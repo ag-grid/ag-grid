@@ -5,6 +5,8 @@
     //todo: sorting looses vertical scrolling
     //todo: grouping
     //todo: advanced filtering
+    //todo: put events into angular digest
+
 
     var module = angular.module("angularGrid", []);
 
@@ -180,6 +182,12 @@
         this.insertPinnedHeader();
         this.insertScrollingHeader();
         this.setPinnedColContainerWidth();
+        this.setBodyContainerWidth();
+    };
+
+    Grid.prototype.setBodyContainerWidth = function() {
+        var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
+        this.eBodyContainer.style.width = mainRowWidth;
     };
 
     Grid.prototype.setupRows = function() {
@@ -319,7 +327,7 @@
             _this.eBodyContainer.removeChild(bodyRowToRemove);
             delete _this.rowsInBodyContainer[indexToRemove];
         });
-    }
+    };
 
     Grid.prototype.ensureEachColHasSize = function() {
         this.gridOptions.columnDefs.forEach(function(colDef) {
@@ -521,6 +529,7 @@
                     _this.setPinnedColContainerWidth();
                 } else {
                     _this.setMainRowWidths();
+                    _this.setBodyContainerWidth();
                 }
             };
             _this.eRoot.onmouseup = function() {
