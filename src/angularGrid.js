@@ -2,6 +2,7 @@
 !(function() {
 
     //todo:
+    //todo: sorting looses vertical scrolling
     //todo: grouping
     //todo: advanced filtering
 
