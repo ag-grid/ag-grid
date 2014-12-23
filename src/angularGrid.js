@@ -2,11 +2,10 @@
 !(function() {
 
     //todo:
-    //todo: sorting looses vertical scrolling
+    //todo: moving columns
     //todo: grouping
     //todo: advanced filtering
     //todo: put events into angular digest
-
 
     var module = angular.module("angularGrid", []);
 

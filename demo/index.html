@@ -21,13 +21,21 @@
             Width: <input type="text" ng-model="width" style="width: 50px;"/>
             Height: <input type="text" ng-model="height" style="width: 50px;"/>
 
+            Style:
+            <select ng-model="style" style="width: 90px;">
+                <option value="">-none-</option>
+                <option value="ag-fresh">Fresh</option>
+                <option value="ag-standard">Standard</option>
+            </select>
+            <button ng-click="onNewCols()">Go</button>
+
         </div>
         <div style="padding: 4px;">
             <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
             {{angularGrid.quickFilterText}}
         </div>
         <!--style="width: 1600px; height: 600px;"-->
-        <div angular-grid="angularGrid" ng-style="{width: width, height: height}" class="ag-fresh"></div>
+        <div angular-grid="angularGrid" ng-style="{width: width, height: height}" ng-class="style"></div>
     </body>
 
 </html>
