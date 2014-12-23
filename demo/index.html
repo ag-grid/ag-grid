@@ -1,0 +1,33 @@
+<!doctype html>
+<html ng-app="grids">
+
+    <head>
+        <script src="../lib/angular.js"></script>
+        <script src="../src/angularGrid.js"></script>
+
+        <script src="main.js"></script>
+
+        <link rel="stylesheet" href="../src/angularGrid.css"/>
+    </head>
+
+    <body ng-controller="mainController" style="height: 100%;">
+
+        <div style="padding: 4px;">
+            Rows: <input type="text" ng-model="rowCount" style="width: 50px;"/>
+            <button ng-click="onNewData()">Go</button>
+            Cols: <input type="text" ng-model="colCount" style="width: 50px;"/>
+            <button ng-click="onNewCols()">Go</button>
+
+            Width: <input type="text" ng-model="width" style="width: 50px;"/>
+            Height: <input type="text" ng-model="height" style="width: 50px;"/>
+
+        </div>
+        <div style="padding: 4px;">
+            <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
+            {{angularGrid.quickFilterText}}
+        </div>
+        <!--style="width: 1600px; height: 600px;"-->
+        <div angular-grid="angularGrid" ng-style="{width: width, height: height}" class="ag-fresh"></div>
+    </body>
+
+</html>

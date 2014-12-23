@@ -1,0 +1,751 @@
+
+!(function() {
+
+    //todo:
+    //todo: grouping
+    //todo: advanced filtering
+
+    var module = angular.module("angularGrid", []);
+
+    var MIN_COL_WIDTH = 10;
+    var DEFAULT_ROW_HEIGHT = 30;
+
+    var SVG_NS = "http://www.w3.org/2000/svg";
+
+    var ASC = "asc";
+    var DESC = "desc";
+
+    var SORT_STYLE_SHOW = "fill:grey; visibility:visible;";
+    var SORT_STYLE_HIDE = "fill:grey; visibility:hidden;";
+
+    var template =
+        "<div class='ag-root'>" +
+        // header
+          "<div class='ag-header'>" +
+            "<div class='ag-pinned-header'></div>" +
+            "<div class='ag-header-viewport'>" +
+              "<div class='ag-header-container'></div>" +
+            "</div>" +
+          "</div>" +
+        // body
+          "<div class='ag-body'>" +
+            "<div class='ag-pinned-cols-viewport'>" +
+              "<div class='ag-pinned-cols-container'></div>" +
+            "</div>" +
+            "<div class='ag-body-viewport-wrapper'>" +
+              "<div class='ag-body-viewport'>" +
+                "<div class='ag-body-container'></div>" +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+        "</div>";
+
+    module.directive("angularGrid", function() {
+        return {
+            restrict: "A",
+            template: template,
+            controller: ["$scope", "$element", Grid],
+            scope: {
+                angularGrid: "="
+            }
+        };
+    });
+
+    function Grid($scope, $element) {
+
+        var _this = this;
+        $scope.grid = this;
+        this.gridOptions = $scope.angularGrid;
+        this.quickFilter = null;
+
+        $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
+            _this.onQuickFilterChanged(newFilter);
+        });
+
+        this.gridOptions.selectedRows = [];
+
+        //done once
+        //for virtualisation, maps keep track of which elements are attached to the dom
+        this.rowsInBodyContainer = {};
+        this.rowsInPinnedContainer = {};
+        this.addApi();
+        this.findAllElements($element);
+        this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
+
+        this.addScrollListener();
+
+        this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
+
+        //done when cols change
+        this.setupColumns();
+
+        //done when rows change
+        this.setupRows();
+
+        //flag to mark when the directive is destroyed
+        this.finished = false;
+        var _this = this;
+        $scope.$on("$destroy", function(){
+            _this.finished = true;
+        });
+    }
+
+    Grid.prototype.onQuickFilterChanged = function(newFilter) {
+        if (newFilter===undefined||newFilter==="") {
+            newFilter = null;
+        }
+        if (this.quickFilter!==newFilter) {
+            if (newFilter!==null) {
+                newFilter = newFilter.toUpperCase();
+            }
+            this.quickFilter = newFilter;
+            this.setupRows();
+        }
+    };
+
+    Grid.prototype.onRowClicked = function(rowIndex) {
+        //if no selection method enabled, do nothing
+        if (this.gridOptions.rowSelection!=="single" && this.gridOptions.rowSelection!=="multiple") {
+            return;
+        }
+        var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
+
+        //if not in array, then it's a new selection, thus selected = true
+        var selected = this.gridOptions.selectedRows.indexOf(row)<0;
+
+        if (selected) {
+            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected==="function") {
+                this.gridOptions.rowSelected(row);
+            }
+            //if single selection, clear any previous
+            if (selected && this.gridOptions.rowSelection === "single") {
+                this.gridOptions.selectedRows.length = 0;
+                var eRowsWithSelectedClass = this.eBody.querySelectorAll(".ag-row-selected");
+                for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
+                    removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
+                }
+            }
+            this.gridOptions.selectedRows.push(row);
+        } else {
+            removeFromArray(this.gridOptions.selectedRows, row);
+        }
+
+        //update css class on selected row
+        var eRows = this.eBody.querySelectorAll("[row='"+rowIndex+"']");
+        for (var i = 0; i<eRows.length; i++) {
+            if (selected) {
+                addCssClass(eRows[i], "ag-row-selected")
+            } else {
+                removeCssClass(eRows[i], "ag-row-selected")
+            }
+        }
+
+        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged==="function") {
+            this.gridOptions.selectionChanged();
+        }
+
+    };
+
+    Grid.prototype.doFilter = function() {
+        var _this = this;
+        if (this.quickFilter) {
+            this.gridOptions.rowDataAfterFilter = [];
+            this.gridOptions.rowData.forEach(function(item) {
+                if (!item._quickFilterAggregateText) {
+                    _this.aggregateRowForQuickFilter(item);
+                }
+                if (item._quickFilterAggregateText.indexOf(_this.quickFilter)>=0) {
+                    _this.gridOptions.rowDataAfterFilter.push(item);
+                }
+            });
+        } else {
+            this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
+        }
+    };
+    
+    Grid.prototype.aggregateRowForQuickFilter = function(rowItem) {
+        var aggregatedText = "";
+        this.gridOptions.columnDefs.forEach(function(colDef) {
+            var value = rowItem[colDef.field];
+            if (value && value!=="") {
+                aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
+            }
+        });
+        rowItem._quickFilterAggregateText = aggregatedText;
+    };
+    
+    Grid.prototype.setupColumns = function() {
+        this.ensureEachColHasSize();
+        this.insertPinnedHeader();
+        this.insertScrollingHeader();
+        this.setPinnedColContainerWidth();
+    };
+
+    Grid.prototype.setupRows = function() {
+
+        this.doFilter();
+        this.doSort();
+
+        //in time, replace this with filter
+        //this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
+        //this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowData.slice(0);
+
+        var rowCount = this.gridOptions.rowDataAfterFilter.length;
+        var containerHeight = this.gridOptions.rowHeight * rowCount;
+        this.eBodyContainer.style.height = containerHeight+"px";
+        this.ePinnedColsContainer.style.height = containerHeight+"px";
+
+        this.refreshAllVirtualRows();
+    };
+    
+    Grid.prototype.refreshAllVirtualRows = function() {
+        //remove all current virtual rows, as they have old data
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        this.removeVirtualRows(rowsToRemove);
+
+        //add in new rows
+        this.drawVirtualRows();
+    };
+
+    Grid.prototype.doSort = function() {
+        //see if there is a col we are sorting by
+        var colDefForSorting = null;
+        this.gridOptions.columnDefs.forEach(function(colDef) {
+            if (colDef.sort) {
+                colDefForSorting = colDef;
+            }
+        });
+
+        if (colDefForSorting) {
+            var keyForSort = colDefForSorting.field;
+            var ascending = colDefForSorting.sort === ASC;
+            var result1 = ascending ? -1 : 1;
+            var result2 = ascending ? 1 : -1;
+
+            this.gridOptions.rowDataAfterSortAndFilter.sort(function(objA, objB) {
+                //hack to stop crashing, in case user isn't supplying objects
+                if (objA===null || objA===undefined || objB===null || objB===undefined) {
+                    return 0;
+                }
+                var valueA = objA[keyForSort];
+                var valueB = objB[keyForSort];
+
+                if (valueA < valueB) {
+                    return result1;
+                } else if (valueA > valueB) {
+                    return result2;
+                } else {
+                    return 0;
+                }
+            });
+        } else {
+            this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
+        }
+
+        this.refreshAllVirtualRows();
+    };
+
+    Grid.prototype.addApi = function() {
+        var _this = this;
+        var api = {
+            onNewRows: function() {
+                _this.gridOptions.selectedRows.length = 0;
+                _this.setupRows();
+            },
+            onNewCols: function() {
+                _this.setupColumns();
+                _this.setupRows();
+            }
+        };
+        this.gridOptions.api = api;
+    };
+
+    Grid.prototype.findAllElements = function($element) {
+        var eGrid = $element[0];
+        this.eGrid = eGrid;
+        this.eRoot = eGrid.querySelector(".ag-root");
+        this.eBody = eGrid.querySelector(".ag-body");
+        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+        this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+        this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
+        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+        this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
+        this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
+        //this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
+        this.eHeader = eGrid.querySelector(".ag-header");
+    };
+
+    Grid.prototype.setPinnedColContainerWidth = function() {
+        var pinnedColWidth = this.getTotalPinnedColWidth();
+        this.ePinnedColsContainer.style.width = pinnedColWidth+"px";
+    };
+
+    Grid.prototype.ensureRowsRendered = function(start, finish) {
+        var pinnedColumnCount = this.getPinnedColCount();
+        var mainRowWidth = this.getTotalUnpinnedColWidth();
+        var _this = this;
+
+        //at the end, this array will contain the items we need to remove
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+
+        //add in new rows
+        for (var rowIndex = start; rowIndex<=finish; rowIndex++) {
+            //see if item already there, and if yes, take it out of the 'to remove' array
+            if (rowsToRemove.indexOf(rowIndex.toString())>=0) {
+                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
+                continue;
+            }
+            //check this row actually exists (in case overflow buffer window exceeds real data)
+            var data = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
+            if (data) {
+                _this.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
+            }
+        }
+
+        //at this point, everything in our 'rowsToRemove' . . .
+        this.removeVirtualRows(rowsToRemove);
+    };
+
+    //takes array of row id's
+    Grid.prototype.removeVirtualRows = function(rowsToRemove) {
+        var _this = this;
+        rowsToRemove.forEach(function(indexToRemove) {
+            var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
+            _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
+            delete _this.rowsInPinnedContainer[indexToRemove];
+
+            var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
+            _this.eBodyContainer.removeChild(bodyRowToRemove);
+            delete _this.rowsInBodyContainer[indexToRemove];
+        });
+    }
+
+    Grid.prototype.ensureEachColHasSize = function() {
+        this.gridOptions.columnDefs.forEach(function(colDef) {
+            if (!colDef.width || colDef.width<10) {
+                colDef.actualWidth = MIN_COL_WIDTH;
+            } else {
+                colDef.actualWidth = colDef.width;
+            }
+        });
+    };
+
+    //see if a grey box is needed at the bottom of the pinned col
+    Grid.prototype.setPinnedColHeight = function() {
+        var bodyHeight = pixelStringToNumber(this.eBody.style.height);
+        var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+        if (scrollShowing) {
+            this.ePinnedColsViewport.style.height = (bodyHeight-20) + "px";
+        } else {
+            this.ePinnedColsViewport.style.height = bodyHeight + "px";
+        }
+    };
+
+    //todo: make this only happen if size changes, and only when visible
+    Grid.prototype.setBodySize = function() {
+        //if (this.eGrid.is(":visible")) {
+        if (true) {
+            var availableHeight = this.eGrid.offsetHeight;
+            var headerHeight = this.eHeader.offsetHeight;
+            var bodyHeight = availableHeight - headerHeight;
+            if (bodyHeight<0) {
+                bodyHeight = 0;
+            }
+
+            if (this.bodyHeightLastTime != bodyHeight) {
+                this.bodyHeightLastTime = bodyHeight;
+                this.eBody.style.height = bodyHeight + "px";
+                //only draw virtual rows if done sort & filter - this
+                //means we don't draw rows if table is not yet initialised
+                if (this.gridOptions.rowDataAfterSortAndFilter) {
+                    this.drawVirtualRows();
+                }
+            }
+
+            //because of change in height, scroll may now be present
+            this.setPinnedColHeight();
+        }
+
+        var _this = this;
+        //the table can change size, so keep calling his to keep it fresh.
+        //not using angular $timeout, do not want to trigger a digest cycle
+        if (!this.finished) {
+            setTimeout(function() {
+                _this.setBodySize();
+            }, 200);
+        }
+    };
+
+    Grid.prototype.getTotalPinnedColWidth = function() {
+        var pinnedColCount = this.getPinnedColCount();
+        var widthSoFar = 0;
+        var colCount = pinnedColCount;
+        if (this.gridOptions.columnDefs.length < pinnedColCount) {
+            colCount = this.gridOptions.columnDefs.length;
+        }
+        for (var colIndex = 0; colIndex<colCount; colIndex++) {
+            widthSoFar += this.gridOptions.columnDefs[colIndex].actualWidth;
+        }
+        return widthSoFar;
+    };
+
+    Grid.prototype.getTotalUnpinnedColWidth = function() {
+        var widthSoFar = 0;
+        var pinnedColCount = this.getPinnedColCount();
+
+        this.gridOptions.columnDefs.forEach(function(colDef, index) {
+            if (index>=pinnedColCount) {
+                widthSoFar += colDef.actualWidth;
+            }
+        });
+
+        return widthSoFar;
+    };
+
+    Grid.prototype.getPinnedColCount = function() {
+        if (this.gridOptions.pinnedColumnCount) {
+            //in case user puts in a string, cast to number
+            return Number(this.gridOptions.pinnedColumnCount);
+        } else {
+            return 0;
+        }
+    };
+
+    Grid.prototype.insertPinnedHeader = function() {
+        var ePinnedHeader = this.ePinnedHeader;
+        removeAllChildren(ePinnedHeader);
+        var pinnedColumnCount = this.getPinnedColCount();
+        var _this = this;
+
+        this.gridOptions.columnDefs.forEach(function(colDef, index) {
+            //only include the first x cols
+            if (index<pinnedColumnCount) {
+                var headerCell = _this.createHeaderCell(colDef, index, true);
+                ePinnedHeader.appendChild(headerCell);
+            }
+        });
+    };
+
+    Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
+        var headerCell = document.createElement("div");
+
+        headerCell.className = "ag-header-cell";
+
+        if (this.gridOptions.enableColResize) {
+            var headerCellResize = document.createElement("div");
+            headerCellResize.className = "ag-header-cell-resize";
+            headerCell.appendChild(headerCellResize);
+            this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
+        }
+
+        //label div
+        var headerCellLabel = document.createElement("div");
+        headerCellLabel.className = "ag-header-cell-label";
+        //add in sort icon
+        if (this.gridOptions.enableSorting) {
+            var headerSortIcon = createSortArrow(colIndex);
+            headerCellLabel.appendChild(headerSortIcon);
+            this.addSortHandling(headerCellLabel, colDef);
+        }
+        //add in text label
+        var eInnerText = document.createElement("span");
+        eInnerText.innerHTML = colDef.displayName;
+        headerCellLabel.appendChild(eInnerText);
+
+        headerCell.appendChild(headerCellLabel);
+        headerCell.style.width = this.formatWidth(colDef.actualWidth);
+
+        return headerCell;
+    };
+
+    Grid.prototype.addSortHandling = function(headerCellLabel, colDef) {
+        var _this = this;
+        headerCellLabel.addEventListener("click", function() {
+
+            //update sort on current col
+            if (colDef.sort === ASC) {
+                colDef.sort = DESC;
+            } else if (colDef.sort === DESC) {
+                colDef.sort = null
+            } else {
+                colDef.sort = ASC;
+            }
+
+            //clear sort on all columns except this one, and update the icons
+            _this.gridOptions.columnDefs.forEach(function(colToClear, colIndex) {
+                if (colToClear!==colDef) {
+                    colToClear.sort = null;
+                }
+
+                //update visibility of icons
+                var sortAscending = colToClear.sort===ASC;
+                var sortDescending = colToClear.sort===DESC;
+
+                var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
+                eSortAscending.setAttribute("style", sortAscending ? SORT_STYLE_SHOW : SORT_STYLE_HIDE);
+
+                var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
+                eSortDescending.setAttribute("style", sortDescending ? SORT_STYLE_SHOW : SORT_STYLE_HIDE);
+            });
+
+            _this.doSort();
+        });
+    };
+
+    Grid.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDef, colIndex, colPinned) {
+        var _this = this;
+        headerCellResize.onmousedown = function(downEvent) {
+            _this.eRoot.style.cursor = "col-resize";
+            _this.dragStartX = downEvent.clientX;
+            _this.colWidthStart = colDef.actualWidth;
+
+            _this.eRoot.onmousemove = function(moveEvent) {
+                var newX = moveEvent.clientX;
+                var change = newX - _this.dragStartX;
+                var newWidth = _this.colWidthStart + change;
+                if (newWidth < MIN_COL_WIDTH) {
+                    newWidth = MIN_COL_WIDTH;
+                }
+                var newWidthPx = newWidth + "px";
+                var selectorForAllColsInCell = ".cell-col-"+colIndex;
+                var cellsForThisCol = _this.eRoot.querySelectorAll(selectorForAllColsInCell);
+                for (var i = 0; i<cellsForThisCol.length; i++) {
+                    cellsForThisCol[i].style.width = newWidthPx;
+                }
+
+                headerCell.style.width = newWidthPx;
+                colDef.actualWidth = newWidth;
+
+                if (colPinned) {
+                    _this.setPinnedColContainerWidth();
+                } else {
+                    _this.setMainRowWidths();
+                }
+            };
+            _this.eRoot.onmouseup = function() {
+                _this.eRoot.style.cursor = "";
+                _this.stopDragging();
+            };
+            _this.eRoot.onmouseleave = function() {
+                _this.stopDragging();
+            };
+        };
+    };
+
+    Grid.prototype.stopDragging = function() {
+        this.eRoot.style.cursor = "";
+        this.eRoot.onmouseup = null;
+        this.eRoot.onmouseleave = null;
+        this.eRoot.onmousemove = null;
+    };
+
+    Grid.prototype.addScrollListener = function() {
+        var _this = this;
+
+        this.eBodyViewport.addEventListener("scroll", function() {
+            _this.scrollHeaderAndPinned();
+            _this.drawVirtualRows();
+        });
+    };
+
+    Grid.prototype.drawVirtualRows = function() {
+        var topPixel = this.eBodyViewport.scrollTop;
+        var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+
+        var firstRow = Math.floor(topPixel / this.gridOptions.rowHeight);
+        var lastRow = Math.floor(bottomPixel / this.gridOptions.rowHeight);
+
+        this.ensureRowsRendered(firstRow, lastRow);
+    };
+
+    Grid.prototype.scrollHeaderAndPinned = function() {
+        this.eHeaderContainer.style.left = -this.eBodyViewport.scrollLeft + "px";
+        this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
+    };
+
+    Grid.prototype.setMainRowWidths = function() {
+        var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
+
+        var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
+        for (var i = 0; i<unpinnedRows.length; i++) {
+            unpinnedRows[i].style.width = mainRowWidth;
+        }
+    };
+
+    Grid.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
+        var ePinnedRow = this.createRowContainer(rowIndex, data);
+        var eMainRow = this.createRowContainer(rowIndex, data);
+        var _this = this;
+
+        this.rowsInBodyContainer[rowIndex] = eMainRow;
+        this.rowsInPinnedContainer[rowIndex] = ePinnedRow;
+
+        eMainRow.style.width = mainRowWidth+"px";
+
+        this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+            var eGridCell = _this.createCell(colDef, data[colDef.field], rowIndex, colIndex);
+
+            if (colIndex>=pinnedColumnCount) {
+                eMainRow.appendChild(eGridCell);
+            } else {
+                ePinnedRow.appendChild(eGridCell);
+            }
+        });
+
+        this.ePinnedColsContainer.appendChild(ePinnedRow);
+        this.eBodyContainer.appendChild(eMainRow);
+    };
+
+    Grid.prototype.createRowContainer = function(rowIndex, row) {
+        var eRow = document.createElement("div");
+        var classesList = ["ag-row"];
+        classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
+        if (this.gridOptions.selectedRows.indexOf(row)>=0) {
+            classesList.push("ag-row-selected");
+        }
+        var classes = classesList.join(" ");
+
+        eRow.className = classes;
+
+        eRow.setAttribute("row", rowIndex);
+
+        eRow.style.top = (this.gridOptions.rowHeight * rowIndex) + "px";
+        eRow.style.height = (this.gridOptions.rowHeight) + "px";
+
+        var _this = this;
+        eRow.addEventListener("click", function() {
+            _this.onRowClicked(Number(this.getAttribute("row")))
+        });
+
+        return eRow;
+    }
+
+    Grid.prototype.createCell = function(colDef, value, rowIndex, colIndex) {
+        var eGridCell = document.createElement("div");
+        eGridCell.className = "ag-cell cell-col-"+colIndex;
+
+        if (value) {
+            eGridCell.innerText = value;
+        } else {
+            eGridCell.innerHTML = "&nbsp;";
+        }
+
+        if (colDef.cellCss) {
+            Object.keys(colDef.cellCss).forEach(function(key) {
+                eGridCell.style[key] = colDef.cellCss[key];
+            });
+        }
+
+        if (this.gridOptions.cellCssFormatter) {
+            var cssStyles = this.gridOptions.cssCellFormatter(rowIndex, colIndex);
+            if (cssStyles) {
+                Object.keys(cssStyles).forEach(function(key) {
+                    eGridCell.style[key] = cssStyles[key];
+                });
+            }
+        }
+
+        if (this.gridOptions.cellClassFormatter) {
+            var classes = this.gridOptions.cellClassFormatter(rowIndex, colIndex);
+            if (classes) {
+                var newClassesString = classes.join(" ");
+                if (eGridCell.className) {
+                    newClassesString = eGridCell.className + " " + newClassesString;
+                }
+                eGridCell.className = newClassesString;
+            }
+        }
+
+        eGridCell.style.width = this.formatWidth(colDef.actualWidth);
+
+        return eGridCell;
+    };
+
+    Grid.prototype.formatWidth = function(width) {
+        if (typeof width === "number") {
+            return width + "px";
+        } else {
+            return width;
+        }
+    };
+
+    Grid.prototype.insertScrollingHeader = function() {
+        var eHeaderContainer = this.eHeaderContainer;
+        removeAllChildren(eHeaderContainer);
+        var pinnedColumnCount = this.getPinnedColCount();
+        var _this = this;
+        this.gridOptions.columnDefs.forEach(function(colDef, index) {
+            if (index<pinnedColumnCount) {
+                return;
+            }
+            var headerCell = _this.createHeaderCell(colDef, index, false);
+            eHeaderContainer.appendChild(headerCell);
+        });
+    };
+
+    //follows small util functions
+    function removeAllChildren(node) {
+        while (node.hasChildNodes()) {
+            node.removeChild(node.lastChild);
+        }
+    }
+
+    //if passed '42px' then returns the number 42
+    function pixelStringToNumber(val) {
+        if (typeof val === "string") {
+            if (val.indexOf("px")>=0) {
+                val.replace("px","");
+            }
+            return parseInt(val);
+        } else {
+            return val;
+        }
+    }
+
+    function addCssClass(element, className) {
+        var oldClasses = element.className;
+        if (oldClasses.indexOf(className)>=0) {
+            return;
+        }
+        element.className = oldClasses + " " + className;;
+    }
+
+    function removeCssClass(element, className) {
+        var oldClasses = element.className;
+        if (oldClasses.indexOf(className)<0) {
+            return;
+        }
+        var newClasses = oldClasses.replace(" " + className, "");
+        newClasses = newClasses.replace(className + " ", "");
+        if (newClasses==className) {
+            newClasses = "";
+        }
+        element.className = newClasses;
+    }
+
+    function removeFromArray(array, object) {
+        array.splice(array.indexOf(object));
+    }
+
+    function createSortArrow(colIndex) {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        eSvg.setAttribute("class", "ag-header-cell-sort");
+
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,10 5,0 10,10");
+        eDescIcon.setAttribute("style", SORT_STYLE_HIDE);
+        eDescIcon.setAttribute("class", "ag-header-cell-sort-desc-"+colIndex);
+        eSvg.appendChild(eDescIcon);
+
+        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
+        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
+        eAscIcon.setAttribute("style", SORT_STYLE_HIDE);
+        eAscIcon.setAttribute("class", "ag-header-cell-sort-asc-"+colIndex);
+        eSvg.appendChild(eAscIcon);
+
+        return eSvg;
+    }
+
+})();

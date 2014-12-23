@@ -1,0 +1,188 @@
+
+.ag-root {
+    height: 100%;
+    font-size: 14px;
+    cursor: default;
+
+    /*disable user mouse selection */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ag-header {
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 25px;
+}
+
+.ag-pinned-header {
+    box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
+    height: 100%;
+}
+
+.ag-header-viewport {
+    box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
+    height: 100%;
+}
+
+.ag-header-container {
+    box-sizing: border-box;
+    position: relative;
+    white-space: nowrap;
+    height: 100%;
+}
+
+.ag-header-cell {
+    box-sizing: border-box;
+    font-weight: bold;
+    color: black;
+    vertical-align: bottom;
+    text-align: center;
+    display: inline-block;
+    height: 100%;
+}
+
+.ag-header-cell-label {
+    padding: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.ag-header-cell-sort {
+    padding-right: 2px;
+}
+
+.ag-header-cell-resize {
+    height: 100%;
+    width: 4px;
+    float: right;
+    cursor: col-resize;
+}
+
+.ag-body {
+}
+
+.ag-pinned-cols-viewport {
+    float: left;
+    overflow: hidden;
+}
+
+.ag-pinned-cols-container {
+    display: inline-block;
+    position: relative;
+}
+
+.ag-body-viewport-wrapper {
+    height: 100%;
+}
+
+.ag-body-viewport {
+    overflow: auto;
+    height: 100%;
+}
+
+.ag-body-container {
+    position: relative;
+}
+
+.ag-row {
+    white-space: nowrap;
+    position: absolute;
+}
+
+.ag-row-odd {
+}
+
+.ag-row-even {
+}
+
+.ag-row-selected {
+}
+
+.agile-gird-row:hover {
+    background-color: aliceblue;
+}
+
+.ag-cell {
+    display: inline-block;
+    white-space: nowrap;
+    /*text-align: right;*/
+    height: 100%;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 4px;
+}
+
+
+.ag-standard .ag-root {
+    border: 1px solid black;
+}
+
+.ag-standard .ag-cell {
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+.ag-standard .ag-header {
+    background: #C0C0C0;
+    border-bottom: 1px solid black;
+}
+
+.ag-standard .ag-header-cell {
+    border-right: 1px solid black;
+}
+
+.ag-standard .ag-row-selected {
+    background-color: #b0b0b0;
+}
+
+
+.ag-fresh .ag-root {
+    border: 1px solid grey;
+}
+
+.ag-fresh .ag-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-header {
+    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(white, lightgrey); /* Standard syntax */
+    border-bottom: 1px solid grey;
+}
+
+.ag-fresh .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-row-odd {
+    background-color: #f0f0f0;
+}
+
+.ag-fresh .ag-row-even {
+    background-color: white;
+}
+
+.ag-fresh .ag-body {
+    background-color: #f0f0f0;
+}
+
+.ag-fresh .ag-row-selected {
+    background-color: #b0b0b0;
+}
+
+.ag-large .ag-root {
+    font-size: 20px;
+}
