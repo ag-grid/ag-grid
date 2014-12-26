@@ -12,7 +12,7 @@ gridsModule.controller('mainController', function($scope) {
 
     $scope.width = "1600px";
     $scope.height = "600px";
-    $scope.style = "ag-fresh";
+    $scope.style = "ag-dark";
 
     $scope.angularGrid = {
         columnDefs: [],

@@ -44,7 +44,6 @@
 .ag-header-cell {
     box-sizing: border-box;
     font-weight: bold;
-    color: black;
     vertical-align: bottom;
     text-align: center;
     display: inline-block;
@@ -182,6 +181,42 @@
 
 .ag-fresh .ag-row-selected {
     background-color: #b0b0b0;
+}
+
+
+.ag-dark .ag-root {
+    border: 1px solid grey;
+    color: #e0e0e0;
+}
+
+.ag-dark .ag-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-dark .ag-header {
+    background-color: #430000;
+    border-bottom: 1px solid grey;
+}
+
+.ag-dark .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-dark .ag-row-odd {
+    background-color: #302E2E;
+}
+
+.ag-dark .ag-row-even {
+    background-color: #403E3E;
+}
+
+.ag-dark .ag-body {
+    background-color: #f0f0f0;
+    /*background-color: #f0f0f0;*/
+}
+
+.ag-dark .ag-row-selected {
+    background-color: #000000;
 }
 
 .ag-large .ag-root {
