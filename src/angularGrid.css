@@ -114,7 +114,6 @@
 .ag-cell {
     display: inline-block;
     white-space: nowrap;
-    /*text-align: right;*/
     height: 100%;
     box-sizing: border-box;
     text-overflow: ellipsis;
@@ -176,7 +175,6 @@
 
 .ag-fresh .ag-body {
     background-color: #ffffff;
-    /*background-color: #f0f0f0;*/
 }
 
 .ag-fresh .ag-row-selected {
@@ -212,7 +210,6 @@
 
 .ag-dark .ag-body {
     background-color: #f0f0f0;
-    /*background-color: #f0f0f0;*/
 }
 
 .ag-dark .ag-row-selected {

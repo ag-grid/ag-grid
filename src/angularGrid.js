@@ -1,11 +1,17 @@
 
-!(function() {
+//todo:
+//todo: advanced filtering
+//todo: moving columns
+//todo: grouping
+//todo: put events into angular digest
 
-    //todo:
-    //todo: moving columns
-    //todo: grouping
-    //todo: advanced filtering
-    //todo: put events into angular digest
+define([
+    "angular",
+    "./littleQuery",
+    "css!./angularGrid"
+], function(angular, lq) {
+
+    lq.removeFromArray();
 
     var module = angular.module("angularGrid", []);
 
@@ -756,5 +762,4 @@
 
         return eSvg;
     }
-
-})();
+});

@@ -1,0 +1,107 @@
+<html>
+
+    <head>
+        <script src="../lib/angular.js"></script>
+        <script src="./angularGrid.js"></script>
+    </head>
+
+    <script>
+        var gridsModule = angular.module("testAngularGrid", ["angularGrid"]);
+
+        gridsModule.controller('mainController', function($scope) {
+
+            var colNames = ["Country","Station","Railway","Game","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+
+            $scope.colCount = 50;
+            $scope.rowCount = 50;
+
+            var pinnedColCount = 1;
+
+            $scope.width = "1600px";
+            $scope.height = "600px";
+            $scope.style = "ag-dark";
+
+            $scope.angularGrid = {
+                columnDefs: [],
+                rowData: [],
+                pinnedColumnCount: pinnedColCount, //and integer, zero or more, default is 0
+                rowHeight: 25, // defaults to 25, can be any integer
+                enableColResize: true, //one of [true, false]
+                enableSorting: true, //one of [true, false]
+                rowSelection: "single", // one of ['single','multiple']
+                rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
+                selectionChanged: function() {console.log("Callback selectionChanged"); } //callback when selection changed
+            };
+
+            createCols();
+            createData();
+
+            $scope.onNewData = function() {
+                createData();
+                $scope.angularGrid.api.onNewRows();
+            };
+
+            $scope.onNewCols = function() {
+                createCols();
+                $scope.angularGrid.api.onNewCols();
+            };
+
+            function createCols() {
+                var columns = [];
+                var colCount = parseInt($scope.colCount);
+                for (var col = 0; col<colCount; col++) {
+                    var colDef = {displayName: colNames[col % colNames.length], field: "col"+col, width: 200, enableColumnResizing: true};
+                    //colDef.width = Math.round(50+Math.random()*200);
+                    columns.push(colDef);
+                }
+                $scope.angularGrid.columnDefs = columns;
+            }
+
+            function createData() {
+                var rowCount = parseInt($scope.rowCount);
+                var colCount = parseInt($scope.colCount);
+                var data = [];
+                for (var row = 0; row<rowCount; row++) {
+                    var rowItem = {};
+                    for (var col = 0; col<colCount; col++) {
+                        var randomBit = Math.random().toString().substring(2,5);
+                        rowItem["col"+col] = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
+                    }
+                    data.push(rowItem);
+                }
+                $scope.angularGrid.rowData = data;
+            }
+
+        });
+    </script>
+
+    <body ng-app="testAngularGrid" ng-controller="mainController" style="height: 100%;">
+
+        <div style="padding: 4px;">
+            Rows: <input type="text" ng-model="rowCount" style="width: 50px;"/>
+            <button ng-click="onNewData()">Go</button>
+            Cols: <input type="text" ng-model="colCount" style="width: 50px;"/>
+            <button ng-click="onNewCols()">Go</button>
+
+            Width: <input type="text" ng-model="width" style="width: 50px;"/>
+            Height: <input type="text" ng-model="height" style="width: 50px;"/>
+
+            Style:
+            <select ng-model="style" style="width: 90px;">
+                <option value="">-none-</option>
+                <option value="ag-fresh">Fresh</option>
+                <option value="ag-standard">Standard</option>
+                <option value="ag-dark">Dark</option>
+            </select>
+            <button ng-click="onNewCols()">Go</button>
+
+        </div>
+        <div style="padding: 4px;">
+            <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
+            {{angularGrid.quickFilterText}}
+        </div>
+        <!--style="width: 1600px; height: 600px;"-->
+        <div angular-grid="angularGrid" ng-style="{width: width, height: height}" ng-class="style"></div>
+    </body>
+
+</html>

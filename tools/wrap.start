@@ -1,0 +1,11 @@
+//Angular Grid
+
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD.
+        define(['angular'], factory);
+    } else {
+        // Browser globals
+        root.angularGrid = factory(root.angular);
+    }
+}(this, function (angular) {

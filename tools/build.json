@@ -1,0 +1,16 @@
+{
+    baseUrl: "../lib",
+    paths: {
+        angular: "../lib/angular",
+        css: "../lib/css"
+    },
+    include: ["css", "../tools/almond", "../src/angularGrid"],
+    exclude: ["angular"],
+    wrap: {
+        startFile: "wrap.start",
+        endFile: "wrap.end"
+    },
+    out: "../dist/angularGrid.js",
+    optimize: "none"
+}
+
