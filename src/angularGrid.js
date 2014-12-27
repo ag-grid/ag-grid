@@ -7,11 +7,11 @@
 
 define([
     "angular",
-    "./littleQuery",
+    "text!./angularGrid.html",
+    "./utils",
+    "./advancedFilter",
     "css!./angularGrid"
-], function(angular, lq) {
-
-    lq.removeFromArray();
+], function(angular, template, utils, advancedFilterFactory) {
 
     var module = angular.module("angularGrid", []);
 
@@ -25,28 +25,6 @@ define([
 
     var SORT_STYLE_SHOW = "fill:grey; visibility:visible;";
     var SORT_STYLE_HIDE = "fill:grey; visibility:hidden;";
-
-    var template =
-        "<div class='ag-root'>" +
-        // header
-          "<div class='ag-header'>" +
-            "<div class='ag-pinned-header'></div>" +
-            "<div class='ag-header-viewport'>" +
-              "<div class='ag-header-container'></div>" +
-            "</div>" +
-          "</div>" +
-        // body
-          "<div class='ag-body'>" +
-            "<div class='ag-pinned-cols-viewport'>" +
-              "<div class='ag-pinned-cols-container'></div>" +
-            "</div>" +
-            "<div class='ag-body-viewport-wrapper'>" +
-              "<div class='ag-body-viewport'>" +
-                "<div class='ag-body-container'></div>" +
-              "</div>" +
-            "</div>" +
-          "</div>" +
-        "</div>";
 
     module.directive("angularGrid", function() {
         return {
@@ -79,6 +57,7 @@ define([
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
+        this.advancedFilter = advancedFilterFactory(this);
 
         this.addScrollListener();
 
@@ -98,6 +77,14 @@ define([
         });
     }
 
+    Grid.prototype.getRowData = function() {
+        return this.gridOptions.rowData;
+    };
+
+    Grid.prototype.getPopupRoot = function() {
+        return this.eBody;
+    };
+
     Grid.prototype.onQuickFilterChanged = function(newFilter) {
         if (newFilter===undefined||newFilter==="") {
             newFilter = null;
@@ -107,8 +94,12 @@ define([
                 newFilter = newFilter.toUpperCase();
             }
             this.quickFilter = newFilter;
-            this.setupRows();
+            this.onFilterChanged();
         }
+    };
+
+    Grid.prototype.onFilterChanged = function() {
+        this.setupRows();
     };
 
     Grid.prototype.onRowClicked = function(rowIndex) {
@@ -130,21 +121,21 @@ define([
                 this.gridOptions.selectedRows.length = 0;
                 var eRowsWithSelectedClass = this.eBody.querySelectorAll(".ag-row-selected");
                 for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
-                    removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
+                    utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
                 }
             }
             this.gridOptions.selectedRows.push(row);
         } else {
-            removeFromArray(this.gridOptions.selectedRows, row);
+            utils.removeFromArray(this.gridOptions.selectedRows, row);
         }
 
         //update css class on selected row
         var eRows = this.eBody.querySelectorAll("[row='"+rowIndex+"']");
         for (var i = 0; i<eRows.length; i++) {
             if (selected) {
-                addCssClass(eRows[i], "ag-row-selected")
+                utils.addCssClass(eRows[i], "ag-row-selected")
             } else {
-                removeCssClass(eRows[i], "ag-row-selected")
+                utils.removeCssClass(eRows[i], "ag-row-selected")
             }
         }
 
@@ -156,16 +147,35 @@ define([
 
     Grid.prototype.doFilter = function() {
         var _this = this;
-        if (this.quickFilter) {
+        var quickFilterPresent = this.quickFilter!==null && this.quickFilter!==undefined && this.quickFilter!=="";
+        var advancedFilterPresent = this.advancedFilter.isFilterPresent();
+        var filterPresent = quickFilterPresent || advancedFilterPresent;
+
+        if (filterPresent) {
             this.gridOptions.rowDataAfterFilter = [];
-            this.gridOptions.rowData.forEach(function(item) {
-                if (!item._quickFilterAggregateText) {
-                    _this.aggregateRowForQuickFilter(item);
+            for (var i = 0, l = this.gridOptions.rowData.length; i<l; i++) {
+                var item = this.gridOptions.rowData[i];
+                //first up, check quick filter
+                if (quickFilterPresent) {
+                    if (!item._quickFilterAggregateText) {
+                        _this.aggregateRowForQuickFilter(item);
+                    }
+                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter)<0) {
+                        //quick filter fails, so skip item
+                        continue;
+                    }
                 }
-                if (item._quickFilterAggregateText.indexOf(_this.quickFilter)>=0) {
-                    _this.gridOptions.rowDataAfterFilter.push(item);
+
+                //second, check advanced filter
+                if (advancedFilterPresent) {
+                    if (!this.advancedFilter.doesFilterPass(item)) {
+                        continue;
+                    }
                 }
-            });
+
+                //got this far, all filters pass
+                this.gridOptions.rowDataAfterFilter.push(item);
+            }
         } else {
             this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
         }
@@ -346,7 +356,7 @@ define([
 
     //see if a grey box is needed at the bottom of the pinned col
     Grid.prototype.setPinnedColHeight = function() {
-        var bodyHeight = pixelStringToNumber(this.eBody.style.height);
+        var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
         var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
         if (scrollShowing) {
             this.ePinnedColsViewport.style.height = (bodyHeight-20) + "px";
@@ -427,7 +437,7 @@ define([
 
     Grid.prototype.insertPinnedHeader = function() {
         var ePinnedHeader = this.ePinnedHeader;
-        removeAllChildren(ePinnedHeader);
+        utils.removeAllChildren(ePinnedHeader);
         var pinnedColumnCount = this.getPinnedColCount();
         var _this = this;
 
@@ -442,6 +452,7 @@ define([
 
     Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
         var headerCell = document.createElement("div");
+        var _this = this;
 
         headerCell.className = "ag-header-cell";
 
@@ -451,6 +462,15 @@ define([
             headerCell.appendChild(headerCellResize);
             this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
         }
+
+        //filter button
+        var filterButton = document.createElement("div");
+        filterButton.className = "ag-header-cell-filter";
+        filterButton.innerHTML = "<b>F</b>";
+        filterButton.onclick = function(clickEvent) {
+            _this.advancedFilter.showFilter(colDef);
+        };
+        headerCell.appendChild(filterButton);
 
         //label div
         var headerCellLabel = document.createElement("div");
@@ -686,7 +706,7 @@ define([
 
     Grid.prototype.insertScrollingHeader = function() {
         var eHeaderContainer = this.eHeaderContainer;
-        removeAllChildren(eHeaderContainer);
+        utils.removeAllChildren(eHeaderContainer);
         var pinnedColumnCount = this.getPinnedColCount();
         var _this = this;
         this.gridOptions.columnDefs.forEach(function(colDef, index) {
@@ -698,49 +718,7 @@ define([
         });
     };
 
-    //follows small util functions
-    function removeAllChildren(node) {
-        while (node.hasChildNodes()) {
-            node.removeChild(node.lastChild);
-        }
-    }
 
-    //if passed '42px' then returns the number 42
-    function pixelStringToNumber(val) {
-        if (typeof val === "string") {
-            if (val.indexOf("px")>=0) {
-                val.replace("px","");
-            }
-            return parseInt(val);
-        } else {
-            return val;
-        }
-    }
-
-    function addCssClass(element, className) {
-        var oldClasses = element.className;
-        if (oldClasses.indexOf(className)>=0) {
-            return;
-        }
-        element.className = oldClasses + " " + className;;
-    }
-
-    function removeCssClass(element, className) {
-        var oldClasses = element.className;
-        if (oldClasses.indexOf(className)<0) {
-            return;
-        }
-        var newClasses = oldClasses.replace(" " + className, "");
-        newClasses = newClasses.replace(className + " ", "");
-        if (newClasses==className) {
-            newClasses = "";
-        }
-        element.className = newClasses;
-    }
-
-    function removeFromArray(array, object) {
-        array.splice(array.indexOf(object));
-    }
 
     function createSortArrow(colIndex) {
         var eSvg = document.createElementNS(SVG_NS, "svg");

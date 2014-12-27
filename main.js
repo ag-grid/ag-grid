@@ -2,7 +2,8 @@
 require.config({
     paths: {
         angular: "lib/angular",
-        css: "lib/css"
+        css: "lib/css",
+        text: "lib/text"
     },
     shim: {
         angular: {

@@ -1,0 +1,10 @@
+.ag-advanced-filter {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.ag-fresh .ag-advanced-filter {
+    border: 1px solid black;
+    background-color: #f0f0f0;
+}
