@@ -37,6 +37,7 @@ define([
         for (var i = 0, l = fields.length; i < l; i++) {
             var field = fields[i];
             var value = item[field];
+            if (value==="") { value = null; }
             var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
             if (filterFailed) {
                 return false;
@@ -105,7 +106,7 @@ define([
             this.colModels[colDef.field] = model;
             var rowData = this.grid.getRowData();
             model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            model.selectedValues = selectedValues = model.uniqueValues.slice(0);
+            model.selectedValues = model.uniqueValues.slice(0);
         }
 
         var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-list");
@@ -129,7 +130,8 @@ define([
         var _this = this;
         model.uniqueValues.forEach(function(value) {
             var eFilterValue = eFilterValueTemplate.cloneNode(true);
-            eFilterValue.querySelector(".ag-advanced-filter-value").innerText = value;
+            var displayNameOfValue = value===null ? "(Blanks)" : value;
+            eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
             var eCheckbox = eFilterValue.querySelector("input");
             eCheckbox.checked = model.selectedValues.indexOf(value)>=0;
 

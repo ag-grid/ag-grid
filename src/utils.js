@@ -9,6 +9,9 @@ define([], function() {
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
             var value = list[i][key];
+            if (value==="") {
+                value = null;
+            }
             if(!uniqueCheck.hasOwnProperty(value)) {
                 result.push(value);
                 uniqueCheck[value] = 1;
