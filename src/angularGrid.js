@@ -1,5 +1,4 @@
 
-//todo: when filtering in scroll, scroll is lost
 //todo: virtualisation in advanced filtering
 //todo: moving columns
 //todo: grouping
@@ -22,8 +21,8 @@ define([
     var ASC = "asc";
     var DESC = "desc";
 
-    var SORT_STYLE_SHOW = "fill:black; visibility:visible;";
-    var SORT_STYLE_HIDE = "fill:black; visibility:hidden;";
+    var SORT_STYLE_SHOW = "visibility:visible;";
+    var SORT_STYLE_HIDE = "visibility:hidden;";
 
     module.directive("angularGrid", function() {
         return {
@@ -736,6 +735,7 @@ define([
 
         var eFunnel = document.createElementNS(SVG_NS, "polygon");
         eFunnel.setAttribute("points", "0,0 5,5 5,12 7,12 7,5 12,0");
+        eFunnel.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eFunnel);
 
         return eSvg;
@@ -743,15 +743,16 @@ define([
 
     function createMenuSvg() {
         var eSvg = document.createElementNS(SVG_NS, "svg");
-        var size = "16"
+        var size = "12"
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
 
-        ["0","4","8"].forEach(function(y) {
+        ["0","5","10"].forEach(function(y) {
             var eLine = document.createElementNS(SVG_NS, "rect");
             eLine.setAttribute("y", y);
             eLine.setAttribute("width", size);
             eLine.setAttribute("height", "2");
+            eLine.setAttribute("class", "ag-header-icon");
             eSvg.appendChild(eLine);
         });
 
@@ -767,13 +768,13 @@ define([
         var eDescIcon = document.createElementNS(SVG_NS, "polygon");
         eDescIcon.setAttribute("points", "0,10 5,0 10,10");
         eDescIcon.setAttribute("style", SORT_STYLE_HIDE);
-        eDescIcon.setAttribute("class", "ag-header-cell-sort-desc-"+colIndex);
+        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
         eSvg.appendChild(eDescIcon);
 
         var eAscIcon = document.createElementNS(SVG_NS, "polygon");
         eAscIcon.setAttribute("points", "0,0 10,0 5,10");
         eAscIcon.setAttribute("style", SORT_STYLE_HIDE);
-        eAscIcon.setAttribute("class", "ag-header-cell-sort-asc-"+colIndex);
+        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
         eSvg.appendChild(eAscIcon);
 
         return eSvg;

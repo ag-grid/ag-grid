@@ -22,3 +22,22 @@
     border: 1px solid black;
     background-color: #f0f0f0;
 }
+
+.ag-standard .ag-advanced-filter-select-all-container {
+    border-bottom: 1px solid lightgrey;
+}
+
+.ag-standard .ag-advanced-filter {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.ag-dark .ag-advanced-filter-select-all-container {
+    border-bottom: 1px solid lightgrey;
+}
+
+.ag-dark .ag-advanced-filter {
+    color: black;
+    border: 1px solid black;
+    background-color: #f0f0f0;
+}

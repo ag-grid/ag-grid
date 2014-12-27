@@ -80,8 +80,7 @@
 
 .ag-header-cell-menu-button {
     float: right;
-    width: 20px;
-    margin-top: 5px;
+    /*margin-top: 5px;*/
 }
 
 .ag-body {
@@ -162,6 +161,16 @@
     background-color: #b0b0b0;
 }
 
+.ag-standard .ag-header-cell-menu-button {
+    padding: 2px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+}
+
+.ag-standard .ag-header-cell-menu-button:hover {
+    border: 1px solid black;
+}
+
 
 .ag-fresh .ag-root {
     border: 1px solid grey;
@@ -181,6 +190,16 @@
 
 .ag-fresh .ag-header-cell {
     border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-header-cell-menu-button {
+    padding: 2px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+}
+
+.ag-fresh .ag-header-cell-menu-button:hover {
+    border: 1px solid black;
 }
 
 .ag-fresh .ag-row-odd {
@@ -215,6 +234,21 @@
 
 .ag-dark .ag-header-cell {
     border-right: 1px solid grey;
+}
+
+.ag-dark .ag-header-cell-menu-button {
+    padding: 2px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+}
+
+.ag-dark .ag-header-cell-menu-button:hover {
+    border: 1px solid #e0e0e0;
+}
+
+.ag-dark .ag-header-icon {
+    stroke: white;
+    fill: white;
 }
 
 .ag-dark .ag-row-odd {
