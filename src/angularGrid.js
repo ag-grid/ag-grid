@@ -242,6 +242,8 @@ define([
             }
         });
 
+        this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
+
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
             var ascending = colDefForSorting.sort === ASC;
@@ -264,8 +266,6 @@ define([
                     return 0;
                 }
             });
-        } else {
-            this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
         }
 
         this.refreshAllVirtualRows();
@@ -276,7 +276,9 @@ define([
         var api = {
             onNewRows: function() {
                 _this.gridOptions.selectedRows.length = 0;
+                _this.advancedFilter.clearAllFilters();
                 _this.setupRows();
+                _this.updateFilterIcons();
             },
             onNewCols: function() {
                 _this.setupColumns();

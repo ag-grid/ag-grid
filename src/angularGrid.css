@@ -108,6 +108,7 @@
 
 .ag-body-container {
     position: relative;
+    display: inline-block;
 }
 
 .ag-row {

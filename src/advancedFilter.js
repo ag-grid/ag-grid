@@ -46,6 +46,10 @@ define([
         return true;
     };
 
+    AdvancedFilter.prototype.clearAllFilters = function() {
+        this.colModels = {};
+    };
+
     AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, eSelectAll, model, value) {
         var checked = eCheckbox.checked;
         if (checked) {
