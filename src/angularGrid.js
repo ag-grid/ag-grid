@@ -10,9 +10,8 @@ define([
     "text!./angularGrid.html",
     "./utils",
     "./advancedFilter",
-    "text!./menuIcon.svg",
     "css!./angularGrid"
-], function(angular, template, utils, advancedFilterFactory, menuIconSvg) {
+], function(angular, template, utils, advancedFilterFactory) {
 
     var module = angular.module("angularGrid", []);
 
