@@ -80,8 +80,8 @@
 
 .ag-header-cell-filter {
     float: right;
-    width: 40px;
-    background-color: lightcoral;
+    width: 20px;
+    margin-top: 5px;
 }
 
 .ag-body {
@@ -197,7 +197,6 @@
 .ag-fresh .ag-row-selected {
     background-color: #b0b0b0;
 }
-
 
 .ag-dark .ag-root {
     border: 1px solid grey;

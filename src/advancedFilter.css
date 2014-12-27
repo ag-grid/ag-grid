@@ -1,7 +1,21 @@
 .ag-advanced-filter {
     position: absolute;
-    /*top: 0px;*/
-    /*left: 0px;*/
+}
+
+.ag-advanced-filter-list {
+    overflow-x: auto;
+    height: 300px;
+    width: 200px;
+}
+
+.ag-advanced-filter-value-container {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ag-fresh .ag-advanced-filter-select-all-container {
+    border-bottom: 1px solid lightgrey;
 }
 
 .ag-fresh .ag-advanced-filter {

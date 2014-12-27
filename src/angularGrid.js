@@ -10,8 +10,9 @@ define([
     "text!./angularGrid.html",
     "./utils",
     "./advancedFilter",
+    "text!./menuIcon.svg",
     "css!./angularGrid"
-], function(angular, template, utils, advancedFilterFactory) {
+], function(angular, template, utils, advancedFilterFactory, menuIconSvg) {
 
     var module = angular.module("angularGrid", []);
 
@@ -466,7 +467,7 @@ define([
         //filter button
         var filterButton = document.createElement("div");
         filterButton.className = "ag-header-cell-filter";
-        filterButton.innerHTML = "<b>F</b>";
+        filterButton.innerHTML = menuIconSvg;
         filterButton.onclick = function() {
             _this.advancedFilter.showFilter(colDef, this);
         };

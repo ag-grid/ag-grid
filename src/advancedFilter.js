@@ -70,15 +70,10 @@ define([
 
     AdvancedFilter.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
         var sourceRect = eventSource.getBoundingClientRect();
-        var sX = sourceRect.left;
-        var sY = sourceRect.top;
-
         var parentRect = ePopupRoot.getBoundingClientRect();
-        var rX = parentRect.left;
-        var rY = parentRect.top;
 
-        var x = sX - rX;
-        var y = sY - rY;
+        var x = sourceRect.left - parentRect.left;
+        var y = sourceRect.top - parentRect.top + sourceRect.height;
 
         ePopup.style.left = x + "px";
         ePopup.style.top = y + "px";
@@ -103,15 +98,23 @@ define([
             model.selectedValues = selectedValues = model.uniqueValues.slice(0);
         }
 
-        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-values");
+        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-list");
         var eFilterValueTemplate = eFilterValues.querySelector("#itemForRepeat");
         eFilterValues.removeChild(eFilterValueTemplate);
 
         var checkboxes = [];
 
         var eSelectAll = ePopupParent.querySelector("#selectAll");
-        eSelectAll.checked = true;
         eSelectAll.onclick = function() { _this.onSelectAll(model, eSelectAll, checkboxes); };
+        if (model.uniqueValues.length==model.selectedValues.length) {
+            eSelectAll.indeterminate = false;
+            eSelectAll.checked = true;
+        } else if (model.selectedValues.length==0) {
+            eSelectAll.indeterminate = false;
+            eSelectAll.checked = false;
+        } else {
+            eSelectAll.indeterminate = true;
+        }
 
         var _this = this;
         model.uniqueValues.forEach(function(value) {
