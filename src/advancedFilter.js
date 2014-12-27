@@ -68,12 +68,31 @@ define([
         this.grid.onFilterChanged();
     };
 
-    AdvancedFilter.prototype.showFilter = function(colDef) {
+    AdvancedFilter.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
+        var sourceRect = eventSource.getBoundingClientRect();
+        var sX = sourceRect.left;
+        var sY = sourceRect.top;
 
-        var popupRoot = this.grid.getPopupRoot();
+        var parentRect = ePopupRoot.getBoundingClientRect();
+        var rX = parentRect.left;
+        var rY = parentRect.top;
 
-        var div = document.createElement("div");
-        div.innerHTML = template;
+        var x = sX - rX;
+        var y = sY - rY;
+
+        ePopup.style.left = x + "px";
+        ePopup.style.top = y + "px";
+    };
+
+    AdvancedFilter.prototype.showFilter = function(colDef, eventSource) {
+
+        var ePopupRoot = this.grid.getPopupRoot();
+
+        var ePopupParent = document.createElement("div");
+        ePopupParent.innerHTML = template;
+
+        var ePopup = ePopupParent.querySelector(".ag-advanced-filter");
+        this.positionPopup(eventSource, ePopup, ePopupRoot)
 
         var model = this.colModels[colDef.field];
         if (!model) {
@@ -84,13 +103,14 @@ define([
             model.selectedValues = selectedValues = model.uniqueValues.slice(0);
         }
 
-        var eFilterValues = div.querySelector(".ag-advanced-filter-values");
+        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-values");
         var eFilterValueTemplate = eFilterValues.querySelector("#itemForRepeat");
         eFilterValues.removeChild(eFilterValueTemplate);
 
         var checkboxes = [];
 
-        var eSelectAll = div.querySelector("#selectAll");
+        var eSelectAll = ePopupParent.querySelector("#selectAll");
+        eSelectAll.checked = true;
         eSelectAll.onclick = function() { _this.onSelectAll(model, eSelectAll, checkboxes); };
 
         var _this = this;
@@ -106,13 +126,13 @@ define([
             checkboxes.push(eCheckbox);
         });
 
-        var eBackdrop = div.querySelector(".ag-popup-backdrop");
+        var eBackdrop = ePopupParent.querySelector(".ag-popup-backdrop");
 
         eBackdrop.onclick = function() {
-            popupRoot.removeChild(div);
+            ePopupRoot.removeChild(ePopupParent);
         };
 
-        popupRoot.appendChild(div);
+        ePopupRoot.appendChild(ePopupParent);
     };
 
     return function(eBody) {

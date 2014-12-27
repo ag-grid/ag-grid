@@ -82,7 +82,7 @@ define([
     };
 
     Grid.prototype.getPopupRoot = function() {
-        return this.eBody;
+        return this.eRoot;
     };
 
     Grid.prototype.onQuickFilterChanged = function(newFilter) {
@@ -467,8 +467,8 @@ define([
         var filterButton = document.createElement("div");
         filterButton.className = "ag-header-cell-filter";
         filterButton.innerHTML = "<b>F</b>";
-        filterButton.onclick = function(clickEvent) {
-            _this.advancedFilter.showFilter(colDef);
+        filterButton.onclick = function() {
+            _this.advancedFilter.showFilter(colDef, this);
         };
         headerCell.appendChild(filterButton);
 
