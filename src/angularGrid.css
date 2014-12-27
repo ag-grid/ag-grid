@@ -78,7 +78,7 @@
     cursor: col-resize;
 }
 
-.ag-header-cell-filter {
+.ag-header-cell-menu-button {
     float: right;
     width: 20px;
     margin-top: 5px;

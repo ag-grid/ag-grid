@@ -24,8 +24,8 @@ define([
     var ASC = "asc";
     var DESC = "desc";
 
-    var SORT_STYLE_SHOW = "fill:grey; visibility:visible;";
-    var SORT_STYLE_HIDE = "fill:grey; visibility:hidden;";
+    var SORT_STYLE_SHOW = "fill:black; visibility:visible;";
+    var SORT_STYLE_HIDE = "fill:black; visibility:hidden;";
 
     module.directive("angularGrid", function() {
         return {
@@ -101,6 +101,7 @@ define([
 
     Grid.prototype.onFilterChanged = function() {
         this.setupRows();
+        this.updateFilterIcons();
     };
 
     Grid.prototype.onRowClicked = function(rowIndex) {
@@ -195,10 +196,10 @@ define([
     
     Grid.prototype.setupColumns = function() {
         this.ensureEachColHasSize();
-        this.insertPinnedHeader();
-        this.insertScrollingHeader();
+        this.insertHeader();
         this.setPinnedColContainerWidth();
         this.setBodyContainerWidth();
+        this.updateFilterIcons();
     };
 
     Grid.prototype.setBodyContainerWidth = function() {
@@ -436,21 +437,6 @@ define([
         }
     };
 
-    Grid.prototype.insertPinnedHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        utils.removeAllChildren(ePinnedHeader);
-        var pinnedColumnCount = this.getPinnedColCount();
-        var _this = this;
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            //only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = _this.createHeaderCell(colDef, index, true);
-                ePinnedHeader.appendChild(headerCell);
-            }
-        });
-    };
-
     Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
         var headerCell = document.createElement("div");
         var _this = this;
@@ -465,23 +451,28 @@ define([
         }
 
         //filter button
-        var filterButton = document.createElement("div");
-        filterButton.className = "ag-header-cell-filter";
-        filterButton.innerHTML = menuIconSvg;
-        filterButton.onclick = function() {
+        var eMenuButton = createMenuSvg();
+        eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+        eMenuButton.onclick = function() {
             _this.advancedFilter.showFilter(colDef, this);
         };
-        headerCell.appendChild(filterButton);
+        headerCell.appendChild(eMenuButton);
 
         //label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
         //add in sort icon
         if (this.gridOptions.enableSorting) {
-            var headerSortIcon = createSortArrow(colIndex);
+            var headerSortIcon = createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
             this.addSortHandling(headerCellLabel, colDef);
         }
+
+        //add in filter icon
+        var filterIcon = createFilterSvg();
+        this.headerFilterIcons[colDef.field] = filterIcon;
+        headerCellLabel.appendChild(filterIcon);
+
         //add in text label
         var eInnerText = document.createElement("span");
         eInnerText.innerHTML = colDef.displayName;
@@ -491,6 +482,15 @@ define([
         headerCell.style.width = this.formatWidth(colDef.actualWidth);
 
         return headerCell;
+    };
+
+    Grid.prototype.updateFilterIcons = function() {
+        var _this = this;
+        this.gridOptions.columnDefs.forEach(function(colDef) {
+            var filterPresent = _this.advancedFilter.isFilterPresentForCol(colDef.field);
+            var visibilityStyle = filterPresent ? "visible" : "hidden";
+            _this.headerFilterIcons[colDef.field].style.visibility = visibilityStyle;
+        });
     };
 
     Grid.prototype.addSortHandling = function(headerCellLabel, colDef) {
@@ -705,23 +705,58 @@ define([
         }
     };
 
-    Grid.prototype.insertScrollingHeader = function() {
+    Grid.prototype.insertHeader = function() {
+        var ePinnedHeader = this.ePinnedHeader;
         var eHeaderContainer = this.eHeaderContainer;
+        utils.removeAllChildren(ePinnedHeader);
         utils.removeAllChildren(eHeaderContainer);
+        this.headerFilterIcons = {};
+
         var pinnedColumnCount = this.getPinnedColCount();
         var _this = this;
+
         this.gridOptions.columnDefs.forEach(function(colDef, index) {
+            //only include the first x cols
             if (index<pinnedColumnCount) {
-                return;
+                var headerCell = _this.createHeaderCell(colDef, index, true);
+                ePinnedHeader.appendChild(headerCell);
+            } else {
+                var headerCell = _this.createHeaderCell(colDef, index, false);
+                eHeaderContainer.appendChild(headerCell);
             }
-            var headerCell = _this.createHeaderCell(colDef, index, false);
-            eHeaderContainer.appendChild(headerCell);
         });
     };
 
+    function createFilterSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "12");
+        eSvg.setAttribute("height", "12");
 
+        var eFunnel = document.createElementNS(SVG_NS, "polygon");
+        eFunnel.setAttribute("points", "0,0 5,5 5,12 7,12 7,5 12,0");
+        eSvg.appendChild(eFunnel);
 
-    function createSortArrow(colIndex) {
+        return eSvg;
+    }
+
+    function createMenuSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        var size = "16"
+        eSvg.setAttribute("width", size);
+        eSvg.setAttribute("height", size);
+
+        ["0","4","8"].forEach(function(y) {
+            var eLine = document.createElementNS(SVG_NS, "rect");
+            eLine.setAttribute("y", y);
+            eLine.setAttribute("width", size);
+            eLine.setAttribute("height", "2");
+            eSvg.appendChild(eLine);
+        });
+
+        return eSvg;
+    }
+
+    function createSortArrowSvg(colIndex) {
         var eSvg = document.createElementNS(SVG_NS, "svg");
         eSvg.setAttribute("width", "10");
         eSvg.setAttribute("height", "10");

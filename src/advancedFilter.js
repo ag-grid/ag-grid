@@ -13,6 +13,12 @@ define([
         return Object.keys(this.colModels).length > 0;
     };
 
+    AdvancedFilter.prototype.isFilterPresentForCol = function (key) {
+        var model =  this.colModels[key];
+        var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
+        return filterPresent;
+    };
+
     AdvancedFilter.prototype.onSelectAll = function (model, eSelectAll, checkboxes) {
         var checked = eSelectAll.checked;
         if (checked) {
