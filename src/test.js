@@ -7,8 +7,16 @@ define([
 
     gridsModule.controller('mainController', function($scope) {
 
-        var colNames = ["Country","Station","Railway","Game","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+        var colNames = ["Country","Game","Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
         var countries = ["Ireland","United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
+        var games = [
+            "Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+            "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
+            "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
+            "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
+            "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
+            "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
+        ];
 
         $scope.colCount = 50;
         $scope.rowCount = 50;
@@ -65,6 +73,8 @@ define([
                     var value;
                     if (colNames[col % colNames.length]==="Country") {
                         value = countries[row % countries.length];
+                    } else if (colNames[col % colNames.length]==="Game") {
+                            value = games[row % games.length];
                     } else {
                         var randomBit = Math.random().toString().substring(2,5);
                         value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";

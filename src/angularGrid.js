@@ -1,9 +1,8 @@
 
-//todo:
-//todo: advanced filtering
+//todo: when filtering in scroll, scroll is lost
+//todo: virtualisation in advanced filtering
 //todo: moving columns
 //todo: grouping
-//todo: put events into angular digest
 
 define([
     "angular",
@@ -41,6 +40,7 @@ define([
 
         var _this = this;
         $scope.grid = this;
+        this.$scope = $scope;
         this.gridOptions = $scope.angularGrid;
         this.quickFilter = null;
 
@@ -142,6 +142,7 @@ define([
 
         if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged==="function") {
             this.gridOptions.selectionChanged();
+            this.$scope.$apply();
         }
 
     };
