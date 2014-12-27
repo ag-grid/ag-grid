@@ -997,18 +997,31 @@ define('text!../src/angularGrid.html',[],function () { return '<div class=\'ag-r
 /** Singleton util class, with jquery and underscore like features. */
 define('../src/utils',[], function() {
 
-    function LittleQuery() {
+    function Utils() {
     }
 
-    //follows small util functions
-    LittleQuery.prototype.removeAllChildren = function(node) {
+    Utils.prototype.uniqueValues = function(list, key) {
+        var uniqueCheck = {};
+        var result = [];
+        for(var i = 0, l = list.length; i < l; i++){
+            var value = list[i][key];
+            if(!uniqueCheck.hasOwnProperty(value)) {
+                result.push(value);
+                uniqueCheck[value] = 1;
+            }
+        }
+        result.sort();
+        return result;
+    };
+
+    Utils.prototype.removeAllChildren = function(node) {
         while (node.hasChildNodes()) {
             node.removeChild(node.lastChild);
         }
     };
 
     //if passed '42px' then returns the number 42
-    LittleQuery.prototype.pixelStringToNumber = function(val) {
+    Utils.prototype.pixelStringToNumber = function(val) {
         if (typeof val === "string") {
             if (val.indexOf("px")>=0) {
                 val.replace("px","");
@@ -1019,7 +1032,7 @@ define('../src/utils',[], function() {
         }
     };
 
-    LittleQuery.prototype.addCssClass = function(element, className) {
+    Utils.prototype.addCssClass = function(element, className) {
         var oldClasses = element.className;
         if (oldClasses.indexOf(className)>=0) {
             return;
@@ -1027,7 +1040,7 @@ define('../src/utils',[], function() {
         element.className = oldClasses + " " + className;;
     };
 
-    LittleQuery.prototype.removeCssClass = function(element, className) {
+    Utils.prototype.removeCssClass = function(element, className) {
         var oldClasses = element.className;
         if (oldClasses.indexOf(className)<0) {
             return;
@@ -1040,13 +1053,16 @@ define('../src/utils',[], function() {
         element.className = newClasses;
     };
 
-    LittleQuery.prototype.removeFromArray = function(array, object) {
-        array.splice(array.indexOf(object));
+    Utils.prototype.removeFromArray = function(array, object) {
+        array.splice(array.indexOf(object), 1);
     };
 
-    return new LittleQuery();
+    return new Utils();
 
 });
+
+define('text!../src/advancedFilter.html',[],function () { return '<div class="ag-popup-backdrop">\r\n\r\n</div>\r\n<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            Select All\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list">\r\n        <div id="itemForRepeat" class="ag-advanced-filter-value-container">\r\n            <label>\r\n                <input type="checkbox"/>\r\n                <span class="ag-advanced-filter-value"></span>\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+
 /*
  * css.normalize.js
  *
@@ -1187,20 +1203,173 @@ define('normalize',[],function() {
     return normalizeCSS;
 });
 
+define('css!../src/advancedFilter',[],function(){});
+define('../src/advancedFilter',[
+    "./utils",
+    "text!./advancedFilter.html",
+    "css!./advancedFilter"
+], function(utils, template) {
+
+    function AdvancedFilter(grid) {
+        this.grid = grid;
+        this.colModels = {};
+    }
+
+    AdvancedFilter.prototype.isFilterPresent = function () {
+        return Object.keys(this.colModels).length > 0;
+    };
+
+    AdvancedFilter.prototype.isFilterPresentForCol = function (key) {
+        var model =  this.colModels[key];
+        var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
+        return filterPresent;
+    };
+
+    AdvancedFilter.prototype.onSelectAll = function (model, eSelectAll, checkboxes) {
+        var checked = eSelectAll.checked;
+        if (checked) {
+            model.selectedValues = model.uniqueValues.slice(0);
+        } else {
+            model.selectedValues.length = 0;
+        }
+        checkboxes.forEach(function (eCheckbox) {
+            eCheckbox.checked = checked;
+        });
+        this.grid.onFilterChanged();
+    };
+
+    AdvancedFilter.prototype.doesFilterPass = function (item) {
+        var fields = Object.keys(this.colModels);
+        for (var i = 0, l = fields.length; i < l; i++) {
+            var field = fields[i];
+            var value = item[field];
+            var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
+            if (filterFailed) {
+                return false;
+            }
+        }
+        //all filters passed
+        return true;
+    };
+
+    AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, eSelectAll, model, value) {
+        var checked = eCheckbox.checked;
+        if (checked) {
+            if (model.selectedValues.indexOf(value)<0) {
+                model.selectedValues.push(value);
+            }
+            //if box arrays are same size, then everything is checked
+            if (model.selectedValues.length==model.uniqueValues.length) {
+                eSelectAll.indeterminate = false;
+                eSelectAll.checked = true;
+            } else {
+                eSelectAll.indeterminate = true;
+            }
+        } else {
+            utils.removeFromArray(model.selectedValues, value);
+            //if set is empty, nothing is selected
+            if (model.selectedValues.length==0) {
+                eSelectAll.indeterminate = false;
+                //eSelectAll.checked = true;
+                eSelectAll.checked = false;
+            } else {
+                eSelectAll.indeterminate = true;
+            }
+        }
+
+        this.grid.onFilterChanged();
+    };
+
+    AdvancedFilter.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
+        var sourceRect = eventSource.getBoundingClientRect();
+        var parentRect = ePopupRoot.getBoundingClientRect();
+
+        var x = sourceRect.left - parentRect.left;
+        var y = sourceRect.top - parentRect.top + sourceRect.height;
+
+        ePopup.style.left = x + "px";
+        ePopup.style.top = y + "px";
+    };
+
+    AdvancedFilter.prototype.showFilter = function(colDef, eventSource) {
+
+        var ePopupRoot = this.grid.getPopupRoot();
+
+        var ePopupParent = document.createElement("div");
+        ePopupParent.innerHTML = template;
+
+        var ePopup = ePopupParent.querySelector(".ag-advanced-filter");
+        this.positionPopup(eventSource, ePopup, ePopupRoot)
+
+        var model = this.colModels[colDef.field];
+        if (!model) {
+            model = {};
+            this.colModels[colDef.field] = model;
+            var rowData = this.grid.getRowData();
+            model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
+            model.selectedValues = selectedValues = model.uniqueValues.slice(0);
+        }
+
+        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-list");
+        var eFilterValueTemplate = eFilterValues.querySelector("#itemForRepeat");
+        eFilterValues.removeChild(eFilterValueTemplate);
+
+        var checkboxes = [];
+
+        var eSelectAll = ePopupParent.querySelector("#selectAll");
+        eSelectAll.onclick = function() { _this.onSelectAll(model, eSelectAll, checkboxes); };
+        if (model.uniqueValues.length==model.selectedValues.length) {
+            eSelectAll.indeterminate = false;
+            eSelectAll.checked = true;
+        } else if (model.selectedValues.length==0) {
+            eSelectAll.indeterminate = false;
+            eSelectAll.checked = false;
+        } else {
+            eSelectAll.indeterminate = true;
+        }
+
+        var _this = this;
+        model.uniqueValues.forEach(function(value) {
+            var eFilterValue = eFilterValueTemplate.cloneNode(true);
+            eFilterValue.querySelector(".ag-advanced-filter-value").innerText = value;
+            var eCheckbox = eFilterValue.querySelector("input");
+            eCheckbox.checked = model.selectedValues.indexOf(value)>=0;
+
+            eCheckbox.onclick = function() { _this.onCheckboxClicked(eCheckbox, eSelectAll, model, value); };
+
+            eFilterValues.appendChild(eFilterValue);
+            checkboxes.push(eCheckbox);
+        });
+
+        var eBackdrop = ePopupParent.querySelector(".ag-popup-backdrop");
+
+        eBackdrop.onclick = function() {
+            ePopupRoot.removeChild(ePopupParent);
+        };
+
+        ePopupRoot.appendChild(ePopupParent);
+    };
+
+    return function(eBody) {
+        return new AdvancedFilter(eBody);
+    };
+
+});
+
 define('css!../src/angularGrid',[],function(){});
 
-//todo:
-//todo: advanced filtering
+//todo: when filtering in scroll, scroll is lost
+//todo: virtualisation in advanced filtering
 //todo: moving columns
 //todo: grouping
-//todo: put events into angular digest
 
 define('../src/angularGrid',[
     "angular",
     "text!./angularGrid.html",
     "./utils",
+    "./advancedFilter",
     "css!./angularGrid"
-], function(angular, template, utils) {
+], function(angular, template, utils, advancedFilterFactory) {
 
     var module = angular.module("angularGrid", []);
 
@@ -1212,30 +1381,8 @@ define('../src/angularGrid',[
     var ASC = "asc";
     var DESC = "desc";
 
-    var SORT_STYLE_SHOW = "fill:grey; visibility:visible;";
-    var SORT_STYLE_HIDE = "fill:grey; visibility:hidden;";
-
-    //var template =
-    //    "<div class='ag-root'>" +
-    //    // header
-    //      "<div class='ag-header'>" +
-    //        "<div class='ag-pinned-header'></div>" +
-    //        "<div class='ag-header-viewport'>" +
-    //          "<div class='ag-header-container'></div>" +
-    //        "</div>" +
-    //      "</div>" +
-    //    // body
-    //      "<div class='ag-body'>" +
-    //        "<div class='ag-pinned-cols-viewport'>" +
-    //          "<div class='ag-pinned-cols-container'></div>" +
-    //        "</div>" +
-    //        "<div class='ag-body-viewport-wrapper'>" +
-    //          "<div class='ag-body-viewport'>" +
-    //            "<div class='ag-body-container'></div>" +
-    //          "</div>" +
-    //        "</div>" +
-    //      "</div>" +
-    //    "</div>";
+    var SORT_STYLE_SHOW = "fill:black; visibility:visible;";
+    var SORT_STYLE_HIDE = "fill:black; visibility:hidden;";
 
     module.directive("angularGrid", function() {
         return {
@@ -1252,6 +1399,7 @@ define('../src/angularGrid',[
 
         var _this = this;
         $scope.grid = this;
+        this.$scope = $scope;
         this.gridOptions = $scope.angularGrid;
         this.quickFilter = null;
 
@@ -1268,6 +1416,7 @@ define('../src/angularGrid',[
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
+        this.advancedFilter = advancedFilterFactory(this);
 
         this.addScrollListener();
 
@@ -1287,6 +1436,14 @@ define('../src/angularGrid',[
         });
     }
 
+    Grid.prototype.getRowData = function() {
+        return this.gridOptions.rowData;
+    };
+
+    Grid.prototype.getPopupRoot = function() {
+        return this.eRoot;
+    };
+
     Grid.prototype.onQuickFilterChanged = function(newFilter) {
         if (newFilter===undefined||newFilter==="") {
             newFilter = null;
@@ -1296,8 +1453,13 @@ define('../src/angularGrid',[
                 newFilter = newFilter.toUpperCase();
             }
             this.quickFilter = newFilter;
-            this.setupRows();
+            this.onFilterChanged();
         }
+    };
+
+    Grid.prototype.onFilterChanged = function() {
+        this.setupRows();
+        this.updateFilterIcons();
     };
 
     Grid.prototype.onRowClicked = function(rowIndex) {
@@ -1339,22 +1501,42 @@ define('../src/angularGrid',[
 
         if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged==="function") {
             this.gridOptions.selectionChanged();
+            this.$scope.$apply();
         }
 
     };
 
     Grid.prototype.doFilter = function() {
         var _this = this;
-        if (this.quickFilter) {
+        var quickFilterPresent = this.quickFilter!==null && this.quickFilter!==undefined && this.quickFilter!=="";
+        var advancedFilterPresent = this.advancedFilter.isFilterPresent();
+        var filterPresent = quickFilterPresent || advancedFilterPresent;
+
+        if (filterPresent) {
             this.gridOptions.rowDataAfterFilter = [];
-            this.gridOptions.rowData.forEach(function(item) {
-                if (!item._quickFilterAggregateText) {
-                    _this.aggregateRowForQuickFilter(item);
+            for (var i = 0, l = this.gridOptions.rowData.length; i<l; i++) {
+                var item = this.gridOptions.rowData[i];
+                //first up, check quick filter
+                if (quickFilterPresent) {
+                    if (!item._quickFilterAggregateText) {
+                        _this.aggregateRowForQuickFilter(item);
+                    }
+                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter)<0) {
+                        //quick filter fails, so skip item
+                        continue;
+                    }
                 }
-                if (item._quickFilterAggregateText.indexOf(_this.quickFilter)>=0) {
-                    _this.gridOptions.rowDataAfterFilter.push(item);
+
+                //second, check advanced filter
+                if (advancedFilterPresent) {
+                    if (!this.advancedFilter.doesFilterPass(item)) {
+                        continue;
+                    }
                 }
-            });
+
+                //got this far, all filters pass
+                this.gridOptions.rowDataAfterFilter.push(item);
+            }
         } else {
             this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
         }
@@ -1373,10 +1555,10 @@ define('../src/angularGrid',[
     
     Grid.prototype.setupColumns = function() {
         this.ensureEachColHasSize();
-        this.insertPinnedHeader();
-        this.insertScrollingHeader();
+        this.insertHeader();
         this.setPinnedColContainerWidth();
         this.setBodyContainerWidth();
+        this.updateFilterIcons();
     };
 
     Grid.prototype.setBodyContainerWidth = function() {
@@ -1614,23 +1796,9 @@ define('../src/angularGrid',[
         }
     };
 
-    Grid.prototype.insertPinnedHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        utils.removeAllChildren(ePinnedHeader);
-        var pinnedColumnCount = this.getPinnedColCount();
-        var _this = this;
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            //only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = _this.createHeaderCell(colDef, index, true);
-                ePinnedHeader.appendChild(headerCell);
-            }
-        });
-    };
-
     Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
         var headerCell = document.createElement("div");
+        var _this = this;
 
         headerCell.className = "ag-header-cell";
 
@@ -1641,20 +1809,29 @@ define('../src/angularGrid',[
             this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
         }
 
-        //var filterButton = document.createElement("div");
-        //headerCellResize.className = "ag-header-cell-filter";
-        //filterButton.innerHTML = "<b>F</b>";
-        //headerCellLabel.appendChild(filterButton);
+        //filter button
+        var eMenuButton = createMenuSvg();
+        eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+        eMenuButton.onclick = function() {
+            _this.advancedFilter.showFilter(colDef, this);
+        };
+        headerCell.appendChild(eMenuButton);
 
         //label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
         //add in sort icon
         if (this.gridOptions.enableSorting) {
-            var headerSortIcon = createSortArrow(colIndex);
+            var headerSortIcon = createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
             this.addSortHandling(headerCellLabel, colDef);
         }
+
+        //add in filter icon
+        var filterIcon = createFilterSvg();
+        this.headerFilterIcons[colDef.field] = filterIcon;
+        headerCellLabel.appendChild(filterIcon);
+
         //add in text label
         var eInnerText = document.createElement("span");
         eInnerText.innerHTML = colDef.displayName;
@@ -1664,6 +1841,15 @@ define('../src/angularGrid',[
         headerCell.style.width = this.formatWidth(colDef.actualWidth);
 
         return headerCell;
+    };
+
+    Grid.prototype.updateFilterIcons = function() {
+        var _this = this;
+        this.gridOptions.columnDefs.forEach(function(colDef) {
+            var filterPresent = _this.advancedFilter.isFilterPresentForCol(colDef.field);
+            var visibilityStyle = filterPresent ? "visible" : "hidden";
+            _this.headerFilterIcons[colDef.field].style.visibility = visibilityStyle;
+        });
     };
 
     Grid.prototype.addSortHandling = function(headerCellLabel, colDef) {
@@ -1878,23 +2064,58 @@ define('../src/angularGrid',[
         }
     };
 
-    Grid.prototype.insertScrollingHeader = function() {
+    Grid.prototype.insertHeader = function() {
+        var ePinnedHeader = this.ePinnedHeader;
         var eHeaderContainer = this.eHeaderContainer;
+        utils.removeAllChildren(ePinnedHeader);
         utils.removeAllChildren(eHeaderContainer);
+        this.headerFilterIcons = {};
+
         var pinnedColumnCount = this.getPinnedColCount();
         var _this = this;
+
         this.gridOptions.columnDefs.forEach(function(colDef, index) {
+            //only include the first x cols
             if (index<pinnedColumnCount) {
-                return;
+                var headerCell = _this.createHeaderCell(colDef, index, true);
+                ePinnedHeader.appendChild(headerCell);
+            } else {
+                var headerCell = _this.createHeaderCell(colDef, index, false);
+                eHeaderContainer.appendChild(headerCell);
             }
-            var headerCell = _this.createHeaderCell(colDef, index, false);
-            eHeaderContainer.appendChild(headerCell);
         });
     };
 
+    function createFilterSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "12");
+        eSvg.setAttribute("height", "12");
 
+        var eFunnel = document.createElementNS(SVG_NS, "polygon");
+        eFunnel.setAttribute("points", "0,0 5,5 5,12 7,12 7,5 12,0");
+        eSvg.appendChild(eFunnel);
 
-    function createSortArrow(colIndex) {
+        return eSvg;
+    }
+
+    function createMenuSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        var size = "16"
+        eSvg.setAttribute("width", size);
+        eSvg.setAttribute("height", size);
+
+        ["0","4","8"].forEach(function(y) {
+            var eLine = document.createElementNS(SVG_NS, "rect");
+            eLine.setAttribute("y", y);
+            eLine.setAttribute("width", size);
+            eLine.setAttribute("height", "2");
+            eSvg.appendChild(eLine);
+        });
+
+        return eSvg;
+    }
+
+    function createSortArrowSvg(colIndex) {
         var eSvg = document.createElementNS(SVG_NS, "svg");
         eSvg.setAttribute("width", "10");
         eSvg.setAttribute("height", "10");
@@ -1918,7 +2139,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n}\r\n\r\n.ag-header {\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-body {\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
+('.ag-advanced-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-advanced-filter-list {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-advanced-filter-value-container {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    width: 20px;\r\n    margin-top: 5px;\r\n}\r\n\r\n.ag-body {\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {
