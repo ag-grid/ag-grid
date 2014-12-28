@@ -2,16 +2,22 @@
     position: absolute;
 }
 
-.ag-advanced-filter-list {
+.ag-advanced-filter-list-viewport {
     overflow-x: auto;
     height: 300px;
     width: 200px;
 }
 
-.ag-advanced-filter-value-container {
+.ag-advanced-filter-list-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ag-advanced-filter-item {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    position: absolute;
 }
 
 .ag-fresh .ag-advanced-filter-select-all-container {
@@ -37,7 +43,6 @@
 }
 
 .ag-dark .ag-advanced-filter {
-    color: black;
     border: 1px solid black;
     background-color: #f0f0f0;
 }

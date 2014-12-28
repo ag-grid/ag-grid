@@ -21,16 +21,15 @@ define([
         $scope.colCount = 50;
         $scope.rowCount = 50;
 
-        var pinnedColCount = 1;
-
         $scope.width = "1600px";
         $scope.height = "600px";
         $scope.style = "ag-fresh";
+        $scope.pinnedColumnCount = 1;
 
         $scope.angularGrid = {
             columnDefs: [],
             rowData: [],
-            pinnedColumnCount: pinnedColCount, //and integer, zero or more, default is 0
+            pinnedColumnCount: $scope.pinnedColumnCount, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
@@ -49,6 +48,7 @@ define([
 
         $scope.onNewCols = function() {
             createCols();
+            $scope.angularGrid.pinnedColumnCount = Number($scope.pinnedColumnCount)
             $scope.angularGrid.api.onNewCols();
         };
 

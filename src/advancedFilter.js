@@ -1,157 +1,171 @@
 define([
     "./utils",
     "text!./advancedFilter.html",
-    "css!./advancedFilter"
 ], function(utils, template) {
 
-    function AdvancedFilter(grid) {
+    var ROW_HEIGHT = 20;
+
+    function AdvancedFilter(model, grid) {
+        this.model = model;
         this.grid = grid;
-        this.colModels = {};
+        this.rowsInBodyContainer = {};
+        this.createGui();
+        this.addScrollListener();
     }
 
-    AdvancedFilter.prototype.isFilterPresent = function () {
-        return Object.keys(this.colModels).length > 0;
+    AdvancedFilter.prototype.getGui = function () {
+        return this.eGui;
     };
 
-    AdvancedFilter.prototype.isFilterPresentForCol = function (key) {
-        var model =  this.colModels[key];
-        var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
-        return filterPresent;
-    };
+    AdvancedFilter.prototype.createGui = function () {
+        var _this = this;
 
-    AdvancedFilter.prototype.onSelectAll = function (model, eSelectAll, checkboxes) {
-        var checked = eSelectAll.checked;
-        if (checked) {
-            model.selectedValues = model.uniqueValues.slice(0);
+        this.eGui = document.createElement("div");
+        this.eGui.innerHTML = template;
+
+        this.eListContainer = this.eGui.querySelector(".ag-advanced-filter-list-container");
+        this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
+        this.eSelectAll = this.eGui.querySelector("#selectAll");
+        this.eListViewport = this.eGui.querySelector(".ag-advanced-filter-list-viewport");
+
+        this.eCheckboxes = [];
+
+        this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
+
+        utils.removeAllChildren(this.eListContainer);
+
+        this.eSelectAll.onclick = function () { _this.onSelectAll();}
+
+        if (this.model.uniqueValues.length === this.model.selectedValues.length) {
+            this.eSelectAll.indeterminate = false;
+            this.eSelectAll.checked = true;
+        } else if (this.model.selectedValues.length == 0) {
+            this.eSelectAll.indeterminate = false;
+            this.eSelectAll.checked = false;
         } else {
-            model.selectedValues.length = 0;
+            this.eSelectAll.indeterminate = true;
         }
-        checkboxes.forEach(function (eCheckbox) {
+    };
+
+    AdvancedFilter.prototype.drawVirtualRows = function () {
+        var topPixel = this.eListViewport.scrollTop;
+        var bottomPixel = topPixel + this.eListViewport.offsetHeight;
+
+        var firstRow = Math.floor(topPixel / ROW_HEIGHT);
+        var lastRow = Math.floor(bottomPixel / ROW_HEIGHT);
+
+        this.ensureRowsRendered(firstRow, lastRow);
+    };
+
+    AdvancedFilter.prototype.ensureRowsRendered = function (start, finish) {
+        var _this = this;
+
+        //at the end, this array will contain the items we need to remove
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+
+        //add in new rows
+        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
+            //see if item already there, and if yes, take it out of the 'to remove' array
+            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
+                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
+                continue;
+            }
+            //check this row actually exists (in case overflow buffer window exceeds real data)
+            if (this.model.uniqueValues.length > rowIndex) {
+                var value = this.model.uniqueValues[rowIndex];
+                _this.insertRow(value, rowIndex);
+            }
+        }
+
+        //at this point, everything in our 'rowsToRemove' . . .
+        this.removeVirtualRows(rowsToRemove);
+    };
+
+    //takes array of row id's
+    AdvancedFilter.prototype.removeVirtualRows = function(rowsToRemove) {
+        var _this = this;
+        rowsToRemove.forEach(function(indexToRemove) {
+            var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
+            _this.eListContainer.removeChild(eRowToRemove);
+            delete _this.rowsInBodyContainer[indexToRemove];
+        });
+    };
+
+    AdvancedFilter.prototype.insertRow = function(value, rowIndex) {
+        var _this = this;
+
+        var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
+        var displayNameOfValue = value === null ? "(Blanks)" : value;
+        eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
+        var eCheckbox = eFilterValue.querySelector("input");
+        eCheckbox.checked = this.model.selectedValues.indexOf(value) >= 0;
+
+        eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
+
+        eFilterValue.style.top = (ROW_HEIGHT * rowIndex) + "px";
+
+        this.eListContainer.appendChild(eFilterValue);
+        this.eCheckboxes.push(eCheckbox);
+        this.rowsInBodyContainer[rowIndex] = eFilterValue;
+    };
+
+    AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, value) {
+        var checked = eCheckbox.checked;
+        if (checked) {
+            if (this.model.selectedValues.indexOf(value)<0) {
+                this.model.selectedValues.push(value);
+            }
+            //if box arrays are same size, then everything is checked
+            if (this.model.selectedValues.length==this.model.uniqueValues.length) {
+                this.eSelectAll.indeterminate = false;
+                this.eSelectAll.checked = true;
+            } else {
+                this.eSelectAll.indeterminate = true;
+            }
+        } else {
+            utils.removeFromArray(this.model.selectedValues, value);
+            //if set is empty, nothing is selected
+            if (this.model.selectedValues.length==0) {
+                this.eSelectAll.indeterminate = false;
+                this.eSelectAll.checked = false;
+            } else {
+                this.eSelectAll.indeterminate = true;
+            }
+        }
+
+        this.grid.onFilterChanged();
+    };
+
+    AdvancedFilter.prototype.onSelectAll = function () {
+        var checked = this.eSelectAll.checked;
+        if (checked) {
+            this.model.selectedValues = this.model.uniqueValues.slice(0);
+        } else {
+            this.model.selectedValues.length = 0;
+        }
+        this.eCheckboxes.forEach(function (eCheckbox) {
             eCheckbox.checked = checked;
         });
         this.grid.onFilterChanged();
     };
 
-    AdvancedFilter.prototype.doesFilterPass = function (item) {
-        var fields = Object.keys(this.colModels);
-        for (var i = 0, l = fields.length; i < l; i++) {
-            var field = fields[i];
-            var value = item[field];
-            if (value==="") { value = null; }
-            var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
-            if (filterFailed) {
-                return false;
-            }
-        }
-        //all filters passed
-        return true;
-    };
 
-    AdvancedFilter.prototype.clearAllFilters = function() {
-        this.colModels = {};
-    };
-
-    AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, eSelectAll, model, value) {
-        var checked = eCheckbox.checked;
-        if (checked) {
-            if (model.selectedValues.indexOf(value)<0) {
-                model.selectedValues.push(value);
-            }
-            //if box arrays are same size, then everything is checked
-            if (model.selectedValues.length==model.uniqueValues.length) {
-                eSelectAll.indeterminate = false;
-                eSelectAll.checked = true;
-            } else {
-                eSelectAll.indeterminate = true;
-            }
-        } else {
-            utils.removeFromArray(model.selectedValues, value);
-            //if set is empty, nothing is selected
-            if (model.selectedValues.length==0) {
-                eSelectAll.indeterminate = false;
-                //eSelectAll.checked = true;
-                eSelectAll.checked = false;
-            } else {
-                eSelectAll.indeterminate = true;
-            }
-        }
-
-        this.grid.onFilterChanged();
-    };
-
-    AdvancedFilter.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
-        var sourceRect = eventSource.getBoundingClientRect();
-        var parentRect = ePopupRoot.getBoundingClientRect();
-
-        var x = sourceRect.left - parentRect.left;
-        var y = sourceRect.top - parentRect.top + sourceRect.height;
-
-        ePopup.style.left = x + "px";
-        ePopup.style.top = y + "px";
-    };
-
-    AdvancedFilter.prototype.showFilter = function(colDef, eventSource) {
-
-        var ePopupRoot = this.grid.getPopupRoot();
-
-        var ePopupParent = document.createElement("div");
-        ePopupParent.innerHTML = template;
-
-        var ePopup = ePopupParent.querySelector(".ag-advanced-filter");
-        this.positionPopup(eventSource, ePopup, ePopupRoot)
-
-        var model = this.colModels[colDef.field];
-        if (!model) {
-            model = {};
-            this.colModels[colDef.field] = model;
-            var rowData = this.grid.getRowData();
-            model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            model.selectedValues = model.uniqueValues.slice(0);
-        }
-
-        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-list");
-        var eFilterValueTemplate = eFilterValues.querySelector("#itemForRepeat");
-        eFilterValues.removeChild(eFilterValueTemplate);
-
-        var checkboxes = [];
-
-        var eSelectAll = ePopupParent.querySelector("#selectAll");
-        eSelectAll.onclick = function() { _this.onSelectAll(model, eSelectAll, checkboxes); };
-        if (model.uniqueValues.length==model.selectedValues.length) {
-            eSelectAll.indeterminate = false;
-            eSelectAll.checked = true;
-        } else if (model.selectedValues.length==0) {
-            eSelectAll.indeterminate = false;
-            eSelectAll.checked = false;
-        } else {
-            eSelectAll.indeterminate = true;
-        }
-
+    AdvancedFilter.prototype.addScrollListener = function() {
         var _this = this;
-        model.uniqueValues.forEach(function(value) {
-            var eFilterValue = eFilterValueTemplate.cloneNode(true);
-            var displayNameOfValue = value===null ? "(Blanks)" : value;
-            eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
-            var eCheckbox = eFilterValue.querySelector("input");
-            eCheckbox.checked = model.selectedValues.indexOf(value)>=0;
 
-            eCheckbox.onclick = function() { _this.onCheckboxClicked(eCheckbox, eSelectAll, model, value); };
-
-            eFilterValues.appendChild(eFilterValue);
-            checkboxes.push(eCheckbox);
+        this.eListViewport.addEventListener("scroll", function() {
+            _this.drawVirtualRows();
         });
-
-        var eBackdrop = ePopupParent.querySelector(".ag-popup-backdrop");
-
-        eBackdrop.onclick = function() {
-            ePopupRoot.removeChild(ePopupParent);
-        };
-
-        ePopupRoot.appendChild(ePopupParent);
     };
 
-    return function(eBody) {
-        return new AdvancedFilter(eBody);
+    //we need to have the gui attached before we can draw the virtual rows, as the
+    //virtual row logic needs info about the gui state
+    AdvancedFilter.prototype.guiAttached = function() {
+        this.drawVirtualRows();
+    };
+
+    return function(model, grid) {
+        return new AdvancedFilter(model, grid);
     };
 
 });
