@@ -22,10 +22,10 @@ define([
 
         this.eGui = utils.loadTemplate(template);
 
-        this.eListContainer = this.eGui.querySelector(".ag-advanced-filter-list-container");
+        this.eListContainer = this.eGui.querySelector(".ag-filter-list-container");
         this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
         this.eSelectAll = this.eGui.querySelector("#selectAll");
-        this.eListViewport = this.eGui.querySelector(".ag-advanced-filter-list-viewport");
+        this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
 
         this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
 
@@ -93,7 +93,7 @@ define([
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
         var displayNameOfValue = value === null ? "(Blanks)" : value;
-        eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
+        eFilterValue.querySelector(".ag-filter-value").innerText = displayNameOfValue;
         var eCheckbox = eFilterValue.querySelector("input");
         eCheckbox.checked = this.model.selectedValues.indexOf(value) >= 0;
 
@@ -139,7 +139,7 @@ define([
         } else {
             this.model.selectedValues.length = 0;
         }
-        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-advanced-filter-checkbox");
+        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-filter-checkbox");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }

@@ -1,48 +1,48 @@
-.ag-advanced-filter {
+.ag-filter {
     position: absolute;
 }
 
-.ag-advanced-filter-list-viewport {
+.ag-filter-list-viewport {
     overflow-x: auto;
     height: 300px;
     width: 200px;
 }
 
-.ag-advanced-filter-list-container {
+.ag-filter-list-container {
     position: relative;
     overflow: hidden;
 }
 
-.ag-advanced-filter-item {
+.ag-filter-item {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     position: absolute;
 }
 
-.ag-fresh .ag-advanced-filter-select-all-container {
+.ag-fresh .ag-filter-select-all-container {
     border-bottom: 1px solid lightgrey;
 }
 
-.ag-fresh .ag-advanced-filter {
+.ag-fresh .ag-filter {
     border: 1px solid black;
     background-color: #f0f0f0;
 }
 
-.ag-standard .ag-advanced-filter-select-all-container {
+.ag-standard .ag-filter-select-all-container {
     border-bottom: 1px solid lightgrey;
 }
 
-.ag-standard .ag-advanced-filter {
+.ag-standard .ag-filter {
     border: 1px solid black;
     background-color: white;
 }
 
-.ag-dark .ag-advanced-filter-select-all-container {
+.ag-dark .ag-filter-select-all-container {
     border-bottom: 1px solid lightgrey;
 }
 
-.ag-dark .ag-advanced-filter {
+.ag-dark .ag-filter {
     border: 1px solid black;
     background-color: #f0f0f0;
 }
