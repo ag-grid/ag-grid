@@ -1,6 +1,6 @@
 define([
     "./utils",
-    "text!./advancedFilter.html",
+    "text!./filter.html",
 ], function(utils, template) {
 
     var ROW_HEIGHT = 20;

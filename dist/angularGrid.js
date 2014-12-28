@@ -1061,7 +1061,7 @@ define('../src/utils',[], function() {
 
 });
 
-define('text!../src/advancedFilter.html',[],function () { return '<div class="ag-popup-backdrop">\r\n\r\n</div>\r\n<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            Select All\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list">\r\n        <div id="itemForRepeat" class="ag-advanced-filter-value-container">\r\n            <label>\r\n                <input type="checkbox"/>\r\n                <span class="ag-advanced-filter-value"></span>\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/filter.html',[],function () { return '<div class="ag-popup-backdrop">\r\n\r\n</div>\r\n<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            Select All\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list">\r\n        <div id="itemForRepeat" class="ag-advanced-filter-value-container">\r\n            <label>\r\n                <input type="checkbox"/>\r\n                <span class="ag-advanced-filter-value"></span>\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 /*
  * css.normalize.js
@@ -1206,7 +1206,7 @@ define('normalize',[],function() {
 define('css!../src/advancedFilter',[],function(){});
 define('../src/advancedFilter',[
     "./utils",
-    "text!./advancedFilter.html",
+    "text!./filter.html",
     "css!./advancedFilter"
 ], function(utils, template) {
 

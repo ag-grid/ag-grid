@@ -7,7 +7,7 @@ define([
     "angular",
     "text!./angularGrid.html",
     "./utils",
-    "./advancedFilterManager",
+    "./filterManager",
     "css!./angularGrid"
 ], function(angular, template, utils, advancedFilterFactory) {
 

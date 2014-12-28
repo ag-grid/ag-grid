@@ -1,7 +1,7 @@
 define([
     "./utils",
-    "./advancedFilter",
-    "css!./advancedFilter"
+    "./filter",
+    "css!./filter"
 ], function(utils, advancedFilterFactory) {
 
     function AdvancedFilterManager(grid) {
@@ -62,18 +62,18 @@ define([
 
         var ePopupRoot = this.grid.getPopupRoot();
         var advancedFilter = advancedFilterFactory(model, this.grid);
-        var ePopupParent = advancedFilter.getGui();
+        var eAdvancedFilterGui = advancedFilter.getGui();
 
-        var ePopup = ePopupParent.querySelector(".ag-advanced-filter");
+        var ePopup = eAdvancedFilterGui.querySelector(".ag-advanced-filter");
         this.positionPopup(eventSource, ePopup, ePopupRoot)
 
-        var eBackdrop = ePopupParent.querySelector(".ag-popup-backdrop");
+        var eBackdrop = eAdvancedFilterGui.querySelector(".ag-popup-backdrop");
 
         eBackdrop.onclick = function() {
-            ePopupRoot.removeChild(ePopupParent);
+            ePopupRoot.removeChild(eAdvancedFilterGui);
         };
 
-        ePopupRoot.appendChild(ePopupParent);
+        ePopupRoot.appendChild(eAdvancedFilterGui);
         advancedFilter.guiAttached();
     };
 
