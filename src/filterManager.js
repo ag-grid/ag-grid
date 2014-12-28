@@ -64,10 +64,9 @@ define([
         var filterComponent = filterComponentFactory(model, this.grid);
         var eFilterGui = filterComponent.getGui();
 
-        var ePopup = eFilterGui.querySelector(".ag-advanced-filter");
-        this.positionPopup(eventSource, ePopup, ePopupParent)
+        this.positionPopup(eventSource, eFilterGui, ePopupParent)
 
-        utils.addModal(ePopupParent, eFilterGui);
+        utils.addAsModalPopup(ePopupParent, eFilterGui);
 
         filterComponent.guiAttached();
     };

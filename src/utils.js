@@ -30,7 +30,7 @@ define([], function() {
     //adds an element to a div, but also adds a background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
-    Utils.prototype.addModal = function(eParent, eChild) {
+    Utils.prototype.addAsModalPopup = function(eParent, eChild) {
         var eBackdrop = document.createElement("div");
         eBackdrop.className = "ag-popup-backdrop";
 
@@ -41,6 +41,14 @@ define([], function() {
 
         eParent.appendChild(eBackdrop);
         eParent.appendChild(eChild);
+    };
+
+    //loads the template and returns it as an element. makes up for no simple way in
+    //the dom api to load html directly, eg we cannot do this: document.createElement(template)
+    Utils.prototype.loadTemplate = function(template) {
+        var tempDiv = document.createElement("div");
+        tempDiv.innerHTML = template;
+        return tempDiv.firstChild;
     };
 
     //if passed '42px' then returns the number 42

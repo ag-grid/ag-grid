@@ -20,15 +20,12 @@ define([
     Filter.prototype.createGui = function () {
         var _this = this;
 
-        this.eGui = document.createElement("div");
-        this.eGui.innerHTML = template;
+        this.eGui = utils.loadTemplate(template);
 
         this.eListContainer = this.eGui.querySelector(".ag-advanced-filter-list-container");
         this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-advanced-filter-list-viewport");
-
-        this.eCheckboxes = [];
 
         this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
 
@@ -105,7 +102,6 @@ define([
         eFilterValue.style.top = (ROW_HEIGHT * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
-        this.eCheckboxes.push(eCheckbox);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
     };
 
@@ -143,12 +139,12 @@ define([
         } else {
             this.model.selectedValues.length = 0;
         }
-        this.eCheckboxes.forEach(function (eCheckbox) {
-            eCheckbox.checked = checked;
-        });
+        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-advanced-filter-checkbox");
+        for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
+            currentlyDisplayedCheckboxes[i].checked = checked;
+        }
         this.grid.onFilterChanged();
     };
-
 
     Filter.prototype.addScrollListener = function() {
         var _this = this;
