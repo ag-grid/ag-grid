@@ -27,6 +27,22 @@ define([], function() {
         }
     };
 
+    //adds an element to a div, but also adds a background checking for clicks,
+    //so that when the background is clicked, the child is removed again, giving
+    //a model look to popups.
+    Utils.prototype.addModal = function(eParent, eChild) {
+        var eBackdrop = document.createElement("div");
+        eBackdrop.className = "ag-popup-backdrop";
+
+        eBackdrop.onclick = function() {
+            eParent.removeChild(eChild);
+            eParent.removeChild(eBackdrop);
+        };
+
+        eParent.appendChild(eBackdrop);
+        eParent.appendChild(eChild);
+    };
+
     //if passed '42px' then returns the number 42
     Utils.prototype.pixelStringToNumber = function(val) {
         if (typeof val === "string") {

@@ -2,24 +2,24 @@ define([
     "./utils",
     "./filter",
     "css!./filter"
-], function(utils, advancedFilterFactory) {
+], function(utils, filterComponentFactory) {
 
-    function AdvancedFilterManager(grid) {
+    function FilterManager(grid) {
         this.grid = grid;
         this.colModels = {};
     }
 
-    AdvancedFilterManager.prototype.isFilterPresent = function () {
+    FilterManager.prototype.isFilterPresent = function () {
         return Object.keys(this.colModels).length > 0;
     };
 
-    AdvancedFilterManager.prototype.isFilterPresentForCol = function (key) {
+    FilterManager.prototype.isFilterPresentForCol = function (key) {
         var model =  this.colModels[key];
         var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
         return filterPresent;
     };
 
-    AdvancedFilterManager.prototype.doesFilterPass = function (item) {
+    FilterManager.prototype.doesFilterPass = function (item) {
         var fields = Object.keys(this.colModels);
         for (var i = 0, l = fields.length; i < l; i++) {
             var field = fields[i];
@@ -34,11 +34,11 @@ define([
         return true;
     };
 
-    AdvancedFilterManager.prototype.clearAllFilters = function() {
+    FilterManager.prototype.clearAllFilters = function() {
         this.colModels = {};
     };
 
-    AdvancedFilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
+    FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
         var sourceRect = eventSource.getBoundingClientRect();
         var parentRect = ePopupRoot.getBoundingClientRect();
 
@@ -49,7 +49,7 @@ define([
         ePopup.style.top = y + "px";
     };
 
-    AdvancedFilterManager.prototype.showFilter = function(colDef, eventSource) {
+    FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
         var model = this.colModels[colDef.field];
         if (!model) {
@@ -60,25 +60,20 @@ define([
             model.selectedValues = model.uniqueValues.slice(0);
         }
 
-        var ePopupRoot = this.grid.getPopupRoot();
-        var advancedFilter = advancedFilterFactory(model, this.grid);
-        var eAdvancedFilterGui = advancedFilter.getGui();
+        var ePopupParent = this.grid.getPopupParent();
+        var filterComponent = filterComponentFactory(model, this.grid);
+        var eFilterGui = filterComponent.getGui();
 
-        var ePopup = eAdvancedFilterGui.querySelector(".ag-advanced-filter");
-        this.positionPopup(eventSource, ePopup, ePopupRoot)
+        var ePopup = eFilterGui.querySelector(".ag-advanced-filter");
+        this.positionPopup(eventSource, ePopup, ePopupParent)
 
-        var eBackdrop = eAdvancedFilterGui.querySelector(".ag-popup-backdrop");
+        utils.addModal(ePopupParent, eFilterGui);
 
-        eBackdrop.onclick = function() {
-            ePopupRoot.removeChild(eAdvancedFilterGui);
-        };
-
-        ePopupRoot.appendChild(eAdvancedFilterGui);
-        advancedFilter.guiAttached();
+        filterComponent.guiAttached();
     };
 
     return function(eBody) {
-        return new AdvancedFilterManager(eBody);
+        return new FilterManager(eBody);
     };
 
 });

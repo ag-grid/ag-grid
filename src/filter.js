@@ -5,7 +5,7 @@ define([
 
     var ROW_HEIGHT = 20;
 
-    function AdvancedFilter(model, grid) {
+    function Filter(model, grid) {
         this.model = model;
         this.grid = grid;
         this.rowsInBodyContainer = {};
@@ -13,11 +13,11 @@ define([
         this.addScrollListener();
     }
 
-    AdvancedFilter.prototype.getGui = function () {
+    Filter.prototype.getGui = function () {
         return this.eGui;
     };
 
-    AdvancedFilter.prototype.createGui = function () {
+    Filter.prototype.createGui = function () {
         var _this = this;
 
         this.eGui = document.createElement("div");
@@ -47,7 +47,7 @@ define([
         }
     };
 
-    AdvancedFilter.prototype.drawVirtualRows = function () {
+    Filter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
@@ -57,7 +57,7 @@ define([
         this.ensureRowsRendered(firstRow, lastRow);
     };
 
-    AdvancedFilter.prototype.ensureRowsRendered = function (start, finish) {
+    Filter.prototype.ensureRowsRendered = function (start, finish) {
         var _this = this;
 
         //at the end, this array will contain the items we need to remove
@@ -82,7 +82,7 @@ define([
     };
 
     //takes array of row id's
-    AdvancedFilter.prototype.removeVirtualRows = function(rowsToRemove) {
+    Filter.prototype.removeVirtualRows = function(rowsToRemove) {
         var _this = this;
         rowsToRemove.forEach(function(indexToRemove) {
             var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
@@ -91,7 +91,7 @@ define([
         });
     };
 
-    AdvancedFilter.prototype.insertRow = function(value, rowIndex) {
+    Filter.prototype.insertRow = function(value, rowIndex) {
         var _this = this;
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
@@ -109,7 +109,7 @@ define([
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
     };
 
-    AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, value) {
+    Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
             if (this.model.selectedValues.indexOf(value)<0) {
@@ -136,7 +136,7 @@ define([
         this.grid.onFilterChanged();
     };
 
-    AdvancedFilter.prototype.onSelectAll = function () {
+    Filter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectedValues = this.model.uniqueValues.slice(0);
@@ -150,7 +150,7 @@ define([
     };
 
 
-    AdvancedFilter.prototype.addScrollListener = function() {
+    Filter.prototype.addScrollListener = function() {
         var _this = this;
 
         this.eListViewport.addEventListener("scroll", function() {
@@ -160,12 +160,12 @@ define([
 
     //we need to have the gui attached before we can draw the virtual rows, as the
     //virtual row logic needs info about the gui state
-    AdvancedFilter.prototype.guiAttached = function() {
+    Filter.prototype.guiAttached = function() {
         this.drawVirtualRows();
     };
 
     return function(model, grid) {
-        return new AdvancedFilter(model, grid);
+        return new Filter(model, grid);
     };
 
 });

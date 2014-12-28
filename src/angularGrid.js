@@ -80,7 +80,7 @@ define([
         return this.gridOptions.rowData;
     };
 
-    Grid.prototype.getPopupRoot = function() {
+    Grid.prototype.getPopupParent = function() {
         return this.eRoot;
     };
 
