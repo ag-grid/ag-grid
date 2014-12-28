@@ -1,7 +1,7 @@
 define([
     "./utils",
     "./filterComponent",
-    "css!./filterComponent"
+    "css!./filter"
 ], function(utils, filterComponentFactory) {
 
     function FilterManager(grid) {

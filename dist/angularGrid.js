@@ -1005,6 +1005,9 @@ define('../src/utils',[], function() {
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
             var value = list[i][key];
+            if (value==="") {
+                value = null;
+            }
             if(!uniqueCheck.hasOwnProperty(value)) {
                 result.push(value);
                 uniqueCheck[value] = 1;
@@ -1018,6 +1021,30 @@ define('../src/utils',[], function() {
         while (node.hasChildNodes()) {
             node.removeChild(node.lastChild);
         }
+    };
+
+    //adds an element to a div, but also adds a background checking for clicks,
+    //so that when the background is clicked, the child is removed again, giving
+    //a model look to popups.
+    Utils.prototype.addAsModalPopup = function(eParent, eChild) {
+        var eBackdrop = document.createElement("div");
+        eBackdrop.className = "ag-popup-backdrop";
+
+        eBackdrop.onclick = function() {
+            eParent.removeChild(eChild);
+            eParent.removeChild(eBackdrop);
+        };
+
+        eParent.appendChild(eBackdrop);
+        eParent.appendChild(eChild);
+    };
+
+    //loads the template and returns it as an element. makes up for no simple way in
+    //the dom api to load html directly, eg we cannot do this: document.createElement(template)
+    Utils.prototype.loadTemplate = function(template) {
+        var tempDiv = document.createElement("div");
+        tempDiv.innerHTML = template;
+        return tempDiv.firstChild;
     };
 
     //if passed '42px' then returns the number 42
@@ -1061,8 +1088,175 @@ define('../src/utils',[], function() {
 
 });
 
-define('text!../src/filter.html',[],function () { return '<div class="ag-popup-backdrop">\r\n\r\n</div>\r\n<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            Select All\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list">\r\n        <div id="itemForRepeat" class="ag-advanced-filter-value-container">\r\n            <label>\r\n                <input type="checkbox"/>\r\n                <span class="ag-advanced-filter-value"></span>\r\n            </label>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/filter.html',[],function () { return '<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list-viewport">\r\n        <div class="ag-advanced-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-advanced-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-advanced-filter-checkbox"/>\r\n                    <span class="ag-advanced-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
+define('../src/filterComponent',[
+    "./utils",
+    "text!./filter.html",
+], function(utils, template) {
+
+    var ROW_HEIGHT = 20;
+
+    function Filter(model, grid) {
+        this.model = model;
+        this.grid = grid;
+        this.rowsInBodyContainer = {};
+        this.createGui();
+        this.addScrollListener();
+    }
+
+    Filter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    Filter.prototype.createGui = function () {
+        var _this = this;
+
+        this.eGui = utils.loadTemplate(template);
+
+        this.eListContainer = this.eGui.querySelector(".ag-advanced-filter-list-container");
+        this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
+        this.eSelectAll = this.eGui.querySelector("#selectAll");
+        this.eListViewport = this.eGui.querySelector(".ag-advanced-filter-list-viewport");
+
+        this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
+
+        utils.removeAllChildren(this.eListContainer);
+
+        this.eSelectAll.onclick = function () { _this.onSelectAll();}
+
+        if (this.model.uniqueValues.length === this.model.selectedValues.length) {
+            this.eSelectAll.indeterminate = false;
+            this.eSelectAll.checked = true;
+        } else if (this.model.selectedValues.length == 0) {
+            this.eSelectAll.indeterminate = false;
+            this.eSelectAll.checked = false;
+        } else {
+            this.eSelectAll.indeterminate = true;
+        }
+    };
+
+    Filter.prototype.drawVirtualRows = function () {
+        var topPixel = this.eListViewport.scrollTop;
+        var bottomPixel = topPixel + this.eListViewport.offsetHeight;
+
+        var firstRow = Math.floor(topPixel / ROW_HEIGHT);
+        var lastRow = Math.floor(bottomPixel / ROW_HEIGHT);
+
+        this.ensureRowsRendered(firstRow, lastRow);
+    };
+
+    Filter.prototype.ensureRowsRendered = function (start, finish) {
+        var _this = this;
+
+        //at the end, this array will contain the items we need to remove
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+
+        //add in new rows
+        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
+            //see if item already there, and if yes, take it out of the 'to remove' array
+            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
+                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
+                continue;
+            }
+            //check this row actually exists (in case overflow buffer window exceeds real data)
+            if (this.model.uniqueValues.length > rowIndex) {
+                var value = this.model.uniqueValues[rowIndex];
+                _this.insertRow(value, rowIndex);
+            }
+        }
+
+        //at this point, everything in our 'rowsToRemove' . . .
+        this.removeVirtualRows(rowsToRemove);
+    };
+
+    //takes array of row id's
+    Filter.prototype.removeVirtualRows = function(rowsToRemove) {
+        var _this = this;
+        rowsToRemove.forEach(function(indexToRemove) {
+            var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
+            _this.eListContainer.removeChild(eRowToRemove);
+            delete _this.rowsInBodyContainer[indexToRemove];
+        });
+    };
+
+    Filter.prototype.insertRow = function(value, rowIndex) {
+        var _this = this;
+
+        var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
+        var displayNameOfValue = value === null ? "(Blanks)" : value;
+        eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
+        var eCheckbox = eFilterValue.querySelector("input");
+        eCheckbox.checked = this.model.selectedValues.indexOf(value) >= 0;
+
+        eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
+
+        eFilterValue.style.top = (ROW_HEIGHT * rowIndex) + "px";
+
+        this.eListContainer.appendChild(eFilterValue);
+        this.rowsInBodyContainer[rowIndex] = eFilterValue;
+    };
+
+    Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
+        var checked = eCheckbox.checked;
+        if (checked) {
+            if (this.model.selectedValues.indexOf(value)<0) {
+                this.model.selectedValues.push(value);
+            }
+            //if box arrays are same size, then everything is checked
+            if (this.model.selectedValues.length==this.model.uniqueValues.length) {
+                this.eSelectAll.indeterminate = false;
+                this.eSelectAll.checked = true;
+            } else {
+                this.eSelectAll.indeterminate = true;
+            }
+        } else {
+            utils.removeFromArray(this.model.selectedValues, value);
+            //if set is empty, nothing is selected
+            if (this.model.selectedValues.length==0) {
+                this.eSelectAll.indeterminate = false;
+                this.eSelectAll.checked = false;
+            } else {
+                this.eSelectAll.indeterminate = true;
+            }
+        }
+
+        this.grid.onFilterChanged();
+    };
+
+    Filter.prototype.onSelectAll = function () {
+        var checked = this.eSelectAll.checked;
+        if (checked) {
+            this.model.selectedValues = this.model.uniqueValues.slice(0);
+        } else {
+            this.model.selectedValues.length = 0;
+        }
+        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-advanced-filter-checkbox");
+        for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
+            currentlyDisplayedCheckboxes[i].checked = checked;
+        }
+        this.grid.onFilterChanged();
+    };
+
+    Filter.prototype.addScrollListener = function() {
+        var _this = this;
+
+        this.eListViewport.addEventListener("scroll", function() {
+            _this.drawVirtualRows();
+        });
+    };
+
+    //we need to have the gui attached before we can draw the virtual rows, as the
+    //virtual row logic needs info about the gui state
+    Filter.prototype.guiAttached = function() {
+        this.drawVirtualRows();
+    };
+
+    return function(model, grid) {
+        return new Filter(model, grid);
+    };
+
+});
 /*
  * css.normalize.js
  *
@@ -1203,46 +1397,34 @@ define('normalize',[],function() {
     return normalizeCSS;
 });
 
-define('css!../src/advancedFilter',[],function(){});
-define('../src/advancedFilter',[
+define('css!../src/filter',[],function(){});
+define('../src/filterManager',[
     "./utils",
-    "text!./filter.html",
-    "css!./advancedFilter"
-], function(utils, template) {
+    "./filterComponent",
+    "css!./filter"
+], function(utils, filterComponentFactory) {
 
-    function AdvancedFilter(grid) {
+    function FilterManager(grid) {
         this.grid = grid;
         this.colModels = {};
     }
 
-    AdvancedFilter.prototype.isFilterPresent = function () {
+    FilterManager.prototype.isFilterPresent = function () {
         return Object.keys(this.colModels).length > 0;
     };
 
-    AdvancedFilter.prototype.isFilterPresentForCol = function (key) {
+    FilterManager.prototype.isFilterPresentForCol = function (key) {
         var model =  this.colModels[key];
         var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
         return filterPresent;
     };
 
-    AdvancedFilter.prototype.onSelectAll = function (model, eSelectAll, checkboxes) {
-        var checked = eSelectAll.checked;
-        if (checked) {
-            model.selectedValues = model.uniqueValues.slice(0);
-        } else {
-            model.selectedValues.length = 0;
-        }
-        checkboxes.forEach(function (eCheckbox) {
-            eCheckbox.checked = checked;
-        });
-        this.grid.onFilterChanged();
-    };
-
-    AdvancedFilter.prototype.doesFilterPass = function (item) {
+    FilterManager.prototype.doesFilterPass = function (item) {
         var fields = Object.keys(this.colModels);
         for (var i = 0, l = fields.length; i < l; i++) {
             var field = fields[i];
             var value = item[field];
+            if (value==="") { value = null; }
             var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
             if (filterFailed) {
                 return false;
@@ -1252,35 +1434,11 @@ define('../src/advancedFilter',[
         return true;
     };
 
-    AdvancedFilter.prototype.onCheckboxClicked = function(eCheckbox, eSelectAll, model, value) {
-        var checked = eCheckbox.checked;
-        if (checked) {
-            if (model.selectedValues.indexOf(value)<0) {
-                model.selectedValues.push(value);
-            }
-            //if box arrays are same size, then everything is checked
-            if (model.selectedValues.length==model.uniqueValues.length) {
-                eSelectAll.indeterminate = false;
-                eSelectAll.checked = true;
-            } else {
-                eSelectAll.indeterminate = true;
-            }
-        } else {
-            utils.removeFromArray(model.selectedValues, value);
-            //if set is empty, nothing is selected
-            if (model.selectedValues.length==0) {
-                eSelectAll.indeterminate = false;
-                //eSelectAll.checked = true;
-                eSelectAll.checked = false;
-            } else {
-                eSelectAll.indeterminate = true;
-            }
-        }
-
-        this.grid.onFilterChanged();
+    FilterManager.prototype.clearAllFilters = function() {
+        this.colModels = {};
     };
 
-    AdvancedFilter.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
+    FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
         var sourceRect = eventSource.getBoundingClientRect();
         var parentRect = ePopupRoot.getBoundingClientRect();
 
@@ -1291,15 +1449,7 @@ define('../src/advancedFilter',[
         ePopup.style.top = y + "px";
     };
 
-    AdvancedFilter.prototype.showFilter = function(colDef, eventSource) {
-
-        var ePopupRoot = this.grid.getPopupRoot();
-
-        var ePopupParent = document.createElement("div");
-        ePopupParent.innerHTML = template;
-
-        var ePopup = ePopupParent.querySelector(".ag-advanced-filter");
-        this.positionPopup(eventSource, ePopup, ePopupRoot)
+    FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
         var model = this.colModels[colDef.field];
         if (!model) {
@@ -1307,58 +1457,29 @@ define('../src/advancedFilter',[
             this.colModels[colDef.field] = model;
             var rowData = this.grid.getRowData();
             model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            model.selectedValues = selectedValues = model.uniqueValues.slice(0);
+            model.selectedValues = model.uniqueValues.slice(0);
         }
 
-        var eFilterValues = ePopupParent.querySelector(".ag-advanced-filter-list");
-        var eFilterValueTemplate = eFilterValues.querySelector("#itemForRepeat");
-        eFilterValues.removeChild(eFilterValueTemplate);
+        var ePopupParent = this.grid.getPopupParent();
+        var filterComponent = filterComponentFactory(model, this.grid);
+        var eFilterGui = filterComponent.getGui();
 
-        var checkboxes = [];
+        this.positionPopup(eventSource, eFilterGui, ePopupParent)
 
-        var eSelectAll = ePopupParent.querySelector("#selectAll");
-        eSelectAll.onclick = function() { _this.onSelectAll(model, eSelectAll, checkboxes); };
-        if (model.uniqueValues.length==model.selectedValues.length) {
-            eSelectAll.indeterminate = false;
-            eSelectAll.checked = true;
-        } else if (model.selectedValues.length==0) {
-            eSelectAll.indeterminate = false;
-            eSelectAll.checked = false;
-        } else {
-            eSelectAll.indeterminate = true;
-        }
+        utils.addAsModalPopup(ePopupParent, eFilterGui);
 
-        var _this = this;
-        model.uniqueValues.forEach(function(value) {
-            var eFilterValue = eFilterValueTemplate.cloneNode(true);
-            eFilterValue.querySelector(".ag-advanced-filter-value").innerText = value;
-            var eCheckbox = eFilterValue.querySelector("input");
-            eCheckbox.checked = model.selectedValues.indexOf(value)>=0;
-
-            eCheckbox.onclick = function() { _this.onCheckboxClicked(eCheckbox, eSelectAll, model, value); };
-
-            eFilterValues.appendChild(eFilterValue);
-            checkboxes.push(eCheckbox);
-        });
-
-        var eBackdrop = ePopupParent.querySelector(".ag-popup-backdrop");
-
-        eBackdrop.onclick = function() {
-            ePopupRoot.removeChild(ePopupParent);
-        };
-
-        ePopupRoot.appendChild(ePopupParent);
+        filterComponent.guiAttached();
     };
 
     return function(eBody) {
-        return new AdvancedFilter(eBody);
+        return new FilterManager(eBody);
     };
 
 });
 
+
 define('css!../src/angularGrid',[],function(){});
 
-//todo: when filtering in scroll, scroll is lost
 //todo: virtualisation in advanced filtering
 //todo: moving columns
 //todo: grouping
@@ -1367,7 +1488,7 @@ define('../src/angularGrid',[
     "angular",
     "text!./angularGrid.html",
     "./utils",
-    "./advancedFilter",
+    "./filterManager",
     "css!./angularGrid"
 ], function(angular, template, utils, advancedFilterFactory) {
 
@@ -1381,8 +1502,8 @@ define('../src/angularGrid',[
     var ASC = "asc";
     var DESC = "desc";
 
-    var SORT_STYLE_SHOW = "fill:black; visibility:visible;";
-    var SORT_STYLE_HIDE = "fill:black; visibility:hidden;";
+    var SORT_STYLE_SHOW = "visibility:visible;";
+    var SORT_STYLE_HIDE = "visibility:hidden;";
 
     module.directive("angularGrid", function() {
         return {
@@ -1440,7 +1561,7 @@ define('../src/angularGrid',[
         return this.gridOptions.rowData;
     };
 
-    Grid.prototype.getPopupRoot = function() {
+    Grid.prototype.getPopupParent = function() {
         return this.eRoot;
     };
 
@@ -1601,6 +1722,8 @@ define('../src/angularGrid',[
             }
         });
 
+        this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
+
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
             var ascending = colDefForSorting.sort === ASC;
@@ -1623,8 +1746,6 @@ define('../src/angularGrid',[
                     return 0;
                 }
             });
-        } else {
-            this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
         }
 
         this.refreshAllVirtualRows();
@@ -1635,7 +1756,9 @@ define('../src/angularGrid',[
         var api = {
             onNewRows: function() {
                 _this.gridOptions.selectedRows.length = 0;
+                _this.advancedFilter.clearAllFilters();
                 _this.setupRows();
+                _this.updateFilterIcons();
             },
             onNewCols: function() {
                 _this.setupColumns();
@@ -2093,6 +2216,7 @@ define('../src/angularGrid',[
 
         var eFunnel = document.createElementNS(SVG_NS, "polygon");
         eFunnel.setAttribute("points", "0,0 5,5 5,12 7,12 7,5 12,0");
+        eFunnel.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eFunnel);
 
         return eSvg;
@@ -2100,15 +2224,16 @@ define('../src/angularGrid',[
 
     function createMenuSvg() {
         var eSvg = document.createElementNS(SVG_NS, "svg");
-        var size = "16"
+        var size = "12"
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
 
-        ["0","4","8"].forEach(function(y) {
+        ["0","5","10"].forEach(function(y) {
             var eLine = document.createElementNS(SVG_NS, "rect");
             eLine.setAttribute("y", y);
             eLine.setAttribute("width", size);
             eLine.setAttribute("height", "2");
+            eLine.setAttribute("class", "ag-header-icon");
             eSvg.appendChild(eLine);
         });
 
@@ -2124,13 +2249,13 @@ define('../src/angularGrid',[
         var eDescIcon = document.createElementNS(SVG_NS, "polygon");
         eDescIcon.setAttribute("points", "0,10 5,0 10,10");
         eDescIcon.setAttribute("style", SORT_STYLE_HIDE);
-        eDescIcon.setAttribute("class", "ag-header-cell-sort-desc-"+colIndex);
+        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
         eSvg.appendChild(eDescIcon);
 
         var eAscIcon = document.createElementNS(SVG_NS, "polygon");
         eAscIcon.setAttribute("points", "0,0 10,0 5,10");
         eAscIcon.setAttribute("style", SORT_STYLE_HIDE);
-        eAscIcon.setAttribute("class", "ag-header-cell-sort-asc-"+colIndex);
+        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
         eSvg.appendChild(eAscIcon);
 
         return eSvg;
@@ -2139,7 +2264,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-advanced-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-advanced-filter-list {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-advanced-filter-value-container {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    width: 20px;\r\n    margin-top: 5px;\r\n}\r\n\r\n.ag-body {\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
+('.ag-advanced-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-advanced-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-advanced-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-advanced-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-standard .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-standard .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: white;\r\n}\r\n\r\n.ag-dark .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {
