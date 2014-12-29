@@ -6,6 +6,22 @@ define([], function() {
     function Utils() {
     }
 
+    //adds all type of change listeners to an element, intended to be a text field
+    Utils.prototype.addChangeListener = function(element, listener) {
+        element.addEventListener("changed", listener);
+        element.addEventListener("paste", listener);
+        element.addEventListener("input", listener);
+    };
+
+    //if value is undefined, null or blank, returns null, othrewise returns the value
+    Utils.prototype.makeNull = function(value) {
+        if (value===null || value===undefined || value==="") {
+            return null;
+        } else {
+            return value;
+        }
+    };
+
     Utils.prototype.uniqueValues = function(list, key) {
         var uniqueCheck = {};
         var result = [];

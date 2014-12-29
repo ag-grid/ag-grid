@@ -6,6 +6,7 @@ define([
     var ROW_HEIGHT = 20;
 
     function Filter(model, grid) {
+        this.miniFilter = null;
         this.model = model;
         this.grid = grid;
         this.rowsInBodyContainer = {};
@@ -17,9 +18,6 @@ define([
         return this.eGui;
     };
 
-    Filter.prototype.onFilterChanged = function() {
-    };
-
     Filter.prototype.createGui = function () {
         var _this = this;
 
@@ -29,20 +27,19 @@ define([
         this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
-        this.eFilter = this.eGui.querySelector(".ag-filter-filter");
+        this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * ROW_HEIGHT) + "px";
 
-        this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
-
-        this.eFilter.addEventListener("keyup", function() {_this.onFilterChanged();} );
+        utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
 
         utils.removeAllChildren(this.eListContainer);
 
         this.eSelectAll.onclick = function () { _this.onSelectAll();}
 
-        if (this.model.uniqueValues.length === this.model.selectedValuesCount) {
+        if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = true;
-        } else if (this.model.selectedValuesCount === 0) {
+        } else if (this.model.isNothingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = false;
         } else {
@@ -74,8 +71,8 @@ define([
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.uniqueValues.length > rowIndex) {
-                var value = this.model.uniqueValues[rowIndex];
+            if (this.model.getUniqueValueCount() > rowIndex) {
+                var value = this.model.getUniqueValue(rowIndex);
                 _this.insertRow(value, rowIndex);
             }
         }
@@ -101,7 +98,7 @@ define([
         var displayNameOfValue = value === null ? "(Blanks)" : value;
         eFilterValue.querySelector(".ag-filter-value").innerText = displayNameOfValue;
         var eCheckbox = eFilterValue.querySelector("input");
-        eCheckbox.checked = this.model.selectedValuesMap[value] !== undefined;
+        eCheckbox.checked = this.model.isValueSelected(value);
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
@@ -114,24 +111,17 @@ define([
     Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
-            if (this.model.selectedValuesMap[value]===undefined) {
-                this.model.selectedValuesMap[value] = null;
-                this.model.selectedValuesCount++;
-            }
-            //if box arrays are same size, then everything is checked
-            if (this.model.selectedValuesCount==this.model.uniqueValues.length) {
+            this.model.selectValue(value);
+            if (this.model.isEverythingSelected()) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = true;
             } else {
                 this.eSelectAll.indeterminate = true;
             }
         } else {
-            if (this.model.selectedValuesMap[value]!==undefined) {
-                delete this.model.selectedValuesMap[value];
-                this.model.selectedValuesCount--;
-            }
+            this.model.unselectValue(value);
             //if set is empty, nothing is selected
-            if (this.model.selectedValuesCount==0) {
+            if (this.model.isNothingSelected()) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = false;
             } else {
@@ -142,24 +132,32 @@ define([
         this.grid.onFilterChanged();
     };
 
+    Filter.prototype.onFilterChanged = function() {
+        var newMiniFilter = utils.makeNull(this.eMiniFilter.value);
+        if (this.miniFilter===newMiniFilter) {
+            //do nothing if filter has not changed
+            return;
+        }
+        this.miniFilter = newMiniFilter;
+    };
+
     Filter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
-        var _this = this;
         if (checked) {
-            this.model.uniqueValues.forEach(function(value) {
-                _this.model.selectedValuesMap[value] = null;
-            });
-            this.model.selectedValuesCount = this.model.uniqueValues.length;
+            this.model.selectEverything();
         } else {
-            this.model.selectedValuesMap = {};
-            this.model.selectedValuesCount = 0;
+            this.model.selectNothing();
         }
+        this.updateAllCheckboxes(checked);
+        this.grid.onFilterChanged();
+    };
+
+    Filter.prototype.updateAllCheckboxes = function(checked) {
         var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-filter-checkbox");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }
-        this.grid.onFilterChanged();
-    };
+    }
 
     Filter.prototype.addScrollListener = function() {
         var _this = this;

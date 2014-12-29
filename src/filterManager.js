@@ -1,8 +1,9 @@
 define([
     "./utils",
     "./filterComponent",
+    "./filterModel",
     "css!./filter.css"
-], function(utils, filterComponentFactory) {
+], function(utils, filterComponentFactory, filterModelFactory) {
 
     function FilterManager(grid) {
         this.grid = grid;
@@ -15,26 +16,27 @@ define([
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
         var model =  this.colModels[key];
-        var filterPresent = model!==null && model!==undefined && model.selectedValuesCount!==model.uniqueValues.length;
+        var filterPresent = model!==undefined && model.isFilterActive();
         return filterPresent;
     };
 
     FilterManager.prototype.doesFilterPass = function (item) {
         var fields = Object.keys(this.colModels);
         for (var i = 0, l = fields.length; i < l; i++) {
+
             var field = fields[i];
             var model = this.colModels[field];
+
             //if no filter, always pass
-            if (model.uniqueValues.length==model.selectedValuesCount) { continue; }
-            //if nothing selected in filter, always fail
-            if (model.uniqueValues.length==0) { return false; }
+            if (model===undefined) {
+                continue;
+            }
 
             var value = item[field];
-            if (value==="") { value = null; }
-            var filterFailed = model.selectedValuesMap[value]===undefined;
-            if (filterFailed) {
+            if (!model.doesFilterPass(value)) {
                 return false;
             }
+
         }
         //all filters passed
         return true;
@@ -59,18 +61,10 @@ define([
 
         var model = this.colModels[colDef.field];
         if (!model) {
-            model = {};
-            this.colModels[colDef.field] = model;
             var rowData = this.grid.getRowData();
-            model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            //we use a map rather than an array for the selected values as the lookup
-            //for a map is much faster than the lookup for an array, especially when
-            //the length of the array is thousands of records long
-            model.selectedValuesMap = {};
-            model.uniqueValues.forEach(function(value) {
-                model.selectedValuesMap[value] = null;
-            });
-            model.selectedValuesCount = model.uniqueValues.length;
+            var uniqueValues = utils.uniqueValues(rowData, colDef.field);
+            model = filterModelFactory(uniqueValues);
+            this.colModels[colDef.field] = model;
         }
 
         var ePopupParent = this.grid.getPopupParent();
