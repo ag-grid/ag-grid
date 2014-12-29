@@ -27,7 +27,7 @@ define([], function() {
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
             var value = list[i][key];
-            if (value==="") {
+            if (value==="" || value===undefined) {
                 value = null;
             }
             if(!uniqueCheck.hasOwnProperty(value)) {

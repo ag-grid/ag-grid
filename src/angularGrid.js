@@ -249,8 +249,7 @@ define([
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
             var ascending = colDefForSorting.sort === ASC;
-            var result1 = ascending ? -1 : 1;
-            var result2 = ascending ? 1 : -1;
+            var inverter = ascending ? 1 : -1;
 
             this.gridOptions.rowDataAfterSortAndFilter.sort(function(objA, objB) {
                 //hack to stop crashing, in case user isn't supplying objects
@@ -260,13 +259,26 @@ define([
                 var valueA = objA[keyForSort];
                 var valueB = objB[keyForSort];
 
-                if (valueA < valueB) {
-                    return result1;
-                } else if (valueA > valueB) {
-                    return result2;
+                if (colDefForSorting.comparator) {
+                    //if comparator provided, use it
+                    return colDefForSorting.comparator(valueA, valueB) * inverter;
                 } else {
-                    return 0;
+                    //otherwise do our own comparison
+                    var valueAMissing = valueA===null || valueA===undefined;
+                    var valueBMissing = valueB===null || valueB===undefined;
+                    if (valueAMissing && valueBMissing) {return 0;}
+                    if (valueAMissing) {return -1 * inverter;}
+                    if (valueBMissing) {return 1 * inverter;}
+
+                    if (valueA < valueB) {
+                        return -1 * inverter;
+                    } else if (valueA > valueB) {
+                        return 1 * inverter;
+                    } else {
+                        return 0;
+                    }
                 }
+
             });
         }
 
@@ -658,16 +670,20 @@ define([
         });
 
         return eRow;
-    }
+    };
 
     Grid.prototype.createCell = function(colDef, value, rowIndex, colIndex) {
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
-        if (value) {
-            eGridCell.innerText = value;
+        if (colDef.cellRenderer) {
+            var resultFromRenderer = colDef.cellRenderer(value);
+            eGridCell.innerHTML = resultFromRenderer;
         } else {
-            eGridCell.innerHTML = "&nbsp;";
+            //if we insert undefined, then it displays as the string 'undefined', ugly!
+            if (value!==undefined) {
+                eGridCell.innerText = value;
+            }
         }
 
         if (colDef.cellCss) {
