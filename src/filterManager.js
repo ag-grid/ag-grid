@@ -15,7 +15,7 @@ define([
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
         var model =  this.colModels[key];
-        var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
+        var filterPresent = model!==null && model!==undefined && model.selectedValuesCount!==model.uniqueValues.length;
         return filterPresent;
     };
 
@@ -25,14 +25,13 @@ define([
             var field = fields[i];
             var model = this.colModels[field];
             //if no filter, always pass
-            if (model.uniqueValues.length==model.selectedValues.length) { continue; }
+            if (model.uniqueValues.length==model.selectedValuesCount) { continue; }
             //if nothing selected in filter, always fail
             if (model.uniqueValues.length==0) { return false; }
 
             var value = item[field];
             if (value==="") { value = null; }
-            var filterFailed = utils.binaryIndexOf(model.selectedValues, value) < 0;
-            //var filterFailed = model.selectedValues.indexOf(value) < 0;
+            var filterFailed = model.selectedValuesMap[value]===undefined;
             if (filterFailed) {
                 return false;
             }
@@ -64,7 +63,14 @@ define([
             this.colModels[colDef.field] = model;
             var rowData = this.grid.getRowData();
             model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            model.selectedValues = model.uniqueValues.slice(0);
+            //we use a map rather than an array for the selected values as the lookup
+            //for a map is much faster than the lookup for an array, especially when
+            //the length of the array is thousands of records long
+            model.selectedValuesMap = {};
+            model.uniqueValues.forEach(function(value) {
+                model.selectedValuesMap[value] = null;
+            });
+            model.selectedValuesCount = model.uniqueValues.length;
         }
 
         var ePopupParent = this.grid.getPopupParent();

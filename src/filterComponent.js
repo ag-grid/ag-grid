@@ -39,10 +39,10 @@ define([
 
         this.eSelectAll.onclick = function () { _this.onSelectAll();}
 
-        if (this.model.uniqueValues.length === this.model.selectedValues.length) {
+        if (this.model.uniqueValues.length === this.model.selectedValuesCount) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = true;
-        } else if (this.model.selectedValues.length == 0) {
+        } else if (this.model.selectedValuesCount === 0) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = false;
         } else {
@@ -101,7 +101,7 @@ define([
         var displayNameOfValue = value === null ? "(Blanks)" : value;
         eFilterValue.querySelector(".ag-filter-value").innerText = displayNameOfValue;
         var eCheckbox = eFilterValue.querySelector("input");
-        eCheckbox.checked = this.model.selectedValues.indexOf(value) >= 0;
+        eCheckbox.checked = this.model.selectedValuesMap[value] !== undefined;
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
@@ -114,21 +114,24 @@ define([
     Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
-            if (this.model.selectedValues.indexOf(value)<0) {
-                this.model.selectedValues.push(value);
-                this.model.selectedValues.sort();
+            if (this.model.selectedValuesMap[value]===undefined) {
+                this.model.selectedValuesMap[value] = null;
+                this.model.selectedValuesCount++;
             }
             //if box arrays are same size, then everything is checked
-            if (this.model.selectedValues.length==this.model.uniqueValues.length) {
+            if (this.model.selectedValuesCount==this.model.uniqueValues.length) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = true;
             } else {
                 this.eSelectAll.indeterminate = true;
             }
         } else {
-            utils.removeFromArray(this.model.selectedValues, value);
+            if (this.model.selectedValuesMap[value]!==undefined) {
+                delete this.model.selectedValuesMap[value];
+                this.model.selectedValuesCount--;
+            }
             //if set is empty, nothing is selected
-            if (this.model.selectedValues.length==0) {
+            if (this.model.selectedValuesCount==0) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = false;
             } else {
@@ -141,10 +144,15 @@ define([
 
     Filter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
+        var _this = this;
         if (checked) {
-            this.model.selectedValues = this.model.uniqueValues.slice(0);
+            this.model.uniqueValues.forEach(function(value) {
+                _this.model.selectedValuesMap[value] = null;
+            });
+            this.model.selectedValuesCount = this.model.uniqueValues.length;
         } else {
-            this.model.selectedValues.length = 0;
+            this.model.selectedValuesMap = {};
+            this.model.selectedValuesCount = 0;
         }
         var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-filter-checkbox");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {

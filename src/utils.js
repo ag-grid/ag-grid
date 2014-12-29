@@ -6,34 +6,6 @@ define([], function() {
     function Utils() {
     }
 
-    // the array must be sorted. returns the index of the value.
-    Utils.prototype.binaryIndexOf = function(searchArray, searchElement) {
-
-        var minIndex = 0;
-        var maxIndex = searchArray.length - 1;
-        var currentIndex;
-        var currentElement;
-
-        while (minIndex <= maxIndex) {
-            currentIndex = (minIndex + maxIndex) / 2 | 0;
-            currentElement = searchArray[currentIndex];
-
-            if (currentElement < searchElement) {
-                minIndex = currentIndex + 1;
-            }
-            else if (currentElement > searchElement) {
-                maxIndex = currentIndex - 1;
-            }
-            else {
-                return currentIndex;
-            }
-        }
-
-        return -1;
-    };
-
-
-
     Utils.prototype.uniqueValues = function(list, key) {
         var uniqueCheck = {};
         var result = [];
