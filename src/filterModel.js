@@ -4,12 +4,53 @@ define(["./utils"], function(utils) {
 
     function FilterModel(uniqueValues) {
         this.uniqueValues = uniqueValues;
+        this.displayedValues = uniqueValues;
+        this.miniFilter = null;
         //we use a map rather than an array for the selected values as the lookup
         //for a map is much faster than the lookup for an array, especially when
         //the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectEverything();
     }
+
+    //sets mini filter. returns true if it changed from last value, otherwise false
+    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
+        newMiniFilter = utils.makeNull(newMiniFilter);
+        if (this.miniFilter===newMiniFilter) {
+            //do nothing if filter has not changed
+            return false;
+        }
+        this.miniFilter = newMiniFilter;
+        this.filterDisplayedValues();
+        return true;
+    };
+
+    FilterModel.prototype.filterDisplayedValues = function() {
+        //if no filter, just use the unique values
+        if (this.miniFilter===null) {
+            this.displayedValues = this.uniqueValues;
+            return;
+        }
+
+        //if filter present, we filter down the list
+        this.displayedValues = [];
+        var miniFilterUpperCase = this.miniFilter.toUpperCase();
+        for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
+            var uniqueValue = this.uniqueValues[i];
+            if (uniqueValue!==null && uniqueValue.toUpperCase().indexOf(miniFilterUpperCase)>=0) {
+                this.displayedValues.push(uniqueValue);
+            }
+        }
+
+    };
+
+    FilterModel.prototype.getDisplayedValueCount = function() {
+        return this.displayedValues.length;
+    };
+
+    FilterModel.prototype.getDisplayedValue = function(index) {
+        return this.displayedValues[index];
+    };
 
     FilterModel.prototype.doesFilterPass = function(value) {
         //if no filter, always pass
@@ -42,10 +83,6 @@ define(["./utils"], function(utils) {
 
     FilterModel.prototype.getUniqueValueCount = function() {
         return this.uniqueValues.length;
-    };
-
-    FilterModel.prototype.getUniqueValue = function(index) {
-        return this.uniqueValues[index];
     };
 
     FilterModel.prototype.unselectValue = function(value) {

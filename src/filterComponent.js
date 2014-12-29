@@ -6,7 +6,6 @@ define([
     var ROW_HEIGHT = 20;
 
     function Filter(model, grid) {
-        this.miniFilter = null;
         this.model = model;
         this.grid = grid;
         this.rowsInBodyContainer = {};
@@ -30,6 +29,7 @@ define([
         this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
         this.eListContainer.style.height = (this.model.getUniqueValueCount() * ROW_HEIGHT) + "px";
 
+        this.setContainerHeight();
         utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
 
         utils.removeAllChildren(this.eListContainer);
@@ -45,6 +45,10 @@ define([
         } else {
             this.eSelectAll.indeterminate = true;
         }
+    };
+
+    Filter.prototype.setContainerHeight = function() {
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * ROW_HEIGHT) + "px";
     };
 
     Filter.prototype.drawVirtualRows = function () {
@@ -71,8 +75,8 @@ define([
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.getUniqueValueCount() > rowIndex) {
-                var value = this.model.getUniqueValue(rowIndex);
+            if (this.model.getDisplayedValueCount() > rowIndex) {
+                var value = this.model.getDisplayedValue(rowIndex);
                 _this.insertRow(value, rowIndex);
             }
         }
@@ -133,12 +137,17 @@ define([
     };
 
     Filter.prototype.onFilterChanged = function() {
-        var newMiniFilter = utils.makeNull(this.eMiniFilter.value);
-        if (this.miniFilter===newMiniFilter) {
-            //do nothing if filter has not changed
-            return;
+        var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
+        if (miniFilterChanged) {
+            this.setContainerHeight();
+            this.clearVirtualRows();
+            this.drawVirtualRows();
         }
-        this.miniFilter = newMiniFilter;
+    };
+
+    Filter.prototype.clearVirtualRows = function() {
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        this.removeVirtualRows(rowsToRemove);
     };
 
     Filter.prototype.onSelectAll = function () {
