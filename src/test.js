@@ -191,7 +191,8 @@ define([
             return null;
         } else {
             var flag = "<img border='0' width='20' height='15' src='http://www.angulargrid.com/flags/"+value.toLowerCase().replace(" ", "_")+".png'>";
-            return flag + value;
+            var link = "<a href='http://en.wikipedia.org/wiki/" + value + "'>"+value+"</a>";
+            return flag + link;
         }
     }
 
