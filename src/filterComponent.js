@@ -30,8 +30,8 @@ define([
         this.eListContainer.style.height = (this.model.getUniqueValueCount() * ROW_HEIGHT) + "px";
 
         this.setContainerHeight();
+        this.eMiniFilter.value = this.model.getMiniFilter();
         utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
-
         utils.removeAllChildren(this.eListContainer);
 
         this.eSelectAll.onclick = function () { _this.onSelectAll();}

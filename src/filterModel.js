@@ -25,6 +25,10 @@ define(["./utils"], function(utils) {
         return true;
     };
 
+    FilterModel.prototype.getMiniFilter = function() {
+        return this.miniFilter;
+    };
+
     FilterModel.prototype.filterDisplayedValues = function() {
         //if no filter, just use the unique values
         if (this.miniFilter===null) {

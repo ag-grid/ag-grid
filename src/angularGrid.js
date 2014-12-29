@@ -1,6 +1,9 @@
 
-//todo: virtualisation in advanced filtering
-//todo: moving columns
+//todo: dates & numbers, sorting and filtering
+//todo: customer cell, boolean & custom
+//todo: align
+//todo: compile into angular
+//todo: moving & hiding columns
 //todo: grouping
 
 define([
