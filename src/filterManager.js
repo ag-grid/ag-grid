@@ -23,9 +23,16 @@ define([
         var fields = Object.keys(this.colModels);
         for (var i = 0, l = fields.length; i < l; i++) {
             var field = fields[i];
+            var model = this.colModels[field];
+            //if no filter, always pass
+            if (model.uniqueValues.length==model.selectedValues.length) { continue; }
+            //if nothing selected in filter, always fail
+            if (model.uniqueValues.length==0) { return false; }
+
             var value = item[field];
             if (value==="") { value = null; }
-            var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
+            var filterFailed = utils.binaryIndexOf(model.selectedValues, value) < 0;
+            //var filterFailed = model.selectedValues.indexOf(value) < 0;
             if (filterFailed) {
                 return false;
             }

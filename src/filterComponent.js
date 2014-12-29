@@ -17,6 +17,9 @@ define([
         return this.eGui;
     };
 
+    Filter.prototype.onFilterChanged = function() {
+    };
+
     Filter.prototype.createGui = function () {
         var _this = this;
 
@@ -26,8 +29,11 @@ define([
         this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
+        this.eFilter = this.eGui.querySelector(".ag-filter-filter");
 
         this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
+
+        this.eFilter.addEventListener("keyup", function() {_this.onFilterChanged();} );
 
         utils.removeAllChildren(this.eListContainer);
 
@@ -110,6 +116,7 @@ define([
         if (checked) {
             if (this.model.selectedValues.indexOf(value)<0) {
                 this.model.selectedValues.push(value);
+                this.model.selectedValues.sort();
             }
             //if box arrays are same size, then everything is checked
             if (this.model.selectedValues.length==this.model.uniqueValues.length) {

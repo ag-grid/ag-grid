@@ -20,7 +20,12 @@
     position: absolute;
 }
 
-.ag-fresh .ag-filter-select-all-container {
+.ag-filter-filter {
+    width: 170px;
+    margin: 4px;
+}
+
+.ag-fresh .ag-filter-header-container {
     border-bottom: 1px solid lightgrey;
 }
 
@@ -29,7 +34,7 @@
     background-color: #f0f0f0;
 }
 
-.ag-standard .ag-filter-select-all-container {
+.ag-standard .ag-filter-header-container {
     border-bottom: 1px solid lightgrey;
 }
 
@@ -38,7 +43,7 @@
     background-color: white;
 }
 
-.ag-dark .ag-filter-select-all-container {
+.ag-dark .ag-filter-header-container {
     border-bottom: 1px solid lightgrey;
 }
 
