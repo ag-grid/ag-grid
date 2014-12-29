@@ -35,7 +35,6 @@ define([], function() {
                 uniqueCheck[value] = 1;
             }
         }
-        result.sort();
         return result;
     };
 

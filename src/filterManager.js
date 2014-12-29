@@ -63,12 +63,17 @@ define([
         if (!model) {
             var rowData = this.grid.getRowData();
             var uniqueValues = utils.uniqueValues(rowData, colDef.field);
+            if (colDef.comparator) {
+                uniqueValues.sort(colDef.comparator);
+            } else {
+                uniqueValues.sort();
+            }
             model = filterModelFactory(uniqueValues);
             this.colModels[colDef.field] = model;
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        var filterComponent = filterComponentFactory(model, this.grid);
+        var filterComponent = filterComponentFactory(model, this.grid, colDef);
         var eFilterGui = filterComponent.getGui();
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent)

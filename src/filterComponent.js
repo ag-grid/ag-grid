@@ -3,12 +3,14 @@ define([
     "text!./filter.html",
 ], function(utils, template) {
 
-    var ROW_HEIGHT = 20;
+    var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(model, grid) {
+    function Filter(model, grid, colDef) {
+        this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
         this.model = model;
         this.grid = grid;
         this.rowsInBodyContainer = {};
+        this.colDef = colDef;
         this.createGui();
         this.addScrollListener();
     }
@@ -27,7 +29,7 @@ define([
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
         this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
-        this.eListContainer.style.height = (this.model.getUniqueValueCount() * ROW_HEIGHT) + "px";
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeiht) + "px";
 
         this.setContainerHeight();
         this.eMiniFilter.value = this.model.getMiniFilter();
@@ -48,15 +50,15 @@ define([
     };
 
     Filter.prototype.setContainerHeight = function() {
-        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * ROW_HEIGHT) + "px";
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
     };
 
     Filter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / ROW_HEIGHT);
-        var lastRow = Math.floor(bottomPixel / ROW_HEIGHT);
+        var firstRow = Math.floor(topPixel / this.rowHeiht);
+        var lastRow = Math.floor(bottomPixel / this.rowHeiht);
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -99,14 +101,23 @@ define([
         var _this = this;
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
-        var displayNameOfValue = value === null ? "(Blanks)" : value;
-        eFilterValue.querySelector(".ag-filter-value").innerText = displayNameOfValue;
+
+        var valueElement = eFilterValue.querySelector(".ag-filter-value");
+        if (this.colDef.filterCellRenderer) {
+            //renderer provided, so use it
+            var resultOfRenderer = this.colDef.filterCellRenderer(value);
+            valueElement.innerHTML = resultOfRenderer;
+        } else {
+            //otherwise display as a string
+            var displayNameOfValue = value === null ? "(Blanks)" : value;
+            valueElement.innerText = displayNameOfValue;
+        }
         var eCheckbox = eFilterValue.querySelector("input");
         eCheckbox.checked = this.model.isValueSelected(value);
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
-        eFilterValue.style.top = (ROW_HEIGHT * rowIndex) + "px";
+        eFilterValue.style.top = (this.rowHeiht * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
@@ -182,8 +193,8 @@ define([
         this.drawVirtualRows();
     };
 
-    return function(model, grid) {
-        return new Filter(model, grid);
+    return function(model, grid, colDef) {
+        return new Filter(model, grid, colDef);
     };
 
 });

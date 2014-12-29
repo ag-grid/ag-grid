@@ -692,6 +692,15 @@ define([
             });
         }
 
+        if (colDef.cellCssFunc) {
+            var cssObjFromFunc = colDef.cellCssFunc(value);
+            if (cssObjFromFunc) {
+                Object.keys(cssObjFromFunc).forEach(function(key) {
+                    eGridCell.style[key] = cssObjFromFunc[key];
+                });
+            }
+        }
+
         if (this.gridOptions.cellCssFormatter) {
             var cssStyles = this.gridOptions.cssCellFormatter(rowIndex, colIndex);
             if (cssStyles) {
