@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+    <head lang="en">
+    <meta charset="UTF-8">
+        <!-- todo: put in seo items hre -->
+        <title>Angular Grid</title>
+        <style></style>
+    </head>
+
+    //todo: Pages: Home, Demo, Documentation, Comparison, Message Board
+
+    <body>
+        <div class="paragraph">
+            Angular Grid (ag-Grid) is another Grid for HTML 5 Angular development. I created
+            Angular Grid out of frustration because I couldn't find a grid that was very fast (sorry ui-Grid),
+            allowed pinned columns (sorry Slick Grid) had excel like advanced filtering
+            and was native to AngularJS (sorry pretty much every grid).
+        </div>
+        <div class="paragraph">
+            So I thought, how hard can it be? Two weeks over Christmas break and the first
+            version is ready for my production needs with the following features:
+            <ul>
+                <li>Native to Angular JS</li>
+                <li>Excel Like Advanced Filtering</li>
+                <li>Gmail like 'Quick Filter'</li>
+                <li>Pinnable Columns</li>
+                <li>Row Virtualisation</li>
+                <li>Column Resizing</li>
+                <li>Sorting</li>
+                <li>Custom Cell Renderers</li>
+                <li>Auto Fit Size</li>
+                <li>Very Customisable via CSS Look and Feel</li>
+                <li>No Dependencies (apart from core Angular), no JQuery, no jqLite</li>
+                <li>Supports very large data sets</li>
+                <li>Very very fast (0..60 mph in 000.1 seconds)</li>
+            </ul>
+            Grouping will be implemented at some point, the design has it ready to slot in, just don't need it
+            right now for my current project, so I am not in a rush.
+        </div>
+        <div class="paragraph">
+            I do not think a grid should be developed entirely in AngularJS. The number of individual cells (even
+            when virtualising the grid) is to much for the data-binding design of AngularJS. That is why the design of
+            ag-Grid is hyprid - using native Javascript and DOM manipulation for the critical 'underneath the hood'
+            parts while still presenting the grid as a native AngularJS directive. If required, Angular data-binding
+            can be used in the cells, but only when required, in my projects it has never been required.
+        </div>
+<!--
+        <div class="paragraph">
+            I work in investment banking. We have applications that display grids with tens of thousands
+            of records with up to 100 columns. ag-Grid manages this data size with ease.
+        </div>
+-->
+        <div class="paragraph">
+            See here for a comparison of ui-Grid and ag-Grid, demonstrating why I stopped using ui-Grid.
+        </div>
+        <div style="padding-top: 100px;">
+            Code on <a href='https://github.com/ceolter/angular-grid'>github</a>.
+        </div>
+        <div style="padding-top: 100px;">
+            Example <a href="test.html">here</a>.
+        </div>
+    </body>
+</html>

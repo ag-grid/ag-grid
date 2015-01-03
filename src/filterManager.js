@@ -66,7 +66,7 @@ define([
             if (colDef.comparator) {
                 uniqueValues.sort(colDef.comparator);
             } else {
-                uniqueValues.sort();
+                uniqueValues.sort(utils.defaultComparator);
             }
             model = filterModelFactory(uniqueValues);
             this.colModels[colDef.field] = model;
@@ -76,7 +76,7 @@ define([
         var filterComponent = filterComponentFactory(model, this.grid, colDef);
         var eFilterGui = filterComponent.getGui();
 
-        this.positionPopup(eventSource, eFilterGui, ePopupParent)
+        this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 

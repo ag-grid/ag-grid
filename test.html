@@ -1,21 +1,60 @@
 <!doctype html>
-<html>
+<html style="height: 100%; margin: 0px; padding: 0px;">
 
     <head>
         <script data-main="main" src="lib/require.js"></script>
     </head>
 
-    <body ng-controller="mainController" style="height: 100%;">
+    <body ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
 
+    <!-- Header, height of 100px-->
+    <div style="height: 65px; position: absolute; top: 0px; left: 0px;">
+        <!-- First row of header, has table options -->
         <div style="padding: 4px;">
-            Rows: <input type="text" ng-model="rowCount" style="width: 50px;"/>
-            <button ng-click="onNewData()">Go</button>
-            Cols: <input type="text" ng-model="colCount" style="width: 50px;"/>
-            Pinned: <input type="text" ng-model="pinnedColumnCount" style="width: 50px;"/>
-            <button ng-click="onNewCols()">Go</button>
+            Rows:
+            <select ng-model="rowCount" ng-change="onRowCountChanged()">
+                <option value="10">10</option>
+                <option value="100">100</option>
+                <option value="1000">1,000</option>
+                <option value="10000">10,000</option>
+                <option value="30000">30,000</option>
+                <option value="50000">50,000</option>
+                <option value="100000">100,000</option>
+            </select>
+            Cols:
+            <select ng-model="colCount" ng-change="onColCountChanged()">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
 
-            Width: <input type="text" ng-model="width" style="width: 50px;"/>
-            Height: <input type="text" ng-model="height" style="width: 50px;"/>
+            Pinned:
+            <select ng-model="angularGrid.pinnedColumnCount">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            Width:
+            <select ng-model="width">
+                <option value="800px">800px</option>
+                <option value="1000px">1500px</option>
+                <option value="2000px">4000px</option>
+                <option value="100%">100% (fit to screen)</option>
+            </select>
+
+            Height:
+            <select ng-model="height">
+                <option value="400px">400px</option>
+                <option value="800px">800px</option>
+                <option value="4000px">4000px</option>
+                <option value="100%">100% (fit to screen)</option>
+            </select>
 
             Style:
             <select ng-model="style" style="width: 90px;">
@@ -27,11 +66,15 @@
             <button ng-click="onNewCols()">Go</button>
 
         </div>
+        <!-- Second row of header, has quick filter -->
         <div style="padding: 4px;">
             <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
         </div>
-        <!--style="width: 1600px; height: 600px;"-->
+    </div>
+    <!-- The table div -->
+    <div style="padding-top: 65px; height: 100%; box-sizing: border-box;">
         <div angular-grid="angularGrid" ng-style="{width: width, height: height}" ng-class="style"></div>
-    </body>
+    </div>
+</body>
 
 </html>

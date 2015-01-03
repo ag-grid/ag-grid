@@ -41,7 +41,7 @@ define(["./utils"], function(utils) {
         var miniFilterUpperCase = this.miniFilter.toUpperCase();
         for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
             var uniqueValue = this.uniqueValues[i];
-            if (uniqueValue!==null && uniqueValue.toUpperCase().indexOf(miniFilterUpperCase)>=0) {
+            if (uniqueValue!==null && uniqueValue.toString().toUpperCase().indexOf(miniFilterUpperCase)>=0) {
                 this.displayedValues.push(uniqueValue);
             }
         }

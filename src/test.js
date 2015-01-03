@@ -7,33 +7,33 @@ define([
 
     gridsModule.controller('mainController', function($scope) {
 
-        var colNames = ["Country","Game","Bought","Price","Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
-        var countries = ["", null, undefined, "Ireland","United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
-        var games = [
-            "", null, undefined, "Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+        var colNames = ["Country","Game","Bought","Price","Test", "Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+        var countries = ["Ireland","United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
+        var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
             "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
             "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
             "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
             "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
-            "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
+            "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello", null, undefined
         ];
         var booleanValues = [true, "true", false, "false", null, undefined, ""];
+        var testValues = ["", null, undefined, "String A", "String B", 111, 222];
 
-        $scope.colCount = 50;
-        $scope.rowCount = 50;
+        $scope.colCount = 20;
+        $scope.rowCount = 100;
 
-        $scope.width = "1600px";
-        $scope.height = "600px";
+        $scope.width = "100%";
+        $scope.height = "100%";
         $scope.style = "ag-fresh";
-        $scope.pinnedColumnCount = 1;
 
         $scope.angularGrid = {
             columnDefs: [],
             rowData: [],
-            pinnedColumnCount: $scope.pinnedColumnCount, //and integer, zero or more, default is 0
+            pinnedColumnCount: 2, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
+            enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple']
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); } //callback when selection changed
@@ -42,14 +42,14 @@ define([
         createCols();
         createData();
 
-        $scope.onNewData = function() {
+        $scope.onRowCountChanged = function() {
             createData();
             $scope.angularGrid.api.onNewRows();
         };
 
-        $scope.onNewCols = function() {
+        $scope.onColCountChanged = function() {
             createCols();
-            $scope.angularGrid.pinnedColumnCount = Number($scope.pinnedColumnCount)
+            //$scope.angularGrid.pinnedColumnCount =
             $scope.angularGrid.api.onNewCols();
         };
 
@@ -79,7 +79,7 @@ define([
                     filterCellRenderer = countryFilterCellRenderer;
                     filterCellHeight = 30;
                 }
-                var colDef = {displayName: colName, field: "col"+col, width: 200, enableColumnResizing: true,
+                var colDef = {displayName: colName, field: "col"+col, width: 200,
                     cellRenderer: cellRenderer, filterCellRenderer: filterCellRenderer, filterCellHeight: filterCellHeight,
                     comparator: comparator, cellCss: cellCss, cellCssFunc: cellCssFunc};
                 columns.push(colDef);
@@ -103,8 +103,11 @@ define([
                         //this is the sample boolean value
                         value = booleanValues[row % booleanValues.length];
                     } else if (colNames[col % colNames.length]==="Price") {
-                        //this is the sample boolean value
-                        value = (Math.random()*100) - 20;
+                        //generate a number between -20 and 80, to two decimal places
+                        value = ((Math.round(Math.random()*10000))/100) - 20;
+                    } else if (colNames[col % colNames.length]==="Test") {
+                        //generate a number between -20 and 80, to two decimal places
+                        value = testValues[row % testValues.length];
                     } else {
                         var randomBit = Math.random().toString().substring(2,5);
                         value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
@@ -154,10 +157,10 @@ define([
         var valueCleaned = booleanCleaner(value);
         if (valueCleaned===true) {
             //this is the unicode for tick character
-            return "&#10004;";
+            return "<span title='true'>&#10004;</span>";
         } else if (valueCleaned===false) {
             //this is the unicode for cross character
-            return "&#10006;";
+            return "<span title='false'>&#10006;</span>";
         } else {
             return null;
         }

@@ -14,6 +14,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    box-sizing: border-box;
 }
 
 .ag-popup-backdrop {
@@ -29,6 +30,7 @@
     box-sizing: border-box;
     overflow: hidden;
     height: 25px;
+    box-sizing: border-box;
 }
 
 .ag-pinned-header {

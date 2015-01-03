@@ -1,7 +1,4 @@
 
-//todo: dates & numbers, sorting and filtering
-//todo: customer cell, boolean & custom
-//todo: align
 //todo: compile into angular
 //todo: moving & hiding columns
 //todo: grouping
@@ -48,6 +45,9 @@ define([
 
         $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
             _this.onQuickFilterChanged(newFilter);
+        });
+        $scope.$watch("angularGrid.pinnedColumnCount", function() {
+            _this.onNewCols();
         });
 
         this.gridOptions.selectedRows = [];
@@ -264,19 +264,7 @@ define([
                     return colDefForSorting.comparator(valueA, valueB) * inverter;
                 } else {
                     //otherwise do our own comparison
-                    var valueAMissing = valueA===null || valueA===undefined;
-                    var valueBMissing = valueB===null || valueB===undefined;
-                    if (valueAMissing && valueBMissing) {return 0;}
-                    if (valueAMissing) {return -1 * inverter;}
-                    if (valueBMissing) {return 1 * inverter;}
-
-                    if (valueA < valueB) {
-                        return -1 * inverter;
-                    } else if (valueA > valueB) {
-                        return 1 * inverter;
-                    } else {
-                        return 0;
-                    }
+                    return utils.defaultComparator(valueA, valueB) * inverter;
                 }
 
             });
@@ -295,12 +283,16 @@ define([
                 _this.updateFilterIcons();
             },
             onNewCols: function() {
-                _this.setupColumns();
-                _this.setupRows();
+                _this.onNewCols();
             }
         };
         this.gridOptions.api = api;
     };
+
+    Grid.prototype.onNewCols = function() {
+        this.setupColumns();
+        this.setupRows();
+    }
 
     Grid.prototype.findAllElements = function($element) {
         var eGrid = $element[0];
@@ -387,12 +379,13 @@ define([
     Grid.prototype.setBodySize = function() {
         //if (this.eGrid.is(":visible")) {
         if (true) {
-            var availableHeight = this.eGrid.offsetHeight;
+            var availableHeight = this.eRoot.offsetHeight;
             var headerHeight = this.eHeader.offsetHeight;
             var bodyHeight = availableHeight - headerHeight;
             if (bodyHeight<0) {
                 bodyHeight = 0;
             }
+            console.log("availableHeight = " + availableHeight + ", headerHeight = " + headerHeight + ", bodyHeight = " + bodyHeight);
 
             if (this.bodyHeightLastTime != bodyHeight) {
                 this.bodyHeightLastTime = bodyHeight;
@@ -467,12 +460,14 @@ define([
         }
 
         //filter button
-        var eMenuButton = createMenuSvg();
-        eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
-        eMenuButton.onclick = function() {
-            _this.advancedFilter.showFilter(colDef, this);
-        };
-        headerCell.appendChild(eMenuButton);
+        if (this.gridOptions.enableFilter) {
+            var eMenuButton = createMenuSvg();
+            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+            eMenuButton.onclick = function () {
+                _this.advancedFilter.showFilter(colDef, this);
+            };
+            headerCell.appendChild(eMenuButton);
+        }
 
         //label div
         var headerCellLabel = document.createElement("div");

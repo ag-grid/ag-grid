@@ -105,6 +105,22 @@ define([], function() {
         array.splice(array.indexOf(object), 1);
     };
 
+    Utils.prototype.defaultComparator = function(valueA, valueB) {
+        var valueAMissing = valueA===null || valueA===undefined;
+        var valueBMissing = valueB===null || valueB===undefined;
+        if (valueAMissing && valueBMissing) {return 0;}
+        if (valueAMissing) {return -1;}
+        if (valueBMissing) {return 1;}
+
+        if (valueA < valueB) {
+            return -1;
+        } else if (valueA > valueB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+
     return new Utils();
 
 });
