@@ -24,7 +24,7 @@ define([
     var SORT_STYLE_SHOW = "visibility:visible;";
     var SORT_STYLE_HIDE = "visibility:hidden;";
 
-    module.directive("angularGrid", function() {
+    module.directive("angularGrid", function () {
         return {
             restrict: "A",
             template: template,
@@ -43,10 +43,10 @@ define([
         this.gridOptions = $scope.angularGrid;
         this.quickFilter = null;
 
-        $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
+        $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
             _this.onQuickFilterChanged(newFilter);
         });
-        $scope.$watch("angularGrid.pinnedColumnCount", function() {
+        $scope.$watch("angularGrid.pinnedColumnCount", function () {
             _this.onNewCols();
         });
 
@@ -74,25 +74,25 @@ define([
         //flag to mark when the directive is destroyed
         this.finished = false;
         var _this = this;
-        $scope.$on("$destroy", function(){
+        $scope.$on("$destroy", function () {
             _this.finished = true;
         });
     }
 
-    Grid.prototype.getRowData = function() {
+    Grid.prototype.getRowData = function () {
         return this.gridOptions.rowData;
     };
 
-    Grid.prototype.getPopupParent = function() {
+    Grid.prototype.getPopupParent = function () {
         return this.eRoot;
     };
 
-    Grid.prototype.onQuickFilterChanged = function(newFilter) {
-        if (newFilter===undefined||newFilter==="") {
+    Grid.prototype.onQuickFilterChanged = function (newFilter) {
+        if (newFilter === undefined || newFilter === "") {
             newFilter = null;
         }
-        if (this.quickFilter!==newFilter) {
-            if (newFilter!==null) {
+        if (this.quickFilter !== newFilter) {
+            if (newFilter !== null) {
                 newFilter = newFilter.toUpperCase();
             }
             this.quickFilter = newFilter;
@@ -100,23 +100,23 @@ define([
         }
     };
 
-    Grid.prototype.onFilterChanged = function() {
+    Grid.prototype.onFilterChanged = function () {
         this.setupRows();
         this.updateFilterIcons();
     };
 
-    Grid.prototype.onRowClicked = function(rowIndex) {
+    Grid.prototype.onRowClicked = function (rowIndex) {
         //if no selection method enabled, do nothing
-        if (this.gridOptions.rowSelection!=="single" && this.gridOptions.rowSelection!=="multiple") {
+        if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
             return;
         }
         var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
 
         //if not in array, then it's a new selection, thus selected = true
-        var selected = this.gridOptions.selectedRows.indexOf(row)<0;
+        var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
 
         if (selected) {
-            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected==="function") {
+            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected === "function") {
                 this.gridOptions.rowSelected(row);
             }
             //if single selection, clear any previous
@@ -133,8 +133,8 @@ define([
         }
 
         //update css class on selected row
-        var eRows = this.eBody.querySelectorAll("[row='"+rowIndex+"']");
-        for (var i = 0; i<eRows.length; i++) {
+        var eRows = this.eBody.querySelectorAll("[row='" + rowIndex + "']");
+        for (var i = 0; i < eRows.length; i++) {
             if (selected) {
                 utils.addCssClass(eRows[i], "ag-row-selected")
             } else {
@@ -142,29 +142,29 @@ define([
             }
         }
 
-        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged==="function") {
+        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
             this.$scope.$apply();
         }
 
     };
 
-    Grid.prototype.doFilter = function() {
+    Grid.prototype.doFilter = function () {
         var _this = this;
-        var quickFilterPresent = this.quickFilter!==null && this.quickFilter!==undefined && this.quickFilter!=="";
+        var quickFilterPresent = this.quickFilter !== null && this.quickFilter !== undefined && this.quickFilter !== "";
         var advancedFilterPresent = this.advancedFilter.isFilterPresent();
         var filterPresent = quickFilterPresent || advancedFilterPresent;
 
         if (filterPresent) {
             this.gridOptions.rowDataAfterFilter = [];
-            for (var i = 0, l = this.gridOptions.rowData.length; i<l; i++) {
+            for (var i = 0, l = this.gridOptions.rowData.length; i < l; i++) {
                 var item = this.gridOptions.rowData[i];
                 //first up, check quick filter
                 if (quickFilterPresent) {
                     if (!item._quickFilterAggregateText) {
                         _this.aggregateRowForQuickFilter(item);
                     }
-                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter)<0) {
+                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter) < 0) {
                         //quick filter fails, so skip item
                         continue;
                     }
@@ -184,19 +184,19 @@ define([
             this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
         }
     };
-    
-    Grid.prototype.aggregateRowForQuickFilter = function(rowItem) {
+
+    Grid.prototype.aggregateRowForQuickFilter = function (rowItem) {
         var aggregatedText = "";
-        this.gridOptions.columnDefs.forEach(function(colDef) {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
             var value = rowItem[colDef.field];
-            if (value && value!=="") {
+            if (value && value !== "") {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
         });
         rowItem._quickFilterAggregateText = aggregatedText;
     };
-    
-    Grid.prototype.setupColumns = function() {
+
+    Grid.prototype.setupColumns = function () {
         this.ensureEachColHasSize();
         this.insertHeader();
         this.setPinnedColContainerWidth();
@@ -204,12 +204,12 @@ define([
         this.updateFilterIcons();
     };
 
-    Grid.prototype.setBodyContainerWidth = function() {
+    Grid.prototype.setBodyContainerWidth = function () {
         var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.setupRows = function() {
+    Grid.prototype.setupRows = function () {
 
         this.doFilter();
         this.doSort();
@@ -220,13 +220,13 @@ define([
 
         var rowCount = this.gridOptions.rowDataAfterFilter.length;
         var containerHeight = this.gridOptions.rowHeight * rowCount;
-        this.eBodyContainer.style.height = containerHeight+"px";
-        this.ePinnedColsContainer.style.height = containerHeight+"px";
+        this.eBodyContainer.style.height = containerHeight + "px";
+        this.ePinnedColsContainer.style.height = containerHeight + "px";
 
         this.refreshAllVirtualRows();
     };
-    
-    Grid.prototype.refreshAllVirtualRows = function() {
+
+    Grid.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
@@ -235,10 +235,10 @@ define([
         this.drawVirtualRows();
     };
 
-    Grid.prototype.doSort = function() {
+    Grid.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefForSorting = null;
-        this.gridOptions.columnDefs.forEach(function(colDef) {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
             if (colDef.sort) {
                 colDefForSorting = colDef;
             }
@@ -251,9 +251,9 @@ define([
             var ascending = colDefForSorting.sort === ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.gridOptions.rowDataAfterSortAndFilter.sort(function(objA, objB) {
+            this.gridOptions.rowDataAfterSortAndFilter.sort(function (objA, objB) {
                 //hack to stop crashing, in case user isn't supplying objects
-                if (objA===null || objA===undefined || objB===null || objB===undefined) {
+                if (objA === null || objA === undefined || objB === null || objB === undefined) {
                     return 0;
                 }
                 var valueA = objA[keyForSort];
@@ -273,28 +273,28 @@ define([
         this.refreshAllVirtualRows();
     };
 
-    Grid.prototype.addApi = function() {
+    Grid.prototype.addApi = function () {
         var _this = this;
         var api = {
-            onNewRows: function() {
+            onNewRows: function () {
                 _this.gridOptions.selectedRows.length = 0;
                 _this.advancedFilter.clearAllFilters();
                 _this.setupRows();
                 _this.updateFilterIcons();
             },
-            onNewCols: function() {
+            onNewCols: function () {
                 _this.onNewCols();
             }
         };
         this.gridOptions.api = api;
     };
 
-    Grid.prototype.onNewCols = function() {
+    Grid.prototype.onNewCols = function () {
         this.setupColumns();
         this.setupRows();
     }
 
-    Grid.prototype.findAllElements = function($element) {
+    Grid.prototype.findAllElements = function ($element) {
         var eGrid = $element[0];
         this.eGrid = eGrid;
         this.eRoot = eGrid.querySelector(".ag-root");
@@ -309,12 +309,12 @@ define([
         this.eHeader = eGrid.querySelector(".ag-header");
     };
 
-    Grid.prototype.setPinnedColContainerWidth = function() {
+    Grid.prototype.setPinnedColContainerWidth = function () {
         var pinnedColWidth = this.getTotalPinnedColWidth();
-        this.ePinnedColsContainer.style.width = pinnedColWidth+"px";
+        this.ePinnedColsContainer.style.width = pinnedColWidth + "px";
     };
 
-    Grid.prototype.ensureRowsRendered = function(start, finish) {
+    Grid.prototype.ensureRowsRendered = function (start, finish) {
         var pinnedColumnCount = this.getPinnedColCount();
         var mainRowWidth = this.getTotalUnpinnedColWidth();
         var _this = this;
@@ -323,9 +323,9 @@ define([
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
         //add in new rows
-        for (var rowIndex = start; rowIndex<=finish; rowIndex++) {
+        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
             //see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString())>=0) {
+            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
@@ -341,9 +341,9 @@ define([
     };
 
     //takes array of row id's
-    Grid.prototype.removeVirtualRows = function(rowsToRemove) {
+    Grid.prototype.removeVirtualRows = function (rowsToRemove) {
         var _this = this;
-        rowsToRemove.forEach(function(indexToRemove) {
+        rowsToRemove.forEach(function (indexToRemove) {
             var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
             _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
             delete _this.rowsInPinnedContainer[indexToRemove];
@@ -354,9 +354,9 @@ define([
         });
     };
 
-    Grid.prototype.ensureEachColHasSize = function() {
-        this.gridOptions.columnDefs.forEach(function(colDef) {
-            if (!colDef.width || colDef.width<10) {
+    Grid.prototype.ensureEachColHasSize = function () {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
+            if (!colDef.width || colDef.width < 10) {
                 colDef.actualWidth = MIN_COL_WIDTH;
             } else {
                 colDef.actualWidth = colDef.width;
@@ -365,11 +365,12 @@ define([
     };
 
     //see if a grey box is needed at the bottom of the pinned col
-    Grid.prototype.setPinnedColHeight = function() {
-        var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
+    Grid.prototype.setPinnedColHeight = function () {
+        //var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
         var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+        var bodyHeight = this.eBodyViewport.offsetHeight;
         if (scrollShowing) {
-            this.ePinnedColsViewport.style.height = (bodyHeight-20) + "px";
+            this.ePinnedColsViewport.style.height = (bodyHeight - 20) + "px";
         } else {
             this.ePinnedColsViewport.style.height = bodyHeight + "px";
         }
@@ -377,6 +378,28 @@ define([
 
     //todo: make this only happen if size changes, and only when visible
     Grid.prototype.setBodySize = function() {
+        var _this = this;
+
+        var bodyHeight = this.eBodyViewport.offsetHeight;
+
+        if (this.bodyHeightLastTime != bodyHeight) {
+            this.setPinnedColHeight();
+
+            //only draw virtual rows if done sort & filter - this
+            //means we don't draw rows if table is not yet initialised
+            if (this.gridOptions.rowDataAfterSortAndFilter) {
+                this.drawVirtualRows();
+            }
+        }
+
+        if (!this.finished) {
+            setTimeout(function() {
+                _this.setBodySize();
+            }, 200);
+        }
+    };
+
+    Grid.prototype.setBodySize2 = function() {
         //if (this.eGrid.is(":visible")) {
         if (true) {
             var availableHeight = this.eRoot.offsetHeight;

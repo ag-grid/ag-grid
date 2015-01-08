@@ -26,11 +26,15 @@
 }
 
 .ag-header {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     white-space: nowrap;
     box-sizing: border-box;
     overflow: hidden;
     height: 25px;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .ag-pinned-header {
@@ -86,6 +90,9 @@
 }
 
 .ag-body {
+    height: 100%;
+    padding-top: 25px;
+    box-sizing: border-box;
 }
 
 .ag-pinned-cols-viewport {
@@ -267,6 +274,10 @@
 
 .ag-dark .ag-row-selected {
     background-color: #000000;
+}
+
+.ag-dark .ag-filter {
+    color: black;
 }
 
 .ag-large .ag-root {
