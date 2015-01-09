@@ -8,7 +8,7 @@ define([
     gridsModule.controller('mainController', function($scope) {
 
         var colNames = ["Country","Game","Bought","Price","Test", "Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
-        var countries = ["Ireland","United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
+        var countries = ["Ireland","Spain", "United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
         var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
             "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
             "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
@@ -190,6 +190,7 @@ define([
     }
 
     function countryCellRenderer(value) {
+        //get flags from here: http://www.freeflagicons.com/
         if (value==="" || value===undefined || value===null) {
             return null;
         } else {

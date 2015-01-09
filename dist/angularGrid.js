@@ -997,15 +997,33 @@ define('text!../src/angularGrid.html',[],function () { return '<div class=\'ag-r
 /** Singleton util class, with jquery and underscore like features. */
 define('../src/utils',[], function() {
 
+    
+
     function Utils() {
     }
+
+    //adds all type of change listeners to an element, intended to be a text field
+    Utils.prototype.addChangeListener = function(element, listener) {
+        element.addEventListener("changed", listener);
+        element.addEventListener("paste", listener);
+        element.addEventListener("input", listener);
+    };
+
+    //if value is undefined, null or blank, returns null, othrewise returns the value
+    Utils.prototype.makeNull = function(value) {
+        if (value===null || value===undefined || value==="") {
+            return null;
+        } else {
+            return value;
+        }
+    };
 
     Utils.prototype.uniqueValues = function(list, key) {
         var uniqueCheck = {};
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
             var value = list[i][key];
-            if (value==="") {
+            if (value==="" || value===undefined) {
                 value = null;
             }
             if(!uniqueCheck.hasOwnProperty(value)) {
@@ -1013,7 +1031,6 @@ define('../src/utils',[], function() {
                 uniqueCheck[value] = 1;
             }
         }
-        result.sort();
         return result;
     };
 
@@ -1084,23 +1101,41 @@ define('../src/utils',[], function() {
         array.splice(array.indexOf(object), 1);
     };
 
+    Utils.prototype.defaultComparator = function(valueA, valueB) {
+        var valueAMissing = valueA===null || valueA===undefined;
+        var valueBMissing = valueB===null || valueB===undefined;
+        if (valueAMissing && valueBMissing) {return 0;}
+        if (valueAMissing) {return -1;}
+        if (valueBMissing) {return 1;}
+
+        if (valueA < valueB) {
+            return -1;
+        } else if (valueA > valueB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+
     return new Utils();
 
 });
 
-define('text!../src/filter.html',[],function () { return '<div class="ag-advanced-filter">\r\n    <div class="ag-advanced-filter-select-all-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-advanced-filter-list-viewport">\r\n        <div class="ag-advanced-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-advanced-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-advanced-filter-checkbox"/>\r\n                    <span class="ag-advanced-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/filter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 define('../src/filterComponent',[
     "./utils",
     "text!./filter.html",
 ], function(utils, template) {
 
-    var ROW_HEIGHT = 20;
+    var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(model, grid) {
+    function Filter(model, grid, colDef) {
+        this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
         this.model = model;
         this.grid = grid;
         this.rowsInBodyContainer = {};
+        this.colDef = colDef;
         this.createGui();
         this.addScrollListener();
     }
@@ -1114,21 +1149,24 @@ define('../src/filterComponent',[
 
         this.eGui = utils.loadTemplate(template);
 
-        this.eListContainer = this.eGui.querySelector(".ag-advanced-filter-list-container");
+        this.eListContainer = this.eGui.querySelector(".ag-filter-list-container");
         this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
         this.eSelectAll = this.eGui.querySelector("#selectAll");
-        this.eListViewport = this.eGui.querySelector(".ag-advanced-filter-list-viewport");
+        this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
+        this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeiht) + "px";
 
-        this.eListContainer.style.height = (this.model.uniqueValues.length * ROW_HEIGHT) + "px";
-
+        this.setContainerHeight();
+        this.eMiniFilter.value = this.model.getMiniFilter();
+        utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
         utils.removeAllChildren(this.eListContainer);
 
         this.eSelectAll.onclick = function () { _this.onSelectAll();}
 
-        if (this.model.uniqueValues.length === this.model.selectedValues.length) {
+        if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = true;
-        } else if (this.model.selectedValues.length == 0) {
+        } else if (this.model.isNothingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = false;
         } else {
@@ -1136,12 +1174,16 @@ define('../src/filterComponent',[
         }
     };
 
+    Filter.prototype.setContainerHeight = function() {
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
+    };
+
     Filter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / ROW_HEIGHT);
-        var lastRow = Math.floor(bottomPixel / ROW_HEIGHT);
+        var firstRow = Math.floor(topPixel / this.rowHeiht);
+        var lastRow = Math.floor(bottomPixel / this.rowHeiht);
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -1160,8 +1202,8 @@ define('../src/filterComponent',[
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.uniqueValues.length > rowIndex) {
-                var value = this.model.uniqueValues[rowIndex];
+            if (this.model.getDisplayedValueCount() > rowIndex) {
+                var value = this.model.getDisplayedValue(rowIndex);
                 _this.insertRow(value, rowIndex);
             }
         }
@@ -1184,14 +1226,23 @@ define('../src/filterComponent',[
         var _this = this;
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
-        var displayNameOfValue = value === null ? "(Blanks)" : value;
-        eFilterValue.querySelector(".ag-advanced-filter-value").innerText = displayNameOfValue;
+
+        var valueElement = eFilterValue.querySelector(".ag-filter-value");
+        if (this.colDef.filterCellRenderer) {
+            //renderer provided, so use it
+            var resultOfRenderer = this.colDef.filterCellRenderer(value);
+            valueElement.innerHTML = resultOfRenderer;
+        } else {
+            //otherwise display as a string
+            var displayNameOfValue = value === null ? "(Blanks)" : value;
+            valueElement.innerText = displayNameOfValue;
+        }
         var eCheckbox = eFilterValue.querySelector("input");
-        eCheckbox.checked = this.model.selectedValues.indexOf(value) >= 0;
+        eCheckbox.checked = this.model.isValueSelected(value);
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
-        eFilterValue.style.top = (ROW_HEIGHT * rowIndex) + "px";
+        eFilterValue.style.top = (this.rowHeiht * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
@@ -1200,20 +1251,17 @@ define('../src/filterComponent',[
     Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
-            if (this.model.selectedValues.indexOf(value)<0) {
-                this.model.selectedValues.push(value);
-            }
-            //if box arrays are same size, then everything is checked
-            if (this.model.selectedValues.length==this.model.uniqueValues.length) {
+            this.model.selectValue(value);
+            if (this.model.isEverythingSelected()) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = true;
             } else {
                 this.eSelectAll.indeterminate = true;
             }
         } else {
-            utils.removeFromArray(this.model.selectedValues, value);
+            this.model.unselectValue(value);
             //if set is empty, nothing is selected
-            if (this.model.selectedValues.length==0) {
+            if (this.model.isNothingSelected()) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = false;
             } else {
@@ -1224,19 +1272,37 @@ define('../src/filterComponent',[
         this.grid.onFilterChanged();
     };
 
+    Filter.prototype.onFilterChanged = function() {
+        var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
+        if (miniFilterChanged) {
+            this.setContainerHeight();
+            this.clearVirtualRows();
+            this.drawVirtualRows();
+        }
+    };
+
+    Filter.prototype.clearVirtualRows = function() {
+        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        this.removeVirtualRows(rowsToRemove);
+    };
+
     Filter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
         if (checked) {
-            this.model.selectedValues = this.model.uniqueValues.slice(0);
+            this.model.selectEverything();
         } else {
-            this.model.selectedValues.length = 0;
+            this.model.selectNothing();
         }
-        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-advanced-filter-checkbox");
+        this.updateAllCheckboxes(checked);
+        this.grid.onFilterChanged();
+    };
+
+    Filter.prototype.updateAllCheckboxes = function(checked) {
+        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-filter-checkbox");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }
-        this.grid.onFilterChanged();
-    };
+    }
 
     Filter.prototype.addScrollListener = function() {
         var _this = this;
@@ -1252,8 +1318,130 @@ define('../src/filterComponent',[
         this.drawVirtualRows();
     };
 
-    return function(model, grid) {
-        return new Filter(model, grid);
+    return function(model, grid, colDef) {
+        return new Filter(model, grid, colDef);
+    };
+
+});
+define('../src/filterModel',["./utils"], function(utils) {
+
+    
+
+    function FilterModel(uniqueValues) {
+        this.uniqueValues = uniqueValues;
+        this.displayedValues = uniqueValues;
+        this.miniFilter = null;
+        //we use a map rather than an array for the selected values as the lookup
+        //for a map is much faster than the lookup for an array, especially when
+        //the length of the array is thousands of records long
+        this.selectedValuesMap = {};
+        this.selectEverything();
+    }
+
+    //sets mini filter. returns true if it changed from last value, otherwise false
+    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
+        newMiniFilter = utils.makeNull(newMiniFilter);
+        if (this.miniFilter===newMiniFilter) {
+            //do nothing if filter has not changed
+            return false;
+        }
+        this.miniFilter = newMiniFilter;
+        this.filterDisplayedValues();
+        return true;
+    };
+
+    FilterModel.prototype.getMiniFilter = function() {
+        return this.miniFilter;
+    };
+
+    FilterModel.prototype.filterDisplayedValues = function() {
+        //if no filter, just use the unique values
+        if (this.miniFilter===null) {
+            this.displayedValues = this.uniqueValues;
+            return;
+        }
+
+        //if filter present, we filter down the list
+        this.displayedValues = [];
+        var miniFilterUpperCase = this.miniFilter.toUpperCase();
+        for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
+            var uniqueValue = this.uniqueValues[i];
+            if (uniqueValue!==null && uniqueValue.toString().toUpperCase().indexOf(miniFilterUpperCase)>=0) {
+                this.displayedValues.push(uniqueValue);
+            }
+        }
+
+    };
+
+    FilterModel.prototype.getDisplayedValueCount = function() {
+        return this.displayedValues.length;
+    };
+
+    FilterModel.prototype.getDisplayedValue = function(index) {
+        return this.displayedValues[index];
+    };
+
+    FilterModel.prototype.doesFilterPass = function(value) {
+        //if no filter, always pass
+        if (this.isEverythingSelected()) { return true; }
+        //if nothing selected in filter, always fail
+        if (this.isNothingSelected()) { return false; }
+
+        value = utils.makeNull(value);
+        var filterPassed = this.selectedValuesMap[value]!==undefined;
+        return filterPassed;
+    };
+
+    FilterModel.prototype.selectEverything = function() {
+        var count = this.uniqueValues.length;
+        for (var i = 0; i<count; i++) {
+            var value = this.uniqueValues[i];
+            this.selectedValuesMap[value] = null;
+        }
+        this.selectedValuesCount = count;
+    };
+
+    FilterModel.prototype.isFilterActive = function() {
+        return this.uniqueValues.length!==this.selectedValuesCount;
+    };
+
+    FilterModel.prototype.selectNothing = function() {
+        this.selectedValuesMap = {};
+        this.selectedValuesCount = 0;
+    };
+
+    FilterModel.prototype.getUniqueValueCount = function() {
+        return this.uniqueValues.length;
+    };
+
+    FilterModel.prototype.unselectValue = function(value) {
+        if (this.selectedValuesMap[value]!==undefined) {
+            delete this.selectedValuesMap[value];
+            this.selectedValuesCount--;
+        }
+    };
+
+    FilterModel.prototype.selectValue = function(value) {
+        if (this.selectedValuesMap[value]===undefined) {
+            this.selectedValuesMap[value] = null;
+            this.selectedValuesCount++;
+        }
+    };
+
+    FilterModel.prototype.isValueSelected = function(value) {
+        return this.selectedValuesMap[value] !== undefined;
+    };
+
+    FilterModel.prototype.isEverythingSelected = function() {
+        return this.uniqueValues.length === this.selectedValuesCount;
+    };
+
+    FilterModel.prototype.isNothingSelected = function() {
+        return this.uniqueValues.length === 0;
+    };
+
+    return function(uniqueValues) {
+        return new FilterModel(uniqueValues);
     };
 
 });
@@ -1401,8 +1589,9 @@ define('css!../src/filter',[],function(){});
 define('../src/filterManager',[
     "./utils",
     "./filterComponent",
-    "css!./filter"
-], function(utils, filterComponentFactory) {
+    "./filterModel",
+    "css!./filter.css"
+], function(utils, filterComponentFactory, filterModelFactory) {
 
     function FilterManager(grid) {
         this.grid = grid;
@@ -1415,20 +1604,27 @@ define('../src/filterManager',[
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
         var model =  this.colModels[key];
-        var filterPresent = model!==null && model!==undefined && model.selectedValues.length!==model.uniqueValues.length;
+        var filterPresent = model!==undefined && model.isFilterActive();
         return filterPresent;
     };
 
     FilterManager.prototype.doesFilterPass = function (item) {
         var fields = Object.keys(this.colModels);
         for (var i = 0, l = fields.length; i < l; i++) {
+
             var field = fields[i];
+            var model = this.colModels[field];
+
+            //if no filter, always pass
+            if (model===undefined) {
+                continue;
+            }
+
             var value = item[field];
-            if (value==="") { value = null; }
-            var filterFailed = this.colModels[field].selectedValues.indexOf(value) < 0;
-            if (filterFailed) {
+            if (!model.doesFilterPass(value)) {
                 return false;
             }
+
         }
         //all filters passed
         return true;
@@ -1453,18 +1649,22 @@ define('../src/filterManager',[
 
         var model = this.colModels[colDef.field];
         if (!model) {
-            model = {};
-            this.colModels[colDef.field] = model;
             var rowData = this.grid.getRowData();
-            model.uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            model.selectedValues = model.uniqueValues.slice(0);
+            var uniqueValues = utils.uniqueValues(rowData, colDef.field);
+            if (colDef.comparator) {
+                uniqueValues.sort(colDef.comparator);
+            } else {
+                uniqueValues.sort(utils.defaultComparator);
+            }
+            model = filterModelFactory(uniqueValues);
+            this.colModels[colDef.field] = model;
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        var filterComponent = filterComponentFactory(model, this.grid);
+        var filterComponent = filterComponentFactory(model, this.grid, colDef);
         var eFilterGui = filterComponent.getGui();
 
-        this.positionPopup(eventSource, eFilterGui, ePopupParent)
+        this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 
@@ -1480,8 +1680,8 @@ define('../src/filterManager',[
 
 define('css!../src/angularGrid',[],function(){});
 
-//todo: virtualisation in advanced filtering
-//todo: moving columns
+//todo: compile into angular
+//todo: moving & hiding columns
 //todo: grouping
 
 define('../src/angularGrid',[
@@ -1505,7 +1705,7 @@ define('../src/angularGrid',[
     var SORT_STYLE_SHOW = "visibility:visible;";
     var SORT_STYLE_HIDE = "visibility:hidden;";
 
-    module.directive("angularGrid", function() {
+    module.directive("angularGrid", function () {
         return {
             restrict: "A",
             template: template,
@@ -1524,8 +1724,11 @@ define('../src/angularGrid',[
         this.gridOptions = $scope.angularGrid;
         this.quickFilter = null;
 
-        $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
+        $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
             _this.onQuickFilterChanged(newFilter);
+        });
+        $scope.$watch("angularGrid.pinnedColumnCount", function () {
+            _this.onNewCols();
         });
 
         this.gridOptions.selectedRows = [];
@@ -1552,25 +1755,25 @@ define('../src/angularGrid',[
         //flag to mark when the directive is destroyed
         this.finished = false;
         var _this = this;
-        $scope.$on("$destroy", function(){
+        $scope.$on("$destroy", function () {
             _this.finished = true;
         });
     }
 
-    Grid.prototype.getRowData = function() {
+    Grid.prototype.getRowData = function () {
         return this.gridOptions.rowData;
     };
 
-    Grid.prototype.getPopupParent = function() {
+    Grid.prototype.getPopupParent = function () {
         return this.eRoot;
     };
 
-    Grid.prototype.onQuickFilterChanged = function(newFilter) {
-        if (newFilter===undefined||newFilter==="") {
+    Grid.prototype.onQuickFilterChanged = function (newFilter) {
+        if (newFilter === undefined || newFilter === "") {
             newFilter = null;
         }
-        if (this.quickFilter!==newFilter) {
-            if (newFilter!==null) {
+        if (this.quickFilter !== newFilter) {
+            if (newFilter !== null) {
                 newFilter = newFilter.toUpperCase();
             }
             this.quickFilter = newFilter;
@@ -1578,23 +1781,23 @@ define('../src/angularGrid',[
         }
     };
 
-    Grid.prototype.onFilterChanged = function() {
+    Grid.prototype.onFilterChanged = function () {
         this.setupRows();
         this.updateFilterIcons();
     };
 
-    Grid.prototype.onRowClicked = function(rowIndex) {
+    Grid.prototype.onRowClicked = function (rowIndex) {
         //if no selection method enabled, do nothing
-        if (this.gridOptions.rowSelection!=="single" && this.gridOptions.rowSelection!=="multiple") {
+        if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
             return;
         }
         var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
 
         //if not in array, then it's a new selection, thus selected = true
-        var selected = this.gridOptions.selectedRows.indexOf(row)<0;
+        var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
 
         if (selected) {
-            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected==="function") {
+            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected === "function") {
                 this.gridOptions.rowSelected(row);
             }
             //if single selection, clear any previous
@@ -1611,8 +1814,8 @@ define('../src/angularGrid',[
         }
 
         //update css class on selected row
-        var eRows = this.eBody.querySelectorAll("[row='"+rowIndex+"']");
-        for (var i = 0; i<eRows.length; i++) {
+        var eRows = this.eBody.querySelectorAll("[row='" + rowIndex + "']");
+        for (var i = 0; i < eRows.length; i++) {
             if (selected) {
                 utils.addCssClass(eRows[i], "ag-row-selected")
             } else {
@@ -1620,29 +1823,29 @@ define('../src/angularGrid',[
             }
         }
 
-        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged==="function") {
+        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
             this.$scope.$apply();
         }
 
     };
 
-    Grid.prototype.doFilter = function() {
+    Grid.prototype.doFilter = function () {
         var _this = this;
-        var quickFilterPresent = this.quickFilter!==null && this.quickFilter!==undefined && this.quickFilter!=="";
+        var quickFilterPresent = this.quickFilter !== null && this.quickFilter !== undefined && this.quickFilter !== "";
         var advancedFilterPresent = this.advancedFilter.isFilterPresent();
         var filterPresent = quickFilterPresent || advancedFilterPresent;
 
         if (filterPresent) {
             this.gridOptions.rowDataAfterFilter = [];
-            for (var i = 0, l = this.gridOptions.rowData.length; i<l; i++) {
+            for (var i = 0, l = this.gridOptions.rowData.length; i < l; i++) {
                 var item = this.gridOptions.rowData[i];
                 //first up, check quick filter
                 if (quickFilterPresent) {
                     if (!item._quickFilterAggregateText) {
                         _this.aggregateRowForQuickFilter(item);
                     }
-                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter)<0) {
+                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter) < 0) {
                         //quick filter fails, so skip item
                         continue;
                     }
@@ -1662,19 +1865,19 @@ define('../src/angularGrid',[
             this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
         }
     };
-    
-    Grid.prototype.aggregateRowForQuickFilter = function(rowItem) {
+
+    Grid.prototype.aggregateRowForQuickFilter = function (rowItem) {
         var aggregatedText = "";
-        this.gridOptions.columnDefs.forEach(function(colDef) {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
             var value = rowItem[colDef.field];
-            if (value && value!=="") {
+            if (value && value !== "") {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
         });
         rowItem._quickFilterAggregateText = aggregatedText;
     };
-    
-    Grid.prototype.setupColumns = function() {
+
+    Grid.prototype.setupColumns = function () {
         this.ensureEachColHasSize();
         this.insertHeader();
         this.setPinnedColContainerWidth();
@@ -1682,12 +1885,12 @@ define('../src/angularGrid',[
         this.updateFilterIcons();
     };
 
-    Grid.prototype.setBodyContainerWidth = function() {
+    Grid.prototype.setBodyContainerWidth = function () {
         var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.setupRows = function() {
+    Grid.prototype.setupRows = function () {
 
         this.doFilter();
         this.doSort();
@@ -1698,13 +1901,13 @@ define('../src/angularGrid',[
 
         var rowCount = this.gridOptions.rowDataAfterFilter.length;
         var containerHeight = this.gridOptions.rowHeight * rowCount;
-        this.eBodyContainer.style.height = containerHeight+"px";
-        this.ePinnedColsContainer.style.height = containerHeight+"px";
+        this.eBodyContainer.style.height = containerHeight + "px";
+        this.ePinnedColsContainer.style.height = containerHeight + "px";
 
         this.refreshAllVirtualRows();
     };
-    
-    Grid.prototype.refreshAllVirtualRows = function() {
+
+    Grid.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
@@ -1713,10 +1916,10 @@ define('../src/angularGrid',[
         this.drawVirtualRows();
     };
 
-    Grid.prototype.doSort = function() {
+    Grid.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefForSorting = null;
-        this.gridOptions.columnDefs.forEach(function(colDef) {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
             if (colDef.sort) {
                 colDefForSorting = colDef;
             }
@@ -1727,48 +1930,52 @@ define('../src/angularGrid',[
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
             var ascending = colDefForSorting.sort === ASC;
-            var result1 = ascending ? -1 : 1;
-            var result2 = ascending ? 1 : -1;
+            var inverter = ascending ? 1 : -1;
 
-            this.gridOptions.rowDataAfterSortAndFilter.sort(function(objA, objB) {
+            this.gridOptions.rowDataAfterSortAndFilter.sort(function (objA, objB) {
                 //hack to stop crashing, in case user isn't supplying objects
-                if (objA===null || objA===undefined || objB===null || objB===undefined) {
+                if (objA === null || objA === undefined || objB === null || objB === undefined) {
                     return 0;
                 }
                 var valueA = objA[keyForSort];
                 var valueB = objB[keyForSort];
 
-                if (valueA < valueB) {
-                    return result1;
-                } else if (valueA > valueB) {
-                    return result2;
+                if (colDefForSorting.comparator) {
+                    //if comparator provided, use it
+                    return colDefForSorting.comparator(valueA, valueB) * inverter;
                 } else {
-                    return 0;
+                    //otherwise do our own comparison
+                    return utils.defaultComparator(valueA, valueB) * inverter;
                 }
+
             });
         }
 
         this.refreshAllVirtualRows();
     };
 
-    Grid.prototype.addApi = function() {
+    Grid.prototype.addApi = function () {
         var _this = this;
         var api = {
-            onNewRows: function() {
+            onNewRows: function () {
                 _this.gridOptions.selectedRows.length = 0;
                 _this.advancedFilter.clearAllFilters();
                 _this.setupRows();
                 _this.updateFilterIcons();
             },
-            onNewCols: function() {
-                _this.setupColumns();
-                _this.setupRows();
+            onNewCols: function () {
+                _this.onNewCols();
             }
         };
         this.gridOptions.api = api;
     };
 
-    Grid.prototype.findAllElements = function($element) {
+    Grid.prototype.onNewCols = function () {
+        this.setupColumns();
+        this.setupRows();
+    }
+
+    Grid.prototype.findAllElements = function ($element) {
         var eGrid = $element[0];
         this.eGrid = eGrid;
         this.eRoot = eGrid.querySelector(".ag-root");
@@ -1783,12 +1990,12 @@ define('../src/angularGrid',[
         this.eHeader = eGrid.querySelector(".ag-header");
     };
 
-    Grid.prototype.setPinnedColContainerWidth = function() {
+    Grid.prototype.setPinnedColContainerWidth = function () {
         var pinnedColWidth = this.getTotalPinnedColWidth();
-        this.ePinnedColsContainer.style.width = pinnedColWidth+"px";
+        this.ePinnedColsContainer.style.width = pinnedColWidth + "px";
     };
 
-    Grid.prototype.ensureRowsRendered = function(start, finish) {
+    Grid.prototype.ensureRowsRendered = function (start, finish) {
         var pinnedColumnCount = this.getPinnedColCount();
         var mainRowWidth = this.getTotalUnpinnedColWidth();
         var _this = this;
@@ -1797,9 +2004,9 @@ define('../src/angularGrid',[
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
         //add in new rows
-        for (var rowIndex = start; rowIndex<=finish; rowIndex++) {
+        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
             //see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString())>=0) {
+            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
@@ -1815,9 +2022,9 @@ define('../src/angularGrid',[
     };
 
     //takes array of row id's
-    Grid.prototype.removeVirtualRows = function(rowsToRemove) {
+    Grid.prototype.removeVirtualRows = function (rowsToRemove) {
         var _this = this;
-        rowsToRemove.forEach(function(indexToRemove) {
+        rowsToRemove.forEach(function (indexToRemove) {
             var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
             _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
             delete _this.rowsInPinnedContainer[indexToRemove];
@@ -1828,9 +2035,9 @@ define('../src/angularGrid',[
         });
     };
 
-    Grid.prototype.ensureEachColHasSize = function() {
-        this.gridOptions.columnDefs.forEach(function(colDef) {
-            if (!colDef.width || colDef.width<10) {
+    Grid.prototype.ensureEachColHasSize = function () {
+        this.gridOptions.columnDefs.forEach(function (colDef) {
+            if (!colDef.width || colDef.width < 10) {
                 colDef.actualWidth = MIN_COL_WIDTH;
             } else {
                 colDef.actualWidth = colDef.width;
@@ -1839,11 +2046,12 @@ define('../src/angularGrid',[
     };
 
     //see if a grey box is needed at the bottom of the pinned col
-    Grid.prototype.setPinnedColHeight = function() {
-        var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
+    Grid.prototype.setPinnedColHeight = function () {
+        //var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
         var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+        var bodyHeight = this.eBodyViewport.offsetHeight;
         if (scrollShowing) {
-            this.ePinnedColsViewport.style.height = (bodyHeight-20) + "px";
+            this.ePinnedColsViewport.style.height = (bodyHeight - 20) + "px";
         } else {
             this.ePinnedColsViewport.style.height = bodyHeight + "px";
         }
@@ -1851,14 +2059,37 @@ define('../src/angularGrid',[
 
     //todo: make this only happen if size changes, and only when visible
     Grid.prototype.setBodySize = function() {
+        var _this = this;
+
+        var bodyHeight = this.eBodyViewport.offsetHeight;
+
+        if (this.bodyHeightLastTime != bodyHeight) {
+            this.setPinnedColHeight();
+
+            //only draw virtual rows if done sort & filter - this
+            //means we don't draw rows if table is not yet initialised
+            if (this.gridOptions.rowDataAfterSortAndFilter) {
+                this.drawVirtualRows();
+            }
+        }
+
+        if (!this.finished) {
+            setTimeout(function() {
+                _this.setBodySize();
+            }, 200);
+        }
+    };
+
+    Grid.prototype.setBodySize2 = function() {
         //if (this.eGrid.is(":visible")) {
         if (true) {
-            var availableHeight = this.eGrid.offsetHeight;
+            var availableHeight = this.eRoot.offsetHeight;
             var headerHeight = this.eHeader.offsetHeight;
             var bodyHeight = availableHeight - headerHeight;
             if (bodyHeight<0) {
                 bodyHeight = 0;
             }
+            console.log("availableHeight = " + availableHeight + ", headerHeight = " + headerHeight + ", bodyHeight = " + bodyHeight);
 
             if (this.bodyHeightLastTime != bodyHeight) {
                 this.bodyHeightLastTime = bodyHeight;
@@ -1933,12 +2164,14 @@ define('../src/angularGrid',[
         }
 
         //filter button
-        var eMenuButton = createMenuSvg();
-        eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
-        eMenuButton.onclick = function() {
-            _this.advancedFilter.showFilter(colDef, this);
-        };
-        headerCell.appendChild(eMenuButton);
+        if (this.gridOptions.enableFilter) {
+            var eMenuButton = createMenuSvg();
+            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+            eMenuButton.onclick = function () {
+                _this.advancedFilter.showFilter(colDef, this);
+            };
+            headerCell.appendChild(eMenuButton);
+        }
 
         //label div
         var headerCellLabel = document.createElement("div");
@@ -2136,22 +2369,35 @@ define('../src/angularGrid',[
         });
 
         return eRow;
-    }
+    };
 
     Grid.prototype.createCell = function(colDef, value, rowIndex, colIndex) {
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
-        if (value) {
-            eGridCell.innerText = value;
+        if (colDef.cellRenderer) {
+            var resultFromRenderer = colDef.cellRenderer(value);
+            eGridCell.innerHTML = resultFromRenderer;
         } else {
-            eGridCell.innerHTML = "&nbsp;";
+            //if we insert undefined, then it displays as the string 'undefined', ugly!
+            if (value!==undefined) {
+                eGridCell.innerText = value;
+            }
         }
 
         if (colDef.cellCss) {
             Object.keys(colDef.cellCss).forEach(function(key) {
                 eGridCell.style[key] = colDef.cellCss[key];
             });
+        }
+
+        if (colDef.cellCssFunc) {
+            var cssObjFromFunc = colDef.cellCssFunc(value);
+            if (cssObjFromFunc) {
+                Object.keys(cssObjFromFunc).forEach(function(key) {
+                    eGridCell.style[key] = cssObjFromFunc[key];
+                });
+            }
         }
 
         if (this.gridOptions.cellCssFormatter) {
@@ -2264,7 +2510,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-advanced-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-advanced-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-advanced-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-advanced-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-standard .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-standard .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: white;\r\n}\r\n\r\n.ag-dark .ag-advanced-filter-select-all-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-advanced-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
+('.ag-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-standard .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-standard .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: white;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-root {\r\n    height: 100%;\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    padding-top: 25px;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n.ag-standard .ag-root {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-cell {\r\n    border-right: 1px solid grey;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-standard .ag-header {\r\n    background: #C0C0C0;\r\n    border-bottom: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-header-cell {\r\n    border-right: 1px solid black;\r\n}\r\n\r\n.ag-standard .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-standard .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {
