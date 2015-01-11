@@ -8,3 +8,13 @@
 body {
     font-size: 20px;
 }
+
+.dot {
+    font-size: 13px;
+    position: relative;
+    top: -3px;
+}
+
+.checkitem {
+    color: darkgreen;
+}

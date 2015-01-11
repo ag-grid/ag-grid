@@ -1,4 +1,6 @@
-//Angular Grid
+// Angular Grid
+// Written by Niall Crosby
+// www.angulargrid.com
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

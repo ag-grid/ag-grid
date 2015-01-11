@@ -8,8 +8,9 @@ define([
     "text!./angularGrid.html",
     "./utils",
     "./filterManager",
+    "./groupCreator",
     "css!./angularGrid"
-], function(angular, template, utils, advancedFilterFactory) {
+], function(angular, template, utils, filterManagerFactory, groupCreator) {
 
     var module = angular.module("angularGrid", []);
 
@@ -59,7 +60,7 @@ define([
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
-        this.advancedFilter = advancedFilterFactory(this);
+        this.advancedFilter = filterManagerFactory(this);
 
         this.addScrollListener();
 
