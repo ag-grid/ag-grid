@@ -141,7 +141,7 @@ define([
             var decPart = (arParts.length > 1 ? arParts[1] : '');
             decPart = (decPart + '00').substr(0,2);
 
-            return '£ ' + intPart + decimalSeparator + decPart;
+            return '&pound; ' + intPart + decimalSeparator + decPart;
         }
     }
 
