@@ -1,4 +1,6 @@
-//Angular Grid
+// Angular Grid
+// Written by Niall Crosby
+// www.angulargrid.com
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -1677,6 +1679,68 @@ define('../src/filterManager',[
 
 });
 
+define('../src/group',[
+
+], function() {
+
+    function Group(col, key) {
+        this.col = col;
+        this.key = key;
+        this.expanded = false;
+        this.children = [];
+    }
+
+    Group.prototype.setExpanded = function(expanded) {
+        this.expanded = expanded;
+    };
+
+    Group.prototype.isExpanded = function() {
+        return this.expanded;
+    };
+
+    Group.prototype.addChild = function(child) {
+        this.children.push(child);
+    };
+
+    return Group;
+});
+define('../src/groupCreator',[
+    "./group"
+],function(Group) {
+
+    function GroupCreator() {
+    }
+
+    GroupCreator.prototype.createGroup = function(rowData, groupBy) {
+        //iterate through items
+        var groupByCol = groupBy[0];
+
+        var groups = {};
+
+        rowData.forEach(function (item) {
+            var groupKey = item[groupByCol.field];
+            //if group doesn't exist yet, create it
+            var group = groups[groupKey];
+            if (!group) {
+                group = new Group(groupByCol, groupKey);
+                groups[groupKey] = group;
+            }
+            group.addChild(item);
+        });
+
+        var result = [];
+        Object.keys(groups).forEach(function(item){
+            result.push(item);
+        });
+
+        return result;
+    };
+
+    return function() {
+        return new GroupCreator();
+    };
+
+});
 
 define('css!../src/angularGrid',[],function(){});
 
@@ -1689,8 +1753,9 @@ define('../src/angularGrid',[
     "text!./angularGrid.html",
     "./utils",
     "./filterManager",
+    "./groupCreator",
     "css!./angularGrid"
-], function(angular, template, utils, advancedFilterFactory) {
+], function(angular, template, utils, filterManagerFactory, groupCreator) {
 
     var module = angular.module("angularGrid", []);
 
@@ -1740,7 +1805,7 @@ define('../src/angularGrid',[
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
-        this.advancedFilter = advancedFilterFactory(this);
+        this.advancedFilter = filterManagerFactory(this);
 
         this.addScrollListener();
 
