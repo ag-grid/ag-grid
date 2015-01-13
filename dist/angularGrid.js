@@ -1767,8 +1767,8 @@ define('../src/angularGrid',[
     var ASC = "asc";
     var DESC = "desc";
 
-    var SORT_STYLE_SHOW = "visibility:visible;";
-    var SORT_STYLE_HIDE = "visibility:hidden;";
+    var SORT_STYLE_SHOW = "display:inline;";
+    var SORT_STYLE_HIDE = "display:none;";
 
     module.directive("angularGrid", function () {
         return {
@@ -2268,8 +2268,8 @@ define('../src/angularGrid',[
         var _this = this;
         this.gridOptions.columnDefs.forEach(function(colDef) {
             var filterPresent = _this.advancedFilter.isFilterPresentForCol(colDef.field);
-            var visibilityStyle = filterPresent ? "visible" : "hidden";
-            _this.headerFilterIcons[colDef.field].style.visibility = visibilityStyle;
+            var displayStyle = filterPresent ? "inline" : "none";
+            _this.headerFilterIcons[colDef.field].style.display = displayStyle;
         });
     };
 
@@ -2295,12 +2295,16 @@ define('../src/angularGrid',[
                 //update visibility of icons
                 var sortAscending = colToClear.sort===ASC;
                 var sortDescending = colToClear.sort===DESC;
+                var sortAny = sortAscending || sortDescending;
 
                 var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
                 eSortAscending.setAttribute("style", sortAscending ? SORT_STYLE_SHOW : SORT_STYLE_HIDE);
 
                 var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
                 eSortDescending.setAttribute("style", sortDescending ? SORT_STYLE_SHOW : SORT_STYLE_HIDE);
+
+                var eParentSvg = eSortAscending.parentNode;
+                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
             _this.doSort();
@@ -2522,11 +2526,11 @@ define('../src/angularGrid',[
 
     function createFilterSvg() {
         var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "12");
-        eSvg.setAttribute("height", "12");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
 
         var eFunnel = document.createElementNS(SVG_NS, "polygon");
-        eFunnel.setAttribute("points", "0,0 5,5 5,12 7,12 7,5 12,0");
+        eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
         eFunnel.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eFunnel);
 
