@@ -25,6 +25,8 @@ define([
     var SORT_STYLE_SHOW = "display:inline;";
     var SORT_STYLE_HIDE = "display:none;";
 
+    var ROW_BUFFER_SIZE = 5;
+
     module.directive("angularGrid", function () {
         return {
             restrict: "A",
@@ -199,6 +201,7 @@ define([
 
     Grid.prototype.setupColumns = function () {
         this.ensureEachColHasSize();
+        this.showPinnedColContainersIfNeeded();
         this.insertHeader();
         this.setPinnedColContainerWidth();
         this.setBodyContainerWidth();
@@ -308,6 +311,19 @@ define([
         this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
         //this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
         this.eHeader = eGrid.querySelector(".ag-header");
+    };
+
+    Grid.prototype.showPinnedColContainersIfNeeded = function () {
+        var showingPinnedCols = this.getPinnedColCount() > 0;
+        //some browsers had layout issues with the blank divs, so if blank,
+        //we don't display them
+        if (showingPinnedCols) {
+            this.ePinnedHeader.style.display = 'inline-block';
+            this.ePinnedColsViewport.style.display = 'inline';
+        } else {
+            this.ePinnedHeader.style.display = 'none';
+            this.ePinnedColsViewport.style.display = 'none';
+        }
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
@@ -629,6 +645,10 @@ define([
 
         var firstRow = Math.floor(topPixel / this.gridOptions.rowHeight);
         var lastRow = Math.floor(bottomPixel / this.gridOptions.rowHeight);
+
+        //add in buffer
+        firstRow = firstRow - ROW_BUFFER_SIZE;
+        lastRow = lastRow + ROW_BUFFER_SIZE;
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
