@@ -39,7 +39,8 @@
                 enableFilter: true, //one of [true, false]
                 rowSelection: "single", // one of ['single','multiple']
                 rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
-                selectionChanged: function() {console.log("Callback selectionChanged"); } //callback when selection changed
+                selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
+                rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
             };
 
             createCols();

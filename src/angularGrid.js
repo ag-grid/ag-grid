@@ -108,12 +108,17 @@ define([
         this.updateFilterIcons();
     };
 
-    Grid.prototype.onRowClicked = function (rowIndex) {
+    Grid.prototype.onRowClicked = function (event, rowIndex) {
+        var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
+
+        if (this.gridOptions.rowClicked) {
+            this.gridOptions.rowClicked(row, event);
+        }
+
         //if no selection method enabled, do nothing
         if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
             return;
         }
-        var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
 
         //if not in array, then it's a new selection, thus selected = true
         var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
@@ -393,7 +398,6 @@ define([
         }
     };
 
-    //todo: make this only happen if size changes, and only when visible
     Grid.prototype.setBodySize = function() {
         var _this = this;
 
@@ -409,41 +413,6 @@ define([
             }
         }
 
-        if (!this.finished) {
-            setTimeout(function() {
-                _this.setBodySize();
-            }, 200);
-        }
-    };
-
-    Grid.prototype.setBodySize2 = function() {
-        //if (this.eGrid.is(":visible")) {
-        if (true) {
-            var availableHeight = this.eRoot.offsetHeight;
-            var headerHeight = this.eHeader.offsetHeight;
-            var bodyHeight = availableHeight - headerHeight;
-            if (bodyHeight<0) {
-                bodyHeight = 0;
-            }
-            console.log("availableHeight = " + availableHeight + ", headerHeight = " + headerHeight + ", bodyHeight = " + bodyHeight);
-
-            if (this.bodyHeightLastTime != bodyHeight) {
-                this.bodyHeightLastTime = bodyHeight;
-                this.eBody.style.height = bodyHeight + "px";
-                //only draw virtual rows if done sort & filter - this
-                //means we don't draw rows if table is not yet initialised
-                if (this.gridOptions.rowDataAfterSortAndFilter) {
-                    this.drawVirtualRows();
-                }
-            }
-
-            //because of change in height, scroll may now be present
-            this.setPinnedColHeight();
-        }
-
-        var _this = this;
-        //the table can change size, so keep calling his to keep it fresh.
-        //not using angular $timeout, do not want to trigger a digest cycle
         if (!this.finished) {
             setTimeout(function() {
                 _this.setBodySize();
@@ -708,8 +677,8 @@ define([
         eRow.style.height = (this.gridOptions.rowHeight) + "px";
 
         var _this = this;
-        eRow.addEventListener("click", function() {
-            _this.onRowClicked(Number(this.getAttribute("row")))
+        eRow.addEventListener("click", function(event) {
+            _this.onRowClicked(event, Number(this.getAttribute("row")))
         });
 
         return eRow;
