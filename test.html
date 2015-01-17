@@ -64,6 +64,15 @@
                 <option value="ag-dark">Dark</option>
             </select>
 
+            Group By:
+            <select ng-model="groupBy" ng-change="onGroupByChanged()" style="width: 90px;">
+                <option value="">-none-</option>
+                <option value="continent">Continent</option>
+                <option value="language">Language</option>
+                <option value="continent,language">Continent, Language</option>
+                <option value="language,continent">Language, Continent</option>
+            </select>
+
         </div>
         <!-- Second row of header, has quick filter -->
         <div style="padding: 4px;">

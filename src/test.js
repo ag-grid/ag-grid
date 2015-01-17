@@ -7,38 +7,78 @@ define([
 
     gridsModule.controller('mainController', function($scope) {
 
-        var colNames = ["Country","Game","Bought","Price","Test", "Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
-        var countries = ["Ireland","Spain", "United Kingdom", "France", "Germany", "Brazil", "Sweden", "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta"];
+        var colNames = ["Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+
+        var countries = [
+            {country: "Ireland", continent: "Europe", language: "English"},
+            {country: "Spain", continent: "Europe", language: "Spanish"},
+            {country: "United Kingdom", continent: "Europe", language: "English"},
+            {country: "France", continent: "Europe", language: "French"},
+            {country: "Germany", continent: "Europe", language: "(other)"},
+            {country: "Sweden", continent: "Europe", language: "(other)"},
+            {country: "Norway", continent: "Europe", language: "(other)"},
+            {country: "Italy", continent: "Europe", language: "(other)"},
+            {country: "Greece", continent: "Europe", language: "(other)"},
+            {country: "Iceland", continent: "Europe", language: "(other)"},
+            {country: "Portugal", continent: "Europe", language: "Portuguese"},
+            {country: "Malta", continent: "Europe", language: "(other)"},
+            {country: "Brazil", continent: "South America", language: "Portuguese"},
+            {country: "Argentina", continent: "South America", language: "Spanish"},
+            {country: "Colombia", continent: "South America", language: "Spanish"},
+            {country: "Peru", continent: "South America", language: "Spanish"},
+            {country: "Venezuela", continent: "South America", language: "Spanish"},
+            {country: "Uruguay", continent: "South America", language: "Spanish"}
+        ];
+
         var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
             "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
             "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
             "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
             "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
-            "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello", null, undefined
+            "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
         ];
         var booleanValues = [true, "true", false, "false", null, undefined, ""];
-        var testValues = ["", null, undefined, "String A", "String B", 111, 222];
+
+        var firstNames = ["Sophie","Isabelle","Emily","Olivia","Lily","Chloe","Isabella",
+            "Amelia","Jessica","Sophia","Ava","Charlotte","Mia","Lucy","Grace","Ruby",
+            "Ella","Evie","Freya","Isla","Poppy","Daisy","Layla"];
+        var lastNames = ["Beckham","Black","Braxton","Brennan","Brock","Bryson","Cadwell",
+            "Cage","Carson","Chandler","Cohen","Cole","Corbin","Dallas","Dalton","Dane",
+            "Donovan","Easton","Fisher","Fletcher","Grady","Greyson","Griffin","Gunner",
+            "Hayden","Hudson","Hunter","Jacoby","Jagger","Jaxon","Jett","Kade","Kane",
+            "Keating","Keegan","Kingston","Kobe"];
 
         $scope.colCount = 20;
-        $scope.rowCount = 100;
+        $scope.rowCount = 1000;
 
         $scope.width = "100%";
         $scope.height = "100%";
         $scope.style = "ag-fresh";
+        $scope.groupBy = "";
 
         $scope.angularGrid = {
             columnDefs: [],
             rowData: [],
-            pinnedColumnCount: 2, //and integer, zero or more, default is 0
+            groupKeys: undefined, //set as string of keys eg ["region","country"],
+            pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
-            rowSelection: "single", // one of ['single','multiple']
+            rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
         };
+
+        var defaultCols = [
+            {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
+            {displayName: "Country", field: "country", width: 200, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 30},
+            {displayName: "Language", field: "language", width: 200},
+            {displayName: "Wanted Game", field: "game", width: 200},
+            {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
+            {displayName: "Quoted Price", field: "price", width: 100, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc}
+        ];
 
         createCols();
         createData();
@@ -50,14 +90,25 @@ define([
 
         $scope.onColCountChanged = function() {
             createCols();
-            //$scope.angularGrid.pinnedColumnCount =
             $scope.angularGrid.api.onNewCols();
         };
 
+        $scope.onGroupByChanged = function() {
+            var groupBy = null;
+            if ($scope.groupBy!=="") {
+                groupBy = $scope.groupBy.split(",");
+            }
+            $scope.angularGrid.groupKeys = groupBy;
+            $scope.angularGrid.api.onNewRows();
+        };
+
         function createCols() {
-            var columns = [];
             var colCount = parseInt($scope.colCount);
-            for (var col = 0; col<colCount; col++) {
+
+            //start with a copy of the default cols
+            var columns = defaultCols.slice(0);
+
+            for (var col = defaultCols.length; col<colCount; col++) {
                 var colName = colNames[col % colNames.length];
                 var cellRenderer = undefined;
                 var cellCss = undefined;
@@ -65,21 +116,6 @@ define([
                 var filterCellRenderer = undefined;
                 var cellCssFunc = undefined;
                 var filterCellHeight = undefined;
-                if (colName=="Bought") {
-                    cellRenderer = booleanCellRenderer;
-                    cellCss = {"text-align": "center"};
-                    comparator = booleanComparator;
-                    filterCellRenderer = booleanFilterCellRenderer;
-                } else if (colName=="Price") {
-                    cellRenderer = currencyRenderer;
-                    filterCellRenderer = currencyRenderer;
-                    cellCss = {"text-align": "right"};
-                    cellCssFunc = currencyCssFunc;
-                } else if (colName=="Country") {
-                    cellRenderer = countryCellRenderer;
-                    filterCellRenderer = countryFilterCellRenderer;
-                    filterCellHeight = 30;
-                }
                 var colDef = {displayName: colName, field: "col"+col, width: 200,
                     cellRenderer: cellRenderer, filterCellRenderer: filterCellRenderer, filterCellHeight: filterCellHeight,
                     comparator: comparator, cellCss: cellCss, cellCssFunc: cellCssFunc};
@@ -94,25 +130,26 @@ define([
             var data = [];
             for (var row = 0; row<rowCount; row++) {
                 var rowItem = {};
-                for (var col = 0; col<colCount; col++) {
+
+                //create data for the known columns
+                var countryData = countries[row % countries.length];
+                rowItem.country = countryData.country;
+                rowItem.continent = countryData.continent;
+                rowItem.language = countryData.language;
+
+                var firstName = firstNames[row % firstNames.length];
+                var lastName = lastNames[row % lastNames.length];
+                rowItem.name = firstName + " " + lastName;
+
+                rowItem.game = games[row % games.length];
+                rowItem.price = ((Math.round(Math.random()*10000))/100) - 20;
+                rowItem.bought = booleanValues[row % booleanValues.length];
+
+                //create dummy data for the additional columns
+                for (var col = defaultCols.length; col<colCount; col++) {
                     var value;
-                    if (colNames[col % colNames.length]==="Country") {
-                        value = countries[row % countries.length];
-                    } else if (colNames[col % colNames.length]==="Game") {
-                        value = games[row % games.length];
-                    } else if (colNames[col % colNames.length]==="Bought") {
-                        //this is the sample boolean value
-                        value = booleanValues[row % booleanValues.length];
-                    } else if (colNames[col % colNames.length]==="Price") {
-                        //generate a number between -20 and 80, to two decimal places
-                        value = ((Math.round(Math.random()*10000))/100) - 20;
-                    } else if (colNames[col % colNames.length]==="Test") {
-                        //generate a number between -20 and 80, to two decimal places
-                        value = testValues[row % testValues.length];
-                    } else {
-                        var randomBit = Math.random().toString().substring(2,5);
-                        value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
-                    }
+                    var randomBit = Math.random().toString().substring(2,5);
+                    value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
                     rowItem["col"+col] = value;
                 }
                 data.push(rowItem);
@@ -120,7 +157,45 @@ define([
             $scope.angularGrid.rowData = data;
         }
 
+        //because name is the first col, if grouping present, we want to indent it.
+        //this method is inside the controller as we access the scope
+        function nameCssFunc(value) {
+            var style = {};
+            if ($scope.angularGrid.groupKeys) {
+                switch ($scope.angularGrid.groupKeys.length) {
+                    case 1 :
+                        style["padding-left"] = "30px";
+                        break;
+                    case 2 :
+                        style["padding-left"] = "40px";
+                        break;
+                }
+            }
+            return style;
+        }
+
     });
+
+    var COUNTRY_CODES = {
+        Ireland: "ie",
+        Spain: "es",
+        "United Kingdom": "gb",
+        France: "fr",
+        Germany: "de",
+        Sweden: "se",
+        Italy: "is",
+        Greece: "gr",
+        Iceland: "is",
+        Portugal: "pt",
+        Malta: "mt",
+        Norway: "no",
+        Brazil: "br",
+        Argentina: "ar",
+        Colombia: "co",
+        Peru: "pe",
+        Venezuela: "ve",
+        Uruguay: "uy"
+    };
 
     function currencyCssFunc(value) {
         if (value!==null && value!==undefined && value<0) {
@@ -195,9 +270,10 @@ define([
         if (value==="" || value===undefined || value===null) {
             return null;
         } else {
-            var flag = "<img border='0' width='20' height='15' src='http://www.angulargrid.com/flags/"+value.toLowerCase().replace(" ", "_")+".png'>";
-            var link = "<a href='http://en.wikipedia.org/wiki/" + value + "'>"+value+"</a>";
-            return flag + link;
+            var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
+            var link = "<a href='http://en.wikipedia.org/wiki/" + value + "' style='text-decoration: none;'> "+value+"</a>";
+            var padding = 0;
+            return "<span style='padding-left: "+padding+"px'>"+flag + link+"</span>";
         }
     }
 
@@ -205,8 +281,8 @@ define([
         if (value==="" || value===undefined || value===null) {
             return "(no country)";
         } else {
-            var flag = "<img border='0' width='40' height='25' src='http://www.angulargrid.com/flags/"+value.toLowerCase().replace(" ", "_")+".png'>";
-            return "<span style='font-weight: bold; font-size: 14px;'>" + flag + value + "</span>";
+            var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
+            return "<span style='font-weight: bold; font-size: 14px;'> " + flag + value + "</span>";
         }
     }
 
