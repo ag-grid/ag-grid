@@ -1690,66 +1690,75 @@ define('../src/filterManager',[
 
 });
 
-define('../src/group',[
-
-], function() {
-
-    function Group(col, key) {
-        this.col = col;
-        this.key = key;
-        this.expanded = false;
-        this.children = [];
-    }
-
-    Group.prototype.setExpanded = function(expanded) {
-        this.expanded = expanded;
-    };
-
-    Group.prototype.isExpanded = function() {
-        return this.expanded;
-    };
-
-    Group.prototype.addChild = function(child) {
-        this.children.push(child);
-    };
-
-    return Group;
-});
 define('../src/groupCreator',[
-    "./group"
-],function(Group) {
+],function() {
 
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.createGroup = function(rowData, groupBy) {
-        //iterate through items
-        var groupByCol = groupBy[0];
+    GroupCreator.prototype.group = function(rowData, groupByFields) {
 
-        var groups = {};
+        var topMostGroup = {
+            level: -1,
+            children: [],
+            childrenMap: {}
+        };
 
-        rowData.forEach(function (item) {
-            var groupKey = item[groupByCol.field];
-            //if group doesn't exist yet, create it
-            var group = groups[groupKey];
-            if (!group) {
-                group = new Group(groupByCol, groupKey);
-                groups[groupKey] = group;
+        var allGroups = [];
+        allGroups.push(topMostGroup);
+
+        var levelToInsertChild = groupByFields.length - 1;
+        var i, currentLevel, item, currentGroup, groupByField, groupKey, nextGroup;
+
+        for (i = 0; i<rowData.length; i++) {
+            item = rowData[i];
+
+            for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
+                groupByField = groupByFields[currentLevel];
+                groupKey = item[groupByField];
+
+                if (currentLevel==0) {
+                    currentGroup = topMostGroup;
+                }
+
+                //if group doesn't exist yet, create it
+                nextGroup = currentGroup.childrenMap[groupKey];
+                if (!nextGroup) {
+                    nextGroup = {
+                        _angularGrid_group: true,
+                        field: groupByField,
+                        key: groupKey,
+                        expanded: false,
+                        children: [],
+                        allChildrenCount: 0,
+                        level: currentGroup.level + 1,
+                        childrenMap: {}//this is a temporary map, we remove at the end of this method
+                    };
+                    currentGroup.childrenMap[groupKey] = nextGroup;
+                    currentGroup.children.push(nextGroup);
+                    allGroups.push(nextGroup);
+                }
+
+                nextGroup.allChildrenCount++;
+
+                if (currentLevel==levelToInsertChild) {
+                    nextGroup.children.push(item);
+                } else {
+                    currentGroup = nextGroup;
+                }
             }
-            group.addChild(item);
-        });
 
-        var result = [];
-        Object.keys(groups).forEach(function(item){
-            result.push(item);
-        });
+        }
 
-        return result;
+        //remove the temporary map
+        for (i = 0; i<allGroups.length; i++) {
+            delete allGroups[i].childrenMap;
+        }
+
+        return topMostGroup.children;
     };
 
-    return function() {
-        return new GroupCreator();
-    };
+    return new GroupCreator();
 
 });
 
@@ -1782,6 +1791,11 @@ define('../src/angularGrid',[
     var SORT_STYLE_HIDE = "display:none;";
 
     var ROW_BUFFER_SIZE = 5;
+
+    var STEP_EVERYTHING = 0;
+    var STEP_FILTER = 1;
+    var STEP_SORT = 2;
+    var STEP_MAP = 3;
 
     module.directive("angularGrid", function () {
         return {
@@ -1828,7 +1842,10 @@ define('../src/angularGrid',[
         this.setupColumns();
 
         //done when rows change
-        this.setupRows();
+        this.setupRows(STEP_EVERYTHING);
+
+        //var colsToGroupBy = [this.gridOptions.columnDefs[0], this.gridOptions.columnDefs[1]];
+        //var groupedResult = groupCreator.group(this.gridOptions.rowData, colsToGroupBy);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -1860,12 +1877,12 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.onFilterChanged = function () {
-        this.setupRows();
+        this.setupRows(STEP_FILTER);
         this.updateFilterIcons();
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
-        var row = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
+        var row = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap[rowIndex];
 
         if (this.gridOptions.rowClicked) {
             this.gridOptions.rowClicked(row, event);
@@ -1913,39 +1930,89 @@ define('../src/angularGrid',[
 
     };
 
+    Grid.prototype.doesRowPassFilter = function(item, quickFilterPresent, advancedFilterPresent) {
+        //first up, check quick filter
+        if (quickFilterPresent) {
+            if (!item._quickFilterAggregateText) {
+                this.aggregateRowForQuickFilter(item);
+            }
+            if (item._quickFilterAggregateText.indexOf(this.quickFilter) < 0) {
+                //quick filter fails, so skip item
+                return false;
+            }
+        }
+
+        //second, check advanced filter
+        if (advancedFilterPresent) {
+            if (!this.advancedFilter.doesFilterPass(item)) {
+                return false;
+            }
+        }
+
+        //got this far, all filters pass
+        return true;
+    };
+
+    Grid.prototype.getTotalChildCount = function(items) {
+        var count = 0;
+        for (var i = 0, l = items.length; i<l; i++) {
+            var item = items[i];
+            var itemIsAGroup = item && item._angularGrid_group;
+            if (itemIsAGroup) {
+                count += item.allChildrenCount;
+            } else {
+                count++;
+            }
+        }
+        return count;
+    };
+
+    Grid.prototype.filterItems = function (items, quickFilterPresent, advancedFilterPresent) {
+        var result = [];
+
+        for (var i = 0, l = items.length; i < l; i++) {
+            var item = items[i];
+
+            var itemIsAGroup = item && item._angularGrid_group;
+            if (itemIsAGroup) {
+                //deal with group
+                var filteredChildren = this.filterItems(item.children, quickFilterPresent, advancedFilterPresent);
+                if (filteredChildren.length>0) {
+                    var allChildrenCount = this.getTotalChildCount(filteredChildren);
+                    var newGroup = this.copyGroup(item, filteredChildren, allChildrenCount);
+                    result.push(newGroup);
+                }
+            } else {
+                if (this.doesRowPassFilter(item, quickFilterPresent, advancedFilterPresent)) {
+                    result.push(item);
+                }
+            }
+        }
+
+        return result;
+    };
+
+    Grid.prototype.copyGroup = function (group, children, allChildrenCount) {
+       return {
+           _angularGrid_group: true,
+           field: group.field,
+           key: group.key,
+           expanded: group.expanded,
+           children: children,
+           allChildrenCount: allChildrenCount,
+           level: group.level
+       };
+    };
+
     Grid.prototype.doFilter = function () {
-        var _this = this;
         var quickFilterPresent = this.quickFilter !== null && this.quickFilter !== undefined && this.quickFilter !== "";
         var advancedFilterPresent = this.advancedFilter.isFilterPresent();
         var filterPresent = quickFilterPresent || advancedFilterPresent;
 
         if (filterPresent) {
-            this.gridOptions.rowDataAfterFilter = [];
-            for (var i = 0, l = this.gridOptions.rowData.length; i < l; i++) {
-                var item = this.gridOptions.rowData[i];
-                //first up, check quick filter
-                if (quickFilterPresent) {
-                    if (!item._quickFilterAggregateText) {
-                        _this.aggregateRowForQuickFilter(item);
-                    }
-                    if (item._quickFilterAggregateText.indexOf(_this.quickFilter) < 0) {
-                        //quick filter fails, so skip item
-                        continue;
-                    }
-                }
-
-                //second, check advanced filter
-                if (advancedFilterPresent) {
-                    if (!this.advancedFilter.doesFilterPass(item)) {
-                        continue;
-                    }
-                }
-
-                //got this far, all filters pass
-                this.gridOptions.rowDataAfterFilter.push(item);
-            }
+            this.gridOptions.rowDataAfterGroupAndFilter = this.filterItems(this.gridOptions.rowDataAfterGroup, quickFilterPresent, advancedFilterPresent);
         } else {
-            this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
+            this.gridOptions.rowDataAfterGroupAndFilter = this.gridOptions.rowDataAfterGroup;
         }
     };
 
@@ -1974,16 +2041,54 @@ define('../src/angularGrid',[
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.setupRows = function () {
+    Grid.prototype.doGrouping = function () {
+        var groupedData;
+        if (this.gridOptions.groupKeys) {
+            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys);
+        } else {
+            groupedData = this.gridOptions.rowData;
+        }
+        this.gridOptions.rowDataAfterGroup = groupedData;
+    };
 
-        this.doFilter();
-        this.doSort();
+    Grid.prototype.addToMap = function (mappedData, originalList) {
+        for (var i = 0; i<originalList.length; i++) {
+            var data = originalList[i];
+            mappedData.push(data);
+            var rowIsAGroup = data && data._angularGrid_group; //_angularGrid_group is set to true on groups
+            if (rowIsAGroup && data.expanded) {
+                this.addToMap(mappedData, data.childrenAfterSort);
+            }
+        }
+    };
 
-        //in time, replace this with filter
-        //this.gridOptions.rowDataAfterFilter = this.gridOptions.rowData.slice(0);
-        //this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowData.slice(0);
+    Grid.prototype.doGroupMapping = function () {
+        var mappedData;
+        if (this.gridOptions.groupKeys) {
+            mappedData = [];
+            this.addToMap(mappedData, this.gridOptions.rowDataAfterGroupAndFilterAndSort);
+        } else {
+            mappedData = this.gridOptions.rowDataAfterGroupAndFilterAndSort;
+        }
+        this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap = mappedData;
+    };
 
-        var rowCount = this.gridOptions.rowDataAfterFilter.length;
+    Grid.prototype.setupRows = function (step) {
+
+        switch (step) {
+            case STEP_EVERYTHING :
+                this.doGrouping(); //populates rowDataAfterGroup
+            case STEP_FILTER :
+                this.doFilter(); //populates rowDataAfterGroupAndFilter
+            case STEP_SORT :
+                this.doSort(); //populates rowDataAfterGroupAndFilterAndSort
+            case STEP_MAP :
+                this.doGroupMapping(); //rowDataAfterGroupAndFilterAndSortAndMap
+        }
+
+        //map to rows
+
+        var rowCount = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap.length;
         var containerHeight = this.gridOptions.rowHeight * rowCount;
         this.eBodyContainer.style.height = containerHeight + "px";
         this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -2009,33 +2114,56 @@ define('../src/angularGrid',[
             }
         });
 
-        this.gridOptions.rowDataAfterSortAndFilter = this.gridOptions.rowDataAfterFilter.slice(0);
+        this.gridOptions.rowDataAfterGroupAndFilterAndSort = this.gridOptions.rowDataAfterGroupAndFilter.slice(0);
 
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
             var ascending = colDefForSorting.sort === ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.gridOptions.rowDataAfterSortAndFilter.sort(function (objA, objB) {
-                //hack to stop crashing, in case user isn't supplying objects
-                if (objA === null || objA === undefined || objB === null || objB === undefined) {
-                    return 0;
-                }
-                var valueA = objA[keyForSort];
-                var valueB = objB[keyForSort];
+            this.sortList(this.gridOptions.rowDataAfterGroupAndFilterAndSort, keyForSort, colDefForSorting, inverter);
+        } else {
+            //if no sorting, set all group children after sort to the original list
+            this.resetSortInGroups(this.gridOptions.rowDataAfterGroupAndFilterAndSort);
+        }
+    };
 
-                if (colDefForSorting.comparator) {
-                    //if comparator provided, use it
-                    return colDefForSorting.comparator(valueA, valueB) * inverter;
-                } else {
-                    //otherwise do our own comparison
-                    return utils.defaultComparator(valueA, valueB) * inverter;
-                }
+    Grid.prototype.resetSortInGroups = function(items) {
+        for (var i = 0, l = items.length; i<l; i++) {
+            var item = items[i];
+            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
+            if (rowIsAGroup) {
+                item.childrenAfterSort = item.children;
+                this.resetSortInGroups(item.children);
+            }
+        }
+    };
 
-            });
+    Grid.prototype.sortList = function (listForSorting, keyForSort, colDefForSorting, inverter) {
+
+        //sort any groups recursively
+        for (var i = 0, l = listForSorting.length; i<l; i++) {
+            var item = listForSorting[i];
+            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
+            if (rowIsAGroup) {
+                item.childrenAfterSort = item.children.slice(0);
+                this.sortList(item.childrenAfterSort, keyForSort, colDefForSorting, inverter);
+            }
         }
 
-        this.refreshAllVirtualRows();
+        listForSorting.sort(function (objA, objB) {
+            var valueA = objA[keyForSort];
+            var valueB = objB[keyForSort];
+
+            if (colDefForSorting.comparator) {
+                //if comparator provided, use it
+                return colDefForSorting.comparator(valueA, valueB) * inverter;
+            } else {
+                //otherwise do our own comparison
+                return utils.defaultComparator(valueA, valueB) * inverter;
+            }
+
+        });
     };
 
     Grid.prototype.addApi = function () {
@@ -2044,7 +2172,7 @@ define('../src/angularGrid',[
             onNewRows: function () {
                 _this.gridOptions.selectedRows.length = 0;
                 _this.advancedFilter.clearAllFilters();
-                _this.setupRows();
+                _this.setupRows(STEP_EVERYTHING);
                 _this.updateFilterIcons();
             },
             onNewCols: function () {
@@ -2056,7 +2184,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
-        this.setupRows();
+        this.setupRows(STEP_EVERYTHING);
     }
 
     Grid.prototype.findAllElements = function ($element) {
@@ -2108,7 +2236,7 @@ define('../src/angularGrid',[
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var data = this.gridOptions.rowDataAfterSortAndFilter[rowIndex];
+            var data = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap[rowIndex];
             if (data) {
                 _this.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
             }
@@ -2164,7 +2292,7 @@ define('../src/angularGrid',[
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.gridOptions.rowDataAfterSortAndFilter) {
+            if (this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap) {
                 this.drawVirtualRows();
             }
         }
@@ -2303,7 +2431,7 @@ define('../src/angularGrid',[
                 eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
-            _this.doSort();
+            _this.setupRows(STEP_SORT);
         });
     };
 
@@ -2393,8 +2521,15 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
-        var ePinnedRow = this.createRowContainer(rowIndex, data);
-        var eMainRow = this.createRowContainer(rowIndex, data);
+        //if no cols, don't draw row
+        if (!this.gridOptions.columnDefs || this.gridOptions.columnDefs.length==0) {
+            return;
+        }
+
+        var rowIsAGroup = data && data._angularGrid_group; //_angularGrid_group is set to true on groups
+
+        var ePinnedRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
+        var eMainRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
         var _this = this;
 
         this.rowsInBodyContainer[rowIndex] = eMainRow;
@@ -2402,21 +2537,45 @@ define('../src/angularGrid',[
 
         eMainRow.style.width = mainRowWidth+"px";
 
-        this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
-            var eGridCell = _this.createCell(colDef, data[colDef.field], rowIndex, colIndex);
-
-            if (colIndex>=pinnedColumnCount) {
-                eMainRow.appendChild(eGridCell);
+        //if group item, insert the first row
+        if (rowIsAGroup) {
+            var firstCol = this.gridOptions.columnDefs[0];
+            var eGroupCell = _this.createGroupCell(data, firstCol);
+            if (pinnedColumnCount>0) {
+                ePinnedRow.appendChild(eGroupCell);
             } else {
-                ePinnedRow.appendChild(eGridCell);
+                eMainRow.appendChild(eGroupCell);
             }
-        });
+
+            //draw in blank cells for the rest of the row
+            this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+                if (colIndex==0) { //skip first col, as this is the group col we already inserted
+                    return;
+                }
+                _this.createCellFromColDef(colDef, null, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+            });
+
+        } else {
+            this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+            });
+        }
 
         this.ePinnedColsContainer.appendChild(ePinnedRow);
         this.eBodyContainer.appendChild(eMainRow);
     };
 
-    Grid.prototype.createRowContainer = function(rowIndex, row) {
+    Grid.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow) {
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex);
+
+        if (colIndex>=pinnedColumnCount) {
+            eMainRow.appendChild(eGridCell);
+        } else {
+            ePinnedRow.appendChild(eGridCell);
+        }
+    };
+
+    Grid.prototype.createRowContainer = function(rowIndex, row, groupRow) {
         var eRow = document.createElement("div");
         var classesList = ["ag-row"];
         classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
@@ -2432,20 +2591,44 @@ define('../src/angularGrid',[
         eRow.style.top = (this.gridOptions.rowHeight * rowIndex) + "px";
         eRow.style.height = (this.gridOptions.rowHeight) + "px";
 
-        var _this = this;
-        eRow.addEventListener("click", function(event) {
-            _this.onRowClicked(event, Number(this.getAttribute("row")))
-        });
+        if (!groupRow) {
+            var _this = this;
+            eRow.addEventListener("click", function(event) {
+                _this.onRowClicked(event, Number(this.getAttribute("row")))
+            });
+        }
 
         return eRow;
     };
 
-    Grid.prototype.createCell = function(colDef, value, rowIndex, colIndex) {
+    Grid.prototype.createGroupCell = function(data, colDef) {
+        var eGridGroupCell = document.createElement("div");
+        eGridGroupCell.className = "ag-cell cell-col-"+0;
+
+        var eSvg = createGroupSvg(data.expanded);
+        eGridGroupCell.appendChild(eSvg);
+        var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
+        eGridGroupCell.appendChild(eText);
+
+        eGridGroupCell.style.width = this.formatWidth(colDef.actualWidth);
+
+        eGridGroupCell.style.paddingLeft = ((data.level + 1) * 10) + "px";
+
+        var _this = this;
+        eGridGroupCell.addEventListener("click", function(event) {
+            data.expanded = !data.expanded;
+            _this.setupRows(STEP_MAP);
+        });
+
+        return eGridGroupCell;
+    };
+
+    Grid.prototype.createCell = function(colDef, value, data, rowIndex, colIndex) {
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value);
+            var resultFromRenderer = colDef.cellRenderer(value, data);
             eGridCell.innerHTML = resultFromRenderer;
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
@@ -2575,6 +2758,27 @@ define('../src/angularGrid',[
 
         return eSvg;
     }
+
+
+    function createGroupSvg(expanded) {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        eSvg.setAttribute("class", "ag-header-cell-sort");
+
+        if (expanded) {
+            var eAscIcon = document.createElementNS(SVG_NS, "polygon");
+            eAscIcon.setAttribute("points", "0,0 10,0 5,10");
+            eSvg.appendChild(eAscIcon);
+        } else {
+            var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+            eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+            eSvg.appendChild(eDescIcon);
+        }
+
+        return eSvg;
+    }
+
 });
 
 
