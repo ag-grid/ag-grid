@@ -1696,7 +1696,7 @@ define('../src/groupCreator',[
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields) {
+    GroupCreator.prototype.group = function(rowData, groupByFields, aggFunction) {
 
         var topMostGroup = {
             level: -1,
@@ -1755,7 +1755,26 @@ define('../src/groupCreator',[
             delete allGroups[i].childrenMap;
         }
 
+        //create data items
+        if (aggFunction) {
+            this.createAggData(topMostGroup.children, aggFunction);
+        }
+
         return topMostGroup.children;
+    };
+
+    GroupCreator.prototype.createAggData = function(children, aggFunction) {
+        for (var i = 0, l = children.length; i<l; i++) {
+            var item = children[i];
+            var itemIsAGroup = item._angularGrid_group;
+            if (itemIsAGroup) {
+                //agg function needs to start at the bottom, so traverse first
+                this.createAggData(item.children, aggFunction);
+                //after traversal, we can now do the agg at this level
+                var data = aggFunction(item.children);
+                item.aggData = data;
+            }
+        }
     };
 
     return new GroupCreator();
@@ -2044,7 +2063,7 @@ define('../src/angularGrid',[
     Grid.prototype.doGrouping = function () {
         var groupedData;
         if (this.gridOptions.groupKeys) {
-            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys);
+            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys, this.gridOptions.aggFunction);
         } else {
             groupedData = this.gridOptions.rowData;
         }
@@ -2548,11 +2567,16 @@ define('../src/angularGrid',[
             }
 
             //draw in blank cells for the rest of the row
+            var groupHasData = data.aggData!==undefined && data.aggData!==null;
             this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
                 if (colIndex==0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                _this.createCellFromColDef(colDef, null, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                var item = null;
+                if (groupHasData) {
+                    item = data.aggData[colDef.field];
+                }
+                _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
             });
 
         } else {

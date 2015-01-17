@@ -279,7 +279,7 @@ define([
     Grid.prototype.doGrouping = function () {
         var groupedData;
         if (this.gridOptions.groupKeys) {
-            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys);
+            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys, this.gridOptions.aggFunction);
         } else {
             groupedData = this.gridOptions.rowData;
         }
@@ -783,11 +783,16 @@ define([
             }
 
             //draw in blank cells for the rest of the row
+            var groupHasData = data.aggData!==undefined && data.aggData!==null;
             this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
                 if (colIndex==0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                _this.createCellFromColDef(colDef, null, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                var item = null;
+                if (groupHasData) {
+                    item = data.aggData[colDef.field];
+                }
+                _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
             });
 
         } else {

@@ -66,6 +66,7 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+            aggFunction: aggFunction,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
@@ -196,6 +197,21 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
+
+    function aggFunction(rows) {
+        var price = 0;
+        rows.forEach(function(row) {
+            var rowIsAGroup = row._angularGrid_group;
+            if (rowIsAGroup) {
+                price += row.aggData.price;
+            } else {
+                price += row.price;
+            }
+        });
+        return {
+            price: price
+        };
+    }
 
     function currencyCssFunc(value) {
         if (value!==null && value!==undefined && value<0) {

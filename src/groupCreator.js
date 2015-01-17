@@ -4,7 +4,7 @@ define([
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields) {
+    GroupCreator.prototype.group = function(rowData, groupByFields, aggFunction) {
 
         var topMostGroup = {
             level: -1,
@@ -63,7 +63,26 @@ define([
             delete allGroups[i].childrenMap;
         }
 
+        //create data items
+        if (aggFunction) {
+            this.createAggData(topMostGroup.children, aggFunction);
+        }
+
         return topMostGroup.children;
+    };
+
+    GroupCreator.prototype.createAggData = function(children, aggFunction) {
+        for (var i = 0, l = children.length; i<l; i++) {
+            var item = children[i];
+            var itemIsAGroup = item._angularGrid_group;
+            if (itemIsAGroup) {
+                //agg function needs to start at the bottom, so traverse first
+                this.createAggData(item.children, aggFunction);
+                //after traversal, we can now do the agg at this level
+                var data = aggFunction(item.children);
+                item.aggData = data;
+            }
+        }
     };
 
     return new GroupCreator();
