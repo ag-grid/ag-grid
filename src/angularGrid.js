@@ -869,7 +869,13 @@ define([
 
         if (colDef.cellRenderer) {
             var resultFromRenderer = colDef.cellRenderer(value, data);
-            eGridCell.innerHTML = resultFromRenderer;
+            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+                //a dom node or element was returned, so add child
+                eGridCell.appendChild(resultFromRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                eGridCell.innerHTML = resultFromRenderer;
+            }
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined) {

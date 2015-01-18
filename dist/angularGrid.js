@@ -1004,6 +1004,24 @@ define('../src/utils',[], function() {
     function Utils() {
     }
 
+    //Returns true if it is a DOM node
+    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    Utils.prototype.isNode = function(o) {
+        return (
+            typeof Node === "object" ? o instanceof Node :
+            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName==="string"
+        );
+    };
+
+    //Returns true if it is a DOM element
+    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    Utils.prototype.isElement = function(o) {
+        return (
+            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+        );
+    };
+
     //adds all type of change listeners to an element, intended to be a text field
     Utils.prototype.addChangeListener = function(element, listener) {
         element.addEventListener("changed", listener);
@@ -1232,8 +1250,16 @@ define('../src/filterComponent',[
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
         if (this.colDef.filterCellRenderer) {
             //renderer provided, so use it
-            var resultOfRenderer = this.colDef.filterCellRenderer(value);
-            valueElement.innerHTML = resultOfRenderer;
+            var resultFromRenderer = this.colDef.filterCellRenderer(value);
+
+            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+                //a dom node or element was returned, so add child
+                valueElement.appendChild(resultFromRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                valueElement.innerHTML = resultFromRenderer;
+            }
+
         } else {
             //otherwise display as a string
             var displayNameOfValue = value === null ? "(Blanks)" : value;
@@ -2653,7 +2679,13 @@ define('../src/angularGrid',[
 
         if (colDef.cellRenderer) {
             var resultFromRenderer = colDef.cellRenderer(value, data);
-            eGridCell.innerHTML = resultFromRenderer;
+            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+                //a dom node or element was returned, so add child
+                eGridCell.appendChild(resultFromRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                eGridCell.innerHTML = resultFromRenderer;
+            }
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined) {

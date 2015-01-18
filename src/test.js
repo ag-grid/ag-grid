@@ -48,6 +48,8 @@ define([
             "Hayden","Hudson","Hunter","Jacoby","Jagger","Jaxon","Jett","Kade","Kane",
             "Keating","Keegan","Kingston","Kobe"];
 
+        var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
         $scope.colCount = 20;
         $scope.rowCount = 1000;
 
@@ -74,12 +76,18 @@ define([
 
         var defaultCols = [
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
-            {displayName: "Country", field: "country", width: 200, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 30},
-            {displayName: "Language", field: "language", width: 200},
-            {displayName: "Wanted Game", field: "game", width: 200},
+            {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 30},
+            {displayName: "Language", field: "language", width: 150},
+            {displayName: "Game of Choice", field: "game", width: 180},
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-            {displayName: "Quoted Price", field: "price", width: 100, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc}
-        ];
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
+            {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
+            {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right", "font-weight": "bold"}, cellCssFunc: currencyCssFunc}        ];
+        //put in the month cols
+        months.forEach(function(month) {
+            defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100,
+                cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}})
+        });
 
         createCols();
         createData();
@@ -143,8 +151,17 @@ define([
                 rowItem.name = firstName + " " + lastName;
 
                 rowItem.game = games[row % games.length];
-                rowItem.price = ((Math.round(Math.random()*10000))/100) - 20;
+                rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
+                rowItem.rating = (Math.round(Math.random()*5));
                 rowItem.bought = booleanValues[row % booleanValues.length];
+
+                var totalWinnings = 0;
+                months.forEach(function(month) {
+                    var value = ((Math.round(Math.random()*10000000))/100) - 20;
+                    rowItem[month.toLocaleLowerCase()] = value;
+                    totalWinnings += value;
+                });
+                rowItem.totalWinnings = totalWinnings;
 
                 //create dummy data for the additional columns
                 for (var col = defaultCols.length; col<colCount; col++) {
@@ -199,18 +216,22 @@ define([
     };
 
     function aggFunction(rows) {
-        var price = 0;
+        var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+        var sums = {};
+        colsToSum.forEach(function(key) { sums[key] = 0; });
+
         rows.forEach(function(row) {
             var rowIsAGroup = row._angularGrid_group;
-            if (rowIsAGroup) {
-                price += row.aggData.price;
-            } else {
-                price += row.price;
-            }
+            colsToSum.forEach(function(key) {
+                if (rowIsAGroup) {
+                    sums[key] += row.aggData[key];
+                } else {
+                    sums[key] += row[key];
+                }
+            });
         });
-        return {
-            price: price
-        };
+
+        return sums;
     }
 
     function currencyCssFunc(value) {
@@ -220,6 +241,20 @@ define([
             return null;
         }
     }
+
+    function ratingRenderer(value)  {
+        var eContainer = document.createElement("span");
+        for (var i = 0; i<5; i++) {
+            if (value>i) {
+                var starImage = document.createElement("img");
+                starImage.src = "http://www.angulargrid.com/images/goldStar.png";
+                eContainer.appendChild(starImage);
+            //} else {
+            //    eContainer.appendChild(document.createTextNode("-"));
+            }
+        }
+        return eContainer;
+    };
 
     function currencyRenderer(value)  {
         if (value===null || value===undefined) {

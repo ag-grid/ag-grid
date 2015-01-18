@@ -105,8 +105,16 @@ define([
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
         if (this.colDef.filterCellRenderer) {
             //renderer provided, so use it
-            var resultOfRenderer = this.colDef.filterCellRenderer(value);
-            valueElement.innerHTML = resultOfRenderer;
+            var resultFromRenderer = this.colDef.filterCellRenderer(value);
+
+            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+                //a dom node or element was returned, so add child
+                valueElement.appendChild(resultFromRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                valueElement.innerHTML = resultFromRenderer;
+            }
+
         } else {
             //otherwise display as a string
             var displayNameOfValue = value === null ? "(Blanks)" : value;

@@ -6,6 +6,24 @@ define([], function() {
     function Utils() {
     }
 
+    //Returns true if it is a DOM node
+    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    Utils.prototype.isNode = function(o) {
+        return (
+            typeof Node === "object" ? o instanceof Node :
+            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName==="string"
+        );
+    };
+
+    //Returns true if it is a DOM element
+    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    Utils.prototype.isElement = function(o) {
+        return (
+            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+        );
+    };
+
     //adds all type of change listeners to an element, intended to be a text field
     Utils.prototype.addChangeListener = function(element, listener) {
         element.addEventListener("changed", listener);
