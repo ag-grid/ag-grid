@@ -36,18 +36,19 @@ define([
         return {
             restrict: "A",
             template: template,
-            controller: ["$scope", "$element", Grid],
+            controller: ["$scope", "$element", "$compile", Grid],
             scope: {
                 angularGrid: "="
             }
         };
     });
 
-    function Grid($scope, $element) {
+    function Grid($scope, $element, $compile) {
 
         var _this = this;
         $scope.grid = this;
         this.$scope = $scope;
+        this.$compile = $compile;
         this.gridOptions = $scope.angularGrid;
         this.quickFilter = null;
 
@@ -64,6 +65,8 @@ define([
         //for virtualisation, maps keep track of which elements are attached to the dom
         this.rowsInBodyContainer = {};
         this.rowsInPinnedContainer = {};
+        this.childScopesForRows = {};
+
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
@@ -479,6 +482,12 @@ define([
 
         //at this point, everything in our 'rowsToRemove' . . .
         this.removeVirtualRows(rowsToRemove);
+
+        //if we are doing angular compiling, then do it here if not in digest
+        //this.$scope.$$phase || this.$scope.$apply();
+        //if(this.gridOptions.angularCompile && !this.$scope.$$phase) {
+        //    this.$scope.$apply();
+        //}
     };
 
     //takes array of row id's
@@ -492,6 +501,12 @@ define([
             var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
             _this.eBodyContainer.removeChild(bodyRowToRemove);
             delete _this.rowsInBodyContainer[indexToRemove];
+
+            var childScopeToDelete = _this.childScopesForRows[indexToRemove];
+            if (childScopeToDelete) {
+                childScopeToDelete.$destroy();
+                delete _this.childScopesForRows[indexToRemove];
+            }
         });
     };
 
@@ -523,6 +538,7 @@ define([
         var bodyHeight = this.eBodyViewport.offsetHeight;
 
         if (this.bodyHeightLastTime != bodyHeight) {
+            this.bodyHeightLastTime = bodyHeight;
             this.setPinnedColHeight();
 
             //only draw virtual rows if done sort & filter - this
@@ -801,8 +817,20 @@ define([
             });
         }
 
-        this.ePinnedColsContainer.appendChild(ePinnedRow);
-        this.eBodyContainer.appendChild(eMainRow);
+        //experimental, try compiling as we insert rows
+        if (this.gridOptions.angularCompile) {
+            var newChildScope = this.$scope.$new();
+            this.childScopesForRows[rowIndex] = newChildScope;
+            newChildScope.rowData = data;
+            var ePinnedRowCompiled = this.$compile(ePinnedRow)(newChildScope);
+            var eMainRowCompiled = this.$compile(eMainRow)(newChildScope);
+            this.ePinnedColsContainer.appendChild(ePinnedRowCompiled[0]);
+            this.eBodyContainer.appendChild(eMainRowCompiled[0]);
+        } else {
+            this.ePinnedColsContainer.appendChild(ePinnedRow);
+            this.eBodyContainer.appendChild(eMainRow);
+        }
+
     };
 
     Grid.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow) {

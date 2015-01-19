@@ -69,6 +69,7 @@ define([
             enableFilter: true, //one of [true, false]
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
+            angularCompile: true,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
@@ -77,7 +78,7 @@ define([
         var defaultCols = [
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 30},
-            {displayName: "Language", field: "language", width: 150},
+            {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180},
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
             {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
@@ -314,6 +315,12 @@ define([
         } else {
             return null;
         }
+    }
+
+    function languageCellRenderer() {
+        //if you must use angularjs, you can
+        return "<span ng-click='showEdit=true' ng-show='!showEdit' ng-bind='rowData.language'></span>" +
+            "<input ng-model='rowData.language' ng-show='showEdit' ng-blur='showEdit=false'/>";
     }
 
     function countryCellRenderer(value) {
