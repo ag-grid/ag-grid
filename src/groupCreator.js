@@ -4,7 +4,7 @@ define([
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields, aggFunction) {
+    GroupCreator.prototype.group = function(rowData, groupByFields, aggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -36,7 +36,7 @@ define([
                         _angularGrid_group: true,
                         field: groupByField,
                         key: groupKey,
-                        expanded: false,
+                        expanded: expandByDefault,
                         children: [],
                         allChildrenCount: 0,
                         level: currentGroup.level + 1,

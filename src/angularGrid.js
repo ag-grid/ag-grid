@@ -1,4 +1,5 @@
 
+//todo: full row group doesn't work when columns are pinned
 //todo: compile into angular
 //todo: moving & hiding columns
 //todo: grouping
@@ -81,9 +82,6 @@ define([
 
         //done when rows change
         this.setupRows(STEP_EVERYTHING);
-
-        //var colsToGroupBy = [this.gridOptions.columnDefs[0], this.gridOptions.columnDefs[1]];
-        //var groupedResult = groupCreator.group(this.gridOptions.rowData, colsToGroupBy);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -282,7 +280,9 @@ define([
     Grid.prototype.doGrouping = function () {
         var groupedData;
         if (this.gridOptions.groupKeys) {
-            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys, this.gridOptions.aggFunction);
+            var expandByDefault = this.gridOptions.groupDefaultExpanded===true;
+            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys,
+                this.gridOptions.aggFunction, expandByDefault);
         } else {
             groupedData = this.gridOptions.rowData;
         }
@@ -415,15 +415,39 @@ define([
             },
             onNewCols: function () {
                 _this.onNewCols();
+            },
+            expandAll: function() {
+                _this.expandOrCollapseAll(true, null);
+                _this.setupRows(STEP_MAP);
+            },
+            collapseAll: function() {
+                _this.expandOrCollapseAll(false, null);
+                _this.setupRows(STEP_MAP);
             }
         };
         this.gridOptions.api = api;
     };
 
+    Grid.prototype.expandOrCollapseAll = function(expand, list) {
+        //if first call in recursion, we set list to parent list
+        if (list==null) { list = this.gridOptions.rowDataAfterGroup; }
+
+        if (!list) { return; }
+
+        var _this = this;
+        list.forEach(function(item) {
+            var itemIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
+            if (itemIsAGroup) {
+                item.expanded = expand;
+                _this.expandOrCollapseAll(expand, item.children);
+            }
+        });
+    };
+
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
         this.setupRows(STEP_EVERYTHING);
-    }
+    };
 
     Grid.prototype.findAllElements = function ($element) {
         var eGrid = $element[0];
@@ -777,7 +801,7 @@ define([
             return;
         }
 
-        var rowIsAGroup = data && data._angularGrid_group; //_angularGrid_group is set to true on groups
+        var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
 
         var ePinnedRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
         var eMainRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
@@ -791,25 +815,30 @@ define([
         //if group item, insert the first row
         if (rowIsAGroup) {
             var firstCol = this.gridOptions.columnDefs[0];
-            var eGroupCell = _this.createGroupCell(data, firstCol);
+            var groupHeaderTakesEntireRow = this.gridOptions.groupUseEntireRow;
+
+            var eGroupRow = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow);
             if (pinnedColumnCount>0) {
-                ePinnedRow.appendChild(eGroupCell);
+                ePinnedRow.appendChild(eGroupRow);
             } else {
-                eMainRow.appendChild(eGroupCell);
+                eMainRow.appendChild(eGroupRow);
             }
 
-            //draw in blank cells for the rest of the row
-            var groupHasData = data.aggData!==undefined && data.aggData!==null;
-            this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
-                if (colIndex==0) { //skip first col, as this is the group col we already inserted
-                    return;
-                }
-                var item = null;
-                if (groupHasData) {
-                    item = data.aggData[colDef.field];
-                }
-                _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
-            });
+            if (!groupHeaderTakesEntireRow) {
+
+                //draw in blank cells for the rest of the row
+                var groupHasData = data.aggData!==undefined && data.aggData!==null;
+                this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+                    if (colIndex==0) { //skip first col, as this is the group col we already inserted
+                        return;
+                    }
+                    var item = null;
+                    if (groupHasData) {
+                        item = data.aggData[colDef.field];
+                    }
+                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                });
+            }
 
         } else {
             this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
@@ -869,26 +898,47 @@ define([
         return eRow;
     };
 
-    Grid.prototype.createGroupCell = function(data, colDef) {
-        var eGridGroupCell = document.createElement("div");
-        eGridGroupCell.className = "ag-cell cell-col-"+0;
+    Grid.prototype.createGroupElement = function(data, firstColDef, useEntireRow) {
+        var eGridGroupRow = document.createElement("div");
+        if (useEntireRow) {
+            eGridGroupRow.className = "ag-group-row";
+        } else {
+            eGridGroupRow.className = "ag-cell cell-col-"+0;
+        }
 
         var eSvg = createGroupSvg(data.expanded);
-        eGridGroupCell.appendChild(eSvg);
-        var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
-        eGridGroupCell.appendChild(eText);
+        eGridGroupRow.appendChild(eSvg);
 
-        eGridGroupCell.style.width = this.formatWidth(colDef.actualWidth);
+        //if renderer provided, use it
+        if (this.gridOptions.groupInnerCellRenderer) {
+            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data);
+            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+                //a dom node or element was returned, so add child
+                eGridGroupRow.appendChild(resultFromRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                var eTextSpan = document.createElement("span");
+                eTextSpan.innerHTML = resultFromRenderer;
+                eGridGroupRow.appendChild(eTextSpan);
+            }
+        //otherwise default is display the key along with the child count
+        } else {
+            var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
+            eGridGroupRow.appendChild(eText);
+        }
 
-        eGridGroupCell.style.paddingLeft = ((data.level + 1) * 10) + "px";
+        if (!useEntireRow) {
+            eGridGroupRow.style.width = this.formatWidth(firstColDef.actualWidth);
+        }
+        eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
 
         var _this = this;
-        eGridGroupCell.addEventListener("click", function(event) {
+        eGridGroupRow.addEventListener("click", function(event) {
             data.expanded = !data.expanded;
             _this.setupRows(STEP_MAP);
         });
 
-        return eGridGroupCell;
+        return eGridGroupRow;
     };
 
     Grid.prototype.createCell = function(colDef, value, data, rowIndex, colIndex) {

@@ -7,8 +7,7 @@
 
     <body ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
 
-    <!-- Header, height of 100px-->
-    <div style="height: 65px; position: absolute; top: 0px; left: 0px;">
+    <div style="height: 100px; position: absolute; top: 0px; left: 0px;">
         <!-- First row of header, has table options -->
         <div style="padding: 4px;">
             Rows:
@@ -64,6 +63,10 @@
                 <option value="ag-dark">Dark</option>
             </select>
 
+        </div>
+
+        <div style="padding: 4px;">
+
             Group By:
             <select ng-model="groupBy" ng-change="onGroupByChanged()" style="width: 90px;">
                 <option value="">-none-</option>
@@ -73,6 +76,19 @@
                 <option value="language,continent">Language, Continent</option>
             </select>
 
+            <span ng-show="groupBy">
+
+                Group Type:
+                <select ng-model="groupType" ng-change="onGroupByChanged()" style="width: 90px;">
+                    <option value="firstCol">First Col</option>
+                    <option value="row">Row</option>
+                </select>
+
+                <button ng-click="angularGrid.api.expandAll()">Expand All</button>
+                <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
+
+            </span>
+
         </div>
         <!-- Second row of header, has quick filter -->
         <div style="padding: 4px;">
@@ -80,7 +96,7 @@
         </div>
     </div>
     <!-- The table div -->
-    <div style="padding-top: 65px; height: 100%; box-sizing: border-box;">
+    <div style="padding-top: 100px; height: 100%; box-sizing: border-box;">
         <div angular-grid="angularGrid" ng-style="{width: width, height: height}" ng-class="style"></div>
     </div>
 </body>

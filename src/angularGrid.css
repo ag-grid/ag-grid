@@ -147,6 +147,17 @@
     padding: 4px;
 }
 
+.ag-group-row {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 4px;
+}
 
 .ag-standard .ag-root {
     border: 1px solid black;
@@ -225,6 +236,10 @@
 
 .ag-fresh .ag-row-selected {
     background-color: #b0b0b0;
+}
+
+.ag-fresh .ag-group-row {
+    background-color: #aaa;
 }
 
 .ag-dark .ag-root {

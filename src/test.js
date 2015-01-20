@@ -57,11 +57,15 @@ define([
         $scope.height = "100%";
         $scope.style = "ag-fresh";
         $scope.groupBy = "";
+        $scope.groupType = "firstCol";
 
         $scope.angularGrid = {
             columnDefs: [],
             rowData: [],
             groupKeys: undefined, //set as string of keys eg ["region","country"],
+//            groupUseEntireRow: true, //one of [true, false]
+//            groupInnerCellRenderer: groupInnerCellRenderer,
+//            groupDefaultExpanded: true, //one of [true, false]
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
@@ -69,7 +73,7 @@ define([
             enableFilter: true, //one of [true, false]
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
-            angularCompile: true,
+            angularCompile: false,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
@@ -104,11 +108,17 @@ define([
         };
 
         $scope.onGroupByChanged = function() {
+            //setup keys
             var groupBy = null;
             if ($scope.groupBy!=="") {
                 groupBy = $scope.groupBy.split(",");
             }
             $scope.angularGrid.groupKeys = groupBy;
+
+            //setup type
+            var groupUseEntireRow = $scope.groupType==='row';
+            $scope.angularGrid.groupUseEntireRow = groupUseEntireRow;
+
             $scope.angularGrid.api.onNewRows();
         };
 
@@ -215,6 +225,10 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
+
+    function groupInnerCellRenderer(data) {
+        return "<b>" + data.key + "</b>";
+    }
 
     function aggFunction(rows) {
         var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
