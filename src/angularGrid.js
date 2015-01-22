@@ -14,7 +14,7 @@ define([
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, filterManagerFactory, RowModel, constants) {
+], function(angular, template, utils, FilterManager, RowModel, constants) {
 
     var module = angular.module("angularGrid", []);
 
@@ -69,9 +69,9 @@ define([
         this.addApi();
         this.findAllElements($element);
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
-        this.advancedFilter = filterManagerFactory(this);
+        this.filterManager = new FilterManager(this);
 
-        this.rowModel = new RowModel(this.gridOptions, this, this.advancedFilter);
+        this.rowModel = new RowModel(this.gridOptions, this, this.filterManager);
 
         this.addScrollListener();
 
@@ -214,7 +214,7 @@ define([
         var api = {
             onNewRows: function () {
                 _this.gridOptions.selectedRows.length = 0;
-                _this.advancedFilter.clearAllFilters();
+                _this.filterManager.clearAllFilters();
                 _this.setupRows(constants.STEP_EVERYTHING);
                 _this.updateFilterIcons();
             },
@@ -437,7 +437,7 @@ define([
             var eMenuButton = createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
-                _this.advancedFilter.showFilter(colDef, this);
+                _this.filterManager.showFilter(colDef, this);
             };
             headerCell.appendChild(eMenuButton);
         }
@@ -471,7 +471,7 @@ define([
     Grid.prototype.updateFilterIcons = function() {
         var _this = this;
         this.gridOptions.columnDefs.forEach(function(colDef) {
-            var filterPresent = _this.advancedFilter.isFilterPresentForCol(colDef.field);
+            var filterPresent = _this.filterManager.isFilterPresentForCol(colDef.field);
             var displayStyle = filterPresent ? "inline" : "none";
             _this.headerFilterIcons[colDef.field].style.display = displayStyle;
         });

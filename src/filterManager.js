@@ -93,8 +93,6 @@ define([
         filterComponent.guiAttached();
     };
 
-    return function(eBody) {
-        return new FilterManager(eBody);
-    };
+    return FilterManager;
 
 });
