@@ -6,5 +6,8 @@ define([], function() {
     constants.STEP_SORT = 2;
     constants.STEP_MAP = 3;
 
+    constants.ASC = "asc";
+    constants.DESC = "desc";
+
     return constants;
 });

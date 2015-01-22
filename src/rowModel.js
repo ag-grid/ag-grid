@@ -38,7 +38,7 @@ define([
 
         if (colDefForSorting) {
             var keyForSort = colDefForSorting.field;
-            var ascending = colDefForSorting.sort === ASC;
+            var ascending = colDefForSorting.sort === constants.ASC;
             var inverter = ascending ? 1 : -1;
 
             this.sortList(this.gridOptions.rowDataAfterGroupAndFilterAndSort, keyForSort, colDefForSorting, inverter);

@@ -331,8 +331,8 @@ define([
         }
     }
 
-    function languageCellRenderer() {
-        //if you must use angularjs, you can
+    function languageCellRenderer(a,b,c,d) {
+
         return "<span ng-click='showEdit=true' ng-show='!showEdit' ng-bind='rowData.language'></span>" +
             "<input ng-model='rowData.language' ng-show='showEdit' ng-blur='showEdit=false'/>";
     }

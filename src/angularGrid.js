@@ -23,9 +23,6 @@ define([
 
     var SVG_NS = "http://www.w3.org/2000/svg";
 
-    var ASC = "asc";
-    var DESC = "desc";
-
     var SORT_STYLE_SHOW = "display:inline;";
     var SORT_STYLE_HIDE = "display:none;";
 
@@ -256,7 +253,6 @@ define([
 
     Grid.prototype.findAllElements = function ($element) {
         var eGrid = $element[0];
-        this.eGrid = eGrid;
         this.eRoot = eGrid.querySelector(".ag-root");
         this.eBody = eGrid.querySelector(".ag-body");
         this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
@@ -482,12 +478,12 @@ define([
         headerCellLabel.addEventListener("click", function() {
 
             //update sort on current col
-            if (colDef.sort === ASC) {
-                colDef.sort = DESC;
-            } else if (colDef.sort === DESC) {
+            if (colDef.sort === constants.ASC) {
+                colDef.sort = constants.DESC;
+            } else if (colDef.sort === constants.DESC) {
                 colDef.sort = null
             } else {
-                colDef.sort = ASC;
+                colDef.sort = constants.ASC;
             }
 
             //clear sort on all columns except this one, and update the icons
@@ -497,8 +493,8 @@ define([
                 }
 
                 //update visibility of icons
-                var sortAscending = colToClear.sort===ASC;
-                var sortDescending = colToClear.sort===DESC;
+                var sortAscending = colToClear.sort===constants.ASC;
+                var sortDescending = colToClear.sort===constants.DESC;
                 var sortAny = sortAscending || sortDescending;
 
                 var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
