@@ -10,10 +10,11 @@ define([
     "./utils",
     "./filterManager",
     "./rowModel",
+    "./constants",
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, filterManagerFactory, RowModel) {
+], function(angular, template, utils, filterManagerFactory, RowModel, constants) {
 
     var module = angular.module("angularGrid", []);
 
@@ -29,11 +30,6 @@ define([
     var SORT_STYLE_HIDE = "display:none;";
 
     var ROW_BUFFER_SIZE = 5;
-
-    var STEP_EVERYTHING = 0;
-    var STEP_FILTER = 1;
-    var STEP_SORT = 2;
-    var STEP_MAP = 3;
 
     module.directive("angularGrid", function () {
         return {
@@ -85,7 +81,7 @@ define([
         this.setupColumns();
 
         //done when rows change
-        this.setupRows(STEP_EVERYTHING);
+        this.setupRows(constants.STEP_EVERYTHING);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -125,7 +121,7 @@ define([
     };
 
     Grid.prototype.onFilterChanged = function () {
-        this.setupRows(STEP_FILTER);
+        this.setupRows(constants.STEP_FILTER);
         this.updateFilterIcons();
     };
 
@@ -219,7 +215,7 @@ define([
             onNewRows: function () {
                 _this.gridOptions.selectedRows.length = 0;
                 _this.advancedFilter.clearAllFilters();
-                _this.setupRows(STEP_EVERYTHING);
+                _this.setupRows(constants.STEP_EVERYTHING);
                 _this.updateFilterIcons();
             },
             onNewCols: function () {
@@ -227,11 +223,11 @@ define([
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
-                _this.setupRows(STEP_MAP);
+                _this.setupRows(constants.STEP_MAP);
             },
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
-                _this.setupRows(STEP_MAP);
+                _this.setupRows(constants.STEP_MAP);
             }
         };
         this.gridOptions.api = api;
@@ -255,7 +251,7 @@ define([
 
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
-        this.setupRows(STEP_EVERYTHING);
+        this.setupRows(constants.STEP_EVERYTHING);
     };
 
     Grid.prototype.findAllElements = function ($element) {
@@ -515,7 +511,7 @@ define([
                 eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
-            _this.setupRows(STEP_SORT);
+            _this.setupRows(constants.STEP_SORT);
         });
     };
 
@@ -744,7 +740,7 @@ define([
         var _this = this;
         eGridGroupRow.addEventListener("click", function(event) {
             data.expanded = !data.expanded;
-            _this.setupRows(STEP_MAP);
+            _this.setupRows(constants.STEP_MAP);
         });
 
         return eGridGroupRow;

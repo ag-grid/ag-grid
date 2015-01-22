@@ -1,7 +1,8 @@
 define([
     "./groupCreator",
-    "./utils"
-], function(groupCreator, utils) {
+    "./utils",
+    "./constants"
+], function(groupCreator, utils, constants) {
 
     function RowModel(gridOptions, angularGrid, filterManager) {
         this.gridOptions = gridOptions;
@@ -9,21 +10,16 @@ define([
         this.filterManager = filterManager;
     }
 
-    RowModel.prototype.STEP_EVERYTHING = 0;
-    RowModel.prototype.STEP_FILTER = 1;
-    RowModel.prototype.STEP_SORT = 2;
-    RowModel.prototype.STEP_MAP = 3;
-
     RowModel.prototype.setupRows = function(step) {
 
         switch (step) {
-            case this.STEP_EVERYTHING :
+            case constants.STEP_EVERYTHING :
                 this.doGrouping(); //populates rowDataAfterGroup
-            case this.STEP_FILTER :
+            case constants.STEP_FILTER :
                 this.doFilter(); //populates rowDataAfterGroupAndFilter
-            case this.STEP_SORT :
+            case constants.STEP_SORT :
                 this.doSort(); //populates rowDataAfterGroupAndFilterAndSort
-            case this.STEP_MAP :
+            case constants.STEP_MAP :
                 this.doGroupMapping(); //rowDataAfterGroupAndFilterAndSortAndMap
         }
 
