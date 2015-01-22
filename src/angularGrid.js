@@ -10,7 +10,9 @@ define([
     "./utils",
     "./filterManager",
     "./groupCreator",
-    "css!./angularGrid"
+    "css!./css/core.css",
+    "css!./css/theme-dark.css",
+    "css!./css/theme-fresh.css"
 ], function(angular, template, utils, filterManagerFactory, groupCreator) {
 
     var module = angular.module("angularGrid", []);

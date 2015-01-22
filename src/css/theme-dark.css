@@ -1,0 +1,62 @@
+
+.ag-dark .ag-root {
+    border: 1px solid grey;
+    color: #e0e0e0;
+}
+
+.ag-dark .ag-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-dark .ag-header {
+    background-color: #430000;
+    border-bottom: 1px solid grey;
+}
+
+.ag-dark .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-dark .ag-header-cell-menu-button {
+    padding: 2px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+}
+
+.ag-dark .ag-header-cell-menu-button:hover {
+    border: 1px solid #e0e0e0;
+}
+
+.ag-dark .ag-header-icon {
+    stroke: white;
+    fill: white;
+}
+
+.ag-dark .ag-row-odd {
+    background-color: #302E2E;
+}
+
+.ag-dark .ag-row-even {
+    background-color: #403E3E;
+}
+
+.ag-dark .ag-body {
+    background-color: #f0f0f0;
+}
+
+.ag-dark .ag-row-selected {
+    background-color: #000000;
+}
+
+.ag-dark .ag-filter {
+    color: black;
+}
+
+.ag-dark .ag-filter-header-container {
+    border-bottom: 1px solid lightgrey;
+}
+
+.ag-dark .ag-filter {
+    border: 1px solid black;
+    background-color: #f0f0f0;
+}

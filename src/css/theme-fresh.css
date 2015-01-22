@@ -1,0 +1,59 @@
+
+.ag-fresh .ag-root {
+    border: 1px solid grey;
+}
+
+.ag-fresh .ag-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-header {
+    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(white, lightgrey); /* Standard syntax */
+    border-bottom: 1px solid grey;
+}
+
+.ag-fresh .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-header-cell-menu-button {
+    padding: 2px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+}
+
+.ag-fresh .ag-header-cell-menu-button:hover {
+    border: 1px solid black;
+}
+
+.ag-fresh .ag-row-odd {
+    background-color: #f0f0f0;
+}
+
+.ag-fresh .ag-row-even {
+    background-color: white;
+}
+
+.ag-fresh .ag-body {
+    background-color: #ffffff;
+}
+
+.ag-fresh .ag-row-selected {
+    background-color: #b0b0b0;
+}
+
+.ag-fresh .ag-group-row {
+    background-color: #aaa;
+}
+
+.ag-fresh .ag-filter-header-container {
+    border-bottom: 1px solid lightgrey;
+}
+
+.ag-fresh .ag-filter {
+    border: 1px solid black;
+    background-color: #f0f0f0;
+}

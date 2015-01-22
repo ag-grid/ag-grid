@@ -269,7 +269,7 @@ define([
             }
         }
         return eContainer;
-    };
+    }
 
     function currencyRenderer(value)  {
         if (value===null || value===undefined) {
