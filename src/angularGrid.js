@@ -9,11 +9,11 @@ define([
     "text!./angularGrid.html",
     "./utils",
     "./filterManager",
-    "./groupCreator",
+    "./rowModel",
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, filterManagerFactory, groupCreator) {
+], function(angular, template, utils, filterManagerFactory, RowModel) {
 
     var module = angular.module("angularGrid", []);
 
@@ -75,6 +75,8 @@ define([
         this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
         this.advancedFilter = filterManagerFactory(this);
 
+        this.rowModel = new RowModel(this.gridOptions, this, this.advancedFilter);
+
         this.addScrollListener();
 
         this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
@@ -101,11 +103,19 @@ define([
         return this.eRoot;
     };
 
+    Grid.prototype.getQuickFilter = function () {
+        return this.quickFilter;
+    };
+
     Grid.prototype.onQuickFilterChanged = function (newFilter) {
         if (newFilter === undefined || newFilter === "") {
             newFilter = null;
         }
         if (this.quickFilter !== newFilter) {
+            //want 'null' to mean to filter, so remove undefined and empty string
+            if (newFilter===undefined || newFilter==="") {
+                newFilter = null;
+            }
             if (newFilter !== null) {
                 newFilter = newFilter.toUpperCase();
             }
@@ -168,103 +178,6 @@ define([
 
     };
 
-    Grid.prototype.doesRowPassFilter = function(item, quickFilterPresent, advancedFilterPresent) {
-        //first up, check quick filter
-        if (quickFilterPresent) {
-            if (!item._quickFilterAggregateText) {
-                this.aggregateRowForQuickFilter(item);
-            }
-            if (item._quickFilterAggregateText.indexOf(this.quickFilter) < 0) {
-                //quick filter fails, so skip item
-                return false;
-            }
-        }
-
-        //second, check advanced filter
-        if (advancedFilterPresent) {
-            if (!this.advancedFilter.doesFilterPass(item)) {
-                return false;
-            }
-        }
-
-        //got this far, all filters pass
-        return true;
-    };
-
-    Grid.prototype.getTotalChildCount = function(items) {
-        var count = 0;
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var itemIsAGroup = item && item._angularGrid_group;
-            if (itemIsAGroup) {
-                count += item.allChildrenCount;
-            } else {
-                count++;
-            }
-        }
-        return count;
-    };
-
-    Grid.prototype.filterItems = function (items, quickFilterPresent, advancedFilterPresent) {
-        var result = [];
-
-        for (var i = 0, l = items.length; i < l; i++) {
-            var item = items[i];
-
-            var itemIsAGroup = item && item._angularGrid_group;
-            if (itemIsAGroup) {
-                //deal with group
-                var filteredChildren = this.filterItems(item.children, quickFilterPresent, advancedFilterPresent);
-                if (filteredChildren.length>0) {
-                    var allChildrenCount = this.getTotalChildCount(filteredChildren);
-                    var newGroup = this.copyGroup(item, filteredChildren, allChildrenCount);
-                    result.push(newGroup);
-                }
-            } else {
-                if (this.doesRowPassFilter(item, quickFilterPresent, advancedFilterPresent)) {
-                    result.push(item);
-                }
-            }
-        }
-
-        return result;
-    };
-
-    Grid.prototype.copyGroup = function (group, children, allChildrenCount) {
-       return {
-           _angularGrid_group: true,
-           field: group.field,
-           key: group.key,
-           expanded: group.expanded,
-           children: children,
-           allChildrenCount: allChildrenCount,
-           level: group.level
-       };
-    };
-
-    Grid.prototype.doFilter = function () {
-        var quickFilterPresent = this.quickFilter !== null && this.quickFilter !== undefined && this.quickFilter !== "";
-        var advancedFilterPresent = this.advancedFilter.isFilterPresent();
-        var filterPresent = quickFilterPresent || advancedFilterPresent;
-
-        if (filterPresent) {
-            this.gridOptions.rowDataAfterGroupAndFilter = this.filterItems(this.gridOptions.rowDataAfterGroup, quickFilterPresent, advancedFilterPresent);
-        } else {
-            this.gridOptions.rowDataAfterGroupAndFilter = this.gridOptions.rowDataAfterGroup;
-        }
-    };
-
-    Grid.prototype.aggregateRowForQuickFilter = function (rowItem) {
-        var aggregatedText = "";
-        this.gridOptions.columnDefs.forEach(function (colDef) {
-            var value = rowItem[colDef.field];
-            if (value && value !== "") {
-                aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
-            }
-        });
-        rowItem._quickFilterAggregateText = aggregatedText;
-    };
-
     Grid.prototype.setupColumns = function () {
         this.ensureEachColHasSize();
         this.showPinnedColContainersIfNeeded();
@@ -279,54 +192,9 @@ define([
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.doGrouping = function () {
-        var groupedData;
-        if (this.gridOptions.groupKeys) {
-            var expandByDefault = this.gridOptions.groupDefaultExpanded===true;
-            groupedData = groupCreator.group(this.gridOptions.rowData, this.gridOptions.groupKeys,
-                this.gridOptions.aggFunction, expandByDefault);
-        } else {
-            groupedData = this.gridOptions.rowData;
-        }
-        this.gridOptions.rowDataAfterGroup = groupedData;
-    };
-
-    Grid.prototype.addToMap = function (mappedData, originalList) {
-        for (var i = 0; i<originalList.length; i++) {
-            var data = originalList[i];
-            mappedData.push(data);
-            var rowIsAGroup = data && data._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup && data.expanded) {
-                this.addToMap(mappedData, data.childrenAfterSort);
-            }
-        }
-    };
-
-    Grid.prototype.doGroupMapping = function () {
-        var mappedData;
-        if (this.gridOptions.groupKeys) {
-            mappedData = [];
-            this.addToMap(mappedData, this.gridOptions.rowDataAfterGroupAndFilterAndSort);
-        } else {
-            mappedData = this.gridOptions.rowDataAfterGroupAndFilterAndSort;
-        }
-        this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap = mappedData;
-    };
-
     Grid.prototype.setupRows = function (step) {
 
-        switch (step) {
-            case STEP_EVERYTHING :
-                this.doGrouping(); //populates rowDataAfterGroup
-            case STEP_FILTER :
-                this.doFilter(); //populates rowDataAfterGroupAndFilter
-            case STEP_SORT :
-                this.doSort(); //populates rowDataAfterGroupAndFilterAndSort
-            case STEP_MAP :
-                this.doGroupMapping(); //rowDataAfterGroupAndFilterAndSortAndMap
-        }
-
-        //map to rows
+        this.rowModel.setupRows(step);
 
         var rowCount = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap.length;
         var containerHeight = this.gridOptions.rowHeight * rowCount;
@@ -343,67 +211,6 @@ define([
 
         //add in new rows
         this.drawVirtualRows();
-    };
-
-    Grid.prototype.doSort = function () {
-        //see if there is a col we are sorting by
-        var colDefForSorting = null;
-        this.gridOptions.columnDefs.forEach(function (colDef) {
-            if (colDef.sort) {
-                colDefForSorting = colDef;
-            }
-        });
-
-        this.gridOptions.rowDataAfterGroupAndFilterAndSort = this.gridOptions.rowDataAfterGroupAndFilter.slice(0);
-
-        if (colDefForSorting) {
-            var keyForSort = colDefForSorting.field;
-            var ascending = colDefForSorting.sort === ASC;
-            var inverter = ascending ? 1 : -1;
-
-            this.sortList(this.gridOptions.rowDataAfterGroupAndFilterAndSort, keyForSort, colDefForSorting, inverter);
-        } else {
-            //if no sorting, set all group children after sort to the original list
-            this.resetSortInGroups(this.gridOptions.rowDataAfterGroupAndFilterAndSort);
-        }
-    };
-
-    Grid.prototype.resetSortInGroups = function(items) {
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
-                item.childrenAfterSort = item.children;
-                this.resetSortInGroups(item.children);
-            }
-        }
-    };
-
-    Grid.prototype.sortList = function (listForSorting, keyForSort, colDefForSorting, inverter) {
-
-        //sort any groups recursively
-        for (var i = 0, l = listForSorting.length; i<l; i++) {
-            var item = listForSorting[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
-                item.childrenAfterSort = item.children.slice(0);
-                this.sortList(item.childrenAfterSort, keyForSort, colDefForSorting, inverter);
-            }
-        }
-
-        listForSorting.sort(function (objA, objB) {
-            var valueA = objA[keyForSort];
-            var valueB = objB[keyForSort];
-
-            if (colDefForSorting.comparator) {
-                //if comparator provided, use it
-                return colDefForSorting.comparator(valueA, valueB) * inverter;
-            } else {
-                //otherwise do our own comparison
-                return utils.defaultComparator(valueA, valueB) * inverter;
-            }
-
-        });
     };
 
     Grid.prototype.addApi = function () {
