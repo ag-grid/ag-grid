@@ -9,5 +9,10 @@ define([], function() {
     constants.ASC = "asc";
     constants.DESC = "desc";
 
+    constants.ROW_BUFFER_SIZE = 5;
+
+    constants.SORT_STYLE_SHOW = "display:inline;";
+    constants.SORT_STYLE_HIDE = "display:none;";
+
     return constants;
 });

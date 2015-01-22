@@ -139,6 +139,14 @@ define([], function() {
         }
     };
 
+    Utils.prototype.formatWidth = function(width) {
+        if (typeof width === "number") {
+            return width + "px";
+        } else {
+            return width;
+        }
+    };
+
     return new Utils();
 
 });
