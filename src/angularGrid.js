@@ -11,17 +11,17 @@ define([
     "./svgFactory",
     "./filterManager",
     "./rowModel",
+    "./rowController",
     "./rowRenderer",
+    "./headerRenderer",
+    "./gridOptionsWrapper",
     "./constants",
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, SvgFactory, FilterManager, RowModel, RowRenderer, constants) {
+], function(angular, template, utils, SvgFactory, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
 
     var module = angular.module("angularGrid", []);
-
-    var MIN_COL_WIDTH = 10;
-    var DEFAULT_ROW_HEIGHT = 30;
 
     var svgFactory = new SvgFactory();
 
@@ -43,6 +43,7 @@ define([
         this.$scope = $scope;
         this.$compile = $compile;
         this.gridOptions = $scope.angularGrid;
+        this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
         this.quickFilter = null;
 
         $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
@@ -54,14 +55,15 @@ define([
 
         this.gridOptions.selectedRows = [];
 
-
         this.addApi();
         this.findAllElements($element);
-        this.gridOptions.rowHeight = (this.gridOptions.rowHeight ? this.gridOptions.rowHeight : DEFAULT_ROW_HEIGHT); //default row height to 30
         this.filterManager = new FilterManager(this);
 
-        this.rowModel = new RowModel(this.gridOptions, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, $element[0], this, $compile);
+        this.rowModel = new RowModel();
+        this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile);
+        //this.headerRenderer = new HeaderRenderer(this.gridOptions);
 
         this.addScrollListener();
 
@@ -116,7 +118,7 @@ define([
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
-        var row = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap[rowIndex];
+        var row = this.rowModel.getRowsAfterMap()[rowIndex];
 
         if (this.gridOptions.rowClicked) {
             this.gridOptions.rowClicked(row, event);
@@ -165,7 +167,7 @@ define([
     };
 
     Grid.prototype.setupColumns = function () {
-        this.ensureEachColHasSize();
+        this.gridOptionsWrapper.ensureEachColHasSize();
         this.showPinnedColContainersIfNeeded();
         this.insertHeader();
         this.setPinnedColContainerWidth();
@@ -174,22 +176,20 @@ define([
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
     Grid.prototype.setupRows = function (step) {
-
-        this.rowModel.setupRows(step);
-
+        this.rowController.setupRows(step);
         this.rowRenderer.render();
-
     };
 
     Grid.prototype.addApi = function () {
         var _this = this;
         var api = {
             onNewRows: function () {
+                _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
                 _this.setupRows(constants.STEP_EVERYTHING);
@@ -212,7 +212,7 @@ define([
 
     Grid.prototype.expandOrCollapseAll = function(expand, list) {
         //if first call in recursion, we set list to parent list
-        if (list==null) { list = this.gridOptions.rowDataAfterGroup; }
+        if (list==null) { list = this.rowModel.getRowsAfterGroup(); }
 
         if (!list) { return; }
 
@@ -245,7 +245,7 @@ define([
     };
 
     Grid.prototype.showPinnedColContainersIfNeeded = function () {
-        var showingPinnedCols = this.getPinnedColCount() > 0;
+        var showingPinnedCols = this.gridOptionsWrapper.getPinnedColCount() > 0;
         //some browsers had layout issues with the blank divs, so if blank,
         //we don't display them
         if (showingPinnedCols) {
@@ -260,16 +260,6 @@ define([
     Grid.prototype.setPinnedColContainerWidth = function () {
         var pinnedColWidth = this.getTotalPinnedColWidth();
         this.ePinnedColsContainer.style.width = pinnedColWidth + "px";
-    };
-
-    Grid.prototype.ensureEachColHasSize = function () {
-        this.gridOptions.columnDefs.forEach(function (colDef) {
-            if (!colDef.width || colDef.width < 10) {
-                colDef.actualWidth = MIN_COL_WIDTH;
-            } else {
-                colDef.actualWidth = colDef.width;
-            }
-        });
     };
 
     //see if a grey box is needed at the bottom of the pinned col
@@ -295,7 +285,7 @@ define([
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap) {
+            if (this.rowModel.getRowsAfterMap()) {
                 this.rowRenderer.drawVirtualRows();
             }
         }
@@ -308,7 +298,7 @@ define([
     };
 
     Grid.prototype.getTotalPinnedColWidth = function() {
-        var pinnedColCount = this.getPinnedColCount();
+        var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
         var widthSoFar = 0;
         var colCount = pinnedColCount;
         if (this.gridOptions.columnDefs.length < pinnedColCount) {
@@ -318,30 +308,6 @@ define([
             widthSoFar += this.gridOptions.columnDefs[colIndex].actualWidth;
         }
         return widthSoFar;
-    };
-
-    //duplicated
-    Grid.prototype.getTotalUnpinnedColWidth = function() {
-        var widthSoFar = 0;
-        var pinnedColCount = this.getPinnedColCount();
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            if (index>=pinnedColCount) {
-                widthSoFar += colDef.actualWidth;
-            }
-        });
-
-        return widthSoFar;
-    };
-
-    //duplicated in RowRenderer
-    Grid.prototype.getPinnedColCount = function() {
-        if (this.gridOptions.pinnedColumnCount) {
-            //in case user puts in a string, cast to number
-            return Number(this.gridOptions.pinnedColumnCount);
-        } else {
-            return 0;
-        }
     };
 
     Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
@@ -451,8 +417,8 @@ define([
                 var newX = moveEvent.clientX;
                 var change = newX - _this.dragStartX;
                 var newWidth = _this.colWidthStart + change;
-                if (newWidth < MIN_COL_WIDTH) {
-                    newWidth = MIN_COL_WIDTH;
+                if (newWidth < constants.MIN_COL_WIDTH) {
+                    newWidth = constants.MIN_COL_WIDTH;
                 }
                 var newWidthPx = newWidth + "px";
                 var selectorForAllColsInCell = ".cell-col-"+colIndex;
@@ -509,7 +475,7 @@ define([
         utils.removeAllChildren(eHeaderContainer);
         this.headerFilterIcons = {};
 
-        var pinnedColumnCount = this.getPinnedColCount();
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var _this = this;
 
         this.gridOptions.columnDefs.forEach(function(colDef, index) {

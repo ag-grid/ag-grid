@@ -14,5 +14,7 @@ define([], function() {
     constants.SORT_STYLE_SHOW = "display:inline;";
     constants.SORT_STYLE_HIDE = "display:none;";
 
+    constants.MIN_COL_WIDTH = 10;
+
     return constants;
 });

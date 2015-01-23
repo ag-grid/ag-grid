@@ -2,8 +2,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, eGrid, angularGrid, $compile) {
+    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile) {
         this.gridOptions = gridOptions;
+        this.rowModel = rowModel;
+        this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.findAllElements(eGrid);
         this.$compile = $compile;
@@ -16,7 +18,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     }
 
     RowRenderer.prototype.setMainRowWidths = function() {
-        var mainRowWidth = this.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth() + "px";
 
         var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
         for (var i = 0; i<unpinnedRows.length; i++) {
@@ -31,8 +33,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.render = function() {
-        var rowCount = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap.length;
-        var containerHeight = this.gridOptions.rowHeight * rowCount;
+        var rowCount = this.rowModel.getRowsAfterMap().length;
+        var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
         this.eBodyContainer.style.height = containerHeight + "px";
         this.ePinnedColsContainer.style.height = containerHeight + "px";
 
@@ -72,8 +74,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var topPixel = this.eBodyViewport.scrollTop;
         var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / this.gridOptions.rowHeight);
-        var lastRow = Math.floor(bottomPixel / this.gridOptions.rowHeight);
+        var firstRow = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
+        var lastRow = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
 
         //add in buffer
         firstRow = firstRow - constants.ROW_BUFFER_SIZE;
@@ -82,33 +84,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.ensureRowsRendered(firstRow, lastRow);
     };
 
-    //duplicated from core
-    RowRenderer.prototype.getPinnedColCount = function() {
-        if (this.gridOptions.pinnedColumnCount) {
-            //in case user puts in a string, cast to number
-            return Number(this.gridOptions.pinnedColumnCount);
-        } else {
-            return 0;
-        }
-    };
-
-    //duplicated
-    RowRenderer.prototype.getTotalUnpinnedColWidth = function() {
-        var widthSoFar = 0;
-        var pinnedColCount = this.getPinnedColCount();
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            if (index>=pinnedColCount) {
-                widthSoFar += colDef.actualWidth;
-            }
-        });
-
-        return widthSoFar;
-    };
-
     RowRenderer.prototype.ensureRowsRendered = function (start, finish) {
-        var pinnedColumnCount = this.getPinnedColCount();
-        var mainRowWidth = this.getTotalUnpinnedColWidth();
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth();
         var _this = this;
 
         //at the end, this array will contain the items we need to remove
@@ -122,7 +100,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var data = this.gridOptions.rowDataAfterGroupAndFilterAndSortAndMap[rowIndex];
+            var data = this.rowModel.getRowsAfterMap()[rowIndex];
             if (data) {
                 _this.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
             }
@@ -140,9 +118,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
         //if no cols, don't draw row
-        if (!this.gridOptions.columnDefs || this.gridOptions.columnDefs.length==0) {
-            return;
-        }
+        if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
         var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
 
@@ -156,9 +132,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eMainRow.style.width = mainRowWidth+"px";
 
         //if group item, insert the first row
+        var columnDefs = this.gridOptionsWrapper.getColumnDefs();
         if (rowIsAGroup) {
-            var firstCol = this.gridOptions.columnDefs[0];
-            var groupHeaderTakesEntireRow = this.gridOptions.groupUseEntireRow;
+            var firstCol = columnDefs[0];
+            var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
             var eGroupRow = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow);
             if (pinnedColumnCount>0) {
@@ -171,7 +148,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
                 //draw in blank cells for the rest of the row
                 var groupHasData = data.aggData!==undefined && data.aggData!==null;
-                this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+                columnDefs.forEach(function(colDef, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
@@ -184,13 +161,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
 
         } else {
-            this.gridOptions.columnDefs.forEach(function(colDef, colIndex) {
+            columnDefs.forEach(function(colDef, colIndex) {
                 _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
             });
         }
 
         //experimental, try compiling as we insert rows
-        if (this.gridOptions.angularCompile) {
+        if (this.gridOptionsWrapper.isAngularCompile()) {
             var newChildScope = this.$scope.$new();
             this.childScopesForRows[rowIndex] = newChildScope;
             newChildScope.rowData = data;
@@ -228,8 +205,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eRow.setAttribute("row", rowIndex);
 
-        eRow.style.top = (this.gridOptions.rowHeight * rowIndex) + "px";
-        eRow.style.height = (this.gridOptions.rowHeight) + "px";
+        eRow.style.top = (this.gridOptionsWrapper.getRowHeight() * rowIndex) + "px";
+        eRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
 
         if (!groupRow) {
             var _this = this;
