@@ -46,6 +46,8 @@ define(["./constants"], function(constants) {
     };
 
     GridOptionsWrapper.prototype.ensureEachColHasSize = function () {
+        if (!this.isColumDefsPresent()) { return; }
+
         this.gridOptions.columnDefs.forEach(function (colDef) {
             if (!colDef.width || colDef.width < 10) {
                 colDef.actualWidth = constants.MIN_COL_WIDTH;
