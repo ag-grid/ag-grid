@@ -4,8 +4,9 @@ define([
     "./filterModel"
 ], function(utils, filterComponentFactory, filterModelFactory) {
 
-    function FilterManager(grid) {
+    function FilterManager(grid, rowModel) {
         this.grid = grid;
+        this.rowModel = rowModel;
         this.colModels = {};
     }
 
@@ -71,7 +72,7 @@ define([
 
         var model = this.colModels[colDef.field];
         if (!model) {
-            var rowData = this.grid.getRowData();
+            var rowData = this.rowModel.getAllRows();
             var uniqueValues = utils.uniqueValues(rowData, colDef.field);
             if (colDef.comparator) {
                 uniqueValues.sort(colDef.comparator);

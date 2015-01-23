@@ -54,10 +54,11 @@ define([
 
         this.addApi();
         this.findAllElements($element);
-        this.filterManager = new FilterManager(this);
 
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
+
+        this.filterManager = new FilterManager(this, this.rowModel);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
@@ -70,7 +71,7 @@ define([
         this.setupColumns();
 
         //done when rows change
-        this.setupRows(constants.STEP_EVERYTHING);
+        this.refreshRows(constants.STEP_EVERYTHING);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -79,10 +80,6 @@ define([
             _this.finished = true;
         });
     }
-
-    Grid.prototype.getRowData = function () {
-        return this.gridOptions.rowData;
-    };
 
     Grid.prototype.getPopupParent = function () {
         return this.eRoot;
@@ -110,7 +107,7 @@ define([
     };
 
     Grid.prototype.onFilterChanged = function () {
-        this.setupRows(constants.STEP_FILTER);
+        this.refreshRows(constants.STEP_FILTER);
         this.headerRenderer.updateFilterIcons();
     };
 
@@ -177,8 +174,8 @@ define([
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.setupRows = function (step) {
-        this.rowController.setupRows(step);
+    Grid.prototype.refreshRows = function (step) {
+        this.rowController.processRows(step);
         this.rowRenderer.render();
     };
 
@@ -189,7 +186,7 @@ define([
                 _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
-                _this.setupRows(constants.STEP_EVERYTHING);
+                _this.refreshRows(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
             },
             onNewCols: function () {
@@ -197,11 +194,11 @@ define([
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
-                _this.setupRows(constants.STEP_MAP);
+                _this.refreshRows(constants.STEP_MAP);
             },
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
-                _this.setupRows(constants.STEP_MAP);
+                _this.refreshRows(constants.STEP_MAP);
             }
         };
         this.gridOptions.api = api;
@@ -225,7 +222,7 @@ define([
 
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
-        this.setupRows(constants.STEP_EVERYTHING);
+        this.refreshRows(constants.STEP_EVERYTHING);
     };
 
     Grid.prototype.findAllElements = function ($element) {

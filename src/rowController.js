@@ -11,18 +11,18 @@ define([
         this.filterManager = filterManager;
     }
 
-    RowController.prototype.setupRows = function(step) {
+    RowController.prototype.processRows = function(step) {
 
         //fallthrough in below switch is on purpose
         switch (step) {
             case constants.STEP_EVERYTHING :
-                this.doGrouping(); //populates rowDataAfterGroup
+                this.doGrouping();
             case constants.STEP_FILTER :
-                this.doFilter(); //populates rowDataAfterGroupAndFilter
+                this.doFilter();
             case constants.STEP_SORT :
-                this.doSort(); //populates rowDataAfterGroupAndFilterAndSort
+                this.doSort();
             case constants.STEP_MAP :
-                this.doGroupMapping(); //rowDataAfterGroupAndFilterAndSortAndMap
+                this.doGroupMapping();
         }
 
     };

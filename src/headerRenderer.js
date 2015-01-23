@@ -121,7 +121,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
-            _this.angularGrid.setupRows(constants.STEP_SORT);
+            _this.angularGrid.refreshRows(constants.STEP_SORT);
         });
     };
 

@@ -255,7 +255,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var _this = this;
         eGridGroupRow.addEventListener("click", function(event) {
             data.expanded = !data.expanded;
-            _this.angularGrid.setupRows(constants.STEP_MAP);
+            _this.angularGrid.refreshRows(constants.STEP_MAP);
         });
 
         return eGridGroupRow;
