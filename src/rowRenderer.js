@@ -266,7 +266,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data);
+            var resultFromRenderer = colDef.cellRenderer(value, data, colDef);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
