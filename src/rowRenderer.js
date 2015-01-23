@@ -296,26 +296,6 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         }
 
-        if (this.gridOptions.cellCssFormatter) {
-            var cssStyles = this.gridOptions.cssCellFormatter(rowIndex, colIndex);
-            if (cssStyles) {
-                Object.keys(cssStyles).forEach(function(key) {
-                    eGridCell.style[key] = cssStyles[key];
-                });
-            }
-        }
-
-        if (this.gridOptions.cellClassFormatter) {
-            var classes = this.gridOptions.cellClassFormatter(rowIndex, colIndex);
-            if (classes) {
-                var newClassesString = classes.join(" ");
-                if (eGridCell.className) {
-                    newClassesString = eGridCell.className + " " + newClassesString;
-                }
-                eGridCell.className = newClassesString;
-            }
-        }
-
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 
         return eGridCell;

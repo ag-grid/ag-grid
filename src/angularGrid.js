@@ -8,7 +8,6 @@ define([
     "angular",
     "text!./angularGrid.html",
     "./utils",
-    "./svgFactory",
     "./filterManager",
     "./rowModel",
     "./rowController",
@@ -19,11 +18,9 @@ define([
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, SvgFactory, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
+], function(angular, template, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
 
     var module = angular.module("angularGrid", []);
-
-    var svgFactory = new SvgFactory();
 
     module.directive("angularGrid", function () {
         return {
@@ -63,7 +60,7 @@ define([
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile);
-        //this.headerRenderer = new HeaderRenderer(this.gridOptions);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
         this.addScrollListener();
 
@@ -114,7 +111,7 @@ define([
 
     Grid.prototype.onFilterChanged = function () {
         this.setupRows(constants.STEP_FILTER);
-        this.updateFilterIcons();
+        this.headerRenderer.updateFilterIcons();
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
@@ -169,10 +166,10 @@ define([
     Grid.prototype.setupColumns = function () {
         this.gridOptionsWrapper.ensureEachColHasSize();
         this.showPinnedColContainersIfNeeded();
-        this.insertHeader();
+        this.headerRenderer.insertHeader();
         this.setPinnedColContainerWidth();
         this.setBodyContainerWidth();
-        this.updateFilterIcons();
+        this.headerRenderer.updateFilterIcons();
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
@@ -193,7 +190,7 @@ define([
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
                 _this.setupRows(constants.STEP_EVERYTHING);
-                _this.updateFilterIcons();
+                _this.headerRenderer.updateFilterIcons();
             },
             onNewCols: function () {
                 _this.onNewCols();
@@ -235,13 +232,12 @@ define([
         var eGrid = $element[0];
         this.eRoot = eGrid.querySelector(".ag-root");
         this.eBody = eGrid.querySelector(".ag-body");
-        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
         this.eBodyContainer = eGrid.querySelector(".ag-body-container");
         this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
         this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
         this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
-        this.eHeader = eGrid.querySelector(".ag-header");
+        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
     };
 
     Grid.prototype.showPinnedColContainersIfNeeded = function () {
@@ -255,6 +251,15 @@ define([
             this.ePinnedHeader.style.display = 'none';
             this.ePinnedColsViewport.style.display = 'none';
         }
+    };
+
+    Grid.prototype.updateBodyContainerWidthAfterColResize = function() {
+        this.rowRenderer.setMainRowWidths();
+        this.setBodyContainerWidth();
+    };
+
+    Grid.prototype.updatePinnedColContainerWidthAfterColResize = function() {
+        this.setPinnedColContainerWidth();
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
@@ -310,150 +315,6 @@ define([
         return widthSoFar;
     };
 
-    Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
-        var headerCell = document.createElement("div");
-        var _this = this;
-
-        headerCell.className = "ag-header-cell";
-
-        if (this.gridOptions.enableColResize) {
-            var headerCellResize = document.createElement("div");
-            headerCellResize.className = "ag-header-cell-resize";
-            headerCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
-        }
-
-        //filter button
-        if (this.gridOptions.enableFilter) {
-            var eMenuButton = svgFactory.createMenuSvg();
-            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
-            eMenuButton.onclick = function () {
-                _this.filterManager.showFilter(colDef, this);
-            };
-            headerCell.appendChild(eMenuButton);
-        }
-
-        //label div
-        var headerCellLabel = document.createElement("div");
-        headerCellLabel.className = "ag-header-cell-label";
-        //add in sort icon
-        if (this.gridOptions.enableSorting) {
-            var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
-            headerCellLabel.appendChild(headerSortIcon);
-            this.addSortHandling(headerCellLabel, colDef);
-        }
-
-        //add in filter icon
-        var filterIcon = svgFactory.createFilterSvg();
-        this.headerFilterIcons[colDef.field] = filterIcon;
-        headerCellLabel.appendChild(filterIcon);
-
-        //add in text label
-        var eInnerText = document.createElement("span");
-        eInnerText.innerHTML = colDef.displayName;
-        headerCellLabel.appendChild(eInnerText);
-
-        headerCell.appendChild(headerCellLabel);
-        headerCell.style.width = utils.formatWidth(colDef.actualWidth);
-
-        return headerCell;
-    };
-
-    Grid.prototype.updateFilterIcons = function() {
-        var _this = this;
-        this.gridOptions.columnDefs.forEach(function(colDef) {
-            var filterPresent = _this.filterManager.isFilterPresentForCol(colDef.field);
-            var displayStyle = filterPresent ? "inline" : "none";
-            _this.headerFilterIcons[colDef.field].style.display = displayStyle;
-        });
-    };
-
-    Grid.prototype.addSortHandling = function(headerCellLabel, colDef) {
-        var _this = this;
-        headerCellLabel.addEventListener("click", function() {
-
-            //update sort on current col
-            if (colDef.sort === constants.ASC) {
-                colDef.sort = constants.DESC;
-            } else if (colDef.sort === constants.DESC) {
-                colDef.sort = null
-            } else {
-                colDef.sort = constants.ASC;
-            }
-
-            //clear sort on all columns except this one, and update the icons
-            _this.gridOptions.columnDefs.forEach(function(colToClear, colIndex) {
-                if (colToClear!==colDef) {
-                    colToClear.sort = null;
-                }
-
-                //update visibility of icons
-                var sortAscending = colToClear.sort===constants.ASC;
-                var sortDescending = colToClear.sort===constants.DESC;
-                var sortAny = sortAscending || sortDescending;
-
-                var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
-                eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
-                eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eParentSvg = eSortAscending.parentNode;
-                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
-            });
-
-            _this.setupRows(constants.STEP_SORT);
-        });
-    };
-
-    Grid.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDef, colIndex, colPinned) {
-        var _this = this;
-        headerCellResize.onmousedown = function(downEvent) {
-            _this.eRoot.style.cursor = "col-resize";
-            _this.dragStartX = downEvent.clientX;
-            _this.colWidthStart = colDef.actualWidth;
-
-            _this.eRoot.onmousemove = function(moveEvent) {
-                var newX = moveEvent.clientX;
-                var change = newX - _this.dragStartX;
-                var newWidth = _this.colWidthStart + change;
-                if (newWidth < constants.MIN_COL_WIDTH) {
-                    newWidth = constants.MIN_COL_WIDTH;
-                }
-                var newWidthPx = newWidth + "px";
-                var selectorForAllColsInCell = ".cell-col-"+colIndex;
-                var cellsForThisCol = _this.eRoot.querySelectorAll(selectorForAllColsInCell);
-                for (var i = 0; i<cellsForThisCol.length; i++) {
-                    cellsForThisCol[i].style.width = newWidthPx;
-                }
-
-                headerCell.style.width = newWidthPx;
-                colDef.actualWidth = newWidth;
-
-                if (colPinned) {
-                    _this.setPinnedColContainerWidth();
-                } else {
-                    _this.rowRenderer.setMainRowWidths();
-                    _this.setBodyContainerWidth();
-                }
-            };
-            _this.eRoot.onmouseup = function() {
-                _this.eRoot.style.cursor = "";
-                _this.stopDragging();
-            };
-            _this.eRoot.onmouseleave = function() {
-                _this.stopDragging();
-            };
-        };
-    };
-
-    Grid.prototype.stopDragging = function() {
-        this.eRoot.style.cursor = "";
-        this.eRoot.onmouseup = null;
-        this.eRoot.onmouseleave = null;
-        this.eRoot.onmousemove = null;
-    };
-
     Grid.prototype.addScrollListener = function() {
         var _this = this;
 
@@ -468,26 +329,6 @@ define([
         this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
     };
 
-    Grid.prototype.insertHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        var eHeaderContainer = this.eHeaderContainer;
-        utils.removeAllChildren(ePinnedHeader);
-        utils.removeAllChildren(eHeaderContainer);
-        this.headerFilterIcons = {};
 
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var _this = this;
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            //only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = _this.createHeaderCell(colDef, index, true);
-                ePinnedHeader.appendChild(headerCell);
-            } else {
-                var headerCell = _this.createHeaderCell(colDef, index, false);
-                eHeaderContainer.appendChild(headerCell);
-            }
-        });
-    };
 
 });

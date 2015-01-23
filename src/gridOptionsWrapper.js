@@ -7,6 +7,18 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.isEnableSorting = function() {
+        return this.gridOptions.enableSorting;
+    };
+
+    GridOptionsWrapper.prototype.isEnableColResize = function() {
+        return this.gridOptions.enableColResize;
+    };
+
+    GridOptionsWrapper.prototype.isEnableFilter = function() {
+        return this.gridOptions.enableFilter;
+    };
+
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() {
         return this.gridOptions.groupDefaultExpanded === true;
     };
@@ -24,11 +36,11 @@ define(["./constants"], function(constants) {
     };
 
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() {
-        return this.groupUseEntireRow===true;
+        return this.gridOptions.groupUseEntireRow===true;
     };
 
     GridOptionsWrapper.prototype.isAngularCompile = function() {
-        return this.angularCompile===true;
+        return this.gridOptions.angularCompile===true;
     };
 
     GridOptionsWrapper.prototype.getColumnDefs = function() {
