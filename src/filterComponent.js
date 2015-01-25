@@ -181,11 +181,11 @@ define([
     };
 
     Filter.prototype.updateAllCheckboxes = function(checked) {
-        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll(".ag-filter-checkbox");
+        var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll("[filter-checkbox=true]");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }
-    }
+    };
 
     Filter.prototype.addScrollListener = function() {
         var _this = this;

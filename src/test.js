@@ -84,7 +84,7 @@ define([
 
         var defaultCols = [
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
-            {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 30},
+            {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180},
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
@@ -384,8 +384,8 @@ define([
         if (value==="" || value===undefined || value===null) {
             return "(no country)";
         } else {
-            var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
-            return "<span style='font-weight: bold; font-size: 14px;'> " + flag + value + "</span>";
+            var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
+            return flag + " " + value;
         }
     }
 

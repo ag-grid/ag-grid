@@ -1,6 +1,7 @@
 
 .ag-fresh .ag-root {
     border: 1px solid grey;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 .ag-fresh .ag-cell {
@@ -23,6 +24,7 @@
     padding: 2px;
     margin-top: 4px;
     border: 1px solid transparent;
+    box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
 }
 
 .ag-fresh .ag-header-cell-menu-button:hover {
@@ -47,6 +49,12 @@
 
 .ag-fresh .ag-group-row {
     background-color: #aaa;
+}
+
+.ag-fresh .ag-filter-checkbox {
+    position: relative;
+    top: 2px;
+    left: 2px;
 }
 
 .ag-fresh .ag-filter-header-container {

@@ -188,8 +188,9 @@ define([
             onNewCols: function () {
                 _this.onNewCols();
             },
-            onNewCols: function () {
-                _this.onNewCols();
+            unselectAll: function () {
+                _this.gridOptionsWrapper.clearSelection();
+                _this.rowRenderer.refreshView();
             },
             refreshView: function () {
                 _this.rowRenderer.refreshView();

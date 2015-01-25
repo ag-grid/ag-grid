@@ -13,131 +13,132 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-        <script src="http://www.angulargrid.com/dist/angularGrid.js"></script>
+        <script src="http://www.angulargrid.com/dist/angularGrid-1.0.js"></script>
 
         <script src="index.js"></script>
 
         <link rel="stylesheet" type="text/css" href="style.css">
 
-        <link rel="shortcut icon" href="favicon.ico" />
+        <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />
     </head>
 
     <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Angular Grid</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="jumbotron">
-        <div class="container">
-
-            <div style="float: right; margin-top: 50px;" ng-app="index" ng-controller="indexController">
-                <div style="text-align: center;">
-                    Small Example - Top 10 Populated Countries
-                </div>
-                <div angular-grid="angularGrid" class="ag-fresh" style="width: 615px; height: 200px;">
-
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="index.html">Angular Grid</a>
+                    <a class="navbar-brand" href="example.html">Example</a>
                 </div>
             </div>
+        </nav>
 
-            <div style="text-align: center; display: inline-block; margin: 10px 0px 10px 0px; padding: 0px 30px 0px 30px;">
-                <h1>Angular Grid</h1>
-                <p>A slick grid for AngularJS</p>
-            </div>
+        <div class="jumbotron">
+            <div class="container">
 
-            <br/>
+                <div style="float: right; margin-top: 50px;" ng-app="index" ng-controller="indexController">
+                    <div style="text-align: center;">
+                        Small Example - Top 10 Populated Countries
+                    </div>
+                    <div angular-grid="angularGrid" class="ag-fresh" style="width: 615px; height: 200px;">
 
-            <div style="margin: 10px 0px 40px 20px; display: inline-block;">
-                <i class="dot fa fa-circle"></i> Designed for Angular JS <i class="checkitem fa fa-check"></i> <br/>
-                <i class="dot fa fa-circle"></i> Advanced Filtering <i class="checkitem fa fa-check"></i> <br/>
-                <i class="dot fa fa-circle"></i> Large Data Sets <i class="checkitem fa fa-check"></i> <br/>
-                <i class="dot fa fa-circle"></i> Very Fast <i class="checkitem fa fa-check"></i> <br/>
-            </div>
+                    </div>
+                </div>
 
-            <p>
-                <a class="btn btn-primary btn-sm" href="https://github.com/ceolter/angular-grid" role="button">
-                    <i class="fa fa-github fa-fw"></i> Github
-                </a>
-                <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/dist/angularGrid.js"" role="button">
-                    <i class="fa fa-download fa-fw"></i> Download
-                </a>
-                <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/example.html" role="button">
-                    <i class="fa fa-bicycle fa-fw"></i> Take a Ride
-                </a>
-<!--
-                <a class="btn btn-primary btn-sm" href="#" role="button">
-                    <i class="fa fa-cog fa-fw"></i> Documentation
-                </a>
--->
-            </p>
-        </div>
-    </div>
+                <div style="text-align: center; display: inline-block; margin: 10px 0px 10px 0px; padding: 0px 30px 0px 30px;">
+                    <h1>Angular Grid</h1>
+                    <p>A slick grid for AngularJS</p>
+                </div>
 
-    <div class="container">
+                <br/>
 
-        <div class="row">
-            <div class="col-md-4">
-                <h2>Why Angular Grid</h2>
+                <div style="margin: 10px 0px 40px 20px; display: inline-block;">
+                    <i class="dot fa fa-circle"></i> Designed for Angular JS <i class="checkitem fa fa-check"></i> <br/>
+                    <i class="dot fa fa-circle"></i> Advanced Filtering <i class="checkitem fa fa-check"></i> <br/>
+                    <i class="dot fa fa-circle"></i> Large Data Sets <i class="checkitem fa fa-check"></i> <br/>
+                    <i class="dot fa fa-circle"></i> Very Fast <i class="checkitem fa fa-check"></i> <br/>
+                </div>
+
                 <p>
-                    Angular Grid is another Grid for HTML 5 Angular development. I created
-                    Angular Grid out of frustration because I couldn't find a grid that was very fast (sorry ui-Grid),
-                    allowed pinned columns (sorry Slick Grid) had excel like advanced filtering
-                    and was native to AngularJS (sorry pretty much every grid).
-                </p>
-                <p>
-                    So I thought, how hard can it be? I guess I am finding out ...
-                </p>
-            </div>
-            <div class="col-md-4">
-                <h2>Features</h2>
-                <p>
-                    <ul>
-                        <li>Native to Angular JS</li>
-                        <li>Excel Like Advanced Filtering</li>
-                        <li>Gmail like 'Quick Filter'</li>
-                        <li>Pinnable Columns</li>
-                        <li>Row Virtualisation</li>
-                        <li>Column Resizing</li>
-                        <li>Sorting</li>
-                        <li>Grouping</li>
-                        <li>Custom Cell Renderers</li>
-                        <li>Auto Resizable</li>
-                        <li>Works with 100% width & height</li>
-                        <li>Customisable via CSS</li>
-                        <li>No Dependencies</li>
-                        <li>Supports very large data sets</li>
-                        <li>Very fast</li>
-                    </ul>
-                </p>
-            </div>
-            <div class="col-md-4">
-                <h2>Who Should Use</h2>
-                <p>
-                    I work for a major investment bank. We required a grid that can handle very large data sets and give a professional Excel-like experience to our users. Angular Grid has been developed for this purpose.
-                </p>
-                <p>
-                    If your requirements are like ours, then you should find Angular Grid very useful. If you find another grid that is better suited to your needs, then use the other grid.
+                    <a class="btn btn-primary btn-sm" href="https://github.com/ceolter/angular-grid" role="button">
+                        <i class="fa fa-github fa-fw"></i> Github
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/dist" role="button">
+                        <i class="fa fa-download fa-fw"></i> Download
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="example.html" role="button">
+                        <i class="fa fa-bicycle fa-fw"></i> Take a Ride
+                    </a>
+    <!--
+                    <a class="btn btn-primary btn-sm" href="#" role="button">
+                        <i class="fa fa-cog fa-fw"></i> Documentation
+                    </a>
+    -->
                 </p>
             </div>
         </div>
 
-        <hr>
+        <div class="container">
 
-        <footer>
-            <div style="float:left;">
-                © Niall Crosby 2015
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Why Angular Grid</h2>
+                    <p>
+                        Angular Grid is another Grid for HTML 5 Angular development. I created
+                        Angular Grid out of frustration because I couldn't find a grid that was very fast (sorry ui-Grid),
+                        allowed pinned columns (sorry Slick Grid) had excel like advanced filtering
+                        and was native to AngularJS (sorry pretty much every grid).
+                    </p>
+                    <p>
+                        So I thought, how hard can it be? I guess I am finding out ...
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Features</h2>
+                    <p>
+                        <ul>
+                            <li>Native to Angular JS</li>
+                            <li>Excel Like Advanced Filtering</li>
+                            <li>Gmail like 'Quick Filter'</li>
+                            <li>Pinnable Columns</li>
+                            <li>Row Virtualisation</li>
+                            <li>Column Resizing</li>
+                            <li>Sorting</li>
+                            <li>Grouping</li>
+                            <li>Custom Cell Renderers</li>
+                            <li>Auto Resizable</li>
+                            <li>Works with 100% width & height</li>
+                            <li>Customisable via CSS</li>
+                            <li>No Dependencies</li>
+                            <li>Supports very large data sets</li>
+                            <li>Very fast</li>
+                        </ul>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Who Should Use</h2>
+                    <p>
+                        I work for a major investment bank. We required a grid that can handle very large data sets and give a professional Excel-like experience to our users. Angular Grid has been developed for this purpose.
+                    </p>
+                    <p>
+                        If your requirements are like ours, then you should find Angular Grid very useful. If you find another grid that is better suited to your needs, then use the other grid.
+                    </p>
+                </div>
             </div>
-            <div style="float:right;">
-                Contact: <a href="mailto:info@angulargrid.com" target="_top">info@angulargrid.com</a>
-            </div>
-            <div style="clear: both;">
-            </div>
-        </footer>
-    </div>
+
+            <hr>
+
+            <footer>
+                <div style="float:left;">
+                    © Niall Crosby 2015
+                </div>
+                <div style="float:right;">
+                    Contact: <a href="mailto:info@angulargrid.com" target="_top">info@angulargrid.com</a>
+                </div>
+                <div style="clear: both;">
+                </div>
+            </footer>
+        </div>
 
         <!--
         <div class="paragraph">
