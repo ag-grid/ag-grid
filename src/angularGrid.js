@@ -1,11 +1,7 @@
 
 //todo: full row group doesn't work when columns are pinned
 //todo: moving & hiding columns
-//todo: customizable headers
-//todo: api to access model
-//todo: api to refresh rows (keep grouping info)
 //todo: allow sort via api
-//todo: show menu only on hover of col
 
 define([
     "angular",
@@ -195,9 +191,17 @@ define([
             onNewCols: function () {
                 _this.onNewCols();
             },
-            unselectAll: function () {
-                _this.gridOptionsWrapper.clearSelection();
+            onNewCols: function () {
+                _this.onNewCols();
+            },
+            refreshView: function () {
                 _this.rowRenderer.refreshView();
+            },
+            getModel: function () {
+                _this.rowModel;
+            },
+            onGroupExpandedOrCollapsed: function() {
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
