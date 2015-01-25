@@ -62,6 +62,13 @@
                 <option value="ag-dark">Dark</option>
             </select>
 
+            Selection:
+            <select ng-model="angularGrid.rowSelection" ng-change="onSelectionChanged()" style="width: 90px;">
+                <option value="">-none-</option>
+                <option value="single">Single</option>
+                <option value="multiple">Multiple</option>
+            </select>
+
         </div>
 
         <div style="padding: 4px;">

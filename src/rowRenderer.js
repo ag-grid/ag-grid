@@ -2,13 +2,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile) {
+    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.findAllElements(eGrid);
         this.$compile = $compile;
+        this.$scope = $scope;
 
         //done once
         //for virtualisation, maps keep track of which elements are attached to the dom
@@ -131,6 +132,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eMainRow.style.width = mainRowWidth+"px";
 
+        //try compiling as we insert rows
+        var newChildScope = null;
+        if (this.gridOptionsWrapper.isAngularCompile()) {
+            newChildScope = this.$scope.$new();
+            this.childScopesForRows[rowIndex] = newChildScope;
+            newChildScope.rowData = data;
+        }
+
         //if group item, insert the first row
         var columnDefs = this.gridOptionsWrapper.getColumnDefs();
         if (rowIsAGroup) {
@@ -156,21 +165,18 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                     if (groupHasData) {
                         item = data.aggData[colDef.field];
                     }
-                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefs.forEach(function(colDef, colIndex) {
-                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
-        //experimental, try compiling as we insert rows
+        //try compiling as we insert rows
         if (this.gridOptionsWrapper.isAngularCompile()) {
-            var newChildScope = this.$scope.$new();
-            this.childScopesForRows[rowIndex] = newChildScope;
-            newChildScope.rowData = data;
             var ePinnedRowCompiled = this.$compile(ePinnedRow)(newChildScope);
             var eMainRowCompiled = this.$compile(eMainRow)(newChildScope);
             this.ePinnedColsContainer.appendChild(ePinnedRowCompiled[0]);
@@ -182,8 +188,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex);
+    RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -261,12 +267,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eGridGroupRow;
     };
 
-    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex) {
+    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data, colDef);
+            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);

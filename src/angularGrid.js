@@ -63,7 +63,7 @@ define([
 
         this.filterManager = new FilterManager(this, this.rowModel);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
         this.addScrollListener();
@@ -194,6 +194,10 @@ define([
             },
             onNewCols: function () {
                 _this.onNewCols();
+            },
+            unselectAll: function () {
+                _this.gridOptionsWrapper.clearSelection();
+                _this.rowRenderer.render();
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);

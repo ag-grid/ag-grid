@@ -61,6 +61,10 @@ define(["./constants"], function(constants) {
         }
     };
 
+    GridOptionsWrapper.prototype.clearSelection = function () {
+        this.gridOptions.selectedRows.length = 0;
+    };
+
     GridOptionsWrapper.prototype.ensureEachColHasSize = function () {
         if (!this.isColumDefsPresent()) { return; }
 

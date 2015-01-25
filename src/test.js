@@ -59,7 +59,7 @@ define([
         $scope.groupBy = "";
         $scope.groupType = "firstCol";
 
-        $scope.angularGrid = {
+        var angularGrid = {
             columnDefs: [],
             rowData: [],
             groupKeys: undefined, //set as string of keys eg ["region","country"],
@@ -73,13 +73,14 @@ define([
             enableFilter: true, //one of [true, false]
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
-            angularCompile: false,
+            angularCompile: true,
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
         };
+        $scope.angularGrid = angularGrid;
 
         var defaultCols = [
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
@@ -102,12 +103,18 @@ define([
 
         $scope.onRowCountChanged = function() {
             createData();
-            $scope.angularGrid.api.onNewRows();
+            angularGrid.api.onNewRows();
         };
 
         $scope.onColCountChanged = function() {
             createCols();
-            $scope.angularGrid.api.onNewCols();
+            angularGrid.api.onNewCols();
+        };
+
+        $scope.onSelectionChanged = function() {
+            if (angularGrid.rowSelection=='') {
+                angularGrid.api.unselectAll();
+            }
         };
 
         $scope.onGroupByChanged = function() {
@@ -116,13 +123,13 @@ define([
             if ($scope.groupBy!=="") {
                 groupBy = $scope.groupBy.split(",");
             }
-            $scope.angularGrid.groupKeys = groupBy;
+            angularGrid.groupKeys = groupBy;
 
             //setup type
             var groupUseEntireRow = $scope.groupType==='row';
-            $scope.angularGrid.groupUseEntireRow = groupUseEntireRow;
+            angularGrid.groupUseEntireRow = groupUseEntireRow;
 
-            $scope.angularGrid.api.onNewRows();
+            angularGrid.api.onNewRows();
         };
 
         function createCols() {
@@ -144,7 +151,7 @@ define([
                     comparator: comparator, cellCss: cellCss, cellCssFunc: cellCssFunc};
                 columns.push(colDef);
             }
-            $scope.angularGrid.columnDefs = columns;
+            angularGrid.columnDefs = columns;
         }
 
         function createData() {
@@ -186,7 +193,7 @@ define([
                 }
                 data.push(rowItem);
             }
-            $scope.angularGrid.rowData = data;
+            angularGrid.rowData = data;
         }
 
         //because name is the first col, if grouping present, we want to indent it.
@@ -348,10 +355,13 @@ define([
         }
     }
 
-    function languageCellRenderer(a,b,c,d) {
-
-        return "<span ng-click='showEdit=true' ng-show='!showEdit' ng-bind='rowData.language'></span>" +
-            "<input ng-model='rowData.language' ng-show='showEdit' ng-blur='showEdit=false'/>";
+    function languageCellRenderer(value, data, colDef, $childScope) {
+        if ($childScope) {
+            return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
+                "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
+        } else {
+            return value;
+        }
     }
 
     function countryCellRenderer(value) {
