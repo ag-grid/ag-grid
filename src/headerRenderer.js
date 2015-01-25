@@ -59,6 +59,15 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 _this.filterManager.showFilter(colDef, this);
             };
             headerCell.appendChild(eMenuButton);
+            headerCell.onmouseenter = function() {
+                eMenuButton.style.opacity = 1;
+            };
+            headerCell.onmouseleave = function() {
+                eMenuButton.style.opacity = 0;
+            };
+            eMenuButton.style.opacity = 0;
+            eMenuButton.style["-webkit-transition"] = "opacity 0.5s";
+            eMenuButton.style["transition"] = "opacity 0.5s";
         }
 
         //label div
