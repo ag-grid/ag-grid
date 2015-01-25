@@ -45,9 +45,6 @@ define([
         $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
             _this.onQuickFilterChanged(newFilter);
         });
-        $scope.$watch("angularGrid.pinnedColumnCount", function () {
-            _this.onNewCols();
-        });
 
         this.gridOptions.selectedRows = [];
 

@@ -51,7 +51,7 @@ define([
         var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
         $scope.colCount = 20;
-        $scope.rowCount = 1000;
+        $scope.rowCount = 100;
 
         $scope.width = "100%";
         $scope.height = "100%";
@@ -104,6 +104,10 @@ define([
         $scope.onRowCountChanged = function() {
             createData();
             angularGrid.api.onNewRows();
+        };
+
+        $scope.onPinnedColCountChanged = function() {
+            angularGrid.api.onNewCols();
         };
 
         $scope.onColCountChanged = function() {

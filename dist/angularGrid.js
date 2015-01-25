@@ -1148,108 +1148,6 @@ define('../src/utils',[], function() {
     return new Utils();
 
 });
-define('../src/constants',[], function() {
-    var constants = {};
-
-    constants.STEP_EVERYTHING = 0;
-    constants.STEP_FILTER = 1;
-    constants.STEP_SORT = 2;
-    constants.STEP_MAP = 3;
-
-    constants.ASC = "asc";
-    constants.DESC = "desc";
-
-    constants.ROW_BUFFER_SIZE = 5;
-
-    constants.SORT_STYLE_SHOW = "display:inline;";
-    constants.SORT_STYLE_HIDE = "display:none;";
-
-    constants.MIN_COL_WIDTH = 10;
-
-    return constants;
-});
-define('../src/svgFactory',["./constants"], function(constants) {
-
-    var SVG_NS = "http://www.w3.org/2000/svg";
-
-    function SvgFactory() {
-    }
-
-    SvgFactory.prototype.createFilterSvg = function() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-
-        var eFunnel = document.createElementNS(SVG_NS, "polygon");
-        eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
-        eFunnel.setAttribute("class", "ag-header-icon");
-        eSvg.appendChild(eFunnel);
-
-        return eSvg;
-    };
-
-    SvgFactory.prototype.createMenuSvg = function() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        var size = "12"
-        eSvg.setAttribute("width", size);
-        eSvg.setAttribute("height", size);
-
-        ["0","5","10"].forEach(function(y) {
-            var eLine = document.createElementNS(SVG_NS, "rect");
-            eLine.setAttribute("y", y);
-            eLine.setAttribute("width", size);
-            eLine.setAttribute("height", "2");
-            eLine.setAttribute("class", "ag-header-icon");
-            eSvg.appendChild(eLine);
-        });
-
-        return eSvg;
-    };
-
-    SvgFactory.prototype.createSortArrowSvg  = function(colIndex) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
-
-        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-        eDescIcon.setAttribute("points", "0,10 5,0 10,10");
-        eDescIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
-        eSvg.appendChild(eDescIcon);
-
-        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-        eAscIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
-        eSvg.appendChild(eAscIcon);
-
-        return eSvg;
-    };
-
-
-    SvgFactory.prototype.createGroupSvg = function(expanded) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
-
-        if (expanded) {
-            var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-            eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-            eSvg.appendChild(eAscIcon);
-        } else {
-            var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-            eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-            eSvg.appendChild(eDescIcon);
-        }
-
-        return eSvg;
-    };
-
-    return SvgFactory;
-
-});
 
 define('text!../src/filter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
@@ -1589,8 +1487,9 @@ define('../src/filterManager',[
     "./filterModel"
 ], function(utils, filterComponentFactory, filterModelFactory) {
 
-    function FilterManager(grid) {
+    function FilterManager(grid, rowModel) {
         this.grid = grid;
+        this.rowModel = rowModel;
         this.colModels = {};
     }
 
@@ -1656,7 +1555,7 @@ define('../src/filterManager',[
 
         var model = this.colModels[colDef.field];
         if (!model) {
-            var rowData = this.grid.getRowData();
+            var rowData = this.rowModel.getAllRows();
             var uniqueValues = utils.uniqueValues(rowData, colDef.field);
             if (colDef.comparator) {
                 uniqueValues.sort(colDef.comparator);
@@ -1801,6 +1700,26 @@ define('../src/groupCreator',[
     return new GroupCreator();
 
 });
+define('../src/constants',[], function() {
+    var constants = {};
+
+    constants.STEP_EVERYTHING = 0;
+    constants.STEP_FILTER = 1;
+    constants.STEP_SORT = 2;
+    constants.STEP_MAP = 3;
+
+    constants.ASC = "asc";
+    constants.DESC = "desc";
+
+    constants.ROW_BUFFER_SIZE = 5;
+
+    constants.SORT_STYLE_SHOW = "display:inline;";
+    constants.SORT_STYLE_HIDE = "display:none;";
+
+    constants.MIN_COL_WIDTH = 10;
+
+    return constants;
+});
 define('../src/rowController',[
     "./groupCreator",
     "./utils",
@@ -1814,18 +1733,18 @@ define('../src/rowController',[
         this.filterManager = filterManager;
     }
 
-    RowController.prototype.updateModelAndRefresh = function(step) {
+    RowController.prototype.updateModel = function(step) {
 
         //fallthrough in below switch is on purpose
         switch (step) {
             case constants.STEP_EVERYTHING :
-                this.doGrouping(); //populates rowDataAfterGroup
+                this.doGrouping();
             case constants.STEP_FILTER :
-                this.doFilter(); //populates rowDataAfterGroupAndFilter
+                this.doFilter();
             case constants.STEP_SORT :
-                this.doSort(); //populates rowDataAfterGroupAndFilterAndSort
+                this.doSort();
             case constants.STEP_MAP :
-                this.doGroupMapping(); //rowDataAfterGroupAndFilterAndSortAndMap
+                this.doGroupMapping();
         }
 
     };
@@ -2028,17 +1947,100 @@ define('../src/rowController',[
 
     return RowController;
 });
+define('../src/svgFactory',["./constants"], function(constants) {
+
+    var SVG_NS = "http://www.w3.org/2000/svg";
+
+    function SvgFactory() {
+    }
+
+    SvgFactory.prototype.createFilterSvg = function() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+
+        var eFunnel = document.createElementNS(SVG_NS, "polygon");
+        eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
+        eFunnel.setAttribute("class", "ag-header-icon");
+        eSvg.appendChild(eFunnel);
+
+        return eSvg;
+    };
+
+    SvgFactory.prototype.createMenuSvg = function() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        var size = "12"
+        eSvg.setAttribute("width", size);
+        eSvg.setAttribute("height", size);
+
+        ["0","5","10"].forEach(function(y) {
+            var eLine = document.createElementNS(SVG_NS, "rect");
+            eLine.setAttribute("y", y);
+            eLine.setAttribute("width", size);
+            eLine.setAttribute("height", "2");
+            eLine.setAttribute("class", "ag-header-icon");
+            eSvg.appendChild(eLine);
+        });
+
+        return eSvg;
+    };
+
+    SvgFactory.prototype.createSortArrowSvg  = function(colIndex) {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        eSvg.setAttribute("class", "ag-header-cell-sort");
+
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,10 5,0 10,10");
+        eDescIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
+        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
+        eSvg.appendChild(eDescIcon);
+
+        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
+        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
+        eAscIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
+        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
+        eSvg.appendChild(eAscIcon);
+
+        return eSvg;
+    };
+
+
+    SvgFactory.prototype.createGroupSvg = function(expanded) {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        eSvg.setAttribute("class", "ag-header-cell-sort");
+
+        if (expanded) {
+            var eAscIcon = document.createElementNS(SVG_NS, "polygon");
+            eAscIcon.setAttribute("points", "0,0 10,0 5,10");
+            eSvg.appendChild(eAscIcon);
+        } else {
+            var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+            eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+            eSvg.appendChild(eDescIcon);
+        }
+
+        return eSvg;
+    };
+
+    return SvgFactory;
+
+});
 define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(constants, SvgFactory, utils) {
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile) {
+    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.findAllElements(eGrid);
         this.$compile = $compile;
+        this.$scope = $scope;
 
         //done once
         //for virtualisation, maps keep track of which elements are attached to the dom
@@ -2062,7 +2064,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
     };
 
-    RowRenderer.prototype.render = function() {
+    RowRenderer.prototype.refreshView = function() {
         var rowCount = this.rowModel.getRowsAfterMap().length;
         var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
         this.eBodyContainer.style.height = containerHeight + "px";
@@ -2161,6 +2163,14 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         eMainRow.style.width = mainRowWidth+"px";
 
+        //try compiling as we insert rows
+        var newChildScope = null;
+        if (this.gridOptionsWrapper.isAngularCompile()) {
+            newChildScope = this.$scope.$new();
+            this.childScopesForRows[rowIndex] = newChildScope;
+            newChildScope.rowData = data;
+        }
+
         //if group item, insert the first row
         var columnDefs = this.gridOptionsWrapper.getColumnDefs();
         if (rowIsAGroup) {
@@ -2186,21 +2196,18 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                     if (groupHasData) {
                         item = data.aggData[colDef.field];
                     }
-                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefs.forEach(function(colDef, colIndex) {
-                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow);
+                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
-        //experimental, try compiling as we insert rows
+        //try compiling as we insert rows
         if (this.gridOptionsWrapper.isAngularCompile()) {
-            var newChildScope = this.$scope.$new();
-            this.childScopesForRows[rowIndex] = newChildScope;
-            newChildScope.rowData = data;
             var ePinnedRowCompiled = this.$compile(ePinnedRow)(newChildScope);
             var eMainRowCompiled = this.$compile(eMainRow)(newChildScope);
             this.ePinnedColsContainer.appendChild(ePinnedRowCompiled[0]);
@@ -2212,8 +2219,8 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex);
+    RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -2291,12 +2298,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eGridGroupRow;
     };
 
-    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex) {
+    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data);
+            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
@@ -2326,26 +2333,6 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         }
 
-        if (this.gridOptions.cellCssFormatter) {
-            var cssStyles = this.gridOptions.cssCellFormatter(rowIndex, colIndex);
-            if (cssStyles) {
-                Object.keys(cssStyles).forEach(function(key) {
-                    eGridCell.style[key] = cssStyles[key];
-                });
-            }
-        }
-
-        if (this.gridOptions.cellClassFormatter) {
-            var classes = this.gridOptions.cellClassFormatter(rowIndex, colIndex);
-            if (classes) {
-                var newClassesString = classes.join(" ");
-                if (eGridCell.className) {
-                    newClassesString = eGridCell.className + " " + newClassesString;
-                }
-                eGridCell.className = newClassesString;
-            }
-        }
-
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 
         return eGridCell;
@@ -2354,11 +2341,213 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     return RowRenderer;
 
 });
-define('../src/headerRenderer',[], function() {
+define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, constants) {
 
-    function HeaderRenderer(gridOptions) {
-        this.gridOptions = gridOptions;
+    var svgFactory = new SvgFactory();
+
+    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager) {
+        this.gridOptionsWrapper = gridOptionsWrapper;
+        this.angularGrid = angularGrid;
+        this.filterManager = filterManager;
+        this.findAllElements(eGrid);
     }
+
+    HeaderRenderer.prototype.findAllElements = function (eGrid) {
+        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+        this.eHeader = eGrid.querySelector(".ag-header");
+        this.eRoot = eGrid.querySelector(".ag-root");
+    };
+
+    HeaderRenderer.prototype.insertHeader = function() {
+        var ePinnedHeader = this.ePinnedHeader;
+        var eHeaderContainer = this.eHeaderContainer;
+        utils.removeAllChildren(ePinnedHeader);
+        utils.removeAllChildren(eHeaderContainer);
+        this.headerFilterIcons = {};
+
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var _this = this;
+
+        this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef, index) {
+            //only include the first x cols
+            if (index<pinnedColumnCount) {
+                var headerCell = _this.createHeaderCell(colDef, index, true);
+                ePinnedHeader.appendChild(headerCell);
+            } else {
+                var headerCell = _this.createHeaderCell(colDef, index, false);
+                eHeaderContainer.appendChild(headerCell);
+            }
+        });
+    };
+
+    HeaderRenderer.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
+        var headerCell = document.createElement("div");
+        var _this = this;
+
+        headerCell.className = "ag-header-cell";
+
+        if (this.gridOptionsWrapper.isEnableColResize()) {
+            var headerCellResize = document.createElement("div");
+            headerCellResize.className = "ag-header-cell-resize";
+            headerCell.appendChild(headerCellResize);
+            this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
+        }
+
+        //filter button
+        if (this.gridOptionsWrapper.isEnableFilter()) {
+            var eMenuButton = svgFactory.createMenuSvg();
+            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+            eMenuButton.onclick = function () {
+                _this.filterManager.showFilter(colDef, this);
+            };
+            headerCell.appendChild(eMenuButton);
+            headerCell.onmouseenter = function() {
+                eMenuButton.style.opacity = 1;
+            };
+            headerCell.onmouseleave = function() {
+                eMenuButton.style.opacity = 0;
+            };
+            eMenuButton.style.opacity = 0;
+            eMenuButton.style["-webkit-transition"] = "opacity 0.5s";
+            eMenuButton.style["transition"] = "opacity 0.5s";
+        }
+
+        //label div
+        var headerCellLabel = document.createElement("div");
+        headerCellLabel.className = "ag-header-cell-label";
+        //add in sort icon
+        if (this.gridOptionsWrapper.isEnableSorting()) {
+            var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
+            headerCellLabel.appendChild(headerSortIcon);
+            this.addSortHandling(headerCellLabel, colDef);
+        }
+
+        //add in filter icon
+        var filterIcon = svgFactory.createFilterSvg();
+        this.headerFilterIcons[colDef.field] = filterIcon;
+        headerCellLabel.appendChild(filterIcon);
+
+        //add in text label
+        var innerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
+        if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
+            //renderer provided, use it
+            var headerCellRenderer = innerCellRenderer(colDef);
+            if (utils.isNode(headerCellRenderer) || utils.isElement(headerCellRenderer)) {
+                //a dom node or element was returned, so add child
+                headerCellLabel.appendChild(headerCellRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                var eTextSpan = document.createElement("span");
+                eTextSpan.innerHTML = headerCellRenderer;
+                headerCellLabel.appendChild(eTextSpan);
+            }
+        } else {
+            //no renderer, default text render
+            var eInnerText = document.createElement("span");
+            eInnerText.innerHTML = colDef.displayName;
+            headerCellLabel.appendChild(eInnerText);
+        }
+
+        headerCell.appendChild(headerCellLabel);
+        headerCell.style.width = utils.formatWidth(colDef.actualWidth);
+
+        return headerCell;
+    };
+
+    HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDef) {
+        var _this = this;
+        headerCellLabel.addEventListener("click", function() {
+
+            //update sort on current col
+            if (colDef.sort === constants.ASC) {
+                colDef.sort = constants.DESC;
+            } else if (colDef.sort === constants.DESC) {
+                colDef.sort = null
+            } else {
+                colDef.sort = constants.ASC;
+            }
+
+            //clear sort on all columns except this one, and update the icons
+            _this.gridOptionsWrapper.getColumnDefs().forEach(function(colToClear, colIndex) {
+                if (colToClear!==colDef) {
+                    colToClear.sort = null;
+                }
+
+                //update visibility of icons
+                var sortAscending = colToClear.sort===constants.ASC;
+                var sortDescending = colToClear.sort===constants.DESC;
+                var sortAny = sortAscending || sortDescending;
+
+                var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
+                eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
+
+                var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
+                eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
+
+                var eParentSvg = eSortAscending.parentNode;
+                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
+            });
+
+            _this.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
+        });
+    };
+
+    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDef, colIndex, colPinned) {
+        var _this = this;
+        headerCellResize.onmousedown = function(downEvent) {
+            _this.eRoot.style.cursor = "col-resize";
+            _this.dragStartX = downEvent.clientX;
+            _this.colWidthStart = colDef.actualWidth;
+
+            _this.eRoot.onmousemove = function(moveEvent) {
+                var newX = moveEvent.clientX;
+                var change = newX - _this.dragStartX;
+                var newWidth = _this.colWidthStart + change;
+                if (newWidth < constants.MIN_COL_WIDTH) {
+                    newWidth = constants.MIN_COL_WIDTH;
+                }
+                var newWidthPx = newWidth + "px";
+                var selectorForAllColsInCell = ".cell-col-"+colIndex;
+                var cellsForThisCol = _this.eRoot.querySelectorAll(selectorForAllColsInCell);
+                for (var i = 0; i<cellsForThisCol.length; i++) {
+                    cellsForThisCol[i].style.width = newWidthPx;
+                }
+
+                headerCell.style.width = newWidthPx;
+                colDef.actualWidth = newWidth;
+
+                //show not be calling these here, should do something else
+                if (colPinned) {
+                    _this.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                } else {
+                    _this.angularGrid.updateBodyContainerWidthAfterColResize();
+                }
+            };
+            _this.eRoot.onmouseup = function() {
+                _this.stopDragging();
+            };
+            _this.eRoot.onmouseleave = function() {
+                _this.stopDragging();
+            };
+        };
+    };
+
+    HeaderRenderer.prototype.stopDragging = function() {
+        this.eRoot.style.cursor = "";
+        this.eRoot.onmouseup = null;
+        this.eRoot.onmouseleave = null;
+        this.eRoot.onmousemove = null;
+    };
+
+    HeaderRenderer.prototype.updateFilterIcons = function() {
+        var _this = this;
+        this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef) {
+            var filterPresent = _this.filterManager.isFilterPresentForCol(colDef.field);
+            var displayStyle = filterPresent ? "inline" : "none";
+            _this.headerFilterIcons[colDef.field].style.display = displayStyle;
+        });
+    };
 
     return HeaderRenderer;
 
@@ -2371,6 +2560,22 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         this.gridOptions = gridOptions;
         this.setupDefaults();
     }
+
+    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() {
+        return this.gridOptions.headerCellRenderer;
+    };
+
+    GridOptionsWrapper.prototype.isEnableSorting = function() {
+        return this.gridOptions.enableSorting;
+    };
+
+    GridOptionsWrapper.prototype.isEnableColResize = function() {
+        return this.gridOptions.enableColResize;
+    };
+
+    GridOptionsWrapper.prototype.isEnableFilter = function() {
+        return this.gridOptions.enableFilter;
+    };
 
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() {
         return this.gridOptions.groupDefaultExpanded === true;
@@ -2389,11 +2594,11 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     };
 
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() {
-        return this.groupUseEntireRow===true;
+        return this.gridOptions.groupUseEntireRow===true;
     };
 
     GridOptionsWrapper.prototype.isAngularCompile = function() {
-        return this.angularCompile===true;
+        return this.gridOptions.angularCompile===true;
     };
 
     GridOptionsWrapper.prototype.getColumnDefs = function() {
@@ -2410,9 +2615,13 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         }
     };
 
+    GridOptionsWrapper.prototype.clearSelection = function () {
+        this.gridOptions.selectedRows.length = 0;
+    };
+
     GridOptionsWrapper.prototype.ensureEachColHasSize = function () {
         if (!this.isColumDefsPresent()) { return; }
-        
+
         this.gridOptions.columnDefs.forEach(function (colDef) {
             if (!colDef.width || colDef.width < 10) {
                 colDef.actualWidth = constants.MIN_COL_WIDTH;
@@ -2598,15 +2807,13 @@ define('css!../src/css/theme-dark',[],function(){});
 define('css!../src/css/theme-fresh',[],function(){});
 
 //todo: full row group doesn't work when columns are pinned
-//todo: compile into angular
 //todo: moving & hiding columns
-//todo: grouping
+//todo: allow sort via api
 
 define('../src/angularGrid',[
     "angular",
     "text!./angularGrid.html",
     "./utils",
-    "./svgFactory",
     "./filterManager",
     "./rowModel",
     "./rowController",
@@ -2617,11 +2824,9 @@ define('../src/angularGrid',[
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, SvgFactory, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
+], function(angular, template, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
 
     var module = angular.module("angularGrid", []);
-
-    var svgFactory = new SvgFactory();
 
     module.directive("angularGrid", function () {
         return {
@@ -2655,13 +2860,14 @@ define('../src/angularGrid',[
 
         this.addApi();
         this.findAllElements($element);
-        this.filterManager = new FilterManager(this);
 
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
+
+        this.filterManager = new FilterManager(this, this.rowModel);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile);
-        //this.headerRenderer = new HeaderRenderer(this.gridOptions);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
         this.addScrollListener();
 
@@ -2680,10 +2886,6 @@ define('../src/angularGrid',[
             _this.finished = true;
         });
     }
-
-    Grid.prototype.getRowData = function () {
-        return this.gridOptions.rowData;
-    };
 
     Grid.prototype.getPopupParent = function () {
         return this.eRoot;
@@ -2712,7 +2914,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onFilterChanged = function () {
         this.updateModelAndRefresh(constants.STEP_FILTER);
-        this.updateFilterIcons();
+        this.headerRenderer.updateFilterIcons();
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
@@ -2767,10 +2969,10 @@ define('../src/angularGrid',[
     Grid.prototype.setupColumns = function () {
         this.gridOptionsWrapper.ensureEachColHasSize();
         this.showPinnedColContainersIfNeeded();
-        this.insertHeader();
+        this.headerRenderer.insertHeader();
         this.setPinnedColContainerWidth();
         this.setBodyContainerWidth();
-        this.updateFilterIcons();
+        this.headerRenderer.updateFilterIcons();
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
@@ -2779,8 +2981,8 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.updateModelAndRefresh = function (step) {
-        this.rowController.updateModelAndRefresh(step);
-        this.rowRenderer.render();
+        this.rowController.updateModel(step);
+        this.rowRenderer.refreshView();
     };
 
     Grid.prototype.addApi = function () {
@@ -2791,10 +2993,22 @@ define('../src/angularGrid',[
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
-                _this.updateFilterIcons();
+                _this.headerRenderer.updateFilterIcons();
             },
             onNewCols: function () {
                 _this.onNewCols();
+            },
+            onNewCols: function () {
+                _this.onNewCols();
+            },
+            refreshView: function () {
+                _this.rowRenderer.refreshView();
+            },
+            getModel: function () {
+                _this.rowModel;
+            },
+            onGroupExpandedOrCollapsed: function() {
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
@@ -2833,13 +3047,12 @@ define('../src/angularGrid',[
         var eGrid = $element[0];
         this.eRoot = eGrid.querySelector(".ag-root");
         this.eBody = eGrid.querySelector(".ag-body");
-        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
         this.eBodyContainer = eGrid.querySelector(".ag-body-container");
         this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
         this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
         this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
-        this.eHeader = eGrid.querySelector(".ag-header");
+        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
     };
 
     Grid.prototype.showPinnedColContainersIfNeeded = function () {
@@ -2853,6 +3066,15 @@ define('../src/angularGrid',[
             this.ePinnedHeader.style.display = 'none';
             this.ePinnedColsViewport.style.display = 'none';
         }
+    };
+
+    Grid.prototype.updateBodyContainerWidthAfterColResize = function() {
+        this.rowRenderer.setMainRowWidths();
+        this.setBodyContainerWidth();
+    };
+
+    Grid.prototype.updatePinnedColContainerWidthAfterColResize = function() {
+        this.setPinnedColContainerWidth();
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
@@ -2908,150 +3130,6 @@ define('../src/angularGrid',[
         return widthSoFar;
     };
 
-    Grid.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
-        var headerCell = document.createElement("div");
-        var _this = this;
-
-        headerCell.className = "ag-header-cell";
-
-        if (this.gridOptions.enableColResize) {
-            var headerCellResize = document.createElement("div");
-            headerCellResize.className = "ag-header-cell-resize";
-            headerCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
-        }
-
-        //filter button
-        if (this.gridOptions.enableFilter) {
-            var eMenuButton = svgFactory.createMenuSvg();
-            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
-            eMenuButton.onclick = function () {
-                _this.filterManager.showFilter(colDef, this);
-            };
-            headerCell.appendChild(eMenuButton);
-        }
-
-        //label div
-        var headerCellLabel = document.createElement("div");
-        headerCellLabel.className = "ag-header-cell-label";
-        //add in sort icon
-        if (this.gridOptions.enableSorting) {
-            var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
-            headerCellLabel.appendChild(headerSortIcon);
-            this.addSortHandling(headerCellLabel, colDef);
-        }
-
-        //add in filter icon
-        var filterIcon = svgFactory.createFilterSvg();
-        this.headerFilterIcons[colDef.field] = filterIcon;
-        headerCellLabel.appendChild(filterIcon);
-
-        //add in text label
-        var eInnerText = document.createElement("span");
-        eInnerText.innerHTML = colDef.displayName;
-        headerCellLabel.appendChild(eInnerText);
-
-        headerCell.appendChild(headerCellLabel);
-        headerCell.style.width = utils.formatWidth(colDef.actualWidth);
-
-        return headerCell;
-    };
-
-    Grid.prototype.updateFilterIcons = function() {
-        var _this = this;
-        this.gridOptions.columnDefs.forEach(function(colDef) {
-            var filterPresent = _this.filterManager.isFilterPresentForCol(colDef.field);
-            var displayStyle = filterPresent ? "inline" : "none";
-            _this.headerFilterIcons[colDef.field].style.display = displayStyle;
-        });
-    };
-
-    Grid.prototype.addSortHandling = function(headerCellLabel, colDef) {
-        var _this = this;
-        headerCellLabel.addEventListener("click", function() {
-
-            //update sort on current col
-            if (colDef.sort === constants.ASC) {
-                colDef.sort = constants.DESC;
-            } else if (colDef.sort === constants.DESC) {
-                colDef.sort = null
-            } else {
-                colDef.sort = constants.ASC;
-            }
-
-            //clear sort on all columns except this one, and update the icons
-            _this.gridOptions.columnDefs.forEach(function(colToClear, colIndex) {
-                if (colToClear!==colDef) {
-                    colToClear.sort = null;
-                }
-
-                //update visibility of icons
-                var sortAscending = colToClear.sort===constants.ASC;
-                var sortDescending = colToClear.sort===constants.DESC;
-                var sortAny = sortAscending || sortDescending;
-
-                var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
-                eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
-                eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eParentSvg = eSortAscending.parentNode;
-                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
-            });
-
-            _this.updateModelAndRefresh(constants.STEP_SORT);
-        });
-    };
-
-    Grid.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDef, colIndex, colPinned) {
-        var _this = this;
-        headerCellResize.onmousedown = function(downEvent) {
-            _this.eRoot.style.cursor = "col-resize";
-            _this.dragStartX = downEvent.clientX;
-            _this.colWidthStart = colDef.actualWidth;
-
-            _this.eRoot.onmousemove = function(moveEvent) {
-                var newX = moveEvent.clientX;
-                var change = newX - _this.dragStartX;
-                var newWidth = _this.colWidthStart + change;
-                if (newWidth < constants.MIN_COL_WIDTH) {
-                    newWidth = constants.MIN_COL_WIDTH;
-                }
-                var newWidthPx = newWidth + "px";
-                var selectorForAllColsInCell = ".cell-col-"+colIndex;
-                var cellsForThisCol = _this.eRoot.querySelectorAll(selectorForAllColsInCell);
-                for (var i = 0; i<cellsForThisCol.length; i++) {
-                    cellsForThisCol[i].style.width = newWidthPx;
-                }
-
-                headerCell.style.width = newWidthPx;
-                colDef.actualWidth = newWidth;
-
-                if (colPinned) {
-                    _this.setPinnedColContainerWidth();
-                } else {
-                    _this.rowRenderer.setMainRowWidths();
-                    _this.setBodyContainerWidth();
-                }
-            };
-            _this.eRoot.onmouseup = function() {
-                _this.eRoot.style.cursor = "";
-                _this.stopDragging();
-            };
-            _this.eRoot.onmouseleave = function() {
-                _this.stopDragging();
-            };
-        };
-    };
-
-    Grid.prototype.stopDragging = function() {
-        this.eRoot.style.cursor = "";
-        this.eRoot.onmouseup = null;
-        this.eRoot.onmouseleave = null;
-        this.eRoot.onmousemove = null;
-    };
-
     Grid.prototype.addScrollListener = function() {
         var _this = this;
 
@@ -3066,27 +3144,7 @@ define('../src/angularGrid',[
         this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
     };
 
-    Grid.prototype.insertHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        var eHeaderContainer = this.eHeaderContainer;
-        utils.removeAllChildren(ePinnedHeader);
-        utils.removeAllChildren(eHeaderContainer);
-        this.headerFilterIcons = {};
 
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var _this = this;
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            //only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = _this.createHeaderCell(colDef, index, true);
-                ePinnedHeader.appendChild(headerCell);
-            } else {
-                var headerCell = _this.createHeaderCell(colDef, index, false);
-                eHeaderContainer.appendChild(headerCell);
-            }
-        });
-    };
 
 });
 
