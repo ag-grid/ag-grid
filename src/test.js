@@ -74,6 +74,8 @@ define([
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
             angularCompile: false,
+            //headerCellRenderer: headerCellRenderer_text,
+            //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
@@ -226,6 +228,20 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
+
+    function headerCellRenderer_dom(colDef) {
+        var eContainer = document.createElement("span");
+        eContainer.style.border = '1px solid darkgreen';
+
+        var eText = document.createTextNode(colDef.displayName);
+        eContainer.appendChild(eText);
+
+        return eContainer;
+    }
+
+    function headerCellRenderer_text(colDef) {
+        return colDef.displayName;
+    }
 
     function groupInnerCellRenderer(data) {
         return "<b>" + data.key + "</b>";

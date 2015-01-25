@@ -7,6 +7,10 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() {
+        return this.gridOptions.headerCellRenderer;
+    };
+
     GridOptionsWrapper.prototype.isEnableSorting = function() {
         return this.gridOptions.enableSorting;
     };

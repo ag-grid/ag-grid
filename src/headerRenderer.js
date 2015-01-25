@@ -77,9 +77,25 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         headerCellLabel.appendChild(filterIcon);
 
         //add in text label
-        var eInnerText = document.createElement("span");
-        eInnerText.innerHTML = colDef.displayName;
-        headerCellLabel.appendChild(eInnerText);
+        var innerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
+        if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
+            //renderer provided, use it
+            var headerCellRenderer = innerCellRenderer(colDef);
+            if (utils.isNode(headerCellRenderer) || utils.isElement(headerCellRenderer)) {
+                //a dom node or element was returned, so add child
+                headerCellLabel.appendChild(headerCellRenderer);
+            } else {
+                //otherwise assume it was html, so just insert
+                var eTextSpan = document.createElement("span");
+                eTextSpan.innerHTML = headerCellRenderer;
+                headerCellLabel.appendChild(eTextSpan);
+            }
+        } else {
+            //no renderer, default text render
+            var eInnerText = document.createElement("span");
+            eInnerText.innerHTML = colDef.displayName;
+            headerCellLabel.appendChild(eInnerText);
+        }
 
         headerCell.appendChild(headerCellLabel);
         headerCell.style.width = utils.formatWidth(colDef.actualWidth);

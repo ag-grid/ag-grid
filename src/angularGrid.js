@@ -1,8 +1,11 @@
 
 //todo: full row group doesn't work when columns are pinned
-//todo: compile into angular
 //todo: moving & hiding columns
-//todo: grouping
+//todo: customizable headers
+//todo: api to access model
+//todo: api to refresh rows (keep grouping info)
+//todo: allow sort via api
+//todo: show menu only on hover of col
 
 define([
     "angular",
