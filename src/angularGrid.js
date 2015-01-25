@@ -74,7 +74,7 @@ define([
         this.setupColumns();
 
         //done when rows change
-        this.refreshRows(constants.STEP_EVERYTHING);
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -110,7 +110,7 @@ define([
     };
 
     Grid.prototype.onFilterChanged = function () {
-        this.refreshRows(constants.STEP_FILTER);
+        this.updateModelAndRefresh(constants.STEP_FILTER);
         this.headerRenderer.updateFilterIcons();
     };
 
@@ -177,9 +177,9 @@ define([
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.refreshRows = function (step) {
-        this.rowController.processRows(step);
-        this.rowRenderer.render();
+    Grid.prototype.updateModelAndRefresh = function (step) {
+        this.rowController.updateModel(step);
+        this.rowRenderer.refreshView();
     };
 
     Grid.prototype.addApi = function () {
@@ -189,7 +189,7 @@ define([
                 _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
-                _this.refreshRows(constants.STEP_EVERYTHING);
+                _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
             },
             onNewCols: function () {
@@ -197,15 +197,15 @@ define([
             },
             unselectAll: function () {
                 _this.gridOptionsWrapper.clearSelection();
-                _this.rowRenderer.render();
+                _this.rowRenderer.refreshView();
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
-                _this.refreshRows(constants.STEP_MAP);
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
-                _this.refreshRows(constants.STEP_MAP);
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             }
         };
         this.gridOptions.api = api;
@@ -229,7 +229,7 @@ define([
 
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
-        this.refreshRows(constants.STEP_EVERYTHING);
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
     };
 
     Grid.prototype.findAllElements = function ($element) {

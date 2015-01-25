@@ -71,9 +71,9 @@ define([
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
-            rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+            rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
-            angularCompile: true,
+            angularCompile: false,
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected

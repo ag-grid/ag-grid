@@ -33,7 +33,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
     };
 
-    RowRenderer.prototype.render = function() {
+    RowRenderer.prototype.refreshView = function() {
         var rowCount = this.rowModel.getRowsAfterMap().length;
         var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
         this.eBodyContainer.style.height = containerHeight + "px";
@@ -261,7 +261,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var _this = this;
         eGridGroupRow.addEventListener("click", function(event) {
             data.expanded = !data.expanded;
-            _this.angularGrid.refreshRows(constants.STEP_MAP);
+            _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
         return eGridGroupRow;

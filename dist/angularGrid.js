@@ -1814,7 +1814,7 @@ define('../src/rowController',[
         this.filterManager = filterManager;
     }
 
-    RowController.prototype.refreshRows = function(step) {
+    RowController.prototype.updateModelAndRefresh = function(step) {
 
         //fallthrough in below switch is on purpose
         switch (step) {
@@ -2285,7 +2285,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var _this = this;
         eGridGroupRow.addEventListener("click", function(event) {
             data.expanded = !data.expanded;
-            _this.angularGrid.refreshRows(constants.STEP_MAP);
+            _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
         return eGridGroupRow;
@@ -2671,7 +2671,7 @@ define('../src/angularGrid',[
         this.setupColumns();
 
         //done when rows change
-        this.refreshRows(constants.STEP_EVERYTHING);
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
 
         //flag to mark when the directive is destroyed
         this.finished = false;
@@ -2711,7 +2711,7 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.onFilterChanged = function () {
-        this.refreshRows(constants.STEP_FILTER);
+        this.updateModelAndRefresh(constants.STEP_FILTER);
         this.updateFilterIcons();
     };
 
@@ -2778,8 +2778,8 @@ define('../src/angularGrid',[
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
-    Grid.prototype.refreshRows = function (step) {
-        this.rowController.refreshRows(step);
+    Grid.prototype.updateModelAndRefresh = function (step) {
+        this.rowController.updateModelAndRefresh(step);
         this.rowRenderer.render();
     };
 
@@ -2790,7 +2790,7 @@ define('../src/angularGrid',[
                 _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.clearAllFilters();
-                _this.refreshRows(constants.STEP_EVERYTHING);
+                _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.updateFilterIcons();
             },
             onNewCols: function () {
@@ -2798,11 +2798,11 @@ define('../src/angularGrid',[
             },
             expandAll: function() {
                 _this.expandOrCollapseAll(true, null);
-                _this.refreshRows(constants.STEP_MAP);
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
-                _this.refreshRows(constants.STEP_MAP);
+                _this.updateModelAndRefresh(constants.STEP_MAP);
             }
         };
         this.gridOptions.api = api;
@@ -2826,7 +2826,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
-        this.refreshRows(constants.STEP_EVERYTHING);
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
     };
 
     Grid.prototype.findAllElements = function ($element) {
@@ -3000,7 +3000,7 @@ define('../src/angularGrid',[
                 eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
-            _this.refreshRows(constants.STEP_SORT);
+            _this.updateModelAndRefresh(constants.STEP_SORT);
         });
     };
 

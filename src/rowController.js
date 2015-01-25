@@ -11,7 +11,7 @@ define([
         this.filterManager = filterManager;
     }
 
-    RowController.prototype.processRows = function(step) {
+    RowController.prototype.updateModel = function(step) {
 
         //fallthrough in below switch is on purpose
         switch (step) {
