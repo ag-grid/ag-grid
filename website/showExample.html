@@ -1,0 +1,18 @@
+<div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs" style="margin-top: 20px">
+    <ul id="myTab" class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#example" id="example-tab" role="tab" data-toggle="tab" aria-controls="example" aria-expanded="true">Example</a></li>
+        <li role="presentation" class=""><a href="#html" id="html-tab" role="tab" data-toggle="tab" aria-controls="html" aria-expanded="true">Html</a></li>
+        <li role="presentation" class=""><a href="#javascript" role="tab" id="javascript-tab" data-toggle="tab" aria-controls="javascript" aria-expanded="true">Javascript</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+        <div role="tabpanel" class="tab-pane fade active in" id="example" aria-labelledby="example-tab">
+            <iframe frameBorder="0" style="width: 620px; height: 240px;" ng-if="source" ng-src="{{source}}"></iframe>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="html" aria-labelledby="html-tab">
+            <pre><code>{{html}}</code></pre>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="javascript" aria-labelledby="javascript-tab">
+            <pre><code>{{javascript}}</code></pre>
+        </div>
+    </div>
+</div>

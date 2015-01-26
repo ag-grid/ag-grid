@@ -1,7 +1,10 @@
 
 //todo: full row group doesn't work when columns are pinned
 //todo: moving & hiding columns
-//todo: allow sort via api
+//todo: allow sort (and clear) via api
+//todo: allow filter (and clear) via api
+//todo: allow custom filtering
+//todo: allow null rows to start
 
 define([
     "angular",
@@ -39,6 +42,10 @@ define([
         this.$scope = $scope;
         this.$compile = $compile;
         this.gridOptions = $scope.angularGrid;
+        if (!this.gridOptions) {
+            console.warn("WARNING - grid options for angularGrid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
+            return;
+        }
         this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
         this.quickFilter = null;
 

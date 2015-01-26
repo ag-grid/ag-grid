@@ -43,6 +43,10 @@
     background-color: #ffffff;
 }
 
+.ag-fresh .ag-body-viewport {
+    background-color: #ddd;
+}
+
 .ag-fresh .ag-row-selected {
     background-color: #b0b0b0;
 }

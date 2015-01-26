@@ -46,6 +46,10 @@
     background-color: #f0f0f0;
 }
 
+.ag-dark .ag-body-viewport {
+    background-color: #ddd;
+}
+
 .ag-dark .ag-row-selected {
     background-color: #000000;
 }

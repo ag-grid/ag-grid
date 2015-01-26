@@ -69,7 +69,9 @@ define(["./constants"], function(constants) {
         if (!this.isColumDefsPresent()) { return; }
 
         this.gridOptions.columnDefs.forEach(function (colDef) {
-            if (!colDef.width || colDef.width < 10) {
+            if (!colDef.width) {
+                colDef.actualWidth = 200;
+            } else if (colDef.width < 10) {
                 colDef.actualWidth = constants.MIN_COL_WIDTH;
             } else {
                 colDef.actualWidth = colDef.width;
