@@ -1,0 +1,117 @@
+<div>
+
+    <p/>
+
+    Each column in the grid is defined using a column definition. A list of column
+    definitions is passed into the grid for rendering.
+
+    <p/>
+
+    <table class="table">
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>displayName</th>
+            <td>The name to render in the column header</td>
+        </tr>
+        <tr>
+            <th>field</th>
+            <td>The field of the row to get the cells data from</td>
+        </tr>
+        <tr>
+            <th>width</th>
+            <td>Initial width, in pixels, of the cell</td>
+        </tr>
+        <tr>
+            <th>cellCss</th>
+            <td>An object of css values.</td>
+        </tr>
+        <tr>
+            <th>cellCssFunc</th>
+            <td>A function that when called, returns an object of css values.</td>
+        </tr>
+        <tr>
+            <th>cellRenderer</th>
+            <td>A function for rendering a cell.</td>
+        </tr>
+        <tr>
+            <th>filterCellRenderer</th>
+            <td>A function for rendering a cell in the filter menu.</td>
+        </tr>
+        <tr>
+            <th>filterCellHeight</th>
+            <td>How high each cell in the filter menu, in pixels.</td>
+        </tr>
+        <tr>
+            <th></th>
+            <td></td>
+        </tr>
+    </table>
+
+    <div class="smallTitle">cellCss</div>
+    Use this if a predetermined style is to be applied to all cells in the column. Eg
+
+    <pre><code>var colDef = {
+    name: 'Col Name',
+    field' 'Col Field',
+    cellCss: {color: red, background-color: green}
+}</code></pre>
+
+    <div class="smallTitle">cellCssFunc</div>
+    A function that when called, returns an object of css values.
+
+<pre><code>var colDef = {
+    name: 'Col Name',
+    field' 'Col Field',
+    cellCssFunc: function(value, data, colDef, $childScope) {
+                 if (value=='Police') {
+                     //mark police cells as red
+                     return {color: red, background-color: green};
+                 } else {
+                     return null;
+                 }
+             }
+}</code></pre>
+
+    value: The value to be rendered.<br/>
+    data: The row (from the rowData array, where value was taken) been rendered.<br/>
+    colDef: The colDef been rendered.<br/>
+    $childScope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
+
+    <div class="smallTitle">cellRenderer</div>
+    A function that when called, returns HTML (either a Dom or Node element, or an HTML string)
+
+<pre><code>var colDef = {
+    name: 'Col Name',
+    field' 'Col Field',
+    cellRenderer: function(value, data, colDef, $childScope) {
+                    if (value=='Police') {
+                        return '<b>POLICE</b>';
+                    } else {
+                        return value.toUpperCase();
+                    }
+                }
+}</code></pre>
+
+    value: The value to be rendered.<br/>
+    data: The row (from the rowData array, where value was taken) been rendered.<br/>
+    colDef: The colDef been rendered.<br/>
+    $childScope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
+
+    <div class="smallTitle">Example: Formatting Cells</div>
+
+    The below example shows three columns formatted, demonstrating each of the three
+    methods above.
+    <p/>
+    Column 1 uses cellCss to format each cell in the column with the same style.
+    <p/>
+    Column 2 uses cellCssFunc to format each cell with the capital letter 'C'.
+    <p/>
+    Column 3 renders the cell from scratch, by adding a gold star image for each
+    multiple of 20,000 the price is.
+
+    <show-example example="columnDefinitions/example1"></show-example>
+
+</div>

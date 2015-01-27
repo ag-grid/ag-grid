@@ -5,6 +5,7 @@
 //todo: allow filter (and clear) via api
 //todo: allow custom filtering
 //todo: allow null rows to start
+//todo: pinned columns not using scrollbar property (see website example)
 
 define([
     "angular",

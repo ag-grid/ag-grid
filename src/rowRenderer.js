@@ -294,7 +294,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         if (colDef.cellCssFunc) {
-            var cssObjFromFunc = colDef.cellCssFunc(value);
+            var cssObjFromFunc = colDef.cellCssFunc(value, data, colDef, $childScope);
             if (cssObjFromFunc) {
                 Object.keys(cssObjFromFunc).forEach(function(key) {
                     eGridCell.style[key] = cssObjFromFunc[key];

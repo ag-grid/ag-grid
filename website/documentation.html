@@ -58,7 +58,9 @@
 
             <div class="col-sm-10 blog-main">
                 <div class="bigTitle">{{currentPage.name}}</div>
-                <ng-include src="currentPage.url"></ng-include>
+                <ng-include ng-if="flag" onload="pageLoaded()" src="currentPage.url"></ng-include>
+                <ng-include ng-if="!flag" onload="pageLoaded()" src="currentPage.url"></ng-include>
+                <div ng-show="showLoading">Loading...</div>
             </div>
 
         </div>

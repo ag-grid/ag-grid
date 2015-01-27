@@ -12,7 +12,8 @@
             {name: "Sorting", url: "./sorting/index.html"},
             {name: "Filtering", url: "./filtering/index.html"},
             {name: "Resizing", url: "./resizing/index.html"},
-            {name: "Pinning", url: "./todo.html"},
+            {name: "Pinning", url: "./pinning/index.html"},
+            {name: "Column Definitions", url: "./columnDefinitions/index.html"},
             {name: "Cell Formatting", url: "./todo.html"},
             {name: "Cell Rendering", url: "./todo.html"},
             {name: "Header Rendering", url: "./todo.html"},
@@ -22,10 +23,17 @@
         ];
 
         $scope.currentPage = $scope.pages[0];
+        $scope.flag = true;
 
         $scope.loadPage = function(page) {
             $scope.currentPage = page;
+            $scope.flag = !$scope.flag;
+            $scope.showLoading = true;
         };
+
+        $scope.pageLoaded = function() {
+            $scope.showLoading = false;
+        }
     });
 
     module.directive("showExample", function() {
