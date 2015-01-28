@@ -13,10 +13,9 @@
             {name: "Filtering", url: "./filtering/index.html"},
             {name: "Resizing", url: "./resizing/index.html"},
             {name: "Pinning", url: "./pinning/index.html"},
+            {name: "Grouping", url: "./grouping/index.html"},
             {name: "Column Definitions", url: "./columnDefinitions/index.html"},
-            {name: "Cell Formatting", url: "./todo.html"},
-            {name: "Cell Rendering", url: "./todo.html"},
-            {name: "Header Rendering", url: "./todo.html"},
+            {name: "Header Formatting", url: "./todo.html"},
             {name: "Angular Compiling", url: "./todo.html"},
             {name: "Styling", url: "./todo.html"},
             {name: "API", url: "./todo.html"}

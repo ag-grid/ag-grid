@@ -19,7 +19,8 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: [],
-        enableFilter: true
+        groupUseEntireRow: true,
+        groupKeys: ['country']
     };
 
     $http.get("../olympicWinners.json")
