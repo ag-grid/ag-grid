@@ -50,6 +50,10 @@
     background-color: #ddd;
 }
 
+.ag-dark .ag-pinned-cols-viewport {
+    background-color: #ddd;
+}
+
 .ag-dark .ag-row-selected {
     background-color: #000000;
 }

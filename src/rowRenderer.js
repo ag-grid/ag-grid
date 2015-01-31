@@ -225,11 +225,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.createGroupElement = function(data, firstColDef, useEntireRow) {
-        var eGridGroupRow = document.createElement("div");
+        var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
-            eGridGroupRow.className = "ag-group-row";
+            eGridGroupRow.className = 'ag-group-row';
+            eGridGroupRow.style.width = '500px';
         } else {
-            eGridGroupRow.className = "ag-cell cell-col-"+0;
+            eGridGroupRow.className = 'ag-cell cell-col-'+0;
         }
 
         var eSvg = svgFactory.createGroupSvg(data.expanded);
@@ -243,7 +244,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 eGridGroupRow.appendChild(resultFromRenderer);
             } else {
                 //otherwise assume it was html, so just insert
-                var eTextSpan = document.createElement("span");
+                var eTextSpan = document.createElement('span');
                 eTextSpan.innerHTML = resultFromRenderer;
                 eGridGroupRow.appendChild(eTextSpan);
             }

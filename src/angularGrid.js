@@ -248,6 +248,7 @@ define([
         this.eBody = eGrid.querySelector(".ag-body");
         this.eBodyContainer = eGrid.querySelector(".ag-body-container");
         this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
+        this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
         this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
         this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
         this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
@@ -277,8 +278,9 @@ define([
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
-        var pinnedColWidth = this.getTotalPinnedColWidth();
-        this.ePinnedColsContainer.style.width = pinnedColWidth + "px";
+        var pinnedColWidth = this.getTotalPinnedColWidth() + "px";
+        this.ePinnedColsContainer.style.width = pinnedColWidth;
+        this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };
 
     //see if a grey box is needed at the bottom of the pinned col

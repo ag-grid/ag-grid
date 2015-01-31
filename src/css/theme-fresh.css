@@ -47,6 +47,10 @@
     background-color: #ddd;
 }
 
+.ag-fresh .ag-pinned-cols-viewport {
+    background-color: #ddd
+}
+
 .ag-fresh .ag-row-selected {
     background-color: #b0b0b0;
 }
