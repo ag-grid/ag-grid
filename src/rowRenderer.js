@@ -127,18 +127,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var eMainRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
         var _this = this;
 
-        this.rowsInBodyContainer[rowIndex] = eMainRow;
-        this.rowsInPinnedContainer[rowIndex] = ePinnedRow;
-
         eMainRow.style.width = mainRowWidth+"px";
 
         //try compiling as we insert rows
-        var newChildScope = null;
-        if (this.gridOptionsWrapper.isAngularCompile()) {
-            newChildScope = this.$scope.$new();
-            this.childScopesForRows[rowIndex] = newChildScope;
-            newChildScope.rowData = data;
-        }
+        var newChildScope = this.createChildScopeOrNull(data, rowIndex);
 
         //if group item, insert the first row
         var columnDefs = this.gridOptionsWrapper.getColumnDefs();
@@ -181,16 +173,30 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         //try compiling as we insert rows
-        if (this.gridOptionsWrapper.isAngularCompile()) {
-            var ePinnedRowCompiled = this.$compile(ePinnedRow)(newChildScope);
-            var eMainRowCompiled = this.$compile(eMainRow)(newChildScope);
-            this.ePinnedColsContainer.appendChild(ePinnedRowCompiled[0]);
-            this.eBodyContainer.appendChild(eMainRowCompiled[0]);
-        } else {
-            this.ePinnedColsContainer.appendChild(ePinnedRow);
-            this.eBodyContainer.appendChild(eMainRow);
-        }
+        this.compileAndAdd(this.ePinnedColsContainer, this.rowsInPinnedContainer, rowIndex, ePinnedRow, newChildScope);
+        this.compileAndAdd(this.eBodyContainer, this.rowsInBodyContainer, rowIndex, eMainRow, newChildScope);
+    };
 
+    RowRenderer.prototype.createChildScopeOrNull = function(data, rowIndex) {
+        if (this.gridOptionsWrapper.isAngularCompile()) {
+            var newChildScope = this.$scope.$new();
+            this.childScopesForRows[rowIndex] = newChildScope;
+            newChildScope.rowData = data;
+            return newChildScope;
+        } else {
+            return null;
+        }
+    };
+
+    RowRenderer.prototype.compileAndAdd = function(container, map, rowIndex, element, scope) {
+        if (scope) {
+            var eElementCompiled = this.$compile(element)(scope);
+            container.appendChild(eElementCompiled[0]);
+            map[rowIndex] = eElementCompiled[0];
+        } else {
+            container.appendChild(element);
+            map[rowIndex] = element;
+        }
     };
 
     RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
