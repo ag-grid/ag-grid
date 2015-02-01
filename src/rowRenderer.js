@@ -146,11 +146,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var firstCol = columnDefs[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow);
+            var eGroupRow = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow, false);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
                 eMainRow.appendChild(eGroupRow);
+            }
+
+            if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
+                var eGroupRowPadding = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow, true);
+                eMainRow.appendChild(eGroupRowPadding);
             }
 
             if (!groupHeaderTakesEntireRow) {
@@ -224,21 +229,23 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDef, useEntireRow) {
+    RowRenderer.prototype.createGroupElement = function(data, firstColDef, useEntireRow, padding) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
-            eGridGroupRow.className = 'ag-group-row';
-            eGridGroupRow.style.width = '500px';
+            eGridGroupRow.className = 'ag-group-cell';
+            //eGridGroupRow.style.width = '500px';
         } else {
             eGridGroupRow.className = 'ag-cell cell-col-'+0;
         }
 
-        var eSvg = svgFactory.createGroupSvg(data.expanded);
-        eGridGroupRow.appendChild(eSvg);
+        if (!padding) {
+            var eSvg = svgFactory.createGroupSvg(data.expanded);
+            eGridGroupRow.appendChild(eSvg);
+        }
 
         //if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
-            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data);
+            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data, padding);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridGroupRow.appendChild(resultFromRenderer);
@@ -248,16 +255,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 eTextSpan.innerHTML = resultFromRenderer;
                 eGridGroupRow.appendChild(eTextSpan);
             }
-            //otherwise default is display the key along with the child count
         } else {
-            var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
-            eGridGroupRow.appendChild(eText);
+            //otherwise default is display the key along with the child count
+            if (!padding) { //only do it if not padding - if we are padding, we display blank row
+                var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
+                eGridGroupRow.appendChild(eText);
+            }
         }
 
         if (!useEntireRow) {
             eGridGroupRow.style.width = utils.formatWidth(firstColDef.actualWidth);
         }
-        eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
+
+        //indent with the group level
+        if (!padding) {
+            eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
+        }
 
         var _this = this;
         eGridGroupRow.addEventListener("click", function(event) {

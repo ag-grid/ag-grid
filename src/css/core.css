@@ -97,7 +97,6 @@
 
 .ag-pinned-cols-viewport {
     float: left;
-    z-index: 1;
     position: absolute;
     overflow: hidden;
 }
@@ -124,6 +123,7 @@
 .ag-row {
     white-space: nowrap;
     position: absolute;
+    width: 100%;
 }
 
 .ag-row-odd {
@@ -149,7 +149,7 @@
     padding: 4px;
 }
 
-.ag-group-row {
+.ag-group-cell {
     position: absolute;
     width: 100%;
     display: inline-block;
