@@ -87,7 +87,7 @@ define([
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
-            {displayName: "Game of Choice", field: "game", width: 180},
+            {displayName: "Game of Choice", field: "game", width: 180, editable: true, newValueHandler: gameNewValueHandler},
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
             {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
@@ -388,6 +388,10 @@ define([
             var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
             return flag + " " + value;
         }
+    }
+
+    function gameNewValueHandler(data, newValue) {
+        data.game = newValue;
     }
 
     angular.bootstrap(document, ['grids']);
