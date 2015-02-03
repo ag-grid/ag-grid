@@ -218,6 +218,10 @@ define([
             return style;
         }
 
+        function gameNewValueHandler(data, newValue) {
+            data.game = newValue;
+        }
+
     });
 
     var COUNTRY_CODES = {
@@ -388,10 +392,6 @@ define([
             var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
             return flag + " " + value;
         }
-    }
-
-    function gameNewValueHandler(data, newValue) {
-        data.game = newValue;
     }
 
     angular.bootstrap(document, ['grids']);

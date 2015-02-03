@@ -44,6 +44,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.refreshAllVirtualRows();
     };
 
+    RowRenderer.prototype.rowDataChanged = function(rows) {
+        //get indexes for the rows
+        var indexesToRemove = [];
+        var rowsAfterMap = this.rowModel.getRowsAfterMap();
+        rows.forEach(function(row) {
+            var index = rowsAfterMap.indexOf(row);
+            if (index>=0) {
+                indexesToRemove.push(index);
+            }
+        });
+        //remove the rows
+        this.removeVirtualRows(indexesToRemove);
+        //add draw them again
+        this.drawVirtualRows();
+    };
+
     RowRenderer.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
@@ -58,12 +74,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var _this = this;
         rowsToRemove.forEach(function (indexToRemove) {
             var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
-            _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
-            delete _this.rowsInPinnedContainer[indexToRemove];
+            if (pinnedRowToRemove) {
+                _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
+                delete _this.rowsInPinnedContainer[indexToRemove];
+            }
 
             var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
-            _this.eBodyContainer.removeChild(bodyRowToRemove);
-            delete _this.rowsInBodyContainer[indexToRemove];
+            if (bodyRowToRemove) {
+                _this.eBodyContainer.removeChild(bodyRowToRemove);
+                delete _this.rowsInBodyContainer[indexToRemove];
+            }
 
             var childScopeToDelete = _this.childScopesForRows[indexToRemove];
             if (childScopeToDelete) {
