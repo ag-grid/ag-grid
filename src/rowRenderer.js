@@ -288,6 +288,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
+        var that = this;
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
 
@@ -321,6 +322,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 });
             }
         }
+
+        eGridCell.addEventListener("click", function(event) {
+            if (that.gridOptionsWrapper.getCellClicked()) {
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event);
+            }
+        });
 
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 

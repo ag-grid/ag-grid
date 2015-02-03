@@ -78,7 +78,8 @@ define([
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
-            rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
+            rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);}, //callback when row clicked
+            cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
         };
         $scope.angularGrid = angularGrid;
 
