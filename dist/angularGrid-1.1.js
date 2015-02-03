@@ -2407,6 +2407,11 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
         headerCell.className = "ag-header-cell";
 
+        //add tooltip if exists
+        if (colDef.headerTooltip) {
+            headerCell.title = colDef.headerTooltip;
+        }
+
         if (this.gridOptionsWrapper.isEnableColResize()) {
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";

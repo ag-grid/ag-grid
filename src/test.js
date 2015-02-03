@@ -83,7 +83,7 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
+            {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180},
