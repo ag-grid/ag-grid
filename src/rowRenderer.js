@@ -16,6 +16,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.rowsInBodyContainer = {};
         this.rowsInPinnedContainer = {};
         this.childScopesForRows = {};
+
+        this.editingCell = false; //gets set to true when editing a cell
     }
 
     RowRenderer.prototype.setMainRowWidths = function() {
@@ -42,6 +44,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.refreshAllVirtualRows();
     };
 
+    RowRenderer.prototype.rowDataChanged = function(rows) {
+        //get indexes for the rows
+        var indexesToRemove = [];
+        var rowsAfterMap = this.rowModel.getRowsAfterMap();
+        rows.forEach(function(row) {
+            var index = rowsAfterMap.indexOf(row);
+            if (index>=0) {
+                indexesToRemove.push(index);
+            }
+        });
+        //remove the rows
+        this.removeVirtualRows(indexesToRemove);
+        //add draw them again
+        this.drawVirtualRows();
+    };
+
     RowRenderer.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
@@ -56,12 +74,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var _this = this;
         rowsToRemove.forEach(function (indexToRemove) {
             var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
-            _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
-            delete _this.rowsInPinnedContainer[indexToRemove];
+            if (pinnedRowToRemove) {
+                _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
+                delete _this.rowsInPinnedContainer[indexToRemove];
+            }
 
             var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
-            _this.eBodyContainer.removeChild(bodyRowToRemove);
-            delete _this.rowsInBodyContainer[indexToRemove];
+            if (bodyRowToRemove) {
+                _this.eBodyContainer.removeChild(bodyRowToRemove);
+                delete _this.rowsInBodyContainer[indexToRemove];
+            }
 
             var childScopeToDelete = _this.childScopesForRows[indexToRemove];
             if (childScopeToDelete) {
@@ -200,7 +222,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -287,10 +309,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eGridGroupRow;
     };
 
-    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
-        var eGridCell = document.createElement("div");
-        eGridCell.className = "ag-cell cell-col-"+colIndex;
-
+    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell) {
         if (colDef.cellRenderer) {
             var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -306,6 +325,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 eGridCell.innerText = value;
             }
         }
+    };
+
+    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
+        var that = this;
+        var eGridCell = document.createElement("div");
+        eGridCell.className = "ag-cell cell-col-"+colIndex;
+        eGridCell.setAttribute("col", colIndex);
+
+        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
 
         if (colDef.cellCss) {
             Object.keys(colDef.cellCss).forEach(function(key) {
@@ -322,9 +350,58 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         }
 
+        eGridCell.addEventListener("click", function(event) {
+            if (that.gridOptionsWrapper.getCellClicked()) {
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event);
+                if (colDef.editable && !that.editingCell) {
+                    that.startEditing(eGridCell, colDef, data, $childScope);
+                }
+            }
+        });
+
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 
         return eGridCell;
+    };
+
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput) {
+        this.editingCell = false;
+        utils.removeAllChildren(eGridCell);
+        var newValue = eInput.value;
+
+        if (colDef.newValueHandler) {
+            colDef.newValueHandler(data, newValue);
+        } else {
+            data[colDef.field] = newValue;
+        }
+
+        var value = data[colDef.field];
+        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
+    };
+
+    RowRenderer.prototype.startEditing = function(eGridCell, colDef, data, $childScope) {
+        var that = this;
+        this.editingCell = true;
+        utils.removeAllChildren(eGridCell);
+        var eInput = document.createElement('input');
+        eInput.type = 'text';
+        eGridCell.appendChild(eInput);
+        eInput.value = data[colDef.field];
+        eInput.style.width = (colDef.actualWidth - 14) + 'px';
+        eInput.focus();
+
+        //stop editing if enter pressed
+        eInput.addEventListener('keypress', function (event) {
+            var key = event.which || event.keyCode;
+            if (key == 13) { // 13 is enter
+                that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+            }
+        });
+
+        //stop entering if we loose focus
+        eInput.addEventListener("blur", function() {
+            that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+        });
     };
 
     return RowRenderer;

@@ -7,49 +7,19 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
-    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() {
-        return this.gridOptions.headerCellRenderer;
-    };
-
-    GridOptionsWrapper.prototype.isEnableSorting = function() {
-        return this.gridOptions.enableSorting;
-    };
-
-    GridOptionsWrapper.prototype.isEnableColResize = function() {
-        return this.gridOptions.enableColResize;
-    };
-
-    GridOptionsWrapper.prototype.isEnableFilter = function() {
-        return this.gridOptions.enableFilter;
-    };
-
-    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() {
-        return this.gridOptions.groupDefaultExpanded === true;
-    };
-
-    GridOptionsWrapper.prototype.getGroupKeys = function() {
-        return this.gridOptions.groupKeys;
-    };
-
-    GridOptionsWrapper.prototype.getAggFunction = function() {
-        return this.gridOptions.aggFunction;
-    };
-
-    GridOptionsWrapper.prototype.getAllRows = function() {
-        return this.gridOptions.rowData;
-    };
-
-    GridOptionsWrapper.prototype.isGroupUseEntireRow = function() {
-        return this.gridOptions.groupUseEntireRow===true;
-    };
-
-    GridOptionsWrapper.prototype.isAngularCompile = function() {
-        return this.gridOptions.angularCompile===true;
-    };
-
-    GridOptionsWrapper.prototype.getColumnDefs = function() {
-        return this.gridOptions.columnDefs;
-    };
+    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
+    GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
+    GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
+    GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
+    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
+    GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
+    GridOptionsWrapper.prototype.getAggFunction = function() { return this.gridOptions.aggFunction; };
+    GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
+    GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
+    GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };
+    GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
+    GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
+    GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
 
     GridOptionsWrapper.prototype.isColumDefsPresent = function() {
         return this.gridOptions.columnDefs && this.gridOptions.columnDefs.length!=0;
@@ -99,10 +69,6 @@ define(["./constants"], function(constants) {
         } else {
             return 0;
         }
-    };
-
-    GridOptionsWrapper.prototype.getRowHeight = function() {
-        return this.gridOptions.rowHeight;
     };
 
     return GridOptionsWrapper;

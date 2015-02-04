@@ -216,6 +216,9 @@ define([
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
                 _this.updateModelAndRefresh(constants.STEP_MAP);
+            },
+            rowDataChanged: function(rows) {
+                _this.rowRenderer.rowDataChanged(rows);
             }
         };
         this.gridOptions.api = api;

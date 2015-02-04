@@ -78,7 +78,8 @@ define([
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
             selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
-            rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
+            rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);}, //callback when row clicked
+            cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
         };
         $scope.angularGrid = angularGrid;
 
@@ -86,7 +87,7 @@ define([
             {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
-            {displayName: "Game of Choice", field: "game", width: 180},
+            {displayName: "Game of Choice", field: "game", width: 180, editable: true, newValueHandler: gameNewValueHandler},
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
             {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
@@ -215,6 +216,10 @@ define([
                 }
             }
             return style;
+        }
+
+        function gameNewValueHandler(data, newValue) {
+            data.game = newValue;
         }
 
     });
