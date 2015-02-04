@@ -321,7 +321,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
-            if (value!==undefined) {
+            if (value!==undefined && value!==null && value!=='') {
                 eGridCell.innerText = value;
             }
         }
@@ -353,9 +353,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
                 that.gridOptionsWrapper.getCellClicked()(data, colDef, event);
-                if (colDef.editable && !that.editingCell) {
-                    that.startEditing(eGridCell, colDef, data, $childScope);
-                }
+            }
+            if (colDef.editable && !that.editingCell) {
+                that.startEditing(eGridCell, colDef, data, $childScope);
             }
         });
 
@@ -370,7 +370,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var newValue = eInput.value;
 
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(data, newValue);
+            colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
         } else {
             data[colDef.field] = newValue;
         }
@@ -385,9 +385,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         utils.removeAllChildren(eGridCell);
         var eInput = document.createElement('input');
         eInput.type = 'text';
-        eGridCell.appendChild(eInput);
-        eInput.value = data[colDef.field];
+        utils.addCssClass(eInput, 'ag-cell-edit-input');
+
+        var value = data[colDef.field];
+        if (value!==null && value!==undefined) {
+            eInput.value = data[colDef.field];
+        }
+
         eInput.style.width = (colDef.actualWidth - 14) + 'px';
+        eGridCell.appendChild(eInput);
         eInput.focus();
 
         //stop editing if enter pressed

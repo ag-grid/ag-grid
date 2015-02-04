@@ -2047,6 +2047,8 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.rowsInBodyContainer = {};
         this.rowsInPinnedContainer = {};
         this.childScopesForRows = {};
+
+        this.editingCell = false; //gets set to true when editing a cell
     }
 
     RowRenderer.prototype.setMainRowWidths = function() {
@@ -2073,6 +2075,22 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.refreshAllVirtualRows();
     };
 
+    RowRenderer.prototype.rowDataChanged = function(rows) {
+        //get indexes for the rows
+        var indexesToRemove = [];
+        var rowsAfterMap = this.rowModel.getRowsAfterMap();
+        rows.forEach(function(row) {
+            var index = rowsAfterMap.indexOf(row);
+            if (index>=0) {
+                indexesToRemove.push(index);
+            }
+        });
+        //remove the rows
+        this.removeVirtualRows(indexesToRemove);
+        //add draw them again
+        this.drawVirtualRows();
+    };
+
     RowRenderer.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
@@ -2087,12 +2105,16 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var _this = this;
         rowsToRemove.forEach(function (indexToRemove) {
             var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
-            _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
-            delete _this.rowsInPinnedContainer[indexToRemove];
+            if (pinnedRowToRemove) {
+                _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
+                delete _this.rowsInPinnedContainer[indexToRemove];
+            }
 
             var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
-            _this.eBodyContainer.removeChild(bodyRowToRemove);
-            delete _this.rowsInBodyContainer[indexToRemove];
+            if (bodyRowToRemove) {
+                _this.eBodyContainer.removeChild(bodyRowToRemove);
+                delete _this.rowsInBodyContainer[indexToRemove];
+            }
 
             var childScopeToDelete = _this.childScopesForRows[indexToRemove];
             if (childScopeToDelete) {
@@ -2231,7 +2253,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -2318,10 +2340,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eGridGroupRow;
     };
 
-    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
-        var eGridCell = document.createElement("div");
-        eGridCell.className = "ag-cell cell-col-"+colIndex;
-
+    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell) {
         if (colDef.cellRenderer) {
             var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -2333,10 +2352,19 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
-            if (value!==undefined) {
+            if (value!==undefined && value!==null && value!=='') {
                 eGridCell.innerText = value;
             }
         }
+    };
+
+    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
+        var that = this;
+        var eGridCell = document.createElement("div");
+        eGridCell.className = "ag-cell cell-col-"+colIndex;
+        eGridCell.setAttribute("col", colIndex);
+
+        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
 
         if (colDef.cellCss) {
             Object.keys(colDef.cellCss).forEach(function(key) {
@@ -2353,9 +2381,64 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         }
 
+        eGridCell.addEventListener("click", function(event) {
+            if (that.gridOptionsWrapper.getCellClicked()) {
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event);
+            }
+            if (colDef.editable && !that.editingCell) {
+                that.startEditing(eGridCell, colDef, data, $childScope);
+            }
+        });
+
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 
         return eGridCell;
+    };
+
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput) {
+        this.editingCell = false;
+        utils.removeAllChildren(eGridCell);
+        var newValue = eInput.value;
+
+        if (colDef.newValueHandler) {
+            colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+        } else {
+            data[colDef.field] = newValue;
+        }
+
+        var value = data[colDef.field];
+        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
+    };
+
+    RowRenderer.prototype.startEditing = function(eGridCell, colDef, data, $childScope) {
+        var that = this;
+        this.editingCell = true;
+        utils.removeAllChildren(eGridCell);
+        var eInput = document.createElement('input');
+        eInput.type = 'text';
+        utils.addCssClass(eInput, 'ag-cell-edit-input');
+
+        var value = data[colDef.field];
+        if (value!==null && value!==undefined) {
+            eInput.value = data[colDef.field];
+        }
+
+        eInput.style.width = (colDef.actualWidth - 14) + 'px';
+        eGridCell.appendChild(eInput);
+        eInput.focus();
+
+        //stop editing if enter pressed
+        eInput.addEventListener('keypress', function (event) {
+            var key = event.which || event.keyCode;
+            if (key == 13) { // 13 is enter
+                that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+            }
+        });
+
+        //stop entering if we loose focus
+        eInput.addEventListener("blur", function() {
+            that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+        });
     };
 
     return RowRenderer;
@@ -2586,49 +2669,20 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         this.setupDefaults();
     }
 
-    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() {
-        return this.gridOptions.headerCellRenderer;
-    };
-
-    GridOptionsWrapper.prototype.isEnableSorting = function() {
-        return this.gridOptions.enableSorting;
-    };
-
-    GridOptionsWrapper.prototype.isEnableColResize = function() {
-        return this.gridOptions.enableColResize;
-    };
-
-    GridOptionsWrapper.prototype.isEnableFilter = function() {
-        return this.gridOptions.enableFilter;
-    };
-
-    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() {
-        return this.gridOptions.groupDefaultExpanded === true;
-    };
-
-    GridOptionsWrapper.prototype.getGroupKeys = function() {
-        return this.gridOptions.groupKeys;
-    };
-
-    GridOptionsWrapper.prototype.getAggFunction = function() {
-        return this.gridOptions.aggFunction;
-    };
-
-    GridOptionsWrapper.prototype.getAllRows = function() {
-        return this.gridOptions.rowData;
-    };
-
-    GridOptionsWrapper.prototype.isGroupUseEntireRow = function() {
-        return this.gridOptions.groupUseEntireRow===true;
-    };
-
-    GridOptionsWrapper.prototype.isAngularCompile = function() {
-        return this.gridOptions.angularCompile===true;
-    };
-
-    GridOptionsWrapper.prototype.getColumnDefs = function() {
-        return this.gridOptions.columnDefs;
-    };
+    GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
+    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
+    GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
+    GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
+    GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
+    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
+    GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
+    GridOptionsWrapper.prototype.getAggFunction = function() { return this.gridOptions.aggFunction; };
+    GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
+    GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
+    GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };
+    GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
+    GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
+    GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
 
     GridOptionsWrapper.prototype.isColumDefsPresent = function() {
         return this.gridOptions.columnDefs && this.gridOptions.columnDefs.length!=0;
@@ -2678,10 +2732,6 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         } else {
             return 0;
         }
-    };
-
-    GridOptionsWrapper.prototype.getRowHeight = function() {
-        return this.gridOptions.rowHeight;
     };
 
     return GridOptionsWrapper;
@@ -3050,6 +3100,9 @@ define('../src/angularGrid',[
             collapseAll: function() {
                 _this.expandOrCollapseAll(false, null);
                 _this.updateModelAndRefresh(constants.STEP_MAP);
+            },
+            rowDataChanged: function(rows) {
+                _this.rowRenderer.rowDataChanged(rows);
             }
         };
         this.gridOptions.api = api;
