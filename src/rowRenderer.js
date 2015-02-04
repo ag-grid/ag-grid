@@ -311,7 +311,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell) {
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope);
+            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions());
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
@@ -341,6 +341,23 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             });
         }
 
+        if (colDef.cellClass) {
+            var classToUse;
+            if (typeof colDef.cellClass === 'function') {
+                classToUse = colDef.cellClass(value, data, colDef);
+            } else {
+                classToUse = colDef.cellClass;
+            }
+
+            if (typeof classToUse === 'string') {
+                utils.addCssClass(eGridCell, classToUse);
+            } else if (Array.isArray(classToUse)) {
+                classToUse.forEach(function(cssClassItem) {
+                    utils.addCssClass(eGridCell,cssClassItem);
+                });
+            }
+        }
+
         if (colDef.cellCssFunc) {
             var cssObjFromFunc = colDef.cellCssFunc(value, data, colDef, $childScope);
             if (cssObjFromFunc) {
@@ -352,7 +369,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(data, colDef, event);
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, this.gridOptionsWrapper.getGridOptions());
+            }
+            if (colDef.cellClicked) {
+                colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.editable && !that.editingCell) {
                 that.startEditing(eGridCell, colDef, data, $childScope);
