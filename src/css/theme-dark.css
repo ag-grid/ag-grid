@@ -7,6 +7,7 @@
 
 .ag-dark .ag-cell {
     border-right: 1px solid grey;
+    padding: 4px;
 }
 
 .ag-dark .ag-header {

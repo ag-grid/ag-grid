@@ -6,6 +6,7 @@
 
 .ag-fresh .ag-cell {
     border-right: 1px solid grey;
+    padding: 4px;
 }
 
 .ag-fresh .ag-header {

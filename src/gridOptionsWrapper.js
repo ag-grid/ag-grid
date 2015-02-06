@@ -22,6 +22,7 @@ define(["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
+    GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
 
     GridOptionsWrapper.prototype.isColumDefsPresent = function() {
         return this.gridOptions.columnDefs && this.gridOptions.columnDefs.length!=0;

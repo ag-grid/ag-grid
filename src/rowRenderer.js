@@ -11,12 +11,6 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.$compile = $compile;
         this.$scope = $scope;
 
-        //done once
-        //for virtualisation, maps keep track of which elements are attached to the dom
-        this.rowsInBodyContainer = {};
-        this.rowsInPinnedContainer = {};
-        this.childScopesForRows = {};
-
         // map of row ids to row objects. keeps track of which elements
         // are rendered for which rows in the dom. each row object has:
         // [scope, bodyRow, pinnedRow, rowData]
@@ -67,7 +61,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.refreshAllVirtualRows = function () {
         //remove all current virtual rows, as they have old data
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
 
         //add in new rows
@@ -76,25 +70,26 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     //takes array of row id's
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
-        var _this = this;
+        var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
-            var pinnedRowToRemove = _this.rowsInPinnedContainer[indexToRemove];
-            if (pinnedRowToRemove) {
-                _this.ePinnedColsContainer.removeChild(pinnedRowToRemove);
-                delete _this.rowsInPinnedContainer[indexToRemove];
+            var renderedRow = that.renderedRows[indexToRemove];
+            if (renderedRow.pinnedElement) {
+                that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
             }
 
-            var bodyRowToRemove = _this.rowsInBodyContainer[indexToRemove];
-            if (bodyRowToRemove) {
-                _this.eBodyContainer.removeChild(bodyRowToRemove);
-                delete _this.rowsInBodyContainer[indexToRemove];
+            if (renderedRow.bodyElement) {
+                that.eBodyContainer.removeChild(renderedRow.bodyElement);
             }
 
-            var childScopeToDelete = _this.childScopesForRows[indexToRemove];
-            if (childScopeToDelete) {
-                childScopeToDelete.$destroy();
-                delete _this.childScopesForRows[indexToRemove];
+            if (renderedRow.scope) {
+                renderedRow.scope.$destroy();
             }
+
+            if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
+                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.rowData, indexToRemove);
+            }
+
+            delete that.renderedRows[indexToRemove];
         });
     };
 
@@ -118,7 +113,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var _this = this;
 
         //at the end, this array will contain the items we need to remove
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        var rowsToRemove = Object.keys(this.renderedRows);
 
         //add in new rows
         for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
@@ -158,6 +153,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         //try compiling as we insert rows
         var newChildScope = this.createChildScopeOrNull(data, rowIndex);
+
+        var renderedRow = {
+            scope: newChildScope,
+            rowData: data
+        };
+        this.renderedRows[rowIndex] = renderedRow;
 
         //if group item, insert the first row
         var columnDefs = this.gridOptionsWrapper.getColumnDefs();
@@ -200,14 +201,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         //try compiling as we insert rows
-        this.compileAndAdd(this.ePinnedColsContainer, this.rowsInPinnedContainer, rowIndex, ePinnedRow, newChildScope);
-        this.compileAndAdd(this.eBodyContainer, this.rowsInBodyContainer, rowIndex, eMainRow, newChildScope);
+        renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
+        renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
     };
 
     RowRenderer.prototype.createChildScopeOrNull = function(data, rowIndex) {
         if (this.gridOptionsWrapper.isAngularCompile()) {
             var newChildScope = this.$scope.$new();
-            this.childScopesForRows[rowIndex] = newChildScope;
             newChildScope.rowData = data;
             return newChildScope;
         } else {
@@ -215,14 +215,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.compileAndAdd = function(container, map, rowIndex, element, scope) {
+    RowRenderer.prototype.compileAndAdd = function(container, rowIndex, element, scope) {
         if (scope) {
             var eElementCompiled = this.$compile(element)(scope);
             container.appendChild(eElementCompiled[0]);
-            map[rowIndex] = eElementCompiled[0];
+            return eElementCompiled[0];
         } else {
             container.appendChild(element);
-            map[rowIndex] = element;
+            return element;
         }
     };
 
@@ -329,9 +329,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eGridGroupRow;
     };
 
-    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell) {
+    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions());
+            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions(), rowIndex);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
@@ -353,7 +353,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.className = "ag-cell cell-col-"+colIndex;
         eGridCell.setAttribute("col", colIndex);
 
-        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
+        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
 
         if (colDef.cellCss) {
             Object.keys(colDef.cellCss).forEach(function(key) {

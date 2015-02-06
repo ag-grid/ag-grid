@@ -146,7 +146,6 @@
     box-sizing: border-box;
     text-overflow: ellipsis;
     overflow: hidden;
-    padding: 4px;
 }
 
 .ag-group-cell {
