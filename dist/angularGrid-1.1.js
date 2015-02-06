@@ -2269,6 +2269,21 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         if (this.gridOptions.selectedRows.indexOf(row)>=0) {
             classesList.push("ag-row-selected");
         }
+
+        // add in extra classes provided by the config
+        if (this.gridOptionsWrapper.getRowClass()) {
+            var extraRowClasses = this.gridOptionsWrapper.getRowClass()(row, rowIndex, groupRow);
+            if (extraRowClasses) {
+                if (typeof extraRowClasses === 'string') {
+                    classesList.push(extraRowClasses);
+                } else if (Array.isArray(extraRowClasses)) {
+                    extraRowClasses.forEach(function(classItem) {
+                        classesList.push(classItem);
+                    });
+                }
+            }
+        }
+
         var classes = classesList.join(" ");
 
         eRow.className = classes;
@@ -2689,6 +2704,7 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
     GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
     GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };

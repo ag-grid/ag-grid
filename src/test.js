@@ -74,6 +74,7 @@ define([
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             aggFunction: aggFunction,
             angularCompile: false,
+            rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected

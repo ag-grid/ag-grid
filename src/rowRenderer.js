@@ -17,6 +17,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.rowsInPinnedContainer = {};
         this.childScopesForRows = {};
 
+        // map of row ids to row objects. keeps track of which elements
+        // are rendered for which rows in the dom. each row object has:
+        // [scope, bodyRow, pinnedRow, rowData]
+        this.renderedRows = {};
+
         this.editingCell = false; //gets set to true when editing a cell
     }
 
@@ -238,6 +243,21 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (this.gridOptions.selectedRows.indexOf(row)>=0) {
             classesList.push("ag-row-selected");
         }
+
+        // add in extra classes provided by the config
+        if (this.gridOptionsWrapper.getRowClass()) {
+            var extraRowClasses = this.gridOptionsWrapper.getRowClass()(row, rowIndex, groupRow);
+            if (extraRowClasses) {
+                if (typeof extraRowClasses === 'string') {
+                    classesList.push(extraRowClasses);
+                } else if (Array.isArray(extraRowClasses)) {
+                    extraRowClasses.forEach(function(classItem) {
+                        classesList.push(classItem);
+                    });
+                }
+            }
+        }
+
         var classes = classesList.join(" ");
 
         eRow.className = classes;
