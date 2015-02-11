@@ -394,7 +394,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             if (colDef.cellClicked) {
                 colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
-            if (colDef.editable && !that.editingCell) {
+            if (that.isCellEditable(colDef, data)) {
                 that.startEditing(eGridCell, colDef, data, $childScope);
             }
         });
@@ -402,6 +402,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
 
         return eGridCell;
+    };
+
+    RowRenderer.prototype.isCellEditable = function(colDef, data) {
+        if (this.editingCell) {
+            return false;
+        }
+
+        if (typeof colDef.editable === 'boolean') {
+            return colDef.editable;
+        }
+
+        if (typeof colDef.editable === 'function') {
+            return colDef.editable(data);
+        }
+
+        return false;
     };
 
     RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput) {
@@ -435,6 +451,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.style.width = (colDef.actualWidth - 14) + 'px';
         eGridCell.appendChild(eInput);
         eInput.focus();
+        eInput.select();
+
 
         //stop editing if enter pressed
         eInput.addEventListener('keypress', function (event) {
