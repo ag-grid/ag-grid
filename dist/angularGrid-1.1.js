@@ -1616,7 +1616,7 @@ define('../src/groupCreator',[
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields, aggFunction, expandByDefault) {
+    GroupCreator.prototype.group = function(rowData, groupByFields, groupAggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -1676,22 +1676,22 @@ define('../src/groupCreator',[
         }
 
         //create data items
-        if (aggFunction) {
-            this.createAggData(topMostGroup.children, aggFunction);
+        if (groupAggFunction) {
+            this.createAggData(topMostGroup.children, groupAggFunction);
         }
 
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(children, aggFunction) {
+    GroupCreator.prototype.createAggData = function(children, groupAggFunction) {
         for (var i = 0, l = children.length; i<l; i++) {
             var item = children[i];
             var itemIsAGroup = item._angularGrid_group;
             if (itemIsAGroup) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(item.children, aggFunction);
+                this.createAggData(item.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
-                var data = aggFunction(item.children);
+                var data = groupAggFunction(item.children);
                 item.aggData = data;
             }
         }
@@ -1817,7 +1817,7 @@ define('../src/rowController',[
         if (this.gridOptionsWrapper.getGroupKeys()) {
             var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
-                this.gridOptionsWrapper.getAggFunction(), expandByDefault);
+                this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
             rowsAfterGroup = this.rowModel.getAllRows();
         }
@@ -2298,6 +2298,22 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eRow.style.top = (this.gridOptionsWrapper.getRowHeight() * rowIndex) + "px";
         eRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
 
+        if (this.gridOptionsWrapper.getRowStyle()) {
+            var cssToUse;
+            var rowStyle = this.gridOptionsWrapper.getRowStyle();
+            if (typeof rowStyle === 'function') {
+                cssToUse = rowStyle(row, rowIndex, groupRow);
+            } else {
+                cssToUse = rowStyle;
+            }
+
+            if (cssToUse) {
+                Object.keys(cssToUse).forEach(function(key) {
+                    eRow.style[key] = cssToUse[key];
+                });
+            }
+        }
+
         if (!groupRow) {
             var _this = this;
             eRow.addEventListener("click", function(event) {
@@ -2386,12 +2402,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
 
-        if (colDef.cellCss) {
+        if (colDef.cellStyle) {
             var cssToUse;
-            if (typeof colDef.cellCss === 'function') {
-                cssToUse = colDef.cellCss(value, data, colDef, $childScope);
+            if (typeof colDef.cellStyle === 'function') {
+                cssToUse = colDef.cellStyle(value, data, colDef, $childScope);
             } else {
-                cssToUse = colDef.cellCss;
+                cssToUse = colDef.cellStyle;
             }
 
             if (cssToUse) {
@@ -2727,6 +2743,7 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
     GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
     GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
@@ -2735,7 +2752,7 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
-    GridOptionsWrapper.prototype.getAggFunction = function() { return this.gridOptions.aggFunction; };
+    GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
     GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };

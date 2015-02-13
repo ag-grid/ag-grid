@@ -47,8 +47,12 @@
             <td>Rows are filtered using this text as a 'quick filter'</td>
         </tr>
         <tr>
-            <th>rowSelection</th>
-            <td>Set to either 'single' or 'multiple'. Leave blank for no selection.</td>
+            <th>rowClass</th>
+            <td>Class to use for the row. Can be string, array of strings, or function.</td>
+        </tr>
+        <tr>
+            <th>rowStyle</th>
+            <td>An object of CSS values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
             <th>angularCompile</th>
@@ -59,24 +63,8 @@
             <td>Provide a function for custom header rendering.</td>
         </tr>
         <tr>
-            <th>groupKeys</th>
-            <td>An array of 1 or more strings, each entry an item to group by. Leave blank, or empty array, for no grouping. ["make","model"]</td>
-        </tr>
-        <tr>
-            <th>groupUseEntireRow</th>
-            <td>If grouping, set to true or false (default is false). If true, group row will use all columns.</td>
-        </tr>
-        <tr>
-            <th>groupInnerCellRenderer</th>
-            <td>If grouping, allows customer rendering of the group cell.</td>
-        </tr>
-        <tr>
-            <th>groupDefaultExpanded</th>
-            <td>If grouping, set to true or false (default is false). If true, when data is loaded, groups will be expanded by default.</td>
-        </tr>
-        <tr>
-            <th>aggFunction</th>
-            <td>If grouping, used to create aggregates.</td>
+            <th>groupKeys<br/> groupUseEntireRow<br/> groupInnerCellRenderer<br/> groupDefaultExpanded<br/> groupAggFunction</th>
+            <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
             <th>rowSelected</th>

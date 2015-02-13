@@ -267,6 +267,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eRow.style.top = (this.gridOptionsWrapper.getRowHeight() * rowIndex) + "px";
         eRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
 
+        if (this.gridOptionsWrapper.getRowStyle()) {
+            var cssToUse;
+            var rowStyle = this.gridOptionsWrapper.getRowStyle();
+            if (typeof rowStyle === 'function') {
+                cssToUse = rowStyle(row, rowIndex, groupRow);
+            } else {
+                cssToUse = rowStyle;
+            }
+
+            if (cssToUse) {
+                Object.keys(cssToUse).forEach(function(key) {
+                    eRow.style[key] = cssToUse[key];
+                });
+            }
+        }
+
         if (!groupRow) {
             var _this = this;
             eRow.addEventListener("click", function(event) {
@@ -355,12 +371,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
 
-        if (colDef.cellCss) {
+        if (colDef.cellStyle) {
             var cssToUse;
-            if (typeof colDef.cellCss === 'function') {
-                cssToUse = colDef.cellCss(value, data, colDef, $childScope);
+            if (typeof colDef.cellStyle === 'function') {
+                cssToUse = colDef.cellStyle(value, data, colDef, $childScope);
             } else {
-                cssToUse = colDef.cellCss;
+                cssToUse = colDef.cellStyle;
             }
 
             if (cssToUse) {

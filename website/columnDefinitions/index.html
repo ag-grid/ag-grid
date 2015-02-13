@@ -29,7 +29,7 @@
             <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>
         <tr>
-            <th>cellCss</th>
+            <th>cellStyle</th>
             <td>An object of css values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
@@ -81,7 +81,7 @@ var colDef4 = {
 }
     </code></pre>
 
-    <div class="smallTitle">cellCss</div>
+    <div class="smallTitle">cellStyle</div>
     Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
     of CSS styles, or a function returning an object of CSS styles.
 
@@ -89,13 +89,13 @@ var colDef4 = {
 var colDef = {
     name: 'Static Styles',
     field' 'field1',
-    cellCss: {color: red, background-color: green}
+    cellStyle: {color: red, background-color: green}
 }
 // return different styles for each row
 var colDef = {
     name: 'Dynamic Styles',
     field' 'field2',
-    cellCss: function(value, data, colDef, $childScope) {
+    cellStyle: function(value, data, colDef, $childScope) {
         if (value=='Police') {
             //mark police cells as red
             return {color: red, background-color: green};
@@ -106,7 +106,7 @@ var colDef = {
 }
     </code></pre>
 
-    Both cellClass and cellCss functions have the following attributes:<br/>
+    Both cellClass and cellStyle functions have the following attributes:<br/>
 
     value: The value to be rendered.<br/>
     data: The row (from the rowData array, where value was taken) been rendered.<br/>
@@ -138,9 +138,9 @@ var colDef = {
     The below example shows three columns formatted, demonstrating each of the three
     methods above.
     <p/>
-    'Athlete' column uses cellCss to format each cell in the column with the same style.
+    'Athlete' column uses cellStyle to format each cell in the column with the same style.
     <p/>
-    'Age' column uses cellCssFunc to format each cell with the capital letter 'C'.
+    'Age' column uses cellStyle to format each cell with the capital letter 'C'.
     <p/>
     'Gold' column renders the cell from scratch, by adding a gold star image for each
     gold medal won.

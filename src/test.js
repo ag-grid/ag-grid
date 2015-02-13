@@ -72,7 +72,7 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
-            aggFunction: aggFunction,
+            groupAggFunction: groupAggFunction,
             angularCompile: false,
             rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
@@ -85,19 +85,19 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, cellCss: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", width: 200, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180, editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
-            {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: currencyCssFunc},
+            {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
-            {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: currencyCssFunc}
+            {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
         //put in the month cols
         months.forEach(function(month) {
             defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100,
-                cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}})
+                cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}})
         });
 
         createCols();
@@ -256,7 +256,7 @@ define([
         return "<b>" + data.key + "</b>";
     }
 
-    function aggFunction(rows) {
+    function groupAggFunction(rows) {
         var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
         var sums = {};
         colsToSum.forEach(function(key) { sums[key] = 0; });
@@ -290,8 +290,6 @@ define([
                 var starImage = document.createElement("img");
                 starImage.src = "http://www.angulargrid.com/images/goldStar.png";
                 eContainer.appendChild(starImage);
-            //} else {
-            //    eContainer.appendChild(document.createTextNode("-"));
             }
         }
         return eContainer;

@@ -4,8 +4,8 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 150, cellCss: {color: 'darkred'}},
-        {displayName: "Age", field: "age", width: 90, cellCss: function(value, data, colDef, $childScope) {
+        {displayName: "Athlete", field: "athlete", width: 150, cellStyle: {color: 'darkred'}},
+        {displayName: "Age", field: "age", width: 90, cellStyle: function(value, data, colDef, $childScope) {
             if (value>=30) {
                 return {'background-color': 'lightblue'};
             } else {

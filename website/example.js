@@ -67,7 +67,7 @@ gridsModule.controller('mainController', function($scope) {
         enableSorting: true, //one of [true, false]
         enableFilter: true, //one of [true, false]
         rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
-        aggFunction: aggFunction,
+        groupAggFunction: groupAggFunction,
         angularCompile: false,
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
@@ -78,19 +78,19 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
-        {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc},
+        {displayName: "Name", field: "name", width: 200, cellStyle: nameCssFunc},
         {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer},
         {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
         {displayName: "Game of Choice", field: "game", width: 180},
-        {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-        {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
+        {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
+        {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}, cellStyle: currencyCssFunc},
         {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
-        {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right", "font-weight": "bold"}, cellCssFunc: currencyCssFunc}
+        {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right", "font-weight": "bold"}, cellStyle: currencyCssFunc}
     ];
     //put in the month cols
     months.forEach(function(month) {
         defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100,
-            cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}})
+            cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}})
     });
 
     createCols();
@@ -139,15 +139,7 @@ gridsModule.controller('mainController', function($scope) {
 
         for (var col = defaultCols.length; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
-            var cellRenderer = undefined;
-            var cellCss = undefined;
-            var comparator = undefined;
-            var filterCellRenderer = undefined;
-            var cellCssFunc = undefined;
-            var filterCellHeight = undefined;
-            var colDef = {displayName: colName, field: "col"+col, width: 200,
-                cellRenderer: cellRenderer, filterCellRenderer: filterCellRenderer, filterCellHeight: filterCellHeight,
-                comparator: comparator, cellCss: cellCss, cellCssFunc: cellCssFunc};
+            var colDef = {displayName: colName, field: "col"+col, width: 200};
             columns.push(colDef);
         }
         angularGrid.columnDefs = columns;
@@ -253,7 +245,7 @@ function groupInnerCellRenderer(data) {
     return "<b>" + data.key + "</b>";
 }
 
-function aggFunction(rows) {
+function groupAggFunction(rows) {
     var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
     var sums = {};
     colsToSum.forEach(function(key) { sums[key] = 0; });

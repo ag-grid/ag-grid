@@ -4,7 +4,7 @@ indexModule = angular.module("index", ["angularGrid"]);
 indexModule.controller('indexController', function($scope) {
 
     //cellRenderer: undefined, filterCellRenderer: undefined, filterCellHeight: undefined,
-    //    comparator: undefined, cellCss: undefined, cellCssFunc: undefined
+    //    comparator: undefined, cellStyle: undefined
 
     $scope.angularGrid = {
         columnDefs: [

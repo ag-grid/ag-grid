@@ -37,6 +37,7 @@
 
     module.directive("showExample", function() {
         return {
+            scope: true,
             controller: Controller,
             templateUrl: "showExample.html"
         }
@@ -45,6 +46,7 @@
     function Controller($scope, $http, $attrs) {
         var example = $attrs["example"];
         $scope.source =  example + ".html";
+        $scope.selectedTab='example';
         $http.get("./"+example+".html").
             success(function(data, status, headers, config) {
                 $scope.html = data;

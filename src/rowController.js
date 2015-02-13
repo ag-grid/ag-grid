@@ -95,7 +95,7 @@ define([
         if (this.gridOptionsWrapper.getGroupKeys()) {
             var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
-                this.gridOptionsWrapper.getAggFunction(), expandByDefault);
+                this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
             rowsAfterGroup = this.rowModel.getAllRows();
         }

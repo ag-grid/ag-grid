@@ -7,6 +7,7 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
     GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
     GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
@@ -15,7 +16,7 @@ define(["./constants"], function(constants) {
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
-    GridOptionsWrapper.prototype.getAggFunction = function() { return this.gridOptions.aggFunction; };
+    GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
     GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };

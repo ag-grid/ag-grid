@@ -1,6 +1,8 @@
 .bigTitle {
     font-size: 20px;
     font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 10px;
 }
 
 .smallTitle {
