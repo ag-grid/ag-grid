@@ -25,12 +25,12 @@
             <td>Initial width, in pixels, of the cell</td>
         </tr>
         <tr>
-            <th>cellCss</th>
-            <td>An object of css values.</td>
+            <th>cellClass</th>
+            <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>
         <tr>
-            <th>cellCssFunc</th>
-            <td>A function that when called, returns an object of css values.</td>
+            <th>cellCss</th>
+            <td>An object of css values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
             <th>cellRenderer</th>
@@ -50,30 +50,63 @@
         </tr>
     </table>
 
+    <div class="smallTitle">cellClass</div>
+
+    Provides a class for the cells in this column. Can be a string (a class), array of strings
+    (array of classes), or a function (that returns a string or an array of strings).
+
+    <pre><code>// return same class for each row
+var colDef1 = {
+    name: 'Static Class',
+    field' 'field1',
+    cellClass: 'my-class'
+}
+// return same array of classes for each row
+var colDef2 = {
+    name: 'Static Array of Classes',
+    field' 'field2',
+    cellClass: ['my-class1','my-class2']
+}
+// return class based on function
+var colDef3 = {
+    name: 'Function Returns String',
+    field' 'field3',
+    cellClass: function(value, data, colDef) { return (value==='something'?'my-class-1':'my-class-2'); }
+}
+// return array of classes based on function
+var colDef4 = {
+    name: 'Function Returns Array',
+    field' 'field4',
+    cellClass: function(value, data, colDef) { return ['my-class-1','my-class-2']; }
+}
+    </code></pre>
+
     <div class="smallTitle">cellCss</div>
-    Use this if a predetermined style is to be applied to all cells in the column. Eg
+    Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
+    of CSS styles, or a function returning an object of CSS styles.
 
-    <pre><code>var colDef = {
-    name: 'Col Name',
-    field' 'Col Field',
+    <pre><code>// return same style for each row
+var colDef = {
+    name: 'Static Styles',
+    field' 'field1',
     cellCss: {color: red, background-color: green}
-}</code></pre>
+}
+// return different styles for each row
+var colDef = {
+    name: 'Dynamic Styles',
+    field' 'field2',
+    cellCss: function(value, data, colDef, $childScope) {
+        if (value=='Police') {
+            //mark police cells as red
+            return {color: red, background-color: green};
+        } else {
+            return null;
+        }
+    }
+}
+    </code></pre>
 
-    <div class="smallTitle">cellCssFunc</div>
-    A function that when called, returns an object of css values.
-
-<pre><code>var colDef = {
-    name: 'Col Name',
-    field' 'Col Field',
-    cellCssFunc: function(value, data, colDef, $childScope) {
-                 if (value=='Police') {
-                     //mark police cells as red
-                     return {color: red, background-color: green};
-                 } else {
-                     return null;
-                 }
-             }
-}</code></pre>
+    Both cellClass and cellCss functions have the following attributes:<br/>
 
     value: The value to be rendered.<br/>
     data: The row (from the rowData array, where value was taken) been rendered.<br/>

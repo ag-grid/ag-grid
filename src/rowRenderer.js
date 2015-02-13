@@ -356,9 +356,18 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
 
         if (colDef.cellCss) {
-            Object.keys(colDef.cellCss).forEach(function(key) {
-                eGridCell.style[key] = colDef.cellCss[key];
-            });
+            var cssToUse;
+            if (typeof colDef.cellCss === 'function') {
+                cssToUse = colDef.cellCss(value, data, colDef, $childScope);
+            } else {
+                cssToUse = colDef.cellCss;
+            }
+
+            if (cssToUse) {
+                Object.keys(cssToUse).forEach(function(key) {
+                    eGridCell.style[key] = cssToUse[key];
+                });
+            }
         }
 
         if (colDef.cellClass) {
@@ -374,15 +383,6 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             } else if (Array.isArray(classToUse)) {
                 classToUse.forEach(function(cssClassItem) {
                     utils.addCssClass(eGridCell,cssClassItem);
-                });
-            }
-        }
-
-        if (colDef.cellCssFunc) {
-            var cssObjFromFunc = colDef.cellCssFunc(value, data, colDef, $childScope);
-            if (cssObjFromFunc) {
-                Object.keys(cssObjFromFunc).forEach(function(key) {
-                    eGridCell.style[key] = cssObjFromFunc[key];
                 });
             }
         }

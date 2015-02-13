@@ -5,7 +5,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
         {displayName: "Athlete", field: "athlete", width: 150, cellCss: {color: 'darkred'}},
-        {displayName: "Age", field: "age", width: 90, cellCssFunc: function(value, data, colDef, $childScope) {
+        {displayName: "Age", field: "age", width: 90, cellCss: function(value, data, colDef, $childScope) {
             if (value>=30) {
                 return {'background-color': 'lightblue'};
             } else {

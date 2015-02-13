@@ -85,14 +85,14 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, cellCssFunc: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", width: 200, cellCss: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
             {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180, editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellCss: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right"}, cellCssFunc: currencyCssFunc},
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: currencyCssFunc},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
-            {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: {"text-align": "right", "font-weight": "bold"}, cellCssFunc: currencyCssFunc}
+            {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellCss: currencyCssFunc}
         ];
         //put in the month cols
         months.forEach(function(month) {
@@ -146,15 +146,7 @@ define([
 
             for (var col = defaultCols.length; col<colCount; col++) {
                 var colName = colNames[col % colNames.length];
-                var cellRenderer = undefined;
-                var cellCss = undefined;
-                var comparator = undefined;
-                var filterCellRenderer = undefined;
-                var cellCssFunc = undefined;
-                var filterCellHeight = undefined;
-                var colDef = {displayName: colName, field: "col"+col, width: 200,
-                    cellRenderer: cellRenderer, filterCellRenderer: filterCellRenderer, filterCellHeight: filterCellHeight,
-                    comparator: comparator, cellCss: cellCss, cellCssFunc: cellCssFunc};
+                var colDef = {displayName: colName, field: "col"+col, width: 200};
                 columns.push(colDef);
             }
             angularGrid.columnDefs = columns;
@@ -204,7 +196,7 @@ define([
 
         //because name is the first col, if grouping present, we want to indent it.
         //this method is inside the controller as we access the scope
-        function nameCssFunc(value) {
+        function nameCssFunc() {
             var style = {};
             if ($scope.angularGrid.groupKeys) {
                 switch ($scope.angularGrid.groupKeys.length) {
@@ -285,9 +277,9 @@ define([
 
     function currencyCssFunc(value) {
         if (value!==null && value!==undefined && value<0) {
-            return {"color": "red"};
+            return {"color": "red", "text-align": "right", "font-weight": "bold"};
         } else {
-            return null;
+            return {"text-align": "right"};
         }
     }
 
