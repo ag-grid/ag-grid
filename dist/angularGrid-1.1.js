@@ -3092,9 +3092,6 @@ define('../src/angularGrid',[
         var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
 
         if (selected) {
-            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected === "function") {
-                this.gridOptions.rowSelected(row);
-            }
             //if single selection, clear any previous
             if (selected && this.gridOptions.rowSelection === "single") {
                 this.gridOptions.selectedRows.length = 0;
@@ -3104,6 +3101,9 @@ define('../src/angularGrid',[
                 }
             }
             this.gridOptions.selectedRows.push(row);
+            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected === "function") {
+                this.gridOptions.rowSelected(row);
+            }
         } else {
             utils.removeFromArray(this.gridOptions.selectedRows, row);
         }
@@ -3120,9 +3120,9 @@ define('../src/angularGrid',[
 
         if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
-            this.$scope.$apply();
         }
 
+        this.$scope.$apply();
     };
 
     Grid.prototype.setupColumns = function () {
