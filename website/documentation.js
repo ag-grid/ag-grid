@@ -15,6 +15,7 @@
             {name: "Pinning", url: "./pinning/index.html"},
             {name: "Grouping", url: "./grouping/index.html"},
             {name: "Column Definitions", url: "./columnDefinitions/index.html"},
+            {name: "Selection", url: "./grouping/todo.html"},
             {name: "Header Formatting", url: "./todo.html"},
             {name: "Angular Compiling", url: "./todo.html"},
             {name: "Styling", url: "./todo.html"},
