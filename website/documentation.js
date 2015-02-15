@@ -16,7 +16,7 @@
             {name: "Grouping", url: "./grouping/index.html"},
             {name: "Column Definitions", url: "./columnDefinitions/index.html"},
             {name: "Selection", url: "./selection/index.html"},
-            {name: "Header Formatting", url: "./todo.html"},
+            {name: "Header Rendering", url: "./headerRendering/index.html"},
             {name: "Angular Compiling", url: "./todo.html"},
             {name: "Styling", url: "./todo.html"},
             {name: "API", url: "./todo.html"}
