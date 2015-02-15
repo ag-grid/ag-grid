@@ -2,7 +2,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope) {
+    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
@@ -10,6 +10,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
+        this.$timeout = $timeout;
 
         // map of row ids to row objects. keeps track of which elements
         // are rendered for which rows in the dom. each row object has:
@@ -110,7 +111,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.ensureRowsRendered = function (start, finish) {
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth();
-        var _this = this;
+        var that = this;
 
         //at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -125,18 +126,20 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             //check this row actually exists (in case overflow buffer window exceeds real data)
             var data = this.rowModel.getRowsAfterMap()[rowIndex];
             if (data) {
-                _this.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
+                that.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
             }
         }
 
         //at this point, everything in our 'rowsToRemove' . . .
         this.removeVirtualRows(rowsToRemove);
 
-        //if we are doing angular compiling, then do it here if not in digest
-        //this.$scope.$$phase || this.$scope.$apply();
-        //if(this.gridOptions.angularCompile && !this.$scope.$$phase) {
-        //    this.$scope.$apply();
-        //}
+        //if we are doing angular compiling, then do digest the scope here
+        if (this.gridOptions.angularCompile) {
+            // we do it in a timeout, in case we are already in an apply
+            this.$timeout(function () {
+                that.$scope.$apply();
+            }, 0);
+        }
     };
 
     RowRenderer.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
@@ -227,7 +230,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, colIndex, $childScope);
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -405,7 +408,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, this.gridOptionsWrapper.getGridOptions());
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.cellClicked) {
                 colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());

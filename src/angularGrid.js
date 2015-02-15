@@ -29,14 +29,14 @@ define([
         return {
             restrict: "A",
             template: template,
-            controller: ["$scope", "$element", "$compile", Grid],
+            controller: ['$scope', '$element', '$compile', '$timeout', Grid],
             scope: {
                 angularGrid: "="
             }
         };
     });
 
-    function Grid($scope, $element, $compile) {
+    function Grid($scope, $element, $compile, $timeout) {
 
         var _this = this;
         $scope.grid = this;
@@ -64,7 +64,7 @@ define([
 
         this.filterManager = new FilterManager(this, this.rowModel);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
         this.addScrollListener();

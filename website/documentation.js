@@ -17,7 +17,7 @@
             {name: "Column Definitions", url: "./columnDefinitions/index.html"},
             {name: "Selection", url: "./selection/index.html"},
             {name: "Header Rendering", url: "./headerRendering/index.html"},
-            {name: "Angular Compiling", url: "./todo.html"},
+            {name: "Angular Compiling", url: "./angularCompiling/index.html"},
             {name: "Styling", url: "./todo.html"},
             {name: "API", url: "./todo.html"}
         ];

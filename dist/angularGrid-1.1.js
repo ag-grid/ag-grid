@@ -2033,7 +2033,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope) {
+    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
@@ -2041,6 +2041,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
+        this.$timeout = $timeout;
 
         // map of row ids to row objects. keeps track of which elements
         // are rendered for which rows in the dom. each row object has:
@@ -2141,7 +2142,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     RowRenderer.prototype.ensureRowsRendered = function (start, finish) {
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth();
-        var _this = this;
+        var that = this;
 
         //at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -2156,18 +2157,20 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             //check this row actually exists (in case overflow buffer window exceeds real data)
             var data = this.rowModel.getRowsAfterMap()[rowIndex];
             if (data) {
-                _this.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
+                that.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
             }
         }
 
         //at this point, everything in our 'rowsToRemove' . . .
         this.removeVirtualRows(rowsToRemove);
 
-        //if we are doing angular compiling, then do it here if not in digest
-        //this.$scope.$$phase || this.$scope.$apply();
-        //if(this.gridOptions.angularCompile && !this.$scope.$$phase) {
-        //    this.$scope.$apply();
-        //}
+        //if we are doing angular compiling, then do digest the scope here
+        if (this.gridOptions.angularCompile) {
+            // we do it in a timeout, in case we are already in an apply
+            this.$timeout(function () {
+                that.$scope.$apply();
+            }, 0);
+        }
     };
 
     RowRenderer.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
@@ -2258,7 +2261,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, colIndex, $childScope);
+        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -2436,7 +2439,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, this.gridOptionsWrapper.getGridOptions());
+                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.cellClicked) {
                 colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
@@ -2990,14 +2993,14 @@ define('../src/angularGrid',[
         return {
             restrict: "A",
             template: template,
-            controller: ["$scope", "$element", "$compile", Grid],
+            controller: ['$scope', '$element', '$compile', '$timeout', Grid],
             scope: {
                 angularGrid: "="
             }
         };
     });
 
-    function Grid($scope, $element, $compile) {
+    function Grid($scope, $element, $compile, $timeout) {
 
         var _this = this;
         $scope.grid = this;
@@ -3025,7 +3028,7 @@ define('../src/angularGrid',[
 
         this.filterManager = new FilterManager(this, this.rowModel);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
         this.addScrollListener();
