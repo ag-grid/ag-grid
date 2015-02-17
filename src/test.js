@@ -74,7 +74,7 @@ define([
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             groupAggFunction: groupAggFunction,
             angularCompile: false,
-            dontUseScrolls: true,
+            //dontUseScrolls: true,
             rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
