@@ -1,6 +1,4 @@
-
 .ag-root {
-    height: 100%;
     font-size: 14px;
     cursor: default;
 
@@ -14,7 +12,17 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
     box-sizing: border-box;
+}
+
+.ag-no-scrolls {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.ag-scrolls {
+    height: 100%;
 }
 
 .ag-popup-backdrop {
@@ -51,11 +59,16 @@
     height: 100%;
 }
 
-.ag-header-container {
+.ag-scrolls .ag-header-container {
     box-sizing: border-box;
     position: relative;
     white-space: nowrap;
     height: 100%;
+}
+
+.ag-no-scrolls .ag-header-container {
+    white-space: nowrap;
+    height: 25px;
 }
 
 .ag-header-cell {
@@ -115,12 +128,15 @@
     height: 100%;
 }
 
-.ag-body-container {
+.ag-scrolls .ag-body-container {
     position: relative;
     display: inline-block;
 }
 
-.ag-row {
+.ag-no-scrolls .ag-body-container {
+}
+
+.ag-scrolls .ag-row {
     white-space: nowrap;
     position: absolute;
     width: 100%;

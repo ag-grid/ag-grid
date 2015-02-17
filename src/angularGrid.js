@@ -143,7 +143,7 @@ define([
             //if single selection, clear any previous
             if (selected && this.gridOptions.rowSelection === "single") {
                 this.gridOptions.selectedRows.length = 0;
-                var eRowsWithSelectedClass = this.eBody.querySelectorAll(".ag-row-selected");
+                var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
                 for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
                     utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
                 }
@@ -157,7 +157,7 @@ define([
         }
 
         //update css class on selected row
-        var eRows = this.eBody.querySelectorAll("[row='" + rowIndex + "']");
+        var eRows = this.eRowsParent.querySelectorAll("[row='" + rowIndex + "']");
         for (var i = 0; i < eRows.length; i++) {
             if (selected) {
                 utils.addCssClass(eRows[i], "ag-row-selected")
@@ -258,15 +258,26 @@ define([
 
     Grid.prototype.findAllElements = function ($element) {
         var eGrid = $element[0];
-        this.eRoot = eGrid.querySelector(".ag-root");
-        this.eBody = eGrid.querySelector(".ag-body");
-        this.eBodyContainer = eGrid.querySelector(".ag-body-container");
-        this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-        this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
-        this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
-        this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
-        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
-        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+
+        if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            this.eRoot = eGrid.querySelector(".ag-root");
+            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+            // for no-scrolls, all rows live in the body container
+            this.eRowsParent = this.eBodyContainer;
+        } else {
+            this.eRoot = eGrid.querySelector(".ag-root");
+            this.eBody = eGrid.querySelector(".ag-body");
+            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+            this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
+            this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
+            this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
+            this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
+            this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+            // for scrolls, all rows live in eBody (containing pinned and normal body)
+            this.eRowsParent = this.eBody;
+        }
     };
 
     Grid.prototype.showPinnedColContainersIfNeeded = function () {

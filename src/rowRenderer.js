@@ -30,9 +30,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.findAllElements = function (eGrid) {
-        this.eBodyContainer = eGrid.querySelector(".ag-body-container");
-        this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-        this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
+        if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+        } else {
+            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+            this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
+            this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
+        }
     };
 
     RowRenderer.prototype.refreshView = function() {
@@ -76,7 +80,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
             var renderedRow = that.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement) {
+            if (renderedRow.pinnedElement && that.ePinnedColsContainer) {
                 that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
             }
 
@@ -286,7 +290,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eRow.setAttribute("row", rowIndex);
 
-        eRow.style.top = (this.gridOptionsWrapper.getRowHeight() * rowIndex) + "px";
+        // if showing scrolls, position on the container
+        if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+            eRow.style.top = (this.gridOptionsWrapper.getRowHeight() * rowIndex) + "px";
+        }
         eRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
 
         if (this.gridOptionsWrapper.getRowStyle()) {

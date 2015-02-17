@@ -143,7 +143,7 @@ define([
             var colCount = parseInt($scope.colCount);
 
             //start with a copy of the default cols
-            var columns = defaultCols.slice(0);
+            var columns = defaultCols.slice(0, colCount);
 
             for (var col = defaultCols.length; col<colCount; col++) {
                 var colName = colNames[col % colNames.length];

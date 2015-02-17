@@ -10,7 +10,12 @@
     padding: 4px;
 }
 
-.ag-dark .ag-header {
+.ag-dark .ag-header-container {
+    background-color: #430000;
+    border-bottom: 1px solid grey;
+}
+
+.ag-dark .ag-pinned-header {
     background-color: #430000;
     border-bottom: 1px solid grey;
 }

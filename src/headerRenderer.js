@@ -10,10 +10,19 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     }
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
-        this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
-        this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
-        this.eHeader = eGrid.querySelector(".ag-header");
-        this.eRoot = eGrid.querySelector(".ag-root");
+
+        if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+            this.eRoot = eGrid.querySelector(".ag-root");
+            // for no-scroll, all header cells live in the header container (the ag-header doesn't exist)
+            this.eHeaderParent = this.eHeaderContainer;
+        } else {
+            this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+            this.eHeader = eGrid.querySelector(".ag-header");
+            // for scroll, all header cells live in the header (contains both normal and pinned headers)
+            this.eHeaderParent = this.eHeader;
+        }
     };
 
     HeaderRenderer.prototype.insertHeader = function() {
@@ -141,10 +150,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 var sortDescending = colToClear.sort===constants.DESC;
                 var sortAny = sortAscending || sortDescending;
 
-                var eSortAscending = _this.eHeader.querySelector(".ag-header-cell-sort-asc-" + colIndex);
+                var eSortAscending = _this.eHeaderParent.querySelector(".ag-header-cell-sort-asc-" + colIndex);
                 eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
 
-                var eSortDescending = _this.eHeader.querySelector(".ag-header-cell-sort-desc-" + colIndex);
+                var eSortDescending = _this.eHeaderParent.querySelector(".ag-header-cell-sort-desc-" + colIndex);
                 eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
 
                 var eParentSvg = eSortAscending.parentNode;
