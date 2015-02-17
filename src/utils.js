@@ -57,8 +57,10 @@ define([], function() {
     };
 
     Utils.prototype.removeAllChildren = function(node) {
-        while (node.hasChildNodes()) {
-            node.removeChild(node.lastChild);
+        if (node) {
+            while (node.hasChildNodes()) {
+                node.removeChild(node.lastChild);
+            }
         }
     };
 

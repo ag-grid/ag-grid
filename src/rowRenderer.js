@@ -36,10 +36,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.refreshView = function() {
-        var rowCount = this.rowModel.getRowsAfterMap().length;
-        var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
-        this.eBodyContainer.style.height = containerHeight + "px";
-        this.ePinnedColsContainer.style.height = containerHeight + "px";
+        if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+            var rowCount = this.rowModel.getRowsAfterMap().length;
+            var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
+            this.eBodyContainer.style.height = containerHeight + "px";
+            this.ePinnedColsContainer.style.height = containerHeight + "px";
+        }
 
         this.refreshAllVirtualRows();
     };
@@ -95,15 +97,28 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
-        var topPixel = this.eBodyViewport.scrollTop;
-        var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+        var firstRow;
+        var lastRow;
 
-        var firstRow = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
-        var lastRow = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
+        if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            firstRow = 0;
+            var rowsAfterMap = this.rowModel.getRowsAfterMap();
+            if (rowsAfterMap) {
+                lastRow = rowsAfterMap.length - 1;
+            } else {
+                lastRow = 0;
+            }
+        } else {
+            var topPixel = this.eBodyViewport.scrollTop;
+            var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-        //add in buffer
-        firstRow = firstRow - constants.ROW_BUFFER_SIZE;
-        lastRow = lastRow + constants.ROW_BUFFER_SIZE;
+            firstRow = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
+            lastRow = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
+
+            //add in buffer
+            firstRow = firstRow - constants.ROW_BUFFER_SIZE;
+            lastRow = lastRow + constants.ROW_BUFFER_SIZE;
+        }
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -221,10 +236,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.compileAndAdd = function(container, rowIndex, element, scope) {
         if (scope) {
             var eElementCompiled = this.$compile(element)(scope);
-            container.appendChild(eElementCompiled[0]);
+            if (container) { // checking container, as if noScroll, pinned container is missing
+                container.appendChild(eElementCompiled[0]);
+            }
             return eElementCompiled[0];
         } else {
-            container.appendChild(element);
+            if (container) {
+                container.appendChild(element);
+            }
             return element;
         }
     };

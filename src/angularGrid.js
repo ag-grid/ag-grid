@@ -9,7 +9,8 @@
 
 define([
     "angular",
-    "text!./angularGrid.html",
+    "text!./template.html",
+    "text!./templateNoScrolls.html",
     "./utils",
     "./filterManager",
     "./rowModel",
@@ -21,14 +22,13 @@ define([
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
+], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
 
     var module = angular.module("angularGrid", []);
 
     module.directive("angularGrid", function () {
         return {
             restrict: "A",
-            template: template,
             controller: ['$scope', '$element', '$compile', '$timeout', Grid],
             scope: {
                 angularGrid: "="
@@ -38,16 +38,24 @@ define([
 
     function Grid($scope, $element, $compile, $timeout) {
 
-        var _this = this;
-        $scope.grid = this;
-        this.$scope = $scope;
-        this.$compile = $compile;
         this.gridOptions = $scope.angularGrid;
         if (!this.gridOptions) {
             console.warn("WARNING - grid options for angularGrid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
             return;
         }
         this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
+
+        var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
+        if (useScrolls) {
+            $element[0].innerHTML = template;
+        } else {
+            $element[0].innerHTML = templateNoScrolls;
+        }
+
+        var _this = this;
+        $scope.grid = this;
+        this.$scope = $scope;
+        this.$compile = $compile;
         this.quickFilter = null;
 
         $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
@@ -67,9 +75,10 @@ define([
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
 
-        this.addScrollListener();
-
-        this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
+        if (useScrolls) {
+            this.addScrollListener();
+            this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
+        }
 
         //done when cols change
         this.setupColumns();
@@ -168,8 +177,10 @@ define([
         this.gridOptionsWrapper.ensureEachColHasSize();
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
-        this.setPinnedColContainerWidth();
-        this.setBodyContainerWidth();
+        if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+            this.setPinnedColContainerWidth();
+            this.setBodyContainerWidth();
+        }
         this.headerRenderer.updateFilterIcons();
     };
 
@@ -259,7 +270,13 @@ define([
     };
 
     Grid.prototype.showPinnedColContainersIfNeeded = function () {
+        // no need to do this if not using scrolls
+        if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            return;
+        }
+
         var showingPinnedCols = this.gridOptionsWrapper.getPinnedColCount() > 0;
+
         //some browsers had layout issues with the blank divs, so if blank,
         //we don't display them
         if (showingPinnedCols) {

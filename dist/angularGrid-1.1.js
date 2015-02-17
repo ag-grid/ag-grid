@@ -994,7 +994,7 @@ define('text',['module'], function (module) {
     return text;
 });
 
-define('text!../src/angularGrid.html',[],function () { return '<div class=\'ag-root\'>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>';});
+define('text!../src/template.html',[],function () { return '<div class=\'ag-root\'>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>';});
 
 /** Singleton util class, with jquery and underscore like features. */
 define('../src/utils',[], function() {
@@ -2973,7 +2973,7 @@ define('css!../src/css/theme-fresh',[],function(){});
 
 define('../src/angularGrid',[
     "angular",
-    "text!./angularGrid.html",
+    "text!./template.html",
     "./utils",
     "./filterManager",
     "./rowModel",

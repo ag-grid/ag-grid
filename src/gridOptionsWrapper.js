@@ -7,6 +7,7 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.isDontUseScrolls = function() { return this.gridOptions.dontUseScrolls; };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
     GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
@@ -67,6 +68,11 @@ define(["./constants"], function(constants) {
     };
 
     GridOptionsWrapper.prototype.getPinnedColCount = function() {
+        // if not using scrolls, then pinned columns doesn't make
+        // sense, so always return 0
+        if (this.isDontUseScrolls()) {
+            return 0;
+        }
         if (this.gridOptions.pinnedColumnCount) {
             //in case user puts in a string, cast to number
             return Number(this.gridOptions.pinnedColumnCount);
