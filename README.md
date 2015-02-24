@@ -33,3 +33,8 @@ Everybody should use this grid!!
 The grid was designed to handle very large data sets and give a professional 'excel like' feel over the data. This was such that it can be used in financial applications.
 
 Personally I find the grid best suits my needs than any other. It is powerful and flexible enough to deal with any job I give it (regardless of needing 100 columns and 20,000 rows, or maybe I need to have the cells very custom and interactive) . . . . and still have the option to make it native Angular if I wish. I was not able to find a grid that fit nicely into the Angular modal and gave me what I needed.
+
+Who Should Use
+--------------
+
+To learn more about Angular Grid, including it's documentation, please visit the website www.angulargrid.com(http://www.angulargrid.com/)
