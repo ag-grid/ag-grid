@@ -6,26 +6,28 @@ Angular Grid is another Grid for HTML 5 Angular development. I created Angular G
 
 So I thought, how hard can it be? I guess I am finding out ...
 
-Will become a sub heading
+Features
 --------------
 
-Features
-Native to Angular JS
-Excel Like Advanced Filtering
-Gmail like 'Quick Filter'
-Pinnable Columns
-Row Virtualisation
-Column Resizing
-Sorting
-Grouping
-Custom Cell Renderers
-Auto Resizable
-Works with 100% width & height
-Customisable via CSS
-No Dependencies
-Supports very large data sets
-Very fast
+- Native to Angular JS
+- Excel Like Advanced Filtering
+- Gmail like 'Quick Filter'
+- Pinnable Columns
+- Row Virtualisation
+- Column Resizing
+- Sorting
+- Grouping
+- Custom Cell Renderers
+- Auto Resizable
+- Works with 100% width & height
+- Customisable via CSS
+- No Dependencies
+- Supports very large data sets
+- Very fast
+
 Who Should Use
+--------------
+
 Everybody should use this grid!!
 
 The grid was designed to handle very large data sets and give a professional 'excel like' feel over the data. This was such that it can be used in financial applications.
