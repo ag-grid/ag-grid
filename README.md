@@ -37,4 +37,4 @@ Personally I find the grid best suits my needs than any other. It is powerful an
 Who Should Use
 --------------
 
-To learn more about Angular Grid, including it's documentation, please visit the website www.angulargrid.com(http://www.angulargrid.com/)
+To learn more about Angular Grid, including it's documentation, please visit the website www.angulargrid.com
