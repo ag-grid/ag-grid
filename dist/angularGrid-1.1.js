@@ -1282,12 +1282,12 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
 
 });
 
-define('text!../src/excelFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/setFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 define('../src/excelFilter',[
     './utils',
     './excelFilterModel',
-    'text!./excelFilter.html'
+    'text!./setFilter.html'
 ], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;

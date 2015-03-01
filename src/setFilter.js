@@ -1,15 +1,15 @@
 define([
     './utils',
-    './excelFilterModel',
-    'text!./excelFilter.html'
+    './setFilterModel',
+    'text!./setFilter.html'
 ], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(grid, colDef, rowModel) {
+    function SetFilter(colDef, rowModel, filterChangedCallback) {
         this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
         this.model = new ExcelFilterModel(colDef, rowModel);
-        this.grid = grid;
+        this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
         this.createGui();
@@ -17,22 +17,22 @@ define([
     }
 
     /* public */
-    Filter.prototype.doesFilterPass = function (value) {
+    SetFilter.prototype.doesFilterPass = function (value) {
         return this.model.doesFilterPass(value);
     };
 
     /* public */
-    Filter.prototype.getGui = function () {
+    SetFilter.prototype.getGui = function () {
         return this.eGui;
     };
 
     /* public */
-    Filter.prototype.onNewRowsLoaded = function () {
+    SetFilter.prototype.onNewRowsLoaded = function () {
         this.model.selectEverything();
         this.updateAllCheckboxes(true);
     };
 
-    Filter.prototype.createGui = function () {
+    SetFilter.prototype.createGui = function () {
         var _this = this;
 
         this.eGui = utils.loadTemplate(template);
@@ -62,11 +62,11 @@ define([
         }
     };
 
-    Filter.prototype.setContainerHeight = function() {
+    SetFilter.prototype.setContainerHeight = function() {
         this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
     };
 
-    Filter.prototype.drawVirtualRows = function () {
+    SetFilter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
@@ -76,7 +76,7 @@ define([
         this.ensureRowsRendered(firstRow, lastRow);
     };
 
-    Filter.prototype.ensureRowsRendered = function (start, finish) {
+    SetFilter.prototype.ensureRowsRendered = function (start, finish) {
         var _this = this;
 
         //at the end, this array will contain the items we need to remove
@@ -101,7 +101,7 @@ define([
     };
 
     //takes array of row id's
-    Filter.prototype.removeVirtualRows = function(rowsToRemove) {
+    SetFilter.prototype.removeVirtualRows = function(rowsToRemove) {
         var _this = this;
         rowsToRemove.forEach(function(indexToRemove) {
             var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
@@ -110,7 +110,7 @@ define([
         });
     };
 
-    Filter.prototype.insertRow = function(value, rowIndex) {
+    SetFilter.prototype.insertRow = function(value, rowIndex) {
         var _this = this;
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
@@ -144,7 +144,7 @@ define([
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
     };
 
-    Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
+    SetFilter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
             this.model.selectValue(value);
@@ -165,10 +165,10 @@ define([
             }
         }
 
-        this.grid.onFilterChanged();
+        this.filterChangedCallback();
     };
 
-    Filter.prototype.onFilterChanged = function() {
+    SetFilter.prototype.onFilterChanged = function() {
         var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.setContainerHeight();
@@ -177,12 +177,12 @@ define([
         }
     };
 
-    Filter.prototype.clearVirtualRows = function() {
+    SetFilter.prototype.clearVirtualRows = function() {
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
     };
 
-    Filter.prototype.onSelectAll = function () {
+    SetFilter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectEverything();
@@ -190,17 +190,17 @@ define([
             this.model.selectNothing();
         }
         this.updateAllCheckboxes(checked);
-        this.grid.onFilterChanged();
+        this.filterChangedCallback();
     };
 
-    Filter.prototype.updateAllCheckboxes = function(checked) {
+    SetFilter.prototype.updateAllCheckboxes = function(checked) {
         var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll("[filter-checkbox=true]");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }
     };
 
-    Filter.prototype.addScrollListener = function() {
+    SetFilter.prototype.addScrollListener = function() {
         var _this = this;
 
         this.eListViewport.addEventListener("scroll", function() {
@@ -211,15 +211,15 @@ define([
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     /* public */
-    Filter.prototype.afterGuiAttached = function() {
+    SetFilter.prototype.afterGuiAttached = function() {
         this.drawVirtualRows();
     };
 
     /* public */
-    Filter.prototype.isFilterActive = function() {
+    SetFilter.prototype.isFilterActive = function() {
         return this.model.isFilterActive();
     };
 
-    return Filter;
+    return SetFilter;
 
 });

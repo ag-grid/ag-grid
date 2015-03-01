@@ -2,7 +2,7 @@ define(["./utils"], function(utils) {
 
     'use strict';
 
-    function FilterModel(colDef, rowModel) {
+    function SetFilterModel(colDef, rowModel) {
 
         var rowData = rowModel.getAllRows();
         this.uniqueValues = utils.uniqueValues(rowData, colDef.field);
@@ -22,7 +22,7 @@ define(["./utils"], function(utils) {
     }
 
     //sets mini filter. returns true if it changed from last value, otherwise false
-    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
+    SetFilterModel.prototype.setMiniFilter = function(newMiniFilter) {
         newMiniFilter = utils.makeNull(newMiniFilter);
         if (this.miniFilter===newMiniFilter) {
             //do nothing if filter has not changed
@@ -33,18 +33,18 @@ define(["./utils"], function(utils) {
         return true;
     };
 
-    FilterModel.prototype.getMiniFilter = function() {
+    SetFilterModel.prototype.getMiniFilter = function() {
         return this.miniFilter;
     };
 
-    FilterModel.prototype.filterDisplayedValues = function() {
-        //if no filter, just use the unique values
-        if (this.miniFilter===null) {
+    SetFilterModel.prototype.filterDisplayedValues = function() {
+        // if no filter, just use the unique values
+        if (this.miniFilter === null) {
             this.displayedValues = this.uniqueValues;
             return;
         }
 
-        //if filter present, we filter down the list
+        // if filter present, we filter down the list
         this.displayedValues = [];
         var miniFilterUpperCase = this.miniFilter.toUpperCase();
         for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
@@ -56,15 +56,15 @@ define(["./utils"], function(utils) {
 
     };
 
-    FilterModel.prototype.getDisplayedValueCount = function() {
+    SetFilterModel.prototype.getDisplayedValueCount = function() {
         return this.displayedValues.length;
     };
 
-    FilterModel.prototype.getDisplayedValue = function(index) {
+    SetFilterModel.prototype.getDisplayedValue = function(index) {
         return this.displayedValues[index];
     };
 
-    FilterModel.prototype.doesFilterPass = function(value) {
+    SetFilterModel.prototype.doesFilterPass = function(value) {
         //if no filter, always pass
         if (this.isEverythingSelected()) { return true; }
         //if nothing selected in filter, always fail
@@ -75,7 +75,7 @@ define(["./utils"], function(utils) {
         return filterPassed;
     };
 
-    FilterModel.prototype.selectEverything = function() {
+    SetFilterModel.prototype.selectEverything = function() {
         var count = this.uniqueValues.length;
         for (var i = 0; i<count; i++) {
             var value = this.uniqueValues[i];
@@ -84,45 +84,45 @@ define(["./utils"], function(utils) {
         this.selectedValuesCount = count;
     };
 
-    FilterModel.prototype.isFilterActive = function() {
+    SetFilterModel.prototype.isFilterActive = function() {
         return this.uniqueValues.length!==this.selectedValuesCount;
     };
 
-    FilterModel.prototype.selectNothing = function() {
+    SetFilterModel.prototype.selectNothing = function() {
         this.selectedValuesMap = {};
         this.selectedValuesCount = 0;
     };
 
-    FilterModel.prototype.getUniqueValueCount = function() {
+    SetFilterModel.prototype.getUniqueValueCount = function() {
         return this.uniqueValues.length;
     };
 
-    FilterModel.prototype.unselectValue = function(value) {
+    SetFilterModel.prototype.unselectValue = function(value) {
         if (this.selectedValuesMap[value]!==undefined) {
             delete this.selectedValuesMap[value];
             this.selectedValuesCount--;
         }
     };
 
-    FilterModel.prototype.selectValue = function(value) {
+    SetFilterModel.prototype.selectValue = function(value) {
         if (this.selectedValuesMap[value]===undefined) {
             this.selectedValuesMap[value] = null;
             this.selectedValuesCount++;
         }
     };
 
-    FilterModel.prototype.isValueSelected = function(value) {
+    SetFilterModel.prototype.isValueSelected = function(value) {
         return this.selectedValuesMap[value] !== undefined;
     };
 
-    FilterModel.prototype.isEverythingSelected = function() {
+    SetFilterModel.prototype.isEverythingSelected = function() {
         return this.uniqueValues.length === this.selectedValuesCount;
     };
 
-    FilterModel.prototype.isNothingSelected = function() {
+    SetFilterModel.prototype.isNothingSelected = function() {
         return this.uniqueValues.length === 0;
     };
 
-    return FilterModel;
+    return SetFilterModel;
 
 });

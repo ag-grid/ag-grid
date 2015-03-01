@@ -1,7 +1,8 @@
 define([
     "./utils",
-    "./excelFilter"
-], function(utils, ExcelFilter) {
+    "./setFilter",
+    "./textFilter"
+], function(utils, SetFilter, StringFilter) {
 
     function FilterManager(grid, rowModel) {
         this.grid = grid;
@@ -15,7 +16,13 @@ define([
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
         var filter = this.allFilters[key];
-        var filterPresent = filter!==undefined && filter.isFilterActive();
+        if (!filter) {
+            return false;
+        }
+        if (!filter.isFilterActive) { // because users can do custom filters, give nice error message
+            console.error('Filter is missing method isFilterActive');
+        }
+        var filterPresent = filter.isFilterActive();
         return filterPresent;
     };
 
@@ -32,6 +39,9 @@ define([
             }
 
             var value = item[field];
+            if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
+                console.error('Filter is missing method doesFilterPass');
+            }
             if (!filter.doesFilterPass(value)) {
                 return false;
             }
@@ -78,18 +88,28 @@ define([
         var filter = this.allFilters[colDef.field];
 
         if (!filter) {
-            filter = new ExcelFilter(this.grid, colDef, this.rowModel);
+            var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
+            if (colDef.filter === 'text') {
+                filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
+            } else {
+                filter = new SetFilter(colDef, this.rowModel, filterChangedCallback);
+            }
             this.allFilters[colDef.field] = filter;
         }
 
         var ePopupParent = this.grid.getPopupParent();
+        if (!filter.getGui) { // because users can do custom filters, give nice error message
+            console.error('Filter is missing method getGui');
+        }
         var eFilterGui = filter.getGui();
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 
-        filter.afterGuiAttached();
+        if (filter.afterGuiAttached) {
+            filter.afterGuiAttached();
+        }
     };
 
     return FilterManager;
