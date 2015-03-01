@@ -1153,19 +1153,148 @@ define('../src/utils',[], function() {
     return new Utils();
 
 });
+define('../src/excelFilterModel',["./utils"], function(utils) {
 
-define('text!../src/filter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+    
 
-define('../src/filterComponent',[
-    "./utils",
-    "text!./filter.html",
-], function(utils, template) {
+    function FilterModel(colDef, rowModel) {
+
+        var rowData = rowModel.getAllRows();
+        this.uniqueValues = utils.uniqueValues(rowData, colDef.field);
+        if (colDef.comparator) {
+            this.uniqueValues.sort(colDef.comparator);
+        } else {
+            this.uniqueValues.sort(utils.defaultComparator);
+        }
+
+        this.displayedValues = this.uniqueValues;
+        this.miniFilter = null;
+        //we use a map rather than an array for the selected values as the lookup
+        //for a map is much faster than the lookup for an array, especially when
+        //the length of the array is thousands of records long
+        this.selectedValuesMap = {};
+        this.selectEverything();
+    }
+
+    //sets mini filter. returns true if it changed from last value, otherwise false
+    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
+        newMiniFilter = utils.makeNull(newMiniFilter);
+        if (this.miniFilter===newMiniFilter) {
+            //do nothing if filter has not changed
+            return false;
+        }
+        this.miniFilter = newMiniFilter;
+        this.filterDisplayedValues();
+        return true;
+    };
+
+    FilterModel.prototype.getMiniFilter = function() {
+        return this.miniFilter;
+    };
+
+    FilterModel.prototype.filterDisplayedValues = function() {
+        //if no filter, just use the unique values
+        if (this.miniFilter===null) {
+            this.displayedValues = this.uniqueValues;
+            return;
+        }
+
+        //if filter present, we filter down the list
+        this.displayedValues = [];
+        var miniFilterUpperCase = this.miniFilter.toUpperCase();
+        for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
+            var uniqueValue = this.uniqueValues[i];
+            if (uniqueValue!==null && uniqueValue.toString().toUpperCase().indexOf(miniFilterUpperCase)>=0) {
+                this.displayedValues.push(uniqueValue);
+            }
+        }
+
+    };
+
+    FilterModel.prototype.getDisplayedValueCount = function() {
+        return this.displayedValues.length;
+    };
+
+    FilterModel.prototype.getDisplayedValue = function(index) {
+        return this.displayedValues[index];
+    };
+
+    FilterModel.prototype.doesFilterPass = function(value) {
+        //if no filter, always pass
+        if (this.isEverythingSelected()) { return true; }
+        //if nothing selected in filter, always fail
+        if (this.isNothingSelected()) { return false; }
+
+        value = utils.makeNull(value);
+        var filterPassed = this.selectedValuesMap[value]!==undefined;
+        return filterPassed;
+    };
+
+    FilterModel.prototype.selectEverything = function() {
+        var count = this.uniqueValues.length;
+        for (var i = 0; i<count; i++) {
+            var value = this.uniqueValues[i];
+            this.selectedValuesMap[value] = null;
+        }
+        this.selectedValuesCount = count;
+    };
+
+    FilterModel.prototype.isFilterActive = function() {
+        return this.uniqueValues.length!==this.selectedValuesCount;
+    };
+
+    FilterModel.prototype.selectNothing = function() {
+        this.selectedValuesMap = {};
+        this.selectedValuesCount = 0;
+    };
+
+    FilterModel.prototype.getUniqueValueCount = function() {
+        return this.uniqueValues.length;
+    };
+
+    FilterModel.prototype.unselectValue = function(value) {
+        if (this.selectedValuesMap[value]!==undefined) {
+            delete this.selectedValuesMap[value];
+            this.selectedValuesCount--;
+        }
+    };
+
+    FilterModel.prototype.selectValue = function(value) {
+        if (this.selectedValuesMap[value]===undefined) {
+            this.selectedValuesMap[value] = null;
+            this.selectedValuesCount++;
+        }
+    };
+
+    FilterModel.prototype.isValueSelected = function(value) {
+        return this.selectedValuesMap[value] !== undefined;
+    };
+
+    FilterModel.prototype.isEverythingSelected = function() {
+        return this.uniqueValues.length === this.selectedValuesCount;
+    };
+
+    FilterModel.prototype.isNothingSelected = function() {
+        return this.uniqueValues.length === 0;
+    };
+
+    return FilterModel;
+
+});
+
+define('text!../src/excelFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+
+define('../src/excelFilter',[
+    './utils',
+    './excelFilterModel',
+    'text!./excelFilter.html'
+], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(model, grid, colDef) {
+    function Filter(grid, colDef, rowModel) {
         this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = model;
+        this.model = new ExcelFilterModel(colDef, rowModel);
         this.grid = grid;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
@@ -1173,8 +1302,20 @@ define('../src/filterComponent',[
         this.addScrollListener();
     }
 
+    /* public */
+    Filter.prototype.doesFilterPass = function (value) {
+        return this.model.doesFilterPass(value);
+    };
+
+    /* public */
     Filter.prototype.getGui = function () {
         return this.eGui;
+    };
+
+    /* public */
+    Filter.prototype.onNewRowsLoaded = function () {
+        this.model.selectEverything();
+        this.updateAllCheckboxes(true);
     };
 
     Filter.prototype.createGui = function () {
@@ -1353,185 +1494,72 @@ define('../src/filterComponent',[
         });
     };
 
-    //we need to have the gui attached before we can draw the virtual rows, as the
-    //virtual row logic needs info about the gui state
-    Filter.prototype.guiAttached = function() {
+    // we need to have the gui attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the gui state
+    /* public */
+    Filter.prototype.afterGuiAttached = function() {
         this.drawVirtualRows();
     };
 
-    return function(model, grid, colDef) {
-        return new Filter(model, grid, colDef);
+    /* public */
+    Filter.prototype.isFilterActive = function() {
+        return this.model.isFilterActive();
     };
 
-});
-define('../src/filterModel',["./utils"], function(utils) {
-
-    
-
-    function FilterModel(uniqueValues) {
-        this.uniqueValues = uniqueValues;
-        this.displayedValues = uniqueValues;
-        this.miniFilter = null;
-        //we use a map rather than an array for the selected values as the lookup
-        //for a map is much faster than the lookup for an array, especially when
-        //the length of the array is thousands of records long
-        this.selectedValuesMap = {};
-        this.selectEverything();
-    }
-
-    //sets mini filter. returns true if it changed from last value, otherwise false
-    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
-        newMiniFilter = utils.makeNull(newMiniFilter);
-        if (this.miniFilter===newMiniFilter) {
-            //do nothing if filter has not changed
-            return false;
-        }
-        this.miniFilter = newMiniFilter;
-        this.filterDisplayedValues();
-        return true;
-    };
-
-    FilterModel.prototype.getMiniFilter = function() {
-        return this.miniFilter;
-    };
-
-    FilterModel.prototype.filterDisplayedValues = function() {
-        //if no filter, just use the unique values
-        if (this.miniFilter===null) {
-            this.displayedValues = this.uniqueValues;
-            return;
-        }
-
-        //if filter present, we filter down the list
-        this.displayedValues = [];
-        var miniFilterUpperCase = this.miniFilter.toUpperCase();
-        for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
-            var uniqueValue = this.uniqueValues[i];
-            if (uniqueValue!==null && uniqueValue.toString().toUpperCase().indexOf(miniFilterUpperCase)>=0) {
-                this.displayedValues.push(uniqueValue);
-            }
-        }
-
-    };
-
-    FilterModel.prototype.getDisplayedValueCount = function() {
-        return this.displayedValues.length;
-    };
-
-    FilterModel.prototype.getDisplayedValue = function(index) {
-        return this.displayedValues[index];
-    };
-
-    FilterModel.prototype.doesFilterPass = function(value) {
-        //if no filter, always pass
-        if (this.isEverythingSelected()) { return true; }
-        //if nothing selected in filter, always fail
-        if (this.isNothingSelected()) { return false; }
-
-        value = utils.makeNull(value);
-        var filterPassed = this.selectedValuesMap[value]!==undefined;
-        return filterPassed;
-    };
-
-    FilterModel.prototype.selectEverything = function() {
-        var count = this.uniqueValues.length;
-        for (var i = 0; i<count; i++) {
-            var value = this.uniqueValues[i];
-            this.selectedValuesMap[value] = null;
-        }
-        this.selectedValuesCount = count;
-    };
-
-    FilterModel.prototype.isFilterActive = function() {
-        return this.uniqueValues.length!==this.selectedValuesCount;
-    };
-
-    FilterModel.prototype.selectNothing = function() {
-        this.selectedValuesMap = {};
-        this.selectedValuesCount = 0;
-    };
-
-    FilterModel.prototype.getUniqueValueCount = function() {
-        return this.uniqueValues.length;
-    };
-
-    FilterModel.prototype.unselectValue = function(value) {
-        if (this.selectedValuesMap[value]!==undefined) {
-            delete this.selectedValuesMap[value];
-            this.selectedValuesCount--;
-        }
-    };
-
-    FilterModel.prototype.selectValue = function(value) {
-        if (this.selectedValuesMap[value]===undefined) {
-            this.selectedValuesMap[value] = null;
-            this.selectedValuesCount++;
-        }
-    };
-
-    FilterModel.prototype.isValueSelected = function(value) {
-        return this.selectedValuesMap[value] !== undefined;
-    };
-
-    FilterModel.prototype.isEverythingSelected = function() {
-        return this.uniqueValues.length === this.selectedValuesCount;
-    };
-
-    FilterModel.prototype.isNothingSelected = function() {
-        return this.uniqueValues.length === 0;
-    };
-
-    return function(uniqueValues) {
-        return new FilterModel(uniqueValues);
-    };
+    return Filter;
 
 });
 define('../src/filterManager',[
     "./utils",
-    "./filterComponent",
-    "./filterModel"
-], function(utils, filterComponentFactory, filterModelFactory) {
+    "./excelFilter"
+], function(utils, ExcelFilter) {
 
     function FilterManager(grid, rowModel) {
         this.grid = grid;
         this.rowModel = rowModel;
-        this.colModels = {};
+        this.allFilters = {};
     }
 
     FilterManager.prototype.isFilterPresent = function () {
-        return Object.keys(this.colModels).length > 0;
+        return Object.keys(this.allFilters).length > 0;
     };
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
-        var model =  this.colModels[key];
-        var filterPresent = model!==undefined && model.isFilterActive();
+        var filter = this.allFilters[key];
+        var filterPresent = filter!==undefined && filter.isFilterActive();
         return filterPresent;
     };
 
     FilterManager.prototype.doesFilterPass = function (item) {
-        var fields = Object.keys(this.colModels);
+        var fields = Object.keys(this.allFilters);
         for (var i = 0, l = fields.length; i < l; i++) {
 
             var field = fields[i];
-            var model = this.colModels[field];
+            var filter = this.allFilters[field];
 
-            //if no filter, always pass
-            if (model===undefined) {
+            // if no filter, always pass
+            if (filter===undefined) {
                 continue;
             }
 
             var value = item[field];
-            if (!model.doesFilterPass(value)) {
+            if (!filter.doesFilterPass(value)) {
                 return false;
             }
 
         }
-        //all filters passed
+        // all filters passed
         return true;
     };
 
-    FilterManager.prototype.clearAllFilters = function() {
-        this.colModels = {};
+    FilterManager.prototype.onNewRowsLoaded = function() {
+        var that = this;
+        Object.keys(this.allFilters).forEach(function (field) {
+            var filter = that.allFilters[field];
+            if (filter.onNewRowsLoaded) {
+                filter.onNewRowsLoaded();
+            }
+        });
     };
 
     FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
@@ -1541,14 +1569,14 @@ define('../src/filterManager',[
         var x = sourceRect.left - parentRect.left;
         var y = sourceRect.top - parentRect.top + sourceRect.height;
 
-        //if popup is overflowing to the right, move it left
+        // if popup is overflowing to the right, move it left
         var widthOfPopup = 200; //this is set in the css
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX =  widthOfParent - widthOfPopup - 20; //20 pixels grace
-        if (x > maxX) { //move position left, back into view
+        if (x > maxX) { // move position left, back into view
             x = maxX;
         }
-        if (x < 0) { //in case the popup has a negative value
+        if (x < 0) { // in case the popup has a negative value
             x = 0;
         }
 
@@ -1558,28 +1586,21 @@ define('../src/filterManager',[
 
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
-        var model = this.colModels[colDef.field];
-        if (!model) {
-            var rowData = this.rowModel.getAllRows();
-            var uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            if (colDef.comparator) {
-                uniqueValues.sort(colDef.comparator);
-            } else {
-                uniqueValues.sort(utils.defaultComparator);
-            }
-            model = filterModelFactory(uniqueValues);
-            this.colModels[colDef.field] = model;
+        var filter = this.allFilters[colDef.field];
+
+        if (!filter) {
+            filter = new ExcelFilter(this.grid, colDef, this.rowModel);
+            this.allFilters[colDef.field] = filter;
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        var filterComponent = filterComponentFactory(model, this.grid, colDef);
-        var eFilterGui = filterComponent.getGui();
+        var eFilterGui = filter.getGui();
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 
-        filterComponent.guiAttached();
+        filter.afterGuiAttached();
     };
 
     return FilterManager;
@@ -3211,7 +3232,7 @@ define('../src/angularGrid',[
             onNewRows: function () {
                 _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
-                _this.filterManager.clearAllFilters();
+                _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
             },

@@ -1,39 +1,38 @@
 define([
-    "./../utils",
-    "./filterComponent",
-    "./filterModel"
-], function(utils, filterComponentFactory, filterModelFactory) {
+    "./utils",
+    "./excelFilter"
+], function(utils, ExcelFilter) {
 
     function FilterManager(grid, rowModel) {
         this.grid = grid;
         this.rowModel = rowModel;
-        this.colModels = {};
+        this.allFilters = {};
     }
 
     FilterManager.prototype.isFilterPresent = function () {
-        return Object.keys(this.colModels).length > 0;
+        return Object.keys(this.allFilters).length > 0;
     };
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
-        var model =  this.colModels[key];
-        var filterPresent = model!==undefined && model.isFilterActive();
+        var filter = this.allFilters[key];
+        var filterPresent = filter!==undefined && filter.isFilterActive();
         return filterPresent;
     };
 
     FilterManager.prototype.doesFilterPass = function (item) {
-        var fields = Object.keys(this.colModels);
+        var fields = Object.keys(this.allFilters);
         for (var i = 0, l = fields.length; i < l; i++) {
 
             var field = fields[i];
-            var model = this.colModels[field];
+            var filter = this.allFilters[field];
 
             // if no filter, always pass
-            if (model===undefined) {
+            if (filter===undefined) {
                 continue;
             }
 
             var value = item[field];
-            if (!model.doesFilterPass(value)) {
+            if (!filter.doesFilterPass(value)) {
                 return false;
             }
 
@@ -42,8 +41,14 @@ define([
         return true;
     };
 
-    FilterManager.prototype.clearAllFilters = function() {
-        this.colModels = {};
+    FilterManager.prototype.onNewRowsLoaded = function() {
+        var that = this;
+        Object.keys(this.allFilters).forEach(function (field) {
+            var filter = that.allFilters[field];
+            if (filter.onNewRowsLoaded) {
+                filter.onNewRowsLoaded();
+            }
+        });
     };
 
     FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
@@ -57,7 +62,7 @@ define([
         var widthOfPopup = 200; //this is set in the css
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX =  widthOfParent - widthOfPopup - 20; //20 pixels grace
-        if (x > maxX) { //move position left, back into view
+        if (x > maxX) { // move position left, back into view
             x = maxX;
         }
         if (x < 0) { // in case the popup has a negative value
@@ -70,28 +75,21 @@ define([
 
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
-        var model = this.colModels[colDef.field];
-        if (!model) {
-            var rowData = this.rowModel.getAllRows();
-            var uniqueValues = utils.uniqueValues(rowData, colDef.field);
-            if (colDef.comparator) {
-                uniqueValues.sort(colDef.comparator);
-            } else {
-                uniqueValues.sort(utils.defaultComparator);
-            }
-            model = filterModelFactory(uniqueValues);
-            this.colModels[colDef.field] = model;
+        var filter = this.allFilters[colDef.field];
+
+        if (!filter) {
+            filter = new ExcelFilter(this.grid, colDef, this.rowModel);
+            this.allFilters[colDef.field] = filter;
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        var filterComponent = filterComponentFactory(model, this.grid, colDef);
-        var eFilterGui = filterComponent.getGui();
+        var eFilterGui = filter.getGui();
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 
-        filterComponent.guiAttached();
+        filter.afterGuiAttached();
     };
 
     return FilterManager;

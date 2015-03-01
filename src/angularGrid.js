@@ -12,7 +12,7 @@ define([
     "text!./template.html",
     "text!./templateNoScrolls.html",
     "./utils",
-    "./filter/filterManager",
+    "./filterManager",
     "./rowModel",
     "./rowController",
     "./rowRenderer",
@@ -200,7 +200,7 @@ define([
             onNewRows: function () {
                 _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
                 _this.gridOptions.selectedRows.length = 0;
-                _this.filterManager.clearAllFilters();
+                _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
             },

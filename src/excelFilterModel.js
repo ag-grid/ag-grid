@@ -1,10 +1,18 @@
-define(["./../utils"], function(utils) {
+define(["./utils"], function(utils) {
 
     'use strict';
 
-    function FilterModel(uniqueValues) {
-        this.uniqueValues = uniqueValues;
-        this.displayedValues = uniqueValues;
+    function FilterModel(colDef, rowModel) {
+
+        var rowData = rowModel.getAllRows();
+        this.uniqueValues = utils.uniqueValues(rowData, colDef.field);
+        if (colDef.comparator) {
+            this.uniqueValues.sort(colDef.comparator);
+        } else {
+            this.uniqueValues.sort(utils.defaultComparator);
+        }
+
+        this.displayedValues = this.uniqueValues;
         this.miniFilter = null;
         //we use a map rather than an array for the selected values as the lookup
         //for a map is much faster than the lookup for an array, especially when
@@ -115,8 +123,6 @@ define(["./../utils"], function(utils) {
         return this.uniqueValues.length === 0;
     };
 
-    return function(uniqueValues) {
-        return new FilterModel(uniqueValues);
-    };
+    return FilterModel;
 
 });

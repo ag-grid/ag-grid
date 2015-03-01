@@ -1,13 +1,14 @@
 define([
-    "./../utils",
-    "text!./filter.html"
-], function(utils, template) {
+    './utils',
+    './excelFilterModel',
+    'text!./excelFilter.html'
+], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(model, grid, colDef) {
+    function Filter(grid, colDef, rowModel) {
         this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = model;
+        this.model = new ExcelFilterModel(colDef, rowModel);
         this.grid = grid;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
@@ -15,8 +16,20 @@ define([
         this.addScrollListener();
     }
 
+    /* public */
+    Filter.prototype.doesFilterPass = function (value) {
+        return this.model.doesFilterPass(value);
+    };
+
+    /* public */
     Filter.prototype.getGui = function () {
         return this.eGui;
+    };
+
+    /* public */
+    Filter.prototype.onNewRowsLoaded = function () {
+        this.model.selectEverything();
+        this.updateAllCheckboxes(true);
     };
 
     Filter.prototype.createGui = function () {
@@ -195,14 +208,18 @@ define([
         });
     };
 
-    //we need to have the gui attached before we can draw the virtual rows, as the
-    //virtual row logic needs info about the gui state
-    Filter.prototype.guiAttached = function() {
+    // we need to have the gui attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the gui state
+    /* public */
+    Filter.prototype.afterGuiAttached = function() {
         this.drawVirtualRows();
     };
 
-    return function(model, grid, colDef) {
-        return new Filter(model, grid, colDef);
+    /* public */
+    Filter.prototype.isFilterActive = function() {
+        return this.model.isFilterActive();
     };
+
+    return Filter;
 
 });
