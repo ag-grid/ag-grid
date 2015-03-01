@@ -1,6 +1,6 @@
 define([
-    "./utils",
-    "text!./filter.html",
+    "./../utils",
+    "text!./filter.html"
 ], function(utils, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;

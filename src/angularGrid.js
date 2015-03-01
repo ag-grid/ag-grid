@@ -12,7 +12,7 @@ define([
     "text!./template.html",
     "text!./templateNoScrolls.html",
     "./utils",
-    "./filterManager",
+    "./filter/filterManager",
     "./rowModel",
     "./rowController",
     "./rowRenderer",

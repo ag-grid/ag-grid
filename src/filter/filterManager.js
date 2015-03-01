@@ -1,5 +1,5 @@
 define([
-    "./utils",
+    "./../utils",
     "./filterComponent",
     "./filterModel"
 ], function(utils, filterComponentFactory, filterModelFactory) {
@@ -27,7 +27,7 @@ define([
             var field = fields[i];
             var model = this.colModels[field];
 
-            //if no filter, always pass
+            // if no filter, always pass
             if (model===undefined) {
                 continue;
             }
@@ -38,7 +38,7 @@ define([
             }
 
         }
-        //all filters passed
+        // all filters passed
         return true;
     };
 
@@ -53,14 +53,14 @@ define([
         var x = sourceRect.left - parentRect.left;
         var y = sourceRect.top - parentRect.top + sourceRect.height;
 
-        //if popup is overflowing to the right, move it left
+        // if popup is overflowing to the right, move it left
         var widthOfPopup = 200; //this is set in the css
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX =  widthOfParent - widthOfPopup - 20; //20 pixels grace
         if (x > maxX) { //move position left, back into view
             x = maxX;
         }
-        if (x < 0) { //in case the popup has a negative value
+        if (x < 0) { // in case the popup has a negative value
             x = 0;
         }
 
