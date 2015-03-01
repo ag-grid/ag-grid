@@ -2574,6 +2574,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
             this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
             this.eHeader = eGrid.querySelector(".ag-header");
+            this.eRoot = eGrid.querySelector(".ag-root");
             // for scroll, all header cells live in the header (contains both normal and pinned headers)
             this.eHeaderParent = this.eHeader;
         }
