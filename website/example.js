@@ -69,27 +69,30 @@ gridsModule.controller('mainController', function($scope) {
         rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
         groupAggFunction: groupAggFunction,
         angularCompile: false,
+        //dontUseScrolls: true,
+        rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
         selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
-        rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);} //callback when row clicked
+        rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);}, //callback when row clicked
+        cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
     };
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
-        {displayName: "Name", field: "name", width: 200, cellStyle: nameCssFunc},
-        {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer},
-        {displayName: "Language", field: "language", width: 150, cellRenderer: languageCellRenderer},
-        {displayName: "Game of Choice", field: "game", width: 180},
-        {displayName: "Bought", field: "bought", width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-        {displayName: "Bank Balance", field: "bankBalance", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}, cellStyle: currencyCssFunc},
+        {displayName: "Name", field: "name", width: 200, filter: 'text', cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+        {displayName: "Country", field: "country", width: 150, filter: 'set', cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
+        {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
+        {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
+        {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
+        {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: 'number', cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
         {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
-        {displayName: "Total Winnings", field: "totalWinnings", width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right", "font-weight": "bold"}, cellStyle: currencyCssFunc}
+        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
     ];
     //put in the month cols
     months.forEach(function(month) {
-        defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100,
+        defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100, filter: 'number',
             cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}})
     });
 
@@ -135,7 +138,7 @@ gridsModule.controller('mainController', function($scope) {
         var colCount = parseInt($scope.colCount);
 
         //start with a copy of the default cols
-        var columns = defaultCols.slice(0);
+        var columns = defaultCols.slice(0, colCount);
 
         for (var col = defaultCols.length; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
@@ -189,7 +192,7 @@ gridsModule.controller('mainController', function($scope) {
 
     //because name is the first col, if grouping present, we want to indent it.
     //this method is inside the controller as we access the scope
-    function nameCssFunc(value) {
+    function nameCssFunc() {
         var style = {};
         if ($scope.angularGrid.groupKeys) {
             switch ($scope.angularGrid.groupKeys.length) {
@@ -202,6 +205,10 @@ gridsModule.controller('mainController', function($scope) {
             }
         }
         return style;
+    }
+
+    function gameNewValueHandler(data, newValue) {
+        data.game = newValue;
     }
 
 });
@@ -266,9 +273,9 @@ function groupAggFunction(rows) {
 
 function currencyCssFunc(value) {
     if (value!==null && value!==undefined && value<0) {
-        return {"color": "red"};
+        return {"color": "red", "text-align": "right", "font-weight": "bold"};
     } else {
-        return null;
+        return {"text-align": "right"};
     }
 }
 
@@ -279,8 +286,6 @@ function ratingRenderer(value)  {
             var starImage = document.createElement("img");
             starImage.src = "http://www.angulargrid.com/images/goldStar.png";
             eContainer.appendChild(starImage);
-            //} else {
-            //    eContainer.appendChild(document.createTextNode("-"));
         }
     }
     return eContainer;

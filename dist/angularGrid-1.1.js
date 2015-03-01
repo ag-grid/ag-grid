@@ -1546,7 +1546,7 @@ define('../src/numberFilter',[
         if (typeof value === 'number') {
             valueAsNumber = value;
         } else {
-            valueAsNumber = parseInt(value);
+            valueAsNumber = parseFloat(value);
         }
 
         switch (this.filterType) {
@@ -1593,7 +1593,7 @@ define('../src/numberFilter',[
             filterText = null;
         }
         if (filterText) {
-            this.filterNumber = parseInt(filterText);
+            this.filterNumber = parseFloat(filterText);
         } else {
             this.filterNumber = null;
         }
