@@ -1153,11 +1153,11 @@ define('../src/utils',[], function() {
     return new Utils();
 
 });
-define('../src/excelFilterModel',["./utils"], function(utils) {
+define('../src/setFilterModel',["./utils"], function(utils) {
 
     
 
-    function FilterModel(colDef, rowModel) {
+    function SetFilterModel(colDef, rowModel) {
 
         var rowData = rowModel.getAllRows();
         this.uniqueValues = utils.uniqueValues(rowData, colDef.field);
@@ -1177,7 +1177,7 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
     }
 
     //sets mini filter. returns true if it changed from last value, otherwise false
-    FilterModel.prototype.setMiniFilter = function(newMiniFilter) {
+    SetFilterModel.prototype.setMiniFilter = function(newMiniFilter) {
         newMiniFilter = utils.makeNull(newMiniFilter);
         if (this.miniFilter===newMiniFilter) {
             //do nothing if filter has not changed
@@ -1188,18 +1188,18 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
         return true;
     };
 
-    FilterModel.prototype.getMiniFilter = function() {
+    SetFilterModel.prototype.getMiniFilter = function() {
         return this.miniFilter;
     };
 
-    FilterModel.prototype.filterDisplayedValues = function() {
-        //if no filter, just use the unique values
-        if (this.miniFilter===null) {
+    SetFilterModel.prototype.filterDisplayedValues = function() {
+        // if no filter, just use the unique values
+        if (this.miniFilter === null) {
             this.displayedValues = this.uniqueValues;
             return;
         }
 
-        //if filter present, we filter down the list
+        // if filter present, we filter down the list
         this.displayedValues = [];
         var miniFilterUpperCase = this.miniFilter.toUpperCase();
         for (var i = 0, l = this.uniqueValues.length; i<l; i++) {
@@ -1211,15 +1211,15 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
 
     };
 
-    FilterModel.prototype.getDisplayedValueCount = function() {
+    SetFilterModel.prototype.getDisplayedValueCount = function() {
         return this.displayedValues.length;
     };
 
-    FilterModel.prototype.getDisplayedValue = function(index) {
+    SetFilterModel.prototype.getDisplayedValue = function(index) {
         return this.displayedValues[index];
     };
 
-    FilterModel.prototype.doesFilterPass = function(value) {
+    SetFilterModel.prototype.doesFilterPass = function(value) {
         //if no filter, always pass
         if (this.isEverythingSelected()) { return true; }
         //if nothing selected in filter, always fail
@@ -1230,7 +1230,7 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
         return filterPassed;
     };
 
-    FilterModel.prototype.selectEverything = function() {
+    SetFilterModel.prototype.selectEverything = function() {
         var count = this.uniqueValues.length;
         for (var i = 0; i<count; i++) {
             var value = this.uniqueValues[i];
@@ -1239,63 +1239,63 @@ define('../src/excelFilterModel',["./utils"], function(utils) {
         this.selectedValuesCount = count;
     };
 
-    FilterModel.prototype.isFilterActive = function() {
+    SetFilterModel.prototype.isFilterActive = function() {
         return this.uniqueValues.length!==this.selectedValuesCount;
     };
 
-    FilterModel.prototype.selectNothing = function() {
+    SetFilterModel.prototype.selectNothing = function() {
         this.selectedValuesMap = {};
         this.selectedValuesCount = 0;
     };
 
-    FilterModel.prototype.getUniqueValueCount = function() {
+    SetFilterModel.prototype.getUniqueValueCount = function() {
         return this.uniqueValues.length;
     };
 
-    FilterModel.prototype.unselectValue = function(value) {
+    SetFilterModel.prototype.unselectValue = function(value) {
         if (this.selectedValuesMap[value]!==undefined) {
             delete this.selectedValuesMap[value];
             this.selectedValuesCount--;
         }
     };
 
-    FilterModel.prototype.selectValue = function(value) {
+    SetFilterModel.prototype.selectValue = function(value) {
         if (this.selectedValuesMap[value]===undefined) {
             this.selectedValuesMap[value] = null;
             this.selectedValuesCount++;
         }
     };
 
-    FilterModel.prototype.isValueSelected = function(value) {
+    SetFilterModel.prototype.isValueSelected = function(value) {
         return this.selectedValuesMap[value] !== undefined;
     };
 
-    FilterModel.prototype.isEverythingSelected = function() {
+    SetFilterModel.prototype.isEverythingSelected = function() {
         return this.uniqueValues.length === this.selectedValuesCount;
     };
 
-    FilterModel.prototype.isNothingSelected = function() {
+    SetFilterModel.prototype.isNothingSelected = function() {
         return this.uniqueValues.length === 0;
     };
 
-    return FilterModel;
+    return SetFilterModel;
 
 });
 
 define('text!../src/setFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
-define('../src/excelFilter',[
+define('../src/setFilter',[
     './utils',
-    './excelFilterModel',
+    './setFilterModel',
     'text!./setFilter.html'
 ], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function Filter(grid, colDef, rowModel) {
+    function SetFilter(colDef, rowModel, filterChangedCallback) {
         this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
         this.model = new ExcelFilterModel(colDef, rowModel);
-        this.grid = grid;
+        this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
         this.createGui();
@@ -1303,22 +1303,22 @@ define('../src/excelFilter',[
     }
 
     /* public */
-    Filter.prototype.doesFilterPass = function (value) {
+    SetFilter.prototype.doesFilterPass = function (value) {
         return this.model.doesFilterPass(value);
     };
 
     /* public */
-    Filter.prototype.getGui = function () {
+    SetFilter.prototype.getGui = function () {
         return this.eGui;
     };
 
     /* public */
-    Filter.prototype.onNewRowsLoaded = function () {
+    SetFilter.prototype.onNewRowsLoaded = function () {
         this.model.selectEverything();
         this.updateAllCheckboxes(true);
     };
 
-    Filter.prototype.createGui = function () {
+    SetFilter.prototype.createGui = function () {
         var _this = this;
 
         this.eGui = utils.loadTemplate(template);
@@ -1348,11 +1348,11 @@ define('../src/excelFilter',[
         }
     };
 
-    Filter.prototype.setContainerHeight = function() {
+    SetFilter.prototype.setContainerHeight = function() {
         this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
     };
 
-    Filter.prototype.drawVirtualRows = function () {
+    SetFilter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
@@ -1362,7 +1362,7 @@ define('../src/excelFilter',[
         this.ensureRowsRendered(firstRow, lastRow);
     };
 
-    Filter.prototype.ensureRowsRendered = function (start, finish) {
+    SetFilter.prototype.ensureRowsRendered = function (start, finish) {
         var _this = this;
 
         //at the end, this array will contain the items we need to remove
@@ -1387,7 +1387,7 @@ define('../src/excelFilter',[
     };
 
     //takes array of row id's
-    Filter.prototype.removeVirtualRows = function(rowsToRemove) {
+    SetFilter.prototype.removeVirtualRows = function(rowsToRemove) {
         var _this = this;
         rowsToRemove.forEach(function(indexToRemove) {
             var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
@@ -1396,7 +1396,7 @@ define('../src/excelFilter',[
         });
     };
 
-    Filter.prototype.insertRow = function(value, rowIndex) {
+    SetFilter.prototype.insertRow = function(value, rowIndex) {
         var _this = this;
 
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
@@ -1430,7 +1430,7 @@ define('../src/excelFilter',[
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
     };
 
-    Filter.prototype.onCheckboxClicked = function(eCheckbox, value) {
+    SetFilter.prototype.onCheckboxClicked = function(eCheckbox, value) {
         var checked = eCheckbox.checked;
         if (checked) {
             this.model.selectValue(value);
@@ -1451,10 +1451,10 @@ define('../src/excelFilter',[
             }
         }
 
-        this.grid.onFilterChanged();
+        this.filterChangedCallback();
     };
 
-    Filter.prototype.onFilterChanged = function() {
+    SetFilter.prototype.onFilterChanged = function() {
         var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.setContainerHeight();
@@ -1463,12 +1463,12 @@ define('../src/excelFilter',[
         }
     };
 
-    Filter.prototype.clearVirtualRows = function() {
+    SetFilter.prototype.clearVirtualRows = function() {
         var rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
     };
 
-    Filter.prototype.onSelectAll = function () {
+    SetFilter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectEverything();
@@ -1476,17 +1476,17 @@ define('../src/excelFilter',[
             this.model.selectNothing();
         }
         this.updateAllCheckboxes(checked);
-        this.grid.onFilterChanged();
+        this.filterChangedCallback();
     };
 
-    Filter.prototype.updateAllCheckboxes = function(checked) {
+    SetFilter.prototype.updateAllCheckboxes = function(checked) {
         var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll("[filter-checkbox=true]");
         for (var i = 0, l = currentlyDisplayedCheckboxes.length; i<l; i++) {
             currentlyDisplayedCheckboxes[i].checked = checked;
         }
     };
 
-    Filter.prototype.addScrollListener = function() {
+    SetFilter.prototype.addScrollListener = function() {
         var _this = this;
 
         this.eListViewport.addEventListener("scroll", function() {
@@ -1497,22 +1497,209 @@ define('../src/excelFilter',[
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     /* public */
-    Filter.prototype.afterGuiAttached = function() {
+    SetFilter.prototype.afterGuiAttached = function() {
         this.drawVirtualRows();
     };
 
     /* public */
-    Filter.prototype.isFilterActive = function() {
+    SetFilter.prototype.isFilterActive = function() {
         return this.model.isFilterActive();
     };
 
-    return Filter;
+    return SetFilter;
+
+});
+
+define('text!../src/numberFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Equals</option>\r\n            <option value="2">Less than</option>\r\n            <option value="3">Greater than</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
+
+define('../src/numberFilter',[
+    './utils',
+    'text!./numberFilter.html'
+], function(utils, template) {
+
+    var EQUALS = 1;
+    var LESS_THAN = 2;
+    var GREATER_THAN = 3;
+
+    function NumberFilter(colDef, rowModel, filterChangedCallback) {
+        this.filterChangedCallback = filterChangedCallback;
+        this.createGui();
+        this.filterNumber = null;
+        this.filterType = EQUALS;
+    }
+
+    /* public */
+    NumberFilter.prototype.afterGuiAttached = function() {
+        this.eFilterTextField.focus();
+    };
+
+    /* public */
+    NumberFilter.prototype.doesFilterPass = function (value) {
+        if (this.filterNumber === null) {
+            return true;
+        }
+        if (!value) {
+            return false;
+        }
+
+        var valueAsNumber;
+        if (typeof value === 'number') {
+            valueAsNumber = value;
+        } else {
+            valueAsNumber = parseInt(value);
+        }
+
+        switch (this.filterType) {
+            case EQUALS :
+                return valueAsNumber === this.filterNumber;
+            case LESS_THAN :
+                return valueAsNumber <= this.filterNumber;
+            case GREATER_THAN :
+                return valueAsNumber >= this.filterNumber;
+            default :
+                // should never happen
+                console.log('invalid filter type ' + this.filterType);
+                return false;
+        }
+    };
+
+    /* public */
+    NumberFilter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    /* public */
+    NumberFilter.prototype.isFilterActive = function() {
+        return this.filterNumber !== null;
+    };
+
+    NumberFilter.prototype.createGui = function () {
+        this.eGui = utils.loadTemplate(template);
+        this.eFilterTextField = this.eGui.querySelector("#filterText");
+        this.eTypeSelect = this.eGui.querySelector("#filterType");
+
+        utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
+        this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
+    };
+
+    NumberFilter.prototype.onTypeChanged = function () {
+        this.filterType = parseInt(this.eTypeSelect.value);
+        this.filterChangedCallback();
+    };
+
+    NumberFilter.prototype.onFilterChanged = function () {
+        var filterText = utils.makeNull(this.eFilterTextField.value);
+        if (filterText && filterText.trim() === '') {
+            filterText = null;
+        }
+        if (filterText) {
+            this.filterNumber = parseInt(filterText);
+        } else {
+            this.filterNumber = null;
+        }
+        this.filterChangedCallback();
+    };
+
+    return NumberFilter;
+
+});
+
+define('text!../src/textFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Contains</option>\r\n            <option value="2">Equals</option>\r\n            <option value="3">Starts with</option>\r\n            <option value="4">Ends with</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
+
+define('../src/textFilter',[
+    './utils',
+    'text!./textFilter.html'
+], function(utils, template) {
+
+    var CONTAINS = 1;
+    var EQUALS = 2;
+    var STARTS_WITH = 3;
+    var ENDS_WITH = 4;
+
+    function TextFilter(colDef, rowModel, filterChangedCallback) {
+        this.filterChangedCallback = filterChangedCallback;
+        this.createGui();
+        this.filterText = null;
+        this.filterType = CONTAINS;
+    }
+
+    /* public */
+    TextFilter.prototype.afterGuiAttached = function() {
+        this.eFilterTextField.focus();
+    };
+
+    /* public */
+    TextFilter.prototype.doesFilterPass = function (value) {
+        if (!this.filterText) {
+            return true;
+        }
+        if (!value) {
+            return false;
+        }
+        var valueLowerCase = value.toString().toLowerCase();
+        switch (this.filterType) {
+            case CONTAINS :
+                return valueLowerCase.indexOf(this.filterText) >= 0;
+            case EQUALS :
+                return valueLowerCase === this.filterText;
+            case STARTS_WITH :
+                return valueLowerCase.indexOf(this.filterText) === 0;
+            case ENDS_WITH :
+                var index = valueLowerCase.indexOf(this.filterText);
+                return  index >= 0 && index === (valueLowerCase.length - this.filterText.length);
+            default :
+                // should never happen
+                console.log('invalid filter type ' + this.filterType);
+                return false;
+        }
+    };
+
+    /* public */
+    TextFilter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    /* public */
+    TextFilter.prototype.isFilterActive = function() {
+        return this.filterText !== null;
+    };
+
+    TextFilter.prototype.createGui = function () {
+        this.eGui = utils.loadTemplate(template);
+        this.eFilterTextField = this.eGui.querySelector("#filterText");
+        this.eTypeSelect = this.eGui.querySelector("#filterType");
+
+        utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
+        this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
+    };
+
+    TextFilter.prototype.onTypeChanged = function () {
+        this.filterType = parseInt(this.eTypeSelect.value);
+        this.filterChangedCallback();
+    };
+
+    TextFilter.prototype.onFilterChanged = function () {
+        var filterText = utils.makeNull(this.eFilterTextField.value);
+        if (filterText && filterText.trim() === '') {
+            filterText = null;
+        }
+        if (filterText) {
+            this.filterText = filterText.toLowerCase();
+        } else {
+            this.filterText = null;
+        }
+        this.filterChangedCallback();
+    };
+
+    return TextFilter;
 
 });
 define('../src/filterManager',[
     "./utils",
-    "./excelFilter"
-], function(utils, ExcelFilter) {
+    "./setFilter",
+    "./numberFilter",
+    "./textFilter"
+], function(utils, SetFilter, NumberFilter, StringFilter) {
 
     function FilterManager(grid, rowModel) {
         this.grid = grid;
@@ -1526,7 +1713,13 @@ define('../src/filterManager',[
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
         var filter = this.allFilters[key];
-        var filterPresent = filter!==undefined && filter.isFilterActive();
+        if (!filter) {
+            return false;
+        }
+        if (!filter.isFilterActive) { // because users can do custom filters, give nice error message
+            console.error('Filter is missing method isFilterActive');
+        }
+        var filterPresent = filter.isFilterActive();
         return filterPresent;
     };
 
@@ -1543,6 +1736,9 @@ define('../src/filterManager',[
             }
 
             var value = item[field];
+            if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
+                console.error('Filter is missing method doesFilterPass');
+            }
             if (!filter.doesFilterPass(value)) {
                 return false;
             }
@@ -1570,9 +1766,9 @@ define('../src/filterManager',[
         var y = sourceRect.top - parentRect.top + sourceRect.height;
 
         // if popup is overflowing to the right, move it left
-        var widthOfPopup = 200; //this is set in the css
+        var widthOfPopup = 200; // this is set in the css
         var widthOfParent = parentRect.right - parentRect.left;
-        var maxX =  widthOfParent - widthOfPopup - 20; //20 pixels grace
+        var maxX =  widthOfParent - widthOfPopup - 20; // 20 pixels grace
         if (x > maxX) { // move position left, back into view
             x = maxX;
         }
@@ -1589,18 +1785,30 @@ define('../src/filterManager',[
         var filter = this.allFilters[colDef.field];
 
         if (!filter) {
-            filter = new ExcelFilter(this.grid, colDef, this.rowModel);
+            var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
+            if (colDef.filter === 'text') {
+                filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
+            } else if (colDef.filter === 'number') {
+                filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
+            } else {
+                filter = new SetFilter(colDef, this.rowModel, filterChangedCallback);
+            }
             this.allFilters[colDef.field] = filter;
         }
 
         var ePopupParent = this.grid.getPopupParent();
+        if (!filter.getGui) { // because users can do custom filters, give nice error message
+            console.error('Filter is missing method getGui');
+        }
         var eFilterGui = filter.getGui();
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
         utils.addAsModalPopup(ePopupParent, eFilterGui);
 
-        filter.afterGuiAttached();
+        if (filter.afterGuiAttached) {
+            filter.afterGuiAttached();
+        }
     };
 
     return FilterManager;
@@ -3414,7 +3622,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n    height: 25px;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    padding-top: 25px;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 300px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    background-color: #aaa;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n    height: 25px;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    padding-top: 25px;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    background-color: #aaa;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

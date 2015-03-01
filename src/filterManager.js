@@ -1,8 +1,9 @@
 define([
     "./utils",
     "./setFilter",
+    "./numberFilter",
     "./textFilter"
-], function(utils, SetFilter, StringFilter) {
+], function(utils, SetFilter, NumberFilter, StringFilter) {
 
     function FilterManager(grid, rowModel) {
         this.grid = grid;
@@ -69,9 +70,9 @@ define([
         var y = sourceRect.top - parentRect.top + sourceRect.height;
 
         // if popup is overflowing to the right, move it left
-        var widthOfPopup = 200; //this is set in the css
+        var widthOfPopup = 200; // this is set in the css
         var widthOfParent = parentRect.right - parentRect.left;
-        var maxX =  widthOfParent - widthOfPopup - 20; //20 pixels grace
+        var maxX =  widthOfParent - widthOfPopup - 20; // 20 pixels grace
         if (x > maxX) { // move position left, back into view
             x = maxX;
         }
@@ -91,6 +92,8 @@ define([
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
             if (colDef.filter === 'text') {
                 filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
+            } else if (colDef.filter === 'number') {
+                filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
             } else {
                 filter = new SetFilter(colDef, this.rowModel, filterChangedCallback);
             }

@@ -185,7 +185,7 @@
 
 .ag-filter-list-viewport {
     overflow-x: auto;
-    height: 300px;
+    height: 200px;
     width: 200px;
 }
 
@@ -207,6 +207,6 @@
 }
 
 .ag-filter-select {
-    width: 100px;
+    width: 110px;
     margin: 4px 4px 0px 4px;
 }
