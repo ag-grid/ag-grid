@@ -1219,17 +1219,6 @@ define('../src/setFilterModel',["./utils"], function(utils) {
         return this.displayedValues[index];
     };
 
-    SetFilterModel.prototype.doesFilterPass = function(value) {
-        //if no filter, always pass
-        if (this.isEverythingSelected()) { return true; }
-        //if nothing selected in filter, always fail
-        if (this.isNothingSelected()) { return false; }
-
-        value = utils.makeNull(value);
-        var filterPassed = this.selectedValuesMap[value]!==undefined;
-        return filterPassed;
-    };
-
     SetFilterModel.prototype.selectEverything = function() {
         var count = this.uniqueValues.length;
         for (var i = 0; i<count; i++) {
@@ -1282,19 +1271,19 @@ define('../src/setFilterModel',["./utils"], function(utils) {
 
 });
 
-define('text!../src/setFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/setFilter.html',[],function () { return '<div>\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 define('../src/setFilter',[
     './utils',
     './setFilterModel',
     'text!./setFilter.html'
-], function(utils, ExcelFilterModel, template) {
+], function(utils, SetFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
     function SetFilter(colDef, rowModel, filterChangedCallback) {
-        this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new ExcelFilterModel(colDef, rowModel);
+        this.rowHeight = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
+        this.model = new SetFilterModel(colDef, rowModel);
         this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
@@ -1302,9 +1291,28 @@ define('../src/setFilter',[
         this.addScrollListener();
     }
 
+    // we need to have the gui attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the gui state
     /* public */
-    SetFilter.prototype.doesFilterPass = function (value) {
-        return this.model.doesFilterPass(value);
+    SetFilter.prototype.afterGuiAttached = function() {
+        this.drawVirtualRows();
+    };
+
+    /* public */
+    SetFilter.prototype.isFilterActive = function() {
+        return this.model.isFilterActive();
+    };
+
+    /* public */
+    SetFilter.prototype.doesFilterPass = function (value, model) {
+        //if no filter, always pass
+        if (model.isEverythingSelected()) { return true; }
+        //if nothing selected in filter, always fail
+        if (model.isNothingSelected()) { return false; }
+
+        value = utils.makeNull(value);
+        var filterPassed = model.selectedValuesMap[value] !== undefined;
+        return filterPassed;
     };
 
     /* public */
@@ -1318,6 +1326,11 @@ define('../src/setFilter',[
         this.updateAllCheckboxes(true);
     };
 
+    /* public */
+    SetFilter.prototype.getModel = function () {
+        return this.model;
+    };
+
     SetFilter.prototype.createGui = function () {
         var _this = this;
 
@@ -1328,14 +1341,14 @@ define('../src/setFilter',[
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
         this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
-        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeight) + "px";
 
         this.setContainerHeight();
         this.eMiniFilter.value = this.model.getMiniFilter();
         utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
         utils.removeAllChildren(this.eListContainer);
 
-        this.eSelectAll.onclick = function () { _this.onSelectAll();}
+        this.eSelectAll.onclick = this.onSelectAll.bind(this);
 
         if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
@@ -1349,15 +1362,15 @@ define('../src/setFilter',[
     };
 
     SetFilter.prototype.setContainerHeight = function() {
-        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeight) + "px";
     };
 
     SetFilter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / this.rowHeiht);
-        var lastRow = Math.floor(bottomPixel / this.rowHeiht);
+        var firstRow = Math.floor(topPixel / this.rowHeight);
+        var lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -1424,7 +1437,7 @@ define('../src/setFilter',[
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
-        eFilterValue.style.top = (this.rowHeiht * rowIndex) + "px";
+        eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
@@ -1494,23 +1507,11 @@ define('../src/setFilter',[
         });
     };
 
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
-    /* public */
-    SetFilter.prototype.afterGuiAttached = function() {
-        this.drawVirtualRows();
-    };
-
-    /* public */
-    SetFilter.prototype.isFilterActive = function() {
-        return this.model.isFilterActive();
-    };
-
     return SetFilter;
 
 });
 
-define('text!../src/numberFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Equals</option>\r\n            <option value="2">Less than</option>\r\n            <option value="3">Greater than</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
+define('text!../src/numberFilter.html',[],function () { return '<div>\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Equals</option>\r\n            <option value="2">Less than</option>\r\n            <option value="3">Greater than</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
 
 define('../src/numberFilter',[
     './utils',
@@ -1604,7 +1605,7 @@ define('../src/numberFilter',[
 
 });
 
-define('text!../src/textFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Contains</option>\r\n            <option value="2">Equals</option>\r\n            <option value="3">Starts with</option>\r\n            <option value="4">Ends with</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
+define('text!../src/textFilter.html',[],function () { return '<div>\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Contains</option>\r\n            <option value="2">Equals</option>\r\n            <option value="3">Starts with</option>\r\n            <option value="4">Ends with</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
 
 define('../src/textFilter',[
     './utils',
@@ -1739,7 +1740,12 @@ define('../src/filterManager',[
             if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
-            if (!filter.doesFilterPass(value)) {
+            var model;
+            // if model is exposed, grab it
+            if (filter.getModel) {
+                model = filter.getModel();
+            }
+            if (!filter.doesFilterPass(value, model)) {
                 return false;
             }
 
@@ -1786,7 +1792,10 @@ define('../src/filterManager',[
 
         if (!filter) {
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
-            if (colDef.filter === 'text') {
+            if (typeof colDef.filter === 'function') {
+                // if user provided a filter, just use it
+                filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback);
+            } else if (colDef.filter === 'text') {
                 filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
             } else if (colDef.filter === 'number') {
                 filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
@@ -1800,7 +1809,9 @@ define('../src/filterManager',[
         if (!filter.getGui) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method getGui');
         }
-        var eFilterGui = filter.getGui();
+        var eFilterGui = document.createElement('div');
+        eFilterGui.className = 'ag-filter';
+        eFilterGui.appendChild(filter.getGui());
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 
@@ -3239,13 +3250,13 @@ define('css!../src/css/theme-dark',[],function(){});
 
 define('css!../src/css/theme-fresh',[],function(){});
 
-//todo: full row group doesn't work when columns are pinned
 //todo: moving & hiding columns
 //todo: allow sort (and clear) via api
 //todo: allow filter (and clear) via api
 //todo: allow custom filtering
 //todo: allow null rows to start
 //todo: pinned columns not using scrollbar property (see website example)
+//todo: angular compile custom filters
 
 define('../src/angularGrid',[
     "angular",

@@ -43,7 +43,12 @@ define([
             if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
-            if (!filter.doesFilterPass(value)) {
+            var model;
+            // if model is exposed, grab it
+            if (filter.getModel) {
+                model = filter.getModel();
+            }
+            if (!filter.doesFilterPass(value, model)) {
                 return false;
             }
 
@@ -90,7 +95,10 @@ define([
 
         if (!filter) {
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
-            if (colDef.filter === 'text') {
+            if (typeof colDef.filter === 'function') {
+                // if user provided a filter, just use it
+                filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback);
+            } else if (colDef.filter === 'text') {
                 filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
             } else if (colDef.filter === 'number') {
                 filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
@@ -104,7 +112,9 @@ define([
         if (!filter.getGui) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method getGui');
         }
-        var eFilterGui = filter.getGui();
+        var eFilterGui = document.createElement('div');
+        eFilterGui.className = 'ag-filter';
+        eFilterGui.appendChild(filter.getGui());
 
         this.positionPopup(eventSource, eFilterGui, ePopupParent);
 

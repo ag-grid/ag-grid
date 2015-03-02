@@ -91,7 +91,7 @@ define([
             {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: 'number', cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
             {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
@@ -237,6 +237,55 @@ define([
         Peru: "pe",
         Venezuela: "ve",
         Uruguay: "uy"
+    };
+
+    function WinningsFilter(colDef, rowModel, filterChangedCallback) {
+        var uniqueId = Math.random();
+        this.filterChangedCallback = filterChangedCallback;
+        this.eGui = document.createElement("div");
+        this.eGui.innerHTML =
+            '<div style="padding: 4px;">' +
+            '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNoFilter">No filter</input></label></div>' +
+            '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbPositive">Positive</input></label></div>' +
+            '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNegative">Negative</input></label></div>' +
+            '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater50">&gt; &pound;50,000</label></div>' +
+            '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater90">&gt; &pound;90,000</label></div>' +
+            '</div>';
+        this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
+        this.cbPositive = this.eGui.querySelector('#cbPositive');
+        this.cbNegative = this.eGui.querySelector('#cbNegative');
+        this.cbGreater50 = this.eGui.querySelector('#cbGreater50');
+        this.cbGreater90 = this.eGui.querySelector('#cbGreater90');
+        this.cbNoFilter.checked = true; // initialise the first to checked
+        this.cbNoFilter.onclick = filterChangedCallback;
+        this.cbPositive.onclick = filterChangedCallback;
+        this.cbNegative.onclick = filterChangedCallback;
+        this.cbGreater50.onclick = filterChangedCallback;
+        this.cbGreater90.onclick = filterChangedCallback;
+    }
+
+    WinningsFilter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    WinningsFilter.prototype.doesFilterPass = function (value, model) {
+        if (this.cbNoFilter.checked) {
+            return true;
+        } else if (this.cbPositive.checked) {
+            return value >= 0;
+        } else if (this.cbNegative.checked) {
+            return value < 0;
+        } else if (this.cbGreater50.checked) {
+            return value >= 50000;
+        } else if (this.cbGreater90.checked) {
+            return value >= 90000;
+        } else {
+            console.error('invalid checkbox selection');
+        }
+    };
+
+    WinningsFilter.prototype.isFilterActive = function () {
+        return !this.cbNoFilter.checked;
     };
 
     function headerCellRenderer_dom(colDef) {
