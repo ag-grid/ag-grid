@@ -2,13 +2,13 @@ define([
     './utils',
     './setFilterModel',
     'text!./setFilter.html'
-], function(utils, ExcelFilterModel, template) {
+], function(utils, SetFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
     function SetFilter(colDef, rowModel, filterChangedCallback) {
         this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new ExcelFilterModel(colDef, rowModel);
+        this.model = new SetFilterModel(colDef, rowModel);
         this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
