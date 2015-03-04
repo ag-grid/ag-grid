@@ -49,7 +49,7 @@ define([
             var model;
             // if model is exposed, grab it
             if (filterWrapper.filter.getModel) {
-                model = filter.getModel();
+                model = filterWrapper.filter.getModel();
             }
             if (!filterWrapper.filter.doesFilterPass(value, model)) {
                 return false;

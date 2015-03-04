@@ -93,11 +93,13 @@ define([
             },
             {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
-            {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
+            {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                filterParams: {cellRenderer: booleanFilterCellRenderer}},
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+                filterParams: {cellRenderer: currencyRenderer}},
             {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer,
-                filterParams: {cellRenderer: ratingRenderer}},
-            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
+                filterParams: {cellRenderer: ratingFilterRenderer}},
+            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
         //put in the month cols
         months.forEach(function(month) {
@@ -379,7 +381,15 @@ define([
         }
     }
 
-    function ratingRenderer(value)  {
+    function ratingFilterRenderer(value)  {
+        return ratingRendererGeneral(value, true)
+    }
+
+    function ratingRenderer(value) {
+        return ratingRendererGeneral(value, false)
+    }
+
+    function ratingRendererGeneral(value, forFilter)  {
         var eContainer = document.createElement("span");
         for (var i = 0; i<5; i++) {
             if (value>i) {
@@ -387,6 +397,9 @@ define([
                 starImage.src = "http://www.angulargrid.com/images/goldStar.png";
                 eContainer.appendChild(starImage);
             }
+        }
+        if (forFilter && value === 0) {
+            eContainer.appendChild(document.createTextNode('(no stars)'));
         }
         return eContainer;
     }
