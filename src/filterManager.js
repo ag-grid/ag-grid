@@ -5,7 +5,10 @@ define([
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, rowModel) {
+    function FilterManager(grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+        this.$compile = $compile;
+        this.$scope = $scope;
+        this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
         this.rowModel = rowModel;
         this.allFilters = {};
@@ -16,14 +19,14 @@ define([
     };
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
-        var filter = this.allFilters[key];
-        if (!filter) {
+        var filterWrapper = this.allFilters[key];
+        if (!filterWrapper) {
             return false;
         }
-        if (!filter.isFilterActive) { // because users can do custom filters, give nice error message
+        if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method isFilterActive');
         }
-        var filterPresent = filter.isFilterActive();
+        var filterPresent = filterWrapper.filter.isFilterActive();
         return filterPresent;
     };
 
@@ -32,23 +35,23 @@ define([
         for (var i = 0, l = fields.length; i < l; i++) {
 
             var field = fields[i];
-            var filter = this.allFilters[field];
+            var filterWrapper = this.allFilters[field];
 
             // if no filter, always pass
-            if (filter===undefined) {
+            if (filterWrapper===undefined) {
                 continue;
             }
 
             var value = item[field];
-            if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
+            if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
             var model;
             // if model is exposed, grab it
-            if (filter.getModel) {
+            if (filterWrapper.filter.getModel) {
                 model = filter.getModel();
             }
-            if (!filter.doesFilterPass(value, model)) {
+            if (!filterWrapper.filter.doesFilterPass(value, model)) {
                 return false;
             }
 
@@ -60,7 +63,7 @@ define([
     FilterManager.prototype.onNewRowsLoaded = function() {
         var that = this;
         Object.keys(this.allFilters).forEach(function (field) {
-            var filter = that.allFilters[field];
+            var filter = that.allFilters[field].filter;
             if (filter.onNewRowsLoaded) {
                 filter.onNewRowsLoaded();
             }
@@ -91,37 +94,62 @@ define([
 
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
-        var filter = this.allFilters[colDef.field];
+        var filterWrapper = this.allFilters[colDef.field];
+        var newChildScope;
 
-        if (!filter) {
+        if (!filterWrapper) {
+            filterWrapper = {};
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
+            var filterParams = colDef.filterParams;
             if (typeof colDef.filter === 'function') {
                 // if user provided a filter, just use it
-                filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback);
+                // first up, create child scope if needed
+                if (this.gridOptionsWrapper.isAngularCompileFilters()) {
+                    filterWrapper.scope = this.$scope.$new();
+                }
+                // now create filter
+                filterWrapper.filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback, filterParams, filterWrapper.scope);
             } else if (colDef.filter === 'text') {
-                filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
+                filterWrapper.filter = new StringFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             } else if (colDef.filter === 'number') {
-                filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
+                filterWrapper.filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             } else {
-                filter = new SetFilter(colDef, this.rowModel, filterChangedCallback);
+                filterWrapper.filter = new SetFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             }
-            this.allFilters[colDef.field] = filter;
+            this.allFilters[colDef.field] = filterWrapper;
+
+            if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
+                console.error('Filter is missing method getGui');
+            }
+
+            var eFilterGui = document.createElement('div');
+            eFilterGui.className = 'ag-filter';
+            var guiFromFilter = filterWrapper.filter.getGui();
+            if (utils.isNode(guiFromFilter) || utils.isElement(guiFromFilter)) {
+                //a dom node or element was returned, so add child
+                eFilterGui.appendChild(guiFromFilter);
+            } else {
+                //otherwise assume it was html, so just insert
+                var eTextSpan = document.createElement('span');
+                eTextSpan.innerHTML = guiFromFilter;
+                eFilterGui.appendChild(eTextSpan);
+            }
+
+            if (filterWrapper.scope) {
+                filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
+            } else {
+                filterWrapper.gui = eFilterGui;
+            }
+
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        if (!filter.getGui) { // because users can do custom filters, give nice error message
-            console.error('Filter is missing method getGui');
-        }
-        var eFilterGui = document.createElement('div');
-        eFilterGui.className = 'ag-filter';
-        eFilterGui.appendChild(filter.getGui());
+        this.positionPopup(eventSource, filterWrapper.gui, ePopupParent);
 
-        this.positionPopup(eventSource, eFilterGui, ePopupParent);
+        utils.addAsModalPopup(ePopupParent, filterWrapper.gui);
 
-        utils.addAsModalPopup(ePopupParent, eFilterGui);
-
-        if (filter.afterGuiAttached) {
-            filter.afterGuiAttached();
+        if (filterWrapper.filter.afterGuiAttached) {
+            filterWrapper.filter.afterGuiAttached();
         }
     };
 

@@ -6,12 +6,15 @@ define([
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function SetFilter(colDef, rowModel, filterChangedCallback) {
-        this.rowHeight = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
+    function SetFilter(colDef, rowModel, filterChangedCallback, filterParams) {
+        this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
         this.model = new SetFilterModel(colDef, rowModel);
         this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
+        if (filterParams) {
+            this.cellRenderer = filterParams.cellRenderer;
+        }
         this.createGui();
         this.addScrollListener();
     }
@@ -140,9 +143,9 @@ define([
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
 
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (this.colDef.filterCellRenderer) {
+        if (this.cellRenderer) {
             //renderer provided, so use it
-            var resultFromRenderer = this.colDef.filterCellRenderer(value);
+            var resultFromRenderer = this.cellRenderer(value);
 
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child

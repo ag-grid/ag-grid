@@ -74,8 +74,9 @@ define([
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             groupAggFunction: groupAggFunction,
             angularCompile: false,
+            angularCompileFilters: true,
             //dontUseScrolls: true,
-            rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
+            rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
             rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
@@ -86,13 +87,16 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, filter: 'text', cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
-            {displayName: "Country", field: "country", width: 150, filter: 'set', cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
+            {displayName: "Name", field: "name", width: 200, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filter: 'set',
+                filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
+            },
             {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
             {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
-            {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
+            {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer,
+                filterParams: {cellRenderer: ratingRenderer}},
             {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
         //put in the month cols
@@ -239,12 +243,54 @@ define([
         Uruguay: "uy"
     };
 
+    function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
+        this.$scope = $scope;
+        $scope.onFilterChanged = function() {
+            filterChangedCallback();
+        };
+    }
+
+    PersonFilter.prototype.getGui = function () {
+        return '<div style="padding: 4px; width: 200px;">' +
+            '<div style="font-weight: bold;">Example Custom Filter</div>' +
+            '<div><input style="margin: 4px 0px 4px 0px;" type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
+            '<div>This filter does partial word search, the following all bring back the name Sophie Beckham:</div>' +
+            '<div>=> "sophie"</div>' +
+            '<div>=> "beckham"</div>' +
+            '<div>=> "sophie beckham"</div>' +
+            '<div>=> "beckham sophie"</div>' +
+            '<div>=> "beck so"</div>' +
+            '</div>';
+    };
+
+    PersonFilter.prototype.doesFilterPass = function (value, model) {
+        var filterText = this.$scope.filterText;
+        if (!filterText) {
+            return true;
+        }
+        // make sure each word passes separately, ie search for firstname, lastname
+        var passed = true;
+        filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+            if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+                passed = false;
+            }
+        });
+
+        return passed;
+    };
+
+    PersonFilter.prototype.isFilterActive = function () {
+        var value = this.$scope.filterText;
+        return value !== null && value !== undefined && value !== '';
+    };
+
     function WinningsFilter(colDef, rowModel, filterChangedCallback) {
         var uniqueId = Math.random();
         this.filterChangedCallback = filterChangedCallback;
         this.eGui = document.createElement("div");
         this.eGui.innerHTML =
             '<div style="padding: 4px;">' +
+            '<div style="font-weight: bold;">Example Custom Filter</div>' +
             '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNoFilter">No filter</input></label></div>' +
             '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbPositive">Positive</input></label></div>' +
             '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNegative">Negative</input></label></div>' +

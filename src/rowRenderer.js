@@ -336,7 +336,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             eGridGroupRow.appendChild(eSvg);
         }
 
-        //if renderer provided, use it
+        // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
             var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data, padding);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -349,7 +349,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 eGridGroupRow.appendChild(eTextSpan);
             }
         } else {
-            //otherwise default is display the key along with the child count
+            // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
                 var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
                 eGridGroupRow.appendChild(eText);
@@ -360,7 +360,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             eGridGroupRow.style.width = utils.formatWidth(firstColDef.actualWidth);
         }
 
-        //indent with the group level
+        // indent with the group level
         if (!padding) {
             eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
         }
