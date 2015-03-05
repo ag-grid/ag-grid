@@ -2,11 +2,14 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager) {
+    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
+        this.$scope = $scope;
+        this.$compile = $compile;
         this.findAllElements(eGrid);
+        this.childScopes = [];
     }
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
@@ -33,11 +36,15 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         utils.removeAllChildren(eHeaderContainer);
         this.headerFilterIcons = {};
 
+        this.childScopes.forEach(function(childScope) {
+            childScope.$destroy();
+        });
+
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var _this = this;
 
         this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef, index) {
-            //only include the first x cols
+            // only include the first x cols
             if (index<pinnedColumnCount) {
                 var headerCell = _this.createHeaderCell(colDef, index, true);
                 ePinnedHeader.appendChild(headerCell);
@@ -54,7 +61,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
         headerCell.className = "ag-header-cell";
 
-        //add tooltip if exists
+        // add tooltip if exists
         if (colDef.headerTooltip) {
             headerCell.title = colDef.headerTooltip;
         }
@@ -66,7 +73,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
         }
 
-        //filter button
+        // filter button
         if (this.gridOptionsWrapper.isEnableFilter()) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
@@ -85,37 +92,57 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             eMenuButton.style["transition"] = "opacity 0.5s";
         }
 
-        //label div
+        // label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
-        //add in sort icon
+        // add in sort icon
         if (this.gridOptionsWrapper.isEnableSorting()) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
             this.addSortHandling(headerCellLabel, colDef);
         }
 
-        //add in filter icon
+        // add in filter icon
         var filterIcon = svgFactory.createFilterSvg();
         this.headerFilterIcons[colDef.field] = filterIcon;
         headerCellLabel.appendChild(filterIcon);
 
-        //add in text label
-        var innerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
-        if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
-            //renderer provided, use it
-            var headerCellRenderer = innerCellRenderer(colDef);
-            if (utils.isNode(headerCellRenderer) || utils.isElement(headerCellRenderer)) {
-                //a dom node or element was returned, so add child
-                headerCellLabel.appendChild(headerCellRenderer);
+        // render the cell, use a renderer if one is provided
+        var headerCellRenderer;
+        if (colDef.headerCellRenderer) { // first look for a renderer in col def
+            headerCellRenderer = colDef.headerCellRenderer;
+        } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
+            headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
+        }
+        if (headerCellRenderer) {
+            // renderer provided, use it
+            var newChildScope;
+            if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
+                newChildScope = this.$scope.$new();
+            }
+            var cellRendererResult = headerCellRenderer(colDef, newChildScope);
+            var childToAppend;
+            if (utils.isNode(cellRendererResult) || utils.isElement(cellRendererResult)) {
+                // a dom node or element was returned, so add child
+                childToAppend = cellRendererResult;
             } else {
-                //otherwise assume it was html, so just insert
+                // otherwise assume it was html, so just insert
                 var eTextSpan = document.createElement("span");
-                eTextSpan.innerHTML = headerCellRenderer;
-                headerCellLabel.appendChild(eTextSpan);
+                eTextSpan.innerHTML = cellRendererResult;
+                childToAppend = eTextSpan;
+            }
+            // angular compile header if option is turned on
+            if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
+                newChildScope.colDef = colDef;
+                newChildScope.colIndex = colIndex;
+                this.childScopes.push(newChildScope);
+                var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
+                headerCellLabel.appendChild(childToAppendCompiled);
+            } else {
+                headerCellLabel.appendChild(childToAppend);
             }
         } else {
-            //no renderer, default text render
+            // no renderer, default text render
             var eInnerText = document.createElement("span");
             eInnerText.innerHTML = colDef.displayName;
             headerCellLabel.appendChild(eInnerText);
@@ -131,7 +158,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var _this = this;
         headerCellLabel.addEventListener("click", function() {
 
-            //update sort on current col
+            // update sort on current col
             if (colDef.sort === constants.ASC) {
                 colDef.sort = constants.DESC;
             } else if (colDef.sort === constants.DESC) {
@@ -140,13 +167,13 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 colDef.sort = constants.ASC;
             }
 
-            //clear sort on all columns except this one, and update the icons
+            // clear sort on all columns except this one, and update the icons
             _this.gridOptionsWrapper.getColumnDefs().forEach(function(colToClear, colIndex) {
                 if (colToClear!==colDef) {
                     colToClear.sort = null;
                 }
 
-                //update visibility of icons
+                // update visibility of icons
                 var sortAscending = colToClear.sort===constants.ASC;
                 var sortDescending = colToClear.sort===constants.DESC;
                 var sortAny = sortAscending || sortDescending;
@@ -189,7 +216,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 headerCell.style.width = newWidthPx;
                 colDef.actualWidth = newWidth;
 
-                //show not be calling these here, should do something else
+                // show not be calling these here, should do something else
                 if (colPinned) {
                     _this.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {

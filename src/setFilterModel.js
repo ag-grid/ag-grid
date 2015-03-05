@@ -64,17 +64,6 @@ define(["./utils"], function(utils) {
         return this.displayedValues[index];
     };
 
-    SetFilterModel.prototype.doesFilterPass = function(value) {
-        //if no filter, always pass
-        if (this.isEverythingSelected()) { return true; }
-        //if nothing selected in filter, always fail
-        if (this.isNothingSelected()) { return false; }
-
-        value = utils.makeNull(value);
-        var filterPassed = this.selectedValuesMap[value]!==undefined;
-        return filterPassed;
-    };
-
     SetFilterModel.prototype.selectEverything = function() {
         var count = this.uniqueValues.length;
         for (var i = 0; i<count; i++) {

@@ -20,7 +20,9 @@ define(["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
-    GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };
+    GridOptionsWrapper.prototype.isAngularCompileRows = function() { return this.gridOptions.angularCompileRows===true; };
+    GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return this.gridOptions.angularCompileFilters===true; };
+    GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return this.gridOptions.angularCompileHeaders===true; };
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };

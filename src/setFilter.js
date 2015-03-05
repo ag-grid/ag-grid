@@ -2,23 +2,45 @@ define([
     './utils',
     './setFilterModel',
     'text!./setFilter.html'
-], function(utils, ExcelFilterModel, template) {
+], function(utils, SetFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function SetFilter(colDef, rowModel, filterChangedCallback) {
-        this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new ExcelFilterModel(colDef, rowModel);
+    function SetFilter(colDef, rowModel, filterChangedCallback, filterParams) {
+        this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
+        this.model = new SetFilterModel(colDef, rowModel);
         this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
+        if (filterParams) {
+            this.cellRenderer = filterParams.cellRenderer;
+        }
         this.createGui();
         this.addScrollListener();
     }
 
+    // we need to have the gui attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the gui state
     /* public */
-    SetFilter.prototype.doesFilterPass = function (value) {
-        return this.model.doesFilterPass(value);
+    SetFilter.prototype.afterGuiAttached = function() {
+        this.drawVirtualRows();
+    };
+
+    /* public */
+    SetFilter.prototype.isFilterActive = function() {
+        return this.model.isFilterActive();
+    };
+
+    /* public */
+    SetFilter.prototype.doesFilterPass = function (value, model) {
+        //if no filter, always pass
+        if (model.isEverythingSelected()) { return true; }
+        //if nothing selected in filter, always fail
+        if (model.isNothingSelected()) { return false; }
+
+        value = utils.makeNull(value);
+        var filterPassed = model.selectedValuesMap[value] !== undefined;
+        return filterPassed;
     };
 
     /* public */
@@ -32,6 +54,11 @@ define([
         this.updateAllCheckboxes(true);
     };
 
+    /* public */
+    SetFilter.prototype.getModel = function () {
+        return this.model;
+    };
+
     SetFilter.prototype.createGui = function () {
         var _this = this;
 
@@ -42,14 +69,14 @@ define([
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
         this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
-        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeight) + "px";
 
         this.setContainerHeight();
         this.eMiniFilter.value = this.model.getMiniFilter();
         utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
         utils.removeAllChildren(this.eListContainer);
 
-        this.eSelectAll.onclick = function () { _this.onSelectAll();}
+        this.eSelectAll.onclick = this.onSelectAll.bind(this);
 
         if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
@@ -63,15 +90,15 @@ define([
     };
 
     SetFilter.prototype.setContainerHeight = function() {
-        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeight) + "px";
     };
 
     SetFilter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / this.rowHeiht);
-        var lastRow = Math.floor(bottomPixel / this.rowHeiht);
+        var firstRow = Math.floor(topPixel / this.rowHeight);
+        var lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -116,9 +143,9 @@ define([
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
 
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (this.colDef.filterCellRenderer) {
+        if (this.cellRenderer) {
             //renderer provided, so use it
-            var resultFromRenderer = this.colDef.filterCellRenderer(value);
+            var resultFromRenderer = this.cellRenderer(value);
 
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
@@ -138,7 +165,7 @@ define([
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
-        eFilterValue.style.top = (this.rowHeiht * rowIndex) + "px";
+        eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
@@ -206,18 +233,6 @@ define([
         this.eListViewport.addEventListener("scroll", function() {
             _this.drawVirtualRows();
         });
-    };
-
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
-    /* public */
-    SetFilter.prototype.afterGuiAttached = function() {
-        this.drawVirtualRows();
-    };
-
-    /* public */
-    SetFilter.prototype.isFilterActive = function() {
-        return this.model.isFilterActive();
     };
 
     return SetFilter;

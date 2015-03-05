@@ -1,11 +1,11 @@
 
-//todo: full row group doesn't work when columns are pinned
 //todo: moving & hiding columns
 //todo: allow sort (and clear) via api
 //todo: allow filter (and clear) via api
 //todo: allow custom filtering
 //todo: allow null rows to start
 //todo: pinned columns not using scrollbar property (see website example)
+//todo: angular compile custom filters
 
 define([
     "angular",
@@ -70,10 +70,10 @@ define([
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.filterManager = new FilterManager(this, this.rowModel);
+        this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();
