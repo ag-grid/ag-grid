@@ -19,7 +19,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: [],
-        angularCompile: true
+        angularCompileRows: true
     };
 
     function ageClicked(age) {

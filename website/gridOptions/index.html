@@ -59,9 +59,19 @@
             <td>An object of CSS values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
-            <th>angularCompile</th>
+            <th>angularCompileRows</th>
             <td>Whether to compile the rows for Angular. Default is false (for performance).
-                Turn on if you want to have customer renderers that use Angular</td>
+                Turn on if you want to use AngularJS in your custom cell renderers.</td>
+        </tr>
+        <tr>
+            <th>angularCompileFilters</th>
+            <td>Whether to compile provided custom filters. Default is false (for performance).
+                Turn on if you want to use AngularJS in your custom filters.</td>
+        </tr>
+        <tr>
+            <th>angularCompileHeaders</th>
+            <td>Whether to compile the customer headers for AngularJS. Default is false (for performance).
+                Turn on if you want to user AngularJS in your custom column headers.</td>
         </tr>
         <tr>
             <th>headerCellRenderer</th>
