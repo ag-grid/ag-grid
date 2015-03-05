@@ -1,5 +1,5 @@
 define([
-    "./utils",
+    "./../utils",
     "./setFilter",
     "./numberFilter",
     "./textFilter"

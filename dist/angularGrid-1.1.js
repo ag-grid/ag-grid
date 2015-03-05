@@ -1282,12 +1282,12 @@ define('../src/setFilterModel',["./utils"], function(utils) {
 
 });
 
-define('text!../src/setFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/setFilter.js',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 define('../src/setFilter',[
     './utils',
     './setFilterModel',
-    'text!./setFilter.html'
+    'text!./setFilter.js'
 ], function(utils, ExcelFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
@@ -1514,7 +1514,7 @@ define('text!../src/numberFilter.html',[],function () { return '<div class="ag-f
 
 define('../src/numberFilter',[
     './utils',
-    'text!./numberFilter.html'
+    'text!./numberFilterTemplate.js'
 ], function(utils, template) {
 
     var EQUALS = 1;

@@ -1,44 +1,47 @@
 define([
-    './utils',
-    'text!./textFilter.html'
+    './../utils',
+    './numberFilterTemplate.js'
 ], function(utils, template) {
 
-    var CONTAINS = 1;
-    var EQUALS = 2;
-    var STARTS_WITH = 3;
-    var ENDS_WITH = 4;
+    var EQUALS = 1;
+    var LESS_THAN = 2;
+    var GREATER_THAN = 3;
 
-    function TextFilter(colDef, rowModel, filterChangedCallback) {
+    function NumberFilter(colDef, rowModel, filterChangedCallback) {
         this.filterChangedCallback = filterChangedCallback;
         this.createGui();
-        this.filterText = null;
-        this.filterType = CONTAINS;
+        this.filterNumber = null;
+        this.filterType = EQUALS;
     }
 
     /* public */
-    TextFilter.prototype.afterGuiAttached = function() {
+    NumberFilter.prototype.afterGuiAttached = function() {
         this.eFilterTextField.focus();
     };
 
     /* public */
-    TextFilter.prototype.doesFilterPass = function (value) {
-        if (!this.filterText) {
+    NumberFilter.prototype.doesFilterPass = function (value) {
+        if (this.filterNumber === null) {
             return true;
         }
         if (!value) {
             return false;
         }
-        var valueLowerCase = value.toString().toLowerCase();
+
+        var valueAsNumber;
+        if (typeof value === 'number') {
+            valueAsNumber = value;
+        } else {
+            valueAsNumber = parseFloat(value);
+        }
+
         switch (this.filterType) {
-            case CONTAINS :
-                return valueLowerCase.indexOf(this.filterText) >= 0;
             case EQUALS :
-                return valueLowerCase === this.filterText;
-            case STARTS_WITH :
-                return valueLowerCase.indexOf(this.filterText) === 0;
-            case ENDS_WITH :
-                var index = valueLowerCase.indexOf(this.filterText);
-                return  index >= 0 && index === (valueLowerCase.length - this.filterText.length);
+                return valueAsNumber === this.filterNumber;
+            case LESS_THAN :
+                return valueAsNumber <= this.filterNumber;
+            case GREATER_THAN :
+                return valueAsNumber >= this.filterNumber;
             default :
                 // should never happen
                 console.log('invalid filter type ' + this.filterType);
@@ -47,16 +50,16 @@ define([
     };
 
     /* public */
-    TextFilter.prototype.getGui = function () {
+    NumberFilter.prototype.getGui = function () {
         return this.eGui;
     };
 
     /* public */
-    TextFilter.prototype.isFilterActive = function() {
-        return this.filterText !== null;
+    NumberFilter.prototype.isFilterActive = function() {
+        return this.filterNumber !== null;
     };
 
-    TextFilter.prototype.createGui = function () {
+    NumberFilter.prototype.createGui = function () {
         this.eGui = utils.loadTemplate(template);
         this.eFilterTextField = this.eGui.querySelector("#filterText");
         this.eTypeSelect = this.eGui.querySelector("#filterType");
@@ -65,24 +68,24 @@ define([
         this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
     };
 
-    TextFilter.prototype.onTypeChanged = function () {
+    NumberFilter.prototype.onTypeChanged = function () {
         this.filterType = parseInt(this.eTypeSelect.value);
         this.filterChangedCallback();
     };
 
-    TextFilter.prototype.onFilterChanged = function () {
+    NumberFilter.prototype.onFilterChanged = function () {
         var filterText = utils.makeNull(this.eFilterTextField.value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
         if (filterText) {
-            this.filterText = filterText.toLowerCase();
+            this.filterNumber = parseFloat(filterText);
         } else {
-            this.filterText = null;
+            this.filterNumber = null;
         }
         this.filterChangedCallback();
     };
 
-    return TextFilter;
+    return NumberFilter;
 
 });

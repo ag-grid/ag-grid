@@ -1,7 +1,7 @@
 define([
-    './utils',
+    './../utils',
     './setFilterModel',
-    'text!./setFilter.html'
+    './setFilterTemplate.js'
 ], function(utils, SetFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
