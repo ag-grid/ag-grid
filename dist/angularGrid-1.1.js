@@ -2668,7 +2668,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                cssToUse = colDef.cellStyle(value, data, colDef, $childScope);
+                cssToUse = colDef.cellStyle(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions());
             } else {
                 cssToUse = colDef.cellStyle;
             }
@@ -2683,7 +2683,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                classToUse = colDef.cellClass(value, data, colDef);
+                classToUse = colDef.cellClass(value, data, colDef, this.gridOptionsWrapper.getGridOptions());
             } else {
                 classToUse = colDef.cellClass;
             }
@@ -3371,16 +3371,16 @@ define('../src/angularGrid',[
             this.gridOptions.rowClicked(row, event);
         }
 
-        //if no selection method enabled, do nothing
+        // if no selection method enabled, do nothing
         if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
             return;
         }
 
-        //if not in array, then it's a new selection, thus selected = true
+        // if not in array, then it's a new selection, thus selected = true
         var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
 
         if (selected) {
-            //if single selection, clear any previous
+            // if single selection, clear any previous
             if (selected && this.gridOptions.rowSelection === "single") {
                 this.gridOptions.selectedRows.length = 0;
                 var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
@@ -3396,7 +3396,7 @@ define('../src/angularGrid',[
             utils.removeFromArray(this.gridOptions.selectedRows, row);
         }
 
-        //update css class on selected row
+        // update css class on selected row
         var eRows = this.eRowsParent.querySelectorAll("[row='" + rowIndex + "']");
         for (var i = 0; i < eRows.length; i++) {
             if (selected) {

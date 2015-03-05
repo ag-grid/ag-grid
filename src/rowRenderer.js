@@ -403,7 +403,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                cssToUse = colDef.cellStyle(value, data, colDef, $childScope);
+                cssToUse = colDef.cellStyle(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions());
             } else {
                 cssToUse = colDef.cellStyle;
             }
@@ -418,7 +418,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                classToUse = colDef.cellClass(value, data, colDef);
+                classToUse = colDef.cellClass(value, data, colDef, this.gridOptionsWrapper.getGridOptions());
             } else {
                 classToUse = colDef.cellClass;
             }
