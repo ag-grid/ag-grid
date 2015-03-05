@@ -68,9 +68,11 @@ gridsModule.controller('mainController', function($scope) {
         enableFilter: true, //one of [true, false]
         rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
         groupAggFunction: groupAggFunction,
-        angularCompile: false,
+        angularCompileRows: false,
+        angularCompileFilters: true,
+        angularCompileHeaders: true,
         //dontUseScrolls: true,
-        rowClass: function(row, pinnedRow) { return (row.country==='Ireland') ? "theClass" : null; },
+        rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
@@ -81,14 +83,19 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
-        {displayName: "Name", field: "name", width: 200, filter: 'text', cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
-        {displayName: "Country", field: "country", width: 150, filter: 'set', cellRenderer: countryCellRenderer, filterCellRenderer: countryFilterCellRenderer, filterCellHeight: 20},
+        {displayName: "Name", field: "name", width: 200, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
+        {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filter: 'set',
+            filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
+        },
         {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
         {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
-        {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator ,filterCellRenderer: booleanFilterCellRenderer},
-        {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: 'number', cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc},
-        {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer, filterCellRenderer: ratingRenderer},
-        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
+        {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+            filterParams: {cellRenderer: booleanFilterCellRenderer}},
+        {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+            filterParams: {cellRenderer: currencyRenderer}},
+        {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer,
+            filterParams: {cellRenderer: ratingFilterRenderer}},
+        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
     ];
     //put in the month cols
     months.forEach(function(month) {
@@ -234,6 +241,97 @@ var COUNTRY_CODES = {
     Uruguay: "uy"
 };
 
+function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
+    this.$scope = $scope;
+    $scope.onFilterChanged = function() {
+        filterChangedCallback();
+    };
+}
+
+PersonFilter.prototype.getGui = function () {
+    return '<div style="padding: 4px; width: 200px;">' +
+        '<div style="font-weight: bold;">Example Custom Filter</div>' +
+        '<div><input style="margin: 4px 0px 4px 0px;" type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
+        '<div>This filter does partial word search, the following all bring back the name Sophie Beckham:</div>' +
+        '<div>=> "sophie"</div>' +
+        '<div>=> "beckham"</div>' +
+        '<div>=> "sophie beckham"</div>' +
+        '<div>=> "beckham sophie"</div>' +
+        '<div>=> "beck so"</div>' +
+        '</div>';
+};
+
+PersonFilter.prototype.doesFilterPass = function (value, model) {
+    var filterText = this.$scope.filterText;
+    if (!filterText) {
+        return true;
+    }
+    // make sure each word passes separately, ie search for firstname, lastname
+    var passed = true;
+    filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+            passed = false;
+        }
+    });
+
+    return passed;
+};
+
+PersonFilter.prototype.isFilterActive = function () {
+    var value = this.$scope.filterText;
+    return value !== null && value !== undefined && value !== '';
+};
+
+function WinningsFilter(colDef, rowModel, filterChangedCallback) {
+    var uniqueId = Math.random();
+    this.filterChangedCallback = filterChangedCallback;
+    this.eGui = document.createElement("div");
+    this.eGui.innerHTML =
+        '<div style="padding: 4px;">' +
+        '<div style="font-weight: bold;">Example Custom Filter</div>' +
+        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNoFilter">No filter</input></label></div>' +
+        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbPositive">Positive</input></label></div>' +
+        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNegative">Negative</input></label></div>' +
+        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater50">&gt; &pound;50,000</label></div>' +
+        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater90">&gt; &pound;90,000</label></div>' +
+        '</div>';
+    this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
+    this.cbPositive = this.eGui.querySelector('#cbPositive');
+    this.cbNegative = this.eGui.querySelector('#cbNegative');
+    this.cbGreater50 = this.eGui.querySelector('#cbGreater50');
+    this.cbGreater90 = this.eGui.querySelector('#cbGreater90');
+    this.cbNoFilter.checked = true; // initialise the first to checked
+    this.cbNoFilter.onclick = filterChangedCallback;
+    this.cbPositive.onclick = filterChangedCallback;
+    this.cbNegative.onclick = filterChangedCallback;
+    this.cbGreater50.onclick = filterChangedCallback;
+    this.cbGreater90.onclick = filterChangedCallback;
+}
+
+WinningsFilter.prototype.getGui = function () {
+    return this.eGui;
+};
+
+WinningsFilter.prototype.doesFilterPass = function (value, model) {
+    if (this.cbNoFilter.checked) {
+        return true;
+    } else if (this.cbPositive.checked) {
+        return value >= 0;
+    } else if (this.cbNegative.checked) {
+        return value < 0;
+    } else if (this.cbGreater50.checked) {
+        return value >= 50000;
+    } else if (this.cbGreater90.checked) {
+        return value >= 90000;
+    } else {
+        console.error('invalid checkbox selection');
+    }
+};
+
+WinningsFilter.prototype.isFilterActive = function () {
+    return !this.cbNoFilter.checked;
+};
+
 function headerCellRenderer_dom(colDef) {
     var eContainer = document.createElement("span");
     eContainer.style.border = '1px solid darkgreen';
@@ -246,6 +344,17 @@ function headerCellRenderer_dom(colDef) {
 
 function headerCellRenderer_text(colDef) {
     return colDef.displayName;
+}
+
+function headerCellRenderer_angular(colDef, $scope) {
+    $scope.showIcon = false;
+    return '<span ng-mouseover="showIcon = true" ng-mouseleave="showIcon = false">' +
+        '<img ' +
+        '   src="http://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg"' +
+        '   style="width: 20px; position: absolute; top: 3px; left: 5px;"' +
+        '   ng-show="showIcon">' +
+        '{{colDef.displayName}}' +
+        '</span>';
 }
 
 function groupInnerCellRenderer(data) {
@@ -279,7 +388,15 @@ function currencyCssFunc(value) {
     }
 }
 
-function ratingRenderer(value)  {
+function ratingFilterRenderer(value)  {
+    return ratingRendererGeneral(value, true)
+}
+
+function ratingRenderer(value) {
+    return ratingRendererGeneral(value, false)
+}
+
+function ratingRendererGeneral(value, forFilter)  {
     var eContainer = document.createElement("span");
     for (var i = 0; i<5; i++) {
         if (value>i) {
@@ -287,6 +404,9 @@ function ratingRenderer(value)  {
             starImage.src = "http://www.angulargrid.com/images/goldStar.png";
             eContainer.appendChild(starImage);
         }
+    }
+    if (forFilter && value === 0) {
+        eContainer.appendChild(document.createTextNode('(no stars)'));
     }
     return eContainer;
 }
