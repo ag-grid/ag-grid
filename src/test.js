@@ -73,8 +73,9 @@ define([
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             groupAggFunction: groupAggFunction,
-            angularCompile: false,
+            angularCompileRows: false,
             angularCompileFilters: true,
+            angularCompileHeaders: true,
             //dontUseScrolls: true,
             rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
@@ -87,7 +88,7 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", width: 200, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
             {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filter: 'set',
                 filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
             },
@@ -348,6 +349,17 @@ define([
 
     function headerCellRenderer_text(colDef) {
         return colDef.displayName;
+    }
+
+    function headerCellRenderer_angular(colDef, $scope) {
+        $scope.showIcon = false;
+        return '<span ng-mouseover="showIcon = true" ng-mouseleave="showIcon = false">' +
+            '<img ' +
+            '   src="http://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg"' +
+            '   style="width: 20px; position: absolute; top: 3px; left: 5px;"' +
+            '   ng-show="showIcon">' +
+            '{{colDef.displayName}}' +
+            '</span>';
     }
 
     function groupInnerCellRenderer(data) {

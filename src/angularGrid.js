@@ -73,7 +73,7 @@ define([
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();

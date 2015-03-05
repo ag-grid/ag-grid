@@ -153,7 +153,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.removeVirtualRows(rowsToRemove);
 
         //if we are doing angular compiling, then do digest the scope here
-        if (this.gridOptions.angularCompile) {
+        if (this.gridOptions.angularCompileRows) {
             // we do it in a timeout, in case we are already in an apply
             this.$timeout(function () {
                 that.$scope.$apply();
@@ -228,7 +228,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.createChildScopeOrNull = function(data, rowIndex) {
-        if (this.gridOptionsWrapper.isAngularCompile()) {
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.$scope.$new();
             newChildScope.rowData = data;
             return newChildScope;
