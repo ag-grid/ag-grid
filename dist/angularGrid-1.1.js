@@ -1153,7 +1153,7 @@ define('../src/utils',[], function() {
     return new Utils();
 
 });
-define('../src/setFilterModel',["./utils"], function(utils) {
+define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     
 
@@ -1219,17 +1219,6 @@ define('../src/setFilterModel',["./utils"], function(utils) {
         return this.displayedValues[index];
     };
 
-    SetFilterModel.prototype.doesFilterPass = function(value) {
-        //if no filter, always pass
-        if (this.isEverythingSelected()) { return true; }
-        //if nothing selected in filter, always fail
-        if (this.isNothingSelected()) { return false; }
-
-        value = utils.makeNull(value);
-        var filterPassed = this.selectedValuesMap[value]!==undefined;
-        return filterPassed;
-    };
-
     SetFilterModel.prototype.selectEverything = function() {
         var count = this.uniqueValues.length;
         for (var i = 0; i<count; i++) {
@@ -1281,30 +1270,75 @@ define('../src/setFilterModel',["./utils"], function(utils) {
     return SetFilterModel;
 
 });
+define('../src/filter/setFilterTemplate.js',[], function() {
 
-define('text!../src/setFilter.js',[],function () { return '<div class="ag-filter">\r\n    <div class="ag-filter-header-container">\r\n        <input class="ag-filter-filter" type="text" placeholder="search..."/>\r\n    </div>\r\n    <div class="ag-filter-header-container">\r\n        <label>\r\n            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\r\n            (Select All)\r\n        </label>\r\n    </div>\r\n    <div class="ag-filter-list-viewport">\r\n        <div class="ag-filter-list-container">\r\n            <div id="itemForRepeat" class="ag-filter-item">\r\n                <label>\r\n                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\r\n                    <span class="ag-filter-value"></span>\r\n                </label>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
-
-define('../src/setFilter',[
-    './utils',
+    return '\
+<div>\
+    <div class="ag-filter-header-container">\
+        <input class="ag-filter-filter" type="text" placeholder="search..."/>\
+    </div>\
+    <div class="ag-filter-header-container">\
+        <label>\
+            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>\
+            (Select All)\
+        </label>\
+    </div>\
+    <div class="ag-filter-list-viewport">\
+        <div class="ag-filter-list-container">\
+            <div id="itemForRepeat" class="ag-filter-item">\
+                <label>\
+                    <input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>\
+                    <span class="ag-filter-value"></span>\
+                </label>\
+            </div>\
+        </div>\
+    </div>\
+</div>\
+';
+});
+define('../src/filter/setFilter',[
+    './../utils',
     './setFilterModel',
-    'text!./setFilter.js'
-], function(utils, ExcelFilterModel, template) {
+    './setFilterTemplate.js'
+], function(utils, SetFilterModel, template) {
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function SetFilter(colDef, rowModel, filterChangedCallback) {
-        this.rowHeiht = colDef.filterCellHeight ? colDef.filterCellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new ExcelFilterModel(colDef, rowModel);
+    function SetFilter(colDef, rowModel, filterChangedCallback, filterParams) {
+        this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
+        this.model = new SetFilterModel(colDef, rowModel);
         this.filterChangedCallback = filterChangedCallback;
         this.rowsInBodyContainer = {};
         this.colDef = colDef;
+        if (filterParams) {
+            this.cellRenderer = filterParams.cellRenderer;
+        }
         this.createGui();
         this.addScrollListener();
     }
 
+    // we need to have the gui attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the gui state
     /* public */
-    SetFilter.prototype.doesFilterPass = function (value) {
-        return this.model.doesFilterPass(value);
+    SetFilter.prototype.afterGuiAttached = function() {
+        this.drawVirtualRows();
+    };
+
+    /* public */
+    SetFilter.prototype.isFilterActive = function() {
+        return this.model.isFilterActive();
+    };
+
+    /* public */
+    SetFilter.prototype.doesFilterPass = function (value, model) {
+        //if no filter, always pass
+        if (model.isEverythingSelected()) { return true; }
+        //if nothing selected in filter, always fail
+        if (model.isNothingSelected()) { return false; }
+
+        value = utils.makeNull(value);
+        var filterPassed = model.selectedValuesMap[value] !== undefined;
+        return filterPassed;
     };
 
     /* public */
@@ -1318,6 +1352,11 @@ define('../src/setFilter',[
         this.updateAllCheckboxes(true);
     };
 
+    /* public */
+    SetFilter.prototype.getModel = function () {
+        return this.model;
+    };
+
     SetFilter.prototype.createGui = function () {
         var _this = this;
 
@@ -1328,14 +1367,14 @@ define('../src/setFilter',[
         this.eSelectAll = this.eGui.querySelector("#selectAll");
         this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
         this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
-        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeight) + "px";
 
         this.setContainerHeight();
         this.eMiniFilter.value = this.model.getMiniFilter();
         utils.addChangeListener(this.eMiniFilter, function() {_this.onFilterChanged();} );
         utils.removeAllChildren(this.eListContainer);
 
-        this.eSelectAll.onclick = function () { _this.onSelectAll();}
+        this.eSelectAll.onclick = this.onSelectAll.bind(this);
 
         if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
@@ -1349,15 +1388,15 @@ define('../src/setFilter',[
     };
 
     SetFilter.prototype.setContainerHeight = function() {
-        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeiht) + "px";
+        this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeight) + "px";
     };
 
     SetFilter.prototype.drawVirtualRows = function () {
         var topPixel = this.eListViewport.scrollTop;
         var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
-        var firstRow = Math.floor(topPixel / this.rowHeiht);
-        var lastRow = Math.floor(bottomPixel / this.rowHeiht);
+        var firstRow = Math.floor(topPixel / this.rowHeight);
+        var lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     };
@@ -1402,9 +1441,9 @@ define('../src/setFilter',[
         var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
 
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (this.colDef.filterCellRenderer) {
+        if (this.cellRenderer) {
             //renderer provided, so use it
-            var resultFromRenderer = this.colDef.filterCellRenderer(value);
+            var resultFromRenderer = this.cellRenderer(value);
 
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
@@ -1424,7 +1463,7 @@ define('../src/setFilter',[
 
         eCheckbox.onclick = function () { _this.onCheckboxClicked(eCheckbox, value); }
 
-        eFilterValue.style.top = (this.rowHeiht * rowIndex) + "px";
+        eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 
         this.eListContainer.appendChild(eFilterValue);
         this.rowsInBodyContainer[rowIndex] = eFilterValue;
@@ -1494,27 +1533,29 @@ define('../src/setFilter',[
         });
     };
 
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
-    /* public */
-    SetFilter.prototype.afterGuiAttached = function() {
-        this.drawVirtualRows();
-    };
-
-    /* public */
-    SetFilter.prototype.isFilterActive = function() {
-        return this.model.isFilterActive();
-    };
-
     return SetFilter;
 
 });
+define('../src/filter/numberFilterTemplate.js',[], function () {
+    return '\
+<div>\
+    <div>\
+        <select class="ag-filter-select" id="filterType">\
+            <option value="1">Equals</option>\
+            <option value="2">Less than</option>\
+            <option value="3">Greater than</option>\
+        </select>\
+    </div>\
+    <div>\
+        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\
+    </div>\
+</div>\
+';
+});
 
-define('text!../src/numberFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Equals</option>\r\n            <option value="2">Less than</option>\r\n            <option value="3">Greater than</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
-
-define('../src/numberFilter',[
-    './utils',
-    'text!./numberFilterTemplate.js'
+define('../src/filter/numberFilter',[
+    './../utils',
+    './numberFilterTemplate.js'
 ], function(utils, template) {
 
     var EQUALS = 1;
@@ -1603,12 +1644,28 @@ define('../src/numberFilter',[
     return NumberFilter;
 
 });
+define('../src/filter/textFilterTemplate.js',[], function () {
 
-define('text!../src/textFilter.html',[],function () { return '<div class="ag-filter">\r\n    <div>\r\n        <select class="ag-filter-select" id="filterType">\r\n            <option value="1">Contains</option>\r\n            <option value="2">Equals</option>\r\n            <option value="3">Starts with</option>\r\n            <option value="4">Ends with</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\r\n    </div>\r\n</div>';});
+    return '\
+<div>\
+    <div>\
+        <select class="ag-filter-select" id="filterType">\
+            <option value="1">Contains</option>\
+            <option value="2">Equals</option>\
+            <option value="3">Starts with</option>\
+            <option value="4">Ends with</option>\
+        </select>\
+    </div>\
+    <div>\
+        <input class="ag-filter-filter" id="filterText" type="text" placeholder="filter..."/>\
+    </div>\
+</div>\
+';
+});
 
-define('../src/textFilter',[
-    './utils',
-    'text!./textFilter.html'
+define('../src/filter/textFilter',[
+    '../utils',
+    './textFilterTemplate.js'
 ], function(utils, template) {
 
     var CONTAINS = 1;
@@ -1694,14 +1751,17 @@ define('../src/textFilter',[
     return TextFilter;
 
 });
-define('../src/filterManager',[
-    "./utils",
+define('../src/filter/filterManager',[
+    "./../utils",
     "./setFilter",
     "./numberFilter",
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, rowModel) {
+    function FilterManager(grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+        this.$compile = $compile;
+        this.$scope = $scope;
+        this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
         this.rowModel = rowModel;
         this.allFilters = {};
@@ -1712,14 +1772,14 @@ define('../src/filterManager',[
     };
 
     FilterManager.prototype.isFilterPresentForCol = function (key) {
-        var filter = this.allFilters[key];
-        if (!filter) {
+        var filterWrapper = this.allFilters[key];
+        if (!filterWrapper) {
             return false;
         }
-        if (!filter.isFilterActive) { // because users can do custom filters, give nice error message
+        if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method isFilterActive');
         }
-        var filterPresent = filter.isFilterActive();
+        var filterPresent = filterWrapper.filter.isFilterActive();
         return filterPresent;
     };
 
@@ -1728,18 +1788,23 @@ define('../src/filterManager',[
         for (var i = 0, l = fields.length; i < l; i++) {
 
             var field = fields[i];
-            var filter = this.allFilters[field];
+            var filterWrapper = this.allFilters[field];
 
             // if no filter, always pass
-            if (filter===undefined) {
+            if (filterWrapper===undefined) {
                 continue;
             }
 
             var value = item[field];
-            if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
+            if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
-            if (!filter.doesFilterPass(value)) {
+            var model;
+            // if model is exposed, grab it
+            if (filterWrapper.filter.getModel) {
+                model = filterWrapper.filter.getModel();
+            }
+            if (!filterWrapper.filter.doesFilterPass(value, model)) {
                 return false;
             }
 
@@ -1751,7 +1816,7 @@ define('../src/filterManager',[
     FilterManager.prototype.onNewRowsLoaded = function() {
         var that = this;
         Object.keys(this.allFilters).forEach(function (field) {
-            var filter = that.allFilters[field];
+            var filter = that.allFilters[field].filter;
             if (filter.onNewRowsLoaded) {
                 filter.onNewRowsLoaded();
             }
@@ -1782,32 +1847,62 @@ define('../src/filterManager',[
 
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
-        var filter = this.allFilters[colDef.field];
+        var filterWrapper = this.allFilters[colDef.field];
+        var newChildScope;
 
-        if (!filter) {
+        if (!filterWrapper) {
+            filterWrapper = {};
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
-            if (colDef.filter === 'text') {
-                filter = new StringFilter(colDef, this.rowModel, filterChangedCallback);
+            var filterParams = colDef.filterParams;
+            if (typeof colDef.filter === 'function') {
+                // if user provided a filter, just use it
+                // first up, create child scope if needed
+                if (this.gridOptionsWrapper.isAngularCompileFilters()) {
+                    filterWrapper.scope = this.$scope.$new();
+                }
+                // now create filter
+                filterWrapper.filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback, filterParams, filterWrapper.scope);
+            } else if (colDef.filter === 'text') {
+                filterWrapper.filter = new StringFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             } else if (colDef.filter === 'number') {
-                filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback);
+                filterWrapper.filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             } else {
-                filter = new SetFilter(colDef, this.rowModel, filterChangedCallback);
+                filterWrapper.filter = new SetFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             }
-            this.allFilters[colDef.field] = filter;
+            this.allFilters[colDef.field] = filterWrapper;
+
+            if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
+                console.error('Filter is missing method getGui');
+            }
+
+            var eFilterGui = document.createElement('div');
+            eFilterGui.className = 'ag-filter';
+            var guiFromFilter = filterWrapper.filter.getGui();
+            if (utils.isNode(guiFromFilter) || utils.isElement(guiFromFilter)) {
+                //a dom node or element was returned, so add child
+                eFilterGui.appendChild(guiFromFilter);
+            } else {
+                //otherwise assume it was html, so just insert
+                var eTextSpan = document.createElement('span');
+                eTextSpan.innerHTML = guiFromFilter;
+                eFilterGui.appendChild(eTextSpan);
+            }
+
+            if (filterWrapper.scope) {
+                filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
+            } else {
+                filterWrapper.gui = eFilterGui;
+            }
+
         }
 
         var ePopupParent = this.grid.getPopupParent();
-        if (!filter.getGui) { // because users can do custom filters, give nice error message
-            console.error('Filter is missing method getGui');
-        }
-        var eFilterGui = filter.getGui();
+        this.positionPopup(eventSource, filterWrapper.gui, ePopupParent);
 
-        this.positionPopup(eventSource, eFilterGui, ePopupParent);
+        utils.addAsModalPopup(ePopupParent, filterWrapper.gui);
 
-        utils.addAsModalPopup(ePopupParent, eFilterGui);
-
-        if (filter.afterGuiAttached) {
-            filter.afterGuiAttached();
+        if (filterWrapper.filter.afterGuiAttached) {
+            filterWrapper.filter.afterGuiAttached();
         }
     };
 
@@ -2418,7 +2513,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.removeVirtualRows(rowsToRemove);
 
         //if we are doing angular compiling, then do digest the scope here
-        if (this.gridOptions.angularCompile) {
+        if (this.gridOptions.angularCompileRows) {
             // we do it in a timeout, in case we are already in an apply
             this.$timeout(function () {
                 that.$scope.$apply();
@@ -2493,7 +2588,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.createChildScopeOrNull = function(data, rowIndex) {
-        if (this.gridOptionsWrapper.isAngularCompile()) {
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.$scope.$new();
             newChildScope.rowData = data;
             return newChildScope;
@@ -2601,7 +2696,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             eGridGroupRow.appendChild(eSvg);
         }
 
-        //if renderer provided, use it
+        // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
             var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data, padding);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -2614,7 +2709,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 eGridGroupRow.appendChild(eTextSpan);
             }
         } else {
-            //otherwise default is display the key along with the child count
+            // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
                 var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
                 eGridGroupRow.appendChild(eText);
@@ -2625,7 +2720,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             eGridGroupRow.style.width = utils.formatWidth(firstColDef.actualWidth);
         }
 
-        //indent with the group level
+        // indent with the group level
         if (!padding) {
             eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
         }
@@ -2785,11 +2880,14 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager) {
+    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
+        this.$scope = $scope;
+        this.$compile = $compile;
         this.findAllElements(eGrid);
+        this.childScopes = [];
     }
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
@@ -2816,11 +2914,15 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         utils.removeAllChildren(eHeaderContainer);
         this.headerFilterIcons = {};
 
+        this.childScopes.forEach(function(childScope) {
+            childScope.$destroy();
+        });
+
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var _this = this;
 
         this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef, index) {
-            //only include the first x cols
+            // only include the first x cols
             if (index<pinnedColumnCount) {
                 var headerCell = _this.createHeaderCell(colDef, index, true);
                 ePinnedHeader.appendChild(headerCell);
@@ -2837,7 +2939,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
         headerCell.className = "ag-header-cell";
 
-        //add tooltip if exists
+        // add tooltip if exists
         if (colDef.headerTooltip) {
             headerCell.title = colDef.headerTooltip;
         }
@@ -2849,7 +2951,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
         }
 
-        //filter button
+        // filter button
         if (this.gridOptionsWrapper.isEnableFilter()) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
@@ -2868,37 +2970,57 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             eMenuButton.style["transition"] = "opacity 0.5s";
         }
 
-        //label div
+        // label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
-        //add in sort icon
+        // add in sort icon
         if (this.gridOptionsWrapper.isEnableSorting()) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
             this.addSortHandling(headerCellLabel, colDef);
         }
 
-        //add in filter icon
+        // add in filter icon
         var filterIcon = svgFactory.createFilterSvg();
         this.headerFilterIcons[colDef.field] = filterIcon;
         headerCellLabel.appendChild(filterIcon);
 
-        //add in text label
-        var innerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
-        if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
-            //renderer provided, use it
-            var headerCellRenderer = innerCellRenderer(colDef);
-            if (utils.isNode(headerCellRenderer) || utils.isElement(headerCellRenderer)) {
-                //a dom node or element was returned, so add child
-                headerCellLabel.appendChild(headerCellRenderer);
+        // render the cell, use a renderer if one is provided
+        var headerCellRenderer;
+        if (colDef.headerCellRenderer) { // first look for a renderer in col def
+            headerCellRenderer = colDef.headerCellRenderer;
+        } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
+            headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
+        }
+        if (headerCellRenderer) {
+            // renderer provided, use it
+            var newChildScope;
+            if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
+                newChildScope = this.$scope.$new();
+            }
+            var cellRendererResult = headerCellRenderer(colDef, newChildScope);
+            var childToAppend;
+            if (utils.isNode(cellRendererResult) || utils.isElement(cellRendererResult)) {
+                // a dom node or element was returned, so add child
+                childToAppend = cellRendererResult;
             } else {
-                //otherwise assume it was html, so just insert
+                // otherwise assume it was html, so just insert
                 var eTextSpan = document.createElement("span");
-                eTextSpan.innerHTML = headerCellRenderer;
-                headerCellLabel.appendChild(eTextSpan);
+                eTextSpan.innerHTML = cellRendererResult;
+                childToAppend = eTextSpan;
+            }
+            // angular compile header if option is turned on
+            if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
+                newChildScope.colDef = colDef;
+                newChildScope.colIndex = colIndex;
+                this.childScopes.push(newChildScope);
+                var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
+                headerCellLabel.appendChild(childToAppendCompiled);
+            } else {
+                headerCellLabel.appendChild(childToAppend);
             }
         } else {
-            //no renderer, default text render
+            // no renderer, default text render
             var eInnerText = document.createElement("span");
             eInnerText.innerHTML = colDef.displayName;
             headerCellLabel.appendChild(eInnerText);
@@ -2914,7 +3036,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         var _this = this;
         headerCellLabel.addEventListener("click", function() {
 
-            //update sort on current col
+            // update sort on current col
             if (colDef.sort === constants.ASC) {
                 colDef.sort = constants.DESC;
             } else if (colDef.sort === constants.DESC) {
@@ -2923,13 +3045,13 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 colDef.sort = constants.ASC;
             }
 
-            //clear sort on all columns except this one, and update the icons
+            // clear sort on all columns except this one, and update the icons
             _this.gridOptionsWrapper.getColumnDefs().forEach(function(colToClear, colIndex) {
                 if (colToClear!==colDef) {
                     colToClear.sort = null;
                 }
 
-                //update visibility of icons
+                // update visibility of icons
                 var sortAscending = colToClear.sort===constants.ASC;
                 var sortDescending = colToClear.sort===constants.DESC;
                 var sortAny = sortAscending || sortDescending;
@@ -2972,7 +3094,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 headerCell.style.width = newWidthPx;
                 colDef.actualWidth = newWidth;
 
-                //show not be calling these here, should do something else
+                // show not be calling these here, should do something else
                 if (colPinned) {
                     _this.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
@@ -3029,7 +3151,9 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
-    GridOptionsWrapper.prototype.isAngularCompile = function() { return this.gridOptions.angularCompile===true; };
+    GridOptionsWrapper.prototype.isAngularCompileRows = function() { return this.gridOptions.angularCompileRows===true; };
+    GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return this.gridOptions.angularCompileFilters===true; };
+    GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return this.gridOptions.angularCompileHeaders===true; };
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
@@ -3239,20 +3363,20 @@ define('css!../src/css/theme-dark',[],function(){});
 
 define('css!../src/css/theme-fresh',[],function(){});
 
-//todo: full row group doesn't work when columns are pinned
 //todo: moving & hiding columns
 //todo: allow sort (and clear) via api
 //todo: allow filter (and clear) via api
 //todo: allow custom filtering
 //todo: allow null rows to start
 //todo: pinned columns not using scrollbar property (see website example)
+//todo: angular compile custom filters
 
 define('../src/angularGrid',[
     "angular",
     "text!./template.html",
     "text!./templateNoScrolls.html",
     "./utils",
-    "./filterManager",
+    "./filter/filterManager",
     "./rowModel",
     "./rowController",
     "./rowRenderer",
@@ -3310,10 +3434,10 @@ define('../src/angularGrid',[
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.filterManager = new FilterManager(this, this.rowModel);
+        this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();
