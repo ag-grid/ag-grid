@@ -1,11 +1,12 @@
 
-//todo: moving & hiding columns
-//todo: allow sort (and clear) via api
-//todo: allow filter (and clear) via api
-//todo: allow custom filtering
-//todo: allow null rows to start
-//todo: pinned columns not using scrollbar property (see website example)
-//todo: angular compile custom filters
+// ideas:
+// moving & hiding columns
+// allow sort (and clear) via api
+// allow filter (and clear) via api
+// allow 'scroll to row' via api
+// allow null rows to start
+// pinned columns not using scrollbar property (see website example)
+// provide example of file browsing, then ansewr: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
 
 define([
     "angular",
