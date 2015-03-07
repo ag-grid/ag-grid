@@ -2825,10 +2825,15 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput, blurListener) {
         this.editingCell = false;
-        utils.removeAllChildren(eGridCell);
         var newValue = eInput.value;
+
+        //If we don't remove the blur listener first, we get:
+        //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
+        eInput.removeEventListener('blur', blurListener);
+
+        utils.removeAllChildren(eGridCell);
 
         if (colDef.newValueHandler) {
             colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
@@ -2858,19 +2863,21 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.focus();
         eInput.select();
 
+        var blurListener = function() {
+            that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+        };
+
+        //stop entering if we loose focus
+        eInput.addEventListener("blur", blurListener);
 
         //stop editing if enter pressed
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+                that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
             }
         });
 
-        //stop entering if we loose focus
-        eInput.addEventListener("blur", function() {
-            that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
-        });
     };
 
     return RowRenderer;
@@ -3363,13 +3370,14 @@ define('css!../src/css/theme-dark',[],function(){});
 
 define('css!../src/css/theme-fresh',[],function(){});
 
-//todo: moving & hiding columns
-//todo: allow sort (and clear) via api
-//todo: allow filter (and clear) via api
-//todo: allow custom filtering
-//todo: allow null rows to start
-//todo: pinned columns not using scrollbar property (see website example)
-//todo: angular compile custom filters
+// ideas:
+// moving & hiding columns
+// allow sort (and clear) via api
+// allow filter (and clear) via api
+// allow 'scroll to row' via api
+// allow null rows to start
+// pinned columns not using scrollbar property (see website example)
+// provide example of file browsing, then ansewr: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
 
 define('../src/angularGrid',[
     "angular",
