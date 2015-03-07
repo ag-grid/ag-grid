@@ -168,7 +168,7 @@
     </ul>
 
 <pre class="codeBlock">
-&lt;div class='<span class="agClass">ag-root</span>'>
+&lt;div class='<span class="agClass">ag-root ag-scrolls</span>'>
   &lt;!-- header -->
 
   &lt;div class="<span class="agClass">ag-header</span>">
@@ -248,6 +248,50 @@
 &lt;/div>
 </pre>
 
+    <div class="bigTitle">Styling with No Scrolls</div>
 
+    Styling with the option 'no scrolls' is similar to styling with scrolls, however the dom layout is much simpler.
+    When no scrolls, there are no pinned columns and no viewports for scrolling.
+
+    <p/>
+
+<pre class="codeBlock">
+&lt;div class="<span class="agClass">ag-root ag-no-scrolls</span>">
+
+    &lt;!-- header -->
+    &lt;div class="<span class="agClass">ag-header-container</span>">
+        &lt;div class="<span class="agClass">ag-header-cell</span>" style="width: 120px;">
+            &lt;span>Athlete&lt;/span>
+        &lt;/div>
+        &lt;div class="<span class="agClass">ag-header-cell</span>" style="width: 90px;">
+            &lt;span>Age&lt;/span>
+        &lt;/div>
+
+        &lt;!-- the other headers... -->
+
+    &lt;/div>
+
+    &lt;!-- body -->
+    &lt;div class="<span class="agClass">ag-body-container</span>">
+        &lt;div class="<span class="agClass">ag-row ag-row-even</span>" <span class="agAttr">row="0"</span> <span class="agPos">style="height: 30px; width: 830px;"</span>>
+            &lt;div class="<span class="agClass">ag-cell cell-col-0</span>" <span class="agAttr">col="0"</span> <span class="agPos">style="width: 120px;"</span>>Michael Phelps&lt;/div>
+            &lt;div class="<span class="agClass">ag-cell cell-col-1</span>" <span class="agAttr">col="1"</span> <span class="agPos">style="width: 90px;"</span>>United States&lt;/div>
+
+            &lt;!-- the other row cells... -->
+
+        &lt;/div>
+        &lt;div class="<span class="agClass">ag-row ag-row-odd</span>" <span class="agAttr">row="1"</span> <span class="agPos">style="height: 30px; width: 830px;"</span>>
+            &lt;div class="<span class="agClass">ag-cell cell-col-0</span>" <span class="agAttr">col="0"</span> <span class="agPos">style="width: 120px;"</span>>Michael Phelps&lt;/div>
+            &lt;div class="<span class="agClass">ag-cell cell-col-1</span>" <span class="agAttr">col="1"</span> <span class="agPos">style="width: 90px;"</span>>United States&lt;/div>
+
+            &lt;!-- the other row cells... -->
+
+        &lt;/div>
+
+        &lt;!-- the other rows... -->
+
+    &lt;/div>
+&lt;/div>
+</pre>
 
 </div>

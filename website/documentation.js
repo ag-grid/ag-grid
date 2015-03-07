@@ -19,8 +19,8 @@
             {name: "Selection", url: "./selection/index.html"},
             {name: "Header Rendering", url: "./headerRendering/index.html"},
             {name: "Angular Compiling", url: "./angularCompiling/index.html"},
-            {name: "Styling", url: "./styling/index.html"},
-            {name: "No Scrolling", url: "./todo.html"},
+            {name: "Layout & Styling", url: "./styling/index.html"},
+            {name: "No Scrolling", url: "./noScrolls/index.html"},
             {name: "API", url: "./todo.html"}
         ];
 
