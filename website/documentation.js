@@ -14,6 +14,7 @@
             {name: "Resizing", url: "./resizing/index.html"},
             {name: "Pinning", url: "./pinning/index.html"},
             {name: "Grouping", url: "./grouping/index.html"},
+            {name: "Editing", url: "./editing/index.html"},
             {name: "Column Definitions", url: "./columnDefinitions/index.html"},
             {name: "Selection", url: "./selection/index.html"},
             {name: "Header Rendering", url: "./headerRendering/index.html"},

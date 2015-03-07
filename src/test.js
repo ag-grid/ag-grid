@@ -94,19 +94,20 @@ define([
                 filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
             },
             {displayName: "Language", field: "language", width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
-            {displayName: "Game of Choice", field: "game", width: 180, editable: editableFunc, filter: 'set', newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
+            {displayName: "Game of Choice", field: "game", width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", filter: 'set', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 filterParams: {cellRenderer: booleanFilterCellRenderer}},
             {displayName: "Bank Balance", field: "bankBalance", width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer}},
             {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
                 filterParams: {cellRenderer: ratingFilterRenderer}},
-            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
+            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
         //put in the month cols
         months.forEach(function(month) {
             defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
-                cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}})
+                newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
+                cellStyle: {"text-align": "right"}})
         });
 
         createCols();
@@ -224,10 +225,6 @@ define([
             return style;
         }
 
-        function gameNewValueHandler(data, newValue) {
-            data.game = newValue;
-        }
-
     });
 
     var COUNTRY_CODES = {
@@ -250,6 +247,11 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
+
+    function numberNewValueHandler(data, newValue, colDef) {
+        var valueAsNumber = parseInt(newValue);
+        data[colDef.field] = valueAsNumber;
+    }
 
     function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
         this.$scope = $scope;
@@ -424,6 +426,8 @@ define([
     function currencyRenderer(value)  {
         if (value===null || value===undefined) {
             return null;
+        } else if (isNaN(value)) {
+            return 'NaN';
         } else {
             var decimalSeparator = Number("1.2").toLocaleString().substr(1,1);
 

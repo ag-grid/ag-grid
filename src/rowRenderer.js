@@ -465,10 +465,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput, blurListener) {
         this.editingCell = false;
-        utils.removeAllChildren(eGridCell);
         var newValue = eInput.value;
+
+        //If we don't remove the blur listener first, we get:
+        //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
+        eInput.removeEventListener('blur', blurListener);
+
+        utils.removeAllChildren(eGridCell);
 
         if (colDef.newValueHandler) {
             colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
@@ -498,19 +503,21 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.focus();
         eInput.select();
 
+        var blurListener = function() {
+            that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+        };
+
+        //stop entering if we loose focus
+        eInput.addEventListener("blur", blurListener);
 
         //stop editing if enter pressed
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
+                that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
             }
         });
 
-        //stop entering if we loose focus
-        eInput.addEventListener("blur", function() {
-            that.stopEditing(eGridCell, colDef, data, $childScope, eInput);
-        });
     };
 
     return RowRenderer;

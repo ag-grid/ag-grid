@@ -67,8 +67,8 @@
                 Width:
                 <select ng-model="width">
                     <option value="800px">800px</option>
-                    <option value="1000px">1500px</option>
-                    <option value="2000px">4000px</option>
+                    <option value="1000px">1000px</option>
+                    <option value="2000px">2000px</option>
                     <option value="100%">100% (fit to screen)</option>
                 </select>
 
@@ -87,6 +87,10 @@
                     <option value="ag-dark">Dark</option>
                 </select>
 
+            </div>
+
+            <div style="padding: 4px;">
+
                 Selection:
                 <select ng-model="angularGrid.rowSelection" ng-change="onSelectionChanged()" style="width: 90px;">
                     <option value="">-none-</option>
@@ -94,9 +98,11 @@
                     <option value="multiple">Multiple</option>
                 </select>
 
-            </div>
-
-            <div style="padding: 4px;">
+                Editable:
+                <select ng-model="editable" style="width: 60px;">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
 
                 Group By:
                 <select ng-model="groupBy" ng-change="onGroupByChanged()" style="width: 90px;">
@@ -115,8 +121,8 @@
                         <option value="row">Row</option>
                     </select>
 
-                    <button class="btn btn-xs" ng-click="angularGrid.api.expandAll()">Expand All</button>
-                    <button class="btn btn-xs" ng-click="angularGrid.api.collapseAll()">Collapse All</button>
+                    <button ng-click="angularGrid.api.expandAll()">Expand All</button>
+                    <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
 
                 </span>
 
