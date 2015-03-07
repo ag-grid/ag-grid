@@ -53,11 +53,12 @@ define([
         $scope.colCount = 20;
         $scope.rowCount = 100;
 
-        $scope.width = "100%";
-        $scope.height = "100%";
-        $scope.style = "ag-fresh";
-        $scope.groupBy = "";
-        $scope.groupType = "firstCol";
+        $scope.width = '100%';
+        $scope.height = '100%';
+        $scope.style = 'ag-fresh';
+        $scope.groupBy = '';
+        $scope.groupType = 'firstCol';
+        $scope.editable = 'false';
 
         var angularGrid = {
             columnDefs: [],
@@ -88,23 +89,23 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
-            {displayName: "Country", field: "country", width: 150, cellRenderer: countryCellRenderer, filter: 'set',
+            {displayName: "Name", field: "name", width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
+            {displayName: "Country", field: "country", width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
                 filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
             },
-            {displayName: "Language", field: "language", width: 150, filter: 'set', cellRenderer: languageCellRenderer},
-            {displayName: "Game of Choice", field: "game", width: 180, filter: 'set', editable: true, newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
-            {displayName: "Bought", field: "bought", filter: 'set', width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+            {displayName: "Language", field: "language", width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
+            {displayName: "Game of Choice", field: "game", width: 180, editable: editableFunc, filter: 'set', newValueHandler: gameNewValueHandler, cellClass: function() { return 'alphabet'; } },
+            {displayName: "Bought", field: "bought", filter: 'set', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 filterParams: {cellRenderer: booleanFilterCellRenderer}},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+            {displayName: "Bank Balance", field: "bankBalance", width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer}},
-            {displayName: "Rating", field: "rating", width: 100, cellRenderer: ratingRenderer,
+            {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
                 filterParams: {cellRenderer: ratingFilterRenderer}},
-            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
+            {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
         ];
         //put in the month cols
         months.forEach(function(month) {
-            defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100, filter: 'number',
+            defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
                 cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer, cellStyle: {"text-align": "right"}})
         });
 
@@ -146,6 +147,10 @@ define([
             angularGrid.api.onNewRows();
         };
 
+        function editableFunc() {
+            return $scope.editable === 'true';
+        }
+
         function createCols() {
             var colCount = parseInt($scope.colCount);
 
@@ -154,7 +159,7 @@ define([
 
             for (var col = defaultCols.length; col<colCount; col++) {
                 var colName = colNames[col % colNames.length];
-                var colDef = {displayName: colName, field: "col"+col, width: 200};
+                var colDef = {displayName: colName, field: "col"+col, width: 200, editable: editableFunc};
                 columns.push(colDef);
             }
             angularGrid.columnDefs = columns;
