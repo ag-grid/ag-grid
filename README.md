@@ -2,6 +2,8 @@
 Angular Grid
 ==============
 
+[![Join the chat at https://gitter.im/ceolter/angular-grid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceolter/angular-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Angular Grid is another Grid for HTML 5 Angular development. I created Angular Grid out of frustration because I couldn't find a grid that was very fast (sorry ui-Grid), allowed pinned columns (sorry Slick Grid) had excel like advanced filtering and was native to AngularJS (sorry pretty much every grid).
 
 So I thought, how hard can it be? I guess I am finding out ...
