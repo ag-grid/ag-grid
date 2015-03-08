@@ -17,7 +17,8 @@ module.controller("exampleCtrl", function($scope) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData
+        rowData: rowData,
+        dontUseScrolls: true // because so little data, no need to use scroll bars
     };
 
 });

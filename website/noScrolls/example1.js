@@ -6,7 +6,7 @@ module.controller("exampleCtrl", function($scope) {
     var columnDefs = [
         {displayName: "Make", field: "make"},
         {displayName: "Model", field: "model"},
-        {displayName: "Price", field: "price"}
+        {displayName: "Price", field: "price", filter: "number"}
     ];
 
     var rowData = [
