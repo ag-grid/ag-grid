@@ -14,12 +14,13 @@ Features
 - Native to Angular JS
 - Excel Like Advanced Filtering
 - Gmail like 'Quick Filter'
+- Customer Filtering
 - Pinnable Columns
 - Row Virtualisation
 - Column Resizing
 - Sorting
-- Grouping
-- Editing
+- Grouping (customizable)
+- Editing (customizable)
 - Custom Cell Renderers
 - Auto Resizable
 - Works with 100% width & height
@@ -38,3 +39,4 @@ The grid was designed to handle very large data sets and give a professional 'ex
 Personally I find the grid best suits my needs than any other. It is powerful and flexible enough to deal with any job I give it (regardless of needing 100 columns and 20,000 rows, or maybe I need to have the cells very custom and interactive) . . . . and still have the option to make it native Angular if I wish. I was not able to find a grid that fit nicely into the Angular modal and gave me what I needed.
 
 To learn more about Angular Grid, including it's documentation, please visit the website www.angulargrid.com
+

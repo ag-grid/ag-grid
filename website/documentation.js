@@ -21,7 +21,7 @@
             {name: "Angular Compiling", url: "./angularCompiling/index.html"},
             {name: "Layout & Styling", url: "./styling/index.html"},
             {name: "No Scrolling", url: "./noScrolls/index.html"},
-            {name: "API", url: "./todo.html"}
+            {name: "API", url: "./api/index.html"}
         ];
 
         $scope.currentPage = $scope.pages[0];

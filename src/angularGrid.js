@@ -4,9 +4,14 @@
 // allow sort (and clear) via api
 // allow filter (and clear) via api
 // allow 'scroll to row' via api
-// allow null rows to start
 // pinned columns not using scrollbar property (see website example)
 // provide example of file browsing, then ansewr: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
+// fill width of columns option
+// reorder columns (popup)
+// reorder columns (drag)
+// allow dragging outside grid (currently last col can't be resized)
+// selecting should be like excel, and have keyboard navigation
+//
 
 define([
     "angular",

@@ -95,7 +95,6 @@ define([
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
         var filterWrapper = this.allFilters[colDef.field];
-        var newChildScope;
 
         if (!filterWrapper) {
             filterWrapper = {};
