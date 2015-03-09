@@ -11,7 +11,7 @@
 // reorder columns (drag)
 // allow dragging outside grid (currently last col can't be resized)
 // selecting should be like excel, and have keyboard navigation
-//
+// filtering blocks the aggregations - the summary numbers go missing!!
 
 define([
     "angular",
