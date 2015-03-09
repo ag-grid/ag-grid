@@ -167,3 +167,8 @@ define([], function() {
 //and the gold pot
 //reddit.com/programming if you get in the top spot there... well, that's massive
 //this is the most difficult and you are likely to get some abuse, but is worth it
+
+//from my experience, best hing is aggregator sites
+//facebook, g+ and are also very good
+//if they link you, it will improve your google positioning
+//also having analytics makes google realise immeditaley that you are being visited
