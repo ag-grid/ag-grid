@@ -152,3 +152,18 @@ define([], function() {
     return new Utils();
 
 });
+
+
+//13:44CAMPO, Alberto, M&IBthe day you get to the fronty page
+//from then on, on your post, a recurennt 5 visits
+//you need to accumulate posts
+//just make a post entry
+//and put it in dzone
+//disclose yourself as the author of the plattform and encourage disccussion
+//this is the worst site, but the easiest to score
+//second best
+//news.ycombinator.com
+//if you get published here... 1000-1500 visits on the day, and if you are lucky quite a lot recurrent
+//and the gold pot
+//reddit.com/programming if you get in the top spot there... well, that's massive
+//this is the most difficult and you are likely to get some abuse, but is worth it
