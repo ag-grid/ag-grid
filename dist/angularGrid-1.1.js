@@ -1153,6 +1153,26 @@ define('../src/utils',[], function() {
     return new Utils();
 
 });
+
+
+//13:44CAMPO, Alberto, M&IBthe day you get to the fronty page
+//from then on, on your post, a recurennt 5 visits
+//you need to accumulate posts
+//just make a post entry
+//and put it in dzone
+//disclose yourself as the author of the plattform and encourage disccussion
+//this is the worst site, but the easiest to score
+//second best
+//news.ycombinator.com
+//if you get published here... 1000-1500 visits on the day, and if you are lucky quite a lot recurrent
+//and the gold pot
+//reddit.com/programming if you get in the top spot there... well, that's massive
+//this is the most difficult and you are likely to get some abuse, but is worth it
+
+//from my experience, best hing is aggregator sites
+//facebook, g+ and are also very good
+//if they link you, it will improve your google positioning
+//also having analytics makes google realise immeditaley that you are being visited;
 define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     
@@ -1848,7 +1868,6 @@ define('../src/filter/filterManager',[
     FilterManager.prototype.showFilter = function(colDef, eventSource) {
 
         var filterWrapper = this.allFilters[colDef.field];
-        var newChildScope;
 
         if (!filterWrapper) {
             filterWrapper = {};
@@ -3005,7 +3024,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 newChildScope = this.$scope.$new();
             }
-            var cellRendererResult = headerCellRenderer(colDef, newChildScope);
+            var cellRendererResult = headerCellRenderer(colDef, newChildScope, this.gridOptionsWrapper.getGridOptions());
             var childToAppend;
             if (utils.isNode(cellRendererResult) || utils.isElement(cellRendererResult)) {
                 // a dom node or element was returned, so add child
@@ -3375,9 +3394,14 @@ define('css!../src/css/theme-fresh',[],function(){});
 // allow sort (and clear) via api
 // allow filter (and clear) via api
 // allow 'scroll to row' via api
-// allow null rows to start
 // pinned columns not using scrollbar property (see website example)
 // provide example of file browsing, then ansewr: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
+// fill width of columns option
+// reorder columns (popup)
+// reorder columns (drag)
+// allow dragging outside grid (currently last col can't be resized)
+// selecting should be like excel, and have keyboard navigation
+// filtering blocks the aggregations - the summary numbers go missing!!
 
 define('../src/angularGrid',[
     "angular",
