@@ -40,7 +40,7 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="/index.html">Angular Grid</a>
                 <a class="navbar-brand" href="/example.html">Example</a>
-                <a class="navbar-brand" href="/angular_grid_getting_started/index.php">Documentation</a>
+                <a class="navbar-brand" href="../angular-grid-getting-started/index.php">Documentation</a>
                 <a class="navbar-brand" href="/forum">Forum</a>
             </div>
         </div>
