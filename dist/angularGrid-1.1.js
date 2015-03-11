@@ -1476,7 +1476,7 @@ define('../src/filter/setFilter',[
         } else {
             //otherwise display as a string
             var displayNameOfValue = value === null ? "(Blanks)" : value;
-            valueElement.innerText = displayNameOfValue;
+            valueElement.innerHTML = displayNameOfValue;
         }
         var eCheckbox = eFilterValue.querySelector("input");
         eCheckbox.checked = this.model.isValueSelected(value);
@@ -2766,7 +2766,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined && value!==null && value!=='') {
-                eGridCell.innerText = value;
+                eGridCell.innerHTML = value;
             }
         }
     };
