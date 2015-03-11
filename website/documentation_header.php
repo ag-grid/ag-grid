@@ -53,23 +53,23 @@
             <div class="col-sm-2">
                 <h4>Documentation</h4>
 
-                <a href="/angular_grid_getting_started/index.php">Getting Started</a><br/>
-                <a href="/angular_grid_loading_rows/index.php">Loading Rows</a><br/>
-                <a href="/angular_grid_width_and_height/index.php">Width & Height</a><br/>
-                <a href="/angular_grid_grid_options/index.php">Grid Options</a><br/>
-                <a href="/angular_grid_sorting/index.php">Sorting</a><br/>
-                <a href="/angular_grid_filtering/index.php">Filtering</a><br/>
-                <a href="/angular_grid_resizing/index.php">Resizing</a><br/>
-                <a href="/angular_grid_pinning/index.php">Pinning</a><br/>
-                <a href="/angular_grid_grouping/index.php">Grouping</a><br/>
-                <a href="/angular_grid_editing/index.php">Editing</a><br/>
-                <a href="/angular_grid_column_definitions/index.php">Column Definitions</a><br/>
-                <a href="/angular_grid_selection/index.php">Selection</a><br/>
-                <a href="/angular_grid_header_rendering/index.php">Header Rendering</a><br/>
-                <a href="/angular_grid_angular_compiling/index.php">Angular Compiling</a><br/>
-                <a href="/angular_grid_styling/index.php">Layout & Styling</a><br/>
-                <a href="/angular_grid_no_scrolls/index.php">No Scrolling</a><br/>
-                <a href="/angular_grid_api/index.php">API</a><br/>
+                <a href="/angular-grid-getting-started/index.php">Getting Started</a><br/>
+                <a href="/angular-grid-loading-rows/index.php">Loading Rows</a><br/>
+                <a href="/angular-grid-width-and-height/index.php">Width & Height</a><br/>
+                <a href="/angular-grid-grid-options/index.php">Grid Options</a><br/>
+                <a href="/angular-grid-sorting/index.php">Sorting</a><br/>
+                <a href="/angular-grid-filtering/index.php">Filtering</a><br/>
+                <a href="/angular-grid-resizing/index.php">Resizing</a><br/>
+                <a href="/angular-grid-pinning/index.php">Pinning</a><br/>
+                <a href="/angular-grid-grouping/index.php">Grouping</a><br/>
+                <a href="/angular-grid-editing/index.php">Editing</a><br/>
+                <a href="/angular-grid-column-definitions/index.php">Column Definitions</a><br/>
+                <a href="/angular-grid-selection/index.php">Selection</a><br/>
+                <a href="/angular-grid-header-rendering/index.php">Header Rendering</a><br/>
+                <a href="/angular-grid-angular-compiling/index.php">Angular Compiling</a><br/>
+                <a href="/angular-grid-styling/index.php">Layout & Styling</a><br/>
+                <a href="/angular-grid-no-scrolls/index.php">No Scrolling</a><br/>
+                <a href="/angular-grid-api/index.php">API</a><br/>
 
             </div>
 
