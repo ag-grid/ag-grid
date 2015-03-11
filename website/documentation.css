@@ -11,3 +11,33 @@
     font-size: 15px;
     font-weight: bold;
 }
+
+.inline {
+    border: 1px solid darkgrey;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+}
+.block {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+}
+.agClass {
+    font-weight: bold;
+    color: black;
+}
+.agAttr {
+    font-weight: bold;
+    color: blue;
+}
+.agPos {
+    font-weight: bold;
+    color: darkgreen;
+}
+.codeBlock {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+    color: grey;
+}
