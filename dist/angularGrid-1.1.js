@@ -3522,6 +3522,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
         var row = this.rowModel.getRowsAfterMap()[rowIndex];
+        var selectedRows = this.gridOptions.selectedRows;
 
         if (this.gridOptions.rowClicked) {
             this.gridOptions.rowClicked(row, event);
@@ -3533,36 +3534,50 @@ define('../src/angularGrid',[
         }
 
         // if not in array, then it's a new selection, thus selected = true
-        var selected = this.gridOptions.selectedRows.indexOf(row) < 0;
+        var newSelection = selectedRows.indexOf(row) < 0;
+        var selectedRowCountBefore = selectedRows.length;
 
-        if (selected) {
-            // if single selection, clear any previous
-            if (selected && this.gridOptions.rowSelection === "single") {
-                this.gridOptions.selectedRows.length = 0;
-                var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
-                for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
-                    utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
-                }
-            }
-            this.gridOptions.selectedRows.push(row);
-            if (this.gridOptions.rowSelected && typeof this.gridOptions.rowSelected === "function") {
-                this.gridOptions.rowSelected(row);
+        // we are doing multi select only if: a) doing multi select and b) user has ctrl key pressed
+        var multiSelect = (this.gridOptions.rowSelection === "multiple" && event.ctrlKey);
+
+        if (multiSelect) {
+            // if multi select, then add to the list, but only if it's not already there
+            if (newSelection) {
+                selectedRows.push(row);
             }
         } else {
-            utils.removeFromArray(this.gridOptions.selectedRows, row);
+            // if not multi select, clear all other selections, and add this selection
+            selectedRows.length = 0;
+            selectedRows.push(row);
         }
 
-        // update css class on selected row
-        var eRows = this.eRowsParent.querySelectorAll("[row='" + rowIndex + "']");
-        for (var i = 0; i < eRows.length; i++) {
-            if (selected) {
-                utils.addCssClass(eRows[i], "ag-row-selected")
-            } else {
-                utils.removeCssClass(eRows[i], "ag-row-selected")
+        // we could do delta updates to the css classes (ie only update whats changed), however
+        // that could would be prone to bugs, and the benefit (user experience) is unnoticeable
+
+        // remove all selection classes from rows
+        var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
+        for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
+            utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
+        }
+
+        // update css class on selected rows
+        for (var j = 0; j < selectedRows.length; j++) {
+            var indexToSelect = this.rowModel.getRowsAfterMap().indexOf(this.gridOptions.selectedRows[j]);
+            var eRows = this.eRowsParent.querySelectorAll("[row='" + indexToSelect + "']");
+            for (var k = 0; k < eRows.length; k++) {
+                utils.addCssClass(eRows[k], "ag-row-selected")
             }
         }
 
-        if (this.gridOptions.selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
+        // if row newly selected, inform listener
+        if (newSelection && typeof this.gridOptions.rowSelected === "function") {
+            this.gridOptions.rowSelected(row);
+        }
+
+        // if selection changed, inform listener
+        var rowCountChanged = selectedRowCountBefore !== this.gridOptions.selectedRows.length;
+        var selectionChanged = newSelection || rowCountChanged;
+        if (selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
         }
 
