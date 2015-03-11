@@ -120,7 +120,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 newChildScope = this.$scope.$new();
             }
-            var cellRendererResult = headerCellRenderer(colDef, newChildScope, this.gridOptionsWrapper.getGridOptions());
+            var cellRendererParams = {colDef: colDef, $scope: newChildScope, gridOptions: this.gridOptionsWrapper.getGridOptions()};
+            var cellRendererResult = headerCellRenderer(cellRendererParams);
             var childToAppend;
             if (utils.isNode(cellRendererResult) || utils.isElement(cellRendererResult)) {
                 // a dom node or element was returned, so add child

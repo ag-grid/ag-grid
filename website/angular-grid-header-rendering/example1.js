@@ -22,10 +22,10 @@ module.controller("exampleCtrl", function($scope, $http) {
         headerCellRenderer: headerCellRendererFunc
     };
 
-    function headerCellRendererFunc(colDef) {
+    function headerCellRendererFunc(params) {
         var eHeader = document.createElement('span');
 
-        var eTitle = document.createTextNode('> ' + colDef.displayName + ' <');
+        var eTitle = document.createTextNode('> ' + params.colDef.displayName + ' <');
         eHeader.appendChild(eTitle);
 
         eHeader.addEventListener('click', function() {

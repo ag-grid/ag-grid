@@ -338,7 +338,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
-            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(data, padding);
+            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer({data: data, padding: padding});
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridGroupRow.appendChild(resultFromRenderer);
@@ -376,7 +376,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
         if (colDef.cellRenderer) {
-            var resultFromRenderer = colDef.cellRenderer(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions(), rowIndex);
+            var rendererParams = {
+                value: value, data: data, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
+                gridOptions: this.gridOptionsWrapper.getGridOptions()
+            };
+            var resultFromRenderer = colDef.cellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
@@ -403,7 +407,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                cssToUse = colDef.cellStyle(value, data, colDef, $childScope, this.gridOptionsWrapper.getGridOptions());
+                var cellStyleParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                    gridOptions: this.gridOptionsWrapper.getGridOptions()};
+                cssToUse = colDef.cellStyle(cellStyleParams);
             } else {
                 cssToUse = colDef.cellStyle;
             }
@@ -418,7 +424,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                classToUse = colDef.cellClass(value, data, colDef, this.gridOptionsWrapper.getGridOptions());
+                var cellClassParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                    gridOptions: this.gridOptionsWrapper.getGridOptions()};
+                classToUse = colDef.cellClass(cellClassParams);
             } else {
                 classToUse = colDef.cellClass;
             }

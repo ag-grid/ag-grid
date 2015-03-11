@@ -30,13 +30,13 @@ module.controller("exampleCtrl", function($scope, $http) {
         return '<span ng-bind="rowData.athlete"></span>';
     }
 
-    function ageCellRendererFunc(value, data, colDef, $childScope) {
-        $childScope.ageClicked = ageClicked;
+    function ageCellRendererFunc(params) {
+        params.$scope.ageClicked = ageClicked;
         return '<button ng-click="ageClicked(rowData.age)" ng-bind="rowData.age"></button>';
     }
 
-    function countryCellRendererFunc(value) {
-        return '<country name="'+value+'"></country>';
+    function countryCellRendererFunc(params) {
+        return '<country name="'+params.value+'"></country>';
     }
 
     $http.get("../olympicWinners.json")

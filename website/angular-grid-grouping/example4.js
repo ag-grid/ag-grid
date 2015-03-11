@@ -25,11 +25,11 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowStyle: rowStyleFunc
     };
 
-    function ageRenderer(value, data) {
-        if (data._angularGrid_group) {
-            return '(' + data.aggData.minAge + '..' + data.aggData.maxAge + ')';
+    function ageRenderer(params) {
+        if (params.data._angularGrid_group) {
+            return '(' + params.data.aggData.minAge + '..' + params.data.aggData.maxAge + ')';
         } else {
-            return value;
+            return params.value;
         }
     }
 

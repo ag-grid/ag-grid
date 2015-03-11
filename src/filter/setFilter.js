@@ -145,7 +145,7 @@ define([
         var valueElement = eFilterValue.querySelector(".ag-filter-value");
         if (this.cellRenderer) {
             //renderer provided, so use it
-            var resultFromRenderer = this.cellRenderer(value);
+            var resultFromRenderer = this.cellRenderer({value: value});
 
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child

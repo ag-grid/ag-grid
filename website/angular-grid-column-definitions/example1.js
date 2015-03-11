@@ -5,8 +5,8 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
         {displayName: "Athlete", field: "athlete", width: 150, cellStyle: {color: 'darkred'}},
-        {displayName: "Age", field: "age", width: 90, cellStyle: function(value, data, colDef, $childScope) {
-            if (value>=30) {
+        {displayName: "Age", field: "age", width: 90, cellStyle: function(params) {
+            if (params.value>=30) {
                 return {'background-color': 'lightblue'};
             } else {
                 return null;
@@ -16,9 +16,9 @@ module.controller("exampleCtrl", function($scope, $http) {
         {displayName: "Year", field: "year", width: 90},
         {displayName: "Date", field: "date", width: 110},
         {displayName: "Sport", field: "sport", width: 110},
-        {displayName: "Gold", field: "gold", width: 100, cellRenderer: function(value, data, colDef, $childScope) {
+        {displayName: "Gold", field: "gold", width: 100, cellRenderer: function(params) {
             var resultElement = document.createElement("span");
-            for (var i = 0; i<value; i++) {
+            for (var i = 0; i<params.value; i++) {
                 var starImageElement = document.createElement("img");
                 starImageElement.src = "http://www.angulargrid.com/images/goldStar.png";
                 resultElement.appendChild(starImageElement);

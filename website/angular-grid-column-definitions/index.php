@@ -57,7 +57,7 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    <h4>cellClass</h4>
+    <h2>cellClass</h2>
 
     Provides a class for the cells in this column. Can be a string (a class), array of strings
     (array of classes), or a function (that returns a string or an array of strings).
@@ -78,17 +78,17 @@ var colDef2 = {
 var colDef3 = {
     name: 'Function Returns String',
     field' 'field3',
-    cellClass: function(value, data, colDef) { return (value==='something'?'my-class-1':'my-class-2'); }
+    cellClass: function(params) { return (params.value==='something'?'my-class-1':'my-class-2'); }
 }
 // return array of classes based on function
 var colDef4 = {
     name: 'Function Returns Array',
     field' 'field4',
-    cellClass: function(value, data, colDef) { return ['my-class-1','my-class-2']; }
+    cellClass: function(params) { return ['my-class-1','my-class-2']; }
 }
     </code></pre>
 
-    <h4>cellStyle</h4>
+    <h2>cellStyle</h2>
     Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
     of CSS styles, or a function returning an object of CSS styles.
 
@@ -102,8 +102,8 @@ var colDef = {
 var colDef = {
     name: 'Dynamic Styles',
     field' 'field2',
-    cellStyle: function(value, data, colDef, $childScope) {
-        if (value=='Police') {
+    cellStyle: function(params) {
+        if (params.value=='Police') {
             //mark police cells as red
             return {color: red, background-color: green};
         } else {
@@ -113,32 +113,40 @@ var colDef = {
 }
     </code></pre>
 
-    Both cellClass and cellStyle functions have the following attributes:<br/>
+    <h4>Cell Style & Cell Class Params</h4>
+
+    Both cellClass and cellStyle functions take a params object with the following values:<br/>
 
     value: The value to be rendered.<br/>
     data: The row (from the rowData array, where value was taken) been rendered.<br/>
     colDef: The colDef been rendered.<br/>
-    $childScope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
+    $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
 
-    <h4>cellRenderer</h4>
+    <h2>cellRenderer</h2>
     A function that when called, returns HTML (either a Dom or Node element, or an HTML string)
 
 <pre><code>var colDef = {
     name: 'Col Name',
     field' 'Col Field',
-    cellRenderer: function(value, data, colDef, $childScope) {
-                    if (value=='Police') {
+    cellRenderer: function(params) {
+                    if (params.value=='Police') {
                         return '<b>POLICE</b>';
                     } else {
-                        return value.toUpperCase();
+                        return params.value.toUpperCase();
                     }
                 }
 }</code></pre>
 
+    <h4>Cell Renderer Params</h4>
+
+    Cell renderer functions take a params object with the following values:<br/>
+
     value: The value to be rendered.<br/>
     data: The row (from the rowData array, where value was taken) been rendered.<br/>
     colDef: The colDef been rendered.<br/>
-    $childScope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
+    $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
+    rowIndex: The index of the row renderer, after sorting and filtering.<br/>
+    gridOptions: A reference to the provided grid options.<br/>
 
     <h4>Example: Formatting Cells</h4>
 

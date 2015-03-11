@@ -1,5 +1,6 @@
 var gridsModule = angular.module("testAngularGrid", ["angularGrid"]);
 
+
 gridsModule.controller('mainController', function($scope) {
 
     var colNames = ["Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
@@ -60,7 +61,7 @@ gridsModule.controller('mainController', function($scope) {
         rowData: [],
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-//            groupInnerCellRenderer: groupInnerCellRenderer,
+        groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: true, //one of [true, false]
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
@@ -349,12 +350,12 @@ function headerCellRenderer_dom(colDef) {
     return eContainer;
 }
 
-function headerCellRenderer_text(colDef) {
-    return colDef.displayName;
+function headerCellRenderer_text(params) {
+    return params.colDef.displayName;
 }
 
-function headerCellRenderer_angular(colDef, $scope) {
-    $scope.showIcon = false;
+function headerCellRenderer_angular(params) {
+    params.$scope.showIcon = false;
     return '<span ng-mouseover="showIcon = true" ng-mouseleave="showIcon = false">' +
         '<img ' +
         '   src="http://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg"' +
@@ -364,8 +365,8 @@ function headerCellRenderer_angular(colDef, $scope) {
         '</span>';
 }
 
-function groupInnerCellRenderer(data) {
-    return "<b>" + data.key + "</b>";
+function groupInnerCellRenderer(params) {
+    return "<b>" + params.data.key + "</b>";
 }
 
 function groupAggFunction(rows) {
@@ -387,20 +388,20 @@ function groupAggFunction(rows) {
     return sums;
 }
 
-function currencyCssFunc(value) {
-    if (value!==null && value!==undefined && value<0) {
+function currencyCssFunc(params) {
+    if (params.value!==null && params.value!==undefined && params.value<0) {
         return {"color": "red", "text-align": "right", "font-weight": "bold"};
     } else {
         return {"text-align": "right"};
     }
 }
 
-function ratingFilterRenderer(value)  {
-    return ratingRendererGeneral(value, true)
+function ratingFilterRenderer(params)  {
+    return ratingRendererGeneral(params.value, true)
 }
 
-function ratingRenderer(value) {
-    return ratingRendererGeneral(value, false)
+function ratingRenderer(params) {
+    return ratingRendererGeneral(params.value, false)
 }
 
 function ratingRendererGeneral(value, forFilter)  {
@@ -418,15 +419,15 @@ function ratingRendererGeneral(value, forFilter)  {
     return eContainer;
 }
 
-function currencyRenderer(value)  {
-    if (value===null || value===undefined) {
+function currencyRenderer(params)  {
+    if (params.value===null || params.value===undefined) {
         return null;
-    } else if (isNaN(value)) {
+    } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
         var decimalSeparator = Number("1.2").toLocaleString().substr(1,1);
 
-        var amountWithCommas = value.toLocaleString();
+        var amountWithCommas = params.value.toLocaleString();
         var arParts = String(amountWithCommas).split(decimalSeparator);
         var intPart = arParts[0];
         var decPart = (arParts.length > 1 ? arParts[1] : '');
@@ -444,8 +445,8 @@ function booleanComparator(value1, value2) {
     return value1Ordinal - value2Ordinal;
 }
 
-function booleanCellRenderer(value) {
-    var valueCleaned = booleanCleaner(value);
+function booleanCellRenderer(params) {
+    var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned===true) {
         //this is the unicode for tick character
         return "<span title='true'>&#10004;</span>";
@@ -457,8 +458,8 @@ function booleanCellRenderer(value) {
     }
 }
 
-function booleanFilterCellRenderer(value) {
-    var valueCleaned = booleanCleaner(value);
+function booleanFilterCellRenderer(params) {
+    var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned===true) {
         //this is the unicode for tick character
         return "&#10004;";
@@ -480,32 +481,31 @@ function booleanCleaner(value) {
     }
 }
 
-function languageCellRenderer(value, data, colDef, $childScope) {
-    if ($childScope) {
+function languageCellRenderer(params) {
+    if (params.$scope) {
         return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
             "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
     } else {
-        return value;
+        return params.value;
     }
 }
 
-function countryCellRenderer(value) {
+function countryCellRenderer(params) {
     //get flags from here: http://www.freeflagicons.com/
-    if (value==="" || value===undefined || value===null) {
+    if (params.value==="" || params.value===undefined || params.value===null) {
         return null;
     } else {
-        var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
-        var link = "<a href='http://en.wikipedia.org/wiki/" + value + "' style='text-decoration: none;'> "+value+"</a>";
-        var padding = 0;
-        return "<span style='padding-left: "+padding+"px'>"+flag + link+"</span>";
+        var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
+        var link = "<a href='http://en.wikipedia.org/wiki/" + params.value + "' style='text-decoration: none;'> "+params.value+"</a>";
+        return "<span>"+flag + link+"</span>";
     }
 }
 
-function countryFilterCellRenderer(value) {
-    if (value==="" || value===undefined || value===null) {
+function countryFilterCellRenderer(params) {
+    if (params.value==="" || params.value===undefined || params.value===null) {
         return "(no country)";
     } else {
-        var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[value]+".png'>";
-        return flag + " " + value;
+        var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
+        return flag + " " + params.value;
     }
 }

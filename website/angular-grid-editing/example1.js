@@ -39,18 +39,18 @@ module.controller("exampleCtrl", function($scope, $timeout) {
         }
     }
 
-    function customEditorUsingAngular(value, data, colDef, $childScope) {
-        $childScope.setSelectionOptions = setSelectionOptions;
+    function customEditorUsingAngular(params) {
+        params.$scope.setSelectionOptions = setSelectionOptions;
 
-        var html = '<span ng-show="!editing" ng-click="startEditing()">{{rowData.'+colDef.field+'}}</span> ' +
-            '<select ng-blur="editing=false" ng-change="editing=false" ng-show="editing" ng-options="item for item in setSelectionOptions" ng-model="rowData.'+colDef.field+'">';
+        var html = '<span ng-show="!editing" ng-click="startEditing()">{{rowData.'+params.colDef.field+'}}</span> ' +
+            '<select ng-blur="editing=false" ng-change="editing=false" ng-show="editing" ng-options="item for item in setSelectionOptions" ng-model="rowData.'+params.colDef.field+'">';
 
         // we could return the html as a string, however we want to add a 'onfocus' listener, which is no possible in AngularJS
         var domElement = document.createElement("span");
         domElement.innerHTML = html;
 
-        $childScope.startEditing = function() {
-            $childScope.editing = true; // set to true, to show dropdown
+        params.$scope.startEditing = function() {
+            params.$scope.editing = true; // set to true, to show dropdown
 
             // put this into $timeout, so it happens AFTER the digest cycle,
             // otherwise the item we are trying to focus is not visible
@@ -63,12 +63,12 @@ module.controller("exampleCtrl", function($scope, $timeout) {
         return domElement;
     }
 
-    function customEditorNoAngular(value, data, colDef) {
+    function customEditorNoAngular(params) {
 
         var editing = false;
 
         var eCell = document.createElement('span');
-        var eLabel = document.createTextNode(value);
+        var eLabel = document.createTextNode(params.value);
         eCell.appendChild(eLabel);
 
         var eSelect = document.createElement("select");
@@ -101,7 +101,7 @@ module.controller("exampleCtrl", function($scope, $timeout) {
             if (editing) {
                 editing = false;
                 var newValue = eSelect.value;
-                data[colDef.field] = newValue;
+                params.data[params.colDef.field] = newValue;
                 eLabel.innerHTML = newValue;
                 eCell.removeChild(eSelect);
                 eCell.appendChild(eLabel);
