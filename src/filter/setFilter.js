@@ -158,7 +158,7 @@ define([
         } else {
             //otherwise display as a string
             var displayNameOfValue = value === null ? "(Blanks)" : value;
-            valueElement.innerText = displayNameOfValue;
+            valueElement.innerHTML = displayNameOfValue;
         }
         var eCheckbox = eFilterValue.querySelector("input");
         eCheckbox.checked = this.model.isValueSelected(value);

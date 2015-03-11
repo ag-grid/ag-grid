@@ -387,7 +387,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         } else {
             //if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined && value!==null && value!=='') {
-                eGridCell.innerText = value;
+                eGridCell.innerHTML = value;
             }
         }
     };
