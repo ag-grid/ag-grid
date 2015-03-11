@@ -42,7 +42,7 @@
         return {
             scope: true,
             controller: Controller,
-            templateUrl: "showExample.html"
+            templateUrl: "/showExample.html"
         }
     });
 
