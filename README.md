@@ -4,39 +4,31 @@ Angular Grid
 
 [![Join the chat at https://gitter.im/ceolter/angular-grid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceolter/angular-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Angular Grid is another Grid for HTML 5 Angular development. I created Angular Grid out of frustration because I couldn't find a grid that was very fast (sorry ui-Grid), allowed pinned columns (sorry Slick Grid) had excel like advanced filtering and was native to AngularJS (sorry pretty much every grid).
-
-So I thought, how hard can it be? I guess I am finding out ...
+Angular Grid is another Grid for HTML 5 AngularJS development. Angular Grid was created
+out of frustration, following a long and endless search for a grid that was very fast,
+allowed pinned columns, had excel like advanced filtering and was native to AngularJS.
 
 Features
 --------------
 
-- Native to Angular JS
-- Excel Like Advanced Filtering
-- Gmail like 'Quick Filter'
-- Customer Filtering
-- Pinnable Columns
-- Row Virtualisation
-- Column Resizing
-- Sorting
-- Grouping (customizable)
-- Editing (customizable)
-- Custom Cell Renderers
-- Auto Resizable
-- Works with 100% width & height
-- Customisable via CSS
-- No Dependencies
-- Supports very large data sets
+- Advanced Filtering (quick filter, excel like filter, custom filters)
+- Row Virtualisation (thousands of rows)
+- Column Pinning, Resizing & Sorting
+- Grouping with Aggregation
+- Custom Cell Editors & Renderers
+- Styleable via CSS
 - Very fast
 
 Who Should Use
 --------------
 
-Everybody should use this grid!!
+The grid was designed to handle very large data sets and give a professional 'excel like' feel over the data.
+This was such that it can be used in financial reporting applications.
 
-The grid was designed to handle very large data sets and give a professional 'excel like' feel over the data. This was such that it can be used in financial applications.
+However you don't need to be writing financial applications to benefit. Setting up a simple grid, for small
+data sets, with a bunch of features, is very easy.
 
-Personally I find the grid best suits my needs than any other. It is powerful and flexible enough to deal with any job I give it (regardless of needing 100 columns and 20,000 rows, or maybe I need to have the cells very custom and interactive) . . . . and still have the option to make it native Angular if I wish. I was not able to find a grid that fit nicely into the Angular modal and gave me what I needed.
+Check out the examples and the documentation to see if it is a good fit for you.
 
-To learn more about Angular Grid, including it's documentation, please visit the website www.angulargrid.com
+[www.angulargrid.com](http://www.angulargrid.com)
 
