@@ -338,7 +338,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
-            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer({data: data, padding: padding});
+            var rendererParams = {
+                data: data, padding: padding, gridOptions: this.gridOptions
+            };
+            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
                 eGridGroupRow.appendChild(resultFromRenderer);
