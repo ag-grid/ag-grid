@@ -2,8 +2,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, eGrid, angularGrid, filterManager, $scope, $compile) {
+    function HeaderRenderer(gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
+        this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;

@@ -25,10 +25,11 @@ define([
     "./headerRenderer",
     "./gridOptionsWrapper",
     "./constants",
+    "./colModel",
     "css!./css/core.css",
     "css!./css/theme-dark.css",
     "css!./css/theme-fresh.css"
-], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants) {
+], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants, ColModel) {
 
     var module = angular.module("angularGrid", []);
 
@@ -58,14 +59,14 @@ define([
             $element[0].innerHTML = templateNoScrolls;
         }
 
-        var _this = this;
+        var that = this;
         $scope.grid = this;
         this.$scope = $scope;
         this.$compile = $compile;
         this.quickFilter = null;
 
         $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
-            _this.onQuickFilterChanged(newFilter);
+            that.onQuickFilterChanged(newFilter);
         });
 
         this.gridOptions.selectedRows = [];
@@ -76,10 +77,12 @@ define([
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
+        this.colModel = new ColModel();
+
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, $element[0], this, this.filterManager, $scope, $compile);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this, this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -94,9 +97,8 @@ define([
 
         //flag to mark when the directive is destroyed
         this.finished = false;
-        var _this = this;
         $scope.$on("$destroy", function () {
-            _this.finished = true;
+            that.finished = true;
         });
     }
 
@@ -195,7 +197,7 @@ define([
     };
 
     Grid.prototype.setupColumns = function () {
-        this.gridOptionsWrapper.ensureEachColHasSize();
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
