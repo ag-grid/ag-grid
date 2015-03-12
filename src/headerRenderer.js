@@ -10,7 +10,6 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         this.$scope = $scope;
         this.$compile = $compile;
         this.findAllElements(eGrid);
-        this.childScopes = [];
     }
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
@@ -37,41 +36,45 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         utils.removeAllChildren(eHeaderContainer);
         this.headerFilterIcons = {};
 
-        this.childScopes.forEach(function(childScope) {
-            childScope.$destroy();
-        });
+        if (this.childScopes) {
+            this.childScopes.forEach(function(childScope) {
+                childScope.$destroy();
+            });
+        }
+        this.childScopes = [];
 
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var _this = this;
+        var that = this;
 
-        this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef, index) {
+        this.colModel.getColDefWrappers().forEach(function(colDefWrapper, index) {
             // only include the first x cols
             if (index<pinnedColumnCount) {
-                var headerCell = _this.createHeaderCell(colDef, index, true);
+                var headerCell = that.createHeaderCell(colDefWrapper, index, true);
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = _this.createHeaderCell(colDef, index, false);
+                var headerCell = that.createHeaderCell(colDefWrapper, index, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDef, colIndex, colPinned) {
-        var headerCell = document.createElement("div");
-        var _this = this;
+    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned) {
+        var that = this;
+        var colDef = colDefWrapper.colDef;
+        var eHeaderCell = document.createElement("div");
 
-        headerCell.className = "ag-header-cell";
+        eHeaderCell.className = "ag-header-cell";
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            headerCell.title = colDef.headerTooltip;
+            eHeaderCell.title = colDef.headerTooltip;
         }
 
         if (this.gridOptionsWrapper.isEnableColResize()) {
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
-            headerCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, headerCell, colDef, colIndex, colPinned);
+            eHeaderCell.appendChild(headerCellResize);
+            this.addColResizeHandling(headerCellResize, eHeaderCell, colDefWrapper, colIndex, colPinned);
         }
 
         // filter button
@@ -79,13 +82,13 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
-                _this.filterManager.showFilter(colDef, this);
+                that.filterManager.showFilter(colDefWrapper, this);
             };
-            headerCell.appendChild(eMenuButton);
-            headerCell.onmouseenter = function() {
+            eHeaderCell.appendChild(eMenuButton);
+            eHeaderCell.onmouseenter = function() {
                 eMenuButton.style.opacity = 1;
             };
-            headerCell.onmouseleave = function() {
+            eHeaderCell.onmouseleave = function() {
                 eMenuButton.style.opacity = 0;
             };
             eMenuButton.style.opacity = 0;
@@ -100,12 +103,12 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         if (this.gridOptionsWrapper.isEnableSorting()) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
-            this.addSortHandling(headerCellLabel, colDef);
+            this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
         // add in filter icon
         var filterIcon = svgFactory.createFilterSvg();
-        this.headerFilterIcons[colDef.field] = filterIcon;
+        this.headerFilterIcons[colDefWrapper.colKey] = filterIcon;
         headerCellLabel.appendChild(filterIcon);
 
         // render the cell, use a renderer if one is provided
@@ -137,6 +140,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 newChildScope.colDef = colDef;
                 newChildScope.colIndex = colIndex;
+                newChildScope.colDefWrapper = colDefWrapper;
                 this.childScopes.push(newChildScope);
                 var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
                 headerCellLabel.appendChild(childToAppendCompiled);
@@ -150,86 +154,87 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             headerCellLabel.appendChild(eInnerText);
         }
 
-        headerCell.appendChild(headerCellLabel);
-        headerCell.style.width = utils.formatWidth(colDef.actualWidth);
+        eHeaderCell.appendChild(headerCellLabel);
+        eHeaderCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
 
-        return headerCell;
+        return eHeaderCell;
     };
 
-    HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDef) {
-        var _this = this;
+    HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapper) {
+        var that = this;
+
         headerCellLabel.addEventListener("click", function() {
 
             // update sort on current col
-            if (colDef.sort === constants.ASC) {
-                colDef.sort = constants.DESC;
-            } else if (colDef.sort === constants.DESC) {
-                colDef.sort = null
+            if (colDefWrapper.sort === constants.ASC) {
+                colDefWrapper.sort = constants.DESC;
+            } else if (colDefWrapper.sort === constants.DESC) {
+                colDefWrapper.sort = null
             } else {
-                colDef.sort = constants.ASC;
+                colDefWrapper.sort = constants.ASC;
             }
 
             // clear sort on all columns except this one, and update the icons
-            _this.gridOptionsWrapper.getColumnDefs().forEach(function(colToClear, colIndex) {
-                if (colToClear!==colDef) {
-                    colToClear.sort = null;
+            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear, colIndex) {
+                if (colWrapperToClear!==colDefWrapper) {
+                    colWrapperToClear.sort = null;
                 }
 
                 // update visibility of icons
-                var sortAscending = colToClear.sort===constants.ASC;
-                var sortDescending = colToClear.sort===constants.DESC;
+                var sortAscending = colWrapperToClear.sort===constants.ASC;
+                var sortDescending = colWrapperToClear.sort===constants.DESC;
                 var sortAny = sortAscending || sortDescending;
 
-                var eSortAscending = _this.eHeaderParent.querySelector(".ag-header-cell-sort-asc-" + colIndex);
+                var eSortAscending = that.eHeaderParent.querySelector(".ag-header-cell-sort-asc-" + colIndex);
                 eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
 
-                var eSortDescending = _this.eHeaderParent.querySelector(".ag-header-cell-sort-desc-" + colIndex);
+                var eSortDescending = that.eHeaderParent.querySelector(".ag-header-cell-sort-desc-" + colIndex);
                 eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
 
                 var eParentSvg = eSortAscending.parentNode;
                 eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
             });
 
-            _this.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
+            that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
         });
     };
 
-    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDef, colIndex, colPinned) {
-        var _this = this;
+    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDefWrapper, colIndex, colPinned) {
+        var that = this;
         headerCellResize.onmousedown = function(downEvent) {
-            _this.eRoot.style.cursor = "col-resize";
-            _this.dragStartX = downEvent.clientX;
-            _this.colWidthStart = colDef.actualWidth;
+            that.eRoot.style.cursor = "col-resize";
+            that.dragStartX = downEvent.clientX;
+            that.colWidthStart = colDefWrapper.actualWidth;
 
-            _this.eRoot.onmousemove = function(moveEvent) {
+            that.eRoot.onmousemove = function(moveEvent) {
                 var newX = moveEvent.clientX;
-                var change = newX - _this.dragStartX;
-                var newWidth = _this.colWidthStart + change;
+                var change = newX - that.dragStartX;
+                var newWidth = that.colWidthStart + change;
                 if (newWidth < constants.MIN_COL_WIDTH) {
                     newWidth = constants.MIN_COL_WIDTH;
                 }
                 var newWidthPx = newWidth + "px";
                 var selectorForAllColsInCell = ".cell-col-"+colIndex;
-                var cellsForThisCol = _this.eRoot.querySelectorAll(selectorForAllColsInCell);
+                var cellsForThisCol = that.eRoot.querySelectorAll(selectorForAllColsInCell);
                 for (var i = 0; i<cellsForThisCol.length; i++) {
                     cellsForThisCol[i].style.width = newWidthPx;
                 }
 
                 headerCell.style.width = newWidthPx;
-                colDef.actualWidth = newWidth;
+                colDefWrapper.actualWidth = newWidth;
 
                 // show not be calling these here, should do something else
                 if (colPinned) {
-                    _this.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                    that.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
-                    _this.angularGrid.updateBodyContainerWidthAfterColResize();
+                    that.angularGrid.updateBodyContainerWidthAfterColResize();
                 }
             };
-            _this.eRoot.onmouseup = function() {
-                _this.stopDragging();
+            that.eRoot.onmouseup = function() {
+                that.stopDragging();
             };
-            _this.eRoot.onmouseleave = function() {
-                _this.stopDragging();
+            that.eRoot.onmouseleave = function() {
+                that.stopDragging();
             };
         };
     };
@@ -242,11 +247,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     };
 
     HeaderRenderer.prototype.updateFilterIcons = function() {
-        var _this = this;
-        this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef) {
-            var filterPresent = _this.filterManager.isFilterPresentForCol(colDef.field);
+        var that = this;
+        this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
+            var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
             var displayStyle = filterPresent ? "inline" : "none";
-            _this.headerFilterIcons[colDef.field].style.display = displayStyle;
+            that.headerFilterIcons[colDefWrapper.colKey].style.display = displayStyle;
         });
     };
 

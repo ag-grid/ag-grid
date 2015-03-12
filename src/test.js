@@ -65,7 +65,7 @@ define([
             rowData: [],
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-            groupInnerCellRenderer: groupInnerCellRenderer,
+//            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: true, //one of [true, false]
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer

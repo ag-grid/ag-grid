@@ -12,6 +12,7 @@
 // allow dragging outside grid (currently last col can't be resized)
 // selecting should be like excel, and have keyboard navigation
 // filtering blocks the aggregations - the summary numbers go missing!!
+// should not be able to edit groups
 
 define([
     "angular",
@@ -80,8 +81,8 @@ define([
         this.colModel = new ColModel();
 
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
+        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this, this.filterManager);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this, this.filterManager, $scope, $compile);
 
         if (useScrolls) {
@@ -197,7 +198,8 @@ define([
     };
 
     Grid.prototype.setupColumns = function () {
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs);
+        var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -208,7 +210,7 @@ define([
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
@@ -332,7 +334,7 @@ define([
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
-        var pinnedColWidth = this.getTotalPinnedColWidth() + "px";
+        var pinnedColWidth = this.colModel.getTotalPinnedColWidth() + "px";
         this.ePinnedColsContainer.style.width = pinnedColWidth;
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };
@@ -370,19 +372,6 @@ define([
                 _this.setBodySize();
             }, 200);
         }
-    };
-
-    Grid.prototype.getTotalPinnedColWidth = function() {
-        var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        var widthSoFar = 0;
-        var colCount = pinnedColCount;
-        if (this.gridOptions.columnDefs.length < pinnedColCount) {
-            colCount = this.gridOptions.columnDefs.length;
-        }
-        for (var colIndex = 0; colIndex<colCount; colIndex++) {
-            widthSoFar += this.gridOptions.columnDefs[colIndex].actualWidth;
-        }
-        return widthSoFar;
     };
 
     Grid.prototype.addScrollListener = function() {

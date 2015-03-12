@@ -49,11 +49,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>cellClicked</th>
-            <td>Function callback, gets called when a cell is clicked..</td>
+            <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
-            <th></th>
-            <td></td>
+            <th>comparator</th>
+            <td>Comparator function for custom sorting.</td>
         </tr>
     </table>
 

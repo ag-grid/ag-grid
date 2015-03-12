@@ -3226,20 +3226,6 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         return widthSoFar;
     };
 
-    GridOptionsWrapper.prototype.getPinnedColCount = function() {
-        // if not using scrolls, then pinned columns doesn't make
-        // sense, so always return 0
-        if (this.isDontUseScrolls()) {
-            return 0;
-        }
-        if (this.gridOptions.pinnedColumnCount) {
-            //in case user puts in a string, cast to number
-            return Number(this.gridOptions.pinnedColumnCount);
-        } else {
-            return 0;
-        }
-    };
-
     return GridOptionsWrapper;
 
 });

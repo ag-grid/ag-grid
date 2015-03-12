@@ -1,18 +1,23 @@
-define(['constants'], function(constants) {
+define(['./constants'], function(constants) {
 
-    function ColModel(columnDefs) {
+    function ColModel() {
     }
 
-    ColModel.prototype.setColumnDefs = function (columnDefs) {
+    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
+        this.pinnedColumnCount = pinnedColCount;
         var colDefWrappers = [];
         if (columnDefs) {
-            columnDefs.forEach( function (colDef, index) {
-                var newColDefWrapper = new ColDefWrapper(colDef);
-                colDefWrappers.push(newColDefWrapper, index);
+            columnDefs.forEach(function (colDef, index) {
+                var newColDefWrapper = new ColDefWrapper(colDef, index);
+                colDefWrappers.push(newColDefWrapper);
             });
         }
         this.colDefWrappers = colDefWrappers;
         this.ensureEachColHasSize();
+    };
+
+    ColModel.prototype.getColDefWrappers = function () {
+        return this.colDefWrappers;
     };
 
     // set the actual widths for each col
@@ -35,9 +40,32 @@ define(['constants'], function(constants) {
         });
     };
 
-    function ColDefWrapper(colDef, index) {
+    ColModel.prototype.getTotalUnpinnedColWidth = function() {
+        return this.getTotalColWidth(false);
+    };
+
+    ColModel.prototype.getTotalPinnedColWidth = function() {
+        return this.getTotalColWidth(true);
+    };
+
+    ColModel.prototype.getTotalColWidth = function(includePinned) {
+        var widthSoFar = 0;
+        var pinnedColCount = this.pinnedColumnCount;
+
+        this.colDefWrappers.forEach(function(colDefWrapper, index) {
+            var columnIsPined = index<pinnedColCount;
+            var includeThisCol = columnIsPined === includePinned;
+            if (includeThisCol) {
+                widthSoFar += colDefWrapper.actualWidth;
+            }
+        });
+
+        return widthSoFar;
+    };
+
+    function ColDefWrapper(colDef, colKey) {
         this.colDef = colDef;
-        this.index = index;
+        this.colKey = colKey;
     }
 
     return ColModel;
