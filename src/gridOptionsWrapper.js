@@ -42,33 +42,6 @@ define(["./constants"], function(constants) {
         this.gridOptions.selectedRows.length = 0;
     };
 
-    GridOptionsWrapper.prototype.ensureEachColHasSize = function () {
-        if (!this.isColumDefsPresent()) { return; }
-
-        this.gridOptions.columnDefs.forEach(function (colDef) {
-            if (!colDef.width) {
-                colDef.actualWidth = 200;
-            } else if (colDef.width < 10) {
-                colDef.actualWidth = constants.MIN_COL_WIDTH;
-            } else {
-                colDef.actualWidth = colDef.width;
-            }
-        });
-    };
-
-    GridOptionsWrapper.prototype.getTotalUnpinnedColWidth = function() {
-        var widthSoFar = 0;
-        var pinnedColCount = this.getPinnedColCount();
-
-        this.gridOptions.columnDefs.forEach(function(colDef, index) {
-            if (index>=pinnedColCount) {
-                widthSoFar += colDef.actualWidth;
-            }
-        });
-
-        return widthSoFar;
-    };
-
     GridOptionsWrapper.prototype.getPinnedColCount = function() {
         // if not using scrolls, then pinned columns doesn't make
         // sense, so always return 0

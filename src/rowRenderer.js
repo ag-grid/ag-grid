@@ -2,9 +2,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
+    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
+        this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.findAllElements(eGrid);
@@ -21,7 +22,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     }
 
     RowRenderer.prototype.setMainRowWidths = function() {
-        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
 
         var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
         for (var i = 0; i<unpinnedRows.length; i++) {
@@ -129,7 +130,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.ensureRowsRendered = function (start, finish) {
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var mainRowWidth = this.gridOptionsWrapper.getTotalUnpinnedColWidth();
+        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth();
         var that = this;
 
         //at the end, this array will contain the items we need to remove
@@ -173,8 +174,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eMainRow.style.width = mainRowWidth+"px";
 
-        //try compiling as we insert rows
-        var newChildScope = this.createChildScopeOrNull(data, rowIndex);
+        // try compiling as we insert rows
+        var newChildScope = this.createChildScopeOrNull(data);
 
         var renderedRow = {
             scope: newChildScope,
@@ -182,13 +183,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         };
         this.renderedRows[rowIndex] = renderedRow;
 
-        //if group item, insert the first row
-        var columnDefs = this.gridOptionsWrapper.getColumnDefs();
+        // if group item, insert the first row
+        var columnDefWrappers = this.colModel.getColDefWrappers();
         if (rowIsAGroup) {
-            var firstCol = columnDefs[0];
+            var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow, false);
+            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -196,7 +197,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(data, firstCol, groupHeaderTakesEntireRow, true);
+                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
@@ -204,21 +205,21 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
                 //draw in blank cells for the rest of the row
                 var groupHasData = data.aggData!==undefined && data.aggData!==null;
-                columnDefs.forEach(function(colDef, colIndex) {
+                columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
                     var item = null;
                     if (groupHasData) {
-                        item = data.aggData[colDef.field];
+                        item = data.aggData[colDefWrapper.colDef.field];
                     }
-                    _this.createCellFromColDef(colDef, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+                    _this.createCellFromColDef(colDefWrapper, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
-            columnDefs.forEach(function(colDef, colIndex) {
-                _this.createCellFromColDef(colDef, data[colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+            columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
+                _this.createCellFromColDef(colDefWrapper, data[colDefWrapper.colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -227,7 +228,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
     };
 
-    RowRenderer.prototype.createChildScopeOrNull = function(data, rowIndex) {
+    RowRenderer.prototype.createChildScopeOrNull = function(data) {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.$scope.$new();
             newChildScope.rowData = data;
@@ -252,8 +253,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDef, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDef, value, data, rowIndex, colIndex, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDefWrapper, value, data, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -322,11 +323,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDef, useEntireRow, padding) {
+    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
             eGridGroupRow.className = 'ag-group-cell';
-            //eGridGroupRow.style.width = '500px';
         } else {
             eGridGroupRow.className = 'ag-cell cell-col-'+0;
         }
@@ -360,7 +360,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         if (!useEntireRow) {
-            eGridGroupRow.style.width = utils.formatWidth(firstColDef.actualWidth);
+            eGridGroupRow.style.width = utils.formatWidth(firstColDefWrapper.actualWidth);
         }
 
         // indent with the group level
@@ -369,7 +369,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         var _this = this;
-        eGridGroupRow.addEventListener("click", function(event) {
+        eGridGroupRow.addEventListener("click", function() {
             data.expanded = !data.expanded;
             _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
@@ -399,12 +399,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCell = function(colDef, value, data, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
         eGridCell.className = "ag-cell cell-col-"+colIndex;
         eGridCell.setAttribute("col", colIndex);
 
+        var colDef = colDefWrapper.colDef;
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
 
         if (colDef.cellStyle) {
@@ -451,11 +452,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (that.isCellEditable(colDef, data)) {
-                that.startEditing(eGridCell, colDef, data, $childScope);
+                that.startEditing(eGridCell, colDefWrapper, data, $childScope);
             }
         });
 
-        eGridCell.style.width = utils.formatWidth(colDef.actualWidth);
+        eGridCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
 
         return eGridCell;
     };
@@ -496,8 +497,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDef, data, $childScope) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, data, $childScope) {
         var that = this;
+        var colDef = colDefWrapper.colDef;
         this.editingCell = true;
         utils.removeAllChildren(eGridCell);
         var eInput = document.createElement('input');
@@ -509,7 +511,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             eInput.value = data[colDef.field];
         }
 
-        eInput.style.width = (colDef.actualWidth - 14) + 'px';
+        eInput.style.width = (colDefWrapper.actualWidth - 14) + 'px';
         eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();

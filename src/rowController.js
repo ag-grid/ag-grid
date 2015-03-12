@@ -4,9 +4,10 @@ define([
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function RowController(gridOptionsWrapper, rowModel, angularGrid, filterManager) {
+    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.rowModel = rowModel;
+        this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
     }
@@ -29,21 +30,20 @@ define([
 
     RowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
-        var colDefForSorting = null;
-        this.gridOptionsWrapper.getColumnDefs().forEach(function (colDef) {
-            if (colDef.sort) {
-                colDefForSorting = colDef;
+        var colDefWrapperForSorting = null;
+        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+            if (colDefWrapper.sort) {
+                colDefWrapperForSorting = colDefWrapper;
             }
         });
 
         var rowsAfterSort = this.rowModel.getRowsAfterFilter().slice(0);
 
-        if (colDefForSorting) {
-            var keyForSort = colDefForSorting.field;
-            var ascending = colDefForSorting.sort === constants.ASC;
+        if (colDefWrapperForSorting) {
+            var ascending = colDefWrapperForSorting.sort === constants.ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.sortList(rowsAfterSort, keyForSort, colDefForSorting, inverter);
+            this.sortList(rowsAfterSort, colDefWrapperForSorting.colDef, inverter);
         } else {
             //if no sorting, set all group children after sort to the original list
             this.resetSortInGroups(rowsAfterSort);
@@ -63,19 +63,20 @@ define([
         }
     };
 
-    RowController.prototype.sortList = function (listForSorting, keyForSort, colDefForSorting, inverter) {
+    RowController.prototype.sortList = function (listForSorting, colDefForSorting, inverter) {
 
         //sort any groups recursively
-        for (var i = 0, l = listForSorting.length; i<l; i++) {
+        for (var i = 0, l = listForSorting.length; i<l; i++) { // critical section, no functional programming
             var item = listForSorting[i];
             var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
             if (rowIsAGroup) {
                 item.childrenAfterSort = item.children.slice(0);
-                this.sortList(item.childrenAfterSort, keyForSort, colDefForSorting, inverter);
+                this.sortList(item.childrenAfterSort, colDefForSorting, inverter);
             }
         }
 
         listForSorting.sort(function (objA, objB) {
+            var keyForSort = colDefForSorting.field;
             var valueA = objA[keyForSort];
             var valueB = objB[keyForSort];
 
@@ -214,8 +215,8 @@ define([
 
     RowController.prototype.aggregateRowForQuickFilter = function (rowItem) {
         var aggregatedText = "";
-        this.gridOptionsWrapper.getColumnDefs().forEach(function (colDef) {
-            var value = rowItem[colDef.field];
+        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+            var value = rowItem[colDefWrapper.colDef.field];
             if (value && value !== "") {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }

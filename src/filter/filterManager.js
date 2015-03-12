@@ -14,12 +14,27 @@ define([
         this.allFilters = {};
     }
 
+    // returns true if at least one filter is active
     FilterManager.prototype.isFilterPresent = function () {
-        return Object.keys(this.allFilters).length > 0;
+        var atLeastOneActive = false;
+        var that = this;
+
+        var keys = Object.keys(this.allFilters);
+        keys.forEach( function (key) {
+            var filterWrapper = that.allFilters[key];
+            if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
+                console.error('Filter is missing method isFilterActive');
+            }
+            if (filterWrapper.filter.isFilterActive()) {
+                atLeastOneActive = true;
+            }
+        });
+        return atLeastOneActive;
     };
 
-    FilterManager.prototype.isFilterPresentForCol = function (key) {
-        var filterWrapper = this.allFilters[key];
+    // returns true if given col has a filter active
+    FilterManager.prototype.isFilterPresentForCol = function (colKey) {
+        var filterWrapper = this.allFilters[colKey];
         if (!filterWrapper) {
             return false;
         }
@@ -31,18 +46,18 @@ define([
     };
 
     FilterManager.prototype.doesFilterPass = function (item) {
-        var fields = Object.keys(this.allFilters);
-        for (var i = 0, l = fields.length; i < l; i++) {
+        var colKeys = Object.keys(this.allFilters);
+        for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
-            var field = fields[i];
-            var filterWrapper = this.allFilters[field];
+            var colKey = colKeys[i];
+            var filterWrapper = this.allFilters[colKey];
 
             // if no filter, always pass
-            if (filterWrapper===undefined) {
+            if (filterWrapper === undefined) {
                 continue;
             }
 
-            var value = item[field];
+            var value = item[filterWrapper.field];
             if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
@@ -92,12 +107,16 @@ define([
         ePopup.style.top = y + "px";
     };
 
-    FilterManager.prototype.showFilter = function(colDef, eventSource) {
+    FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
 
-        var filterWrapper = this.allFilters[colDef.field];
+        var filterWrapper = this.allFilters[colDefWrapper.colKey];
+        var colDef = colDefWrapper.colDef;
 
         if (!filterWrapper) {
-            filterWrapper = {};
+            filterWrapper = {
+                colKey: colDefWrapper.colKey,
+                field: colDef.field
+            };
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
             var filterParams = colDef.filterParams;
             if (typeof colDef.filter === 'function') {
@@ -115,7 +134,7 @@ define([
             } else {
                 filterWrapper.filter = new SetFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
             }
-            this.allFilters[colDef.field] = filterWrapper;
+            this.allFilters[colDefWrapper.colKey] = filterWrapper;
 
             if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method getGui');
