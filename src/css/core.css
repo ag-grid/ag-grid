@@ -40,7 +40,7 @@
     white-space: nowrap;
     box-sizing: border-box;
     overflow: hidden;
-    height: 25px;
+    height: 50px; /* set this back to 25 */
     box-sizing: border-box;
     width: 100%;
 }
@@ -75,7 +75,7 @@
 
 .ag-no-scrolls .ag-header-container {
     white-space: nowrap;
-    height: 25px;
+    height: 50px;
 }
 
 .ag-header-cell {
@@ -84,7 +84,27 @@
     vertical-align: bottom;
     text-align: center;
     display: inline-block;
+}
+
+.ag-header-cell-grouped {
+    height: 50%;
+}
+
+.ag-header-cell-not-grouped {
     height: 100%;
+}
+
+.ag-header-group {
+    box-sizing: border-box;
+    display: inline-block;
+    height: 100%;
+}
+
+.ag-header-group-cell {
+    box-sizing: border-box;
+    text-align: center;
+    padding: 4px;
+    height: 50%;
 }
 
 .ag-header-cell-label {
@@ -111,7 +131,7 @@
 
 .ag-body {
     height: 100%;
-    padding-top: 25px;
+    padding-top: 50px;
     box-sizing: border-box;
 }
 

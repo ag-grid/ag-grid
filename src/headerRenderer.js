@@ -29,41 +29,115 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
     };
 
-    HeaderRenderer.prototype.insertHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        var eHeaderContainer = this.eHeaderContainer;
-        utils.removeAllChildren(ePinnedHeader);
-        utils.removeAllChildren(eHeaderContainer);
+    HeaderRenderer.prototype.insertHeader = function () {
+        utils.removeAllChildren(this.ePinnedHeader);
+        utils.removeAllChildren(this.eHeaderContainer);
         this.headerFilterIcons = {};
 
         if (this.childScopes) {
-            this.childScopes.forEach(function(childScope) {
+            this.childScopes.forEach(function (childScope) {
                 childScope.$destroy();
             });
         }
         this.childScopes = [];
 
+        if (this.gridOptionsWrapper.isGroupHeaders()) {
+            this.insertHeadersWithGrouping();
+        } else {
+            this.insertHeadersWithoutGrouping();
+        }
+
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
+        // split the columns into groups
+        var currentGroup = [];
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var colDefWrappers = this.colModel.getColDefWrappers();
+        var lastGroupName = undefined;
+        var that = this;
+        var pinned = true;
+        colDefWrappers.forEach(function (colDefWrapper, index) {
+            var endOfPinnedHeader = index === pinnedColumnCount;
+            var groupKeyMismatch = colDefWrapper.colDef.group !== lastGroupName;
+            var newGroupNeeded = endOfPinnedHeader || groupKeyMismatch;
+            // flush the last group out
+            if (newGroupNeeded && currentGroup.length > 0) {
+                var firstIndex = index - currentGroup.length;
+                var eHeaderCell = that.createGroupedHeaderCell(currentGroup, pinned, firstIndex);
+                var eContainerToAddTo = pinned ? that.ePinnedHeader : that.eHeaderContainer;
+                eContainerToAddTo.appendChild(eHeaderCell);
+                // this group is now inserted, so clear out the buffer
+                currentGroup.length = 0;
+            }
+            currentGroup.push(colDefWrapper);
+            pinned = index < pinnedColumnCount;
+            lastGroupName = colDefWrapper.colDef.group;
+        });
+        // one more group to insert, do it here
+        var firstIndex = colDefWrappers.length - currentGroup.length;
+        var eHeaderCell = this.createGroupedHeaderCell(currentGroup, pinned, firstIndex);
+        var eContainerToAddTo = pinned ? this.ePinnedHeader : this.eHeaderContainer;
+        eContainerToAddTo.appendChild(eHeaderCell);
+    };
+
+    HeaderRenderer.prototype.createGroupedHeaderCell = function(groupColDefWrappers, pinned, firstIndex) {
+        var eHeaderGroup = document.createElement('div');
+        eHeaderGroup.className = 'ag-header-group';
+
+        var eHeaderGroupCell = document.createElement('div');
+        eHeaderGroupCell.className = 'ag-header-group-cell';
+
+        // no renderer, default text render
+        var groupName = groupColDefWrappers[0].colDef.group;
+        if (groupName && groupName !== '') {
+            var eInnerText = document.createElement("span");
+            eInnerText.innerHTML = groupColDefWrappers[0].colDef.group;
+            eHeaderGroupCell.appendChild(eInnerText);
+        }
+
+        eHeaderGroup.appendChild(eHeaderGroupCell);
+
+        var that = this;
+        groupColDefWrappers.forEach(function (colDefWrapper, index) {
+            var colIndex = index + firstIndex;
+            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, pinned, true);
+            eHeaderGroup.appendChild(eHeaderCell);
+        });
+
+        return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
+        var ePinnedHeader = this.ePinnedHeader;
+        var eHeaderContainer = this.eHeaderContainer;
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.colModel.getColDefWrappers().forEach(function(colDefWrapper, index) {
+        this.colModel.getColDefWrappers().forEach(function (colDefWrapper, index) {
             // only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, true);
+            if (index < pinnedColumnCount) {
+                var headerCell = that.createHeaderCell(colDefWrapper, index, true, false);
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, false);
+                var headerCell = that.createHeaderCell(colDefWrapper, index, false, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned) {
+    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         var eHeaderCell = document.createElement("div");
 
-        eHeaderCell.className = "ag-header-cell";
+        var headerCellClasses = ['ag-header-cell'];
+        if (grouped) {
+            headerCellClasses.push('ag-header-cell-grouped'); // this takes 50% height
+        } else {
+            headerCellClasses.push('ag-header-cell-not-grouped'); // this takes 100% height
+        }
+        eHeaderCell.className = headerCellClasses.join(' ');
 
         // add tooltip if exists
         if (colDef.headerTooltip) {

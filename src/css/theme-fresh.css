@@ -29,6 +29,11 @@
     border-right: 1px solid grey;
 }
 
+.ag-fresh .ag-header-group-cell {
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
 .ag-fresh .ag-header-cell-menu-button {
     padding: 2px;
     margin-top: 4px;
