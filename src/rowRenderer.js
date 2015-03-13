@@ -213,13 +213,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                     if (groupHasData) {
                         item = data.aggData[colDefWrapper.colDef.field];
                     }
-                    _this.createCellFromColDef(colDefWrapper, item, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+                    _this.createCellFromColDef(colDefWrapper, item, data, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, data[colDefWrapper.colDef.field], data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, data[colDefWrapper.colDef.field], data, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -253,8 +253,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, data, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, data, rowIndex, colIndex, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, data, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -326,9 +326,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
-            eGridGroupRow.className = 'ag-group-cell';
+            eGridGroupRow.className = 'ag-group-cell-entire-row';
         } else {
-            eGridGroupRow.className = 'ag-cell cell-col-'+0;
+            eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+0;
         }
 
         if (!padding) {
@@ -399,11 +399,17 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
-        eGridCell.className = "ag-cell cell-col-"+colIndex;
         eGridCell.setAttribute("col", colIndex);
+
+        // set class, only include ag-group-cell if it's a group cell
+        var classes = ['ag-cell', 'cell-col-'+colIndex];
+        if (isGroup) {
+            classes.push('ag-group-cell');
+        }
+        eGridCell.className = classes.join(' ');
 
         var colDef = colDefWrapper.colDef;
         this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);

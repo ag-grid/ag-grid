@@ -164,7 +164,7 @@
     overflow: hidden;
 }
 
-.ag-group-cell {
+.ag-group-cell-entire-row {
     position: absolute;
     width: 100%;
     display: inline-block;

@@ -64,8 +64,12 @@
     background-color: #b0b0b0;
 }
 
-.ag-fresh .ag-group-cell {
+.ag-fresh .ag-group-cell-entire-row {
     background-color: #aaa;
+}
+
+.ag-fresh .ag-group-cell {
+    border-bottom: 1px solid black;
 }
 
 .ag-fresh .ag-filter-checkbox {
