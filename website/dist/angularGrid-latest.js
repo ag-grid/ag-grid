@@ -2731,8 +2731,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
 
         if (!padding) {
-            var eSvg = svgFactory.createGroupSvg(data.expanded);
-            eGridGroupRow.appendChild(eSvg);
+            this.addGroupExpandIcon(eGridGroupRow, data.expanded);
         }
 
         // if renderer provided, use it
@@ -2774,6 +2773,30 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         });
 
         return eGridGroupRow;
+    };
+
+    RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
+        var groupIconRenderer = this.gridOptionsWrapper.getGroupIconRenderer();
+
+        // if no renderer for group icon, use the default
+        if (typeof groupIconRenderer !== 'function') {
+            var eSvg = svgFactory.createGroupSvg(expanded);
+            eGridGroupRow.appendChild(eSvg);
+            return;
+        }
+
+        // otherwise, use the renderer
+        var resultFromRenderer = groupIconRenderer(expanded);
+        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+            //a dom node or element was returned, so add child
+            eGridGroupRow.appendChild(resultFromRenderer);
+        } else {
+            //otherwise assume it was html, so just insert
+            var eTextSpan = document.createElement('span');
+            eTextSpan.innerHTML = resultFromRenderer;
+            eGridGroupRow.appendChild(eTextSpan);
+        }
+
     };
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
@@ -3220,6 +3243,7 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
+    GridOptionsWrapper.prototype.getGroupIconRenderer = function() { return this.gridOptions.groupIconRenderer; };
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };

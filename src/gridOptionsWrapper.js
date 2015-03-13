@@ -17,6 +17,7 @@ define(["./constants"], function(constants) {
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
     GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded === true; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
+    GridOptionsWrapper.prototype.getGroupIconRenderer = function() { return this.gridOptions.groupIconRenderer; };
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return this.gridOptions.groupUseEntireRow===true; };
