@@ -93,6 +93,24 @@ include '../documentation_header.php';
 
     <show-example example="example5"></show-example>
 
+    <h4>Custom Expand / Collapse Icon</h4>
+
+    It is possible to override the default collapse / expand icon. This is set by providing
+    a renderer to the grid options. Like all other renderers, the result can either be an
+    html DOM element, or an string that will be treated as HTML.
+
+    <p/>
+    This example uses simple text as the icons:
+
+    <pre>groupIconRenderer: function (expanded) { return expanded ? '-' : '+'; }
+    </pre>
+
+    <p/>
+    This example uses Font Awesome icons to provide 'minus' and 'plus' icons:
+
+    <pre>groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; }
+    </pre>
+
 </div>
 
 <?php include '../documentation_footer.php';?>
