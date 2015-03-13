@@ -32,3 +32,7 @@ Check out the examples and the documentation to see if it is a good fit for you.
 
 [www.angulargrid.com](http://www.angulargrid.com)
 
+Releases
+--------------
+
+Releases are located in website/dist
