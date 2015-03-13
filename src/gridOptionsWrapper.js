@@ -7,6 +7,7 @@ define(["./constants"], function(constants) {
         this.setupDefaults();
     }
 
+    GridOptionsWrapper.prototype.isGroupHeaders = function() { return this.gridOptions.groupHeaders === true; };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return this.gridOptions.dontUseScrolls; };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
     GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };

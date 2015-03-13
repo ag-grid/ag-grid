@@ -52,6 +52,13 @@
     height: 100%;
 }
 
+/*.ag-pinned-header-group {
+    box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
+    height: 100%;
+}*/
+
 .ag-header-viewport {
     box-sizing: border-box;
     display: inline-block;
