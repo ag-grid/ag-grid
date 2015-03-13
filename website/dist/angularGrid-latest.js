@@ -2374,7 +2374,6 @@ define('../src/svgFactory',["./constants"], function(constants) {
         return eSvg;
     };
 
-
     SvgFactory.prototype.createGroupSvg = function(expanded) {
         var eSvg = document.createElementNS(SVG_NS, "svg");
         eSvg.setAttribute("width", "10");
@@ -2393,6 +2392,24 @@ define('../src/svgFactory',["./constants"], function(constants) {
 
         return eSvg;
     };
+    //SvgFactory.prototype.createGroupSvg = function(expanded) {
+    //    var eSvg = document.createElementNS(SVG_NS, "svg");
+    //    eSvg.setAttribute("width", "10");
+    //    eSvg.setAttribute("height", "10");
+    //    eSvg.setAttribute("class", "ag-header-cell-sort");
+    //
+    //    if (expanded) {
+    //        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
+    //        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
+    //        eSvg.appendChild(eAscIcon);
+    //    } else {
+    //        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+    //        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+    //        eSvg.appendChild(eDescIcon);
+    //    }
+    //
+    //    return eSvg;
+    //};
 
     return SvgFactory;
 
