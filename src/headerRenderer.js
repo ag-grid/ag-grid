@@ -68,7 +68,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 var eContainerToAddTo = pinned ? that.ePinnedHeader : that.eHeaderContainer;
                 eContainerToAddTo.appendChild(eHeaderCell);
                 // this group is now inserted, so clear out the buffer
-                currentGroup.length = 0;
+                currentGroup = [];
             }
             currentGroup.push(colDefWrapper);
             pinned = index < pinnedColumnCount;
@@ -101,11 +101,21 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var that = this;
         groupColDefWrappers.forEach(function (colDefWrapper, index) {
             var colIndex = index + firstIndex;
-            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, pinned, true);
+            var groupDetails = {eHeaderGroupCell: eHeaderGroupCell, groupColDefWrappers: groupColDefWrappers};
+            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, pinned, true, groupDetails);
+            that.setWidthOfGroupHeaderCell(groupDetails);
             eHeaderGroup.appendChild(eHeaderCell);
         });
 
         return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(groupDetails) {
+        var totalWidth = 0;
+        groupDetails.groupColDefWrappers.forEach( function (colDefWrapper) {
+            totalWidth += colDefWrapper.actualWidth;
+        });
+        groupDetails.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
     };
 
     HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
@@ -126,7 +136,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped) {
+    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, groupDetails) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         var eHeaderCell = document.createElement("div");
@@ -148,7 +158,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, eHeaderCell, colDefWrapper, colIndex, colPinned);
+            this.addColResizeHandling(headerCellResize, eHeaderCell, colDefWrapper, colIndex, colPinned, groupDetails);
         }
 
         // filter button
@@ -273,7 +283,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         });
     };
 
-    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDefWrapper, colIndex, colPinned) {
+    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDefWrapper, colIndex, colPinned, groupDetails) {
         var that = this;
         headerCellResize.onmousedown = function(downEvent) {
             that.eRoot.style.cursor = "col-resize";
@@ -296,6 +306,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
                 headerCell.style.width = newWidthPx;
                 colDefWrapper.actualWidth = newWidth;
+
+                if (groupDetails) {
+                    that.setWidthOfGroupHeaderCell(groupDetails);
+                }
 
                 // show not be calling these here, should do something else
                 if (colPinned) {

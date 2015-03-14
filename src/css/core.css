@@ -105,6 +105,8 @@
     text-align: center;
     padding: 4px;
     height: 50%;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .ag-header-cell-label {
