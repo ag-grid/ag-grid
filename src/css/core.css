@@ -40,7 +40,6 @@
     white-space: nowrap;
     box-sizing: border-box;
     overflow: hidden;
-    height: 50px; /* set this back to 25 */
     box-sizing: border-box;
     width: 100%;
 }
@@ -51,13 +50,6 @@
     overflow: hidden;
     height: 100%;
 }
-
-/*.ag-pinned-header-group {
-    box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    height: 100%;
-}*/
 
 .ag-header-viewport {
     box-sizing: border-box;
@@ -75,7 +67,6 @@
 
 .ag-no-scrolls .ag-header-container {
     white-space: nowrap;
-    height: 50px;
 }
 
 .ag-header-cell {
@@ -135,7 +126,6 @@
 
 .ag-body {
     height: 100%;
-    padding-top: 50px;
     box-sizing: border-box;
 }
 

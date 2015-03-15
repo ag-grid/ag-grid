@@ -59,6 +59,7 @@ define([
         $scope.groupBy = '';
         $scope.groupType = 'firstCol';
         $scope.editable = 'false';
+        $scope.groupHeaders = 'true';
 
         var angularGrid = {
             columnDefs: [],
@@ -68,6 +69,7 @@ define([
 //            groupUseEntireRow: true, //one of [true, false]
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: true, //one of [true, false]
+//            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
@@ -133,6 +135,11 @@ define([
             if (angularGrid.rowSelection=='') {
                 angularGrid.api.unselectAll();
             }
+        };
+
+        $scope.onGroupHeaders = function() {
+            angularGrid.groupHeaders = $scope.groupHeaders === 'true';
+            angularGrid.api.onNewCols();
         };
 
         $scope.onGroupByChanged = function() {
