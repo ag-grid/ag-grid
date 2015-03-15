@@ -3943,12 +3943,12 @@ define('../src/angularGrid',[
     Grid.prototype.setHeaderHeight = function () {
         var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         var headerHeightPixels = headerHeight + 'px';
-        this.eBody.style['padding-top'] = headerHeightPixels;
         var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
         if (dontUseScrolls) {
             this.eHeaderContainer.style['height'] = headerHeightPixels;
         } else {
             this.eHeader.style['height'] = headerHeightPixels;
+            this.eBody.style['padding-top'] = headerHeightPixels;
         }
     };
 
