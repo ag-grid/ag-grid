@@ -93,9 +93,9 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
+            {displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
-                filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
+                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
             {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
@@ -498,8 +498,10 @@ define([
         if (params.$scope) {
             return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
                 "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
-        } else {
+        } else if (params.value) {
             return params.value;
+        } else {
+            return null;
         }
     }
 
@@ -507,16 +509,6 @@ define([
         //get flags from here: http://www.freeflagicons.com/
         if (params.value==="" || params.value===undefined || params.value===null) {
             return null;
-        } else {
-            var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
-            var link = "<a href='http://en.wikipedia.org/wiki/" + params.value + "' style='text-decoration: none;'> "+params.value+"</a>";
-            return "<span>"+flag + link+"</span>";
-        }
-    }
-
-    function countryFilterCellRenderer(params) {
-        if (params.value==="" || params.value===undefined || params.value===null) {
-            return "(no country)";
         } else {
             var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
             return flag + " " + params.value;
