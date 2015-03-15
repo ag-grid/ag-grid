@@ -59,14 +59,17 @@ define([
         $scope.groupBy = '';
         $scope.groupType = 'firstCol';
         $scope.editable = 'false';
+        $scope.groupHeaders = 'true';
 
         var angularGrid = {
             columnDefs: [],
             rowData: [],
+            groupHeaders: true,
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: true, //one of [true, false]
+//            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
@@ -90,15 +93,15 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column", headerCellRenderer: headerCellRenderer_angular},
-            {displayName: "Country", field: "country", width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
-                filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
+            {displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
-            {displayName: "Language", field: "language", width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
-            {displayName: "Game of Choice", field: "game", width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
-            {displayName: "Bought", field: "bought", filter: 'set', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+            {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
+            {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
+            {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 filterParams: {cellRenderer: booleanFilterCellRenderer}},
-            {displayName: "Bank Balance", field: "bankBalance", width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+            {displayName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer}},
             {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
                 filterParams: {cellRenderer: ratingFilterRenderer}},
@@ -106,7 +109,7 @@ define([
         ];
         //put in the month cols
         months.forEach(function(month) {
-            defaultCols.push({displayName: month, field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
+            defaultCols.push({displayName: month, group: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
                 newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
                 cellStyle: {"text-align": "right"}})
         });
@@ -132,6 +135,11 @@ define([
             if (angularGrid.rowSelection=='') {
                 angularGrid.api.unselectAll();
             }
+        };
+
+        $scope.onGroupHeaders = function() {
+            angularGrid.groupHeaders = $scope.groupHeaders === 'true';
+            angularGrid.api.onNewCols();
         };
 
         $scope.onGroupByChanged = function() {
@@ -490,8 +498,10 @@ define([
         if (params.$scope) {
             return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
                 "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
-        } else {
+        } else if (params.value) {
             return params.value;
+        } else {
+            return null;
         }
     }
 
@@ -499,16 +509,6 @@ define([
         //get flags from here: http://www.freeflagicons.com/
         if (params.value==="" || params.value===undefined || params.value===null) {
             return null;
-        } else {
-            var flag = "<img border='0' width='20' height='15' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
-            var link = "<a href='http://en.wikipedia.org/wiki/" + params.value + "' style='text-decoration: none;'> "+params.value+"</a>";
-            return "<span>"+flag + link+"</span>";
-        }
-    }
-
-    function countryFilterCellRenderer(params) {
-        if (params.value==="" || params.value===undefined || params.value===null) {
-            return "(no country)";
         } else {
             var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
             return flag + " " + params.value;

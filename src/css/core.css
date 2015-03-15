@@ -40,7 +40,6 @@
     white-space: nowrap;
     box-sizing: border-box;
     overflow: hidden;
-    height: 25px;
     box-sizing: border-box;
     width: 100%;
 }
@@ -68,20 +67,51 @@
 
 .ag-no-scrolls .ag-header-container {
     white-space: nowrap;
-    height: 25px;
 }
 
 .ag-header-cell {
     box-sizing: border-box;
-    font-weight: bold;
     vertical-align: bottom;
     text-align: center;
+    display: inline-block;
+}
+
+.ag-header-cell-grouped {
+    height: 50%;
+}
+
+.ag-header-cell-not-grouped {
+    height: 100%;
+}
+
+.ag-header-group {
+    box-sizing: border-box;
     display: inline-block;
     height: 100%;
 }
 
+.ag-header-group-cell {
+    box-sizing: border-box;
+    text-align: center;
+    height: 50%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* When there is no group specified, this style gets used */
+.ag-header-group-cell-no-group {
+}
+
+/* When there is a group specified, normally a bottom border is provided */
+.ag-header-group-cell-with-group {
+}
+
+.ag-header-group-cell-label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .ag-header-cell-label {
-    padding: 4px;
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -104,7 +134,6 @@
 
 .ag-body {
     height: 100%;
-    padding-top: 25px;
     box-sizing: border-box;
 }
 

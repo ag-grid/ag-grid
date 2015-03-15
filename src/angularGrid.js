@@ -197,7 +197,20 @@ define([
         this.$scope.$apply();
     };
 
+    Grid.prototype.setHeaderHeight = function () {
+        var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
+        var headerHeightPixels = headerHeight + 'px';
+        this.eBody.style['padding-top'] = headerHeightPixels;
+        var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
+        if (dontUseScrolls) {
+            this.eHeaderContainer.style['height'] = headerHeightPixels;
+        } else {
+            this.eHeader.style['height'] = headerHeightPixels;
+        }
+    };
+
     Grid.prototype.setupColumns = function () {
+        this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
         this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
@@ -299,6 +312,7 @@ define([
             this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
             this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
             this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+            this.eHeader = eGrid.querySelector(".ag-header");
             this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
             // for scrolls, all rows live in eBody (containing pinned and normal body)
             this.eRowsParent = this.eBody;

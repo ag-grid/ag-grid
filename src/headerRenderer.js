@@ -29,41 +29,184 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
     };
 
-    HeaderRenderer.prototype.insertHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        var eHeaderContainer = this.eHeaderContainer;
-        utils.removeAllChildren(ePinnedHeader);
-        utils.removeAllChildren(eHeaderContainer);
+    HeaderRenderer.prototype.insertHeader = function () {
+        utils.removeAllChildren(this.ePinnedHeader);
+        utils.removeAllChildren(this.eHeaderContainer);
         this.headerFilterIcons = {};
 
         if (this.childScopes) {
-            this.childScopes.forEach(function(childScope) {
+            this.childScopes.forEach(function (childScope) {
                 childScope.$destroy();
             });
         }
         this.childScopes = [];
 
+        if (this.gridOptionsWrapper.isGroupHeaders()) {
+            this.insertHeadersWithGrouping();
+        } else {
+            this.insertHeadersWithoutGrouping();
+        }
+
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
+        // split the columns into groups
+        var currentGroup = null;
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var colDefWrappers = this.colModel.getColDefWrappers();
+        var that = this;
+        // this logic is called twice below, so refactored it out here.
+        // not in a public method, keeping it private to this method
+        var addGroupFunc = function () {
+            // see if it's just a normal column
+            var eHeaderCell = that.createGroupedHeaderCell(currentGroup);
+            var eContainerToAddTo = currentGroup.pinned ? that.ePinnedHeader : that.eHeaderContainer;
+            eContainerToAddTo.appendChild(eHeaderCell);
+        };
+        colDefWrappers.forEach(function (colDefWrapper, index) {
+            // do we need a new group, because we move from pinned to non-pinned columns?
+            var endOfPinnedHeader = index === pinnedColumnCount;
+            // do we need a new group, because the group names doesn't match from previous col?
+            var groupKeyMismatch = currentGroup && colDefWrapper.colDef.group !== currentGroup.name;
+            // we don't group columns where no group is specified
+            var colNotInGroup = currentGroup && !currentGroup.name;
+            // do we need a new group, because we are just starting
+            var processingFirstCol = index === 0;
+            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
+            // flush the last group out, if it exists
+            if (newGroupNeeded && !processingFirstCol) {
+                addGroupFunc();
+            }
+            // create new group, if it's needed
+            if (newGroupNeeded) {
+                currentGroup = {
+                    colDefWrappers: [],
+                    eHeaderCells: [], // contains the child header cells, they get re-sized when parent width changed
+                    firstIndex: index,
+                    pinned: index < pinnedColumnCount,
+                    name: colDefWrapper.colDef.group
+                };
+            }
+            currentGroup.colDefWrappers.push(colDefWrapper);
+        });
+        // one more group to insert, do it here
+        if (currentGroup) {
+            addGroupFunc();
+        }
+    };
+
+    HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
+
+        var eHeaderGroup = document.createElement('div');
+        eHeaderGroup.className = 'ag-header-group';
+
+        var eHeaderGroupCell = document.createElement('div');
+        currentGroup.eHeaderGroupCell = eHeaderGroupCell;
+        var classNames = ['ag-header-group-cell'];
+        // having different classes below allows the style to not have a bottom border
+        // on the group header, if no group is specified
+        if (currentGroup.name) {
+            classNames.push('ag-header-group-cell-with-group');
+        } else {
+            classNames.push('ag-header-group-cell-no-group');
+        }
+        eHeaderGroupCell.className = classNames.join(' ');
+
+        if (this.gridOptionsWrapper.isEnableColResize()) {
+            var eHeaderCellResize = document.createElement("div");
+            eHeaderCellResize.className = "ag-header-cell-resize";
+            eHeaderGroupCell.appendChild(eHeaderCellResize);
+            currentGroup.eHeaderCellResize = eHeaderCellResize;
+            var dragCallback = this.groupDragCallbackFactory(currentGroup);
+            this.addDragHandler(eHeaderCellResize, dragCallback);
+        }
+
+        // no renderer, default text render
+        var groupName = currentGroup.name;
+        if (groupName && groupName !== '') {
+            var eGroupCellLabel = document.createElement("div");
+            eGroupCellLabel.className = 'ag-header-group-cell-label';
+            eHeaderGroupCell.appendChild(eGroupCellLabel);
+
+            var eInnerText = document.createElement("span");
+            eInnerText.innerHTML = groupName;
+            eGroupCellLabel.appendChild(eInnerText);
+        }
+
+        eHeaderGroup.appendChild(eHeaderGroupCell);
+
+        var that = this;
+        currentGroup.colDefWrappers.forEach(function (colDefWrapper, index) {
+            var colIndex = index + currentGroup.firstIndex;
+            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, currentGroup.pinned, true, currentGroup);
+            that.setWidthOfGroupHeaderCell(currentGroup);
+            eHeaderGroup.appendChild(eHeaderCell);
+            currentGroup.eHeaderCells.push(eHeaderCell);
+        });
+
+        return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.addDragHandler = function (eDraggableElement, dragCallback) {
+        var that = this;
+        eDraggableElement.onmousedown = function(downEvent) {
+            dragCallback.onDragStart();
+            that.eRoot.style.cursor = "col-resize";
+            that.dragStartX = downEvent.clientX;
+
+            that.eRoot.onmousemove = function(moveEvent) {
+                var newX = moveEvent.clientX;
+                var change = newX - that.dragStartX;
+                dragCallback.onDragging(change);
+            };
+            that.eRoot.onmouseup = function() {
+                that.stopDragging();
+            };
+            that.eRoot.onmouseleave = function() {
+                that.stopDragging();
+            };
+        };
+    };
+
+    HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
+        var totalWidth = 0;
+        headerGroup.colDefWrappers.forEach( function (colDefWrapper) {
+            totalWidth += colDefWrapper.actualWidth;
+        });
+        headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
+        headerGroup.actualWidth = totalWidth;
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
+        var ePinnedHeader = this.ePinnedHeader;
+        var eHeaderContainer = this.eHeaderContainer;
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.colModel.getColDefWrappers().forEach(function(colDefWrapper, index) {
+        this.colModel.getColDefWrappers().forEach(function (colDefWrapper, index) {
             // only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, true);
+            if (index < pinnedColumnCount) {
+                var headerCell = that.createHeaderCell(colDefWrapper, index, true, false);
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, false);
+                var headerCell = that.createHeaderCell(colDefWrapper, index, false, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned) {
+    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         var eHeaderCell = document.createElement("div");
 
-        eHeaderCell.className = "ag-header-cell";
+        var headerCellClasses = ['ag-header-cell'];
+        if (grouped) {
+            headerCellClasses.push('ag-header-cell-grouped'); // this takes 50% height
+        } else {
+            headerCellClasses.push('ag-header-cell-not-grouped'); // this takes 100% height
+        }
+        eHeaderCell.className = headerCellClasses.join(' ');
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
@@ -74,7 +217,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, eHeaderCell, colDefWrapper, colIndex, colPinned);
+            var dragCallback = this.headerDragCallbackFactory(colIndex, colPinned, eHeaderCell, colDefWrapper, headerGroup);
+            this.addDragHandler(headerCellResize, dragCallback)
         }
 
         // filter button
@@ -199,43 +343,104 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         });
     };
 
-    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDefWrapper, colIndex, colPinned) {
-        var that = this;
-        headerCellResize.onmousedown = function(downEvent) {
-            that.eRoot.style.cursor = "col-resize";
-            that.dragStartX = downEvent.clientX;
-            that.colWidthStart = colDefWrapper.actualWidth;
+    HeaderRenderer.prototype.groupDragCallbackFactory = function (currentGroup) {
+        var parent = this;
+        return {
+            onDragStart: function() {
+                this.groupWidthStart = currentGroup.actualWidth;
+                this.childrenWidthStarts = [];
+                var that = this;
+                currentGroup.colDefWrappers.forEach( function (colDefWrapper) {
+                    that.childrenWidthStarts.push(colDefWrapper.actualWidth);
+                });
+                this.minWidth = currentGroup.colDefWrappers.length * constants.MIN_COL_WIDTH;
+            },
+            onDragging: function(dragChange) {
 
-            that.eRoot.onmousemove = function(moveEvent) {
-                var newX = moveEvent.clientX;
-                var change = newX - that.dragStartX;
-                var newWidth = that.colWidthStart + change;
+                var newWidth = this.groupWidthStart + dragChange;
+                if (newWidth < this.minWidth) {
+                    newWidth = this.minWidth;
+                }
+
+                // set the new width to the group header
+                var newWidthPx = newWidth + "px";
+                currentGroup.eHeaderGroupCell.style.width = newWidthPx;
+                currentGroup.actualWidth = newWidth;
+
+                // distribute the new width to the child headers
+                var changeRatio = newWidth / this.groupWidthStart;
+                // keep track of pixels used, and last column gets the remaining,
+                // to cater for rounding errors, and min width adjustments
+                var pixelsToDistribute = newWidth;
+                var that = this;
+                currentGroup.colDefWrappers.forEach( function (colDefWrapper, index) {
+                    var notLastCol = index !== (currentGroup.colDefWrappers.length-1);
+                    var newChildSize;
+                    if (notLastCol) {
+                        // if not the last col, calculate the column width as normal
+                        var startChildSize = that.childrenWidthStarts[index];
+                        newChildSize = startChildSize * changeRatio;
+                        if (newChildSize < constants.MIN_COL_WIDTH) {
+                            newChildSize = constants.MIN_COL_WIDTH;
+                        }
+                        pixelsToDistribute -= newChildSize;
+                    } else {
+                        // if last col, give it the remaining pixels
+                        newChildSize = pixelsToDistribute;
+                    }
+                    var childColIndex = currentGroup.firstIndex + index;
+                    var eHeaderCell = currentGroup.eHeaderCells[index];
+                    parent.adjustColumnWidth(newChildSize, childColIndex, colDefWrapper, eHeaderCell);
+                });
+
+                // show not be calling these here, should do something else
+                if (currentGroup.pinned) {
+                    parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                } else {
+                    parent.angularGrid.updateBodyContainerWidthAfterColResize();
+                }
+            }
+        };
+    };
+
+    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, colIndex, colDefWrapper, eHeaderCell) {
+        var newWidthPx = newWidth + "px";
+        var selectorForAllColsInCell = ".cell-col-"+colIndex;
+        var cellsForThisCol = this.eRoot.querySelectorAll(selectorForAllColsInCell);
+        for (var i = 0; i<cellsForThisCol.length; i++) {
+            cellsForThisCol[i].style.width = newWidthPx;
+        }
+
+        eHeaderCell.style.width = newWidthPx;
+        colDefWrapper.actualWidth = newWidth;
+    };
+
+    // gets called when a header (not a header group) gets resized
+    HeaderRenderer.prototype.headerDragCallbackFactory = function (colIndex, colPinned, headerCell, colDefWrapper, headerGroup) {
+        var parent = this;
+        return {
+            onDragStart: function() {
+                this.startWidth = colDefWrapper.actualWidth;
+            },
+            onDragging: function(dragChange) {
+                var newWidth = this.startWidth + dragChange;
                 if (newWidth < constants.MIN_COL_WIDTH) {
                     newWidth = constants.MIN_COL_WIDTH;
                 }
-                var newWidthPx = newWidth + "px";
-                var selectorForAllColsInCell = ".cell-col-"+colIndex;
-                var cellsForThisCol = that.eRoot.querySelectorAll(selectorForAllColsInCell);
-                for (var i = 0; i<cellsForThisCol.length; i++) {
-                    cellsForThisCol[i].style.width = newWidthPx;
-                }
 
-                headerCell.style.width = newWidthPx;
-                colDefWrapper.actualWidth = newWidth;
+                parent.adjustColumnWidth(newWidth, colIndex, colDefWrapper, headerCell);
+
+                if (headerGroup) {
+                    parent.setWidthOfGroupHeaderCell(headerGroup);
+                }
 
                 // show not be calling these here, should do something else
                 if (colPinned) {
-                    that.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                    parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
-                    that.angularGrid.updateBodyContainerWidthAfterColResize();
+                    parent.angularGrid.updateBodyContainerWidthAfterColResize();
                 }
-            };
-            that.eRoot.onmouseup = function() {
-                that.stopDragging();
-            };
-            that.eRoot.onmouseleave = function() {
-                that.stopDragging();
-            };
+            }
         };
     };
 

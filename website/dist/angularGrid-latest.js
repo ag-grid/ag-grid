@@ -994,7 +994,7 @@ define('text',['module'], function (module) {
     return text;
 });
 
-define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>';});
+define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
 
 
 define('text!../src/templateNoScrolls.html',[],function () { return '<div class=\'ag-root ag-no-scrolls\'>\r\n    <!-- header -->\r\n    <div class=\'ag-header-container\'></div>\r\n    <!-- body -->\r\n    <div class=\'ag-body-container\'></div>\r\n</div>';});
@@ -3012,41 +3012,184 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         }
     };
 
-    HeaderRenderer.prototype.insertHeader = function() {
-        var ePinnedHeader = this.ePinnedHeader;
-        var eHeaderContainer = this.eHeaderContainer;
-        utils.removeAllChildren(ePinnedHeader);
-        utils.removeAllChildren(eHeaderContainer);
+    HeaderRenderer.prototype.insertHeader = function () {
+        utils.removeAllChildren(this.ePinnedHeader);
+        utils.removeAllChildren(this.eHeaderContainer);
         this.headerFilterIcons = {};
 
         if (this.childScopes) {
-            this.childScopes.forEach(function(childScope) {
+            this.childScopes.forEach(function (childScope) {
                 childScope.$destroy();
             });
         }
         this.childScopes = [];
 
+        if (this.gridOptionsWrapper.isGroupHeaders()) {
+            this.insertHeadersWithGrouping();
+        } else {
+            this.insertHeadersWithoutGrouping();
+        }
+
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
+        // split the columns into groups
+        var currentGroup = null;
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var colDefWrappers = this.colModel.getColDefWrappers();
+        var that = this;
+        // this logic is called twice below, so refactored it out here.
+        // not in a public method, keeping it private to this method
+        var addGroupFunc = function () {
+            // see if it's just a normal column
+            var eHeaderCell = that.createGroupedHeaderCell(currentGroup);
+            var eContainerToAddTo = currentGroup.pinned ? that.ePinnedHeader : that.eHeaderContainer;
+            eContainerToAddTo.appendChild(eHeaderCell);
+        };
+        colDefWrappers.forEach(function (colDefWrapper, index) {
+            // do we need a new group, because we move from pinned to non-pinned columns?
+            var endOfPinnedHeader = index === pinnedColumnCount;
+            // do we need a new group, because the group names doesn't match from previous col?
+            var groupKeyMismatch = currentGroup && colDefWrapper.colDef.group !== currentGroup.name;
+            // we don't group columns where no group is specified
+            var colNotInGroup = currentGroup && !currentGroup.name;
+            // do we need a new group, because we are just starting
+            var processingFirstCol = index === 0;
+            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
+            // flush the last group out, if it exists
+            if (newGroupNeeded && !processingFirstCol) {
+                addGroupFunc();
+            }
+            // create new group, if it's needed
+            if (newGroupNeeded) {
+                currentGroup = {
+                    colDefWrappers: [],
+                    eHeaderCells: [], // contains the child header cells, they get re-sized when parent width changed
+                    firstIndex: index,
+                    pinned: index < pinnedColumnCount,
+                    name: colDefWrapper.colDef.group
+                };
+            }
+            currentGroup.colDefWrappers.push(colDefWrapper);
+        });
+        // one more group to insert, do it here
+        if (currentGroup) {
+            addGroupFunc();
+        }
+    };
+
+    HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
+
+        var eHeaderGroup = document.createElement('div');
+        eHeaderGroup.className = 'ag-header-group';
+
+        var eHeaderGroupCell = document.createElement('div');
+        currentGroup.eHeaderGroupCell = eHeaderGroupCell;
+        var classNames = ['ag-header-group-cell'];
+        // having different classes below allows the style to not have a bottom border
+        // on the group header, if no group is specified
+        if (currentGroup.name) {
+            classNames.push('ag-header-group-cell-with-group');
+        } else {
+            classNames.push('ag-header-group-cell-no-group');
+        }
+        eHeaderGroupCell.className = classNames.join(' ');
+
+        if (this.gridOptionsWrapper.isEnableColResize()) {
+            var eHeaderCellResize = document.createElement("div");
+            eHeaderCellResize.className = "ag-header-cell-resize";
+            eHeaderGroupCell.appendChild(eHeaderCellResize);
+            currentGroup.eHeaderCellResize = eHeaderCellResize;
+            var dragCallback = this.groupDragCallbackFactory(currentGroup);
+            this.addDragHandler(eHeaderCellResize, dragCallback);
+        }
+
+        // no renderer, default text render
+        var groupName = currentGroup.name;
+        if (groupName && groupName !== '') {
+            var eGroupCellLabel = document.createElement("div");
+            eGroupCellLabel.className = 'ag-header-group-cell-label';
+            eHeaderGroupCell.appendChild(eGroupCellLabel);
+
+            var eInnerText = document.createElement("span");
+            eInnerText.innerHTML = groupName;
+            eGroupCellLabel.appendChild(eInnerText);
+        }
+
+        eHeaderGroup.appendChild(eHeaderGroupCell);
+
+        var that = this;
+        currentGroup.colDefWrappers.forEach(function (colDefWrapper, index) {
+            var colIndex = index + currentGroup.firstIndex;
+            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, currentGroup.pinned, true, currentGroup);
+            that.setWidthOfGroupHeaderCell(currentGroup);
+            eHeaderGroup.appendChild(eHeaderCell);
+            currentGroup.eHeaderCells.push(eHeaderCell);
+        });
+
+        return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.addDragHandler = function (eDraggableElement, dragCallback) {
+        var that = this;
+        eDraggableElement.onmousedown = function(downEvent) {
+            dragCallback.onDragStart();
+            that.eRoot.style.cursor = "col-resize";
+            that.dragStartX = downEvent.clientX;
+
+            that.eRoot.onmousemove = function(moveEvent) {
+                var newX = moveEvent.clientX;
+                var change = newX - that.dragStartX;
+                dragCallback.onDragging(change);
+            };
+            that.eRoot.onmouseup = function() {
+                that.stopDragging();
+            };
+            that.eRoot.onmouseleave = function() {
+                that.stopDragging();
+            };
+        };
+    };
+
+    HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
+        var totalWidth = 0;
+        headerGroup.colDefWrappers.forEach( function (colDefWrapper) {
+            totalWidth += colDefWrapper.actualWidth;
+        });
+        headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
+        headerGroup.actualWidth = totalWidth;
+    };
+
+    HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
+        var ePinnedHeader = this.ePinnedHeader;
+        var eHeaderContainer = this.eHeaderContainer;
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.colModel.getColDefWrappers().forEach(function(colDefWrapper, index) {
+        this.colModel.getColDefWrappers().forEach(function (colDefWrapper, index) {
             // only include the first x cols
-            if (index<pinnedColumnCount) {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, true);
+            if (index < pinnedColumnCount) {
+                var headerCell = that.createHeaderCell(colDefWrapper, index, true, false);
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, false);
+                var headerCell = that.createHeaderCell(colDefWrapper, index, false, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned) {
+    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         var eHeaderCell = document.createElement("div");
 
-        eHeaderCell.className = "ag-header-cell";
+        var headerCellClasses = ['ag-header-cell'];
+        if (grouped) {
+            headerCellClasses.push('ag-header-cell-grouped'); // this takes 50% height
+        } else {
+            headerCellClasses.push('ag-header-cell-not-grouped'); // this takes 100% height
+        }
+        eHeaderCell.className = headerCellClasses.join(' ');
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
@@ -3057,7 +3200,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
-            this.addColResizeHandling(headerCellResize, eHeaderCell, colDefWrapper, colIndex, colPinned);
+            var dragCallback = this.headerDragCallbackFactory(colIndex, colPinned, eHeaderCell, colDefWrapper, headerGroup);
+            this.addDragHandler(headerCellResize, dragCallback)
         }
 
         // filter button
@@ -3182,43 +3326,104 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         });
     };
 
-    HeaderRenderer.prototype.addColResizeHandling = function(headerCellResize, headerCell, colDefWrapper, colIndex, colPinned) {
-        var that = this;
-        headerCellResize.onmousedown = function(downEvent) {
-            that.eRoot.style.cursor = "col-resize";
-            that.dragStartX = downEvent.clientX;
-            that.colWidthStart = colDefWrapper.actualWidth;
+    HeaderRenderer.prototype.groupDragCallbackFactory = function (currentGroup) {
+        var parent = this;
+        return {
+            onDragStart: function() {
+                this.groupWidthStart = currentGroup.actualWidth;
+                this.childrenWidthStarts = [];
+                var that = this;
+                currentGroup.colDefWrappers.forEach( function (colDefWrapper) {
+                    that.childrenWidthStarts.push(colDefWrapper.actualWidth);
+                });
+                this.minWidth = currentGroup.colDefWrappers.length * constants.MIN_COL_WIDTH;
+            },
+            onDragging: function(dragChange) {
 
-            that.eRoot.onmousemove = function(moveEvent) {
-                var newX = moveEvent.clientX;
-                var change = newX - that.dragStartX;
-                var newWidth = that.colWidthStart + change;
+                var newWidth = this.groupWidthStart + dragChange;
+                if (newWidth < this.minWidth) {
+                    newWidth = this.minWidth;
+                }
+
+                // set the new width to the group header
+                var newWidthPx = newWidth + "px";
+                currentGroup.eHeaderGroupCell.style.width = newWidthPx;
+                currentGroup.actualWidth = newWidth;
+
+                // distribute the new width to the child headers
+                var changeRatio = newWidth / this.groupWidthStart;
+                // keep track of pixels used, and last column gets the remaining,
+                // to cater for rounding errors, and min width adjustments
+                var pixelsToDistribute = newWidth;
+                var that = this;
+                currentGroup.colDefWrappers.forEach( function (colDefWrapper, index) {
+                    var notLastCol = index !== (currentGroup.colDefWrappers.length-1);
+                    var newChildSize;
+                    if (notLastCol) {
+                        // if not the last col, calculate the column width as normal
+                        var startChildSize = that.childrenWidthStarts[index];
+                        newChildSize = startChildSize * changeRatio;
+                        if (newChildSize < constants.MIN_COL_WIDTH) {
+                            newChildSize = constants.MIN_COL_WIDTH;
+                        }
+                        pixelsToDistribute -= newChildSize;
+                    } else {
+                        // if last col, give it the remaining pixels
+                        newChildSize = pixelsToDistribute;
+                    }
+                    var childColIndex = currentGroup.firstIndex + index;
+                    var eHeaderCell = currentGroup.eHeaderCells[index];
+                    parent.adjustColumnWidth(newChildSize, childColIndex, colDefWrapper, eHeaderCell);
+                });
+
+                // show not be calling these here, should do something else
+                if (currentGroup.pinned) {
+                    parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                } else {
+                    parent.angularGrid.updateBodyContainerWidthAfterColResize();
+                }
+            }
+        };
+    };
+
+    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, colIndex, colDefWrapper, eHeaderCell) {
+        var newWidthPx = newWidth + "px";
+        var selectorForAllColsInCell = ".cell-col-"+colIndex;
+        var cellsForThisCol = this.eRoot.querySelectorAll(selectorForAllColsInCell);
+        for (var i = 0; i<cellsForThisCol.length; i++) {
+            cellsForThisCol[i].style.width = newWidthPx;
+        }
+
+        eHeaderCell.style.width = newWidthPx;
+        colDefWrapper.actualWidth = newWidth;
+    };
+
+    // gets called when a header (not a header group) gets resized
+    HeaderRenderer.prototype.headerDragCallbackFactory = function (colIndex, colPinned, headerCell, colDefWrapper, headerGroup) {
+        var parent = this;
+        return {
+            onDragStart: function() {
+                this.startWidth = colDefWrapper.actualWidth;
+            },
+            onDragging: function(dragChange) {
+                var newWidth = this.startWidth + dragChange;
                 if (newWidth < constants.MIN_COL_WIDTH) {
                     newWidth = constants.MIN_COL_WIDTH;
                 }
-                var newWidthPx = newWidth + "px";
-                var selectorForAllColsInCell = ".cell-col-"+colIndex;
-                var cellsForThisCol = that.eRoot.querySelectorAll(selectorForAllColsInCell);
-                for (var i = 0; i<cellsForThisCol.length; i++) {
-                    cellsForThisCol[i].style.width = newWidthPx;
-                }
 
-                headerCell.style.width = newWidthPx;
-                colDefWrapper.actualWidth = newWidth;
+                parent.adjustColumnWidth(newWidth, colIndex, colDefWrapper, headerCell);
+
+                if (headerGroup) {
+                    parent.setWidthOfGroupHeaderCell(headerGroup);
+                }
 
                 // show not be calling these here, should do something else
                 if (colPinned) {
-                    that.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                    parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
-                    that.angularGrid.updateBodyContainerWidthAfterColResize();
+                    parent.angularGrid.updateBodyContainerWidthAfterColResize();
                 }
-            };
-            that.eRoot.onmouseup = function() {
-                that.stopDragging();
-            };
-            that.eRoot.onmouseleave = function() {
-                that.stopDragging();
-            };
+            }
         };
     };
 
@@ -3250,7 +3455,8 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         this.setupDefaults();
     }
 
-    GridOptionsWrapper.prototype.isDontUseScrolls = function() { return this.gridOptions.dontUseScrolls; };
+    GridOptionsWrapper.prototype.isGroupHeaders = function() { return this.gridOptions.groupHeaders === true; };
+    GridOptionsWrapper.prototype.isDontUseScrolls = function() { return this.gridOptions.dontUseScrolls === true; };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
     GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
@@ -3271,6 +3477,20 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.getHeaderHeight = function() {
+        if (this.gridOptions.headerHeight) {
+            // if header height provided, used it
+            return this.gridOptions.headerHeight;
+        } else {
+            // otherwise return 25 if no grouping, 50 if grouping
+            if (this.isGroupHeaders()) {
+                return 50;
+            } else {
+                return 25;
+            }
+        }
+    };
 
     GridOptionsWrapper.prototype.isColumDefsPresent = function() {
         return this.gridOptions.columnDefs && this.gridOptions.columnDefs.length!=0;
@@ -3720,7 +3940,20 @@ define('../src/angularGrid',[
         this.$scope.$apply();
     };
 
+    Grid.prototype.setHeaderHeight = function () {
+        var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
+        var headerHeightPixels = headerHeight + 'px';
+        this.eBody.style['padding-top'] = headerHeightPixels;
+        var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
+        if (dontUseScrolls) {
+            this.eHeaderContainer.style['height'] = headerHeightPixels;
+        } else {
+            this.eHeader.style['height'] = headerHeightPixels;
+        }
+    };
+
     Grid.prototype.setupColumns = function () {
+        this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
         this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
@@ -3822,6 +4055,7 @@ define('../src/angularGrid',[
             this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
             this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
             this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
+            this.eHeader = eGrid.querySelector(".ag-header");
             this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
             // for scrolls, all rows live in eBody (containing pinned and normal body)
             this.eRowsParent = this.eBody;
@@ -3917,7 +4151,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    height: 25px;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n    height: 25px;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    font-weight: bold;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    padding: 4px;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    padding-top: 25px;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #b0b0b0;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {
