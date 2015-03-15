@@ -41,3 +41,11 @@
     margin: 5px;
     color: grey;
 }
+
+
+.sidebarLink {
+    font-weight: bold;
+    padding: 4px;
+    border-bottom: 1px solid lightgrey;
+    display: block;
+}
