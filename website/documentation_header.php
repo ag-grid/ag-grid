@@ -57,13 +57,14 @@
                 <a class="sidebarLink" href="/angular-grid-loading-rows/index.php">Loading Rows</a>
                 <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
                 <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
+                <a class="sidebarLink" href="/angular-grid-column-definitions/index.php">Column Definitions</a>
                 <a class="sidebarLink" href="/angular-grid-sorting/index.php">Sorting</a>
                 <a class="sidebarLink" href="/angular-grid-filtering/index.php">Filtering</a>
                 <a class="sidebarLink" href="/angular-grid-resizing/index.php">Resizing</a>
                 <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
                 <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
+                <a class="sidebarLink" href="/angular-grid-grouping-headers/index.php">Grouping Headers</a>
                 <a class="sidebarLink" href="/angular-grid-editing/index.php">Editing Cells</a>
-                <a class="sidebarLink" href="/angular-grid-column-definitions/index.php">Column Definitions</a>
                 <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
                 <a class="sidebarLink" href="/angular-grid-header-rendering/index.php">Header Rendering</a>
                 <a class="sidebarLink" href="/angular-grid-angular-compiling/index.php">Angular Compiling</a>
