@@ -24,6 +24,10 @@
     border-right: 1px solid grey;
 }
 
+.ag-dark .ag-header-group-cell-label {
+    font-weight: bold;
+}
+
 .ag-dark .ag-header-group-cell {
     border-right: 1px solid grey;
     border-bottom: 1px solid grey;
