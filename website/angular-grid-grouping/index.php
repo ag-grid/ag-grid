@@ -108,8 +108,13 @@ include '../documentation_header.php';
     <p/>
     This example uses Font Awesome icons to provide 'minus' and 'plus' icons:
 
-    <pre>groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; }
-    </pre>
+    <pre>groupIconRenderer: function (expanded) {
+  if (expanded) {
+    return '&lt;i class="fa fa-minus-square-o"/>';
+  } else {
+    return '&lt;i class="fa fa-plus-square-o"/>';
+  }
+}</pre>
 
 </div>
 
