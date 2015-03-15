@@ -98,12 +98,20 @@
     overflow: hidden;
 }
 
+/* When there is no group specified, this style gets used */
+.ag-header-group-cell-no-group {
+}
+
+/* When there is a group specified, normally a bottom border is provided */
+.ag-header-group-cell-with-group {
+}
+
 .ag-header-group-cell-label {
-    padding: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .ag-header-cell-label {
-    padding: 4px;
     text-overflow: ellipsis;
     overflow: hidden;
 }

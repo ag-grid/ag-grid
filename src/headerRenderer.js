@@ -58,6 +58,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         // this logic is called twice below, so refactored it out here.
         // not in a public method, keeping it private to this method
         var addGroupFunc = function () {
+            // see if it's just a normal column
             var eHeaderCell = that.createGroupedHeaderCell(currentGroup);
             var eContainerToAddTo = currentGroup.pinned ? that.ePinnedHeader : that.eHeaderContainer;
             eContainerToAddTo.appendChild(eHeaderCell);
@@ -67,9 +68,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var endOfPinnedHeader = index === pinnedColumnCount;
             // do we need a new group, because the group names doesn't match from previous col?
             var groupKeyMismatch = currentGroup && colDefWrapper.colDef.group !== currentGroup.name;
+            // we don't group columns where no group is specified
+            var colNotInGroup = currentGroup && !currentGroup.name;
             // do we need a new group, because we are just starting
             var processingFirstCol = index === 0;
-            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch;
+            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
             // flush the last group out, if it exists
             if (newGroupNeeded && !processingFirstCol) {
                 addGroupFunc();
@@ -93,12 +96,21 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     };
 
     HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
+
         var eHeaderGroup = document.createElement('div');
         eHeaderGroup.className = 'ag-header-group';
 
         var eHeaderGroupCell = document.createElement('div');
-        eHeaderGroupCell.className = 'ag-header-group-cell';
         currentGroup.eHeaderGroupCell = eHeaderGroupCell;
+        var classNames = ['ag-header-group-cell'];
+        // having different classes below allows the style to not have a bottom border
+        // on the group header, if no group is specified
+        if (currentGroup.name) {
+            classNames.push('ag-header-group-cell-with-group');
+        } else {
+            classNames.push('ag-header-group-cell-no-group');
+        }
+        eHeaderGroupCell.className = classNames.join(' ');
 
         if (this.gridOptionsWrapper.isEnableColResize()) {
             var eHeaderCellResize = document.createElement("div");
@@ -112,10 +124,13 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         // no renderer, default text render
         var groupName = currentGroup.name;
         if (groupName && groupName !== '') {
-            var eInnerText = document.createElement("div");
+            var eGroupCellLabel = document.createElement("div");
+            eGroupCellLabel.className = 'ag-header-group-cell-label';
+            eHeaderGroupCell.appendChild(eGroupCellLabel);
+
+            var eInnerText = document.createElement("span");
             eInnerText.innerHTML = groupName;
-            eInnerText.className = 'ag-header-group-cell-label';
-            eHeaderGroupCell.appendChild(eInnerText);
+            eGroupCellLabel.appendChild(eInnerText);
         }
 
         eHeaderGroup.appendChild(eHeaderGroupCell);
@@ -203,7 +218,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
             var dragCallback = this.headerDragCallbackFactory(colIndex, colPinned, eHeaderCell, colDefWrapper, headerGroup);
-            this.addDragHandler(eHeaderCell, dragCallback)
+            this.addDragHandler(headerCellResize, dragCallback)
         }
 
         // filter button

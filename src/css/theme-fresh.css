@@ -31,10 +31,18 @@
 
 .ag-fresh .ag-header-group-cell {
     border-right: 1px solid grey;
+}
+
+.ag-fresh .ag-header-group-cell-with-group {
     border-bottom: 1px solid grey;
 }
 
+.ag-fresh .ag-header-cell-label {
+    padding: 4px;
+}
+
 .ag-fresh .ag-header-group-cell-label {
+    padding: 4px;
     font-weight: bold;
 }
 
