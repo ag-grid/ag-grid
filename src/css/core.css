@@ -103,10 +103,13 @@
 .ag-header-group-cell {
     box-sizing: border-box;
     text-align: center;
-    padding: 4px;
     height: 50%;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.ag-header-group-cell-label {
+    padding: 4px;
 }
 
 .ag-header-cell-label {
