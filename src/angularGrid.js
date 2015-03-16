@@ -147,51 +147,55 @@ define([
             return;
         }
 
-        // if not in array, then it's a new selection, thus selected = true
-        var newSelection = selectedRows.indexOf(row) < 0;
-        var selectedRowCountBefore = selectedRows.length;
+        // 1 - row selected, deselect others
+        // 1 - row not selected, deselect others
+        // 2 - now selected, don't deselect
 
-        // we are doing multi select only if: a) doing multi select and b) user has ctrl key pressed
+        var atLeastOneSelectionChange = false;
+
+        // see if rows to be deselected
         var multiSelect = (this.gridOptions.rowSelection === "multiple" && event.ctrlKey);
+        if (!multiSelect) {
+            // not doing multi-select, so deselect everything other than the 'just selected' row
+            for (var i = selectedRows.length; i>=0; i--) {
+                // skip the 'just selected' row
+                if (selectedRows[i] === row) {
+                    continue;
+                }
 
-        if (multiSelect) {
-            // if multi select, then add to the list, but only if it's not already there
-            if (newSelection) {
-                selectedRows.push(row);
+                // deselect the css
+                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
+                utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + indexOfPreviousSelection + '"]', 'ag-row-selected');
+
+                // remove the row
+                selectedRows.splice(i, 1);
+
+                // inform virtual row listener
+                this.onVirtualRowSelected(indexOfPreviousSelection, false);
+
+                atLeastOneSelectionChange = true;
             }
-        } else {
-            // if not multi select, clear all other selections, and add this selection
-            selectedRows.length = 0;
+        }
+
+        // see if row needs to be selected
+        if (selectedRows.indexOf(row) < 0) {
             selectedRows.push(row);
-        }
 
-        // we could do delta updates to the css classes (ie only update whats changed), however
-        // that could would be prone to bugs, and the benefit (user experience) is unnoticeable
+            // set css class on selected row
+            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
 
-        // remove all selection classes from rows
-        var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
-        for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
-            utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
-        }
-
-        // update css class on selected rows
-        for (var j = 0; j < selectedRows.length; j++) {
-            var indexToSelect = this.rowModel.getRowsAfterMap().indexOf(this.gridOptions.selectedRows[j]);
-            var eRows = this.eRowsParent.querySelectorAll("[row='" + indexToSelect + "']");
-            for (var k = 0; k < eRows.length; k++) {
-                utils.addCssClass(eRows[k], "ag-row-selected")
+            // inform the rowSelected listener, if any
+            if (typeof this.gridOptions.rowSelected === "function") {
+                this.gridOptions.rowSelected(row);
             }
+
+            // inform virtual row listener
+            this.onVirtualRowSelected(rowIndex, true);
+
+            atLeastOneSelectionChange = true;
         }
 
-        // if row newly selected, inform listener
-        if (newSelection && typeof this.gridOptions.rowSelected === "function") {
-            this.gridOptions.rowSelected(row);
-        }
-
-        // if selection changed, inform listener
-        var rowCountChanged = selectedRowCountBefore !== this.gridOptions.selectedRows.length;
-        var selectionChanged = newSelection || rowCountChanged;
-        if (selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
+        if (atLeastOneSelectionChange && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
         }
 
@@ -283,6 +287,17 @@ define([
             this.virtualRowCallbacks[rowIndex] = [];
         }
         this.virtualRowCallbacks[rowIndex].push(callback);
+    };
+
+    Grid.prototype.onVirtualRowSelected = function(rowIndex, selected) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowSelected(selected);
+                }
+            });
+        }
     };
 
     Grid.prototype.onVirtualRowRemoved = function(rowIndex) {

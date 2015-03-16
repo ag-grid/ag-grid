@@ -222,7 +222,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
 
         // filter button
-        var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.hideMenu;
+        var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
         if (showMenu) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
@@ -245,9 +245,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
         // add in sort icon
-        if (this.gridOptionsWrapper.isEnableSorting()) {
+        if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
+            headerSortIcon.setAttribute("display", "none");
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 

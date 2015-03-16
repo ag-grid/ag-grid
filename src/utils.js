@@ -100,6 +100,20 @@ define([], function() {
         }
     };
 
+    Utils.prototype.querySelectorAll_addCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.addCssClass(eRows[k], cssClass);
+        }
+    };
+
+    Utils.prototype.querySelectorAll_removeCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.removeCssClass(eRows[k], cssClass);
+        }
+    };
+
     Utils.prototype.addCssClass = function(element, className) {
         var oldClasses = element.className;
         if (oldClasses.indexOf(className)>=0) {

@@ -76,9 +76,13 @@ define(['./constants'], function(constants) {
     ColModel.prototype.createCheckboxColDef = function () {
         return {
             width: 30,
-            hideMenu: true,
-            headerRenderer: function() {
-                return '#';
+            suppressMenu: true,
+            suppressSorting: true,
+            headerCellRenderer: function() {
+                var eCheckbox = document.createElement('input');
+                eCheckbox.type = "checkbox";
+                eCheckbox.name = "name";
+                return eCheckbox;
             },
             cellRenderer: checkboxCellRendererFactory(this.angularGrid)
         };
@@ -86,15 +90,21 @@ define(['./constants'], function(constants) {
 
     function checkboxCellRendererFactory(angularGrid) {
         return function(params) {
+
+            var eCheckbox = document.createElement('input');
+            eCheckbox.type = "checkbox";
+            eCheckbox.name = "name";
+
             angularGrid.addVirtualRowListener(params.rowIndex, {
                 rowSelected: function (selected) {
-                    console.log('rowSelected: ' + params.rowIndex + ' ' + selected);
+                    eCheckbox.checked = selected;
                 },
                 rowRemoved: function () {
                     console.log('rowRemoved: ' + params.rowIndex);
                 }
             });
-            return '-';
+
+            return eCheckbox;
         };
     }
 
