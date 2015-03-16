@@ -1,14 +1,24 @@
 define(['./constants'], function(constants) {
 
-    function ColModel() {
+    function ColModel(angularGrid) {
+        this.angularGrid = angularGrid;
     }
 
-    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
+    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount, checkboxSelectionColumn) {
         this.pinnedColumnCount = pinnedColCount;
         var colDefWrappers = [];
+
+        var colIndex = 0;
+
+        if (checkboxSelectionColumn) {
+            var checkboxColDef = this.createCheckboxColDef();
+            var checkboxColDefWrapper = new ColDefWrapper(checkboxColDef, colIndex++);
+            colDefWrappers.push(checkboxColDefWrapper);
+        }
+
         if (columnDefs) {
-            columnDefs.forEach(function (colDef, index) {
-                var newColDefWrapper = new ColDefWrapper(colDef, index);
+            columnDefs.forEach(function (colDef) {
+                var newColDefWrapper = new ColDefWrapper(colDef, colIndex++);
                 colDefWrappers.push(newColDefWrapper);
             });
         }
@@ -62,6 +72,31 @@ define(['./constants'], function(constants) {
 
         return widthSoFar;
     };
+
+    ColModel.prototype.createCheckboxColDef = function () {
+        return {
+            width: 30,
+            hideMenu: true,
+            headerRenderer: function() {
+                return '#';
+            },
+            cellRenderer: checkboxCellRendererFactory(this.angularGrid)
+        };
+    };
+
+    function checkboxCellRendererFactory(angularGrid) {
+        return function(params) {
+            angularGrid.addVirtualRowListener(params.rowIndex, {
+                rowSelected: function (selected) {
+                    console.log('rowSelected: ' + params.rowIndex + ' ' + selected);
+                },
+                rowRemoved: function () {
+                    console.log('rowRemoved: ' + params.rowIndex);
+                }
+            });
+            return '-';
+        };
+    }
 
     function ColDefWrapper(colDef, colKey) {
         this.colDef = colDef;

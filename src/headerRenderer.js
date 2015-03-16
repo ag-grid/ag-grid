@@ -222,7 +222,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
 
         // filter button
-        if (this.gridOptionsWrapper.isEnableFilter()) {
+        var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.hideMenu;
+        if (showMenu) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {

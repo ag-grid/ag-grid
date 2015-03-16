@@ -96,6 +96,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
                 that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.rowData, indexToRemove);
             }
+            that.angularGrid.onVirtualRowRemoved(indexToRemove);
 
             delete that.renderedRows[indexToRemove];
         });

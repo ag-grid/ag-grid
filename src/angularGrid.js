@@ -71,6 +71,7 @@ define([
         });
 
         this.gridOptions.selectedRows = [];
+        this.virtualRowCallbacks = {};
 
         this.addApi();
         this.findAllElements($element);
@@ -78,7 +79,7 @@ define([
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.colModel = new ColModel();
+        this.colModel = new ColModel(this);
 
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this, this.filterManager);
@@ -212,7 +213,8 @@ define([
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        var useCheckboxSelection = this.gridOptionsWrapper.isCheckboxSelection();
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount, useCheckboxSelection);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -266,11 +268,34 @@ define([
                 _this.expandOrCollapseAll(false, null);
                 _this.updateModelAndRefresh(constants.STEP_MAP);
             },
+            addVirtualRowListener: function(rowIndex, callback) {
+                _this.addVirtualRowListener(rowIndex, callback);
+            },
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
             }
         };
         this.gridOptions.api = api;
+    };
+
+    Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {
+        if (!this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex] = [];
+        }
+        this.virtualRowCallbacks[rowIndex].push(callback);
+    };
+
+    Grid.prototype.onVirtualRowRemoved = function(rowIndex) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowRemoved();
+                }
+            });
+        }
+        // remove the callbacks
+        delete this.virtualRowCallbacks[rowIndex];
     };
 
     Grid.prototype.expandOrCollapseAll = function(expand, list) {

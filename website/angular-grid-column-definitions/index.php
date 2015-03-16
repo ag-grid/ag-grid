@@ -55,6 +55,11 @@ include '../documentation_header.php';
             <th>comparator</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
+        <tr>
+            <th>hideMenu</th>
+            <td>Set to true if no header menu should be shown for this column.</td>
+        </tr>
+
     </table>
 
     <h2>cellClass</h2>

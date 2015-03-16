@@ -77,6 +77,7 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
+            checkboxSelection: true,
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,
             angularCompileFilters: true,

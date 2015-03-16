@@ -1,4 +1,4 @@
-define(["./constants"], function(constants) {
+define([], function() {
 
     var DEFAULT_ROW_HEIGHT = 30;
 
@@ -11,6 +11,7 @@ define(["./constants"], function(constants) {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isCheckboxSelection = function() { return isTrue(this.gridOptions.checkboxSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };

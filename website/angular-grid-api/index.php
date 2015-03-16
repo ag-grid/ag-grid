@@ -67,6 +67,16 @@ include '../documentation_header.php';
             If none of the rows are visible, nothing is done. The table uses object reverence comparison (ie row1 == row2)
             to check the provided rows with the original rows, to find the corresponding rows.</td>
         </tr>
+        <tr>
+            <th>addVirtualRowListener(rowIndex, callback)</th>
+            <td>Register a callback for notifications about a particular virtualised row. When
+                the row is removed from the table (due to virtualisation), the callback is removed.
+                This callback is intended for cell renderers, that want to register for events
+                for the rendered row - thus if the row is no longer rendered on the screen, the
+                callbacks stop. If the row is redrawn, then the cell renderer must register
+                another callback.
+            </td>
+        </tr>
     </table>
 
     In the future, I plan to extend this API.
