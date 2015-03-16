@@ -135,9 +135,8 @@ define([
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
-        var row = this.rowModel.getRowsAfterMap()[rowIndex];
-        var selectedRows = this.gridOptions.selectedRows;
 
+        var row = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
             this.gridOptions.rowClicked(row, event);
         }
@@ -147,17 +146,43 @@ define([
             return;
         }
 
-        // 1 - row selected, deselect others
-        // 1 - row not selected, deselect others
-        // 2 - now selected, don't deselect
+        // if checkbox selection, then do nothing, as clicking on rows shouldn't select in this instance
+        if (this.gridOptionsWrapper.isCheckboxSelection()) {
+            return;
+        }
 
+        var tryMulti = event.ctrlKey;
+        this.selectRow(tryMulti, rowIndex, row);
+    };
+
+    Grid.prototype.isRowSelected = function(row) {
+        return this.gridOptions.selectedRows.indexOf(row) >= 0;
+    };
+
+    Grid.prototype.unselectRow = function (rowIndex, row) {
+        // deselect the css
+        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+
+        // remove the row
+        var selectedRows = this.gridOptions.selectedRows;
+        var indexToRemove = selectedRows.indexOf(row);
+        selectedRows.splice(indexToRemove, 1);
+
+        // inform virtual row listener
+        this.onVirtualRowSelected(rowIndex, false);
+    };
+
+    Grid.prototype.selectRow = function (tryMulti, rowIndex, row) {
+        var selectedRows = this.gridOptions.selectedRows;
+        var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
+
+        // at the end, if this is true, we inform the callback
         var atLeastOneSelectionChange = false;
 
         // see if rows to be deselected
-        var multiSelect = (this.gridOptions.rowSelection === "multiple" && event.ctrlKey);
         if (!multiSelect) {
             // not doing multi-select, so deselect everything other than the 'just selected' row
-            for (var i = selectedRows.length; i>=0; i--) {
+            for (var i = (selectedRows.length - 1); i>=0; i--) {
                 // skip the 'just selected' row
                 if (selectedRows[i] === row) {
                     continue;
@@ -165,13 +190,7 @@ define([
 
                 // deselect the css
                 var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
-                utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + indexOfPreviousSelection + '"]', 'ag-row-selected');
-
-                // remove the row
-                selectedRows.splice(i, 1);
-
-                // inform virtual row listener
-                this.onVirtualRowSelected(indexOfPreviousSelection, false);
+                this.unselectRow(indexOfPreviousSelection, selectedRows[i]);
 
                 atLeastOneSelectionChange = true;
             }

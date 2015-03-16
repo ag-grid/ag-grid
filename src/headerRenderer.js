@@ -326,6 +326,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                     colWrapperToClear.sort = null;
                 }
 
+                // check in case no sorting on this particular col, as sorting is optional per col
+                if (colWrapperToClear.colDef.suppressSorting) {
+                    return;
+                }
+
                 // update visibility of icons
                 var sortAscending = colWrapperToClear.sort===constants.ASC;
                 var sortDescending = colWrapperToClear.sort===constants.DESC;

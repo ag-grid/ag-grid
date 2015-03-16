@@ -80,8 +80,8 @@ define(['./constants'], function(constants) {
             suppressSorting: true,
             headerCellRenderer: function() {
                 var eCheckbox = document.createElement('input');
-                eCheckbox.type = "checkbox";
-                eCheckbox.name = "name";
+                eCheckbox.type = 'checkbox';
+                eCheckbox.name = 'name';
                 return eCheckbox;
             },
             cellRenderer: checkboxCellRendererFactory(this.angularGrid)
@@ -94,6 +94,16 @@ define(['./constants'], function(constants) {
             var eCheckbox = document.createElement('input');
             eCheckbox.type = "checkbox";
             eCheckbox.name = "name";
+            eCheckbox.checked = angularGrid.isRowSelected(params.data);
+
+            eCheckbox.onchange = function () {
+                var newValue = eCheckbox.checked;
+                if (newValue) {
+                    angularGrid.selectRow(true, params.rowIndex, params.data);
+                } else {
+                    angularGrid.unselectRow(params.rowIndex, params.data);
+                }
+            };
 
             angularGrid.addVirtualRowListener(params.rowIndex, {
                 rowSelected: function (selected) {
