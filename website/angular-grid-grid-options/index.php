@@ -97,6 +97,10 @@ include '../documentation_header.php';
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
+            <th>dontUseScrolls</th>
+            <td>Set to true or false (default is false). When true, scrollbars are not used.</td>
+        </tr>
+        <tr>
             <th>rowSelected</th>
             <td>Function callback, gets called when a row is selected.</td>
         </tr>
