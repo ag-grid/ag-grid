@@ -1,25 +1,22 @@
 define(['./constants'], function(constants) {
 
-    function ColModel(angularGrid) {
+    function ColModel(angularGrid, selectionRendererFactory) {
         this.angularGrid = angularGrid;
+        this.selectionRendererFactory = selectionRendererFactory;
     }
 
-    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount, checkboxSelectionColumn) {
+    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
         var colDefWrappers = [];
 
-        var colIndex = 0;
-
-        if (checkboxSelectionColumn) {
-            var checkboxColDef = this.createCheckboxColDef();
-            var checkboxColDefWrapper = new ColDefWrapper(checkboxColDef, colIndex++);
-            colDefWrappers.push(checkboxColDefWrapper);
-        }
-
+        var that = this;
         if (columnDefs) {
-            columnDefs.forEach(function (colDef) {
-                var newColDefWrapper = new ColDefWrapper(colDef, colIndex++);
-                colDefWrappers.push(newColDefWrapper);
+            columnDefs.forEach(function (colDef, index) {
+                if (colDef === 'checkboxSelection') {
+                    colDef = that.selectionRendererFactory.createCheckboxColDef();
+                }
+                var colDefWrapper = new ColDefWrapper(colDef, index);
+                colDefWrappers.push(colDefWrapper);
             });
         }
         this.colDefWrappers = colDefWrappers;
@@ -72,51 +69,6 @@ define(['./constants'], function(constants) {
 
         return widthSoFar;
     };
-
-    ColModel.prototype.createCheckboxColDef = function () {
-        return {
-            width: 30,
-            suppressMenu: true,
-            suppressSorting: true,
-            headerCellRenderer: function() {
-                var eCheckbox = document.createElement('input');
-                eCheckbox.type = 'checkbox';
-                eCheckbox.name = 'name';
-                return eCheckbox;
-            },
-            cellRenderer: checkboxCellRendererFactory(this.angularGrid)
-        };
-    };
-
-    function checkboxCellRendererFactory(angularGrid) {
-        return function(params) {
-
-            var eCheckbox = document.createElement('input');
-            eCheckbox.type = "checkbox";
-            eCheckbox.name = "name";
-            eCheckbox.checked = angularGrid.isRowSelected(params.data);
-
-            eCheckbox.onchange = function () {
-                var newValue = eCheckbox.checked;
-                if (newValue) {
-                    angularGrid.selectRow(true, params.rowIndex, params.data);
-                } else {
-                    angularGrid.unselectRow(params.rowIndex, params.data);
-                }
-            };
-
-            angularGrid.addVirtualRowListener(params.rowIndex, {
-                rowSelected: function (selected) {
-                    eCheckbox.checked = selected;
-                },
-                rowRemoved: function () {
-                    console.log('rowRemoved: ' + params.rowIndex);
-                }
-            });
-
-            return eCheckbox;
-        };
-    }
 
     function ColDefWrapper(colDef, colKey) {
         this.colDef = colDef;

@@ -11,6 +11,7 @@ define([], function() {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
     GridOptionsWrapper.prototype.isCheckboxSelection = function() { return isTrue(this.gridOptions.checkboxSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };

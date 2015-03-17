@@ -2,12 +2,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
+    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
+        this.selectionRendererFactory = selectionRendererFactory;
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
@@ -190,7 +192,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false);
+            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -198,7 +200,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true);
+                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
@@ -324,7 +326,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding) {
+    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding, rowIndex) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
             eGridGroupRow.className = 'ag-group-cell-entire-row';
@@ -334,6 +336,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         if (!padding) {
             this.addGroupExpandIcon(eGridGroupRow, data.expanded);
+        }
+
+        // if selection, add in selection box
+        if (!padding && this.gridOptionsWrapper.isCheckboxSelection()) {
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+            eGridGroupRow.appendChild(eCheckbox);
         }
 
         // if renderer provided, use it
@@ -423,6 +431,20 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
+    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+        var eCellWrapper = document.createElement('span');
+
+        eGridCell.appendChild(eCellWrapper);
+
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+        eCellWrapper.appendChild(eCheckbox);
+
+        var eDivWithValue = document.createElement("span");
+        eCellWrapper.appendChild(eDivWithValue);
+
+        this.putDataIntoCell(colDef, value, data, $childScope, eDivWithValue, rowIndex);
+    };
+
     RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
@@ -436,7 +458,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.className = classes.join(' ');
 
         var colDef = colDefWrapper.colDef;
-        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        if (colDef.checkboxSelection) {
+            this.putDataAndSelectionCheckboxIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        } else {
+            this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        }
 
         if (colDef.cellStyle) {
             var cssToUse;

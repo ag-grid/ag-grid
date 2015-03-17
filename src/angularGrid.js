@@ -15,22 +15,25 @@
 // should not be able to edit groups
 
 define([
-    "angular",
-    "text!./template.html",
-    "text!./templateNoScrolls.html",
-    "./utils",
-    "./filter/filterManager",
-    "./rowModel",
-    "./rowController",
-    "./rowRenderer",
-    "./headerRenderer",
-    "./gridOptionsWrapper",
-    "./constants",
-    "./colModel",
-    "css!./css/core.css",
-    "css!./css/theme-dark.css",
-    "css!./css/theme-fresh.css"
-], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants, ColModel) {
+    'angular',
+    'text!./template.html',
+    'text!./templateNoScrolls.html',
+    './utils',
+    './filter/filterManager',
+    './rowModel',
+    './rowController',
+    './rowRenderer',
+    './headerRenderer',
+    './gridOptionsWrapper',
+    './constants',
+    './colModel',
+    './selectionRendererFactory',
+    'css!./css/core.css',
+    'css!./css/theme-dark.css',
+    'css!./css/theme-fresh.css'
+], function(angular, template, templateNoScrolls, utils, FilterManager,
+            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            constants, ColModel, SelectionRendererFactory) {
 
     var module = angular.module("angularGrid", []);
 
@@ -79,12 +82,16 @@ define([
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.colModel = new ColModel(this);
+        var selectionRendererFactory = new SelectionRendererFactory(this);
 
+        this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this, this.filterManager, $scope, $compile);
+        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
+                                this.filterManager);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
+                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
+                                this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -146,8 +153,8 @@ define([
             return;
         }
 
-        // if checkbox selection, then do nothing, as clicking on rows shouldn't select in this instance
-        if (this.gridOptionsWrapper.isCheckboxSelection()) {
+        // if click selection suppressed, do nothing
+        if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
             return;
         }
 
@@ -236,8 +243,7 @@ define([
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        var useCheckboxSelection = this.gridOptionsWrapper.isCheckboxSelection();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount, useCheckboxSelection);
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {

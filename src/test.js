@@ -77,6 +77,8 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
+            groupSelection: 'group', // one of ['group','children'], leave blank for no group selection
+            suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
             checkboxSelection: true,
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,
@@ -94,10 +96,11 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
+            //'checkboxSelection',
             {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
