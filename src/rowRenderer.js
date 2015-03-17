@@ -339,7 +339,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         // if selection, add in selection box
-        if (!padding && this.gridOptionsWrapper.isCheckboxSelection()) {
+        if (!padding && this.gridOptionsWrapper.isGroupSelection()) {
             var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
             eGridGroupRow.appendChild(eCheckbox);
         }

@@ -11,6 +11,8 @@ define([], function() {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isGroupSelectionGroup = function() { return this.gridOptions.groupSelection === 'group'; };
+    GridOptionsWrapper.prototype.isGroupSelectionChildren = function() { return this.gridOptions.groupSelection === 'children'; };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
     GridOptionsWrapper.prototype.isCheckboxSelection = function() { return isTrue(this.gridOptions.checkboxSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
@@ -35,6 +37,10 @@ define([], function() {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.isGroupSelection = function() {
+        return this.isGroupSelectionChildren() || this.isGroupSelectionGroup();
+    };
 
     GridOptionsWrapper.prototype.getHeaderHeight = function() {
         if (this.gridOptions.headerHeight) {

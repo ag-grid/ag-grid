@@ -88,8 +88,8 @@ define([
             rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
-            rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
-            selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
+            rowSelected: rowSelected, //callback when row selected
+            selectionChanged: selectionChanged, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);}, //callback when row clicked
             cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
         };
@@ -238,6 +238,10 @@ define([
             return style;
         }
 
+        function selectionChanged() {
+            console.log('Callback selectionChanged: selection count = ' + $scope.angularGrid.selectedRows.length);
+        }
+
     });
 
     var COUNTRY_CODES = {
@@ -260,6 +264,12 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
+
+    function rowSelected(row) {
+        var rowIsAGroup = row._angularGrid_group;
+        var valueToPrint = rowIsAGroup ? 'group ('+row.key+')' : row.name;
+        console.log("Callback rowSelected: " + valueToPrint);
+    }
 
     function numberNewValueHandler(data, newValue, colDef) {
         var valueAsNumber = parseInt(newValue);

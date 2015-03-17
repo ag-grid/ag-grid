@@ -167,6 +167,13 @@ define([
     };
 
     Grid.prototype.unselectRow = function (rowIndex, row) {
+        if (this.gridOptions.selectedRows.indexOf(row)>= 0) {
+            this.unselectRowDontFireListeners(rowIndex, row);
+            this.gridOptions.selectionChanged();
+        }
+    };
+
+    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, row) {
         // deselect the css
         utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
 
@@ -197,7 +204,7 @@ define([
 
                 // deselect the css
                 var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
-                this.unselectRow(indexOfPreviousSelection, selectedRows[i]);
+                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedRows[i]);
 
                 atLeastOneSelectionChange = true;
             }
