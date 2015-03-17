@@ -1101,6 +1101,20 @@ define('../src/utils',[], function() {
         }
     };
 
+    Utils.prototype.querySelectorAll_addCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.addCssClass(eRows[k], cssClass);
+        }
+    };
+
+    Utils.prototype.querySelectorAll_removeCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.removeCssClass(eRows[k], cssClass);
+        }
+    };
+
     Utils.prototype.addCssClass = function(element, className) {
         var oldClasses = element.className;
         if (oldClasses.indexOf(className)>=0) {
@@ -2418,12 +2432,14 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid, angularGrid, $compile, $scope, $timeout) {
+    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
+        this.selectionRendererFactory = selectionRendererFactory;
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
@@ -2512,6 +2528,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
                 that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.rowData, indexToRemove);
             }
+            that.angularGrid.onVirtualRowRemoved(indexToRemove);
 
             delete that.renderedRows[indexToRemove];
         });
@@ -2605,7 +2622,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false);
+            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -2613,7 +2630,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true);
+                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
@@ -2739,7 +2756,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding) {
+    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding, rowIndex) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
             eGridGroupRow.className = 'ag-group-cell-entire-row';
@@ -2749,6 +2766,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         if (!padding) {
             this.addGroupExpandIcon(eGridGroupRow, data.expanded);
+        }
+
+        // if selection, add in selection box
+        if (!padding && this.gridOptionsWrapper.isGroupSelection()) {
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+            eGridGroupRow.appendChild(eCheckbox);
         }
 
         // if renderer provided, use it
@@ -2838,6 +2861,20 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
+    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+        var eCellWrapper = document.createElement('span');
+
+        eGridCell.appendChild(eCellWrapper);
+
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+        eCellWrapper.appendChild(eCheckbox);
+
+        var eDivWithValue = document.createElement("span");
+        eCellWrapper.appendChild(eDivWithValue);
+
+        this.putDataIntoCell(colDef, value, data, $childScope, eDivWithValue, rowIndex);
+    };
+
     RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
@@ -2851,7 +2888,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eGridCell.className = classes.join(' ');
 
         var colDef = colDefWrapper.colDef;
-        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        if (colDef.checkboxSelection) {
+            this.putDataAndSelectionCheckboxIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        } else {
+            this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+        }
 
         if (colDef.cellStyle) {
             var cssToUse;
@@ -3205,7 +3246,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         }
 
         // filter button
-        if (this.gridOptionsWrapper.isEnableFilter()) {
+        var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
+        if (showMenu) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
@@ -3227,9 +3269,10 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
         // add in sort icon
-        if (this.gridOptionsWrapper.isEnableSorting()) {
+        if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
+            headerSortIcon.setAttribute("display", "none");
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
@@ -3305,6 +3348,11 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             that.colModel.getColDefWrappers().forEach(function(colWrapperToClear, colIndex) {
                 if (colWrapperToClear!==colDefWrapper) {
                     colWrapperToClear.sort = null;
+                }
+
+                // check in case no sorting on this particular col, as sorting is optional per col
+                if (colWrapperToClear.colDef.suppressSorting) {
+                    return;
                 }
 
                 // update visibility of icons
@@ -3446,7 +3494,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     return HeaderRenderer;
 
 });
-define('../src/gridOptionsWrapper',["./constants"], function(constants) {
+define('../src/gridOptionsWrapper',[], function() {
 
     var DEFAULT_ROW_HEIGHT = 30;
 
@@ -3459,6 +3507,10 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isGroupSelectionGroup = function() { return this.gridOptions.groupSelection === 'group'; };
+    GridOptionsWrapper.prototype.isGroupSelectionChildren = function() { return this.gridOptions.groupSelection === 'children'; };
+    GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
+    GridOptionsWrapper.prototype.isCheckboxSelection = function() { return isTrue(this.gridOptions.checkboxSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
@@ -3481,6 +3533,10 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.isGroupSelection = function() {
+        return this.isGroupSelectionChildren() || this.isGroupSelectionGroup();
+    };
 
     GridOptionsWrapper.prototype.getHeaderHeight = function() {
         if (this.gridOptions.headerHeight) {
@@ -3529,16 +3585,23 @@ define('../src/gridOptionsWrapper',["./constants"], function(constants) {
 });
 define('../src/colModel',['./constants'], function(constants) {
 
-    function ColModel() {
+    function ColModel(angularGrid, selectionRendererFactory) {
+        this.angularGrid = angularGrid;
+        this.selectionRendererFactory = selectionRendererFactory;
     }
 
     ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
         var colDefWrappers = [];
+
+        var that = this;
         if (columnDefs) {
             columnDefs.forEach(function (colDef, index) {
-                var newColDefWrapper = new ColDefWrapper(colDef, index);
-                colDefWrappers.push(newColDefWrapper);
+                if (colDef === 'checkboxSelection') {
+                    colDef = that.selectionRendererFactory.createCheckboxColDef();
+                }
+                var colDefWrapper = new ColDefWrapper(colDef, index);
+                colDefWrappers.push(colDefWrapper);
             });
         }
         this.colDefWrappers = colDefWrappers;
@@ -3599,6 +3662,69 @@ define('../src/colModel',['./constants'], function(constants) {
 
     return ColModel;
 
+});
+define('../src/selectionRendererFactory',[], function () {
+
+    function SelectionRendererFactory(angularGrid) {
+        this.angularGrid = angularGrid;
+    }
+
+    SelectionRendererFactory.prototype.createCheckboxColDef = function () {
+        return {
+            width: 30,
+            suppressMenu: true,
+            suppressSorting: true,
+            headerCellRenderer: function() {
+                var eCheckbox = document.createElement('input');
+                eCheckbox.type = 'checkbox';
+                eCheckbox.name = 'name';
+                return eCheckbox;
+            },
+            cellRenderer: this.createCheckboxRenderer(this.angularGrid)
+        };
+    };
+
+    SelectionRendererFactory.prototype.createCheckboxRenderer = function () {
+        var that = this;
+        return function(params) {
+            return that.createSelectionCheckbox(params.data, params.rowIndex);
+        };
+    };
+
+    SelectionRendererFactory.prototype.createSelectionCheckbox = function (data, rowIndex) {
+
+        var eCheckbox = document.createElement('input');
+        eCheckbox.type = "checkbox";
+        eCheckbox.name = "name";
+        eCheckbox.checked = this.angularGrid.isRowSelected(data);
+
+        var that = this;
+        eCheckbox.onclick = function (event) {
+            event.stopPropagation();
+        };
+
+        eCheckbox.onchange = function () {
+            var newValue = eCheckbox.checked;
+            if (newValue) {
+                that.angularGrid.selectRow(true, rowIndex, data);
+            } else {
+                that.angularGrid.unselectRow(rowIndex, data);
+            }
+        };
+
+        this.angularGrid.addVirtualRowListener(rowIndex, {
+            rowSelected: function (selected) {
+                eCheckbox.checked = selected;
+            },
+            rowRemoved: function () {
+            }
+        });
+
+        return eCheckbox;
+
+    };
+
+    return SelectionRendererFactory;
 });
 /*
  * css.normalize.js
@@ -3762,22 +3888,25 @@ define('css!../src/css/theme-fresh',[],function(){});
 // should not be able to edit groups
 
 define('../src/angularGrid',[
-    "angular",
-    "text!./template.html",
-    "text!./templateNoScrolls.html",
-    "./utils",
-    "./filter/filterManager",
-    "./rowModel",
-    "./rowController",
-    "./rowRenderer",
-    "./headerRenderer",
-    "./gridOptionsWrapper",
-    "./constants",
-    "./colModel",
-    "css!./css/core.css",
-    "css!./css/theme-dark.css",
-    "css!./css/theme-fresh.css"
-], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants, ColModel) {
+    'angular',
+    'text!./template.html',
+    'text!./templateNoScrolls.html',
+    './utils',
+    './filter/filterManager',
+    './rowModel',
+    './rowController',
+    './rowRenderer',
+    './headerRenderer',
+    './gridOptionsWrapper',
+    './constants',
+    './colModel',
+    './selectionRendererFactory',
+    'css!./css/core.css',
+    'css!./css/theme-dark.css',
+    'css!./css/theme-fresh.css'
+], function(angular, template, templateNoScrolls, utils, FilterManager,
+            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            constants, ColModel, SelectionRendererFactory) {
 
     var module = angular.module("angularGrid", []);
 
@@ -3818,6 +3947,7 @@ define('../src/angularGrid',[
         });
 
         this.gridOptions.selectedRows = [];
+        this.virtualRowCallbacks = {};
 
         this.addApi();
         this.findAllElements($element);
@@ -3825,12 +3955,16 @@ define('../src/angularGrid',[
         this.rowModel = new RowModel();
         this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.colModel = new ColModel();
+        var selectionRendererFactory = new SelectionRendererFactory(this);
 
+        this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this, this.filterManager, $scope, $compile);
+        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
+                                this.filterManager);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
+                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
+                                this.filterManager, $scope, $compile);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -3881,9 +4015,8 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
-        var row = this.rowModel.getRowsAfterMap()[rowIndex];
-        var selectedRows = this.gridOptions.selectedRows;
 
+        var row = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
             this.gridOptions.rowClicked(row, event);
         }
@@ -3893,51 +4026,82 @@ define('../src/angularGrid',[
             return;
         }
 
-        // if not in array, then it's a new selection, thus selected = true
-        var newSelection = selectedRows.indexOf(row) < 0;
-        var selectedRowCountBefore = selectedRows.length;
+        // if click selection suppressed, do nothing
+        if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
+            return;
+        }
 
-        // we are doing multi select only if: a) doing multi select and b) user has ctrl key pressed
-        var multiSelect = (this.gridOptions.rowSelection === "multiple" && event.ctrlKey);
+        var tryMulti = event.ctrlKey;
+        this.selectRow(tryMulti, rowIndex, row);
+    };
 
-        if (multiSelect) {
-            // if multi select, then add to the list, but only if it's not already there
-            if (newSelection) {
-                selectedRows.push(row);
+    Grid.prototype.isRowSelected = function(row) {
+        return this.gridOptions.selectedRows.indexOf(row) >= 0;
+    };
+
+    Grid.prototype.unselectRow = function (rowIndex, row) {
+        if (this.gridOptions.selectedRows.indexOf(row)>= 0) {
+            this.unselectRowDontFireListeners(rowIndex, row);
+            this.gridOptions.selectionChanged();
+        }
+    };
+
+    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, row) {
+        // deselect the css
+        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+
+        // remove the row
+        var selectedRows = this.gridOptions.selectedRows;
+        var indexToRemove = selectedRows.indexOf(row);
+        selectedRows.splice(indexToRemove, 1);
+
+        // inform virtual row listener
+        this.onVirtualRowSelected(rowIndex, false);
+    };
+
+    Grid.prototype.selectRow = function (tryMulti, rowIndex, row) {
+        var selectedRows = this.gridOptions.selectedRows;
+        var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
+
+        // at the end, if this is true, we inform the callback
+        var atLeastOneSelectionChange = false;
+
+        // see if rows to be deselected
+        if (!multiSelect) {
+            // not doing multi-select, so deselect everything other than the 'just selected' row
+            for (var i = (selectedRows.length - 1); i>=0; i--) {
+                // skip the 'just selected' row
+                if (selectedRows[i] === row) {
+                    continue;
+                }
+
+                // deselect the css
+                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
+                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedRows[i]);
+
+                atLeastOneSelectionChange = true;
             }
-        } else {
-            // if not multi select, clear all other selections, and add this selection
-            selectedRows.length = 0;
+        }
+
+        // see if row needs to be selected
+        if (selectedRows.indexOf(row) < 0) {
             selectedRows.push(row);
-        }
 
-        // we could do delta updates to the css classes (ie only update whats changed), however
-        // that could would be prone to bugs, and the benefit (user experience) is unnoticeable
+            // set css class on selected row
+            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
 
-        // remove all selection classes from rows
-        var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
-        for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
-            utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
-        }
-
-        // update css class on selected rows
-        for (var j = 0; j < selectedRows.length; j++) {
-            var indexToSelect = this.rowModel.getRowsAfterMap().indexOf(this.gridOptions.selectedRows[j]);
-            var eRows = this.eRowsParent.querySelectorAll("[row='" + indexToSelect + "']");
-            for (var k = 0; k < eRows.length; k++) {
-                utils.addCssClass(eRows[k], "ag-row-selected")
+            // inform the rowSelected listener, if any
+            if (typeof this.gridOptions.rowSelected === "function") {
+                this.gridOptions.rowSelected(row);
             }
+
+            // inform virtual row listener
+            this.onVirtualRowSelected(rowIndex, true);
+
+            atLeastOneSelectionChange = true;
         }
 
-        // if row newly selected, inform listener
-        if (newSelection && typeof this.gridOptions.rowSelected === "function") {
-            this.gridOptions.rowSelected(row);
-        }
-
-        // if selection changed, inform listener
-        var rowCountChanged = selectedRowCountBefore !== this.gridOptions.selectedRows.length;
-        var selectionChanged = newSelection || rowCountChanged;
-        if (selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
+        if (atLeastOneSelectionChange && typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
         }
 
@@ -4013,11 +4177,45 @@ define('../src/angularGrid',[
                 _this.expandOrCollapseAll(false, null);
                 _this.updateModelAndRefresh(constants.STEP_MAP);
             },
+            addVirtualRowListener: function(rowIndex, callback) {
+                _this.addVirtualRowListener(rowIndex, callback);
+            },
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
             }
         };
         this.gridOptions.api = api;
+    };
+
+    Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {
+        if (!this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex] = [];
+        }
+        this.virtualRowCallbacks[rowIndex].push(callback);
+    };
+
+    Grid.prototype.onVirtualRowSelected = function(rowIndex, selected) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowSelected(selected);
+                }
+            });
+        }
+    };
+
+    Grid.prototype.onVirtualRowRemoved = function(rowIndex) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowRemoved();
+                }
+            });
+        }
+        // remove the callbacks
+        delete this.virtualRowCallbacks[rowIndex];
     };
 
     Grid.prototype.expandOrCollapseAll = function(expand, list) {
