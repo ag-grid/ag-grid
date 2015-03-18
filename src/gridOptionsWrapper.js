@@ -43,7 +43,7 @@ define([], function() {
     };
 
     GridOptionsWrapper.prototype.getHeaderHeight = function() {
-        if (this.gridOptions.headerHeight) {
+        if (typeof this.gridOptions.headerHeight === 'number') {
             // if header height provided, used it
             return this.gridOptions.headerHeight;
         } else {

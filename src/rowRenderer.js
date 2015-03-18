@@ -362,7 +362,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         } else {
             // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
-                var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
+                var textToDisplay = " " + data.key;
+                // only include the child count if it's included, eg if user doing custom aggregation,
+                // then this could be left out, or set to -1, ie no child count
+                if (data.allChildrenCount >= 0) {
+                    textToDisplay + " (" + data.allChildrenCount + ")";
+                }
+                var eText = document.createTextNode(textToDisplay);
                 eGridGroupRow.appendChild(eText);
             }
         }
@@ -373,7 +379,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         // indent with the group level
         if (!padding) {
-            eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
+            // only do this if an indent - as this overwrites the padding that
+            // the theme set, which will make things look 'not aligned' for the
+            // first group level.
+            if (data.level > 0) {
+                eGridGroupRow.style.paddingLeft = (data.level * 10) + "px";
+            }
         }
 
         var _this = this;

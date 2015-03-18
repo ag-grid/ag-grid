@@ -1988,6 +1988,12 @@ define('../src/rowModel',[], function() {
     RowModel.prototype.getRowsAfterMap = function() { return this.rowsAfterMap; };
     RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
 
+    // returns the virtual row index, or -1 if the row is not currently displayed (due to mapping,
+    // ie the group it belongs to isn't visible)
+    RowModel.prototype.getVirtualIndex = function(row) {
+        return this.rowsAfterMap.indexOf(row);
+    };
+
     return RowModel;
 
 });
@@ -2273,12 +2279,16 @@ define('../src/rowController',[
 
     RowController.prototype.doGroupMapping = function () {
         var rowsAfterMap;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+
+        // took this 'if' statement out to allow user to provide items already grouped.
+        // want to keep an eye on performance, if grid still performs with this 'additional'
+        // step, then will leave as below.
+        //if (this.gridOptionsWrapper.getGroupKeys()) {
             rowsAfterMap = [];
             this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        } else {
-            rowsAfterMap = this.rowModel.getRowsAfterSort();
-        }
+        //} else {
+        //    rowsAfterMap = this.rowModel.getRowsAfterSort();
+        //}
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
@@ -2792,7 +2802,13 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         } else {
             // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
-                var eText = document.createTextNode(" " + data.key + " (" + data.allChildrenCount + ")");
+                var textToDisplay = " " + data.key;
+                // only include the child count if it's included, eg if user doing custom aggregation,
+                // then this could be left out, or set to -1, ie no child count
+                if (data.allChildrenCount >= 0) {
+                    textToDisplay + " (" + data.allChildrenCount + ")";
+                }
+                var eText = document.createTextNode(textToDisplay);
                 eGridGroupRow.appendChild(eText);
             }
         }
@@ -2803,7 +2819,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         // indent with the group level
         if (!padding) {
-            eGridGroupRow.style.paddingLeft = ((data.level + 1) * 10) + "px";
+            // only do this if an indent - as this overwrites the padding that
+            // the theme set, which will make things look 'not aligned' for the
+            // first group level.
+            if (data.level > 0) {
+                eGridGroupRow.style.paddingLeft = (data.level * 10) + "px";
+            }
         }
 
         var _this = this;
@@ -3539,7 +3560,7 @@ define('../src/gridOptionsWrapper',[], function() {
     };
 
     GridOptionsWrapper.prototype.getHeaderHeight = function() {
-        if (this.gridOptions.headerHeight) {
+        if (typeof this.gridOptions.headerHeight === 'number') {
             // if header height provided, used it
             return this.gridOptions.headerHeight;
         } else {
@@ -3706,7 +3727,7 @@ define('../src/selectionRendererFactory',[], function () {
         eCheckbox.onchange = function () {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.angularGrid.selectRow(true, rowIndex, data);
+                that.angularGrid.selectRow(data, true);
             } else {
                 that.angularGrid.unselectRow(rowIndex, data);
             }
@@ -4032,7 +4053,7 @@ define('../src/angularGrid',[
         }
 
         var tryMulti = event.ctrlKey;
-        this.selectRow(tryMulti, rowIndex, row);
+        this.selectRow(row, tryMulti);
     };
 
     Grid.prototype.isRowSelected = function(row) {
@@ -4059,7 +4080,7 @@ define('../src/angularGrid',[
         this.onVirtualRowSelected(rowIndex, false);
     };
 
-    Grid.prototype.selectRow = function (tryMulti, rowIndex, row) {
+    Grid.prototype.selectRow = function (row, tryMulti) {
         var selectedRows = this.gridOptions.selectedRows;
         var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
 
@@ -4088,15 +4109,20 @@ define('../src/angularGrid',[
             selectedRows.push(row);
 
             // set css class on selected row
-            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+            var virtualRowIndex = this.rowModel.getVirtualIndex(row);
+            // NOTE: should also check the row renderer - that this row is actually rendered,
+            // ie not outside the scrolling viewport
+            if (virtualRowIndex >= 0) {
+                utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRowIndex + '"]', 'ag-row-selected');
+
+                // inform virtual row listener
+                this.onVirtualRowSelected(virtualRowIndex, true);
+            }
 
             // inform the rowSelected listener, if any
             if (typeof this.gridOptions.rowSelected === "function") {
                 this.gridOptions.rowSelected(row);
             }
-
-            // inform virtual row listener
-            this.onVirtualRowSelected(rowIndex, true);
 
             atLeastOneSelectionChange = true;
         }
@@ -4182,6 +4208,9 @@ define('../src/angularGrid',[
             },
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
+            },
+            selectRow: function(row, tryMulti) {
+                _this.selectRow(row, tryMulti);
             }
         };
         this.gridOptions.api = api;

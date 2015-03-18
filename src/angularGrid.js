@@ -159,7 +159,7 @@ define([
         }
 
         var tryMulti = event.ctrlKey;
-        this.selectRow(tryMulti, rowIndex, row);
+        this.selectRow(row, tryMulti);
     };
 
     Grid.prototype.isRowSelected = function(row) {
@@ -186,7 +186,7 @@ define([
         this.onVirtualRowSelected(rowIndex, false);
     };
 
-    Grid.prototype.selectRow = function (tryMulti, rowIndex, row) {
+    Grid.prototype.selectRow = function (row, tryMulti) {
         var selectedRows = this.gridOptions.selectedRows;
         var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
 
@@ -215,15 +215,20 @@ define([
             selectedRows.push(row);
 
             // set css class on selected row
-            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+            var virtualRowIndex = this.rowModel.getVirtualIndex(row);
+            // NOTE: should also check the row renderer - that this row is actually rendered,
+            // ie not outside the scrolling viewport
+            if (virtualRowIndex >= 0) {
+                utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRowIndex + '"]', 'ag-row-selected');
+
+                // inform virtual row listener
+                this.onVirtualRowSelected(virtualRowIndex, true);
+            }
 
             // inform the rowSelected listener, if any
             if (typeof this.gridOptions.rowSelected === "function") {
                 this.gridOptions.rowSelected(row);
             }
-
-            // inform virtual row listener
-            this.onVirtualRowSelected(rowIndex, true);
 
             atLeastOneSelectionChange = true;
         }
@@ -309,6 +314,9 @@ define([
             },
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
+            },
+            selectRow: function(row, tryMulti) {
+                _this.selectRow(row, tryMulti);
             }
         };
         this.gridOptions.api = api;

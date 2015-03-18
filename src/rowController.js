@@ -170,12 +170,16 @@ define([
 
     RowController.prototype.doGroupMapping = function () {
         var rowsAfterMap;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+
+        // took this 'if' statement out to allow user to provide items already grouped.
+        // want to keep an eye on performance, if grid still performs with this 'additional'
+        // step, then will leave as below.
+        //if (this.gridOptionsWrapper.getGroupKeys()) {
             rowsAfterMap = [];
             this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        } else {
-            rowsAfterMap = this.rowModel.getRowsAfterSort();
-        }
+        //} else {
+        //    rowsAfterMap = this.rowModel.getRowsAfterSort();
+        //}
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 

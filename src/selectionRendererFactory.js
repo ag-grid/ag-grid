@@ -41,7 +41,7 @@ define([], function () {
         eCheckbox.onchange = function () {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.angularGrid.selectRow(true, rowIndex, data);
+                that.angularGrid.selectRow(data, true);
             } else {
                 that.angularGrid.unselectRow(rowIndex, data);
             }
