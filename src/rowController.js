@@ -91,7 +91,7 @@ define([
 
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+        if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
@@ -140,14 +140,18 @@ define([
     };
 
     RowController.prototype.setAllRows = function(allRows) {
-        // place each row into a wrapper
-        var allRowsWrapped = [];
-        for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
-            allRowsWrapped.push({
-                rowData: allRows[i]
-            });
+        if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
+            this.rowModel.setAllRows(allRows);
+        } else {
+            // place each row into a wrapper
+            var allRowsWrapped = [];
+            for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
+                allRowsWrapped.push({
+                    rowData: allRows[i]
+                });
+            }
+            this.rowModel.setAllRows(allRowsWrapped);
         }
-        this.rowModel.setAllRows(allRowsWrapped);
     };
 
     RowController.prototype.getTotalChildCount = function(rowNodes) {

@@ -13,6 +13,7 @@
 // selecting should be like excel, and have keyboard navigation
 // filtering blocks the aggregations - the summary numbers go missing!!
 // should not be able to edit groups
+// editing a checkbox field fails
 
 define([
     'angular',

@@ -169,21 +169,20 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         //if no cols, don't draw row
         if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
-        var rowData = node.rowData;
+        //var rowData = node.rowData;
         var rowIsAGroup = node.group;
 
-        var ePinnedRow = this.createRowContainer(rowIndex, rowData, rowIsAGroup);
-        var eMainRow = this.createRowContainer(rowIndex, rowData, rowIsAGroup);
+        var ePinnedRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
+        var eMainRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
         var _this = this;
 
         eMainRow.style.width = mainRowWidth+"px";
 
         // try compiling as we insert rows
-        var newChildScope = this.createChildScopeOrNull(rowData);
+        var newChildScope = this.createChildScopeOrNull(node.rowData);
 
         var renderedRow = {
-            scope: newChildScope,
-            rowData: rowData
+            scope: newChildScope
         };
         this.renderedRows[rowIndex] = renderedRow;
 
@@ -208,22 +207,22 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             if (!groupHeaderTakesEntireRow) {
 
                 //draw in blank cells for the rest of the row
-                var groupHasData = rowData!==undefined && rowData!==null;
+                var groupHasData = node.rowData!==undefined && node.rowData!==null;
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
                     var item = null;
                     if (groupHasData) {
-                        item = rowData[colDefWrapper.colDef.field];
+                        item = node.rowData[colDefWrapper.colDef.field];
                     }
-                    _this.createCellFromColDef(colDefWrapper, item, rowData, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
+                    _this.createCellFromColDef(colDefWrapper, item, node, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, rowData[colDefWrapper.colDef.field], rowData, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, node.rowData[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -257,8 +256,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, data, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -327,7 +326,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding, rowIndex) {
+    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
             eGridGroupRow.className = 'ag-group-cell-entire-row';
@@ -336,19 +335,19 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         if (!padding) {
-            this.addGroupExpandIcon(eGridGroupRow, data.expanded);
+            this.addGroupExpandIcon(eGridGroupRow, node.expanded);
         }
 
         // if selection, add in selection box
         if (!padding && this.gridOptionsWrapper.isGroupSelection()) {
-            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
             eGridGroupRow.appendChild(eCheckbox);
         }
 
         // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
             var rendererParams = {
-                data: data, padding: padding, gridOptions: this.gridOptions
+                data: node.rowData, node: node, padding: padding, gridOptions: this.gridOptions
             };
             var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -363,11 +362,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         } else {
             // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
-                var textToDisplay = " " + data.key;
+                var textToDisplay = " " + node.key;
                 // only include the child count if it's included, eg if user doing custom aggregation,
                 // then this could be left out, or set to -1, ie no child count
-                if (data.allChildrenCount >= 0) {
-                    textToDisplay + " (" + data.allChildrenCount + ")";
+                if (node.allChildrenCount >= 0) {
+                    textToDisplay + " (" + node.allChildrenCount + ")";
                 }
                 var eText = document.createTextNode(textToDisplay);
                 eGridGroupRow.appendChild(eText);
@@ -383,14 +382,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             // only do this if an indent - as this overwrites the padding that
             // the theme set, which will make things look 'not aligned' for the
             // first group level.
-            if (data.level > 0) {
-                eGridGroupRow.style.paddingLeft = (data.level * 10) + "px";
+            if (node.level > 0) {
+                eGridGroupRow.style.paddingLeft = (node.level * 10) + "px";
             }
         }
 
         var _this = this;
         eGridGroupRow.addEventListener("click", function() {
-            data.expanded = !data.expanded;
+            node.expanded = !node.expanded;
             _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
@@ -421,10 +420,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     };
 
-    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+    RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
         if (colDef.cellRenderer) {
             var rendererParams = {
-                value: value, data: data, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
+                value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
                 gridOptions: this.gridOptionsWrapper.getGridOptions()
             };
             var resultFromRenderer = colDef.cellRenderer(rendererParams);
@@ -443,21 +442,21 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
         var eCellWrapper = document.createElement('span');
 
         eGridCell.appendChild(eCellWrapper);
 
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node.rowData, rowIndex);
         eCellWrapper.appendChild(eCheckbox);
 
         var eDivWithValue = document.createElement("span");
         eCellWrapper.appendChild(eDivWithValue);
 
-        this.putDataIntoCell(colDef, value, data, $childScope, eDivWithValue, rowIndex);
+        this.putDataIntoCell(colDef, value, node, $childScope, eDivWithValue, rowIndex);
     };
 
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope) {
+    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
         eGridCell.setAttribute("col", colIndex);
@@ -471,15 +470,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         var colDef = colDefWrapper.colDef;
         if (colDef.checkboxSelection) {
-            this.putDataAndSelectionCheckboxIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+            this.putDataAndSelectionCheckboxIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
         } else {
-            this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+            this.putDataIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
         }
 
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                var cellStyleParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                var cellStyleParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 cssToUse = colDef.cellStyle(cellStyleParams);
             } else {
@@ -496,7 +495,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                var cellClassParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                var cellClassParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 classToUse = colDef.cellClass(cellClassParams);
             } else {
@@ -514,13 +513,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                that.gridOptionsWrapper.getCellClicked()(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.cellClicked) {
-                colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                colDef.cellClicked(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
-            if (that.isCellEditable(colDef, data)) {
-                that.startEditing(eGridCell, colDefWrapper, data, $childScope);
+            if (that.isCellEditable(colDef, node.rowData)) {
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope);
             }
         });
 
@@ -545,7 +544,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput, blurListener) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener) {
         this.editingCell = false;
         var newValue = eInput.value;
 
@@ -556,16 +555,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         utils.removeAllChildren(eGridCell);
 
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+            colDef.newValueHandler(node.rowData, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
         } else {
-            data[colDef.field] = newValue;
+            node.rowData[colDef.field] = newValue;
         }
 
-        var value = data[colDef.field];
-        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
+        var value = node.rowData[colDef.field];
+        this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, data, $childScope) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         this.editingCell = true;
@@ -574,9 +573,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.type = 'text';
         utils.addCssClass(eInput, 'ag-cell-edit-input');
 
-        var value = data[colDef.field];
+        var value = node.rowData[colDef.field];
         if (value!==null && value!==undefined) {
-            eInput.value = data[colDef.field];
+            eInput.value = value;
         }
 
         eInput.style.width = (colDefWrapper.actualWidth - 14) + 'px';
@@ -585,7 +584,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.select();
 
         var blurListener = function() {
-            that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
         };
 
         //stop entering if we loose focus
@@ -595,7 +594,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
             }
         });
 

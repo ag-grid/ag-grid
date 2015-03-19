@@ -11,6 +11,7 @@ define([], function() {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupSelectionGroup = function() { return this.gridOptions.groupSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupSelectionChildren = function() { return this.gridOptions.groupSelection === 'children'; };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
@@ -37,6 +38,10 @@ define([], function() {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
+        return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
+    };
 
     GridOptionsWrapper.prototype.isGroupSelection = function() {
         return this.isGroupSelectionChildren() || this.isGroupSelectionGroup();

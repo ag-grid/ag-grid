@@ -1032,7 +1032,7 @@ define('../src/utils',[], function() {
         element.addEventListener("input", listener);
     };
 
-    //if value is undefined, null or blank, returns null, othrewise returns the value
+    //if value is undefined, null or blank, returns null, otherwise returns the value
     Utils.prototype.makeNull = function(value) {
         if (value===null || value===undefined || value==="") {
             return null;
@@ -1041,11 +1041,12 @@ define('../src/utils',[], function() {
         }
     };
 
-    Utils.prototype.uniqueValues = function(list, key) {
+    Utils.prototype.uniqueValuesFromRowWrappers = function(list, key) {
         var uniqueCheck = {};
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
-            var value = list[i][key];
+            var rowData = list[i].rowData;
+            var value = rowData ? rowData[key] : null;
             if (value==="" || value===undefined) {
                 value = null;
             }
@@ -1194,7 +1195,7 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
     function SetFilterModel(colDef, rowModel) {
 
         var rowData = rowModel.getAllRows();
-        this.uniqueValues = utils.uniqueValues(rowData, colDef.field);
+        this.uniqueValues = utils.uniqueValuesFromRowWrappers(rowData, colDef.field);
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -1832,7 +1833,7 @@ define('../src/filter/filterManager',[
         return filterPresent;
     };
 
-    FilterManager.prototype.doesFilterPass = function (item) {
+    FilterManager.prototype.doesFilterPass = function (rowData) {
         var colKeys = Object.keys(this.allFilters);
         for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
@@ -1844,7 +1845,7 @@ define('../src/filter/filterManager',[
                 continue;
             }
 
-            var value = item[filterWrapper.field];
+            var value = rowData[filterWrapper.field];
             if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
@@ -1994,6 +1995,10 @@ define('../src/rowModel',[], function() {
         return this.rowsAfterMap.indexOf(row);
     };
 
+    RowModel.prototype.getVirtualRow = function(index) {
+        return this.rowsAfterMap[index];
+    };
+
     return RowModel;
 
 });
@@ -2003,7 +2008,7 @@ define('../src/groupCreator',[
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields, groupAggFunction, expandByDefault) {
+    GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -2015,14 +2020,15 @@ define('../src/groupCreator',[
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupByFields.length - 1;
-        var i, currentLevel, item, currentGroup, groupByField, groupKey, nextGroup;
+        var i, currentLevel, node, rowData, currentGroup, groupByField, groupKey, nextGroup;
 
-        for (i = 0; i<rowData.length; i++) {
-            item = rowData[i];
+        for (i = 0; i<rowNodes.length; i++) {
+            node = rowNodes[i];
+            rowData = node.rowData;
 
             for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
                 groupByField = groupByFields[currentLevel];
-                groupKey = item[groupByField];
+                groupKey = rowData[groupByField];
 
                 if (currentLevel==0) {
                     currentGroup = topMostGroup;
@@ -2032,11 +2038,13 @@ define('../src/groupCreator',[
                 nextGroup = currentGroup.childrenMap[groupKey];
                 if (!nextGroup) {
                     nextGroup = {
-                        _angularGrid_group: true,
+                        group: true,
                         field: groupByField,
                         key: groupKey,
                         expanded: expandByDefault,
                         children: [],
+                        // for top most level, parent is null
+                        parent: currentGroup === topMostGroup ? null : currentGroup,
                         allChildrenCount: 0,
                         level: currentGroup.level + 1,
                         childrenMap: {}//this is a temporary map, we remove at the end of this method
@@ -2049,7 +2057,8 @@ define('../src/groupCreator',[
                 nextGroup.allChildrenCount++;
 
                 if (currentLevel==levelToInsertChild) {
-                    nextGroup.children.push(item);
+                    node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                    nextGroup.children.push(node);
                 } else {
                     currentGroup = nextGroup;
                 }
@@ -2070,16 +2079,15 @@ define('../src/groupCreator',[
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(children, groupAggFunction) {
-        for (var i = 0, l = children.length; i<l; i++) {
-            var item = children[i];
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
+    GroupCreator.prototype.createAggData = function(rowNodes, groupAggFunction) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var node = rowNodes[i];
+            if (node.group) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(item.children, groupAggFunction);
+                this.createAggData(node.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
-                var data = groupAggFunction(item.children);
-                item.aggData = data;
+                var rowData = groupAggFunction(node.children);
+                node.rowData = rowData;
             }
         }
     };
@@ -2146,48 +2154,46 @@ define('../src/rowController',[
             }
         });
 
-        var rowsAfterSort = this.rowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.rowModel.getRowsAfterFilter().slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.sortList(rowsAfterSort, colDefWrapperForSorting.colDef, inverter);
+            this.sortList(rowNodesBeforeSort, colDefWrapperForSorting.colDef, inverter);
         } else {
             //if no sorting, set all group children after sort to the original list
-            this.resetSortInGroups(rowsAfterSort);
+            this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.rowModel.setRowsAfterSort(rowsAfterSort);
+        this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
     };
 
-    RowController.prototype.resetSortInGroups = function(items) {
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
+    RowController.prototype.resetSortInGroups = function(rowNodes) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var item = rowNodes[i];
+            if (item.group) {
                 item.childrenAfterSort = item.children;
                 this.resetSortInGroups(item.children);
             }
         }
     };
 
-    RowController.prototype.sortList = function (listForSorting, colDefForSorting, inverter) {
+    RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
-        //sort any groups recursively
-        for (var i = 0, l = listForSorting.length; i<l; i++) { // critical section, no functional programming
-            var item = listForSorting[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
-                item.childrenAfterSort = item.children.slice(0);
-                this.sortList(item.childrenAfterSort, colDefForSorting, inverter);
+        // sort any groups recursively
+        for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
+            var node = nodes[i];
+            if (node.group) {
+                node.childrenAfterSort = node.children.slice(0);
+                this.sortList(node.childrenAfterSort, colDefForSorting, inverter);
             }
         }
 
-        listForSorting.sort(function (objA, objB) {
+        nodes.sort(function (objA, objB) {
             var keyForSort = colDefForSorting.field;
-            var valueA = objA[keyForSort];
-            var valueB = objB[keyForSort];
+            var valueA = objA.rowData ? objA.rowData[keyForSort] : null;
+            var valueB = objB.rowData ? objB.rowData[keyForSort] : null;
 
             if (colDefForSorting.comparator) {
                 //if comparator provided, use it
@@ -2202,7 +2208,7 @@ define('../src/rowController',[
 
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+        if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
@@ -2226,24 +2232,23 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterFilter(rowsAfterFilter);
     };
 
-    RowController.prototype.filterItems = function (items, quickFilterPresent, advancedFilterPresent) {
+    RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
-        for (var i = 0, l = items.length; i < l; i++) {
-            var item = items[i];
+        for (var i = 0, l = rowNodes.length; i < l; i++) {
+            var node = rowNodes[i];
 
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
-                //deal with group
-                var filteredChildren = this.filterItems(item.children, quickFilterPresent, advancedFilterPresent);
+            if (node.group) {
+                // deal with group
+                var filteredChildren = this.filterItems(node.children, quickFilterPresent, advancedFilterPresent);
                 if (filteredChildren.length>0) {
                     var allChildrenCount = this.getTotalChildCount(filteredChildren);
-                    var newGroup = this.copyGroup(item, filteredChildren, allChildrenCount);
+                    var newGroup = this.copyGroupNode(node, filteredChildren, allChildrenCount);
                     result.push(newGroup);
                 }
             } else {
-                if (this.doesRowPassFilter(item, quickFilterPresent, advancedFilterPresent)) {
-                    result.push(item);
+                if (this.doesRowPassFilter(node, quickFilterPresent, advancedFilterPresent)) {
+                    result.push(node);
                 }
             }
         }
@@ -2251,12 +2256,26 @@ define('../src/rowController',[
         return result;
     };
 
-    RowController.prototype.getTotalChildCount = function(items) {
+    RowController.prototype.setAllRows = function(allRows) {
+        if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
+            this.rowModel.setAllRows(allRows);
+        } else {
+            // place each row into a wrapper
+            var allRowsWrapped = [];
+            for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
+                allRowsWrapped.push({
+                    rowData: allRows[i]
+                });
+            }
+            this.rowModel.setAllRows(allRowsWrapped);
+        }
+    };
+
+    RowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var item = rowNodes[i];
+            if (item.group) {
                 count += item.allChildrenCount;
             } else {
                 count++;
@@ -2265,15 +2284,15 @@ define('../src/rowController',[
         return count;
     };
 
-    RowController.prototype.copyGroup = function (group, children, allChildrenCount) {
+    RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
-            _angularGrid_group: true,
-            field: group.field,
-            key: group.key,
-            expanded: group.expanded,
+            group: true,
+            field: groupNode.field,
+            key: groupNode.key,
+            expanded: groupNode.expanded,
             children: children,
             allChildrenCount: allChildrenCount,
-            level: group.level
+            level: groupNode.level
         };
     };
 
@@ -2292,24 +2311,23 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
-    RowController.prototype.addToMap = function (mappedData, originalList) {
-        for (var i = 0; i<originalList.length; i++) {
-            var data = originalList[i];
-            mappedData.push(data);
-            var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup && data.expanded) {
-                this.addToMap(mappedData, data.childrenAfterSort);
+    RowController.prototype.addToMap = function (mappedData, originalNodes) {
+        for (var i = 0; i<originalNodes.length; i++) {
+            var node = originalNodes[i];
+            mappedData.push(node);
+            if (node.group && node.expanded) {
+                this.addToMap(mappedData, node.childrenAfterSort);
             }
         }
     };
 
-    RowController.prototype.doesRowPassFilter = function(item, quickFilterPresent, advancedFilterPresent) {
+    RowController.prototype.doesRowPassFilter = function(rowNode, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
-            if (!item._quickFilterAggregateText) {
-                this.aggregateRowForQuickFilter(item);
+            if (!rowNode.quickFilterAggregateText) {
+                this.aggregateRowForQuickFilter(rowNode);
             }
-            if (item._quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
+            if (rowNode.quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
                 //quick filter fails, so skip item
                 return false;
             }
@@ -2317,7 +2335,7 @@ define('../src/rowController',[
 
         //second, check advanced filter
         if (advancedFilterPresent) {
-            if (!this.filterManager.doesFilterPass(item)) {
+            if (!this.filterManager.doesFilterPass(rowNode.rowData)) {
                 return false;
             }
         }
@@ -2326,15 +2344,16 @@ define('../src/rowController',[
         return true;
     };
 
-    RowController.prototype.aggregateRowForQuickFilter = function (rowItem) {
-        var aggregatedText = "";
+    RowController.prototype.aggregateRowForQuickFilter = function (rowDataWrapper) {
+        var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
-            var value = rowItem[colDefWrapper.colDef.field];
-            if (value && value !== "") {
+            var rowData = rowDataWrapper.rowData;
+            var value = rowData ? rowData[colDefWrapper.colDef.field] : null;
+            if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
         });
-        rowItem._quickFilterAggregateText = aggregatedText;
+        rowDataWrapper.quickFilterAggregateText = aggregatedText;
     };
 
     return RowController;
@@ -2587,9 +2606,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var data = this.rowModel.getRowsAfterMap()[rowIndex];
-            if (data) {
-                that.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
+            var rowDataWrapper = this.rowModel.getVirtualRow(rowIndex);
+            if (rowDataWrapper) {
+                that.insertRow(rowDataWrapper, rowIndex, mainRowWidth, pinnedColumnCount);
             }
         }
 
@@ -2605,24 +2624,24 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
+    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth, pinnedColumnCount) {
         //if no cols, don't draw row
         if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
-        var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
+        //var rowData = node.rowData;
+        var rowIsAGroup = node.group;
 
-        var ePinnedRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
-        var eMainRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
+        var ePinnedRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
+        var eMainRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
         var _this = this;
 
         eMainRow.style.width = mainRowWidth+"px";
 
         // try compiling as we insert rows
-        var newChildScope = this.createChildScopeOrNull(data);
+        var newChildScope = this.createChildScopeOrNull(node.rowData);
 
         var renderedRow = {
-            scope: newChildScope,
-            rowData: data
+            scope: newChildScope
         };
         this.renderedRows[rowIndex] = renderedRow;
 
@@ -2632,7 +2651,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
+            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -2640,29 +2659,29 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
+                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
             if (!groupHeaderTakesEntireRow) {
 
                 //draw in blank cells for the rest of the row
-                var groupHasData = data.aggData!==undefined && data.aggData!==null;
+                var groupHasData = node.rowData!==undefined && node.rowData!==null;
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
                     var item = null;
                     if (groupHasData) {
-                        item = data.aggData[colDefWrapper.colDef.field];
+                        item = node.rowData[colDefWrapper.colDef.field];
                     }
-                    _this.createCellFromColDef(colDefWrapper, item, data, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
+                    _this.createCellFromColDef(colDefWrapper, item, node, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, data[colDefWrapper.colDef.field], data, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, node.rowData[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -2696,8 +2715,8 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, data, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -2766,7 +2785,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eRow;
     };
 
-    RowRenderer.prototype.createGroupElement = function(data, firstColDefWrapper, useEntireRow, padding, rowIndex) {
+    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
             eGridGroupRow.className = 'ag-group-cell-entire-row';
@@ -2775,19 +2794,19 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
 
         if (!padding) {
-            this.addGroupExpandIcon(eGridGroupRow, data.expanded);
+            this.addGroupExpandIcon(eGridGroupRow, node.expanded);
         }
 
         // if selection, add in selection box
         if (!padding && this.gridOptionsWrapper.isGroupSelection()) {
-            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
             eGridGroupRow.appendChild(eCheckbox);
         }
 
         // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
             var rendererParams = {
-                data: data, padding: padding, gridOptions: this.gridOptions
+                data: node.rowData, node: node, padding: padding, gridOptions: this.gridOptions
             };
             var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -2802,11 +2821,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         } else {
             // otherwise default is display the key along with the child count
             if (!padding) { //only do it if not padding - if we are padding, we display blank row
-                var textToDisplay = " " + data.key;
+                var textToDisplay = " " + node.key;
                 // only include the child count if it's included, eg if user doing custom aggregation,
                 // then this could be left out, or set to -1, ie no child count
-                if (data.allChildrenCount >= 0) {
-                    textToDisplay + " (" + data.allChildrenCount + ")";
+                if (node.allChildrenCount >= 0) {
+                    textToDisplay + " (" + node.allChildrenCount + ")";
                 }
                 var eText = document.createTextNode(textToDisplay);
                 eGridGroupRow.appendChild(eText);
@@ -2822,14 +2841,14 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             // only do this if an indent - as this overwrites the padding that
             // the theme set, which will make things look 'not aligned' for the
             // first group level.
-            if (data.level > 0) {
-                eGridGroupRow.style.paddingLeft = (data.level * 10) + "px";
+            if (node.level > 0) {
+                eGridGroupRow.style.paddingLeft = (node.level * 10) + "px";
             }
         }
 
         var _this = this;
         eGridGroupRow.addEventListener("click", function() {
-            data.expanded = !data.expanded;
+            node.expanded = !node.expanded;
             _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
@@ -2860,10 +2879,10 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     };
 
-    RowRenderer.prototype.putDataIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+    RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
         if (colDef.cellRenderer) {
             var rendererParams = {
-                value: value, data: data, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
+                value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
                 gridOptions: this.gridOptionsWrapper.getGridOptions()
             };
             var resultFromRenderer = colDef.cellRenderer(rendererParams);
@@ -2882,21 +2901,21 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, data, $childScope, eGridCell, rowIndex) {
+    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
         var eCellWrapper = document.createElement('span');
 
         eGridCell.appendChild(eCellWrapper);
 
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(data, rowIndex);
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node.rowData, rowIndex);
         eCellWrapper.appendChild(eCheckbox);
 
         var eDivWithValue = document.createElement("span");
         eCellWrapper.appendChild(eDivWithValue);
 
-        this.putDataIntoCell(colDef, value, data, $childScope, eDivWithValue, rowIndex);
+        this.putDataIntoCell(colDef, value, node, $childScope, eDivWithValue, rowIndex);
     };
 
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, data, rowIndex, colIndex, isGroup, $childScope) {
+    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
         eGridCell.setAttribute("col", colIndex);
@@ -2910,15 +2929,15 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         var colDef = colDefWrapper.colDef;
         if (colDef.checkboxSelection) {
-            this.putDataAndSelectionCheckboxIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+            this.putDataAndSelectionCheckboxIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
         } else {
-            this.putDataIntoCell(colDef, value, data, $childScope, eGridCell, rowIndex);
+            this.putDataIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
         }
 
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                var cellStyleParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                var cellStyleParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 cssToUse = colDef.cellStyle(cellStyleParams);
             } else {
@@ -2935,7 +2954,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                var cellClassParams = {value: value, data: data, colDef: colDef, $scope: $childScope,
+                var cellClassParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 classToUse = colDef.cellClass(cellClassParams);
             } else {
@@ -2953,13 +2972,13 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                that.gridOptionsWrapper.getCellClicked()(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.cellClicked) {
-                colDef.cellClicked(data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                colDef.cellClicked(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
-            if (that.isCellEditable(colDef, data)) {
-                that.startEditing(eGridCell, colDefWrapper, data, $childScope);
+            if (that.isCellEditable(colDef, node.rowData)) {
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope);
             }
         });
 
@@ -2984,7 +3003,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, data, $childScope, eInput, blurListener) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener) {
         this.editingCell = false;
         var newValue = eInput.value;
 
@@ -2995,16 +3014,16 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         utils.removeAllChildren(eGridCell);
 
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+            colDef.newValueHandler(node.rowData, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
         } else {
-            data[colDef.field] = newValue;
+            node.rowData[colDef.field] = newValue;
         }
 
-        var value = data[colDef.field];
-        this.putDataIntoCell(colDef, value, data, $childScope, eGridCell);
+        var value = node.rowData[colDef.field];
+        this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, data, $childScope) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         this.editingCell = true;
@@ -3013,9 +3032,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.type = 'text';
         utils.addCssClass(eInput, 'ag-cell-edit-input');
 
-        var value = data[colDef.field];
+        var value = node.rowData[colDef.field];
         if (value!==null && value!==undefined) {
-            eInput.value = data[colDef.field];
+            eInput.value = value;
         }
 
         eInput.style.width = (colDefWrapper.actualWidth - 14) + 'px';
@@ -3024,7 +3043,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.select();
 
         var blurListener = function() {
-            that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
         };
 
         //stop entering if we loose focus
@@ -3034,7 +3053,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, data, $childScope, eInput, blurListener);
+                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
             }
         });
 
@@ -3528,6 +3547,7 @@ define('../src/gridOptionsWrapper',[], function() {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupSelectionGroup = function() { return this.gridOptions.groupSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupSelectionChildren = function() { return this.gridOptions.groupSelection === 'children'; };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
@@ -3554,6 +3574,10 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
+        return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
+    };
 
     GridOptionsWrapper.prototype.isGroupSelection = function() {
         return this.isGroupSelectionChildren() || this.isGroupSelectionGroup();
@@ -3585,6 +3609,7 @@ define('../src/gridOptionsWrapper',[], function() {
 
     GridOptionsWrapper.prototype.clearSelection = function () {
         this.gridOptions.selectedRows.length = 0;
+        this.gridOptions.selectedNodes.length = 0;
     };
 
     GridOptionsWrapper.prototype.getPinnedColCount = function() {
@@ -3717,7 +3742,7 @@ define('../src/selectionRendererFactory',[], function () {
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
-        eCheckbox.checked = this.angularGrid.isRowSelected(data);
+        eCheckbox.checked = this.angularGrid.isNodeSelected(data);
 
         var that = this;
         eCheckbox.onclick = function (event) {
@@ -3727,9 +3752,9 @@ define('../src/selectionRendererFactory',[], function () {
         eCheckbox.onchange = function () {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.angularGrid.selectRow(data, true);
+                that.angularGrid.selectIndex(rowIndex, true);
             } else {
-                that.angularGrid.unselectRow(rowIndex, data);
+                that.angularGrid.unselectIndex(rowIndex);
             }
         };
 
@@ -3907,6 +3932,7 @@ define('css!../src/css/theme-fresh',[],function(){});
 // selecting should be like excel, and have keyboard navigation
 // filtering blocks the aggregations - the summary numbers go missing!!
 // should not be able to edit groups
+// editing a checkbox field fails
 
 define('../src/angularGrid',[
     'angular',
@@ -3968,13 +3994,13 @@ define('../src/angularGrid',[
         });
 
         this.gridOptions.selectedRows = [];
+        this.gridOptions.selectedNodes = [];
         this.virtualRowCallbacks = {};
 
         this.addApi();
         this.findAllElements($element);
 
         this.rowModel = new RowModel();
-        this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         var selectionRendererFactory = new SelectionRendererFactory(this);
 
@@ -3986,6 +4012,8 @@ define('../src/angularGrid',[
                                 $element[0], this, selectionRendererFactory, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
                                 this.filterManager, $scope, $compile);
+
+        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         if (useScrolls) {
             this.addScrollListener();
@@ -4037,9 +4065,9 @@ define('../src/angularGrid',[
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var row = this.rowModel.getRowsAfterMap()[rowIndex];
+        var node = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
-            this.gridOptions.rowClicked(row, event);
+            this.gridOptions.rowClicked(node.rowData, event);
         }
 
         // if no selection method enabled, do nothing
@@ -4053,35 +4081,41 @@ define('../src/angularGrid',[
         }
 
         var tryMulti = event.ctrlKey;
-        this.selectRow(row, tryMulti);
+        this.selectRow(node, tryMulti);
     };
 
-    Grid.prototype.isRowSelected = function(row) {
-        return this.gridOptions.selectedRows.indexOf(row) >= 0;
+    Grid.prototype.isNodeSelected = function(row) {
+        return this.gridOptions.selectedNodes.indexOf(row) >= 0;
     };
 
-    Grid.prototype.unselectRow = function (rowIndex, row) {
-        if (this.gridOptions.selectedRows.indexOf(row)>= 0) {
-            this.unselectRowDontFireListeners(rowIndex, row);
-            this.gridOptions.selectionChanged();
+    Grid.prototype.unselectIndex = function (rowIndex) {
+        var node = this.rowModel.getVirtualRow(rowIndex);
+        if (node) {
+            this.unselectRowDontFireListeners(rowIndex, node);
+            this.updateSelectedRowsAndCallListener();
         }
     };
 
-    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, row) {
+    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, node) {
         // deselect the css
         utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
 
         // remove the row
-        var selectedRows = this.gridOptions.selectedRows;
-        var indexToRemove = selectedRows.indexOf(row);
-        selectedRows.splice(indexToRemove, 1);
+        var selectedNodes = this.gridOptions.selectedNodes;
+        var indexToRemove = selectedNodes.indexOf(node);
+        selectedNodes.splice(indexToRemove, 1);
 
         // inform virtual row listener
         this.onVirtualRowSelected(rowIndex, false);
     };
 
-    Grid.prototype.selectRow = function (row, tryMulti) {
-        var selectedRows = this.gridOptions.selectedRows;
+    Grid.prototype.selectIndex = function (index, tryMulti) {
+        var node = this.rowModel.getVirtualRow(index);
+        this.selectRow(node, tryMulti);
+    };
+
+    Grid.prototype.selectRow = function (node, tryMulti) {
+        var selectedNodes = this.gridOptions.selectedNodes;
         var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
 
         // at the end, if this is true, we inform the callback
@@ -4090,26 +4124,26 @@ define('../src/angularGrid',[
         // see if rows to be deselected
         if (!multiSelect) {
             // not doing multi-select, so deselect everything other than the 'just selected' row
-            for (var i = (selectedRows.length - 1); i>=0; i--) {
+            for (var i = (selectedNodes.length - 1); i>=0; i--) {
                 // skip the 'just selected' row
-                if (selectedRows[i] === row) {
+                if (selectedNodes[i] === node) {
                     continue;
                 }
 
                 // deselect the css
-                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
-                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedRows[i]);
+                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedNodes[i]);
+                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedNodes[i]);
 
                 atLeastOneSelectionChange = true;
             }
         }
 
         // see if row needs to be selected
-        if (selectedRows.indexOf(row) < 0) {
-            selectedRows.push(row);
+        if (selectedNodes.indexOf(node) < 0) {
+            selectedNodes.push(node);
 
             // set css class on selected row
-            var virtualRowIndex = this.rowModel.getVirtualIndex(row);
+            var virtualRowIndex = this.rowModel.getVirtualIndex(node);
             // NOTE: should also check the row renderer - that this row is actually rendered,
             // ie not outside the scrolling viewport
             if (virtualRowIndex >= 0) {
@@ -4121,17 +4155,30 @@ define('../src/angularGrid',[
 
             // inform the rowSelected listener, if any
             if (typeof this.gridOptions.rowSelected === "function") {
-                this.gridOptions.rowSelected(row);
+                this.gridOptions.rowSelected(node.rowData, node);
             }
 
             atLeastOneSelectionChange = true;
         }
 
-        if (atLeastOneSelectionChange && typeof this.gridOptions.selectionChanged === "function") {
+        if (atLeastOneSelectionChange) {
+            this.updateSelectedRowsAndCallListener();
+        }
+    };
+
+    Grid.prototype.updateSelectedRowsAndCallListener = function () {
+        // update selected rows
+        this.gridOptions.selectedRows.length = 0;
+        var that = this;
+        this.gridOptions.selectedNodes.forEach(function (node) {
+            that.gridOptions.selectedRows.push(node.rowData);
+        });
+
+        if (typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
         }
 
-        this.$scope.$apply();
+        setTimeout(function () { that.$scope.$apply(); }, 0);
     };
 
     Grid.prototype.setHeaderHeight = function () {
@@ -4173,7 +4220,8 @@ define('../src/angularGrid',[
         var _this = this;
         var api = {
             onNewRows: function () {
-                _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
+                _this.rowController.setAllRows(_this.gridOptionsWrapper.getAllRows());
+                _this.gridOptions.selectedNodes.length = 0;
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
@@ -4209,8 +4257,8 @@ define('../src/angularGrid',[
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
             },
-            selectRow: function(row, tryMulti) {
-                _this.selectRow(row, tryMulti);
+            selectIndex: function(index, tryMulti) {
+                _this.selectIndex(index, tryMulti);
             }
         };
         this.gridOptions.api = api;
@@ -4247,18 +4295,17 @@ define('../src/angularGrid',[
         delete this.virtualRowCallbacks[rowIndex];
     };
 
-    Grid.prototype.expandOrCollapseAll = function(expand, list) {
+    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
         //if first call in recursion, we set list to parent list
-        if (list==null) { list = this.rowModel.getRowsAfterGroup(); }
+        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
 
-        if (!list) { return; }
+        if (!rowNodes) { return; }
 
         var _this = this;
-        list.forEach(function(item) {
-            var itemIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (itemIsAGroup) {
-                item.expanded = expand;
-                _this.expandOrCollapseAll(expand, item.children);
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
             }
         });
     };

@@ -39,6 +39,10 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
+            <th>selectIndex(index)</th>
+            <td>Select the row at the given index.</td>
+        </tr>
+        <tr>
             <th>refreshView()</th>
             <td>Redraw all visible rows. Handy has a blanked 'redraw all' if changes have been made to the row data.</td>
         </tr>

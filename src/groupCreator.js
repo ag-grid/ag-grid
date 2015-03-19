@@ -4,7 +4,7 @@ define([
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowDataWrappers, groupByFields, groupAggFunction, expandByDefault) {
+    GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -16,11 +16,11 @@ define([
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupByFields.length - 1;
-        var i, currentLevel, rowDataWrapper, rowData, currentGroup, groupByField, groupKey, nextGroup;
+        var i, currentLevel, node, rowData, currentGroup, groupByField, groupKey, nextGroup;
 
-        for (i = 0; i<rowDataWrappers.length; i++) {
-            rowDataWrapper = rowDataWrappers[i];
-            rowData = rowDataWrapper.rowData;
+        for (i = 0; i<rowNodes.length; i++) {
+            node = rowNodes[i];
+            rowData = node.rowData;
 
             for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
                 groupByField = groupByFields[currentLevel];
@@ -39,6 +39,8 @@ define([
                         key: groupKey,
                         expanded: expandByDefault,
                         children: [],
+                        // for top most level, parent is null
+                        parent: currentGroup === topMostGroup ? null : currentGroup,
                         allChildrenCount: 0,
                         level: currentGroup.level + 1,
                         childrenMap: {}//this is a temporary map, we remove at the end of this method
@@ -51,7 +53,8 @@ define([
                 nextGroup.allChildrenCount++;
 
                 if (currentLevel==levelToInsertChild) {
-                    nextGroup.children.push(rowDataWrapper);
+                    node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                    nextGroup.children.push(node);
                 } else {
                     currentGroup = nextGroup;
                 }

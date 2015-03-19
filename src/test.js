@@ -64,6 +64,7 @@ define([
         var angularGrid = {
             columnDefs: [],
             rowData: [],
+            rowsAlreadyGrouped: false,
             groupHeaders: true,
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
@@ -223,19 +224,16 @@ define([
 
         //because name is the first col, if grouping present, we want to indent it.
         //this method is inside the controller as we access the scope
-        function nameCssFunc() {
-            var style = {};
-            if ($scope.angularGrid.groupKeys) {
-                switch ($scope.angularGrid.groupKeys.length) {
-                    case 1 :
-                        style["padding-left"] = "30px";
-                        break;
-                    case 2 :
-                        style["padding-left"] = "40px";
-                        break;
+        function nameCssFunc(params) {
+            // if we are part of a group, the parent will point to the parent group
+            if (params.node.parent) {
+                var pixelsToIndex = 20 + (params.node.parent.level * 10);
+                return {
+                    'padding-left': pixelsToIndex + 'px'
                 }
+            } else {
+                return null;
             }
-            return style;
         }
 
         function selectionChanged() {
