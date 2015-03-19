@@ -74,13 +74,13 @@ define([
         });
 
         this.gridOptions.selectedRows = [];
+        this.gridOptions.selectedNodes = [];
         this.virtualRowCallbacks = {};
 
         this.addApi();
         this.findAllElements($element);
 
         this.rowModel = new RowModel();
-        this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         var selectionRendererFactory = new SelectionRendererFactory(this);
 
@@ -92,6 +92,8 @@ define([
                                 $element[0], this, selectionRendererFactory, $compile, $scope, $timeout);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
                                 this.filterManager, $scope, $compile);
+
+        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         if (useScrolls) {
             this.addScrollListener();
@@ -143,9 +145,9 @@ define([
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var row = this.rowModel.getRowsAfterMap()[rowIndex];
+        var node = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
-            this.gridOptions.rowClicked(row, event);
+            this.gridOptions.rowClicked(node.rowData, event);
         }
 
         // if no selection method enabled, do nothing
@@ -159,35 +161,41 @@ define([
         }
 
         var tryMulti = event.ctrlKey;
-        this.selectRow(row, tryMulti);
+        this.selectRow(node, tryMulti);
     };
 
-    Grid.prototype.isRowSelected = function(row) {
-        return this.gridOptions.selectedRows.indexOf(row) >= 0;
+    Grid.prototype.isNodeSelected = function(row) {
+        return this.gridOptions.selectedNodes.indexOf(row) >= 0;
     };
 
-    Grid.prototype.unselectRow = function (rowIndex, row) {
-        if (this.gridOptions.selectedRows.indexOf(row)>= 0) {
-            this.unselectRowDontFireListeners(rowIndex, row);
-            this.gridOptions.selectionChanged();
+    Grid.prototype.unselectIndex = function (rowIndex) {
+        var node = this.rowModel.getVirtualRow(rowIndex);
+        if (node) {
+            this.unselectRowDontFireListeners(rowIndex, node);
+            this.updateSelectedRowsAndCallListener();
         }
     };
 
-    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, row) {
+    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, node) {
         // deselect the css
         utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
 
         // remove the row
-        var selectedRows = this.gridOptions.selectedRows;
-        var indexToRemove = selectedRows.indexOf(row);
-        selectedRows.splice(indexToRemove, 1);
+        var selectedNodes = this.gridOptions.selectedNodes;
+        var indexToRemove = selectedNodes.indexOf(node);
+        selectedNodes.splice(indexToRemove, 1);
 
         // inform virtual row listener
         this.onVirtualRowSelected(rowIndex, false);
     };
 
-    Grid.prototype.selectRow = function (row, tryMulti) {
-        var selectedRows = this.gridOptions.selectedRows;
+    Grid.prototype.selectIndex = function (index, tryMulti) {
+        var node = this.rowModel.getVirtualRow(index);
+        this.selectRow(node, tryMulti);
+    };
+
+    Grid.prototype.selectRow = function (node, tryMulti) {
+        var selectedNodes = this.gridOptions.selectedNodes;
         var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
 
         // at the end, if this is true, we inform the callback
@@ -196,26 +204,26 @@ define([
         // see if rows to be deselected
         if (!multiSelect) {
             // not doing multi-select, so deselect everything other than the 'just selected' row
-            for (var i = (selectedRows.length - 1); i>=0; i--) {
+            for (var i = (selectedNodes.length - 1); i>=0; i--) {
                 // skip the 'just selected' row
-                if (selectedRows[i] === row) {
+                if (selectedNodes[i] === node) {
                     continue;
                 }
 
                 // deselect the css
-                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedRows[i]);
-                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedRows[i]);
+                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedNodes[i]);
+                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedNodes[i]);
 
                 atLeastOneSelectionChange = true;
             }
         }
 
         // see if row needs to be selected
-        if (selectedRows.indexOf(row) < 0) {
-            selectedRows.push(row);
+        if (selectedNodes.indexOf(node) < 0) {
+            selectedNodes.push(node);
 
             // set css class on selected row
-            var virtualRowIndex = this.rowModel.getVirtualIndex(row);
+            var virtualRowIndex = this.rowModel.getVirtualIndex(node);
             // NOTE: should also check the row renderer - that this row is actually rendered,
             // ie not outside the scrolling viewport
             if (virtualRowIndex >= 0) {
@@ -227,17 +235,30 @@ define([
 
             // inform the rowSelected listener, if any
             if (typeof this.gridOptions.rowSelected === "function") {
-                this.gridOptions.rowSelected(row);
+                this.gridOptions.rowSelected(node.rowData, node);
             }
 
             atLeastOneSelectionChange = true;
         }
 
-        if (atLeastOneSelectionChange && typeof this.gridOptions.selectionChanged === "function") {
+        if (atLeastOneSelectionChange) {
+            this.updateSelectedRowsAndCallListener();
+        }
+    };
+
+    Grid.prototype.updateSelectedRowsAndCallListener = function () {
+        // update selected rows
+        this.gridOptions.selectedRows.length = 0;
+        var that = this;
+        this.gridOptions.selectedNodes.forEach(function (node) {
+            that.gridOptions.selectedRows.push(node.rowData);
+        });
+
+        if (typeof this.gridOptions.selectionChanged === "function") {
             this.gridOptions.selectionChanged();
         }
 
-        this.$scope.$apply();
+        setTimeout(function () { that.$scope.$apply(); }, 0);
     };
 
     Grid.prototype.setHeaderHeight = function () {
@@ -279,7 +300,8 @@ define([
         var _this = this;
         var api = {
             onNewRows: function () {
-                _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
+                _this.rowController.setAllRows(_this.gridOptionsWrapper.getAllRows());
+                _this.gridOptions.selectedNodes.length = 0;
                 _this.gridOptions.selectedRows.length = 0;
                 _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
@@ -315,8 +337,8 @@ define([
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
             },
-            selectRow: function(row, tryMulti) {
-                _this.selectRow(row, tryMulti);
+            selectIndex: function(index, tryMulti) {
+                _this.selectIndex(index, tryMulti);
             }
         };
         this.gridOptions.api = api;
@@ -353,18 +375,17 @@ define([
         delete this.virtualRowCallbacks[rowIndex];
     };
 
-    Grid.prototype.expandOrCollapseAll = function(expand, list) {
+    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
         //if first call in recursion, we set list to parent list
-        if (list==null) { list = this.rowModel.getRowsAfterGroup(); }
+        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
 
-        if (!list) { return; }
+        if (!rowNodes) { return; }
 
         var _this = this;
-        list.forEach(function(item) {
-            var itemIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (itemIsAGroup) {
-                item.expanded = expand;
-                _this.expandOrCollapseAll(expand, item.children);
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
             }
         });
     };

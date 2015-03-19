@@ -4,7 +4,7 @@ define([
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields, groupAggFunction, expandByDefault) {
+    GroupCreator.prototype.group = function(rowDataWrappers, groupByFields, groupAggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -16,14 +16,15 @@ define([
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupByFields.length - 1;
-        var i, currentLevel, item, currentGroup, groupByField, groupKey, nextGroup;
+        var i, currentLevel, rowDataWrapper, rowData, currentGroup, groupByField, groupKey, nextGroup;
 
-        for (i = 0; i<rowData.length; i++) {
-            item = rowData[i];
+        for (i = 0; i<rowDataWrappers.length; i++) {
+            rowDataWrapper = rowDataWrappers[i];
+            rowData = rowDataWrapper.rowData;
 
             for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
                 groupByField = groupByFields[currentLevel];
-                groupKey = item[groupByField];
+                groupKey = rowData[groupByField];
 
                 if (currentLevel==0) {
                     currentGroup = topMostGroup;
@@ -33,7 +34,7 @@ define([
                 nextGroup = currentGroup.childrenMap[groupKey];
                 if (!nextGroup) {
                     nextGroup = {
-                        _angularGrid_group: true,
+                        group: true,
                         field: groupByField,
                         key: groupKey,
                         expanded: expandByDefault,
@@ -50,7 +51,7 @@ define([
                 nextGroup.allChildrenCount++;
 
                 if (currentLevel==levelToInsertChild) {
-                    nextGroup.children.push(item);
+                    nextGroup.children.push(rowDataWrapper);
                 } else {
                     currentGroup = nextGroup;
                 }
@@ -71,16 +72,15 @@ define([
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(children, groupAggFunction) {
-        for (var i = 0, l = children.length; i<l; i++) {
-            var item = children[i];
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
+    GroupCreator.prototype.createAggData = function(rowNodes, groupAggFunction) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var node = rowNodes[i];
+            if (node.group) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(item.children, groupAggFunction);
+                this.createAggData(node.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
-                var data = groupAggFunction(item.children);
-                item.aggData = data;
+                var rowData = groupAggFunction(node.children);
+                node.rowData = rowData;
             }
         }
     };

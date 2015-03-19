@@ -147,9 +147,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var data = this.rowModel.getRowsAfterMap()[rowIndex];
-            if (data) {
-                that.insertRow(data, rowIndex, mainRowWidth, pinnedColumnCount);
+            var rowDataWrapper = this.rowModel.getVirtualRow(rowIndex);
+            if (rowDataWrapper) {
+                that.insertRow(rowDataWrapper, rowIndex, mainRowWidth, pinnedColumnCount);
             }
         }
 
@@ -165,24 +165,25 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.insertRow = function(data, rowIndex, mainRowWidth, pinnedColumnCount) {
+    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth, pinnedColumnCount) {
         //if no cols, don't draw row
         if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
-        var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
+        var rowData = node.rowData;
+        var rowIsAGroup = node.group;
 
-        var ePinnedRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
-        var eMainRow = this.createRowContainer(rowIndex, data, rowIsAGroup);
+        var ePinnedRow = this.createRowContainer(rowIndex, rowData, rowIsAGroup);
+        var eMainRow = this.createRowContainer(rowIndex, rowData, rowIsAGroup);
         var _this = this;
 
         eMainRow.style.width = mainRowWidth+"px";
 
         // try compiling as we insert rows
-        var newChildScope = this.createChildScopeOrNull(data);
+        var newChildScope = this.createChildScopeOrNull(rowData);
 
         var renderedRow = {
             scope: newChildScope,
-            rowData: data
+            rowData: rowData
         };
         this.renderedRows[rowIndex] = renderedRow;
 
@@ -192,7 +193,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
+            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -200,29 +201,29 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(data, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
+                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
             if (!groupHeaderTakesEntireRow) {
 
                 //draw in blank cells for the rest of the row
-                var groupHasData = data.aggData!==undefined && data.aggData!==null;
+                var groupHasData = rowData!==undefined && rowData!==null;
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
                     var item = null;
                     if (groupHasData) {
-                        item = data.aggData[colDefWrapper.colDef.field];
+                        item = rowData[colDefWrapper.colDef.field];
                     }
-                    _this.createCellFromColDef(colDefWrapper, item, data, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
+                    _this.createCellFromColDef(colDefWrapper, item, rowData, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, data[colDefWrapper.colDef.field], data, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, rowData[colDefWrapper.colDef.field], rowData, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
             });
         }
 

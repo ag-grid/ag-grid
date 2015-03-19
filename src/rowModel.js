@@ -30,6 +30,10 @@ define([], function() {
         return this.rowsAfterMap.indexOf(row);
     };
 
+    RowModel.prototype.getVirtualRow = function(index) {
+        return this.rowsAfterMap[index];
+    };
+
     return RowModel;
 
 });

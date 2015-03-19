@@ -31,7 +31,7 @@ define([], function() {
         element.addEventListener("input", listener);
     };
 
-    //if value is undefined, null or blank, returns null, othrewise returns the value
+    //if value is undefined, null or blank, returns null, otherwise returns the value
     Utils.prototype.makeNull = function(value) {
         if (value===null || value===undefined || value==="") {
             return null;
@@ -40,11 +40,12 @@ define([], function() {
         }
     };
 
-    Utils.prototype.uniqueValues = function(list, key) {
+    Utils.prototype.uniqueValuesFromRowWrappers = function(list, key) {
         var uniqueCheck = {};
         var result = [];
         for(var i = 0, l = list.length; i < l; i++){
-            var value = list[i][key];
+            var rowData = list[i].rowData;
+            var value = rowData ? rowData[key] : null;
             if (value==="" || value===undefined) {
                 value = null;
             }

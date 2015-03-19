@@ -78,7 +78,7 @@ define([
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
             groupSelection: 'group', // one of ['group','children'] - children not yet implemented, just group for now
-            suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+            suppressRowClickSelection: false, // if true, clicking rows doesn't select (useful for checkbox selection)
             checkboxSelection: true,
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,
@@ -265,9 +265,8 @@ define([
         Uruguay: "uy"
     };
 
-    function rowSelected(row) {
-        var rowIsAGroup = row._angularGrid_group;
-        var valueToPrint = rowIsAGroup ? 'group ('+row.key+')' : row.name;
+    function rowSelected(row, node) {
+        var valueToPrint = node.group ? 'group ('+node.key+')' : row.name;
         console.log("Callback rowSelected: " + valueToPrint);
     }
 
@@ -396,19 +395,14 @@ define([
         return "<b>" + params.data.key + "</b>";
     }
 
-    function groupAggFunction(rows) {
+    function groupAggFunction(rowWrappers) {
         var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
         var sums = {};
         colsToSum.forEach(function(key) { sums[key] = 0; });
 
-        rows.forEach(function(row) {
-            var rowIsAGroup = row._angularGrid_group;
+        rowWrappers.forEach(function(rowWrapper) {
             colsToSum.forEach(function(key) {
-                if (rowIsAGroup) {
-                    sums[key] += row.aggData[key];
-                } else {
-                    sums[key] += row[key];
-                }
+                sums[key] += rowWrapper.rowData[key];
             });
         });
 

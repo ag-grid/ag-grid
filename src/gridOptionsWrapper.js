@@ -68,6 +68,7 @@ define([], function() {
 
     GridOptionsWrapper.prototype.clearSelection = function () {
         this.gridOptions.selectedRows.length = 0;
+        this.gridOptions.selectedNodes.length = 0;
     };
 
     GridOptionsWrapper.prototype.getPinnedColCount = function() {

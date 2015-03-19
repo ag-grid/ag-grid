@@ -31,7 +31,7 @@ define([], function () {
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
-        eCheckbox.checked = this.angularGrid.isRowSelected(data);
+        eCheckbox.checked = this.angularGrid.isNodeSelected(data);
 
         var that = this;
         eCheckbox.onclick = function (event) {
@@ -41,9 +41,9 @@ define([], function () {
         eCheckbox.onchange = function () {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.angularGrid.selectRow(data, true);
+                that.angularGrid.selectIndex(rowIndex, true);
             } else {
-                that.angularGrid.unselectRow(rowIndex, data);
+                that.angularGrid.unselectIndex(rowIndex);
             }
         };
 
