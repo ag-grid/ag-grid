@@ -447,7 +447,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eGridCell.appendChild(eCellWrapper);
 
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node.rowData, rowIndex);
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
         eCellWrapper.appendChild(eCheckbox);
 
         var eDivWithValue = document.createElement("span");

@@ -2906,7 +2906,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         eGridCell.appendChild(eCellWrapper);
 
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node.rowData, rowIndex);
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
         eCellWrapper.appendChild(eCheckbox);
 
         var eDivWithValue = document.createElement("span");
@@ -3733,16 +3733,16 @@ define('../src/selectionRendererFactory',[], function () {
     SelectionRendererFactory.prototype.createCheckboxRenderer = function () {
         var that = this;
         return function(params) {
-            return that.createSelectionCheckbox(params.data, params.rowIndex);
+            return that.createSelectionCheckbox(params.node, params.rowIndex);
         };
     };
 
-    SelectionRendererFactory.prototype.createSelectionCheckbox = function (data, rowIndex) {
+    SelectionRendererFactory.prototype.createSelectionCheckbox = function (node, rowIndex) {
 
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
-        eCheckbox.checked = this.angularGrid.isNodeSelected(data);
+        eCheckbox.checked = this.angularGrid.isNodeSelected(node);
 
         var that = this;
         eCheckbox.onclick = function (event) {
