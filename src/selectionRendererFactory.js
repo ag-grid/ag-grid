@@ -32,7 +32,7 @@ define([], function () {
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
-        eCheckbox.checked = this.selectionController.isNodeSelected(node);
+        setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
 
         var that = this;
         eCheckbox.onclick = function (event) {
@@ -50,15 +50,25 @@ define([], function () {
 
         this.angularGrid.addVirtualRowListener(rowIndex, {
             rowSelected: function (selected) {
-                eCheckbox.checked = selected;
+                setCheckboxState(eCheckbox, selected);
             },
             rowRemoved: function () {
             }
         });
 
         return eCheckbox;
-
     };
+
+    function setCheckboxState(eCheckbox, state) {
+        if (typeof state === 'boolean') {
+            eCheckbox.checked = state;
+            eCheckbox.indeterminate = false;
+        } else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            eCheckbox.indeterminate = true;
+        }
+    }
 
     return SelectionRendererFactory;
 });

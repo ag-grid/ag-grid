@@ -106,7 +106,7 @@ define([
 
         this.rowModel = new RowModel();
 
-        this.selectionController = new SelectionController(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope);
+        this.selectionController = new SelectionController();
         var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
 
         this.colModel = new ColModel(this, selectionRendererFactory);
@@ -119,6 +119,8 @@ define([
                                 this.filterManager, $scope, $compile);
 
         this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+
+        this.selectionController.init(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope, this.rowRenderer);
 
         if (useScrolls) {
             this.addScrollListener();

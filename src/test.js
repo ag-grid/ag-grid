@@ -78,7 +78,7 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
-            groupSelection: 'group', // one of ['group','children'] - children not yet implemented, just group for now
+            groupSelection: 'children', // one of ['group','children'] - children not yet implemented, just group for now
             suppressRowClickSelection: false, // if true, clicking rows doesn't select (useful for checkbox selection)
             checkboxSelection: true,
             groupAggFunction: groupAggFunction,

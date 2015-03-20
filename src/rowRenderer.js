@@ -124,33 +124,45 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
-        var firstRow;
-        var lastRow;
+        var first;
+        var last;
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
-            firstRow = 0;
+            first = 0;
             var rowsAfterMap = this.rowModel.getRowsAfterMap();
             if (rowsAfterMap) {
-                lastRow = rowsAfterMap.length - 1;
+                last = rowsAfterMap.length - 1;
             } else {
-                lastRow = 0;
+                last = 0;
             }
         } else {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-            firstRow = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
-            lastRow = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
+            first = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
+            last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
 
             //add in buffer
-            firstRow = firstRow - constants.ROW_BUFFER_SIZE;
-            lastRow = lastRow + constants.ROW_BUFFER_SIZE;
+            first = first - constants.ROW_BUFFER_SIZE;
+            last = last + constants.ROW_BUFFER_SIZE;
         }
 
-        this.ensureRowsRendered(firstRow, lastRow);
+        this.firstVirtualRenderedRow = first;
+        this.lastVirtualRenderedRow = last;
+
+        this.ensureRowsRendered();
     };
 
-    RowRenderer.prototype.ensureRowsRendered = function (start, finish) {
+    RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
+        return this.firstVirtualRenderedRow;
+    };
+
+    RowRenderer.prototype.getLastVirtualRenderedRow = function () {
+        return this.lastVirtualRenderedRow;
+    };
+
+    RowRenderer.prototype.ensureRowsRendered = function () {
+
         var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var mainRowWidth = this.colModel.getTotalUnpinnedColWidth();
         var that = this;
@@ -159,7 +171,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var rowsToRemove = Object.keys(this.renderedRows);
 
         //add in new rows
-        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
+        for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
             //see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
