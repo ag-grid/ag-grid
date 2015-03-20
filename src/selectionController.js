@@ -247,6 +247,7 @@ define(['./utils'], function(utils) {
     // true: if selected
     // false: if unselected
     // undefined: if it's a group and 'children selection' is sued adn 'children' are a mix of selected and unselected
+    // NOTE: This method is very slow. Need to speed it up.
     SelectionController.prototype.isNodeSelected = function(node) {
         if (this.gridOptionsWrapper.isGroupSelectionChildren() && node.group) {
             // doing child selection, we need to traverse the children
@@ -267,6 +268,7 @@ define(['./utils'], function(utils) {
         if (!this.gridOptionsWrapper.isGroupSelectionChildren()) {
             return;
         }
+
         var firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
         var lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
