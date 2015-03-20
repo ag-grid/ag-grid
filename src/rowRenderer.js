@@ -54,18 +54,37 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.rowDataChanged = function(rows) {
-        //get indexes for the rows
+        // convert to nodes, and call other function.
+        // we only need to be worried about rendered rows,
+        // as this method is called to whats rendered.
+        // if the row isn't rendered, we don't care
+        var nodes = [];
+        var renderedRows = this.renderedRows;
+        Object.keys(renderedRows).forEach(function (key) {
+            var renderedRow = renderedRows[key];
+            // see if the rendered row is in the list of rows we have to update
+            var rowNeedsUpdating = rows.indexOf(renderedRow.node.rowData) >= 0;
+            if (rowNeedsUpdating) {
+                nodes.push(renderedRow.node);
+            }
+        });
+
+        this.rowNodesChanged(nodes);
+    };
+
+    RowRenderer.prototype.rowNodesChanged = function(nodes) {
+        // get indexes for the rows
         var indexesToRemove = [];
         var rowsAfterMap = this.rowModel.getRowsAfterMap();
-        rows.forEach(function(row) {
+        nodes.forEach(function(row) {
             var index = rowsAfterMap.indexOf(row);
             if (index>=0) {
                 indexesToRemove.push(index);
             }
         });
-        //remove the rows
+        // remove the rows
         this.removeVirtualRows(indexesToRemove);
-        //add draw them again
+        // add draw them again
         this.drawVirtualRows();
     };
 
@@ -172,8 +191,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         //var rowData = node.rowData;
         var rowIsAGroup = node.group;
 
-        var ePinnedRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
-        var eMainRow = this.createRowContainer(rowIndex, node.rowData, rowIsAGroup);
+        var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
+        var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
         var _this = this;
 
         eMainRow.style.width = mainRowWidth+"px";
@@ -182,7 +201,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var newChildScope = this.createChildScopeOrNull(node.rowData);
 
         var renderedRow = {
-            scope: newChildScope
+            scope: newChildScope,
+            node: node
         };
         this.renderedRows[rowIndex] = renderedRow;
 
@@ -266,17 +286,19 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createRowContainer = function(rowIndex, row, groupRow) {
+    RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
         var eRow = document.createElement("div");
         var classesList = ["ag-row"];
         classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
-        if (this.gridOptions.selectedRows.indexOf(row)>=0) {
+        if (this.gridOptions.selectedNodes.indexOf(node)>=0) {
             classesList.push("ag-row-selected");
         }
 
         // add in extra classes provided by the config
         if (this.gridOptionsWrapper.getRowClass()) {
-            var extraRowClasses = this.gridOptionsWrapper.getRowClass()(row, rowIndex, groupRow);
+            var params = {node: node, data: node.rowData, rowIndex: rowIndex,
+                gridOptions: this.gridOptionsWrapper.getGridOptions()};
+            var extraRowClasses = this.gridOptionsWrapper.getRowClass()(params);
             if (extraRowClasses) {
                 if (typeof extraRowClasses === 'string') {
                     classesList.push(extraRowClasses);
@@ -304,7 +326,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var cssToUse;
             var rowStyle = this.gridOptionsWrapper.getRowStyle();
             if (typeof rowStyle === 'function') {
-                cssToUse = rowStyle(row, rowIndex, groupRow);
+                cssToUse = rowStyle(node.rowData, rowIndex, groupRow);
             } else {
                 cssToUse = rowStyle;
             }

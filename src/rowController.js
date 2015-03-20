@@ -145,10 +145,12 @@ define([
         } else {
             // place each row into a wrapper
             var allRowsWrapped = [];
-            for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
-                allRowsWrapped.push({
-                    rowData: allRows[i]
-                });
+            if (allRows) {
+                for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
+                    allRowsWrapped.push({
+                        rowData: allRows[i]
+                    });
+                }
             }
             this.rowModel.setAllRows(allRowsWrapped);
         }

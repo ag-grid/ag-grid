@@ -116,6 +116,10 @@ include '../documentation_header.php';
             <th>selectionChanged</th>
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
+        <tr>
+            <th>getRowClass</th>
+            <td>Function callback, to allow adding a css class to a row.</td>
+        </tr>
     </table>
 
 </div>
