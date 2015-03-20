@@ -3778,7 +3778,7 @@ define('../src/selectionRendererFactory',[], function () {
             if (newValue) {
                 that.angularGrid.selectIndex(rowIndex, true);
             } else {
-                that.angularGrid.unselectIndex(rowIndex);
+                that.angularGrid.deselectIndex(rowIndex);
             }
         };
 
@@ -4112,7 +4112,7 @@ define('../src/angularGrid',[
         return this.gridOptions.selectedNodes.indexOf(row) >= 0;
     };
 
-    Grid.prototype.unselectIndex = function (rowIndex) {
+    Grid.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getVirtualRow(rowIndex);
         if (node) {
             this.unselectRowDontFireListeners(rowIndex, node);

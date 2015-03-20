@@ -11,6 +11,8 @@ define([], function() {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
+    GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
     GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupSelectionGroup = function() { return this.gridOptions.groupSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupSelectionChildren = function() { return this.gridOptions.groupSelection === 'children'; };
@@ -37,7 +39,12 @@ define([], function() {
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
+    GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
+    GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+
+    GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
+    GridOptionsWrapper.prototype.setSelectedNodes = function(newSelectedNodes) { return this.gridOptions.selectedNodes = newSelectedNodes; };
 
     GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
         return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
@@ -69,11 +76,6 @@ define([], function() {
         if (!this.gridOptions.rowHeight) {
             this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
         }
-    };
-
-    GridOptionsWrapper.prototype.clearSelection = function () {
-        this.gridOptions.selectedRows.length = 0;
-        this.gridOptions.selectedNodes.length = 0;
     };
 
     GridOptionsWrapper.prototype.getPinnedColCount = function() {

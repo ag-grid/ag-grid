@@ -15,6 +15,30 @@
 // should not be able to edit groups
 // editing a checkbox field fails
 
+/* breaking changes:
+
+ row records now stored in 'node' objects, previously records were stored directing in a list (with the exception of
+ group rows). each node object has attribute 'data' with the rows data. in addition, the following attributes also
+ exist:
+  -> parent (reference to the parent node, if it exists)
+  -> group - set to 'true' if this node is a group node (ie has children)
+      -> children: the groups children
+      -> field: the field grouped by (for information purposes only, if doing your own grouping, not needed)
+      -> key: the group key (what text to display beside the group when rendering)
+      -> expanded: whether the group is expanded or not
+      -> allChildrenCount: how many children (including grand children) this group has. number is displayed
+                           in brackets beside the group, set to -1 if doing own group and don't want this displayed
+      -> level: group level, 0 is top most level. use this to add padding to your cell, if displaying something
+                in the group column
+
+ for selection, the grid now works off nodes, so a list of 'selectedNodes' as well as 'selectedRows' is kept (the
+ nodes is the primary, each time this changes, the grid updates selectedRows, the user can choose which one to work
+ off).
+
+ all the callbacks, where 'params' is passed, now 'node' is also passed inside the param object.
+
+*/
+
 define([
     'angular',
     'text!./template.html',
@@ -29,12 +53,13 @@ define([
     './constants',
     './colModel',
     './selectionRendererFactory',
+    './selectionController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
             RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory) {
+            constants, ColModel, SelectionRendererFactory, SelectionController) {
 
     var module = angular.module("angularGrid", []);
 
@@ -74,8 +99,6 @@ define([
             that.onQuickFilterChanged(newFilter);
         });
 
-        this.gridOptions.selectedRows = [];
-        this.gridOptions.selectedNodes = [];
         this.virtualRowCallbacks = {};
 
         this.addApi();
@@ -83,7 +106,8 @@ define([
 
         this.rowModel = new RowModel();
 
-        var selectionRendererFactory = new SelectionRendererFactory(this);
+        this.selectionController = new SelectionController(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope);
+        var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
 
         this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
@@ -152,7 +176,7 @@ define([
         }
 
         // if no selection method enabled, do nothing
-        if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
+        if (!this.gridOptionsWrapper.isRowSelection()) {
             return;
         }
 
@@ -162,104 +186,7 @@ define([
         }
 
         var tryMulti = event.ctrlKey;
-        this.selectRow(node, tryMulti);
-    };
-
-    Grid.prototype.isNodeSelected = function(row) {
-        return this.gridOptions.selectedNodes.indexOf(row) >= 0;
-    };
-
-    Grid.prototype.unselectIndex = function (rowIndex) {
-        var node = this.rowModel.getVirtualRow(rowIndex);
-        if (node) {
-            this.unselectRowDontFireListeners(rowIndex, node);
-            this.updateSelectedRowsAndCallListener();
-        }
-    };
-
-    Grid.prototype.unselectRowDontFireListeners = function (rowIndex, node) {
-        // deselect the css
-        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
-
-        // remove the row
-        var selectedNodes = this.gridOptions.selectedNodes;
-        var indexToRemove = selectedNodes.indexOf(node);
-        selectedNodes.splice(indexToRemove, 1);
-
-        // inform virtual row listener
-        this.onVirtualRowSelected(rowIndex, false);
-    };
-
-    Grid.prototype.selectIndex = function (index, tryMulti) {
-        var node = this.rowModel.getVirtualRow(index);
-        this.selectRow(node, tryMulti);
-    };
-
-    Grid.prototype.selectRow = function (node, tryMulti) {
-        var selectedNodes = this.gridOptions.selectedNodes;
-        var multiSelect = this.gridOptions.rowSelection === "multiple" && tryMulti;
-
-        // at the end, if this is true, we inform the callback
-        var atLeastOneSelectionChange = false;
-
-        // see if rows to be deselected
-        if (!multiSelect) {
-            // not doing multi-select, so deselect everything other than the 'just selected' row
-            for (var i = (selectedNodes.length - 1); i>=0; i--) {
-                // skip the 'just selected' row
-                if (selectedNodes[i] === node) {
-                    continue;
-                }
-
-                // deselect the css
-                var indexOfPreviousSelection = this.rowModel.getRowsAfterMap().indexOf(selectedNodes[i]);
-                this.unselectRowDontFireListeners(indexOfPreviousSelection, selectedNodes[i]);
-
-                atLeastOneSelectionChange = true;
-            }
-        }
-
-        // see if row needs to be selected
-        if (selectedNodes.indexOf(node) < 0) {
-            selectedNodes.push(node);
-
-            // set css class on selected row
-            var virtualRowIndex = this.rowModel.getVirtualIndex(node);
-            // NOTE: should also check the row renderer - that this row is actually rendered,
-            // ie not outside the scrolling viewport
-            if (virtualRowIndex >= 0) {
-                utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRowIndex + '"]', 'ag-row-selected');
-
-                // inform virtual row listener
-                this.onVirtualRowSelected(virtualRowIndex, true);
-            }
-
-            // inform the rowSelected listener, if any
-            if (typeof this.gridOptions.rowSelected === "function") {
-                this.gridOptions.rowSelected(node.rowData, node);
-            }
-
-            atLeastOneSelectionChange = true;
-        }
-
-        if (atLeastOneSelectionChange) {
-            this.updateSelectedRowsAndCallListener();
-        }
-    };
-
-    Grid.prototype.updateSelectedRowsAndCallListener = function () {
-        // update selected rows
-        this.gridOptions.selectedRows.length = 0;
-        var that = this;
-        this.gridOptions.selectedNodes.forEach(function (node) {
-            that.gridOptions.selectedRows.push(node.rowData);
-        });
-
-        if (typeof this.gridOptions.selectionChanged === "function") {
-            this.gridOptions.selectionChanged();
-        }
-
-        setTimeout(function () { that.$scope.$apply(); }, 0);
+        this.selectionController.selectNode(node, tryMulti);
     };
 
     Grid.prototype.setHeaderHeight = function () {
@@ -312,7 +239,7 @@ define([
                 _this.onNewCols();
             },
             unselectAll: function () {
-                _this.gridOptionsWrapper.clearSelection();
+                _this.selectionController.clearSelection();
                 _this.rowRenderer.refreshView();
             },
             refreshView: function () {
@@ -339,7 +266,7 @@ define([
                 _this.rowRenderer.rowDataChanged(rows);
             },
             selectIndex: function(index, tryMulti) {
-                _this.selectIndex(index, tryMulti);
+                _this.selectionController.selectIndex(index, tryMulti);
             }
         };
         this.gridOptions.api = api;

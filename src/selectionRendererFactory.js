@@ -1,7 +1,8 @@
 define([], function () {
 
-    function SelectionRendererFactory(angularGrid) {
+    function SelectionRendererFactory(angularGrid, selectionController) {
         this.angularGrid = angularGrid;
+        this.selectionController = selectionController;
     }
 
     SelectionRendererFactory.prototype.createCheckboxColDef = function () {
@@ -15,7 +16,7 @@ define([], function () {
                 eCheckbox.name = 'name';
                 return eCheckbox;
             },
-            cellRenderer: this.createCheckboxRenderer(this.angularGrid)
+            cellRenderer: this.createCheckboxRenderer()
         };
     };
 
@@ -31,7 +32,7 @@ define([], function () {
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
-        eCheckbox.checked = this.angularGrid.isNodeSelected(node);
+        eCheckbox.checked = this.selectionController.isNodeSelected(node);
 
         var that = this;
         eCheckbox.onclick = function (event) {
@@ -41,9 +42,9 @@ define([], function () {
         eCheckbox.onchange = function () {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.angularGrid.selectIndex(rowIndex, true);
+                that.selectionController.selectIndex(rowIndex, true);
             } else {
-                that.angularGrid.unselectIndex(rowIndex);
+                that.selectionController.deselectIndex(rowIndex);
             }
         };
 
