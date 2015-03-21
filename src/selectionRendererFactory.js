@@ -32,6 +32,7 @@ define([], function () {
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
+        eCheckbox.className = 'ag-selection-checkbox';
         setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
 
         var that = this;
