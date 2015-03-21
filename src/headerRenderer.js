@@ -222,7 +222,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
 
         // filter button
-        if (this.gridOptionsWrapper.isEnableFilter()) {
+        var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
+        if (showMenu) {
             var eMenuButton = svgFactory.createMenuSvg();
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
@@ -244,9 +245,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
         // add in sort icon
-        if (this.gridOptionsWrapper.isEnableSorting()) {
+        if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
             var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
             headerCellLabel.appendChild(headerSortIcon);
+            headerSortIcon.setAttribute("display", "none");
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
@@ -322,6 +324,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             that.colModel.getColDefWrappers().forEach(function(colWrapperToClear, colIndex) {
                 if (colWrapperToClear!==colDefWrapper) {
                     colWrapperToClear.sort = null;
+                }
+
+                // check in case no sorting on this particular col, as sorting is optional per col
+                if (colWrapperToClear.colDef.suppressSorting) {
+                    return;
                 }
 
                 // update visibility of icons

@@ -42,8 +42,8 @@ module.controller("exampleCtrl", function($scope, $timeout) {
     function customEditorUsingAngular(params) {
         params.$scope.setSelectionOptions = setSelectionOptions;
 
-        var html = '<span ng-show="!editing" ng-click="startEditing()">{{rowData.'+params.colDef.field+'}}</span> ' +
-            '<select ng-blur="editing=false" ng-change="editing=false" ng-show="editing" ng-options="item for item in setSelectionOptions" ng-model="rowData.'+params.colDef.field+'">';
+        var html = '<span ng-show="!editing" ng-click="startEditing()">{{data.'+params.colDef.field+'}}</span> ' +
+            '<select ng-blur="editing=false" ng-change="editing=false" ng-show="editing" ng-options="item for item in setSelectionOptions" ng-model="data.'+params.colDef.field+'">';
 
         // we could return the html as a string, however we want to add a 'onfocus' listener, which is no possible in AngularJS
         var domElement = document.createElement("span");

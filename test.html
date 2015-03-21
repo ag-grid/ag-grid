@@ -75,8 +75,9 @@
             <div style="padding: 4px;">
 
                 Selection:
-                <select ng-model="angularGrid.rowSelection" ng-change="onSelectionChanged()" style="width: 90px;">
+                <select ng-model="rowSelection" ng-change="onSelectionChanged()" style="width: 90px;">
                     <option value="">-none-</option>
+                    <option value="checkbox">Checkbox</option>
                     <option value="single">Single</option>
                     <option value="multiple">Multiple</option>
                 </select>

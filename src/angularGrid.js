@@ -13,24 +13,54 @@
 // selecting should be like excel, and have keyboard navigation
 // filtering blocks the aggregations - the summary numbers go missing!!
 // should not be able to edit groups
+// editing a checkbox field fails
+
+/* breaking changes:
+
+ row records now stored in 'node' objects, previously records were stored directing in a list (with the exception of
+ group rows). each node object has attribute 'data' with the rows data. in addition, the following attributes also
+ exist:
+  -> parent (reference to the parent node, if it exists)
+  -> group - set to 'true' if this node is a group node (ie has children)
+      -> children: the groups children
+      -> field: the field grouped by (for information purposes only, if doing your own grouping, not needed)
+      -> key: the group key (what text to display beside the group when rendering)
+      -> expanded: whether the group is expanded or not
+      -> allChildrenCount: how many children (including grand children) this group has. number is displayed
+                           in brackets beside the group, set to -1 if doing own group and don't want this displayed
+      -> level: group level, 0 is top most level. use this to add padding to your cell, if displaying something
+                in the group column
+
+ for selection, the grid now works off nodes, so a list of 'selectedNodes' as well as 'selectedRows' is kept (the
+ nodes is the primary, each time this changes, the grid updates selectedRows, the user can choose which one to work
+ off).
+
+ all the callbacks, where 'params' is passed, now 'node' is also passed inside the param object.
+
+ where child scope is created for the row, the data for the row is now on the scope as 'data' and not 'rowData' as previous
+*/
 
 define([
-    "angular",
-    "text!./template.html",
-    "text!./templateNoScrolls.html",
-    "./utils",
-    "./filter/filterManager",
-    "./rowModel",
-    "./rowController",
-    "./rowRenderer",
-    "./headerRenderer",
-    "./gridOptionsWrapper",
-    "./constants",
-    "./colModel",
-    "css!./css/core.css",
-    "css!./css/theme-dark.css",
-    "css!./css/theme-fresh.css"
-], function(angular, template, templateNoScrolls, utils, FilterManager, RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper, constants, ColModel) {
+    'angular',
+    'text!./template.html',
+    'text!./templateNoScrolls.html',
+    './utils',
+    './filter/filterManager',
+    './rowModel',
+    './rowController',
+    './rowRenderer',
+    './headerRenderer',
+    './gridOptionsWrapper',
+    './constants',
+    './colModel',
+    './selectionRendererFactory',
+    './selectionController',
+    'css!./css/core.css',
+    'css!./css/theme-dark.css',
+    'css!./css/theme-fresh.css'
+], function(angular, template, templateNoScrolls, utils, FilterManager,
+            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            constants, ColModel, SelectionRendererFactory, SelectionController) {
 
     var module = angular.module("angularGrid", []);
 
@@ -70,20 +100,29 @@ define([
             that.onQuickFilterChanged(newFilter);
         });
 
-        this.gridOptions.selectedRows = [];
+        this.virtualRowCallbacks = {};
 
         this.addApi();
         this.findAllElements($element);
 
         this.rowModel = new RowModel();
-        this.rowModel.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-        this.colModel = new ColModel();
+        this.selectionController = new SelectionController();
+        var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
 
+        this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this, this.filterManager);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper, $element[0], this, $compile, $scope, $timeout);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this, this.filterManager, $scope, $compile);
+        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
+                                this.filterManager);
+        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
+                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout,
+                                this.selectionController);
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
+                                this.filterManager, $scope, $compile);
+
+        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+
+        this.selectionController.init(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope, this.rowRenderer);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -134,67 +173,25 @@ define([
     };
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
-        var row = this.rowModel.getRowsAfterMap()[rowIndex];
-        var selectedRows = this.gridOptions.selectedRows;
 
+        var node = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
-            this.gridOptions.rowClicked(row, event);
+            this.gridOptions.rowClicked(node.data, event);
         }
 
         // if no selection method enabled, do nothing
-        if (this.gridOptions.rowSelection !== "single" && this.gridOptions.rowSelection !== "multiple") {
+        if (!this.gridOptionsWrapper.isRowSelection()) {
             return;
         }
 
-        // if not in array, then it's a new selection, thus selected = true
-        var newSelection = selectedRows.indexOf(row) < 0;
-        var selectedRowCountBefore = selectedRows.length;
-
-        // we are doing multi select only if: a) doing multi select and b) user has ctrl key pressed
-        var multiSelect = (this.gridOptions.rowSelection === "multiple" && event.ctrlKey);
-
-        if (multiSelect) {
-            // if multi select, then add to the list, but only if it's not already there
-            if (newSelection) {
-                selectedRows.push(row);
-            }
-        } else {
-            // if not multi select, clear all other selections, and add this selection
-            selectedRows.length = 0;
-            selectedRows.push(row);
+        // if click selection suppressed, do nothing
+        if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
+            return;
         }
 
-        // we could do delta updates to the css classes (ie only update whats changed), however
-        // that could would be prone to bugs, and the benefit (user experience) is unnoticeable
-
-        // remove all selection classes from rows
-        var eRowsWithSelectedClass = this.eRowsParent.querySelectorAll(".ag-row-selected");
-        for (var i = 0; i < eRowsWithSelectedClass.length; i++) {
-            utils.removeCssClass(eRowsWithSelectedClass[i], "ag-row-selected");
-        }
-
-        // update css class on selected rows
-        for (var j = 0; j < selectedRows.length; j++) {
-            var indexToSelect = this.rowModel.getRowsAfterMap().indexOf(this.gridOptions.selectedRows[j]);
-            var eRows = this.eRowsParent.querySelectorAll("[row='" + indexToSelect + "']");
-            for (var k = 0; k < eRows.length; k++) {
-                utils.addCssClass(eRows[k], "ag-row-selected")
-            }
-        }
-
-        // if row newly selected, inform listener
-        if (newSelection && typeof this.gridOptions.rowSelected === "function") {
-            this.gridOptions.rowSelected(row);
-        }
-
-        // if selection changed, inform listener
-        var rowCountChanged = selectedRowCountBefore !== this.gridOptions.selectedRows.length;
-        var selectionChanged = newSelection || rowCountChanged;
-        if (selectionChanged && typeof this.gridOptions.selectionChanged === "function") {
-            this.gridOptions.selectionChanged();
-        }
-
-        this.$scope.$apply();
+        // ctrlKey for windows, metaKey for Apple
+        var tryMulti = event.ctrlKey || event.metaKey;
+        this.selectionController.selectNode(node, tryMulti);
     };
 
     Grid.prototype.setHeaderHeight = function () {
@@ -236,8 +233,8 @@ define([
         var _this = this;
         var api = {
             onNewRows: function () {
-                _this.rowModel.setAllRows(_this.gridOptionsWrapper.getAllRows());
-                _this.gridOptions.selectedRows.length = 0;
+                _this.rowController.setAllRows(_this.gridOptionsWrapper.getAllRows());
+                _this.selectionController.clearSelection();
                 _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
@@ -246,7 +243,7 @@ define([
                 _this.onNewCols();
             },
             unselectAll: function () {
-                _this.gridOptionsWrapper.clearSelection();
+                _this.selectionController.clearSelection();
                 _this.rowRenderer.refreshView();
             },
             refreshView: function () {
@@ -266,25 +263,61 @@ define([
                 _this.expandOrCollapseAll(false, null);
                 _this.updateModelAndRefresh(constants.STEP_MAP);
             },
+            addVirtualRowListener: function(rowIndex, callback) {
+                _this.addVirtualRowListener(rowIndex, callback);
+            },
             rowDataChanged: function(rows) {
                 _this.rowRenderer.rowDataChanged(rows);
+            },
+            selectIndex: function(index, tryMulti) {
+                _this.selectionController.selectIndex(index, tryMulti);
             }
         };
         this.gridOptions.api = api;
     };
 
-    Grid.prototype.expandOrCollapseAll = function(expand, list) {
-        //if first call in recursion, we set list to parent list
-        if (list==null) { list = this.rowModel.getRowsAfterGroup(); }
+    Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {
+        if (!this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex] = [];
+        }
+        this.virtualRowCallbacks[rowIndex].push(callback);
+    };
 
-        if (!list) { return; }
+    Grid.prototype.onVirtualRowSelected = function(rowIndex, selected) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowSelected(selected);
+                }
+            });
+        }
+    };
+
+    Grid.prototype.onVirtualRowRemoved = function(rowIndex) {
+        // inform the callbacks of the event
+        if (this.virtualRowCallbacks[rowIndex]) {
+            this.virtualRowCallbacks[rowIndex].forEach( function (callback) {
+                if (typeof callback.rowRemoved === 'function') {
+                    callback.rowRemoved();
+                }
+            });
+        }
+        // remove the callbacks
+        delete this.virtualRowCallbacks[rowIndex];
+    };
+
+    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
+        //if first call in recursion, we set list to parent list
+        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
+
+        if (!rowNodes) { return; }
 
         var _this = this;
-        list.forEach(function(item) {
-            var itemIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (itemIsAGroup) {
-                item.expanded = expand;
-                _this.expandOrCollapseAll(expand, item.children);
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
             }
         });
     };

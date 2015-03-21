@@ -37,48 +37,46 @@ define([
             }
         });
 
-        var rowsAfterSort = this.rowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.rowModel.getRowsAfterFilter().slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.sortList(rowsAfterSort, colDefWrapperForSorting.colDef, inverter);
+            this.sortList(rowNodesBeforeSort, colDefWrapperForSorting.colDef, inverter);
         } else {
             //if no sorting, set all group children after sort to the original list
-            this.resetSortInGroups(rowsAfterSort);
+            this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.rowModel.setRowsAfterSort(rowsAfterSort);
+        this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
     };
 
-    RowController.prototype.resetSortInGroups = function(items) {
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
+    RowController.prototype.resetSortInGroups = function(rowNodes) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var item = rowNodes[i];
+            if (item.group) {
                 item.childrenAfterSort = item.children;
                 this.resetSortInGroups(item.children);
             }
         }
     };
 
-    RowController.prototype.sortList = function (listForSorting, colDefForSorting, inverter) {
+    RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
-        //sort any groups recursively
-        for (var i = 0, l = listForSorting.length; i<l; i++) { // critical section, no functional programming
-            var item = listForSorting[i];
-            var rowIsAGroup = item._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup) {
-                item.childrenAfterSort = item.children.slice(0);
-                this.sortList(item.childrenAfterSort, colDefForSorting, inverter);
+        // sort any groups recursively
+        for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
+            var node = nodes[i];
+            if (node.group) {
+                node.childrenAfterSort = node.children.slice(0);
+                this.sortList(node.childrenAfterSort, colDefForSorting, inverter);
             }
         }
 
-        listForSorting.sort(function (objA, objB) {
+        nodes.sort(function (objA, objB) {
             var keyForSort = colDefForSorting.field;
-            var valueA = objA[keyForSort];
-            var valueB = objB[keyForSort];
+            var valueA = objA.data ? objA.data[keyForSort] : null;
+            var valueB = objB.data ? objB.data[keyForSort] : null;
 
             if (colDefForSorting.comparator) {
                 //if comparator provided, use it
@@ -93,7 +91,7 @@ define([
 
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+        if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
@@ -117,24 +115,23 @@ define([
         this.rowModel.setRowsAfterFilter(rowsAfterFilter);
     };
 
-    RowController.prototype.filterItems = function (items, quickFilterPresent, advancedFilterPresent) {
+    RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
-        for (var i = 0, l = items.length; i < l; i++) {
-            var item = items[i];
+        for (var i = 0, l = rowNodes.length; i < l; i++) {
+            var node = rowNodes[i];
 
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
-                //deal with group
-                var filteredChildren = this.filterItems(item.children, quickFilterPresent, advancedFilterPresent);
+            if (node.group) {
+                // deal with group
+                var filteredChildren = this.filterItems(node.children, quickFilterPresent, advancedFilterPresent);
                 if (filteredChildren.length>0) {
                     var allChildrenCount = this.getTotalChildCount(filteredChildren);
-                    var newGroup = this.copyGroup(item, filteredChildren, allChildrenCount);
+                    var newGroup = this.copyGroupNode(node, filteredChildren, allChildrenCount);
                     result.push(newGroup);
                 }
             } else {
-                if (this.doesRowPassFilter(item, quickFilterPresent, advancedFilterPresent)) {
-                    result.push(item);
+                if (this.doesRowPassFilter(node, quickFilterPresent, advancedFilterPresent)) {
+                    result.push(node);
                 }
             }
         }
@@ -142,12 +139,44 @@ define([
         return result;
     };
 
-    RowController.prototype.getTotalChildCount = function(items) {
+    RowController.prototype.setAllRows = function(rows) {
+        var nodes;
+        if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
+            nodes = rows;
+        } else {
+            // place each row into a wrapper
+            var nodes = [];
+            if (rows) {
+                for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
+                    nodes.push({
+                        data: rows[i]
+                    });
+                }
+            }
+        }
+
+        this.recursivelyAddIdToNodes(nodes, 0);
+        this.rowModel.setAllRows(nodes);
+    };
+
+    // add in index - this is used by the selectionController - so quick
+    // to look up selected rows
+    RowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            node.id = index++;
+            if (node.group && node.children) {
+                index = this.recursivelyAddIdToNodes(node.children);
+            }
+        }
+        return index;
+    };
+
+    RowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
-        for (var i = 0, l = items.length; i<l; i++) {
-            var item = items[i];
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var item = rowNodes[i];
+            if (item.group) {
                 count += item.allChildrenCount;
             } else {
                 count++;
@@ -156,47 +185,50 @@ define([
         return count;
     };
 
-    RowController.prototype.copyGroup = function (group, children, allChildrenCount) {
+    RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
-            _angularGrid_group: true,
-            field: group.field,
-            key: group.key,
-            expanded: group.expanded,
+            group: true,
+            field: groupNode.field,
+            key: groupNode.key,
+            expanded: groupNode.expanded,
             children: children,
             allChildrenCount: allChildrenCount,
-            level: group.level
+            level: groupNode.level
         };
     };
 
     RowController.prototype.doGroupMapping = function () {
         var rowsAfterMap;
-        if (this.gridOptionsWrapper.getGroupKeys()) {
+
+        // took this 'if' statement out to allow user to provide items already grouped.
+        // want to keep an eye on performance, if grid still performs with this 'additional'
+        // step, then will leave as below.
+        //if (this.gridOptionsWrapper.getGroupKeys()) {
             rowsAfterMap = [];
             this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        } else {
-            rowsAfterMap = this.rowModel.getRowsAfterSort();
-        }
+        //} else {
+        //    rowsAfterMap = this.rowModel.getRowsAfterSort();
+        //}
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
-    RowController.prototype.addToMap = function (mappedData, originalList) {
-        for (var i = 0; i<originalList.length; i++) {
-            var data = originalList[i];
-            mappedData.push(data);
-            var rowIsAGroup = data._angularGrid_group; //_angularGrid_group is set to true on groups
-            if (rowIsAGroup && data.expanded) {
-                this.addToMap(mappedData, data.childrenAfterSort);
+    RowController.prototype.addToMap = function (mappedData, originalNodes) {
+        for (var i = 0; i<originalNodes.length; i++) {
+            var node = originalNodes[i];
+            mappedData.push(node);
+            if (node.group && node.expanded) {
+                this.addToMap(mappedData, node.childrenAfterSort);
             }
         }
     };
 
-    RowController.prototype.doesRowPassFilter = function(item, quickFilterPresent, advancedFilterPresent) {
+    RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
-            if (!item._quickFilterAggregateText) {
-                this.aggregateRowForQuickFilter(item);
+            if (!node.quickFilterAggregateText) {
+                this.aggregateRowForQuickFilter(node);
             }
-            if (item._quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
+            if (node.quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
                 //quick filter fails, so skip item
                 return false;
             }
@@ -204,7 +236,7 @@ define([
 
         //second, check advanced filter
         if (advancedFilterPresent) {
-            if (!this.filterManager.doesFilterPass(item)) {
+            if (!this.filterManager.doesFilterPass(node.data)) {
                 return false;
             }
         }
@@ -213,15 +245,16 @@ define([
         return true;
     };
 
-    RowController.prototype.aggregateRowForQuickFilter = function (rowItem) {
-        var aggregatedText = "";
+    RowController.prototype.aggregateRowForQuickFilter = function (node) {
+        var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
-            var value = rowItem[colDefWrapper.colDef.field];
-            if (value && value !== "") {
+            var data = node.data;
+            var value = data ? data[colDefWrapper.colDef.field] : null;
+            if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
         });
-        rowItem._quickFilterAggregateText = aggregatedText;
+        node.quickFilterAggregateText = aggregatedText;
     };
 
     return RowController;

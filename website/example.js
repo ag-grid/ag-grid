@@ -386,7 +386,7 @@ function groupAggFunction(rows) {
         var rowIsAGroup = row._angularGrid_group;
         colsToSum.forEach(function(key) {
             if (rowIsAGroup) {
-                sums[key] += row.aggData[key];
+                sums[key] += row.data[key];
             } else {
                 sums[key] += row[key];
             }
@@ -492,7 +492,7 @@ function booleanCleaner(value) {
 function languageCellRenderer(params) {
     if (params.$scope) {
         return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
-            "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
+            "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
     } else if (params.value) {
         return params.value;
     } else {

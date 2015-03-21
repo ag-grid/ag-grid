@@ -35,16 +35,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
         rows.forEach(function(row) {
 
-            var rowIsAGroup = row._angularGrid_group;
-
-            // if this is a group, then we agg from the aggData,
-            // not the row itself.
-            var data;
-            if (rowIsAGroup) {
-                data = row.aggData;
-            } else {
-                data = row;
-            }
+            var data = row.data;
 
             sums.gold += data.gold;
             sums.silver += data.silver;

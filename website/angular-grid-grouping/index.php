@@ -71,12 +71,11 @@ include '../documentation_header.php';
 
     <p/>
     When aggregating rows in multi-level, the rows been aggregated can contain aggregation rows themselves.
-    This is checked using the _angularGrid_group property on the row. If it is set, then that row
+    This is checked using the 'group' property on the node. If it is set, then that row
     is a group row and has attributes relevant to the group. When aggregating, the results of
-    the aggregation the group is stored in the attribute aggData.
+    the aggregation for the group is stored in the node attribute data.
 
     <show-example example="example3"></show-example>
-
 
     <div class="bigTitle">Advanced Multi-Level Grouping</div>
 

@@ -26,8 +26,8 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     function ageRenderer(params) {
-        if (params.data._angularGrid_group) {
-            return '(' + params.data.aggData.minAge + '..' + params.data.aggData.maxAge + ')';
+        if (params.node.group) {
+            return '(' + params.data.minAge + '..' + params.data.maxAge + ')';
         } else {
             return params.value;
         }
@@ -41,7 +41,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         }
     }
 
-    function groupAggFunction(rows) {
+    function groupAggFunction(nodes) {
 
         var sums = {
             gold: 0,
@@ -52,15 +52,10 @@ module.controller("exampleCtrl", function($scope, $http) {
             maxAge: 0,
         };
 
-        rows.forEach(function(row) {
+        nodes.forEach(function(node) {
 
-            var rowIsAGroup = row._angularGrid_group;
-
-            // if this is a group, then we agg from the aggData,
-            // not the row itself.
-            var data;
-            if (rowIsAGroup) {
-                data = row.aggData;
+            var data = node.data;
+            if (node.group) {
 
                 if (sums.minAge > data.minAge) {
                     sums.minAge = data.minAge;
@@ -70,8 +65,6 @@ module.controller("exampleCtrl", function($scope, $http) {
                 }
 
             } else {
-
-                data = row;
 
                 if (sums.minAge > data.age) {
                     sums.minAge = data.age;

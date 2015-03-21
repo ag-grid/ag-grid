@@ -27,12 +27,12 @@ module.controller("exampleCtrl", function($scope, $http) {
     }
 
     function athleteCellRendererFunc() {
-        return '<span ng-bind="rowData.athlete"></span>';
+        return '<span ng-bind="data.athlete"></span>';
     }
 
     function ageCellRendererFunc(params) {
         params.$scope.ageClicked = ageClicked;
-        return '<button ng-click="ageClicked(rowData.age)" ng-bind="rowData.age"></button>';
+        return '<button ng-click="ageClicked(data.age)" ng-bind="data.age"></button>';
     }
 
     function countryCellRendererFunc(params) {

@@ -25,6 +25,22 @@ include '../documentation_header.php';
 
     <show-example example="example2"></show-example>
 
+    <h4>Checkbox Selection</h4>
+
+    Checkbox selection can be used in two places: a) row selection and b) group selection.
+
+    </p>
+
+    To enable checkbox selection for a row, set the attribute 'checkboxSelection' to true
+    on one of the column definitions.
+
+    </p>
+
+    To enable checkbox selection for groups, set the attribute 'groupCheckboxSelection' to
+    one of 'group' or 'children'. When set to <b>group</b>, then selecting the group will
+    select the group node. When set to <b>children</b>, then selecting the group will
+    either select or deselect all of the children.
+
     <h4>Selection Callbacks</h4>
 
     There are two callback with regards selection:<br/>

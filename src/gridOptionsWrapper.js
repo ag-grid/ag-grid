@@ -1,4 +1,4 @@
-define(["./constants"], function(constants) {
+define([], function() {
 
     var DEFAULT_ROW_HEIGHT = 30;
 
@@ -11,6 +11,12 @@ define(["./constants"], function(constants) {
         return value === true || value === 'true';
     }
 
+    GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
+    GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
+    GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
+    GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
+    GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
+    GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
     GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
@@ -32,10 +38,23 @@ define(["./constants"], function(constants) {
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
+    GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
+    GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
 
+    GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
+    GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) { return this.gridOptions.selectedNodesById = newSelectedNodes; };
+
+    GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
+        return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
+    };
+
+    GridOptionsWrapper.prototype.isGroupCheckboxSelection = function() {
+        return this.isGroupCheckboxSelectionChildren() || this.isGroupCheckboxSelectionGroup();
+    };
+
     GridOptionsWrapper.prototype.getHeaderHeight = function() {
-        if (this.gridOptions.headerHeight) {
+        if (typeof this.gridOptions.headerHeight === 'number') {
             // if header height provided, used it
             return this.gridOptions.headerHeight;
         } else {
@@ -56,10 +75,6 @@ define(["./constants"], function(constants) {
         if (!this.gridOptions.rowHeight) {
             this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
         }
-    };
-
-    GridOptionsWrapper.prototype.clearSelection = function () {
-        this.gridOptions.selectedRows.length = 0;
     };
 
     GridOptionsWrapper.prototype.getPinnedColCount = function() {

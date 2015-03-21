@@ -1,15 +1,22 @@
 define(['./constants'], function(constants) {
 
-    function ColModel() {
+    function ColModel(angularGrid, selectionRendererFactory) {
+        this.angularGrid = angularGrid;
+        this.selectionRendererFactory = selectionRendererFactory;
     }
 
     ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
         var colDefWrappers = [];
+
+        var that = this;
         if (columnDefs) {
             columnDefs.forEach(function (colDef, index) {
-                var newColDefWrapper = new ColDefWrapper(colDef, index);
-                colDefWrappers.push(newColDefWrapper);
+                if (colDef === 'checkboxSelection') {
+                    colDef = that.selectionRendererFactory.createCheckboxColDef();
+                }
+                var colDefWrapper = new ColDefWrapper(colDef, index);
+                colDefWrappers.push(colDefWrapper);
             });
         }
         this.colDefWrappers = colDefWrappers;

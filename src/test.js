@@ -60,10 +60,12 @@ define([
         $scope.groupType = 'firstCol';
         $scope.editable = 'false';
         $scope.groupHeaders = 'true';
+        $scope.rowSelection = 'checkbox';
 
         var angularGrid = {
             columnDefs: [],
             rowData: [],
+            rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
             groupHeaders: true,
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
@@ -76,7 +78,9 @@ define([
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
-            rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
+            rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+            groupCheckboxSelection: 'children', // one of ['group','children']
+            suppressRowClickSelection: false, // if true, clicking rows doesn't select (useful for checkbox selection)
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,
             angularCompileFilters: true,
@@ -85,18 +89,19 @@ define([
             rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
             //headerCellRenderer: headerCellRenderer_text,
             //headerCellRenderer: headerCellRenderer_dom,
-            rowSelected: function(row) {console.log("Callback rowSelected: " + row); }, //callback when row selected
-            selectionChanged: function() {console.log("Callback selectionChanged"); }, //callback when selection changed
+            rowSelected: rowSelected, //callback when row selected
+            selectionChanged: selectionChanged, //callback when selection changed
             rowClicked: function(row, event) {console.log("Callback rowClicked: " + row + " - " + event);}, //callback when row clicked
             cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
         };
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
+            //'checkboxSelection',
             {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
             {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
             {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
@@ -132,9 +137,31 @@ define([
         };
 
         $scope.onSelectionChanged = function() {
-            if (angularGrid.rowSelection=='') {
-                angularGrid.api.unselectAll();
+            switch ($scope.rowSelection) {
+                case 'checkbox' :
+                    angularGrid.columnDefs[0].checkboxSelection = true;
+                    angularGrid.groupCheckboxSelection = 'children';
+                    angularGrid.rowSelection = 'multiple';
+                    break;
+                case 'single' :
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = 'single';
+                    break;
+                case 'multiple' :
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = 'multiple';
+                    break;
+                default :
+                    // turn selection off
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = null;
+                    break;
             }
+            angularGrid.api.unselectAll();
+            angularGrid.api.onNewCols();
         };
 
         $scope.onGroupHeaders = function() {
@@ -219,19 +246,29 @@ define([
 
         //because name is the first col, if grouping present, we want to indent it.
         //this method is inside the controller as we access the scope
-        function nameCssFunc() {
-            var style = {};
-            if ($scope.angularGrid.groupKeys) {
-                switch ($scope.angularGrid.groupKeys.length) {
-                    case 1 :
-                        style["padding-left"] = "30px";
-                        break;
-                    case 2 :
-                        style["padding-left"] = "40px";
-                        break;
+        function nameCssFunc(params) {
+            // if we are part of a group, the parent will point to the parent group
+            if (params.node.parent) {
+                var pixelsToIndex = 20 + (params.node.parent.level * 10);
+                return {
+                    'padding-left': pixelsToIndex + 'px'
                 }
+            } else {
+                return null;
             }
-            return style;
+        }
+
+        function selectionChanged() {
+            console.log('Callback selectionChanged: selection count = ' + $scope.angularGrid.selectedRows.length);
+        }
+
+        function rowSelected(row, node) {
+            // this clogs the console, when to many rows displayed, and use selected 'select all'.
+            // so check 'not to many rows'
+            if (angularGrid.rowData.length <= 100) {
+                var valueToPrint = node.group ? 'group ('+node.key+')' : row.name;
+                console.log("Callback rowSelected: " + valueToPrint);
+            }
         }
 
     });
@@ -382,19 +419,14 @@ define([
         return "<b>" + params.data.key + "</b>";
     }
 
-    function groupAggFunction(rows) {
+    function groupAggFunction(nodes) {
         var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
         var sums = {};
         colsToSum.forEach(function(key) { sums[key] = 0; });
 
-        rows.forEach(function(row) {
-            var rowIsAGroup = row._angularGrid_group;
+        nodes.forEach(function(node) {
             colsToSum.forEach(function(key) {
-                if (rowIsAGroup) {
-                    sums[key] += row.aggData[key];
-                } else {
-                    sums[key] += row[key];
-                }
+                sums[key] += node.data[key];
             });
         });
 
@@ -497,7 +529,7 @@ define([
     function languageCellRenderer(params) {
         if (params.$scope) {
             return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
-                "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
+                "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
         } else if (params.value) {
             return params.value;
         } else {

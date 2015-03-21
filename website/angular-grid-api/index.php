@@ -39,6 +39,11 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
+            <th>selectIndex(index, multi)</th>
+            <td>Select the row at the given index. If multi is true, then previous selections will be kept (ie allow
+                multi-select). If multi is false, any previously selected row will be unselected.</td>
+        </tr>
+        <tr>
             <th>refreshView()</th>
             <td>Redraw all visible rows. Handy has a blanked 'redraw all' if changes have been made to the row data.</td>
         </tr>
@@ -66,6 +71,16 @@ include '../documentation_header.php';
             due to row virtualisation, these rows have corresponding DOM elements) then only these rows are redrawn.
             If none of the rows are visible, nothing is done. The table uses object reverence comparison (ie row1 == row2)
             to check the provided rows with the original rows, to find the corresponding rows.</td>
+        </tr>
+        <tr>
+            <th>addVirtualRowListener(rowIndex, callback)</th>
+            <td>Register a callback for notifications about a particular virtualised row. When
+                the row is removed from the table (due to virtualisation), the callback is removed.
+                This callback is intended for cell renderers, that want to register for events
+                for the rendered row - thus if the row is no longer rendered on the screen, the
+                callbacks stop. If the row is redrawn, then the cell renderer must register
+                another callback.
+            </td>
         </tr>
     </table>
 

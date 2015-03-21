@@ -31,7 +31,7 @@ define([], function() {
         element.addEventListener("input", listener);
     };
 
-    //if value is undefined, null or blank, returns null, othrewise returns the value
+    //if value is undefined, null or blank, returns null, otherwise returns the value
     Utils.prototype.makeNull = function(value) {
         if (value===null || value===undefined || value==="") {
             return null;
@@ -40,12 +40,13 @@ define([], function() {
         }
     };
 
-    Utils.prototype.uniqueValues = function(list, key) {
+    Utils.prototype.uniqueValuesFromRowWrappers = function(nodes, key) {
         var uniqueCheck = {};
         var result = [];
-        for(var i = 0, l = list.length; i < l; i++){
-            var value = list[i][key];
-            if (value==="" || value===undefined) {
+        for (var i = 0, l = nodes.length; i < l; i++){
+            var data = nodes[i].data;
+            var value = data ? data[key] : null;
+            if (value==="" || value === undefined) {
                 value = null;
             }
             if(!uniqueCheck.hasOwnProperty(value)) {
@@ -97,6 +98,20 @@ define([], function() {
             return parseInt(val);
         } else {
             return val;
+        }
+    };
+
+    Utils.prototype.querySelectorAll_addCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.addCssClass(eRows[k], cssClass);
+        }
+    };
+
+    Utils.prototype.querySelectorAll_removeCssClass = function(eParent, selector, cssClass) {
+        var eRows = eParent.querySelectorAll(selector);
+        for (var k = 0; k < eRows.length; k++) {
+            this.removeCssClass(eRows[k], cssClass);
         }
     };
 

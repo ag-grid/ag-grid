@@ -45,7 +45,7 @@ define([
         return filterPresent;
     };
 
-    FilterManager.prototype.doesFilterPass = function (item) {
+    FilterManager.prototype.doesFilterPass = function (data) {
         var colKeys = Object.keys(this.allFilters);
         for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
@@ -57,7 +57,7 @@ define([
                 continue;
             }
 
-            var value = item[filterWrapper.field];
+            var value = data[filterWrapper.field];
             if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }

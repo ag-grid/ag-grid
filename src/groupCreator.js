@@ -4,7 +4,7 @@ define([
     function GroupCreator() {
     }
 
-    GroupCreator.prototype.group = function(rowData, groupByFields, groupAggFunction, expandByDefault) {
+    GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunction, expandByDefault) {
 
         var topMostGroup = {
             level: -1,
@@ -16,14 +16,19 @@ define([
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupByFields.length - 1;
-        var i, currentLevel, item, currentGroup, groupByField, groupKey, nextGroup;
+        var i, currentLevel, node, data, currentGroup, groupByField, groupKey, nextGroup;
 
-        for (i = 0; i<rowData.length; i++) {
-            item = rowData[i];
+        // start at -1 and go backwards, as all the positive indexes
+        // are already used by the nodes.
+        var index = -1;
+
+        for (i = 0; i<rowNodes.length; i++) {
+            node = rowNodes[i];
+            data = node.data;
 
             for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
                 groupByField = groupByFields[currentLevel];
-                groupKey = item[groupByField];
+                groupKey = data[groupByField];
 
                 if (currentLevel==0) {
                     currentGroup = topMostGroup;
@@ -33,11 +38,14 @@ define([
                 nextGroup = currentGroup.childrenMap[groupKey];
                 if (!nextGroup) {
                     nextGroup = {
-                        _angularGrid_group: true,
+                        group: true,
                         field: groupByField,
+                        id: index--,
                         key: groupKey,
                         expanded: expandByDefault,
                         children: [],
+                        // for top most level, parent is null
+                        parent: currentGroup === topMostGroup ? null : currentGroup,
                         allChildrenCount: 0,
                         level: currentGroup.level + 1,
                         childrenMap: {}//this is a temporary map, we remove at the end of this method
@@ -50,7 +58,8 @@ define([
                 nextGroup.allChildrenCount++;
 
                 if (currentLevel==levelToInsertChild) {
-                    nextGroup.children.push(item);
+                    node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                    nextGroup.children.push(node);
                 } else {
                     currentGroup = nextGroup;
                 }
@@ -71,16 +80,15 @@ define([
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(children, groupAggFunction) {
-        for (var i = 0, l = children.length; i<l; i++) {
-            var item = children[i];
-            var itemIsAGroup = item._angularGrid_group;
-            if (itemIsAGroup) {
+    GroupCreator.prototype.createAggData = function(rowNodes, groupAggFunction) {
+        for (var i = 0, l = rowNodes.length; i<l; i++) {
+            var node = rowNodes[i];
+            if (node.group) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(item.children, groupAggFunction);
+                this.createAggData(node.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
-                var data = groupAggFunction(item.children);
-                item.aggData = data;
+                var data = groupAggFunction(node.children);
+                node.data = data;
             }
         }
     };
