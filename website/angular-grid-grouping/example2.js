@@ -24,7 +24,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupAggFunction: groupAggFunction
     };
 
-    function groupAggFunction(rows) {
+    function groupAggFunction(nodes) {
 
         var sums = {
             gold: 0,
@@ -33,11 +33,12 @@ module.controller("exampleCtrl", function($scope, $http) {
             total: 0
         };
 
-        rows.forEach(function(row) {
-            sums.gold += row.gold;
-            sums.silver += row.silver;
-            sums.bronze += row.bronze;
-            sums.total += row.total;
+        nodes.forEach(function(node) {
+            var data = node.data;
+            sums.gold += data.gold;
+            sums.silver += data.silver;
+            sums.bronze += data.bronze;
+            sums.total += data.total;
         });
 
         return sums;

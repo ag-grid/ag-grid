@@ -117,7 +117,7 @@ define(['./utils'], function(utils) {
 
         // inform the rowSelected listener, if any
         if (typeof this.gridOptionsWrapper.getRowSelected() === "function") {
-            this.gridOptionsWrapper.getRowSelected()(node.rowData, node);
+            this.gridOptionsWrapper.getRowSelected()(node.data, node);
         }
 
         return true;

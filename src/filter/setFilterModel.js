@@ -4,8 +4,8 @@ define(["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        var rowData = rowModel.getAllRows();
-        this.uniqueValues = utils.uniqueValuesFromRowWrappers(rowData, colDef.field);
+        var allNodes = rowModel.getAllRows();
+        this.uniqueValues = utils.uniqueValuesFromRowWrappers(allNodes, colDef.field);
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {

@@ -40,13 +40,13 @@ define([], function() {
         }
     };
 
-    Utils.prototype.uniqueValuesFromRowWrappers = function(list, key) {
+    Utils.prototype.uniqueValuesFromRowWrappers = function(nodes, key) {
         var uniqueCheck = {};
         var result = [];
-        for(var i = 0, l = list.length; i < l; i++){
-            var rowData = list[i].rowData;
-            var value = rowData ? rowData[key] : null;
-            if (value==="" || value===undefined) {
+        for (var i = 0, l = nodes.length; i < l; i++){
+            var data = nodes[i].data;
+            var value = data ? data[key] : null;
+            if (value==="" || value === undefined) {
                 value = null;
             }
             if(!uniqueCheck.hasOwnProperty(value)) {

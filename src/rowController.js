@@ -75,8 +75,8 @@ define([
 
         nodes.sort(function (objA, objB) {
             var keyForSort = colDefForSorting.field;
-            var valueA = objA.rowData ? objA.rowData[keyForSort] : null;
-            var valueB = objB.rowData ? objB.rowData[keyForSort] : null;
+            var valueA = objA.data ? objA.data[keyForSort] : null;
+            var valueB = objB.data ? objB.data[keyForSort] : null;
 
             if (colDefForSorting.comparator) {
                 //if comparator provided, use it
@@ -149,7 +149,7 @@ define([
             if (rows) {
                 for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
                     nodes.push({
-                        rowData: rows[i]
+                        data: rows[i]
                     });
                 }
             }
@@ -222,13 +222,13 @@ define([
         }
     };
 
-    RowController.prototype.doesRowPassFilter = function(rowNode, quickFilterPresent, advancedFilterPresent) {
+    RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
-            if (!rowNode.quickFilterAggregateText) {
-                this.aggregateRowForQuickFilter(rowNode);
+            if (!node.quickFilterAggregateText) {
+                this.aggregateRowForQuickFilter(node);
             }
-            if (rowNode.quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
+            if (node.quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
                 //quick filter fails, so skip item
                 return false;
             }
@@ -236,7 +236,7 @@ define([
 
         //second, check advanced filter
         if (advancedFilterPresent) {
-            if (!this.filterManager.doesFilterPass(rowNode.rowData)) {
+            if (!this.filterManager.doesFilterPass(node.data)) {
                 return false;
             }
         }
@@ -245,16 +245,16 @@ define([
         return true;
     };
 
-    RowController.prototype.aggregateRowForQuickFilter = function (rowDataWrapper) {
+    RowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
-            var rowData = rowDataWrapper.rowData;
-            var value = rowData ? rowData[colDefWrapper.colDef.field] : null;
+            var data = node.data;
+            var value = data ? data[colDefWrapper.colDef.field] : null;
             if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
         });
-        rowDataWrapper.quickFilterAggregateText = aggregatedText;
+        node.quickFilterAggregateText = aggregatedText;
     };
 
     return RowController;

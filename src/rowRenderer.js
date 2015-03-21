@@ -65,7 +65,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         Object.keys(renderedRows).forEach(function (key) {
             var renderedRow = renderedRows[key];
             // see if the rendered row is in the list of rows we have to update
-            var rowNeedsUpdating = rows.indexOf(renderedRow.node.rowData) >= 0;
+            var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
                 nodes.push(renderedRow.node);
             }
@@ -117,7 +117,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
 
             if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
-                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.rowData, indexToRemove);
+                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
             }
             that.angularGrid.onVirtualRowRemoved(indexToRemove);
 
@@ -194,9 +194,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var rowDataWrapper = this.rowModel.getVirtualRow(rowIndex);
-            if (rowDataWrapper) {
-                that.insertRow(rowDataWrapper, rowIndex, mainRowWidth, pinnedColumnCount);
+            var node = this.rowModel.getVirtualRow(rowIndex);
+            if (node) {
+                that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
             }
         }
 
@@ -226,7 +226,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eMainRow.style.width = mainRowWidth+"px";
 
         // try compiling as we insert rows
-        var newChildScope = this.createChildScopeOrNull(node.rowData);
+        var newChildScope = this.createChildScopeOrNull(node.data);
 
         var renderedRow = {
             scope: newChildScope,
@@ -256,14 +256,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             if (!groupHeaderTakesEntireRow) {
 
                 //draw in blank cells for the rest of the row
-                var groupHasData = node.rowData!==undefined && node.rowData!==null;
+                var groupHasData = node.data !== undefined && node.data !== null;
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
                     var item = null;
                     if (groupHasData) {
-                        item = node.rowData[colDefWrapper.colDef.field];
+                        item = node.data[colDefWrapper.colDef.field];
                     }
                     _this.createCellFromColDef(colDefWrapper, item, node, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
                 });
@@ -271,7 +271,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, node.rowData[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, node.data[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -283,7 +283,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.createChildScopeOrNull = function(data) {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.$scope.$new();
-            newChildScope.rowData = data;
+            newChildScope.data = data;
             return newChildScope;
         } else {
             return null;
@@ -325,7 +325,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         // add in extra classes provided by the config
         if (this.gridOptionsWrapper.getRowClass()) {
-            var params = {node: node, data: node.rowData, rowIndex: rowIndex,
+            var params = {node: node, data: node.data, rowIndex: rowIndex,
                 gridOptions: this.gridOptionsWrapper.getGridOptions()};
             var extraRowClasses = this.gridOptionsWrapper.getRowClass()(params);
             if (extraRowClasses) {
@@ -355,7 +355,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var cssToUse;
             var rowStyle = this.gridOptionsWrapper.getRowStyle();
             if (typeof rowStyle === 'function') {
-                cssToUse = rowStyle(node.rowData, rowIndex, groupRow);
+                cssToUse = rowStyle(node.data, rowIndex, groupRow);
             } else {
                 cssToUse = rowStyle;
             }
@@ -409,7 +409,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         // if renderer provided, use it
         if (this.gridOptions.groupInnerCellRenderer) {
             var rendererParams = {
-                data: node.rowData, node: node, padding: padding, gridOptions: this.gridOptions
+                data: node.data, node: node, padding: padding, gridOptions: this.gridOptions
             };
             var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -485,7 +485,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
         if (colDef.cellRenderer) {
             var rendererParams = {
-                value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
+                value: value, data: node.data, node: node, colDef: colDef, $scope: $childScope, rowIndex: rowIndex,
                 gridOptions: this.gridOptionsWrapper.getGridOptions()
             };
             var resultFromRenderer = colDef.cellRenderer(rendererParams);
@@ -540,7 +540,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellStyle) {
             var cssToUse;
             if (typeof colDef.cellStyle === 'function') {
-                var cellStyleParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
+                var cellStyleParams = {value: value, data: node.data, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 cssToUse = colDef.cellStyle(cellStyleParams);
             } else {
@@ -557,7 +557,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         if (colDef.cellClass) {
             var classToUse;
             if (typeof colDef.cellClass === 'function') {
-                var cellClassParams = {value: value, data: node.rowData, node: node, colDef: colDef, $scope: $childScope,
+                var cellClassParams = {value: value, data: node.data, node: node, colDef: colDef, $scope: $childScope,
                     gridOptions: this.gridOptionsWrapper.getGridOptions()};
                 classToUse = colDef.cellClass(cellClassParams);
             } else {
@@ -575,12 +575,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         eGridCell.addEventListener("click", function(event) {
             if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                that.gridOptionsWrapper.getCellClicked()(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (colDef.cellClicked) {
-                colDef.cellClicked(node.rowData, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
+                colDef.cellClicked(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
-            if (that.isCellEditable(colDef, node.rowData)) {
+            if (that.isCellEditable(colDef, node.data)) {
                 that.startEditing(eGridCell, colDefWrapper, node, $childScope);
             }
         });
@@ -617,12 +617,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         utils.removeAllChildren(eGridCell);
 
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(node.rowData, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+            colDef.newValueHandler(node.data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
         } else {
-            node.rowData[colDef.field] = newValue;
+            node.data[colDef.field] = newValue;
         }
 
-        var value = node.rowData[colDef.field];
+        var value = node.data[colDef.field];
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
@@ -635,7 +635,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.type = 'text';
         utils.addCssClass(eInput, 'ag-cell-edit-input');
 
-        var value = node.rowData[colDef.field];
+        var value = node.data[colDef.field];
         if (value!==null && value!==undefined) {
             eInput.value = value;
         }

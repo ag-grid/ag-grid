@@ -37,6 +37,7 @@
 
  all the callbacks, where 'params' is passed, now 'node' is also passed inside the param object.
 
+ where child scope is created for the row, the data for the row is now on the scope as 'data' and not 'rowData' as previous
 */
 
 define([
@@ -175,7 +176,7 @@ define([
 
         var node = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
-            this.gridOptions.rowClicked(node.rowData, event);
+            this.gridOptions.rowClicked(node.data, event);
         }
 
         // if no selection method enabled, do nothing
@@ -188,7 +189,8 @@ define([
             return;
         }
 
-        var tryMulti = event.ctrlKey;
+        // ctrlKey for windows, metaKey for Apple
+        var tryMulti = event.ctrlKey || event.metaKey;
         this.selectionController.selectNode(node, tryMulti);
     };
 

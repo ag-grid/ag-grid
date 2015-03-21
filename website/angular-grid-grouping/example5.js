@@ -48,15 +48,15 @@ module.controller("exampleCtrl", function($scope, $http) {
             html += '<img class="flag" border="0" width="20" height="15" src="http://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
         }
 
-        html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', params.data.key);
-        html += '<span class="medal gold"> Gold: GOLD_COUNT</span>'.replace('GOLD_COUNT', params.data.aggData.gold);
-        html += '<span class="medal silver"> Silver: SILVER_COUNT</span>'.replace('SILVER_COUNT', params.data.aggData.silver);
-        html += '<span class="medal bronze"> Bronze: BRONZE_COUNT</span>'.replace('BRONZE_COUNT', params.data.aggData.bronze);
+        html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', params.node.key);
+        html += '<span class="medal gold"> Gold: GOLD_COUNT</span>'.replace('GOLD_COUNT', params.data.gold);
+        html += '<span class="medal silver"> Silver: SILVER_COUNT</span>'.replace('SILVER_COUNT', params.data.silver);
+        html += '<span class="medal bronze"> Bronze: BRONZE_COUNT</span>'.replace('BRONZE_COUNT', params.data.bronze);
 
         return html;
     }
 
-    function groupAggFunction(rows) {
+    function groupAggFunction(nodes) {
 
         var sums = {
             gold: 0,
@@ -67,15 +67,11 @@ module.controller("exampleCtrl", function($scope, $http) {
             maxAge: 0,
         };
 
-        rows.forEach(function(row) {
+        nodes.forEach(function(node) {
 
-            var rowIsAGroup = row._angularGrid_group;
+            var data = node.data;
 
-            // if this is a group, then we agg from the aggData,
-            // not the row itself.
-            var data;
-            if (rowIsAGroup) {
-                data = row.aggData;
+            if (node.group) {
 
                 if (sums.minAge > data.minAge) {
                     sums.minAge = data.minAge;
@@ -85,8 +81,6 @@ module.controller("exampleCtrl", function($scope, $http) {
                 }
 
             } else {
-
-                data = row;
 
                 if (sums.minAge > data.age) {
                     sums.minAge = data.age;

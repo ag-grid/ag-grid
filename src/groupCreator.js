@@ -16,7 +16,7 @@ define([
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupByFields.length - 1;
-        var i, currentLevel, node, rowData, currentGroup, groupByField, groupKey, nextGroup;
+        var i, currentLevel, node, data, currentGroup, groupByField, groupKey, nextGroup;
 
         // start at -1 and go backwards, as all the positive indexes
         // are already used by the nodes.
@@ -24,11 +24,11 @@ define([
 
         for (i = 0; i<rowNodes.length; i++) {
             node = rowNodes[i];
-            rowData = node.rowData;
+            data = node.data;
 
             for (currentLevel = 0; currentLevel<groupByFields.length; currentLevel++) {
                 groupByField = groupByFields[currentLevel];
-                groupKey = rowData[groupByField];
+                groupKey = data[groupByField];
 
                 if (currentLevel==0) {
                     currentGroup = topMostGroup;
@@ -87,8 +87,8 @@ define([
                 //agg function needs to start at the bottom, so traverse first
                 this.createAggData(node.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
-                var rowData = groupAggFunction(node.children);
-                node.rowData = rowData;
+                var data = groupAggFunction(node.children);
+                node.data = data;
             }
         }
     };

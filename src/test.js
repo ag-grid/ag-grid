@@ -397,14 +397,14 @@ define([
         return "<b>" + params.data.key + "</b>";
     }
 
-    function groupAggFunction(rowWrappers) {
+    function groupAggFunction(nodes) {
         var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
         var sums = {};
         colsToSum.forEach(function(key) { sums[key] = 0; });
 
-        rowWrappers.forEach(function(rowWrapper) {
+        nodes.forEach(function(node) {
             colsToSum.forEach(function(key) {
-                sums[key] += rowWrapper.rowData[key];
+                sums[key] += node.data[key];
             });
         });
 
@@ -507,7 +507,7 @@ define([
     function languageCellRenderer(params) {
         if (params.$scope) {
             return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
-                "<span ng-click='clicked=false' ng-show='clicked' ng-bind='rowData.language'></span>";
+                "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
         } else if (params.value) {
             return params.value;
         } else {
