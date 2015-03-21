@@ -10,6 +10,6 @@
         startFile: "wrap.start",
         endFile: "wrap.end"
     },
-    out: "../website/dist/angularGrid-1.2.js",
+    out: "../website/dist/angularGrid-latest.js",
     optimize: "none"
 }
