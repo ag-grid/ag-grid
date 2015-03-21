@@ -47,7 +47,7 @@ define(['./utils'], function(utils) {
             atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
         }
 
-        if (this.gridOptionsWrapper.isGroupSelectionChildren() && node.group) {
+        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
             // don't select the group, select the children instead
             atLeastOneItemSelected = this.recursivelySelectAllChildren(node);
         } else {
@@ -163,7 +163,7 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getVirtualRow(rowIndex);
         if (node) {
-            if (this.gridOptionsWrapper.isGroupSelectionChildren() && node.group) {
+            if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
                 // want to deselect children, not this node, so recursively deselect
                 this.recursivelyDeselectAllChildren(node);
             } else {
@@ -254,7 +254,7 @@ define(['./utils'], function(utils) {
     // false: if unselected
     // undefined: if it's a group and 'children selection' is sued adn 'children' are a mix of selected and unselected
     SelectionController.prototype.isNodeSelected = function(node) {
-        if (this.gridOptionsWrapper.isGroupSelectionChildren() && node.group) {
+        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
             // doing child selection, we need to traverse the children
             var resultOfChildren = this.recursivelyCheckIfSelected(node);
             switch (resultOfChildren) {
@@ -270,7 +270,7 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.updateGroupParentsIfNeeded = function() {
         // we only do this if parent nodes are responsible
         // for selecting their children.
-        if (!this.gridOptionsWrapper.isGroupSelectionChildren()) {
+        if (!this.gridOptionsWrapper.isGroupCheckboxSelectionChildren()) {
             return;
         }
 

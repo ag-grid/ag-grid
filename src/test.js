@@ -60,11 +60,12 @@ define([
         $scope.groupType = 'firstCol';
         $scope.editable = 'false';
         $scope.groupHeaders = 'true';
+        $scope.rowSelection = 'checkbox';
 
         var angularGrid = {
             columnDefs: [],
             rowData: [],
-            rowsAlreadyGrouped: false,
+            rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
             groupHeaders: true,
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
@@ -77,10 +78,9 @@ define([
             enableColResize: true, //one of [true, false]
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
-            rowSelection: "single", // one of ['single','multiple'], leave blank for no selection
-            groupSelection: 'children', // one of ['group','children'] - children not yet implemented, just group for now
+            rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+            groupCheckboxSelection: 'children', // one of ['group','children']
             suppressRowClickSelection: false, // if true, clicking rows doesn't select (useful for checkbox selection)
-            checkboxSelection: true,
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,
             angularCompileFilters: true,
@@ -137,9 +137,31 @@ define([
         };
 
         $scope.onSelectionChanged = function() {
-            if (angularGrid.rowSelection=='') {
-                angularGrid.api.unselectAll();
+            switch ($scope.rowSelection) {
+                case 'checkbox' :
+                    angularGrid.columnDefs[0].checkboxSelection = true;
+                    angularGrid.groupCheckboxSelection = 'children';
+                    angularGrid.rowSelection = 'multiple';
+                    break;
+                case 'single' :
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = 'single';
+                    break;
+                case 'multiple' :
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = 'multiple';
+                    break;
+                default :
+                    // turn selection off
+                    angularGrid.columnDefs[0].checkboxSelection = false;
+                    angularGrid.groupCheckboxSelection = null;
+                    angularGrid.rowSelection = null;
+                    break;
             }
+            angularGrid.api.unselectAll();
+            angularGrid.api.onNewCols();
         };
 
         $scope.onGroupHeaders = function() {
