@@ -42,14 +42,22 @@ Changes in 1.2
 
 Row records now stored in 'node' objects, previously records were stored directly in a list (with the exception of
 group rows). Each node object has attribute 'data' with the rows data. In addition, the following attributes also exist:
+
   -> parent (reference to the parent node, if it exists)
+
   -> group - set to 'true' if this node is a group node (ie has children)
+
       -> children: the groups children
+
       -> field: the field grouped by (for information purposes only, if doing your own grouping, not needed)
+
       -> key: the group key (what text to display beside the group when rendering)
+
       -> expanded: whether the group is expanded or not
+
       -> allChildrenCount: how many children (including grand children) this group has. number is displayed
                            in brackets beside the group, set to -1 if doing own group and don't want this displayed
+
       -> level: group level, 0 is top most level. use this to add padding to your cell, if displaying something
                 in the group column
 
