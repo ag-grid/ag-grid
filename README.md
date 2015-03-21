@@ -43,10 +43,10 @@ Changes in 1.2
 Row records now stored in 'node' objects, previously records were stored directly in a list (with the exception of
 group rows). Each node object has attribute 'data' with the rows data. In addition, the following attributes also exist:
 
-  -> parent (reference to the parent node, if it exists)
-
-  -> group - set to 'true' if this node is a group node (ie has children)
-
+'''
+  parent: (reference to the parent node, if it exists)
+  group: set to 'true' if this node is a group node (ie has children)
+'''
       -> children: the groups children
 
       -> field: the field grouped by (for information purposes only, if doing your own grouping, not needed)
