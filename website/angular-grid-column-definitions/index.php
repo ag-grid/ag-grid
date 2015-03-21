@@ -56,6 +56,10 @@ include '../documentation_header.php';
             <td>Comparator function for custom sorting.</td>
         </tr>
         <tr>
+            <th>checkboxSelection</th>
+            <td>Set to true to render a selection checkbox in the column.</td>
+        </tr>
+        <tr>
             <th>suppressMenu</th>
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>

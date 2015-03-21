@@ -93,7 +93,9 @@ include '../documentation_header.php';
             <td>Provide a function for custom header rendering.</td>
         </tr>
         <tr>
-            <th>groupKeys<br/> groupUseEntireRow<br/> groupInnerCellRenderer<br/> groupDefaultExpanded<br/> groupAggFunction</th>
+            <th>groupKeys<br/> groupUseEntireRow<br/> groupInnerCellRenderer<br/>
+                groupDefaultExpanded<br/> groupAggFunction<br/> groupIconRenderer<br/>
+                groupCheckboxSelection</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
@@ -113,12 +115,21 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
+            <th>suppressRowClickSelection</th>
+            <td>If true, rows won't be selected when clicked. Use when you want checkbox selection exclusively.</td>
+        </tr>
+        <tr>
             <th>selectionChanged</th>
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
         <tr>
             <th>getRowClass</th>
             <td>Function callback, to allow adding a css class to a row.</td>
+        </tr>
+        <tr>
+            <th>rowsAlreadyGrouped</th>
+            <td>Set to true if data provided to the grid is already in node structure (this is for passing
+                already aggregated data to the grid).</td>
         </tr>
     </table>
 

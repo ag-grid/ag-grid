@@ -39,8 +39,9 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
-            <th>selectIndex(index)</th>
-            <td>Select the row at the given index.</td>
+            <th>selectIndex(index, multi)</th>
+            <td>Select the row at the given index. If multi is true, then previous selections will be kept (ie allow
+                multi-select). If multi is false, any previously selected row will be unselected.</td>
         </tr>
         <tr>
             <th>refreshView()</th>
