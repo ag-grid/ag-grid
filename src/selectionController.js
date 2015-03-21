@@ -18,19 +18,20 @@ define(['./utils'], function(utils) {
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
 
-        this.selectedNodes = [];
         this.selectedNodesById = {};
         this.selectedRows = [];
 
         gridOptionsWrapper.setSelectedRows(this.selectedRows);
-        gridOptionsWrapper.setSelectedNodes(this.selectedNodes);
+        gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
     };
 
     // public
     SelectionController.prototype.clearSelection = function() {
         this.selectedRows.length = 0;
-        this.selectedNodes.length = 0;
-        this.selectedNodeBysId = {};
+        var keys = Object.keys(this.selectedNodesById);
+        for (var i = 0; i<keys.length; i++) {
+            delete this.selectedNodesById[keys[i]];
+        }
     };
 
     // public
@@ -102,7 +103,7 @@ define(['./utils'], function(utils) {
             return false;
         }
 
-        this.selectedNodes.push(node);
+        this.selectedNodesById[node.id] = node;
 
         // set css class on selected row
         var virtualRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
@@ -129,15 +130,17 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.doWorkOfDeselectAllNodes = function (nodeToKeepSelected) {
         // not doing multi-select, so deselect everything other than the 'just selected' row
         var atLeastOneSelectionChange;
-        for (var i = (this.selectedNodes.length - 1); i>=0; i--) {
+        var selectedNodeKeys = Object.keys(this.selectedNodesById);
+        for (var i = 0; i < selectedNodeKeys.length; i++) {
             // skip the 'just selected' row
-            if (this.selectedNodes[i] === nodeToKeepSelected) {
+            var key = selectedNodeKeys[i];
+            var nodeToDeselect = this.selectedNodesById[key];
+            if (nodeToDeselect === nodeToKeepSelected) {
                 continue;
+            } else {
+                this.deselectNode(nodeToDeselect);
+                atLeastOneSelectionChange = true;
             }
-
-            this.deselectNode(this.selectedNodes[i]);
-
-            atLeastOneSelectionChange = true;
         }
         return atLeastOneSelectionChange;
     };
@@ -145,15 +148,15 @@ define(['./utils'], function(utils) {
     // private
     SelectionController.prototype.deselectNode = function (node) {
         // deselect the css
-        var renderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
-        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + renderedRowIndex + '"]', 'ag-row-selected');
+        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        if (virtualRenderedRowIndex >= 0) {
+            utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+            // inform virtual row listener
+            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, false);
+        }
 
         // remove the row
-        var indexToRemove = this.selectedNodes.indexOf(node);
-        this.selectedNodes.splice(indexToRemove, 1);
-
-        // inform virtual row listener
-        this.angularGrid.onVirtualRowSelected(renderedRowIndex, false);
+        this.selectedNodesById[node.id] = undefined;
     };
 
     // public (selectionRendererFactory)
@@ -182,16 +185,14 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.syncSelectedRowsAndCallListener = function () {
         // update selected rows
         var selectedRows = this.selectedRows;
-        var selectedNodes = this.selectedNodes;
-        // clear selected nodes by id
-        var selectedNodesById = this.selectedNodesById = {};
         // clear selected rows
         selectedRows.length = 0;
-        selectedNodes.forEach(function (node) {
-            selectedRows.push(node.rowData);
-            // this is used for quick access, so not using 'index of' for checking if a node is selected
-            selectedNodesById[node.id] = true;
-        });
+        var keys = Object.keys(this.selectedNodesById);
+        for (var i = 0; i<keys.length; i++) {
+            if (this.selectedNodesById[keys[i]] !== undefined) {
+                selectedRows.push(this.selectedNodesById[keys[i]]);
+            }
+        }
 
         if (typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
             this.gridOptionsWrapper.getSelectionChanged()();
@@ -262,7 +263,7 @@ define(['./utils'], function(utils) {
                 default : return undefined;
             }
         } else {
-            return this.selectedNodesById[node.id] === true;
+            return this.selectedNodesById[node.id] !== undefined;
         }
     };
 

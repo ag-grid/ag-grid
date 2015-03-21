@@ -3,7 +3,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     var svgFactory = new SvgFactory();
 
     function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
-                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout) {
+                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout,
+                         selectionController) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
         this.colModel = colModel;
@@ -14,6 +15,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.$compile = $compile;
         this.$scope = $scope;
         this.$timeout = $timeout;
+        this.selectionController = selectionController;
 
         // map of row ids to row objects. keeps track of which elements
         // are rendered for which rows in the dom. each row object has:
@@ -317,7 +319,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var eRow = document.createElement("div");
         var classesList = ["ag-row"];
         classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
-        if (this.gridOptions.selectedNodes.indexOf(node)>=0) {
+        if (this.selectionController.isNodeSelected(node)) {
             classesList.push("ag-row-selected");
         }
 

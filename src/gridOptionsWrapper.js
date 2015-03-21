@@ -44,7 +44,7 @@ define([], function() {
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
 
     GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
-    GridOptionsWrapper.prototype.setSelectedNodes = function(newSelectedNodes) { return this.gridOptions.selectedNodes = newSelectedNodes; };
+    GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) { return this.gridOptions.selectedNodesById = newSelectedNodes; };
 
     GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
         return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;

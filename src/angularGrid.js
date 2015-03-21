@@ -114,7 +114,8 @@ define([
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
                                 this.filterManager);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
-                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout);
+                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout,
+                                this.selectionController);
         this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
                                 this.filterManager, $scope, $compile);
 
@@ -231,8 +232,7 @@ define([
         var api = {
             onNewRows: function () {
                 _this.rowController.setAllRows(_this.gridOptionsWrapper.getAllRows());
-                _this.gridOptions.selectedNodes.length = 0;
-                _this.gridOptions.selectedRows.length = 0;
+                _this.selectionController.clearSelection();
                 _this.filterManager.onNewRowsLoaded();
                 _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 _this.headerRenderer.updateFilterIcons();
