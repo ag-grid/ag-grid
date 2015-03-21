@@ -18,6 +18,10 @@ define([
         var levelToInsertChild = groupByFields.length - 1;
         var i, currentLevel, node, rowData, currentGroup, groupByField, groupKey, nextGroup;
 
+        // start at -1 and go backwards, as all the positive indexes
+        // are already used by the nodes.
+        var index = -1;
+
         for (i = 0; i<rowNodes.length; i++) {
             node = rowNodes[i];
             rowData = node.rowData;
@@ -36,6 +40,7 @@ define([
                     nextGroup = {
                         group: true,
                         field: groupByField,
+                        id: index--,
                         key: groupKey,
                         expanded: expandByDefault,
                         children: [],

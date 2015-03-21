@@ -127,11 +127,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var first;
         var last;
 
+        var rowCount = this.rowModel.getRowsAfterMap().length;
+
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
             var rowsAfterMap = this.rowModel.getRowsAfterMap();
             if (rowsAfterMap) {
-                last = rowsAfterMap.length - 1;
+                last = rowCount - 1;
             } else {
                 last = 0;
             }
@@ -145,12 +147,24 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             //add in buffer
             first = first - constants.ROW_BUFFER_SIZE;
             last = last + constants.ROW_BUFFER_SIZE;
+
+            // adjust, in case buffer extended actual size
+            if (first < 0) {
+                first = 0;
+            }
+            if (last > rowCount - 1) {
+                last = rowCount - 1;
+            }
         }
 
         this.firstVirtualRenderedRow = first;
         this.lastVirtualRenderedRow = last;
 
         this.ensureRowsRendered();
+    };
+
+    RowRenderer.prototype.isIndexRendered = function (index) {
+        return index >= this.firstVirtualRenderedRow && index <= this.lastVirtualRenderedRow;
     };
 
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
@@ -214,7 +228,8 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         var renderedRow = {
             scope: newChildScope,
-            node: node
+            node: node,
+            rowIndex: rowIndex
         };
         this.renderedRows[rowIndex] = renderedRow;
 
@@ -360,6 +375,17 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eRow;
     };
 
+    RowRenderer.prototype.getIndexOfRenderedNode = function(node) {
+        var renderedRows = this.renderedRows;
+        var keys = Object.keys(renderedRows);
+        for (var i = 0; i<keys.length; i++) {
+            if (renderedRows[keys[i]].node === node) {
+                return renderedRows[keys[i]].rowIndex;
+            }
+        }
+        return -1;
+    };
+
     RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex) {
         var eGridGroupRow = document.createElement('div');
         if (useEntireRow) {
@@ -400,7 +426,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 // only include the child count if it's included, eg if user doing custom aggregation,
                 // then this could be left out, or set to -1, ie no child count
                 if (node.allChildrenCount >= 0) {
-                    textToDisplay + " (" + node.allChildrenCount + ")";
+                    textToDisplay += " (" + node.allChildrenCount + ")";
                 }
                 var eText = document.createTextNode(textToDisplay);
                 eGridGroupRow.appendChild(eText);

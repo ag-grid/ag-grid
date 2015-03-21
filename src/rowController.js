@@ -139,21 +139,37 @@ define([
         return result;
     };
 
-    RowController.prototype.setAllRows = function(allRows) {
+    RowController.prototype.setAllRows = function(rows) {
+        var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
-            this.rowModel.setAllRows(allRows);
+            nodes = rows;
         } else {
             // place each row into a wrapper
-            var allRowsWrapped = [];
-            if (allRows) {
-                for (var i = 0; i < allRows.length; i++) { // could be lots of rows, don't use functional programming
-                    allRowsWrapped.push({
-                        rowData: allRows[i]
+            var nodes = [];
+            if (rows) {
+                for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
+                    nodes.push({
+                        rowData: rows[i]
                     });
                 }
             }
-            this.rowModel.setAllRows(allRowsWrapped);
         }
+
+        this.recursivelyAddIdToNodes(nodes, 0);
+        this.rowModel.setAllRows(nodes);
+    };
+
+    // add in index - this is used by the selectionController - so quick
+    // to look up selected rows
+    RowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            node.id = index++;
+            if (node.group && node.children) {
+                index = this.recursivelyAddIdToNodes(node.children);
+            }
+        }
+        return index;
     };
 
     RowController.prototype.getTotalChildCount = function(rowNodes) {

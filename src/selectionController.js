@@ -19,6 +19,7 @@ define(['./utils'], function(utils) {
         this.rowRenderer = rowRenderer;
 
         this.selectedNodes = [];
+        this.selectedNodesById = {};
         this.selectedRows = [];
 
         gridOptionsWrapper.setSelectedRows(this.selectedRows);
@@ -29,6 +30,7 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.clearSelection = function() {
         this.selectedRows.length = 0;
         this.selectedNodes.length = 0;
+        this.selectedNodeBysId = {};
     };
 
     // public
@@ -96,17 +98,16 @@ define(['./utils'], function(utils) {
     // 2 - updates the UI
     // 3 - calls callbacks
     SelectionController.prototype.doWorkOfSelectNode = function (node) {
-        if (this.selectedNodes.indexOf(node) >= 0) {
+        if (this.selectedNodesById[node.id]) {
             return false;
         }
 
         this.selectedNodes.push(node);
 
         // set css class on selected row
-        var virtualRowIndex = this.rowModel.getVirtualIndex(node);
-        // NOTE: should also check the row renderer - that this row is actually rendered,
-        // ie not outside the scrolling viewport
-        if (virtualRowIndex >= 0) {
+        var virtualRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        var guiRowNeedsUpdating = this.rowRenderer.isIndexRendered(virtualRowIndex);
+        if (guiRowNeedsUpdating) {
             utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRowIndex + '"]', 'ag-row-selected');
 
             // inform virtual row listener
@@ -144,15 +145,15 @@ define(['./utils'], function(utils) {
     // private
     SelectionController.prototype.deselectNode = function (node) {
         // deselect the css
-        var rowIndex = this.rowModel.getVirtualIndex(node);
-        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+        var renderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + renderedRowIndex + '"]', 'ag-row-selected');
 
         // remove the row
         var indexToRemove = this.selectedNodes.indexOf(node);
         this.selectedNodes.splice(indexToRemove, 1);
 
         // inform virtual row listener
-        this.angularGrid.onVirtualRowSelected(rowIndex, false);
+        this.angularGrid.onVirtualRowSelected(renderedRowIndex, false);
     };
 
     // public (selectionRendererFactory)
@@ -164,9 +165,9 @@ define(['./utils'], function(utils) {
                 this.recursivelyDeselectAllChildren(node);
             } else {
                 this.deselectNode(node);
-                this.syncSelectedRowsAndCallListener();
             }
         }
+        this.syncSelectedRowsAndCallListener();
         this.updateGroupParentsIfNeeded();
     };
 
@@ -182,10 +183,14 @@ define(['./utils'], function(utils) {
         // update selected rows
         var selectedRows = this.selectedRows;
         var selectedNodes = this.selectedNodes;
-
+        // clear selected nodes by id
+        var selectedNodesById = this.selectedNodesById = {};
+        // clear selected rows
         selectedRows.length = 0;
         selectedNodes.forEach(function (node) {
             selectedRows.push(node.rowData);
+            // this is used for quick access, so not using 'index of' for checking if a node is selected
+            selectedNodesById[node.id] = true;
         });
 
         if (typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
@@ -247,7 +252,6 @@ define(['./utils'], function(utils) {
     // true: if selected
     // false: if unselected
     // undefined: if it's a group and 'children selection' is sued adn 'children' are a mix of selected and unselected
-    // NOTE: This method is very slow. Need to speed it up.
     SelectionController.prototype.isNodeSelected = function(node) {
         if (this.gridOptionsWrapper.isGroupSelectionChildren() && node.group) {
             // doing child selection, we need to traverse the children
@@ -258,7 +262,7 @@ define(['./utils'], function(utils) {
                 default : return undefined;
             }
         } else {
-            return this.selectedNodes.indexOf(node) >= 0;
+            return this.selectedNodesById[node.id] === true;
         }
     };
 

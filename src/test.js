@@ -240,6 +240,15 @@ define([
             console.log('Callback selectionChanged: selection count = ' + $scope.angularGrid.selectedRows.length);
         }
 
+        function rowSelected(row, node) {
+            // this clogs the console, when to many rows displayed, and use selected 'select all'.
+            // so check 'not to many rows'
+            if (angularGrid.rowData.length <= 100) {
+                var valueToPrint = node.group ? 'group ('+node.key+')' : row.name;
+                console.log("Callback rowSelected: " + valueToPrint);
+            }
+        }
+
     });
 
     var COUNTRY_CODES = {
@@ -262,11 +271,6 @@ define([
         Venezuela: "ve",
         Uruguay: "uy"
     };
-
-    function rowSelected(row, node) {
-        var valueToPrint = node.group ? 'group ('+node.key+')' : row.name;
-        console.log("Callback rowSelected: " + valueToPrint);
-    }
 
     function numberNewValueHandler(data, newValue, colDef) {
         var valueAsNumber = parseInt(newValue);
