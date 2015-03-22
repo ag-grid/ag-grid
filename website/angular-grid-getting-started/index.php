@@ -1,4 +1,5 @@
 <?php
+$key = "Getting Started";
 $pageTitle = "Angular Compiling";
 $pageDescription = "Angular Grid Angular Compiling";
 $pageKeyboards = "Angular Grid Angular Compiling";

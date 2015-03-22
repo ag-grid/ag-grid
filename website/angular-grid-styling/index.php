@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "Styling";
-$pageDescription = "Angular Grid Styling";
-$pageKeyboards = "Angular Grid Styling";
+$key = "Styling";
+$pageTitle = "AngularJS Angular Grid Styling";
+$pageDescription = "AngularJS Angular Grid Styling";
+$pageKeyboards = "AngularJS Angular Grid Styling";
 include '../documentation_header.php';
 ?>
 

@@ -49,3 +49,19 @@
     border-bottom: 1px solid lightgrey;
     display: block;
 }
+
+.sidebarLinkSelected {
+    font-weight: bold;
+    padding: 4px;
+    border-bottom: 1px solid lightgrey;
+    display: block;
+    background-color: aliceblue;
+}
+
+h4 {
+    margin-top: 30px;
+}
+
+h2 {
+    margin-top: 0px;
+}

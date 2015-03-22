@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "Pinning";
-$pageDescription = "Angular Grid Pinning";
-$pageKeyboards = "Angular Grid Pinning";
+$key = "Pinning";
+$pageTitle = "AngularJS Angular Grid Pinning";
+$pageDescription = "AngularJS Angular Grid Pinning";
+$pageKeyboards = "AngularJS Angular Grid Pinning";
 include '../documentation_header.php';
 ?>
 

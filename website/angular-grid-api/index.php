@@ -1,4 +1,5 @@
 <?php
+$key = "API";
 $pageTitle = "Angular Compiling";
 $pageDescription = "Angular Grid Angular Compiling";
 $pageKeyboards = "Angular Grid Angular Compiling";
@@ -83,8 +84,6 @@ include '../documentation_header.php';
             </td>
         </tr>
     </table>
-
-    In the future, I plan to extend this API.
 
 </div>
 

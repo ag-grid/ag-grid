@@ -1,4 +1,5 @@
 <?php
+$key = "Loading Rows";
 $pageTitle = "Loading Rows";
 $pageDescription = "Angular Grid Loading Rows";
 $pageKeyboards = "Angular Grid Loading Rows";

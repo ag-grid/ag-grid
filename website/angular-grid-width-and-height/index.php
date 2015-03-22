@@ -1,5 +1,6 @@
 <?php
-$pageTitle = "Resizing";
+$key = "Width & Height";
+$pageTitle = "Angular Grid Width and Height";
 $pageDescription = "Angular Grid Resizing";
 $pageKeyboards = "Angular Grid Resizing";
 include '../documentation_header.php';
@@ -8,8 +9,6 @@ include '../documentation_header.php';
 <div>
 
     <h2>Width and Height</h2>
-
-    <div class="bigTitle">Width and Height</div>
 
     <h4>Fixed Width and Height</h4>
 

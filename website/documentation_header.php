@@ -51,26 +51,114 @@
         <div class="row">
 
             <div class="col-sm-2">
-                <h4>Documentation</h4>
 
-                <a class="sidebarLink" href="/angular-grid-getting-started/index.php">Getting Started</a>
-                <a class="sidebarLink" href="/angular-grid-loading-rows/index.php">Loading Rows</a>
-                <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
-                <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
-                <a class="sidebarLink" href="/angular-grid-column-definitions/index.php">Column Definitions</a>
-                <a class="sidebarLink" href="/angular-grid-sorting/index.php">Sorting</a>
-                <a class="sidebarLink" href="/angular-grid-filtering/index.php">Filtering</a>
-                <a class="sidebarLink" href="/angular-grid-resizing/index.php">Resizing</a>
-                <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
-                <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
-                <a class="sidebarLink" href="/angular-grid-grouping-headers/index.php">Grouping Headers</a>
-                <a class="sidebarLink" href="/angular-grid-editing/index.php">Editing Cells</a>
-                <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
-                <a class="sidebarLink" href="/angular-grid-header-rendering/index.php">Header Rendering</a>
-                <a class="sidebarLink" href="/angular-grid-angular-compiling/index.php">Angular Compiling</a>
-                <a class="sidebarLink" href="/angular-grid-styling/index.php">Layout & Styling</a>
-                <a class="sidebarLink" href="/angular-grid-no-scrolls/index.php">No Scrolling</a>
-                <a class="sidebarLink" href="/angular-grid-api/index.php">API</a>
+                <?php if ($key == "Getting Started") { ?>
+                    <span class="sidebarLinkSelected">Getting Started</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-getting-started/index.php">Getting Started</a>
+                <?php } ?>
+
+                <?php if ($key == "Loading Rows") { ?>
+                    <span class="sidebarLinkSelected">Loading Rows</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-loading-rows/index.php">Loading Rows</a>
+                <?php } ?>
+
+                <?php if ($key == "Width & Height") { ?>
+                    <span class="sidebarLinkSelected">Width & Height</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
+                <?php } ?>
+
+                <?php if ($key == "Grid Options") { ?>
+                    <span class="sidebarLinkSelected">Grid Options</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
+                <?php } ?>
+
+                <?php if ($key == "Column Definitions") { ?>
+                    <span class="sidebarLinkSelected">Column Definitions</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-column-definitions/index.php">Column Definitions</a>
+                <?php } ?>
+
+                <?php if ($key == "Sorting") { ?>
+                    <span class="sidebarLinkSelected">Sorting</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-sorting/index.php">Sorting</a>
+                <?php } ?>
+
+                <?php if ($key == "Filtering") { ?>
+                    <span class="sidebarLinkSelected">Filtering</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-filtering/index.php">Filtering</a>
+                <?php } ?>
+
+                <?php if ($key == "Resizing") { ?>
+                    <span class="sidebarLinkSelected">Resizing</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-resizing/index.php">Resizing</a>
+                <?php } ?>
+
+                <?php if ($key == "Pinning") { ?>
+                    <span class="sidebarLinkSelected">Pinning</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
+                <?php } ?>
+
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
+                <?php } ?>
+
+                <?php if ($key == "Grouping Headers") { ?>
+                    <span class="sidebarLinkSelected">Grouping Headers</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grouping-headers/index.php">Grouping Headers</a>
+                <?php } ?>
+
+                <?php if ($key == "Editing") { ?>
+                    <span class="sidebarLinkSelected">Editing Cells</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-editing/index.php">Editing Cells</a>
+                <?php } ?>
+
+                <?php if ($key == "Header Rendering") { ?>
+                    <span class="sidebarLinkSelected">Header Rendering</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-header-rendering/index.php">Header Rendering</a>
+                <?php } ?>
+
+                <?php if ($key == "Selection") { ?>
+                    <span class="sidebarLinkSelected">Selection</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
+                <?php } ?>
+
+                <?php if ($key == "Angular Compiling") { ?>
+                    <span class="sidebarLinkSelected">Angular Compiling</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-angular-compiling/index.php">Angular Compiling</a>
+                <?php } ?>
+
+                <?php if ($key == "Styling") { ?>
+                    <span class="sidebarLinkSelected">Layout & Styling</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-styling/index.php">Layout & Styling</a>
+                <?php } ?>
+
+                <?php if ($key == "No Scrolls") { ?>
+                    <span class="sidebarLinkSelected">No Scrolling</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-no-scrolls/index.php">No Scrolling</a>
+                <?php } ?>
+
+                <?php if ($key == "API") { ?>
+                    <span class="sidebarLinkSelected">API</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-api/index.php">API</a>
+                <?php } ?>
 
             </div>
 

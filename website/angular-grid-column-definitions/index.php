@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "Angular Compiling";
-$pageDescription = "Angular Grid Angular Compiling";
-$pageKeyboards = "Angular Grid Angular Compiling";
+$key = "Column Definitions";
+$pageTitle = "Column Definitions";
+$pageDescription = "Angular Grid Column Definitions";
+$pageKeyboards = "Angular Grid Column Definitions";
 include '../documentation_header.php';
 ?>
 

@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "Selection";
-$pageDescription = "Angular Grid Selection";
-$pageKeyboards = "Angular Grid Selection";
+$key = "Selection";
+$pageTitle = "AngularJS Angular Grid Selection";
+$pageDescription = "AngularJS Angular Grid Selection";
+$pageKeyboards = "AngularJS Angular Grid Selection";
 include '../documentation_header.php';
 ?>
 

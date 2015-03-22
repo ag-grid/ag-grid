@@ -16,7 +16,6 @@
 
 // bugs:
 // editing a checkbox field fails
-// checkbox group not getting selected
 
 define([
     'angular',

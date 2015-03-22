@@ -1,13 +1,15 @@
 <?php
-$pageTitle = "Angular Compiling";
-$pageDescription = "Angular Grid Angular Compiling";
-$pageKeyboards = "Angular Grid Angular Compiling";
+$key = "Angular Compiling";
+$pageTitle = "AngularJS Data Grid - Angular Compiling";
+$pageDescription = "Documentation on how to Angular Compile for Angular AngularJS Data Grid";
+$pageKeyboards = "AngularJS Angular Data Grid Angular Compiling";
 include '../documentation_header.php';
 ?>
 
 <div>
     <h2>Angular Compiling</h2>
 
+    <p/>
     Angular is great. The author of Angular Grid uses Angular for his large projects.
     <p/>
     However the author of Angular Grid is of the opinion that not everything should be

@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "Grouping";
-$pageDescription = "Angular Grid Grouping";
-$pageKeyboards = "Angular Grid Grouping";
+$key = "Grouping";
+$pageTitle = "AngularJS Angular Grid Grouping and Aggregation";
+$pageDescription = "AngularJS Angular Grid Grouping and Aggregation";
+$pageKeyboards = "AngularJS Angular Grid Grouping and Aggregation";
 include '../documentation_header.php';
 ?>
 

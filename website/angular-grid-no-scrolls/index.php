@@ -1,7 +1,8 @@
 <?php
-$pageTitle = "No Scrolls";
-$pageDescription = "Angular Grid No Scrolls";
-$pageKeyboards = "Angular Grid No Scrolls";
+$key = "No Scrolls";
+$pageTitle = "AngularJS Angular Grid No Scrolls";
+$pageDescription = "AngularJS Angular Grid No Scrolls";
+$pageKeyboards = "AngularJS Angular Grid No Scrolls";
 include '../documentation_header.php';
 ?>
 
