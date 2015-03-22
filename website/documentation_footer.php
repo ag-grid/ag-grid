@@ -10,8 +10,6 @@
             </div>
             <div style="float:right;">
                 Contact: <a href="mailto:info@angulargrid.com" target="_top">info@angulargrid.com</a>
-                <br/>
-                Please post questions on the forum
             </div>
             <div style="clear: both;">
             </div>

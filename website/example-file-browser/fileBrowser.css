@@ -1,0 +1,39 @@
+
+.ag-file-browser .ag-root {
+    border: 1px solid grey;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.ag-file-browser .ag-cell {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.ag-file-browser .ag-header-container {
+    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(white, lightgrey); /* Standard syntax */
+    border-bottom: 1px solid grey;
+}
+
+.ag-file-browser .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-file-browser .ag-header-cell-label {
+    padding: 4px;
+}
+
+.ag-file-browser .ag-row:hover {
+    background-color: aliceblue;
+}
+
+.ag-file-browser .ag-body {
+    background-color: #ffffff;
+}
+
+.ag-file-browser .ag-body-viewport {
+    background-color: #ffffff;
+}
+

@@ -81,7 +81,7 @@ define([
     RowController.prototype.resetSortInGroups = function(rowNodes) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
-            if (item.group) {
+            if (item.group && item.children) {
                 item.childrenAfterSort = item.children;
                 this.resetSortInGroups(item.children);
             }
@@ -93,7 +93,7 @@ define([
         // sort any groups recursively
         for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
             var node = nodes[i];
-            if (node.group) {
+            if (node.group && node.children) {
                 node.childrenAfterSort = node.children.slice(0);
                 this.sortList(node.childrenAfterSort, colDefForSorting, inverter);
             }
@@ -170,6 +170,7 @@ define([
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
             nodes = rows;
+            this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
         } else {
             // place each row into a wrapper
             var nodes = [];
@@ -193,10 +194,25 @@ define([
             var node = nodes[i];
             node.id = index++;
             if (node.group && node.children) {
-                index = this.recursivelyAddIdToNodes(node.children);
+                index = this.recursivelyAddIdToNodes(node.children, index);
             }
         }
         return index;
+    };
+
+    // add in index - this is used by the selectionController - so quick
+    // to look up selected rows
+    RowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            if (parent) {
+                node.parent = parent;
+            }
+            node.level = level;
+            if (node.group && node.children) {
+                this.recursivelyCheckUserProvidedNodes(node.children, node, level + 1);
+            }
+        }
     };
 
     RowController.prototype.getTotalChildCount = function(rowNodes) {
@@ -241,6 +257,9 @@ define([
     };
 
     RowController.prototype.addToMap = function (mappedData, originalNodes) {
+        if (!originalNodes) {
+            return;
+        }
         for (var i = 0; i<originalNodes.length; i++) {
             var node = originalNodes[i];
             mappedData.push(node);

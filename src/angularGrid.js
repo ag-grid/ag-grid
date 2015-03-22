@@ -11,7 +11,6 @@
 // reorder columns (drag)
 // allow dragging outside grid (currently last col can't be resized)
 // selecting should be like excel, and have keyboard navigation
-// filtering blocks the aggregations - the summary numbers go missing!!
 // should not be able to edit groups
 
 // bugs:
@@ -153,7 +152,8 @@ define([
 
         var node = this.rowModel.getRowsAfterMap()[rowIndex];
         if (this.gridOptions.rowClicked) {
-            this.gridOptions.rowClicked(node.data, event);
+            var params = {node: node, data: node.data, event: event};
+            this.gridOptions.rowClicked(params);
         }
 
         // if no selection method enabled, do nothing

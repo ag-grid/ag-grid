@@ -11,11 +11,15 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
+        <link href="example-file-browser/fileBrowser.css" rel="stylesheet">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
         <script src="dist/angularGrid-latest.js"></script>
+
+        <script src="example-file-browser/fileBrowser.js"></script>
 
         <script src="index.js"></script>
 
@@ -36,12 +40,12 @@
 
     </head>
 
-    <body>
+    <body ng-app="index">
 
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="index.html">Angular Grid</a>
+                    <a class="navbar-brand" href="index.html">Home</a>
                     <a class="navbar-brand" href="example.html">Example</a>
                     <a class="navbar-brand" href="/angular-grid-getting-started/index.php">Documentation</a>
                     <a class="navbar-brand" href="forum">Forum</a>
@@ -49,91 +53,147 @@
             </div>
         </nav>
 
-        <div class="jumbotron">
+        <div style="margin-top: 50px; background-color: #eeeeee; padding-top: 20px; padding-bottom: 40px;">
+
             <div class="container">
 
-                <div style="float: right; margin-top: 50px;" ng-app="index" ng-controller="indexController">
-                    <div style="text-align: center">
-                        <img src="open-source.png" style="width: 80px;" alt="Open Source"/>
-                        <img src="github.png" style="width: 80px;" alt="Git Hub"/>
-                        <img src="angularjs.png" style="width: 80px;" alt="Angular JS"/>
+                <div class="row">
+                    <div class="col-md-6" style="text-align: center;">
+                        <h1>Angular Grid</h1>
+                        <div>
+                            Advanced Data Grid for AngularJS
+                        </div>
+                        <div style="padding-top: 20px;">
+                            <a class="btn btn-primary btn-sm" href="https://github.com/ceolter/angular-grid" role="button">
+                                <i class="fa fa-github fa-fw"></i> Github
+                            </a>
+                            <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/dist" role="button">
+                                <i class="fa fa-download fa-fw"></i> Download
+                            </a>
+                            <a class="btn btn-primary btn-sm" href="example.html" role="button">
+                                <i class="fa fa-bicycle fa-fw"></i> Take a Ride
+                            </a>
+                        </div>
                     </div>
-                    <div style="text-align: center; padding-top: 20px;">
-                        Small Example - Top 5 Populated Countries
-                    </div>
-                    <div angular-grid="angularGrid" class="ag-fresh" style="display: inline-block; box-shadow: 10px 10px 5px #888888;">
 
+                    <div class="col-md-6" style="text-align: center;">
+                        <div style="margin: 10px;">
+                            <img src="open-source.png" style="width: 80px;" alt="Open Source" title="Open Source"/>
+                            <img src="github.png" style="width: 80px;" alt="Git Hub" title="Git Hub"/>
+                            <img src="angularjs.png" style="width: 80px;" alt="Angular JS" title="AngularJS"/>
+                        </div>
+                        <div style="margin: 10px;">
+                            <img src="browser_logos.png" style="width: 260px" alt="Cross Browser" title="Cross Browser"/>
+                        </div>
                     </div>
+
                 </div>
 
-                <div style="text-align: center; display: inline-block; margin: 10px 0px 10px 0px; padding: 0px 30px 0px 30px;">
-                    <h1>Angular Grid</h1>
-                    <b>A data grid for AngularJS</b>
-                </div>
-
-                <div style="margin: 10px 0px 40px 20px; display: inline-block;">
-                    <i class="dot fa fa-circle"></i> Designed for Angular JS <i class="checkitem fa fa-check"></i> <br/>
-                    <i class="dot fa fa-circle"></i> Large Data Sets, Very Fast <i class="checkitem fa fa-check"></i> <br/>
-                </div>
-
-                <p>
-                    <a class="btn btn-primary btn-sm" href="https://github.com/ceolter/angular-grid" role="button">
-                        <i class="fa fa-github fa-fw"></i> Github
-                    </a>
-                    <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/dist" role="button">
-                        <i class="fa fa-download fa-fw"></i> Download
-                    </a>
-                    <a class="btn btn-primary btn-sm" href="example.html" role="button">
-                        <i class="fa fa-bicycle fa-fw"></i> Take a Ride
-                    </a>
-    <!--
-                    <a class="btn btn-primary btn-sm" href="#" role="button">
-                        <i class="fa fa-cog fa-fw"></i> Documentation
-                    </a>
-    -->
-                </p>
             </div>
         </div>
+
 
         <div class="container">
 
             <div class="row">
-                <div class="col-md-4">
-                    <h2>Why Angular Grid</h2>
+                <div class="col-md-6">
+                    <h2>Introducing Angular Grid</h2>
                     <p>
-                        Angular Grid is another Grid for HTML 5 AngularJS development. Angular Grid was created
-                        out of frustration, following a long and endless search for a grid that was very fast,
-                        allowed pinned columns, had excel like advanced filtering and was native to AngularJS.
+                        Angular Grid is a powerful and flexible data grid for AngularJS.
+                        It was created out of frustration, following an endless search
+                        for a grid that was fast, feature rich, robust and designed
+                        with AngularJS in mind.
+                    </p>
+                    <p>
+                        Angular Grid was built for use in financial reporting applications, where data sets
+                        are large with heavy demands on filtering, grouping, aggregating and presentation.
+                    </p>
+                    <p>
+                        But great power does not require great responsibility, it's easy to
+                        get up with any modest requirement.
                     </p>
                 </div>
-                <div class="col-md-4">
-                    <h2>Features</h2>
+
+                <div class="col-md-6">
+                    <h2>Handling Large Data Sets</h2>
                     <p>
-                        <ul>
-                            <li>Advanced Filtering (quick filter, excel like filter, custom filters)</li>
-                            <li>Row Virtualisation (thousands of rows)</li>
-                            <li>Column Pinning, Resizing & Sorting</li>
-                            <li>Grouping with Aggregation</li>
-                            <li>Custom Cell Editors & Renderers</li>
-                            <li>Styleable via CSS</li>
-                            <li>Very fast</li>
-                        </ul>
+                        The <b>Hybrid AngularJS & DOM Engine</b> creates a powerful combination of AngularJS
+                        where required and native Javascript at all other times, giving the best performance.
+                        A grid written solely in AngularJS will be inherently slower.
                     </p>
+                    <p>
+                        <b>Row Virtualisation</b> provides a window on top of the data, rendering only DOM objects
+                        visible within the viewable area. This makes displaying hundreds of thousands of rows
+                        within the browser a reality, allowing the user to filter and group to the data of interest.
+                    </p>
+
                 </div>
-                <div class="col-md-4">
-                    <h2>Who Should Use</h2>
-                    <p>
-                        The grid was designed to handle very large data sets and give a professional 'excel like' feel over the data.
-                        This was such that it can be used in financial reporting applications.
-                    </p>
-                    <p>
-                        However you don't need to be writing financial applications to benefit. Setting up a simple grid, for small
-                        data sets, with a bunch of features, is very easy.
-                    </p>
-                    <p>
-                        Check out the examples and the documentation to see if it is a good fit for you.
-                    </p>
+            </div>
+
+            <hr/>
+
+            <div style="text-align: center;">
+                <h2>Grid Features</h2>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Column Pinning</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Column Resizing</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Data Sorting</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Quick Search</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Advanced Filtering</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Custom Rendering & Cell Styling</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Data Editing</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> CSS Themes</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Header Grouping</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Row Grouping & Aggregation</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Click & Checkbox Selection</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> API</span>
+                <span class="feature"><i class="fa fa-check-circle-o"></i> Printable</span>
+            </div>
+
+            <!--
+            <hr/>
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div style="text-align: center; padding-top: 20px;">
+                        Basic example: The grid without any custimisations.
+                    </div>
                 </div>
+                <div class="col-md-9" ng-controller="indexController">
+                    <div angular-grid="angularGrid" class="ag-fresh" style="display: inline-block; box-shadow: 10px 10px 5px #888888;">
+                    </div>
+                </div>
+            </div>-->
+
+            <hr/>
+
+            <div class="container">
+
+                <h2>Example - File Explorer</h2>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div>
+                            The grid is provided with a
+                            tree structure and styled to look like Microsoft
+                            File Explorer.
+                        </div>
+                    </div>
+                    <div class="col-md-9" ng-controller="fileBrowserController"
+                         style="border: 1px solid darkgrey;
+                                width: 600px;
+                                background-color: lightgrey;
+                                border-radius: 5px;
+                                padding: 3px;">
+                        <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 14px;"> &nbsp; {{selectedFile}}</div>
+                        <div style="width: 100%; height: 400px;"
+                             angular-grid="gridOptions"
+                             class="ag-file-browser">
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
             <hr>
@@ -150,20 +210,5 @@
             </footer>
         </div>
 
-        <!--
-        <div class="paragraph">
-            I do not think a grid should be developed entirely in AngularJS. The number of individual cells (even
-            when virtualising the grid) is to much for the data-binding design of AngularJS. That is why the design of
-            ag-Grid is hybrid - using native Javascript and DOM manipulation for the critical 'underneath the hood'
-            parts while still presenting the grid as a native AngularJS directive. If required, Angular data-binding
-            can be used in the cells, but only when required, in my projects it has never been required.
-        </div>
-        -->
-<!--
-        <div class="paragraph">
-            I work in investment banking. We have applications that display grids with tens of thousands
-            of records with up to 100 columns. ag-Grid manages this data size with ease.
-        </div>
--->
     </body>
 </html>

@@ -1,10 +1,7 @@
 
-indexModule = angular.module("index", ["angularGrid"]);
+indexModule = angular.module("index", ["angularGrid", "fileBrowser"]);
 
 indexModule.controller('indexController', function($scope) {
-
-    //cellRenderer: undefined, filterCellRenderer: undefined, filterCellHeight: undefined,
-    //    comparator: undefined, cellStyle: undefined
 
     $scope.angularGrid = {
         columnDefs: [
