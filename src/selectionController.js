@@ -106,13 +106,12 @@ define(['./utils'], function(utils) {
         this.selectedNodesById[node.id] = node;
 
         // set css class on selected row
-        var virtualRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
-        var guiRowNeedsUpdating = this.rowRenderer.isIndexRendered(virtualRowIndex);
-        if (guiRowNeedsUpdating) {
-            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRowIndex + '"]', 'ag-row-selected');
+        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        if (virtualRenderedRowIndex >= 0) {
+            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
 
             // inform virtual row listener
-            this.angularGrid.onVirtualRowSelected(virtualRowIndex, true);
+            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
         }
 
         // inform the rowSelected listener, if any
@@ -279,11 +278,15 @@ define(['./utils'], function(utils) {
         for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
             // see if node is a group
             var node = this.rowModel.getVirtualRow(rowIndex);
-            // node could be null, if we are within the buffer region and
-            // no row for this location, eg negative rows
-            if (node && node.group) {
+            if (node.group) {
                 var selected = this.isNodeSelected(node);
                 this.angularGrid.onVirtualRowSelected(rowIndex, selected);
+
+                if (selected) {
+                    utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+                } else {
+                    utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
+                }
             }
         }
     };

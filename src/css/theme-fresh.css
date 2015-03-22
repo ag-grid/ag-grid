@@ -58,7 +58,7 @@
 }
 
 .ag-fresh .ag-row-odd {
-    background-color: #f0f0f0;
+    background-color: #f6f6f6;
 }
 
 .ag-fresh .ag-row-even {
@@ -78,7 +78,8 @@
 }
 
 .ag-fresh .ag-row-selected {
-    background-color: #b0b0b0;
+    background-color: #B2DFEE;
+    /*background-color: #ECF1EF;*/
 }
 
 .ag-fresh .ag-group-cell-entire-row {

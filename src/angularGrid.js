@@ -5,7 +5,7 @@
 // allow filter (and clear) via api
 // allow 'scroll to row' via api
 // pinned columns not using scrollbar property (see website example)
-// provide example of file browsing, then ansewr: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
+// provide example of file browsing, then answer: http://stackoverflow.com/questions/22775031/hierarchical-grid-in-angular-js
 // fill width of columns option
 // reorder columns (popup)
 // reorder columns (drag)
@@ -13,32 +13,10 @@
 // selecting should be like excel, and have keyboard navigation
 // filtering blocks the aggregations - the summary numbers go missing!!
 // should not be able to edit groups
+
+// bugs:
 // editing a checkbox field fails
-
-/* breaking changes:
-
- row records now stored in 'node' objects, previously records were stored directing in a list (with the exception of
- group rows). each node object has attribute 'data' with the rows data. in addition, the following attributes also
- exist:
-  -> parent (reference to the parent node, if it exists)
-  -> group - set to 'true' if this node is a group node (ie has children)
-      -> children: the groups children
-      -> field: the field grouped by (for information purposes only, if doing your own grouping, not needed)
-      -> key: the group key (what text to display beside the group when rendering)
-      -> expanded: whether the group is expanded or not
-      -> allChildrenCount: how many children (including grand children) this group has. number is displayed
-                           in brackets beside the group, set to -1 if doing own group and don't want this displayed
-      -> level: group level, 0 is top most level. use this to add padding to your cell, if displaying something
-                in the group column
-
- for selection, the grid now works off nodes, so a list of 'selectedNodes' as well as 'selectedRows' is kept (the
- nodes is the primary, each time this changes, the grid updates selectedRows, the user can choose which one to work
- off).
-
- all the callbacks, where 'params' is passed, now 'node' is also passed inside the param object.
-
- where child scope is created for the row, the data for the row is now on the scope as 'data' and not 'rowData' as previous
-*/
+// checkbox group not getting selected
 
 define([
     'angular',
