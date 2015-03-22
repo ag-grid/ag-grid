@@ -2025,19 +2025,19 @@ define('../src/groupCreator',[
 
         //create data items
         if (groupAggFunction) {
-            this.createAggData(topMostGroup.children, groupAggFunction);
+            this.recursivelyCreateAggData(topMostGroup.children, groupAggFunction);
         }
 
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(children, groupAggFunction) {
+    GroupCreator.prototype.recursivelyCreateAggData = function(children, groupAggFunction) {
         for (var i = 0, l = children.length; i<l; i++) {
             var item = children[i];
             var itemIsAGroup = item._angularGrid_group;
             if (itemIsAGroup) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(item.children, groupAggFunction);
+                this.recursivelyCreateAggData(item.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
                 var data = groupAggFunction(item.children);
                 item.aggData = data;

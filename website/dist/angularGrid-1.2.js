@@ -2078,18 +2078,18 @@ define('../src/groupCreator',[
 
         //create data items
         if (groupAggFunction) {
-            this.createAggData(topMostGroup.children, groupAggFunction);
+            this.recursivelyCreateAggData(topMostGroup.children, groupAggFunction);
         }
 
         return topMostGroup.children;
     };
 
-    GroupCreator.prototype.createAggData = function(rowNodes, groupAggFunction) {
+    GroupCreator.prototype.recursivelyCreateAggData = function(rowNodes, groupAggFunction) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var node = rowNodes[i];
             if (node.group) {
                 //agg function needs to start at the bottom, so traverse first
-                this.createAggData(node.children, groupAggFunction);
+                this.recursivelyCreateAggData(node.children, groupAggFunction);
                 //after traversal, we can now do the agg at this level
                 var data = groupAggFunction(node.children);
                 node.data = data;

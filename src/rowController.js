@@ -20,12 +20,38 @@ define([
                 this.doGrouping();
             case constants.STEP_FILTER :
                 this.doFilter();
+                this.doAggregate();
             case constants.STEP_SORT :
                 this.doSort();
             case constants.STEP_MAP :
                 this.doGroupMapping();
         }
 
+    };
+
+    RowController.prototype.doAggregate = function () {
+
+        var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
+        if (typeof groupAggFunction !== 'function') {
+            return;
+        }
+
+        var nodes = this.rowModel.getRowsAfterFilter();
+
+        this.recursivelyCreateAggData(nodes, groupAggFunction);
+    };
+
+    RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
+        for (var i = 0, l = nodes.length; i<l; i++) {
+            var node = nodes[i];
+            if (node.group) {
+                //agg function needs to start at the bottom, so traverse first
+                this.recursivelyCreateAggData(node.children, groupAggFunction);
+                //after traversal, we can now do the agg at this level
+                var data = groupAggFunction(node.children);
+                node.data = data;
+            }
+        }
     };
 
     RowController.prototype.doSort = function () {
@@ -127,6 +153,7 @@ define([
                 if (filteredChildren.length>0) {
                     var allChildrenCount = this.getTotalChildCount(filteredChildren);
                     var newGroup = this.copyGroupNode(node, filteredChildren, allChildrenCount);
+
                     result.push(newGroup);
                 }
             } else {
@@ -188,6 +215,7 @@ define([
     RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
             group: true,
+            data: groupNode.data,
             field: groupNode.field,
             key: groupNode.key,
             expanded: groupNode.expanded,

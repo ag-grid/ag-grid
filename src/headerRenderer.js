@@ -237,8 +237,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 eMenuButton.style.opacity = 0;
             };
             eMenuButton.style.opacity = 0;
-            eMenuButton.style["-webkit-transition"] = "opacity 0.5s";
-            eMenuButton.style["transition"] = "opacity 0.5s";
+            eMenuButton.style["-webkit-transition"] = "opacity 0.5s, border 0.2s";
+            eMenuButton.style["transition"] = "opacity 0.5s, border 0.2s";
         }
 
         // label div

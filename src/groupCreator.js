@@ -48,7 +48,7 @@ define([
                         parent: currentGroup === topMostGroup ? null : currentGroup,
                         allChildrenCount: 0,
                         level: currentGroup.level + 1,
-                        childrenMap: {}//this is a temporary map, we remove at the end of this method
+                        childrenMap: {} //this is a temporary map, we remove at the end of this method
                     };
                     currentGroup.childrenMap[groupKey] = nextGroup;
                     currentGroup.children.push(nextGroup);
@@ -72,25 +72,7 @@ define([
             delete allGroups[i].childrenMap;
         }
 
-        //create data items
-        if (groupAggFunction) {
-            this.createAggData(topMostGroup.children, groupAggFunction);
-        }
-
         return topMostGroup.children;
-    };
-
-    GroupCreator.prototype.createAggData = function(rowNodes, groupAggFunction) {
-        for (var i = 0, l = rowNodes.length; i<l; i++) {
-            var node = rowNodes[i];
-            if (node.group) {
-                //agg function needs to start at the bottom, so traverse first
-                this.createAggData(node.children, groupAggFunction);
-                //after traversal, we can now do the agg at this level
-                var data = groupAggFunction(node.children);
-                node.data = data;
-            }
-        }
     };
 
     return new GroupCreator();
