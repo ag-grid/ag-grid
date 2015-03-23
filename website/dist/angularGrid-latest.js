@@ -4090,7 +4090,8 @@ define('../src/selectionController',['./utils'], function(utils) {
         var keys = Object.keys(this.selectedNodesById);
         for (var i = 0; i<keys.length; i++) {
             if (this.selectedNodesById[keys[i]] !== undefined) {
-                selectedRows.push(this.selectedNodesById[keys[i]]);
+                var selectedNode = this.selectedNodesById[keys[i]];
+                selectedRows.push(selectedNode.data);
             }
         }
 
