@@ -4570,7 +4570,7 @@ define('../src/angularGrid',[
                 _this.rowRenderer.refreshView();
             },
             getModel: function () {
-                _this.rowModel;
+                return _this.rowModel;
             },
             onGroupExpandedOrCollapsed: function() {
                 _this.updateModelAndRefresh(constants.STEP_MAP);
