@@ -12,6 +12,7 @@
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
         <link href="example-file-browser/fileBrowser.css" rel="stylesheet">
+        <link href="example-basic/basic.css" rel="stylesheet">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -20,6 +21,7 @@
         <script src="dist/angularGrid-latest.js"></script>
 
         <script src="example-file-browser/fileBrowser.js"></script>
+        <script src="example-basic/basic.js"></script>
 
         <script src="index.js"></script>
 
@@ -167,18 +169,33 @@
 
             <hr/>
 
+            <div class="row" style="padding: 30px">
+
+                <div class="col-md-3">
+                    <div>
+                        Using the default look and feel, get a feature rich grid with minimal learning and coding.
+                    </div>
+                </div>
+                <div class="col-md-9" ng-controller="basicController">
+                    <div style="width: 800px; height: 400px;"
+                         angular-grid="gridOptions"
+                         class="ag-fresh ag-basic">
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
             <div class="container">
 
-                <h2>Example - File Explorer</h2>
+                <div class="row" style="padding: 30px">
 
-                <div class="row">
                     <div class="col-md-3">
                         <div>
-                            The grid is provided with a
-                            tree structure and styled to look like Microsoft
-                            File Explorer.
+                            With a bit more planning, create a fine tuned behaviour and look and feel.
                         </div>
                     </div>
+
                     <div class="col-md-9" ng-controller="fileBrowserController"
                          style="border: 1px solid darkgrey;
                                 width: 600px;

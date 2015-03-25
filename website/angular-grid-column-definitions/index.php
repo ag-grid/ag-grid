@@ -68,6 +68,10 @@ include '../documentation_header.php';
             <th>suppressSorting</th>
             <td>Set to true if no sorting should be done for this column.</td>
         </tr>
+        <tr>
+            <th>group</th>
+            <td>If grouping columns, the group this column belongs to.</td>
+        </tr>
 
     </table>
 
