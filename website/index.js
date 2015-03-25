@@ -1,5 +1,5 @@
 
-indexModule = angular.module("index", ["angularGrid", "fileBrowser"]);
+indexModule = angular.module("index", ["angularGrid", "fileBrowser", 'basic']);
 
 indexModule.controller('indexController', function($scope) {
 
