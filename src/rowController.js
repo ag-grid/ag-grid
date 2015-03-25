@@ -27,6 +27,10 @@ define([
                 this.doGroupMapping();
         }
 
+        if (typeof this.gridOptionsWrapper.getModelUpdated() === 'function') {
+            this.gridOptionsWrapper.getModelUpdated()();
+        }
+
     };
 
     RowController.prototype.doAggregate = function () {

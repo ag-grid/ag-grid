@@ -126,13 +126,21 @@ fileBrowserModule.controller('basicController', function($scope) {
         enableFilter: true,
         groupHeaders: true,
         rowHeight: 22,
-        pinnedColumnCount: 3
+        pinnedColumnCount: 3,
+        modelUpdated: modelUpdated
     };
+
+    function modelUpdated() {
+        var model = $scope.gridOptions.api.getModel();
+        var totalRows = model.getAllRows().length;
+        var processedRows = model.getRowsAfterMap().length;
+        $scope.rowCount = processedRows + ' / ' + totalRows;
+    }
 
     function createRowData() {
         var rowData = [];
 
-        for (var i = 0; i<200; i++) {
+        for (var i = 0; i<10000; i++) {
             var countryData = countries[i % countries.length];
             rowData.push({
                 name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
