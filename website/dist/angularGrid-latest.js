@@ -2131,6 +2131,10 @@ define('../src/rowController',[
                 this.doGroupMapping();
         }
 
+        if (typeof this.gridOptionsWrapper.getModelUpdated() === 'function') {
+            this.gridOptionsWrapper.getModelUpdated()();
+        }
+
     };
 
     RowController.prototype.doAggregate = function () {
@@ -3687,6 +3691,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return isTrue(this.gridOptions.angularCompileHeaders); };
     GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
+    GridOptionsWrapper.prototype.getModelUpdated = function() { return this.gridOptions.modelUpdated; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
     GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
     GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };

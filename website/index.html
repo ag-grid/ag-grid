@@ -151,37 +151,35 @@
                 <span class="feature"><i class="fa fa-check-circle-o"></i> Printable</span>
             </div>
 
-            <!--
-            <hr/>
-
-            <div class="row">
-
-                <div class="col-md-3">
-                    <div style="text-align: center; padding-top: 20px;">
-                        Basic example: The grid without any custimisations.
-                    </div>
-                </div>
-                <div class="col-md-9" ng-controller="indexController">
-                    <div angular-grid="angularGrid" class="ag-fresh" style="display: inline-block; box-shadow: 10px 10px 5px #888888;">
-                    </div>
-                </div>
-            </div>-->
-
             <hr/>
 
             <div class="row" style="padding: 30px">
 
                 <div class="col-md-3">
-                    <div>
+                    <div style="margin-top: 50px">
                         Using the default look and feel, get a feature rich grid with minimal learning and coding.
                     </div>
+                    <div style="margin-top: 50px">
+                        Filtering and sorting work lightning fast despite 10,000 rows.
+                    </div>
                 </div>
+
+
                 <div class="col-md-9" ng-controller="basicController">
-                    <div style="width: 800px; height: 400px;"
+                    <div style="padding: 4px">
+                        <div style="float: right;">
+                            <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Type text to filter..."/>
+                        </div>
+                        <div style="padding: 4px;">
+                            <b>Example Large Data</b> ({{rowCount}})
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 400px;"
                          angular-grid="gridOptions"
                          class="ag-fresh ag-basic">
                     </div>
                 </div>
+
             </div>
 
             <hr/>
@@ -191,21 +189,25 @@
                 <div class="row" style="padding: 30px">
 
                     <div class="col-md-3">
-                        <div>
+                        <div style="margin-top: 50px">
                             With a bit more planning, create a fine tuned behaviour and look and feel.
                         </div>
                     </div>
 
-                    <div class="col-md-9" ng-controller="fileBrowserController"
-                         style="border: 1px solid darkgrey;
+                    <div class="col-md-9" ng-controller="fileBrowserController">
+                        <div style="padding: 4px;">
+                            <b>Example Custimisation</b>
+                        </div>
+                        <div style="border: 1px solid darkgrey;
                                 width: 600px;
                                 background-color: lightgrey;
                                 border-radius: 5px;
                                 padding: 3px;">
-                        <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 14px;"> &nbsp; {{selectedFile}}</div>
-                        <div style="width: 100%; height: 400px;"
-                             angular-grid="gridOptions"
-                             class="ag-file-browser">
+                            <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 14px;"> &nbsp; {{selectedFile}}</div>
+                            <div style="width: 100%; height: 400px;"
+                                 angular-grid="gridOptions"
+                                 class="ag-file-browser">
+                            </div>
                         </div>
                     </div>
 
