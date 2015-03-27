@@ -109,7 +109,7 @@ columnDefinition = {
         </tr>
         <tr>
             <th>MyCustomFilter</th>
-            <td>Constructor function for the class. Takes the following parameters:
+            <td>Constructor function for the class. Takes one parameter with the following attributes:
                 <ul>
                     <li>colDef: The col def this filter is for.</li>
                     <li>rowModel: The internal row model inside Angular Grid. This should be treated as
@@ -142,8 +142,8 @@ columnDefinition = {
         <tr>
             <th>doesFilterPass</th>
             <td>The grid will ask each active filter, in turn, whether each row in the grid passes. If any
-                filter fails, then the row will be excluded from the final set. The method takes value (the
-                value to be checked) and and model (for the filter, as provided by the 'get model' below -
+                filter fails, then the row will be excluded from the final set. The method is provided the value (the
+                value to be checked), the row node, the row data and the filter model (for the filter, as provided by the 'get model' below -
                 for now, the model can be ignored).</td>
         </tr>
         <tr>

@@ -1930,7 +1930,9 @@ define('../src/filter/filterManager',[
                 // if user provided a filter, just use it
                 // first up, create child scope if needed
                 if (this.gridOptionsWrapper.isAngularCompileFilters()) {
-                    filterWrapper.scope = this.$scope.$new();
+                    var scope = this.$scope.$new();
+                    filterWrapper.scope = scope;
+                    params.$scope = scope;
                 }
                 // now create filter
                 filterWrapper.filter = new colDef.filter(params);

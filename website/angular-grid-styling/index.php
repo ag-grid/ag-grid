@@ -99,13 +99,13 @@ include '../documentation_header.php';
             ag-header <br/>
             <div class='inline'>
                 ag-pinned-header <br/>
-                <img src="styling/pinnedHeader.png"/>
+                <img src="pinnedHeader.png"/>
             </div>
             <div class='inline'>
                 ag-header-viewport <br/>
                 <div class='inline'>
                     ag-header-container <br/>
-                    <img src="styling/header.png"/>
+                    <img src="header.png"/>
                 </div>
             </div>
         </div>
@@ -116,7 +116,7 @@ include '../documentation_header.php';
                 ag-pinned-cols-viewport <br/>
                 <div class='inline'>
                     ag-pinned-cols-container <br/>
-                    <img src="styling/pinnedBody.png"/>
+                    <img src="pinnedBody.png"/>
                 </div>
             </div>
             <div class='inline'>
@@ -125,7 +125,7 @@ include '../documentation_header.php';
                     ag-body-viewport <br/>
                     <div class='inline'>
                         ag-body-container <br/>
-                        <img src="styling/body.png"/>
+                        <img src="body.png"/>
                     </div>
                 </div>
             </div>
