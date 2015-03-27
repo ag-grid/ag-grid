@@ -161,7 +161,7 @@ columnDefinition = {
         <tr>
             <th>getModel</th>
             <td>Returns the model for the filter. At the moment, the only purpose of this is to have it passed
-            into the 'doesFilterPass' method. In the future, the grid will be enhanced to have seperate classes
+            into the 'doesFilterPass' method. In the future, the grid will be enhanced to have separate classes
             create the filter and check the filter passing. However for now this isn't implemented so you can
             ignore the 'getModel' method and the corresponding 'model' passed to 'does filter pass'.</td>
         </tr>

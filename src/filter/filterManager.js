@@ -45,7 +45,8 @@ define([
         return filterPresent;
     };
 
-    FilterManager.prototype.doesFilterPass = function (data) {
+    FilterManager.prototype.doesFilterPass = function (node) {
+        var data = node.data;
         var colKeys = Object.keys(this.allFilters);
         for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
@@ -66,10 +67,15 @@ define([
             if (filterWrapper.filter.getModel) {
                 model = filterWrapper.filter.getModel();
             }
-            if (!filterWrapper.filter.doesFilterPass(value, model)) {
+            var params = {
+                value: value,
+                model: model,
+                node: node,
+                data: data
+            };
+            if (!filterWrapper.filter.doesFilterPass(params)) {
                 return false;
             }
-
         }
         // all filters passed
         return true;
@@ -119,6 +125,13 @@ define([
             };
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
             var filterParams = colDef.filterParams;
+            var params = {
+                colDef: colDef,
+                rowModel: this.rowModel,
+                filterChangedCallback: filterChangedCallback,
+                filterParams: filterParams,
+                scope: filterWrapper.scope
+            };
             if (typeof colDef.filter === 'function') {
                 // if user provided a filter, just use it
                 // first up, create child scope if needed
@@ -126,13 +139,13 @@ define([
                     filterWrapper.scope = this.$scope.$new();
                 }
                 // now create filter
-                filterWrapper.filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback, filterParams, filterWrapper.scope);
+                filterWrapper.filter = new colDef.filter(params);
             } else if (colDef.filter === 'text') {
-                filterWrapper.filter = new StringFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new StringFilter(params);
             } else if (colDef.filter === 'number') {
-                filterWrapper.filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new NumberFilter(params);
             } else {
-                filterWrapper.filter = new SetFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new SetFilter(params);
             }
             this.allFilters[colDefWrapper.colKey] = filterWrapper;
 

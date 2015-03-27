@@ -8,8 +8,8 @@ define([
     var STARTS_WITH = 3;
     var ENDS_WITH = 4;
 
-    function TextFilter(colDef, rowModel, filterChangedCallback) {
-        this.filterChangedCallback = filterChangedCallback;
+    function TextFilter(params) {
+        this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterText = null;
         this.filterType = CONTAINS;
@@ -21,10 +21,11 @@ define([
     };
 
     /* public */
-    TextFilter.prototype.doesFilterPass = function (value) {
+    TextFilter.prototype.doesFilterPass = function (node) {
         if (!this.filterText) {
             return true;
         }
+        var value = node.value;
         if (!value) {
             return false;
         }

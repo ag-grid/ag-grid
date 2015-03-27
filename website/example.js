@@ -316,7 +316,7 @@ PersonFilter.prototype.getGui = function () {
         '</div>';
 };
 
-PersonFilter.prototype.doesFilterPass = function (value, model) {
+PersonFilter.prototype.doesFilterPass = function (node) {
     var filterText = this.$scope.filterText;
     if (!filterText) {
         return true;
@@ -324,7 +324,7 @@ PersonFilter.prototype.doesFilterPass = function (value, model) {
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+        if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
             passed = false;
         }
     });
@@ -367,7 +367,8 @@ WinningsFilter.prototype.getGui = function () {
     return this.eGui;
 };
 
-WinningsFilter.prototype.doesFilterPass = function (value, model) {
+WinningsFilter.prototype.doesFilterPass = function (node) {
+    var value = node.value;
     if (this.cbNoFilter.checked) {
         return true;
     } else if (this.cbPositive.checked) {

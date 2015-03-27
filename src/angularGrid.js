@@ -89,7 +89,7 @@ define([
         this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
-                                this.filterManager);
+                                this.filterManager, $scope);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
                                 $element[0], this, selectionRendererFactory, $compile, $scope, $timeout,
                                 this.selectionController);

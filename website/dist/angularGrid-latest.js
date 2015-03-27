@@ -1339,12 +1339,13 @@ define('../src/filter/setFilter',[
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function SetFilter(colDef, rowModel, filterChangedCallback, filterParams) {
+    function SetFilter(params) {
+        var filterParams = params.filterParams;
         this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new SetFilterModel(colDef, rowModel);
-        this.filterChangedCallback = filterChangedCallback;
+        this.model = new SetFilterModel(params.colDef, params.rowModel);
+        this.filterChangedCallback = params.filterChangedCallback;
         this.rowsInBodyContainer = {};
-        this.colDef = colDef;
+        this.colDef = params.colDef;
         if (filterParams) {
             this.cellRenderer = filterParams.cellRenderer;
         }
@@ -1365,7 +1366,9 @@ define('../src/filter/setFilter',[
     };
 
     /* public */
-    SetFilter.prototype.doesFilterPass = function (value, model) {
+    SetFilter.prototype.doesFilterPass = function (node) {
+        var value = node.value;
+        var model = node.model;
         //if no filter, always pass
         if (model.isEverythingSelected()) { return true; }
         //if nothing selected in filter, always fail
@@ -1597,8 +1600,8 @@ define('../src/filter/numberFilter',[
     var LESS_THAN = 2;
     var GREATER_THAN = 3;
 
-    function NumberFilter(colDef, rowModel, filterChangedCallback) {
-        this.filterChangedCallback = filterChangedCallback;
+    function NumberFilter(params) {
+        this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterNumber = null;
         this.filterType = EQUALS;
@@ -1610,10 +1613,12 @@ define('../src/filter/numberFilter',[
     };
 
     /* public */
-    NumberFilter.prototype.doesFilterPass = function (value) {
+    NumberFilter.prototype.doesFilterPass = function (node) {
         if (this.filterNumber === null) {
             return true;
         }
+        var value = node.value;
+
         if (!value) {
             return false;
         }
@@ -1708,8 +1713,8 @@ define('../src/filter/textFilter',[
     var STARTS_WITH = 3;
     var ENDS_WITH = 4;
 
-    function TextFilter(colDef, rowModel, filterChangedCallback) {
-        this.filterChangedCallback = filterChangedCallback;
+    function TextFilter(params) {
+        this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterText = null;
         this.filterType = CONTAINS;
@@ -1721,10 +1726,11 @@ define('../src/filter/textFilter',[
     };
 
     /* public */
-    TextFilter.prototype.doesFilterPass = function (value) {
+    TextFilter.prototype.doesFilterPass = function (node) {
         if (!this.filterText) {
             return true;
         }
+        var value = node.value;
         if (!value) {
             return false;
         }
@@ -1833,7 +1839,8 @@ define('../src/filter/filterManager',[
         return filterPresent;
     };
 
-    FilterManager.prototype.doesFilterPass = function (data) {
+    FilterManager.prototype.doesFilterPass = function (node) {
+        var data = node.data;
         var colKeys = Object.keys(this.allFilters);
         for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
@@ -1854,10 +1861,15 @@ define('../src/filter/filterManager',[
             if (filterWrapper.filter.getModel) {
                 model = filterWrapper.filter.getModel();
             }
-            if (!filterWrapper.filter.doesFilterPass(value, model)) {
+            var params = {
+                value: value,
+                model: model,
+                node: node,
+                data: data
+            };
+            if (!filterWrapper.filter.doesFilterPass(params)) {
                 return false;
             }
-
         }
         // all filters passed
         return true;
@@ -1907,6 +1919,13 @@ define('../src/filter/filterManager',[
             };
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
             var filterParams = colDef.filterParams;
+            var params = {
+                colDef: colDef,
+                rowModel: this.rowModel,
+                filterChangedCallback: filterChangedCallback,
+                filterParams: filterParams,
+                scope: filterWrapper.scope
+            };
             if (typeof colDef.filter === 'function') {
                 // if user provided a filter, just use it
                 // first up, create child scope if needed
@@ -1914,13 +1933,13 @@ define('../src/filter/filterManager',[
                     filterWrapper.scope = this.$scope.$new();
                 }
                 // now create filter
-                filterWrapper.filter = new colDef.filter(colDef, this.rowModel, filterChangedCallback, filterParams, filterWrapper.scope);
+                filterWrapper.filter = new colDef.filter(params);
             } else if (colDef.filter === 'text') {
-                filterWrapper.filter = new StringFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new StringFilter(params);
             } else if (colDef.filter === 'number') {
-                filterWrapper.filter = new NumberFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new NumberFilter(params);
             } else {
-                filterWrapper.filter = new SetFilter(colDef, this.rowModel, filterChangedCallback, filterParams);
+                filterWrapper.filter = new SetFilter(params);
             }
             this.allFilters[colDefWrapper.colKey] = filterWrapper;
 
@@ -2108,12 +2127,13 @@ define('../src/rowController',[
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager) {
+    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.rowModel = rowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
+        this.$scope = $scope;
     }
 
     RowController.prototype.updateModel = function(step) {
@@ -2133,6 +2153,12 @@ define('../src/rowController',[
 
         if (typeof this.gridOptionsWrapper.getModelUpdated() === 'function') {
             this.gridOptionsWrapper.getModelUpdated()();
+            var $scope = this.$scope;
+            if ($scope) {
+                setTimeout(function () {
+                    $scope.$apply();
+                }, 0);
+            }
         }
 
     };
@@ -2391,7 +2417,7 @@ define('../src/rowController',[
 
         //second, check advanced filter
         if (advancedFilterPresent) {
-            if (!this.filterManager.doesFilterPass(node.data)) {
+            if (!this.filterManager.doesFilterPass(node)) {
                 return false;
             }
         }
@@ -4437,7 +4463,7 @@ define('../src/angularGrid',[
         this.colModel = new ColModel(this, selectionRendererFactory);
         this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
-                                this.filterManager);
+                                this.filterManager, $scope);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
                                 $element[0], this, selectionRendererFactory, $compile, $scope, $timeout,
                                 this.selectionController);
