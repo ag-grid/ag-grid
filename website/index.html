@@ -13,6 +13,7 @@
 
         <link href="example-file-browser/fileBrowser.css" rel="stylesheet">
         <link href="example-basic/basic.css" rel="stylesheet">
+        <link href="example-account-report/account.css" rel="stylesheet">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -22,6 +23,7 @@
 
         <script src="example-file-browser/fileBrowser.js"></script>
         <script src="example-basic/basic.js"></script>
+        <script src="example-account-report/account.js"></script>
 
         <script src="index.js"></script>
 
@@ -174,6 +176,7 @@
                             <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Quick filter..."/>
                         </div>
                         <div style="padding: 4px;">
+                            <img src="example.png" width="25px"/>
                             <b>Example Large Data</b> ({{rowCount}} rows)
                         </div>
                     </div>
@@ -187,18 +190,49 @@
 
             <hr/>
 
+
+            <div class="row" style="padding: 30px">
+
+                <div class="col-md-9" ng-controller="accountController">
+                    <div style="text-align: center; padding-bottom: 10px;">
+                        <img src="example.png" width="25px"/>
+                        <b>Example Style for presentations</b>
+                    </div>
+                    <div style="display: inline-block;"
+                         angular-grid="gridOptions"
+                         class="ag-account">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div style="margin-top: 50px; padding-left: 20px;">
+                        Give a professional style for grids that will end up as presentations.
+                    </div>
+                    <div style="margin-top: 50px; padding-left: 20px;">
+                        No scrolls works well for presentations and printing.
+                    </div>
+                </div>
+
+
+            </div>
+
+            <hr/>
+
             <div class="container">
 
                 <div class="row" style="padding: 30px">
 
                     <div class="col-md-3">
                         <div style="margin-top: 50px">
-                            With a bit more planning, create a fine tuned behaviour and look and feel.
+                            Cell renderers and grid themes allow custimised behaviours and look and feels.
+                        </div>
+                        <div style="margin-top: 50px">
+                            Create complex widgets, beyond what's expected of HTML tables.
                         </div>
                     </div>
 
                     <div class="col-md-9" ng-controller="fileBrowserController">
                         <div style="padding: 4px;">
+                            <img src="example.png" width="25px"/>
                             <b>Example Custimisation</b>
                         </div>
                         <div style="border: 1px solid darkgrey;

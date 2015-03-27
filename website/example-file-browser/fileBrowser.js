@@ -138,6 +138,8 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
         rowClicked: rowClicked
     };
 
+    $scope.selectedFile = 'Select a file below...';
+
     function rowClicked(params) {
         var node = params.node;
         var path = node.data.name;
