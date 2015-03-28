@@ -52,7 +52,7 @@
 
         <div class="row">
 
-            <div class="col-sm-2">
+            <div class="col-sm-2" style="padding-top: 15px;">
 
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>

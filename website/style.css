@@ -84,3 +84,12 @@ h2 {
 .top-button-selected:active {
     text-decoration: none;
 }
+
+.share-link:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+.share-link {
+    text-decoration: none;
+}
