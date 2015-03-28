@@ -18,6 +18,7 @@
     <script src="/documentation.js"></script>
 
     <link rel="stylesheet" href="/documentation.css">
+    <link rel="stylesheet" href="/style.css">
 
     <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />
 
@@ -37,11 +38,12 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/index.html">Home</a>
-                <a class="navbar-brand" href="/example.html">Example</a>
-                <a class="navbar-brand" href="../angular-grid-getting-started/index.php">Documentation</a>
-                <a class="navbar-brand" href="/forum">Forum</a>
+            <div class="navbar-header top-header big-text">
+                <a class="top-button" href="/index.html">Home</a>
+                <a class="top-button" href="/example.html">Test Drive</a>
+                <a class="top-button-selected" href="/angular-grid-getting-started/index.php">Documentation</a>
+                <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/">Story</a>
+                <a class="top-button" href="/forum">Forum</a>
             </div>
         </div>
     </nav>

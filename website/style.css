@@ -5,7 +5,8 @@
     width: 800px;
     padding-top: 20px;
 }
-body {
+
+.big-text {
     font-size: 20px;
 }
 
@@ -34,4 +35,52 @@ h1 {
 h2 {
     margin-top: 40px;
     margin-bottom: 25px;
+}
+
+.top-header {
+    padding-top: 12px;
+}
+
+.top-button {
+    margin-right: 15px;
+    color: #888888;
+}
+
+.top-button:link {
+    text-decoration: none;
+}
+
+.top-button:visited {
+    text-decoration: none;
+}
+
+.top-button:hover {
+    text-decoration: none;
+    color: #eeeeee;
+}
+
+.top-button:active {
+    text-decoration: none;
+}
+
+.top-button-selected {
+    margin-right: 15px;
+    color: #eeeeee;
+}
+
+.top-button-selected:link {
+    text-decoration: none;
+}
+
+.top-button-selected:visited {
+    text-decoration: none;
+}
+
+.top-button-selected:hover {
+    text-decoration: none;
+    color: #eeeeee;
+}
+
+.top-button-selected:active {
+    text-decoration: none;
 }
