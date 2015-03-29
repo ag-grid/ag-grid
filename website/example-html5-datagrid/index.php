@@ -51,7 +51,23 @@ include '../documentation_header.php';
 
     <h4>Complex Example</h4>
 
-    Below is the example from the main page.
+    <p>
+        Below is the example from the main page. This demonstrates a lot of the features inside Angular Grid.
+        For how individual features work, please refer to the main documentation. However the differences
+        between this and using Angular Grid inside AngularJS are as follows:
+    </p>
+
+    <ul>
+        <li>
+            AngularJS script is not loaded.
+        </li>
+        <li>
+            The div has an ID, instead of using the angular-grid attribute.
+        </li>
+        <li>
+            The angularGrid method is called, passing in the ID of the div to use for the table and the grid options.
+        </li>
+    </ul>
 
     <show-example example="html5grid"></show-example>
 
