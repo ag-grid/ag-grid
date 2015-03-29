@@ -3,9 +3,9 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Angular Grid - A Data Grid for AngularJS</title>
-    <meta name="description" content="A data grid for Angular JS">
-    <meta name="keywords" content="angularjs angular grid table ui-grid ng-grid"/>
+    <title>Why the world needed another AngularJS grid</title>
+    <meta name="description" content="A discussion on why I built Angular Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid">
+    <meta name="keywords" content="angularjs angular grid ui-grid ng-grid jqxgrid slickgrid"/>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -82,8 +82,8 @@
             </p>
             <p>
                 So for our more complex tables we went with jxqGrid. jqxGrid performed
-                much better with large datasets, but we still found it lacking. It behaved
-                a bit clunky, was tricky to extend and custimse, and wasn't native to AngularJS
+                much better with large data-sets, but we still found it lacking. It behaved
+                a bit clunky, was tricky to extend and customise, and wasn't native to AngularJS
                 (making it not 'natural' for the AngularJS developer). We stuck with jqxGrid,
                 taking it as the 'best choice for now'.
             </p>
@@ -111,7 +111,7 @@
             </p>
             <p>
                 So jqxGrid was again our grid of choice and I went home for Christmas to mull over it all.
-                Slick Grid showed JavaScript was capable of a great fast grid. But I liked the interface
+                Slick Grid showed Javascript was capable of a great fast grid. But I liked the interface
                 and native AngularJS feel of ui-grid. How hard would it be to match
                 Slick Grid for performance, but keep the AngularJS interface??? Can it really
                 be that difficult to write a grid that gave me this?
@@ -124,22 +124,22 @@
                 <ul>
                     <li><b>SVG:</b></li> I created a prototype using SVG DOM elements. I considered
                     using D3 to interface with the DOM, but for the fastest possible grid, I thought D3
-                    could add an unnecessary layer. So wrote raw Javascript creating SVG. I virtualised
+                    could add an unnecessary layer. So I wrote raw Javascript creating SVG. I virtualised
                     the rows on a scrolling div. This was interesting for me to program,
-                    but I knew where this was going, out reach of most developers not used to SVG and
-                    hence custimisation was going to be a nightmare. Time for the next prototype...
+                    but I knew where this was going, out of reach of most developers not used to SVG and
+                    hence customisation was going to be a nightmare. Time for the next prototype...
                     <li><b>Canvas:</b></li> Canvas was of interest to me because games are
                     programmed using the HTML canvas and games render very fast, with complicated
                     scenes drawn at high frame rates. So I created a canvas to act as my viewport,
                     and used sliders to act as scrollbars (ie no native browser scrolling).
-                    The position of the scrollbars indicated to the grid engine what part
+                    The position of the sliders indicated to the grid engine what part
                     of the grid to render within the viewable area.
-                    This is how 2D scrolling platform games work, only rendering
-                    areas in the visible viewport. I then used canvas 2D drawing API to render the grid cells.
+                    This is how 2D scrolling platform games work, deciding what gets rendered
+                    in the visible viewport depending on the scroll position. I then used canvas 2D drawing API to render the grid cells.
                     This prototype worked very fast but had the following drawbacks: a) looked awful as the styling could not use
                     CSS and layout was crude b) you loose all dom interactivity on elements (ie you
                     cannot attach native browser events to your own canvas objects) and c) like SVG this option
-                    pushed the technology out of reach of the ordinary JavaScript
+                    pushed the technology out of reach of the ordinary Javascript
                     developer (unless like me you like programming games).
                     <li><b>Pure AngularJS:</b></li> Next up was what ui-grid
                     did, use Angular JS for everything - almost using the
@@ -160,7 +160,7 @@
                     processing and redraw lags (waiting for the digest cycle), and grids
                     require fast redraw when been scrolled and virtualised, so the extra
                     logic that AngularJS puts in behind the scenes doesn't work in your
-                    favor when building something like a complex grid. So my journey
+                    favour when building something like a complex grid. So my journey
                     continued, how can a grid be an AngularJS component
                     but yet not use AngularJS???
                     <li><b>Hybrid AngularJS:</b></li> The final prototype offering, use AngularJS
@@ -176,38 +176,38 @@
                     but they were fun, if you consider alone on your laptop writing code
                     that will never be used 'fun').
                     But what about AngularJS, what if someone did want two-way-binding,
-                    or use Angular to customise a cell? Easy - we can add that as an option!
+                    or use AngularJS to customise a cell? Easy - we can add that as an option!
                     If you want to user AngularJS you can, just turn it on and have your rows
                     compiled AngularJS style!!!
                 </ul>
             </p>
             <p>
-                The Hybrid AngularJS was the clear winner. The SVG and Canvas experiments
+                The Hybrid AngularJS was the clear winner. The SVG and canvas experiments
                 were fun but ended up in my 'home office software graveyard'. With the prototype
                 under my belt, I felt I had the workings of a grid worthy of investing more time in,
                 so I came up with a list of all the things I wanted in a grid. My list was
                 as follows (otherwise known as requirements):
                 <ul>
-                    <li>Angular Interface</li> - Influenced by ng-grid. I wanted it to be simple to
+                    <li>AngularJS Interface</li> - Influenced by ng-grid. I wanted it to be simple to
                     pop in a list of rows and columns and off you go. The default settings
                     would cater for everything else.
-                    <li>Custimisable Cell Editors and Renderers</li> - Influenced by Java Swings JTable.
+                    <li>Customisable Cell Editors and Renderers</li> - Influenced by Java Swings JTable.
                     I really liked the power of Swing's JTable and have not come across a grid in Javascript / HTML
                     that gave me similar ease of use.
                     <li>Themable via CSS</li> - Everything has a CSS class, everything can be styled.
-                    Our CSS guys can 'go to town' making our most important grids very professional for 'board level presentations'.
+                    I wanted our CSS guys can 'go to town' making our most important grids very professional for 'board level presentations'.
                     <li>Pinned columns & Checkbox Selection</li> - These must work smoothly and be supported
                     as part of the core grid out of the box.
                     <li>'Excel like' filtering</li> - Our users were used to Microsoft Excel, where
                     the user can select values from a set. This must work very fast, so the user
                     can easily slice and dice the data with zero wait times.
-                    <li>Custimisable Filters</li> - Should be easy to add in new filters to the grids dataset.
+                    <li>Customisable Filters</li> - Should be easy to add in new filters to the grids data-set.
                     Applications I build typically have custom filters at the top of the grid. I wanted
                     a grid that could easily combine these filters into the core grid filtering.
-                    <li>Aggregations and Grouping</li> - Having working in Business Intelligence,
+                    <li>Aggregations and Grouping</li> - Having worked in Business Intelligence,
                     I appreciate the need to handle large data sets. Not just display the data,
                     but be able to 'manage' the data. This means group and aggregate on the fly.
-                    In the future, large data in the browser will become more common.
+                    In the future I expect large data in the browser to become more common.
                     <li>Zero Dependencies</li> - Not even JQuery, as it's becoming common to not use JQuery
                     in modern web app development.
                     <li>Other stuff</li> - And then it had to support resizable columns,
@@ -216,7 +216,7 @@
                 So I coded up the new grid in time for getting back to work in 2015. I introduced Angular Grid
                 to the 'troubled' application. What a breath of fresh air! For the first time we had
                 a grid that performed as well as SlickGrid and had a programming interface native to AngularJS.
-                The styling and custimising worked a treat.
+                The styling and customising worked a treat.
                 The grid made our application more responsive than any of the grids that we had used.
                 For the first time I felt our grid choice was without compromise.
             </p>

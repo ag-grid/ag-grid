@@ -301,10 +301,10 @@ define([
         data[colDef.field] = valueAsNumber;
     }
 
-    function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
-        this.$scope = $scope;
-        $scope.onFilterChanged = function() {
-            filterChangedCallback();
+    function PersonFilter(params) {
+        this.$scope = params.$scope;
+        this.$scope.onFilterChanged = function() {
+            params.filterChangedCallback();
         };
     }
 
@@ -342,9 +342,9 @@ define([
         return value !== null && value !== undefined && value !== '';
     };
 
-    function WinningsFilter(colDef, rowModel, filterChangedCallback) {
+    function WinningsFilter(params) {
         var uniqueId = Math.random();
-        this.filterChangedCallback = filterChangedCallback;
+        this.filterChangedCallback = params.filterChangedCallback;
         this.eGui = document.createElement("div");
         this.eGui.innerHTML =
             '<div style="padding: 4px;">' +
@@ -361,11 +361,11 @@ define([
         this.cbGreater50 = this.eGui.querySelector('#cbGreater50');
         this.cbGreater90 = this.eGui.querySelector('#cbGreater90');
         this.cbNoFilter.checked = true; // initialise the first to checked
-        this.cbNoFilter.onclick = filterChangedCallback;
-        this.cbPositive.onclick = filterChangedCallback;
-        this.cbNegative.onclick = filterChangedCallback;
-        this.cbGreater50.onclick = filterChangedCallback;
-        this.cbGreater90.onclick = filterChangedCallback;
+        this.cbNoFilter.onclick = this.filterChangedCallback;
+        this.cbPositive.onclick = this.filterChangedCallback;
+        this.cbNegative.onclick = this.filterChangedCallback;
+        this.cbGreater50.onclick = this.filterChangedCallback;
+        this.cbGreater90.onclick = this.filterChangedCallback;
     }
 
     WinningsFilter.prototype.getGui = function () {

@@ -2546,7 +2546,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     var svgFactory = new SvgFactory();
 
     function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
-                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout,
+                         angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
@@ -2557,7 +2557,6 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
-        this.$timeout = $timeout;
         this.selectionController = selectionController;
 
         // map of row ids to row objects. keeps track of which elements
@@ -2749,7 +2748,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         //if we are doing angular compiling, then do digest the scope here
         if (this.gridOptions.angularCompileRows) {
             // we do it in a timeout, in case we are already in an apply
-            this.$timeout(function () {
+            setTimeout(function () {
                 that.$scope.$apply();
             }, 0);
         }
@@ -4414,48 +4413,76 @@ define('../src/angularGrid',[
             RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
             constants, ColModel, SelectionRendererFactory, SelectionController) {
 
-    var module = angular.module("angularGrid", []);
+    // if angular is present, register the directive
+    if (angular) {
+        var angularModule = angular.module("angularGrid", []);
+        angularModule.directive("angularGrid", function () {
+            return {
+                restrict: "A",
+                controller: ['$element', '$scope', '$compile', AngularDirectiveController],
+                scope: {
+                    angularGrid: "="
+                }
+            };
+        });
+    }
 
-    module.directive("angularGrid", function () {
-        return {
-            restrict: "A",
-            controller: ['$scope', '$element', '$compile', '$timeout', Grid],
-            scope: {
-                angularGrid: "="
+    // this function is used for creating a grid, outside of any AngularJS
+    function angularGridGlobalFunction(element, gridOptions) {
+        // see if element is a query selector, or a real element
+        var eGridDiv;
+        if (typeof element === 'string') {
+            eGridDiv = document.querySelector(element);
+            if (!eGridDiv) {
+                console.log('WARNING - was not able to find element ' + element + ' in the DOM, Angular Grid initialisation aborted.');
+                return;
             }
-        };
-    });
+        }
+        new Grid(eGridDiv, gridOptions, null, null);
+    }
 
-    function Grid($scope, $element, $compile, $timeout) {
-
-        this.gridOptions = $scope.angularGrid;
-        if (!this.gridOptions) {
-            console.warn("WARNING - grid options for angularGrid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
+    function AngularDirectiveController($element, $scope, $compile) {
+        var eGridDiv = $element[0];
+        var gridOptions = $scope.angularGrid;
+        if (!gridOptions) {
+            console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
             return;
         }
+        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile);
+
+        $scope.$on("$destroy", function () {
+            grid.setFinished();
+        });
+    }
+
+    function Grid(eGridDiv, gridOptions, $scope, $compile) {
+
+        this.gridOptions = gridOptions;
         this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
 
         var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
         if (useScrolls) {
-            $element[0].innerHTML = template;
+            eGridDiv.innerHTML = template;
         } else {
-            $element[0].innerHTML = templateNoScrolls;
+            eGridDiv.innerHTML = templateNoScrolls;
         }
 
         var that = this;
-        $scope.grid = this;
         this.$scope = $scope;
         this.$compile = $compile;
         this.quickFilter = null;
 
-        $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
-            that.onQuickFilterChanged(newFilter);
-        });
+        // if using angular, watch for quickFilter changes
+        if ($scope) {
+            $scope.$watch("angularGrid.quickFilterText", function (newFilter) {
+                that.onQuickFilterChanged(newFilter);
+            });
+        }
 
         this.virtualRowCallbacks = {};
 
         this.addApi();
-        this.findAllElements($element);
+        this.findAllElements(eGridDiv);
 
         this.rowModel = new RowModel();
 
@@ -4467,9 +4494,9 @@ define('../src/angularGrid',[
         this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
                                 this.filterManager, $scope);
         this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
-                                $element[0], this, selectionRendererFactory, $compile, $scope, $timeout,
+                                eGridDiv, this, selectionRendererFactory, $compile, $scope,
                                 this.selectionController);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, $element[0], this,
+        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, eGridDiv, this,
                                 this.filterManager, $scope, $compile);
 
         this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
@@ -4489,10 +4516,11 @@ define('../src/angularGrid',[
 
         //flag to mark when the directive is destroyed
         this.finished = false;
-        $scope.$on("$destroy", function () {
-            that.finished = true;
-        });
     }
+
+    Grid.prototype.setFinished = function () {
+        this.finished = true;
+    };
 
     Grid.prototype.getPopupParent = function () {
         return this.eRoot;
@@ -4583,47 +4611,50 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.addApi = function () {
-        var _this = this;
+        var that = this;
         var api = {
             onNewRows: function () {
-                _this.rowController.setAllRows(_this.gridOptionsWrapper.getAllRows());
-                _this.selectionController.clearSelection();
-                _this.filterManager.onNewRowsLoaded();
-                _this.updateModelAndRefresh(constants.STEP_EVERYTHING);
-                _this.headerRenderer.updateFilterIcons();
+                that.rowController.setAllRows(that.gridOptionsWrapper.getAllRows());
+                that.selectionController.clearSelection();
+                that.filterManager.onNewRowsLoaded();
+                that.updateModelAndRefresh(constants.STEP_EVERYTHING);
+                that.headerRenderer.updateFilterIcons();
             },
             onNewCols: function () {
-                _this.onNewCols();
+                that.onNewCols();
             },
             unselectAll: function () {
-                _this.selectionController.clearSelection();
-                _this.rowRenderer.refreshView();
+                that.selectionController.clearSelection();
+                that.rowRenderer.refreshView();
             },
             refreshView: function () {
-                _this.rowRenderer.refreshView();
+                that.rowRenderer.refreshView();
             },
             getModel: function () {
-                return _this.rowModel;
+                return that.rowModel;
             },
             onGroupExpandedOrCollapsed: function() {
-                _this.updateModelAndRefresh(constants.STEP_MAP);
+                that.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
-                _this.expandOrCollapseAll(true, null);
-                _this.updateModelAndRefresh(constants.STEP_MAP);
+                that.expandOrCollapseAll(true, null);
+                that.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
-                _this.expandOrCollapseAll(false, null);
-                _this.updateModelAndRefresh(constants.STEP_MAP);
+                that.expandOrCollapseAll(false, null);
+                that.updateModelAndRefresh(constants.STEP_MAP);
             },
             addVirtualRowListener: function(rowIndex, callback) {
-                _this.addVirtualRowListener(rowIndex, callback);
+                that.addVirtualRowListener(rowIndex, callback);
             },
             rowDataChanged: function(rows) {
-                _this.rowRenderer.rowDataChanged(rows);
+                that.rowRenderer.rowDataChanged(rows);
+            },
+            setQuickFilter: function(newFilter) {
+                that.onQuickFilterChanged(newFilter)
             },
             selectIndex: function(index, tryMulti) {
-                _this.selectionController.selectIndex(index, tryMulti);
+                that.selectionController.selectIndex(index, tryMulti);
             }
         };
         this.gridOptions.api = api;
@@ -4680,26 +4711,24 @@ define('../src/angularGrid',[
         this.updateModelAndRefresh(constants.STEP_EVERYTHING);
     };
 
-    Grid.prototype.findAllElements = function ($element) {
-        var eGrid = $element[0];
-
+    Grid.prototype.findAllElements = function (eGridDiv) {
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
-            this.eRoot = eGrid.querySelector(".ag-root");
-            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
-            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
+            this.eRoot = eGridDiv.querySelector(".ag-root");
+            this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
+            this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
             // for no-scrolls, all rows live in the body container
             this.eRowsParent = this.eBodyContainer;
         } else {
-            this.eRoot = eGrid.querySelector(".ag-root");
-            this.eBody = eGrid.querySelector(".ag-body");
-            this.eBodyContainer = eGrid.querySelector(".ag-body-container");
-            this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-            this.eBodyViewportWrapper = eGrid.querySelector(".ag-body-viewport-wrapper");
-            this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
-            this.ePinnedColsViewport = eGrid.querySelector(".ag-pinned-cols-viewport");
-            this.ePinnedHeader = eGrid.querySelector(".ag-pinned-header");
-            this.eHeader = eGrid.querySelector(".ag-header");
-            this.eHeaderContainer = eGrid.querySelector(".ag-header-container");
+            this.eRoot = eGridDiv.querySelector(".ag-root");
+            this.eBody = eGridDiv.querySelector(".ag-body");
+            this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
+            this.eBodyViewport = eGridDiv.querySelector(".ag-body-viewport");
+            this.eBodyViewportWrapper = eGridDiv.querySelector(".ag-body-viewport-wrapper");
+            this.ePinnedColsContainer = eGridDiv.querySelector(".ag-pinned-cols-container");
+            this.ePinnedColsViewport = eGridDiv.querySelector(".ag-pinned-cols-viewport");
+            this.ePinnedHeader = eGridDiv.querySelector(".ag-pinned-header");
+            this.eHeader = eGridDiv.querySelector(".ag-header");
+            this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
             // for scrolls, all rows live in eBody (containing pinned and normal body)
             this.eRowsParent = this.eBody;
         }
@@ -4788,8 +4817,7 @@ define('../src/angularGrid',[
         this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
     };
 
-
-
+    return angularGridGlobalFunction;
 });
 
 

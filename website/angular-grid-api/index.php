@@ -69,9 +69,16 @@ include '../documentation_header.php';
         <tr>
             <th>rowDataChanged(rows)</th>
             <td>Inform the table that the provided rows have changed. If any of the rows are currently visible (ie
-            due to row virtualisation, these rows have corresponding DOM elements) then only these rows are redrawn.
-            If none of the rows are visible, nothing is done. The table uses object reverence comparison (ie row1 == row2)
-            to check the provided rows with the original rows, to find the corresponding rows.</td>
+                due to row virtualisation, these rows have corresponding DOM elements) then only these rows are redrawn.
+                If none of the rows are visible, nothing is done. The table uses object reverence comparison (ie row1 == row2)
+                to check the provided rows with the original rows, to find the corresponding rows.</td>
+        </tr>
+        <tr>
+            <th>setQuickFilter(quickFilter)</th>
+            <td>Pass a quick filter text into Angular Grid for filtering. If using Angular, the grid watched the 'quickFilterText'
+                attribute of the gridOptions. If you won't want to use quickFilterText (ie if not using AngularJS) then you can
+                call this method instead to apply a quick filter.
+            </td>
         </tr>
         <tr>
             <th>addVirtualRowListener(rowIndex, callback)</th>

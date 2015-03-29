@@ -93,3 +93,12 @@ h2 {
 .share-link {
     text-decoration: none;
 }
+
+.header-icon {
+    font-size: 30px;
+}
+
+.header-button {
+    margin-left: 10px;
+    margin-right: 10px;
+}
