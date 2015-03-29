@@ -34,7 +34,7 @@
     </script>
 </head>
 
-<body ng-app="documentation" ng-controller="documentationController">
+<body ng-app="documentation">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -52,7 +52,11 @@
 
         <div class="row">
 
-            <div class="col-sm-2" style="padding-top: 15px;">
+            <div class="col-sm-2">
+
+                <h4>
+                    Documentation
+                </h4>
 
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>
@@ -160,6 +164,16 @@
                     <span class="sidebarLinkSelected">API</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-api/index.php">API</a>
+                <?php } ?>
+
+                <h4>
+                    Examples
+                </h4>
+
+                <?php if ($key == "No Angular") { ?>
+                    <span class="sidebarLinkSelected">No AngularJS</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-html5-datagrid/index.php">No AngularJS</a>
                 <?php } ?>
 
             </div>

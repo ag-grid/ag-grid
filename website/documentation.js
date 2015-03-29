@@ -3,41 +3,6 @@
 
     var module = angular.module("documentation", []);
 
-    module.controller("documentationController", function($scope) {
-        $scope.pages = [
-            {name: "Getting Started", url: "./gettingStarted/index.html"},
-            {name: "Loading Rows", url: "./loadingRows/index.html"},
-            {name: "Width & Height", url: "./widthAndHeight/index.html"},
-            {name: "Grid Options", url: "./gridOptions/index.html"},
-            {name: "Sorting", url: "./sorting/index.html"},
-            {name: "Filtering", url: "./filtering/index.html"},
-            {name: "Resizing", url: "./resizing/index.html"},
-            {name: "Pinning", url: "./pinning/index.html"},
-            {name: "Grouping", url: "./grouping/index.html"},
-            {name: "Editing", url: "./editing/index.html"},
-            {name: "Column Definitions", url: "./columnDefinitions/index.html"},
-            {name: "Selection", url: "./selection/index.html"},
-            {name: "Header Rendering", url: "./headerRendering/index.html"},
-            {name: "Angular Compiling", url: "./angularCompiling/index.html"},
-            {name: "Layout & Styling", url: "./styling/index.html"},
-            {name: "No Scrolling", url: "./noScrolls/index.html"},
-            {name: "API", url: "./api/index.html"}
-        ];
-
-        $scope.currentPage = $scope.pages[0];
-        $scope.flag = true;
-
-        $scope.loadPage = function(page) {
-            $scope.currentPage = page;
-            $scope.flag = !$scope.flag;
-            $scope.showLoading = true;
-        };
-
-        $scope.pageLoaded = function() {
-            $scope.showLoading = false;
-        }
-    });
-
     module.directive("showExample", function() {
         return {
             scope: true,
@@ -49,7 +14,12 @@
     function Controller($scope, $http, $attrs) {
         var example = $attrs["example"];
         $scope.source =  example + ".html";
-        $scope.selectedTab='example';
+        $scope.selectedTab = 'example';
+        if ($attrs.exampleHeight) {
+            $scope.exampleHeight = $attrs.exampleHeight;
+        } else {
+            $scope.exampleHeight = '500px';
+        }
         $http.get("./"+example+".html").
             success(function(data, status, headers, config) {
                 $scope.html = data;

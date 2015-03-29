@@ -36,7 +36,7 @@ include '../documentation_header.php';
     The grid options provide AngularGrid with the details needed to render. At a
     minimum you provide the columns (columnDefs) and the rows (rowData).
 
-    <show-example example="example1"></show-example>
+    <show-example example="example1" example-height="200px"></show-example>
 </div>
 
 <?php include '../documentation_footer.php';?>
