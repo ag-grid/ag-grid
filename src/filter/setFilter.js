@@ -6,12 +6,13 @@ define([
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    function SetFilter(colDef, rowModel, filterChangedCallback, filterParams) {
+    function SetFilter(params) {
+        var filterParams = params.filterParams;
         this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
-        this.model = new SetFilterModel(colDef, rowModel);
-        this.filterChangedCallback = filterChangedCallback;
+        this.model = new SetFilterModel(params.colDef, params.rowModel);
+        this.filterChangedCallback = params.filterChangedCallback;
         this.rowsInBodyContainer = {};
-        this.colDef = colDef;
+        this.colDef = params.colDef;
         if (filterParams) {
             this.cellRenderer = filterParams.cellRenderer;
         }
@@ -32,7 +33,9 @@ define([
     };
 
     /* public */
-    SetFilter.prototype.doesFilterPass = function (value, model) {
+    SetFilter.prototype.doesFilterPass = function (node) {
+        var value = node.value;
+        var model = node.model;
         //if no filter, always pass
         if (model.isEverythingSelected()) { return true; }
         //if nothing selected in filter, always fail

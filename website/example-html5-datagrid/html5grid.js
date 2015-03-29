@@ -1,6 +1,4 @@
-var fileBrowserModule = angular.module('basic', ['angularGrid']);
-
-fileBrowserModule.controller('basicController', function($scope) {
+(function () {
 
     var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
         "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
@@ -120,7 +118,7 @@ fileBrowserModule.controller('basicController', function($scope) {
         {displayName: "Address", field: "address", group: 'Contact', width: 500, filter: 'text'}
     ];
 
-    $scope.gridOptions = {
+    var gridOptions = {
         columnDefs: columnDefs,
         rowData: createRowData(),
         rowSelection: 'multiple',
@@ -133,11 +131,27 @@ fileBrowserModule.controller('basicController', function($scope) {
         modelUpdated: modelUpdated
     };
 
+    // wait for the document to be loaded, otherwise
+    // Angular Grid will not find the div in the document.
+    document.addEventListener("DOMContentLoaded", function() {
+        window.angularGrid('#myGrid', gridOptions);
+        addQuickFilterListener();
+    });
+
+    function addQuickFilterListener() {
+        var eInput = document.querySelector('#quickFilterInput');
+        eInput.addEventListener("input", function () {
+            var text = eInput.value;
+            gridOptions.api.setQuickFilter(text);
+        });
+    }
+
     function modelUpdated() {
-        var model = $scope.gridOptions.api.getModel();
+        var model = gridOptions.api.getModel();
         var totalRows = model.getAllRows().length;
         var processedRows = model.getRowsAfterMap().length;
-        $scope.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+        var eSpan = document.querySelector('#rowCount');
+        eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }
 
     function createRowData() {
@@ -361,4 +375,4 @@ fileBrowserModule.controller('basicController', function($scope) {
         return this.selected !== PROFICIENCY_NONE;
     };
 
-});
+})();

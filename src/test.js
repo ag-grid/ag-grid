@@ -301,10 +301,10 @@ define([
         data[colDef.field] = valueAsNumber;
     }
 
-    function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
-        this.$scope = $scope;
-        $scope.onFilterChanged = function() {
-            filterChangedCallback();
+    function PersonFilter(params) {
+        this.$scope = params.$scope;
+        this.$scope.onFilterChanged = function() {
+            params.filterChangedCallback();
         };
     }
 
@@ -321,7 +321,7 @@ define([
             '</div>';
     };
 
-    PersonFilter.prototype.doesFilterPass = function (value, model) {
+    PersonFilter.prototype.doesFilterPass = function (node) {
         var filterText = this.$scope.filterText;
         if (!filterText) {
             return true;
@@ -329,7 +329,7 @@ define([
         // make sure each word passes separately, ie search for firstname, lastname
         var passed = true;
         filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-            if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+            if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
                 passed = false;
             }
         });
@@ -342,9 +342,9 @@ define([
         return value !== null && value !== undefined && value !== '';
     };
 
-    function WinningsFilter(colDef, rowModel, filterChangedCallback) {
+    function WinningsFilter(params) {
         var uniqueId = Math.random();
-        this.filterChangedCallback = filterChangedCallback;
+        this.filterChangedCallback = params.filterChangedCallback;
         this.eGui = document.createElement("div");
         this.eGui.innerHTML =
             '<div style="padding: 4px;">' +
@@ -361,28 +361,28 @@ define([
         this.cbGreater50 = this.eGui.querySelector('#cbGreater50');
         this.cbGreater90 = this.eGui.querySelector('#cbGreater90');
         this.cbNoFilter.checked = true; // initialise the first to checked
-        this.cbNoFilter.onclick = filterChangedCallback;
-        this.cbPositive.onclick = filterChangedCallback;
-        this.cbNegative.onclick = filterChangedCallback;
-        this.cbGreater50.onclick = filterChangedCallback;
-        this.cbGreater90.onclick = filterChangedCallback;
+        this.cbNoFilter.onclick = this.filterChangedCallback;
+        this.cbPositive.onclick = this.filterChangedCallback;
+        this.cbNegative.onclick = this.filterChangedCallback;
+        this.cbGreater50.onclick = this.filterChangedCallback;
+        this.cbGreater90.onclick = this.filterChangedCallback;
     }
 
     WinningsFilter.prototype.getGui = function () {
         return this.eGui;
     };
 
-    WinningsFilter.prototype.doesFilterPass = function (value, model) {
+    WinningsFilter.prototype.doesFilterPass = function (node) {
         if (this.cbNoFilter.checked) {
             return true;
         } else if (this.cbPositive.checked) {
-            return value >= 0;
+            return node.value >= 0;
         } else if (this.cbNegative.checked) {
-            return value < 0;
+            return node.value < 0;
         } else if (this.cbGreater50.checked) {
-            return value >= 50000;
+            return node.value >= 50000;
         } else if (this.cbGreater90.checked) {
-            return value >= 90000;
+            return node.value >= 90000;
         } else {
             console.error('invalid checkbox selection');
         }

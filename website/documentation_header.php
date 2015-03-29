@@ -18,6 +18,7 @@
     <script src="/documentation.js"></script>
 
     <link rel="stylesheet" href="/documentation.css">
+    <link rel="stylesheet" href="/style.css">
 
     <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />
 
@@ -33,15 +34,16 @@
     </script>
 </head>
 
-<body ng-app="documentation" ng-controller="documentationController">
+<body ng-app="documentation">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/index.html">Home</a>
-                <a class="navbar-brand" href="/example.html">Example</a>
-                <a class="navbar-brand" href="../angular-grid-getting-started/index.php">Documentation</a>
-                <a class="navbar-brand" href="/forum">Forum</a>
+            <div class="navbar-header top-header big-text">
+                <a class="top-button" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                <a class="top-button-selected" href="/angular-grid-getting-started/index.php"> <i class="fa fa-book"></i> Documentation</a>
+                <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
             </div>
         </div>
     </nav>
@@ -51,6 +53,10 @@
         <div class="row">
 
             <div class="col-sm-2">
+
+                <h4>
+                    Documentation
+                </h4>
 
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>
@@ -158,6 +164,16 @@
                     <span class="sidebarLinkSelected">API</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-api/index.php">API</a>
+                <?php } ?>
+
+                <h4>
+                    Examples
+                </h4>
+
+                <?php if ($key == "No Angular") { ?>
+                    <span class="sidebarLinkSelected">No AngularJS</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-html5-datagrid/index.php">No AngularJS</a>
                 <?php } ?>
 
             </div>

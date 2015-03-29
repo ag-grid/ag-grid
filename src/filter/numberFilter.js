@@ -7,8 +7,8 @@ define([
     var LESS_THAN = 2;
     var GREATER_THAN = 3;
 
-    function NumberFilter(colDef, rowModel, filterChangedCallback) {
-        this.filterChangedCallback = filterChangedCallback;
+    function NumberFilter(params) {
+        this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterNumber = null;
         this.filterType = EQUALS;
@@ -20,10 +20,12 @@ define([
     };
 
     /* public */
-    NumberFilter.prototype.doesFilterPass = function (value) {
+    NumberFilter.prototype.doesFilterPass = function (node) {
         if (this.filterNumber === null) {
             return true;
         }
+        var value = node.value;
+
         if (!value) {
             return false;
         }

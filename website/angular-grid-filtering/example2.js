@@ -30,10 +30,10 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
         });
 
 
-    function PersonFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {
-        this.$scope = $scope;
-        $scope.onFilterChanged = function() {
-            filterChangedCallback();
+    function PersonFilter(params) {
+        this.$scope = params.$scope;
+        this.$scope.onFilterChanged = function() {
+            params.filterChangedCallback();
         };
     }
 
@@ -47,7 +47,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
             '</div>';
     };
 
-    PersonFilter.prototype.doesFilterPass = function (value, model) {
+    PersonFilter.prototype.doesFilterPass = function (node) {
         var filterText = this.$scope.filterText;
         if (!filterText) {
             return true;
@@ -55,7 +55,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
         // make sure each word passes separately, ie search for firstname, lastname
         var passed = true;
         filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-            if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+            if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
                 passed = false;
             }
         });

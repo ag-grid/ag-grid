@@ -3,7 +3,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     var svgFactory = new SvgFactory();
 
     function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
-                         angularGrid, selectionRendererFactory, $compile, $scope, $timeout,
+                         angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
         this.rowModel = rowModel;
@@ -14,7 +14,6 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.findAllElements(eGrid);
         this.$compile = $compile;
         this.$scope = $scope;
-        this.$timeout = $timeout;
         this.selectionController = selectionController;
 
         // map of row ids to row objects. keeps track of which elements
@@ -206,7 +205,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         //if we are doing angular compiling, then do digest the scope here
         if (this.gridOptions.angularCompileRows) {
             // we do it in a timeout, in case we are already in an apply
-            this.$timeout(function () {
+            setTimeout(function () {
                 that.$scope.$apply();
             }, 0);
         }

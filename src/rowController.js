@@ -4,12 +4,13 @@ define([
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager) {
+    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.rowModel = rowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
+        this.$scope = $scope;
     }
 
     RowController.prototype.updateModel = function(step) {
@@ -29,6 +30,12 @@ define([
 
         if (typeof this.gridOptionsWrapper.getModelUpdated() === 'function') {
             this.gridOptionsWrapper.getModelUpdated()();
+            var $scope = this.$scope;
+            if ($scope) {
+                setTimeout(function () {
+                    $scope.$apply();
+                }, 0);
+            }
         }
 
     };
@@ -287,7 +294,7 @@ define([
 
         //second, check advanced filter
         if (advancedFilterPresent) {
-            if (!this.filterManager.doesFilterPass(node.data)) {
+            if (!this.filterManager.doesFilterPass(node)) {
                 return false;
             }
         }

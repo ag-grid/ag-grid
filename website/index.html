@@ -5,6 +5,7 @@
         <title>Angular Grid - A Data Grid for AngularJS</title>
         <meta name="description" content="A data grid for Angular JS">
         <meta name="keywords" content="angularjs angular grid table ui-grid ng-grid"/>
+        <meta property="og:image" content="http://www.angulargrid.com/images/angular-grid.png"/>
 
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -13,6 +14,7 @@
 
         <link href="example-file-browser/fileBrowser.css" rel="stylesheet">
         <link href="example-basic/basic.css" rel="stylesheet">
+        <link href="example-account-report/account.css" rel="stylesheet">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -22,6 +24,7 @@
 
         <script src="example-file-browser/fileBrowser.js"></script>
         <script src="example-basic/basic.js"></script>
+        <script src="example-account-report/account.js"></script>
 
         <script src="index.js"></script>
 
@@ -42,15 +45,16 @@
 
     </head>
 
-    <body ng-app="index">
+    <body ng-app="index" class="big-text">
 
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="index.html">Home</a>
-                    <a class="navbar-brand" href="example.html">Example</a>
-                    <a class="navbar-brand" href="/angular-grid-getting-started/index.php">Documentation</a>
-                    <a class="navbar-brand" href="forum">Forum</a>
+                <div class="navbar-header top-header big-text">
+                    <a class="top-button-selected" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                    <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                    <a class="top-button" href="/angular-grid-getting-started/index.php"> <i class="fa fa-book"></i> Documentation</a>
+                    <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                    <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
                 </div>
             </div>
         </nav>
@@ -61,32 +65,45 @@
 
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;">
-                        <h1>Angular Grid</h1>
-                        <div>
-                            Advanced Data Grid for AngularJS
-                        </div>
-                        <div style="padding-top: 20px;">
-                            <a class="btn btn-primary btn-sm" href="https://github.com/ceolter/angular-grid" role="button">
-                                <i class="fa fa-github fa-fw"></i> Github
-                            </a>
-                            <a class="btn btn-primary btn-sm" href="http://www.angulargrid.com/dist" role="button">
-                                <i class="fa fa-download fa-fw"></i> Download
-                            </a>
-                            <a class="btn btn-primary btn-sm" href="example.html" role="button">
-                                <i class="fa fa-bicycle fa-fw"></i> Take a Ride
-                            </a>
-                        </div>
+                        <h1>
+                            <img src="/images/angular-grid.png" alt="Angular Grid - Advanced Data Grid for AngularJS"/>
+                        </h1>
+
                     </div>
 
                     <div class="col-md-6" style="text-align: center;">
-                        <div style="margin: 10px;">
-                            <img src="open-source.png" style="width: 80px;" alt="Open Source" title="Open Source"/>
-                            <img src="github.png" style="width: 80px;" alt="Git Hub" title="Git Hub"/>
-                            <img src="angularjs.png" style="width: 80px;" alt="Angular JS" title="AngularJS"/>
+
+                        <div style="padding: 50px;">
+                            <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.angulargrid.com">
+                                <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
+                            </a>
+
+                            <a class='share-link' href="https://twitter.com/home?status=Check%20out%20AngularGrid,%20a%20new%20way%20to%20show%20grid%20data%20for%20AngularJS">
+                                <img src="/images/twitter_32.png" alt="Share on Twitter" title="Share on Twitter"/>
+                            </a>
+
+                            <a class='share-link' href="https://plus.google.com/share?url=www.angulargrid.com">
+                                <img src="/images/googleplus_32.png" alt="Share on Google Plus" title="Share on Google Plus"/>
+                            </a>
+
+                            <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.angulargrid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
+                                <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
+                            </a>
+
                         </div>
-                        <div style="margin: 10px;">
-                            <img src="browser_logos.png" style="width: 260px" alt="Cross Browser" title="Cross Browser"/>
+
+                        <div style="padding: 20px;">
+                            <a class="btn btn-primary btn-sm header-button" href="example.html" role="button">
+                                <i class="fa fa-bicycle header-icon"></i><br/>Test Drive
+                            </a>
+                            <a class="btn btn-primary btn-sm header-button" href="http://www.angulargrid.com/dist" role="button">
+                                <i class="fa fa-download header-icon"></i><br/>Download
+                            </a>
+                            <a class="btn btn-primary btn-sm header-button" href="https://github.com/ceolter/angular-grid" role="button">
+                                <i class="fa fa-github header-icon"></i><br/>Github
+                            </a>
                         </div>
+
                     </div>
 
                 </div>
@@ -94,32 +111,29 @@
             </div>
         </div>
 
-
         <div class="container">
 
             <div class="row">
                 <div class="col-md-6">
                     <h2>Introducing Angular Grid</h2>
                     <p>
-                        Angular Grid is a powerful and flexible data grid for AngularJS.
-                        It was created out of frustration, following an endless search
-                        for a grid that was fast, feature rich, robust and designed
-                        with AngularJS in mind.
+                        Angular Grid is a powerful data grid for AngularJS.
+                        <b>Until now, there was no decent grid written for AngularJS</b>.
                     </p>
                     <p>
-                        Angular Grid was built for use in financial reporting applications, where data sets
-                        are large with heavy demands on filtering, grouping, aggregating and presentation.
+                        Angular Grid was built for financial reporting applications.
+                        It supports large data sets with filtering, grouping and aggregating.
+                        It's customizable look and feel creates professional presentations.
                     </p>
                     <p>
-                        But great power does not require great responsibility, it's easy to
-                        get up with any modest requirement.
+                        Easy to use, quick to get going.
                     </p>
                 </div>
 
                 <div class="col-md-6">
-                    <h2>Handling Large Data Sets</h2>
+                    <h2>Hybrid AngularJS & DOM Engine</h2>
                     <p>
-                        The <b>Hybrid AngularJS & DOM Engine</b> creates a powerful combination of AngularJS
+                        The grid engine uses AngularJS
                         where required and native Javascript at all other times, giving the best performance.
                         A grid written solely in AngularJS will be inherently slower.
                     </p>
@@ -157,10 +171,13 @@
 
                 <div class="col-md-3">
                     <div style="margin-top: 50px">
-                        Using the default look and feel, get a feature rich grid with minimal learning and coding.
+                        Using the default look and feel, get a feature rich grid with minimal coding.
                     </div>
                     <div style="margin-top: 50px">
                         Filtering and sorting work lightning fast despite 10,000 rows.
+                    </div>
+                    <div style="margin-top: 50px">
+                        'Excel like' filtering (Name & Country columns) or customised filtering (Skills & Proficiency columns).
                     </div>
                 </div>
 
@@ -168,10 +185,11 @@
                 <div class="col-md-9" ng-controller="basicController">
                     <div style="padding: 4px">
                         <div style="float: right;">
-                            <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Type text to filter..."/>
+                            <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Quick filter..."/>
                         </div>
                         <div style="padding: 4px;">
-                            <b>Example Large Data</b> ({{rowCount}})
+                            <img src="example.png" width="25px"/>
+                            <b>Example Large Data</b> ({{rowCount}} rows)
                         </div>
                     </div>
                     <div style="width: 100%; height: 400px;"
@@ -184,18 +202,49 @@
 
             <hr/>
 
+
+            <div class="row" style="padding: 30px">
+
+                <div class="col-md-9" ng-controller="accountController">
+                    <div style="text-align: center; padding-bottom: 10px;">
+                        <img src="example.png" width="25px"/>
+                        <b>Example Style for presentations</b>
+                    </div>
+                    <div style="display: inline-block;"
+                         angular-grid="gridOptions"
+                         class="ag-account">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div style="margin-top: 50px; padding-left: 20px;">
+                        Give a professional style for grids that will end up as presentations.
+                    </div>
+                    <div style="margin-top: 50px; padding-left: 20px;">
+                        No scrolls works well for presentations and printing.
+                    </div>
+                </div>
+
+
+            </div>
+
+            <hr/>
+
             <div class="container">
 
                 <div class="row" style="padding: 30px">
 
                     <div class="col-md-3">
                         <div style="margin-top: 50px">
-                            With a bit more planning, create a fine tuned behaviour and look and feel.
+                            Cell renderers and grid themes allow custimised behaviours and look and feels.
+                        </div>
+                        <div style="margin-top: 50px">
+                            Create complex widgets, beyond what's expected of HTML tables.
                         </div>
                     </div>
 
                     <div class="col-md-9" ng-controller="fileBrowserController">
                         <div style="padding: 4px;">
+                            <img src="example.png" width="25px"/>
                             <b>Example Custimisation</b>
                         </div>
                         <div style="border: 1px solid darkgrey;
