@@ -37,6 +37,11 @@ h2 {
     margin-bottom: 25px;
 }
 
+.horizontal-rule {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .top-header {
     padding-top: 12px;
 }
@@ -95,7 +100,7 @@ h2 {
 }
 
 .header-icon {
-    font-size: 30px;
+    font-size: 14px;
 }
 
 .header-button {

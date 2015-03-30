@@ -40,9 +40,26 @@
         <div class="navbar-header top-header big-text">
             <a class="top-button" href="/index.html"> <i class="fa fa-home"></i> Home</a>
             <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
-            <a class="top-button" href="/angular-grid-getting-started/index.php"> <i class="fa fa-book"></i> Documentation</a>
+            <a class="top-button" href="/documentation.php"> <i class="fa fa-book"></i> Documentation</a>
             <a class="top-button-selected" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
             <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+        </div>
+        <div style="float:right;" class="navbar-header top-header">
+            <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.angulargrid.com">
+                <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
+            </a>
+
+            <a class='share-link' href="https://twitter.com/home?status=Check%20out%20AngularGrid,%20a%20new%20way%20to%20show%20grid%20data%20for%20AngularJS">
+                <img src="/images/twitter_32.png" alt="Share on Twitter" title="Share on Twitter"/>
+            </a>
+
+            <a class='share-link' href="https://plus.google.com/share?url=www.angulargrid.com">
+                <img src="/images/googleplus_32.png" alt="Share on Google Plus" title="Share on Google Plus"/>
+            </a>
+
+            <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.angulargrid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
+                <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
+            </a>
         </div>
     </div>
 </nav>
@@ -69,11 +86,11 @@
             </p>
             <p>
                 In the beginning we were new to AngularJS, so we decided to use
-                ng-grid. We found the basic interface into ng-grid nice and simple,
+                <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a>. We found the basic interface into <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> nice and simple,
                 an AngularJS directive that took a list of columns and a list
                 of rows. However we also needed to have checkbox selection and grouping,
-                and found to get these items from ng-grid required using plugins,
-                looking at ng-grid source code and hacking around. These we could
+                and found to get these items from <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> required using plugins,
+                looking at <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> source code and hacking around. These we could
                 live with (ie our users don't care about these things) but found frustrating
                 as developers. Once our tables started to grow in size beyond 20 columns and
                 once we introduced pinned columns, the grid gave the user experience
@@ -81,39 +98,39 @@
                 unusable.
             </p>
             <p>
-                So for our more complex tables we went with jxqGrid. jqxGrid performed
+                So for our more complex tables we went with jxqGrid. <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> performed
                 much better with large data-sets, but we still found it lacking. It behaved
                 a bit clunky, was tricky to extend and customise, and wasn't native to AngularJS
-                (making it not 'natural' for the AngularJS developer). We stuck with jqxGrid,
+                (making it not 'natural' for the AngularJS developer). We stuck with <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a>,
                 taking it as the 'best choice for now'.
             </p>
             <p>
-                We also considered Slick Grid. It's widely adopted, free, and performed
+                We also considered <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>. It's widely adopted, free, and performed
                 very well. However it didn't support pinned columns (unless you went
                 with a branch) and it wasn't written with AngularJS in mind.
             </p>
             <p>
-                I realised in 2014 that ng-grid was been rewritten, that ui-grid was
-                going to be the new ng-grid and solve the performance problems.
-                So I kept a close eye on ui-grid and was excited in late in 2014 when
-                I could download a release candidate of ui-grid. Finally I could say
-                goodbye to jqxGrid and move back into the pure-AngularJS world...
-                I really wanted ui-grid to be my answer...
+                I realised in 2014 that <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> was been rewritten, that <a href="http://ui-grid.info/">ui-grid</a> was
+                going to be the new <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> and solve the performance problems.
+                So I kept a close eye on <a href="http://ui-grid.info/">ui-grid</a> and was excited in late in 2014 when
+                I could download a release candidate of <a href="http://ui-grid.info/">ui-grid</a>. Finally I could say
+                goodbye to <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> and move back into the pure-AngularJS world...
+                I really wanted <a href="http://ui-grid.info/">ui-grid</a> to be my answer...
             </p>
             <p>
-                Performance in ui-grid was disappointing. And it had bugs. OK so the bugs I could deal with,
+                Performance in <a href="http://ui-grid.info/">ui-grid</a> was disappointing. And it had bugs. OK so the bugs I could deal with,
                 it was a release candidate after all and bugs are expected in initial releases
                 of all software (note: time of writing, 4 months later, it's still
                 release candidate), but the performance made our application fail system test.
                 That means the performance was so bad our test team deemed the application not suitable
                 to be released into production. I was ready to be ui-grids number one fan!! But
-                we took it out and put jqxGrid back in :(
+                we took it out and put <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> back in :(
             </p>
             <p>
-                So jqxGrid was again our grid of choice and I went home for Christmas to mull over it all.
-                Slick Grid showed Javascript was capable of a great fast grid. But I liked the interface
-                and native AngularJS feel of ui-grid. How hard would it be to match
-                Slick Grid for performance, but keep the AngularJS interface??? Can it really
+                So <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> was again our grid of choice and I went home for Christmas to mull over it all.
+                <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> showed Javascript was capable of a great fast grid. But I liked the interface
+                and native AngularJS feel of <a href="http://ui-grid.info/">ui-grid</a>. How hard would it be to match
+                <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> for performance, but keep the AngularJS interface??? Can it really
                 be that difficult to write a grid that gave me this?
             </p>
             <p>
@@ -141,7 +158,7 @@
                     cannot attach native browser events to your own canvas objects) and c) like SVG this option
                     pushed the technology out of reach of the ordinary Javascript
                     developer (unless like me you like programming games).
-                    <li><b>Pure AngularJS:</b></li> Next up was what ui-grid
+                    <li><b>Pure AngularJS:</b></li> Next up was what <a href="http://ui-grid.info/">ui-grid</a>
                     did, use Angular JS for everything - almost using the
                     project to showcase AngularJS. So I created a grid
                     using about eight directives, one for a cell, one for a row, one for a
@@ -151,9 +168,9 @@
                     This created a lot of Angular scopes and some extra levels of div's
                     than I wanted (unnecessary baggage). The result was very AngularJS-esque,
                     performed fine
-                    (better than ui-grid, but unfair to make a comparison at this point
+                    (better than <a href="http://ui-grid.info/">ui-grid</a>, but unfair to make a comparison at this point
                     as I didn't have any complex features in) but didn't perform as well
-                    as Slick Grid. You see, Angular JS is great for form based applications,
+                    as <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>. You see, Angular JS is great for form based applications,
                     where you don't have hundreds of bound values laid out in a grid
                     and scrolling. I still use Angular JS as my primary building tool
                     for web applications. However the 'free stuff' you get costs CPU
@@ -164,13 +181,13 @@
                     continued, how can a grid be an AngularJS component
                     but yet not use AngularJS???
                     <li><b>Hybrid AngularJS:</b></li> The final prototype offering, use AngularJS
-                    to present the grid (so has an AngularJS interface like ui-grid) but doesn't
+                    to present the grid (so has an AngularJS interface like <a href="http://ui-grid.info/">ui-grid</a>) but doesn't
                     use AngularJS itself to draw the grid. This incidentally became the
                     evolutionary prototype of what is now Angular Grid. When drawing the grid, not
                     using AngularJS means you don't get two-way-binding. However in my
                     experience, the vast majority of grids don't require this, so supporting
                     it is slowing down everything to cater for the few. The performance,
-                    to my surprise, was up to Slick Grid. I say 'to my surprise' as I was
+                    to my surprise, was up to <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>. I say 'to my surprise' as I was
                     expecting it to be harder to come up with a fast grid (if I'd had an
                     inkling I wouldn't of bothered with my SVG and canvas experiments,
                     but they were fun, if you consider alone on your laptop writing code
@@ -188,7 +205,7 @@
                 so I came up with a list of all the things I wanted in a grid. My list was
                 as follows (otherwise known as requirements):
                 <ul>
-                    <li>AngularJS Interface</li> - Influenced by ng-grid. I wanted it to be simple to
+                    <li>AngularJS Interface</li> - Influenced by <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a>. I wanted it to be simple to
                     pop in a list of rows and columns and off you go. The default settings
                     would cater for everything else.
                     <li>Customisable Cell Editors and Renderers</li> - Influenced by Java Swings JTable.
@@ -215,7 +232,7 @@
                 </ul>
                 So I coded up the new grid in time for getting back to work in 2015. I introduced Angular Grid
                 to the 'troubled' application. What a breath of fresh air! For the first time we had
-                a grid that performed as well as SlickGrid and had a programming interface native to AngularJS.
+                a grid that performed as well as <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> and had a programming interface native to AngularJS.
                 The styling and customising worked a treat.
                 The grid made our application more responsive than any of the grids that we had used.
                 For the first time I felt our grid choice was without compromise.
