@@ -428,7 +428,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var useRenderer = typeof this.gridOptions.groupInnerCellRenderer === 'function';
         if (useRenderer) {
             var rendererParams = { data: node.data, node: node, padding: padding, gridOptions: this.gridOptions };
-            this.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
+            utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
         } else {
             if (!padding) {
                 if (footer) {
@@ -457,10 +457,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         }
 
-        var _this = this;
+        var that = this;
         eGridGroupRow.addEventListener("click", function() {
             node.expanded = !node.expanded;
-            _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
+            that.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
         return eGridGroupRow;
@@ -485,43 +485,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eParent.appendChild(eText);
     };
 
-    // tries to use the provided renderer. if a renderer found, returns true.
-    // if no renderer, returns false.
-    RowRenderer.prototype.useRenderer = function(eParent, eRenderer, params) {
-        var resultFromRenderer = eRenderer(params);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-            //a dom node or element was returned, so add child
-            eParent.appendChild(resultFromRenderer);
-        } else {
-            //otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = resultFromRenderer;
-            eParent.appendChild(eTextSpan);
-        }
-    };
-
     RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
         var groupIconRenderer = this.gridOptionsWrapper.getGroupIconRenderer();
 
-        // if no renderer for group icon, use the default
-        if (typeof groupIconRenderer !== 'function') {
+        if (typeof groupIconRenderer === 'function') {
+            utils.useRenderer(eGridGroupRow, groupIconRenderer, expanded);
+        } else {
             var eSvg = svgFactory.createGroupSvg(expanded);
             eGridGroupRow.appendChild(eSvg);
-            return;
         }
-
-        // otherwise, use the renderer
-        var resultFromRenderer = groupIconRenderer(expanded);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-            //a dom node or element was returned, so add child
-            eGridGroupRow.appendChild(resultFromRenderer);
-        } else {
-            //otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = resultFromRenderer;
-            eGridGroupRow.appendChild(eTextSpan);
-        }
-
     };
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
@@ -532,14 +504,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             };
             var resultFromRenderer = colDef.cellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-                //a dom node or element was returned, so add child
+                // a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
             } else {
-                //otherwise assume it was html, so just insert
+                // otherwise assume it was html, so just insert
                 eGridCell.innerHTML = resultFromRenderer;
             }
         } else {
-            //if we insert undefined, then it displays as the string 'undefined', ugly!
+            // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined && value!==null && value!=='') {
                 eGridCell.innerHTML = value;
             }

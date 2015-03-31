@@ -202,7 +202,17 @@
     box-sizing: border-box;
     text-overflow: ellipsis;
     overflow: hidden;
-    padding: 4px;
+}
+
+.ag-footer-cell-entire-row {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .ag-large .ag-root {
