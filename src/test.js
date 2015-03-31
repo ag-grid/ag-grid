@@ -72,6 +72,7 @@ define([
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: true, //one of [true, false]
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
+            groupIncludeFooter: true,
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer

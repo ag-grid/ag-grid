@@ -253,17 +253,10 @@ define([
     };
 
     RowController.prototype.doGroupMapping = function () {
-        var rowsAfterMap;
-
-        // took this 'if' statement out to allow user to provide items already grouped.
-        // want to keep an eye on performance, if grid still performs with this 'additional'
-        // step, then will leave as below.
-        //if (this.gridOptionsWrapper.getGroupKeys()) {
-            rowsAfterMap = [];
-            this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        //} else {
-        //    rowsAfterMap = this.rowModel.getRowsAfterSort();
-        //}
+        // even if not going grouping, we do the mapping, as the client might
+        // of passed in data that already has a grouping in it somewhere
+        var rowsAfterMap = [];
+        this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
@@ -276,8 +269,23 @@ define([
             mappedData.push(node);
             if (node.group && node.expanded) {
                 this.addToMap(mappedData, node.childrenAfterSort);
+
+                // put a footer in if user is looking for it
+                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                    var footerNode = this.createFooterNode(node);
+                    mappedData.push(footerNode);
+                }
             }
         }
+    };
+
+    RowController.prototype.createFooterNode = function (groupNode) {
+        var footerNode = {};
+        Object.keys(groupNode).forEach(function (key) {
+            footerNode[key] = groupNode[key];
+        });
+        footerNode.footer = true;
+        return footerNode;
     };
 
     RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {

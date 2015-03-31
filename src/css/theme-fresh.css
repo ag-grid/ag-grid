@@ -88,6 +88,11 @@
 }
 
 .ag-fresh .ag-group-cell {
+    font-weight: bold;
+}
+
+.ag-fresh .ag-footer-cell {
+    font-weight: bold;
 }
 
 .ag-fresh .ag-filter-checkbox {

@@ -81,6 +81,14 @@
     background-color: #000000;
 }
 
+.ag-dark .ag-group-cell {
+    font-weight: bold;
+}
+
+.ag-dark .ag-footer-cell {
+    font-weight: bold;
+}
+
 .ag-dark .ag-filter {
     color: black;
 }
