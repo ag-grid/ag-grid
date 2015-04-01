@@ -1,0 +1,25 @@
+{
+  "name": "angular-grid",
+  "version": "1.2.0",
+  "description": "High performance and feature rich data grid for AngularJS",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceolter/angular-grid.git"
+  },
+  "keywords": [
+    "grid",
+    "data",
+    "table",
+    "angular"
+  ],
+  "author": "Niall Crosby <info@angulargrid.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/angular-grid/issues"
+  },
+  "homepage": "http://www.angulargrid.com/"
+}
