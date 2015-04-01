@@ -129,7 +129,7 @@ define([
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
-            var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
+            var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {

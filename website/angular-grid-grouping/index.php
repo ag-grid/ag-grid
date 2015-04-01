@@ -42,7 +42,9 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupDefaultExpanded</th>
-            <td>If grouping, set to true or false (default is false). If true, when data is loaded, groups will be expanded by default.</td>
+            <td>If grouping, set to true, false or a number (default is false). If true, when data is loaded, groups will be expanded by default.
+            If false, they won't. If a number, then the first n levels will be expanded, eg 0 for none, 1 first level only, etc.
+            </td>
         </tr>
         <tr>
             <th>groupAggFunction</th>
@@ -115,6 +117,10 @@ include '../documentation_header.php';
     return '&lt;i class="fa fa-plus-square-o"/>';
   }
 }</pre>
+
+    <p>
+    todo: need to document how footers work
+    </p>
 
 </div>
 

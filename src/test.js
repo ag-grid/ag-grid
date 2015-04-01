@@ -70,7 +70,7 @@ define([
             groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //            groupInnerCellRenderer: groupInnerCellRenderer,
-//            groupDefaultExpanded: true, //one of [true, false]
+//            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
             groupIncludeFooter: true,
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
