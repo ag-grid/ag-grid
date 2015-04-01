@@ -1,0 +1,27 @@
+{
+  "name": "angular-grid",
+  "version": "1.2.0",
+  "homepage": "http://angulargrid.com/",
+  "authors": [
+    "Niall Crosby <info@angulargrid.com>"
+  ],
+  "description": "High performance and feature rich data grid for AngularJS",
+  "main": "main.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "grid",
+    "data",
+    "table",
+    "angular"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
