@@ -2893,12 +2893,36 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
-        var eRow = document.createElement("div");
+    RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
         var classesList = ["ag-row"];
         classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
+
         if (this.selectionController.isNodeSelected(node)) {
             classesList.push("ag-row-selected");
+        }
+        if (node.group) {
+            // if a group, put the level of the group in
+            classesList.push("ag-row-level-" + node.level);
+        } else {
+            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+            if (node.parent) {
+                classesList.push("ag-row-level-" + (node.parent.level + 1) );
+            } else {
+                classesList.push("ag-row-level-0");
+            }
+        }
+        if (node.group) {
+            classesList.push("ag-row-group");
+        }
+        if (node.group && !node.footer && node.expanded) {
+            classesList.push("ag-row-group-expanded");
+        }
+        if (node.group && !node.footer && !node.expanded) {
+            // opposite of expanded is contracted according to the internet.
+            classesList.push("ag-row-group-contracted");
+        }
+        if (node.group && node.footer) {
+            classesList.push("ag-row-footer");
         }
 
         // add in extra classes provided by the config
@@ -2920,6 +2944,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var classes = classesList.join(" ");
 
         eRow.className = classes;
+    };
+
+    RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
+        var eRow = document.createElement("div");
+
+        this.addClassesToRow(rowIndex, node, eRow);
 
         eRow.setAttribute("row", rowIndex);
 
