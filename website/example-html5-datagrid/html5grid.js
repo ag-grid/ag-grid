@@ -16,7 +16,7 @@
         France: "fr",
         Germany: "de",
         Sweden: "se",
-        Italy: "is",
+        Italy: "it",
         Greece: "gr",
         Iceland: "is",
         Portugal: "pt",
