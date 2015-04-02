@@ -10,6 +10,16 @@ Angular Grid was built for financial reporting applications. It supports large d
 
 Easy to use, quick to get going.
 
+#### Install with Bower
+```sh
+$ bower install ag-grid
+```
+
+#### Install with Npm
+```sh
+$ npm install angular-grid
+```
+
 Handling Large Data Sets
 ==============
 
