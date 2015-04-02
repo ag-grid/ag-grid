@@ -3092,20 +3092,6 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
-        var eCellWrapper = document.createElement('span');
-
-        eGridCell.appendChild(eCellWrapper);
-
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
-        eCellWrapper.appendChild(eCheckbox);
-
-        var eDivWithValue = document.createElement("span");
-        eCellWrapper.appendChild(eDivWithValue);
-
-        this.putDataIntoCell(colDef, value, node, $childScope, eDivWithValue, rowIndex);
-    };
-
     RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
@@ -3122,12 +3108,24 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
         eGridCell.className = classes.join(' ');
 
+        var eCellWrapper = document.createElement('span');
+        eGridCell.appendChild(eCellWrapper);
+
+        // see if we need a padding box
+        if (colIndex === 0 && (node.parent)) {
+            var pixelsToIndent = 20 + (node.parent.level * 10);
+            eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
+        }
+
         var colDef = colDefWrapper.colDef;
         if (colDef.checkboxSelection) {
-            this.putDataAndSelectionCheckboxIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
-        } else {
-            this.putDataIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
+            eCellWrapper.appendChild(eCheckbox);
         }
+
+        var eSpanWithValue = document.createElement("span");
+        eCellWrapper.appendChild(eSpanWithValue);
+        this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
 
         if (colDef.cellStyle) {
             var cssToUse;

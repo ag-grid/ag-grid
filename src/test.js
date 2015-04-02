@@ -98,7 +98,7 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+            {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column"},
             {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
@@ -245,20 +245,6 @@ define([
                 data.push(rowItem);
             }
             angularGrid.rowData = data;
-        }
-
-        //because name is the first col, if grouping present, we want to indent it.
-        //this method is inside the controller as we access the scope
-        function nameCssFunc(params) {
-            // if we are part of a group, the parent will point to the parent group
-            if (params.node.parent) {
-                var pixelsToIndex = 20 + (params.node.parent.level * 10);
-                return {
-                    'padding-left': pixelsToIndex + 'px'
-                }
-            } else {
-                return null;
-            }
         }
 
         function selectionChanged() {
