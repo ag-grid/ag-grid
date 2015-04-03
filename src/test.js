@@ -82,7 +82,7 @@ define([
             enableSorting: true, //one of [true, false]
             enableFilter: true, //one of [true, false]
             rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
-            groupCheckboxSelection: 'children', // one of ['group','children']
+            groupCheckboxSelection: 'group', // one of ['group','children']
             suppressRowClickSelection: false, // if true, clicking rows doesn't select (useful for checkbox selection)
             groupAggFunction: groupAggFunction,
             angularCompileRows: false,

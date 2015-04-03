@@ -285,6 +285,11 @@ define([
             footerNode[key] = groupNode[key];
         });
         footerNode.footer = true;
+        // get both header and footer to reference each other as siblings. this is never undone,
+        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
+        // sibling - but that's fine, as we can ignore this if the header is contracted.
+        footerNode.sibling = groupNode;
+        groupNode.sibling = footerNode;
         return footerNode;
     };
 
