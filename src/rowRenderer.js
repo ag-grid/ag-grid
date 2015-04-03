@@ -498,7 +498,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     // creates cell with 'Total {{key}}' for a group
     RowRenderer.prototype.createFooterCell = function(eParent, node) {
-        var textToDisplay = "Total " + node.key;
+        // if we are doing cell - then it makes sense to put in 'total', which is just a best guess,
+        // that the user is going to want to say 'total'. typically i expect the user to override
+        // how this cell is rendered
+        var textToDisplay;
+        if (this.gridOptionsWrapper.isGroupUseEntireRow()) {
+            textToDisplay = "Group footer - you should provide a custom groupInnerCellRenderer to render what makes sense for you"
+        } else {
+            textToDisplay = "Total " + node.key;
+        }
         var eText = document.createTextNode(textToDisplay);
         eParent.appendChild(eText);
     };

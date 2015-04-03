@@ -53,11 +53,13 @@ define([
         $scope.colCount = 20;
         $scope.rowCount = 100;
 
-        $scope.width = '100%';
+        $scope.size = 'fill'; // model for size select
+        $scope.width = '100%'; // the div gets it's width and height from here
         $scope.height = '100%';
+
         $scope.style = 'ag-fresh';
         $scope.groupBy = '';
-        $scope.groupType = 'firstCol';
+        $scope.groupType = 'col';
         $scope.editable = 'false';
         $scope.groupHeaders = 'true';
         $scope.rowSelection = 'checkbox';
@@ -72,7 +74,7 @@ define([
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-            groupIncludeFooter: true,
+            groupIncludeFooter: false,
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
@@ -172,17 +174,31 @@ define([
             angularGrid.api.onNewCols();
         };
 
+        $scope.onSize = function() {
+            if ($scope.size === 'fill') {
+                $scope.width = '100%';
+                $scope.height = '100%';
+            } else {
+                $scope.width = '800px';
+                $scope.height = '600px';
+            }
+        };
+
         $scope.onGroupByChanged = function() {
-            //setup keys
+            // setup keys
             var groupBy = null;
             if ($scope.groupBy!=="") {
                 groupBy = $scope.groupBy.split(",");
             }
             angularGrid.groupKeys = groupBy;
 
-            //setup type
-            var groupUseEntireRow = $scope.groupType==='row';
+            // setup type
+            var groupUseEntireRow = $scope.groupType==='row' || $scope.groupType==='rowWithFooter';
             angularGrid.groupUseEntireRow = groupUseEntireRow;
+
+            // use footer or not
+            var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
+            angularGrid.groupIncludeFooter = useFooter;
 
             angularGrid.api.onNewRows();
         };

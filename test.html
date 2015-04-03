@@ -41,20 +41,10 @@
                     <option value="5">5</option>
                 </select>
 
-                Width:
-                <select ng-model="width">
-                    <option value="800px">800px</option>
-                    <option value="1000px">1000px</option>
-                    <option value="2000px">2000px</option>
-                    <option value="100%">100% (fit to screen)</option>
-                </select>
-
-                Height:
-                <select ng-model="height">
-                    <option value="400px">400px</option>
-                    <option value="800px">800px</option>
-                    <option value="4000px">4000px</option>
-                    <option value="100%">100% (fit to screen)</option>
+                Size:
+                <select ng-model="size" ng-change="onSize()">
+                    <option value="fill">Fill Page</option>
+                    <option value="fixed">800x600</option>
                 </select>
 
                 Group Headers:
@@ -101,8 +91,10 @@
 
                     Group Type:
                     <select ng-model="groupType" ng-change="onGroupByChanged()" style="width: 90px;">
-                        <option value="firstCol">First Col</option>
+                        <option value="col">Col</option>
+                        <option value="colWithFooter">Col with Footer</option>
                         <option value="row">Row</option>
+                        <option value="rowWithFooter">Row with Footer</option>
                     </select>
 
                     <button ng-click="angularGrid.api.expandAll()">Expand All</button>

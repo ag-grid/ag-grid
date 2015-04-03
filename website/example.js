@@ -48,11 +48,13 @@ gridsModule.controller('mainController', function($scope) {
     $scope.colCount = 20;
     $scope.rowCount = 100;
 
-    $scope.width = '100%';
+    $scope.size = 'fill'; // model for size select
+    $scope.width = '100%'; // the div gets it's width and height from here
     $scope.height = '100%';
+
     $scope.style = 'ag-fresh';
     $scope.groupBy = '';
-    $scope.groupType = 'firstCol';
+    $scope.groupType = 'col';
     $scope.editable = 'false';
     $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
@@ -92,7 +94,7 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
-        {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, cellStyle: nameCssFunc, headerTooltip: "The Name Column"},
+        {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column"},
         {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
         },
@@ -166,17 +168,31 @@ gridsModule.controller('mainController', function($scope) {
         angularGrid.api.onNewCols();
     };
 
+    $scope.onSize = function() {
+        if ($scope.size === 'fill') {
+            $scope.width = '100%';
+            $scope.height = '100%';
+        } else {
+            $scope.width = '800px';
+            $scope.height = '600px';
+        }
+    };
+
     $scope.onGroupByChanged = function() {
-        //setup keys
+        // setup keys
         var groupBy = null;
         if ($scope.groupBy!=="") {
             groupBy = $scope.groupBy.split(",");
         }
         angularGrid.groupKeys = groupBy;
 
-        //setup type
-        var groupUseEntireRow = $scope.groupType==='row';
+        // setup type
+        var groupUseEntireRow = $scope.groupType==='row' || $scope.groupType==='rowWithFooter';
         angularGrid.groupUseEntireRow = groupUseEntireRow;
+
+        // use footer or not
+        var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
+        angularGrid.groupIncludeFooter = useFooter;
 
         angularGrid.api.onNewRows();
     };
@@ -239,20 +255,6 @@ gridsModule.controller('mainController', function($scope) {
             data.push(rowItem);
         }
         angularGrid.rowData = data;
-    }
-
-    //because name is the first col, if grouping present, we want to indent it.
-    //this method is inside the controller as we access the scope
-    function nameCssFunc(params) {
-        // if we are part of a group, the parent will point to the parent group
-        if (params.node.parent) {
-            var pixelsToIndex = 20 + (params.node.parent.level * 10);
-            return {
-                'padding-left': pixelsToIndex + 'px'
-            }
-        } else {
-            return null;
-        }
     }
 
     function selectionChanged() {
