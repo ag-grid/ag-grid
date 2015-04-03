@@ -25,8 +25,9 @@ include '../documentation_header.php';
     <h4>New Value Handlers</h4>
 
     If you want to use the simple text editing, but want to format the result in some way
-    before inserting into the row, then you can provide a 'new value handler' to the column.
-    This will allow you to add additional validation or conversation to the value.
+    before inserting into the row, then you can provide a newValueHandler to the column.
+    This will allow you to add additional validation or conversation to the value. The example
+    below shows the newValueHandler in action in the 'Upper Case Only' column.
 
     <div class="bigTitle">Custom Editing</div>
 
@@ -49,8 +50,8 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>Upper Case Only</th>
-            <td>Allows the grid to manage the editing, however a custom 'new value
-                handler' is used to make the text upper case before attaching to the row.</td>
+            <td>Allows the grid to manage the editing, however a custom newValueHandler is
+                used to make the text upper case before attaching to the row.</td>
         </tr>
         <tr>
             <th>Number</th>
