@@ -81,6 +81,24 @@
     background-color: #000000;
 }
 
+.ag-dark .ag-group-cell-entire-row {
+    background-color: #aaa;
+    padding: 4px;
+}
+
+.ag-dark .ag-footer-cell-entire-row {
+    background-color: #aaa;
+    padding: 4px;
+}
+
+.ag-dark .ag-group-cell {
+    font-style: italic;
+}
+
+.ag-dark .ag-footer-cell {
+    font-style: italic;
+}
+
 .ag-dark .ag-filter {
     color: black;
 }

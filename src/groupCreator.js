@@ -42,7 +42,7 @@ define([
                         field: groupByField,
                         id: index--,
                         key: groupKey,
-                        expanded: expandByDefault,
+                        expanded: this.isExpanded(expandByDefault, currentLevel),
                         children: [],
                         // for top most level, parent is null
                         parent: currentGroup === topMostGroup ? null : currentGroup,
@@ -73,6 +73,14 @@ define([
         }
 
         return topMostGroup.children;
+    };
+
+    GroupCreator.prototype.isExpanded = function(expandByDefault, level) {
+        if (typeof expandByDefault === 'number') {
+            return level < expandByDefault;
+        } else {
+            return expandByDefault === true || expandByDefault === 'true';
+        }
     };
 
     return new GroupCreator();

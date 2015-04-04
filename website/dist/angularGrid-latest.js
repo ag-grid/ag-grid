@@ -1165,6 +1165,21 @@ define('../src/utils',[], function() {
         }
     };
 
+    // tries to use the provided renderer. if a renderer found, returns true.
+    // if no renderer, returns false.
+    Utils.prototype.useRenderer = function(eParent, eRenderer, params) {
+        var resultFromRenderer = eRenderer(params);
+        if (this.isNode(resultFromRenderer) || this.isElement(resultFromRenderer)) {
+            //a dom node or element was returned, so add child
+            eParent.appendChild(resultFromRenderer);
+        } else {
+            //otherwise assume it was html, so just insert
+            var eTextSpan = document.createElement('span');
+            eTextSpan.innerHTML = resultFromRenderer;
+            eParent.appendChild(eTextSpan);
+        }
+    };
+
     return new Utils();
 
 });
@@ -2067,7 +2082,7 @@ define('../src/groupCreator',[
                         field: groupByField,
                         id: index--,
                         key: groupKey,
-                        expanded: expandByDefault,
+                        expanded: this.isExpanded(expandByDefault, currentLevel),
                         children: [],
                         // for top most level, parent is null
                         parent: currentGroup === topMostGroup ? null : currentGroup,
@@ -2098,6 +2113,14 @@ define('../src/groupCreator',[
         }
 
         return topMostGroup.children;
+    };
+
+    GroupCreator.prototype.isExpanded = function(expandByDefault, level) {
+        if (typeof expandByDefault === 'number') {
+            return level < expandByDefault;
+        } else {
+            return expandByDefault === true || expandByDefault === 'true';
+        }
     };
 
     return new GroupCreator();
@@ -2254,7 +2277,7 @@ define('../src/rowController',[
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
-            var expandByDefault = this.gridOptionsWrapper.isGroupDefaultExpanded();
+            var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
             rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
@@ -2378,17 +2401,10 @@ define('../src/rowController',[
     };
 
     RowController.prototype.doGroupMapping = function () {
-        var rowsAfterMap;
-
-        // took this 'if' statement out to allow user to provide items already grouped.
-        // want to keep an eye on performance, if grid still performs with this 'additional'
-        // step, then will leave as below.
-        //if (this.gridOptionsWrapper.getGroupKeys()) {
-            rowsAfterMap = [];
-            this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        //} else {
-        //    rowsAfterMap = this.rowModel.getRowsAfterSort();
-        //}
+        // even if not going grouping, we do the mapping, as the client might
+        // of passed in data that already has a grouping in it somewhere
+        var rowsAfterMap = [];
+        this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
@@ -2401,8 +2417,28 @@ define('../src/rowController',[
             mappedData.push(node);
             if (node.group && node.expanded) {
                 this.addToMap(mappedData, node.childrenAfterSort);
+
+                // put a footer in if user is looking for it
+                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                    var footerNode = this.createFooterNode(node);
+                    mappedData.push(footerNode);
+                }
             }
         }
+    };
+
+    RowController.prototype.createFooterNode = function (groupNode) {
+        var footerNode = {};
+        Object.keys(groupNode).forEach(function (key) {
+            footerNode[key] = groupNode[key];
+        });
+        footerNode.footer = true;
+        // get both header and footer to reference each other as siblings. this is never undone,
+        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
+        // sibling - but that's fine, as we can ignore this if the header is contracted.
+        footerNode.sibling = groupNode;
+        groupNode.sibling = footerNode;
+        return footerNode;
     };
 
     RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
@@ -2760,6 +2796,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         //var rowData = node.rowData;
         var rowIsAGroup = node.group;
+        var rowIsAFooter = node.footer;
 
         var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
         var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
@@ -2783,7 +2820,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             var firstColWrapper = columnDefWrappers[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex);
+            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
             if (pinnedColumnCount>0) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
@@ -2791,29 +2828,33 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
 
             if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex);
+                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
             if (!groupHeaderTakesEntireRow) {
 
-                //draw in blank cells for the rest of the row
-                var groupHasData = node.data !== undefined && node.data !== null;
+                // draw in cells for the rest of the row.
+                // if group is a footer, always show the data.
+                // if group is a header, only show data if not expanded
+                var groupData;
+                if (node.footer) {
+                    groupData = node.data;
+                } else {
+                    groupData = node.expanded ? undefined : node.data;
+                }
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
-                    var item = null;
-                    if (groupHasData) {
-                        item = node.data[colDefWrapper.colDef.field];
-                    }
-                    _this.createCellFromColDef(colDefWrapper, item, node, rowIndex, colIndex, pinnedColumnCount, true, eMainRow, ePinnedRow, newChildScope);
+                    var value = groupData ? groupData[colDefWrapper.colDef.field] : undefined;
+                    _this.createCellFromColDef(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
             columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, node.data[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, false, eMainRow, ePinnedRow, newChildScope);
+                _this.createCellFromColDef(colDefWrapper, node.data[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -2847,8 +2888,8 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, isGroup, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, $childScope);
 
         if (colIndex>=pinnedColumnCount) {
             eMainRow.appendChild(eGridCell);
@@ -2857,12 +2898,36 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
-        var eRow = document.createElement("div");
+    RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
         var classesList = ["ag-row"];
         classesList.push(rowIndex%2==0 ? "ag-row-even" : "ag-row-odd");
+
         if (this.selectionController.isNodeSelected(node)) {
             classesList.push("ag-row-selected");
+        }
+        if (node.group) {
+            // if a group, put the level of the group in
+            classesList.push("ag-row-level-" + node.level);
+        } else {
+            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+            if (node.parent) {
+                classesList.push("ag-row-level-" + (node.parent.level + 1) );
+            } else {
+                classesList.push("ag-row-level-0");
+            }
+        }
+        if (node.group) {
+            classesList.push("ag-row-group");
+        }
+        if (node.group && !node.footer && node.expanded) {
+            classesList.push("ag-row-group-expanded");
+        }
+        if (node.group && !node.footer && !node.expanded) {
+            // opposite of expanded is contracted according to the internet.
+            classesList.push("ag-row-group-contracted");
+        }
+        if (node.group && node.footer) {
+            classesList.push("ag-row-footer");
         }
 
         // add in extra classes provided by the config
@@ -2884,6 +2949,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var classes = classesList.join(" ");
 
         eRow.className = classes;
+    };
+
+    RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
+        var eRow = document.createElement("div");
+
+        this.addClassesToRow(rowIndex, node, eRow);
 
         eRow.setAttribute("row", rowIndex);
 
@@ -2930,50 +3001,50 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return -1;
     };
 
-    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex) {
-        var eGridGroupRow = document.createElement('div');
+    RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, useEntireRow) {
         if (useEntireRow) {
-            eGridGroupRow.className = 'ag-group-cell-entire-row';
+            if (footer) {
+                eGridGroupRow.className = 'ag-footer-cell-entire-row';
+            } else {
+                eGridGroupRow.className = 'ag-group-cell-entire-row';
+            }
         } else {
-            eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+0;
+            if (footer) {
+                eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-'+0;
+            } else {
+                eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+0;
+            }
         }
+    };
 
-        if (!padding) {
+    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex, footer) {
+        var eGridGroupRow = document.createElement('div');
+
+        this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow);
+
+        var expandIconNeeded = !padding && !footer;
+        if (expandIconNeeded) {
             this.addGroupExpandIcon(eGridGroupRow, node.expanded);
         }
 
-        // if selection, add in selection box
-        if (!padding && this.gridOptionsWrapper.isGroupCheckboxSelection()) {
+        var checkboxNeeded = !padding && !footer && this.gridOptionsWrapper.isGroupCheckboxSelection();
+        if (checkboxNeeded) {
             var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
             eGridGroupRow.appendChild(eCheckbox);
         }
 
-        // if renderer provided, use it
-        if (this.gridOptions.groupInnerCellRenderer) {
-            var rendererParams = {
-                data: node.data, node: node, padding: padding, gridOptions: this.gridOptions
-            };
-            var resultFromRenderer = this.gridOptions.groupInnerCellRenderer(rendererParams);
-            if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-                //a dom node or element was returned, so add child
-                eGridGroupRow.appendChild(resultFromRenderer);
-            } else {
-                //otherwise assume it was html, so just insert
-                var eTextSpan = document.createElement('span');
-                eTextSpan.innerHTML = resultFromRenderer;
-                eGridGroupRow.appendChild(eTextSpan);
-            }
+        // try user custom rendering first
+        var useRenderer = typeof this.gridOptions.groupInnerCellRenderer === 'function';
+        if (useRenderer) {
+            var rendererParams = { data: node.data, node: node, padding: padding, gridOptions: this.gridOptions };
+            utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
         } else {
-            // otherwise default is display the key along with the child count
-            if (!padding) { //only do it if not padding - if we are padding, we display blank row
-                var textToDisplay = " " + node.key;
-                // only include the child count if it's included, eg if user doing custom aggregation,
-                // then this could be left out, or set to -1, ie no child count
-                if (node.allChildrenCount >= 0) {
-                    textToDisplay += " (" + node.allChildrenCount + ")";
+            if (!padding) {
+                if (footer) {
+                    this.createFooterCell(eGridGroupRow, node);
+                } else {
+                    this.createGroupCell(eGridGroupRow, node);
                 }
-                var eText = document.createTextNode(textToDisplay);
-                eGridGroupRow.appendChild(eText);
             }
         }
 
@@ -2986,42 +3057,60 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             // only do this if an indent - as this overwrites the padding that
             // the theme set, which will make things look 'not aligned' for the
             // first group level.
-            if (node.level > 0) {
-                eGridGroupRow.style.paddingLeft = (node.level * 10) + "px";
+            if (node.footer || node.level > 0) {
+                var paddingPx = node.level * 10;
+                if (footer) {
+                    paddingPx += 10;
+                }
+                eGridGroupRow.style.paddingLeft = paddingPx + "px";
             }
         }
 
-        var _this = this;
+        var that = this;
         eGridGroupRow.addEventListener("click", function() {
             node.expanded = !node.expanded;
-            _this.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
+            that.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
         });
 
         return eGridGroupRow;
     };
 
+    // creates cell with 'Total {{key}}' for a group
+    RowRenderer.prototype.createFooterCell = function(eParent, node) {
+        // if we are doing cell - then it makes sense to put in 'total', which is just a best guess,
+        // that the user is going to want to say 'total'. typically i expect the user to override
+        // how this cell is rendered
+        var textToDisplay;
+        if (this.gridOptionsWrapper.isGroupUseEntireRow()) {
+            textToDisplay = "Group footer - you should provide a custom groupInnerCellRenderer to render what makes sense for you"
+        } else {
+            textToDisplay = "Total " + node.key;
+        }
+        var eText = document.createTextNode(textToDisplay);
+        eParent.appendChild(eText);
+    };
+
+    // creates cell with '{{key}} ({{childCount}})' for a group
+    RowRenderer.prototype.createGroupCell = function(eParent, node) {
+        var textToDisplay = " " + node.key;
+        // only include the child count if it's included, eg if user doing custom aggregation,
+        // then this could be left out, or set to -1, ie no child count
+        if (node.allChildrenCount >= 0) {
+            textToDisplay += " (" + node.allChildrenCount + ")";
+        }
+        var eText = document.createTextNode(textToDisplay);
+        eParent.appendChild(eText);
+    };
+
     RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
         var groupIconRenderer = this.gridOptionsWrapper.getGroupIconRenderer();
 
-        // if no renderer for group icon, use the default
-        if (typeof groupIconRenderer !== 'function') {
+        if (typeof groupIconRenderer === 'function') {
+            utils.useRenderer(eGridGroupRow, groupIconRenderer, expanded);
+        } else {
             var eSvg = svgFactory.createGroupSvg(expanded);
             eGridGroupRow.appendChild(eSvg);
-            return;
         }
-
-        // otherwise, use the renderer
-        var resultFromRenderer = groupIconRenderer(expanded);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-            //a dom node or element was returned, so add child
-            eGridGroupRow.appendChild(resultFromRenderer);
-        } else {
-            //otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = resultFromRenderer;
-            eGridGroupRow.appendChild(eTextSpan);
-        }
-
     };
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
@@ -3032,52 +3121,54 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             };
             var resultFromRenderer = colDef.cellRenderer(rendererParams);
             if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-                //a dom node or element was returned, so add child
+                // a dom node or element was returned, so add child
                 eGridCell.appendChild(resultFromRenderer);
             } else {
-                //otherwise assume it was html, so just insert
+                // otherwise assume it was html, so just insert
                 eGridCell.innerHTML = resultFromRenderer;
             }
         } else {
-            //if we insert undefined, then it displays as the string 'undefined', ugly!
+            // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (value!==undefined && value!==null && value!=='') {
                 eGridCell.innerHTML = value;
             }
         }
     };
 
-    RowRenderer.prototype.putDataAndSelectionCheckboxIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
-        var eCellWrapper = document.createElement('span');
-
-        eGridCell.appendChild(eCellWrapper);
-
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
-        eCellWrapper.appendChild(eCheckbox);
-
-        var eDivWithValue = document.createElement("span");
-        eCellWrapper.appendChild(eDivWithValue);
-
-        this.putDataIntoCell(colDef, value, node, $childScope, eDivWithValue, rowIndex);
-    };
-
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, isGroup, $childScope) {
+    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
         eGridCell.setAttribute("col", colIndex);
 
         // set class, only include ag-group-cell if it's a group cell
         var classes = ['ag-cell', 'cell-col-'+colIndex];
-        if (isGroup) {
-            classes.push('ag-group-cell');
+        if (node.group) {
+            if (node.footer) {
+                classes.push('ag-footer-cell');
+            } else {
+                classes.push('ag-group-cell');
+            }
         }
         eGridCell.className = classes.join(' ');
 
+        var eCellWrapper = document.createElement('span');
+        eGridCell.appendChild(eCellWrapper);
+
+        // see if we need a padding box
+        if (colIndex === 0 && (node.parent)) {
+            var pixelsToIndent = 20 + (node.parent.level * 10);
+            eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
+        }
+
         var colDef = colDefWrapper.colDef;
         if (colDef.checkboxSelection) {
-            this.putDataAndSelectionCheckboxIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
-        } else {
-            this.putDataIntoCell(colDef, value, node, $childScope, eGridCell, rowIndex);
+            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
+            eCellWrapper.appendChild(eCheckbox);
         }
+
+        var eSpanWithValue = document.createElement("span");
+        eCellWrapper.appendChild(eSpanWithValue);
+        this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
 
         if (colDef.cellStyle) {
             var cssToUse;
@@ -3697,6 +3788,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
+    GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
@@ -3707,7 +3799,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
     GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
-    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return isTrue(this.gridOptions.groupDefaultExpanded); };
+    GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
     GridOptionsWrapper.prototype.getGroupIconRenderer = function() { return this.gridOptions.groupIconRenderer; };
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
@@ -3971,6 +4063,16 @@ define('../src/selectionController',['./utils'], function(utils) {
     SelectionController.prototype.selectNode = function (node, tryMulti) {
         var multiSelect = this.gridOptionsWrapper.isRowSelectionMulti() && tryMulti;
 
+        // if the node is a group, then selecting this is the same as selecting the parent,
+        // so to have only one flow through the below, we always select the header parent
+        // (which then has the side effect of selecting the child).
+        var nodeToSelect;
+        if (node.footer) {
+            nodeToSelect = node.sibling;
+        } else {
+            nodeToSelect = node;
+        }
+
         // at the end, if this is true, we inform the callback
         var atLeastOneItemUnselected = false;
         var atLeastOneItemSelected = false;
@@ -3980,12 +4082,12 @@ define('../src/selectionController',['./utils'], function(utils) {
             atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
         }
 
-        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
+        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && nodeToSelect.group) {
             // don't select the group, select the children instead
-            atLeastOneItemSelected = this.recursivelySelectAllChildren(node);
+            atLeastOneItemSelected = this.recursivelySelectAllChildren(nodeToSelect);
         } else {
             // see if row needs to be selected
-            atLeastOneItemSelected = this.doWorkOfSelectNode(node);
+            atLeastOneItemSelected = this.doWorkOfSelectNode(nodeToSelect);
         }
 
         if (atLeastOneItemUnselected || atLeastOneItemSelected) {
@@ -4038,13 +4140,11 @@ define('../src/selectionController',['./utils'], function(utils) {
 
         this.selectedNodesById[node.id] = node;
 
-        // set css class on selected row
-        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
-        if (virtualRenderedRowIndex >= 0) {
-            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+        this.addCssClassForNode_andInformVirtualRowListener(node);
 
-            // inform virtual row listener
-            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
+        // also color in the footer if there is one
+        if (node.group && node.expanded && node.sibling) {
+            this.addCssClassForNode_andInformVirtualRowListener(node.sibling);
         }
 
         // inform the rowSelected listener, if any
@@ -4053,6 +4153,21 @@ define('../src/selectionController',['./utils'], function(utils) {
         }
 
         return true;
+    };
+
+    // private
+    // 1 - selects a node
+    // 2 - updates the UI
+    // 3 - calls callbacks
+    // wow - what a big name for a method, exception case, it's saying what the method does
+    SelectionController.prototype.addCssClassForNode_andInformVirtualRowListener = function (node) {
+        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        if (virtualRenderedRowIndex >= 0) {
+            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+
+            // inform virtual row listener
+            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
+        }
     };
 
     // private
@@ -4080,15 +4195,25 @@ define('../src/selectionController',['./utils'], function(utils) {
     // private
     SelectionController.prototype.deselectNode = function (node) {
         // deselect the css
+        this.removeCssClassForNode(node);
+
+        // if node is a header, and if it has a sibling footer, deselect the footer also
+        if (node.group && node.expanded && node.sibling) { // also check that it's expanded, as sibling could be a ghost
+            this.removeCssClassForNode(node.sibling);
+        }
+
+        // remove the row
+        this.selectedNodesById[node.id] = undefined;
+    };
+
+    // private
+    SelectionController.prototype.removeCssClassForNode = function (node) {
         var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
         if (virtualRenderedRowIndex >= 0) {
             utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
             // inform virtual row listener
             this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, false);
         }
-
-        // remove the row
-        this.selectedNodesById[node.id] = undefined;
     };
 
     // public (selectionRendererFactory)
@@ -4822,7 +4947,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n    /*background-color: #ECF1EF;*/\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

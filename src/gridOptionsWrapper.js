@@ -16,6 +16,7 @@ define([], function() {
     GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
+    GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
     GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
     GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
@@ -26,7 +27,7 @@ define([], function() {
     GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
     GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
     GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
-    GridOptionsWrapper.prototype.isGroupDefaultExpanded = function() { return isTrue(this.gridOptions.groupDefaultExpanded); };
+    GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
     GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
     GridOptionsWrapper.prototype.getGroupIconRenderer = function() { return this.gridOptions.groupIconRenderer; };
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };

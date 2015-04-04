@@ -19,7 +19,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 200, cellStyle: {'padding-left': '40px'} },
+        {displayName: "Athlete", field: "athlete", width: 200},
         {displayName: "Age", field: "age", width: 90},
         {displayName: "Gold", field: "gold", width: 100},
         {displayName: "Silver", field: "silver", width: 100},

@@ -29,6 +29,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         groupKeys: ['category'],
         groupHeaders: true,
         groupDefaultExpanded: true,
+        groupIncludeFooter: true,
         enableColResize: true,
         enableSorting: false,
         dontUseScrolls: true,

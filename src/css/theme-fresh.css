@@ -80,14 +80,24 @@
 
 .ag-fresh .ag-row-selected {
     background-color: #B2DFEE;
-    /*background-color: #ECF1EF;*/
 }
 
 .ag-fresh .ag-group-cell-entire-row {
     background-color: #aaa;
+    padding: 4px;
+}
+
+.ag-fresh .ag-footer-cell-entire-row {
+    background-color: #aaa;
+    padding: 4px;
 }
 
 .ag-fresh .ag-group-cell {
+    font-style: italic;
+}
+
+.ag-fresh .ag-footer-cell {
+    font-style: italic;
 }
 
 .ag-fresh .ag-filter-checkbox {

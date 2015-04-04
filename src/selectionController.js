@@ -38,6 +38,16 @@ define(['./utils'], function(utils) {
     SelectionController.prototype.selectNode = function (node, tryMulti) {
         var multiSelect = this.gridOptionsWrapper.isRowSelectionMulti() && tryMulti;
 
+        // if the node is a group, then selecting this is the same as selecting the parent,
+        // so to have only one flow through the below, we always select the header parent
+        // (which then has the side effect of selecting the child).
+        var nodeToSelect;
+        if (node.footer) {
+            nodeToSelect = node.sibling;
+        } else {
+            nodeToSelect = node;
+        }
+
         // at the end, if this is true, we inform the callback
         var atLeastOneItemUnselected = false;
         var atLeastOneItemSelected = false;
@@ -47,12 +57,12 @@ define(['./utils'], function(utils) {
             atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
         }
 
-        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
+        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && nodeToSelect.group) {
             // don't select the group, select the children instead
-            atLeastOneItemSelected = this.recursivelySelectAllChildren(node);
+            atLeastOneItemSelected = this.recursivelySelectAllChildren(nodeToSelect);
         } else {
             // see if row needs to be selected
-            atLeastOneItemSelected = this.doWorkOfSelectNode(node);
+            atLeastOneItemSelected = this.doWorkOfSelectNode(nodeToSelect);
         }
 
         if (atLeastOneItemUnselected || atLeastOneItemSelected) {
@@ -105,13 +115,11 @@ define(['./utils'], function(utils) {
 
         this.selectedNodesById[node.id] = node;
 
-        // set css class on selected row
-        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
-        if (virtualRenderedRowIndex >= 0) {
-            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+        this.addCssClassForNode_andInformVirtualRowListener(node);
 
-            // inform virtual row listener
-            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
+        // also color in the footer if there is one
+        if (node.group && node.expanded && node.sibling) {
+            this.addCssClassForNode_andInformVirtualRowListener(node.sibling);
         }
 
         // inform the rowSelected listener, if any
@@ -120,6 +128,21 @@ define(['./utils'], function(utils) {
         }
 
         return true;
+    };
+
+    // private
+    // 1 - selects a node
+    // 2 - updates the UI
+    // 3 - calls callbacks
+    // wow - what a big name for a method, exception case, it's saying what the method does
+    SelectionController.prototype.addCssClassForNode_andInformVirtualRowListener = function (node) {
+        var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
+        if (virtualRenderedRowIndex >= 0) {
+            utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+
+            // inform virtual row listener
+            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
+        }
     };
 
     // private
@@ -147,15 +170,25 @@ define(['./utils'], function(utils) {
     // private
     SelectionController.prototype.deselectNode = function (node) {
         // deselect the css
+        this.removeCssClassForNode(node);
+
+        // if node is a header, and if it has a sibling footer, deselect the footer also
+        if (node.group && node.expanded && node.sibling) { // also check that it's expanded, as sibling could be a ghost
+            this.removeCssClassForNode(node.sibling);
+        }
+
+        // remove the row
+        this.selectedNodesById[node.id] = undefined;
+    };
+
+    // private
+    SelectionController.prototype.removeCssClassForNode = function (node) {
         var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
         if (virtualRenderedRowIndex >= 0) {
             utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
             // inform virtual row listener
             this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, false);
         }
-
-        // remove the row
-        this.selectedNodesById[node.id] = undefined;
     };
 
     // public (selectionRendererFactory)

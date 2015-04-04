@@ -164,6 +164,21 @@ define([], function() {
         }
     };
 
+    // tries to use the provided renderer. if a renderer found, returns true.
+    // if no renderer, returns false.
+    Utils.prototype.useRenderer = function(eParent, eRenderer, params) {
+        var resultFromRenderer = eRenderer(params);
+        if (this.isNode(resultFromRenderer) || this.isElement(resultFromRenderer)) {
+            //a dom node or element was returned, so add child
+            eParent.appendChild(resultFromRenderer);
+        } else {
+            //otherwise assume it was html, so just insert
+            var eTextSpan = document.createElement('span');
+            eTextSpan.innerHTML = resultFromRenderer;
+            eParent.appendChild(eTextSpan);
+        }
+    };
+
     return new Utils();
 
 });
