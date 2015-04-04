@@ -4,7 +4,7 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 200},
+        {displayName: "Athlete", field: "athlete", checkboxSelection: true, width: 200},
         {displayName: "Gold", field: "gold", width: 100},
         {displayName: "Silver", field: "silver", width: 100},
         {displayName: "Bronze", field: "bronze", width: 100},
@@ -20,11 +20,14 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: [],
         groupUseEntireRow: false,
-        groupKeys: ['country'],
-        groupAggFunction: groupAggFunction
+        groupKeys: ['country','sport'],
+        groupAggFunction: groupAggFunction,
+        groupIncludeFooter: true,
+        groupSelection: true,
+        groupCheckboxSelection: 'children'
     };
 
-    function groupAggFunction(nodes) {
+    function groupAggFunction(rows) {
 
         var sums = {
             gold: 0,
@@ -33,12 +36,15 @@ module.controller("exampleCtrl", function($scope, $http) {
             total: 0
         };
 
-        nodes.forEach(function(node) {
-            var data = node.data;
+        rows.forEach(function(row) {
+
+            var data = row.data;
+
             sums.gold += data.gold;
             sums.silver += data.silver;
             sums.bronze += data.bronze;
             sums.total += data.total;
+
         });
 
         return sums;

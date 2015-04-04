@@ -56,19 +56,19 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    <div class="bigTitle">Grouping Example</div>
+    <h3>Grouping Example</h3>
 
     Below shows a simple grouping example, using one attribute to group, the entire row is used and no aggregation function.
 
     <show-example example="example1"></show-example>
 
-    <div class="bigTitle">Grouping with Aggregation</div>
+    <h3>Grouping with Aggregation</h3>
 
     Below shows a more complex example, using aggregation to sum the number of medals for each country.
 
     <show-example example="example2"></show-example>
 
-    <div class="bigTitle">Multi-Level Grouping with Aggregation</div>
+    <h3>Multi-Level Grouping with Aggregation</h3>
 
     Even more complicated, multiple levels of grouping and aggregation.
 
@@ -80,7 +80,26 @@ include '../documentation_header.php';
 
     <show-example example="example3"></show-example>
 
-    <div class="bigTitle">Advanced Multi-Level Grouping</div>
+    <h3>Grouping Footers</h3>
+
+    <p>
+        If you want to include a footer with each group, set the property <i>groupIncludeFooter</i> to true.
+        The footer is displayed as the last line of the group when then group is expanded - it is not displayed
+        when the group is collapsed.
+    </p>
+    <p>
+        The footer will display the word 'Total' followed by the group key.
+    </p>
+    <p>
+        When showing the groups in one column, the aggregation data is displayed
+        in the group header when collapsed, and only in the footer when expanded (ie it moves from the header
+        to the footer). To have different rendering, provide a custom <i>groupInnerCellRenderer</i>, where
+        the renderer can check if it's a header or footer.
+    </p>
+
+    <show-example example="groupingFooters"></show-example>
+
+    <h3>Advanced Multi-Level Grouping</h3>
 
     When doing aggregations, it is not always possible to just 'sum' the values, especially if they
     are not number values. The example below shows a complex custom aggregation over age giving
@@ -88,16 +107,16 @@ include '../documentation_header.php';
 
     <show-example example="example4"></show-example>
 
-    <div class="bigTitle">Group Row Rendering</div>
+    <h3>Group Row Rendering</h3>
 
     It is possible to override the rendering of the group row. Below shows an example of aggregating,
     then using the entire row to give a summary.
 
     <show-example example="example5"></show-example>
 
-    <h4>Custom Expand / Collapse Icon</h4>
+    <h3>Custom Expand / Collapse Icons</h3>
 
-    It is possible to override the default collapse / expand icon. This is set by providing
+    It is possible to override the default expand / collapse icons. This is set by providing
     a renderer to the grid options. Like all other renderers, the result can either be an
     html DOM element, or an string that will be treated as HTML.
 
@@ -117,10 +136,6 @@ include '../documentation_header.php';
     return '&lt;i class="fa fa-plus-square-o"/>';
   }
 }</pre>
-
-    <p>
-    todo: need to document how footers work
-    </p>
 
 </div>
 
