@@ -8,17 +8,23 @@ include 'documentation_header.php';
 
 <div>
 
-    <h2>Foreword</h2>
+    <div style="width: 800px; font-size: 16px;">
+        <h2>The Community is Growing</h2>
+        <div style="border: 1px solid darkgrey; background-color: lightgrey; padding: 10px;">
+            <p>
+                <b>Thank you</b> to everyone who has started to use Angular Grid.
+            </p>
+            <p>
+                Last week saw <b>over 10,000 visits</b> to the Angular Grid website. Github stars are now in the hundreds.
+                People are actively asking questions and getting involved.
+            </p>
+            <p>
+                Please keep spreading the word!!
+            </p>
+            <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+        </div>
 
-    <div style="width: 800px;">
-        <p>
-            I am committed to writing documentation and providing examples. If you notice anything
-            wrong with the documentation, please let me know, so I can expand on it. If you have
-            any examples of the grid you can share, please send them on.
-        </p>
-        <p>
-            I hope you enjoy using Angular Grid!!
-        </p>
         <h4>
             Help Grow the Community
         </h4>

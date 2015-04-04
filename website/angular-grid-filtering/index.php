@@ -14,7 +14,7 @@ include '../documentation_header.php';
     You have two options for filtering, one is use on of the default built-in filters (easy but limited),
     or bake your own custom filters (powerful but more difficult).
 
-    <div class="bigTitle">Enable Filtering</div>
+    <h3>Enable Filtering</h3>
 
     Turn filtering on for the grid by enabling filtering in the grid options. When on, each column header will have
     the filter menu icon appear when the mouse hovers over it. When clicked, a filter menu will appear. The menu
@@ -24,7 +24,7 @@ include '../documentation_header.php';
 
     When a filter is active on a column, the filter icon appears before the column name in the header.
 
-    <div class="bigTitle">Default Built-In Filters</div>
+    <h3>Default Built-In Filters</h3>
 
     The following filter options can be set for a column definition:
 
@@ -50,7 +50,7 @@ include '../documentation_header.php';
 
     If no filter type is specified, the default 'set' filter is used.
 
-    <div class="bigTitle">Filter Parameters</div>
+    <h3>Filter Parameters</h3>
 
     An additional attribute on the column definition, filterParams, can be used to provide extra information to
     the filter. Currently only set filter makes use of this nad takes a cellRenderer and rowHeight as follows:
@@ -63,19 +63,28 @@ columnDefinition = {
     filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
 }</pre>
 
-    <div class="bigTitle">Quick Filter</div>
+    <h3>Quick Filter</h3>
 
     In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
     GMail) can also be applied. Set the quick filter text into the grid options and tell the grid, via the API,
     to filter the data (which will include the new quick filter).
 
-    <div class="bigTitle">Built In Filters Example</div>
+    <h3>Built In Filters Example</h3>
 
     The example below shows the three types of built in filters, as well as the quick filter, in action.
 
     <show-example example="example1"></show-example>
 
-    <div class="bigTitle">Custom Filtering</div>
+    <h3>Filter Icon</h3>
+
+    You can provide a custom filter icon to be used in the header. This is done by providing a
+    <i>filterIconRenderer</i> in the grid options. The method can return back a string of HTML
+    or a DOM object. The example below uses the Font Awesome filter icon.
+    <pre>gridOptions.filterIconRenderer: function () {
+        return '&lt;i class="fa fa-filter"/>';
+    }</pre>
+
+    <h3>Custom Filtering</h3>
 
     If the filters provided don't provide what you want, then it's time to build your own filter class.
 
@@ -167,8 +176,7 @@ columnDefinition = {
         </tr>
     </table>
 
-    <div class="bigTitle">Custom Filters Example</div>
-
+    <h3>Custom Filter Example</h3>
     The example below shows a custom filter on the Athlete column.
 
     <show-example example="example2"></show-example>

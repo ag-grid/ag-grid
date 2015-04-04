@@ -195,6 +195,23 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         });
     };
 
+    HeaderRenderer.prototype.createFilterIcon = function() {
+        if (typeof this.gridOptionsWrapper.getFilterIconRenderer() === 'function') {
+            var rendererResult = this.gridOptionsWrapper.getFilterIconRenderer()();
+            if (typeof rendererResult === 'string') {
+                var eSpan = document.createElement('span');
+                eSpan.innerHTML = rendererResult;
+                return eSpan;
+            } else if (utils.isNodeOrElement(rendererResult)) {
+                return rendererResult;
+            } else {
+                throw 'filterIconRenderer - function should return DOM object or String';
+            }
+        } else {
+            return svgFactory.createFilterSvg();
+        }
+    };
+
     HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
         var that = this;
         var colDef = colDefWrapper.colDef;
@@ -253,7 +270,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
 
         // add in filter icon
-        var filterIcon = svgFactory.createFilterSvg();
+        var filterIcon = this.createFilterIcon();
         this.headerFilterIcons[colDefWrapper.colKey] = filterIcon;
         headerCellLabel.appendChild(filterIcon);
 

@@ -24,6 +24,10 @@ define([], function() {
         );
     };
 
+    Utils.prototype.isNodeOrElement = function(o) {
+        return this.isNode(o) || this.isElement(o);
+    };
+
     //adds all type of change listeners to an element, intended to be a text field
     Utils.prototype.addChangeListener = function(element, listener) {
         element.addEventListener("changed", listener);
