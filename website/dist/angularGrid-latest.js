@@ -3501,7 +3501,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         }
     };
 
-    HeaderRenderer.prototype.getIcon = function(iconFromGridOptions, theDefaultFunc) {
+    HeaderRenderer.prototype.createIcon = function(iconFromGridOptions, theDefaultFunc) {
         if (typeof iconFromGridOptions === 'function') {
             var rendererResult = iconFromGridOptions();
             if (typeof rendererResult === 'string') {

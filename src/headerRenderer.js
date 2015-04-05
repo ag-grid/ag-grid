@@ -194,40 +194,6 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         });
     };
 
-    HeaderRenderer.prototype.createFilterIcon = function() {
-        if (typeof this.gridOptionsWrapper.getFilterIconRenderer() === 'function') {
-            var rendererResult = this.gridOptionsWrapper.getFilterIconRenderer()();
-            if (typeof rendererResult === 'string') {
-                var eSpan = document.createElement('span');
-                eSpan.innerHTML = rendererResult;
-                return eSpan;
-            } else if (utils.isNodeOrElement(rendererResult)) {
-                return rendererResult;
-            } else {
-                throw 'filterIconRenderer - function should return DOM object or String';
-            }
-        } else {
-            return svgFactory.createFilterSvg();
-        }
-    };
-
-    HeaderRenderer.prototype.getIcon = function(iconFromGridOptions, theDefaultFunc) {
-        if (typeof iconFromGridOptions === 'function') {
-            var rendererResult = iconFromGridOptions();
-            if (typeof rendererResult === 'string') {
-                var eSpan = document.createElement('span');
-                eSpan.innerHTML = rendererResult;
-                return eSpan;
-            } else if (utils.isNodeOrElement(rendererResult)) {
-                return rendererResult;
-            } else {
-                throw 'iconRenderer should return back a string or a dom object';
-            }
-        } else {
-            return theDefaultFunc();
-        }
-    };
-
     HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
         var that = this;
         var colDef = colDefWrapper.colDef;
@@ -257,7 +223,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         // filter button
         var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
         if (showMenu) {
-            var eMenuButton = svgFactory.createMenuSvg();
+            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, colDefWrapper, svgFactory.createMenuSvg);
+            utils.addCssClass(eMenuButton, 'ag-header-icon');
+
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
                 that.filterManager.showFilter(colDefWrapper, this);
@@ -278,19 +246,22 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
 
-        // add in sort icon
+        // add in sort icons
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            colDefWrapper.eSortAsc = svgFactory.createSortAscSvg();
-            colDefWrapper.eSortDesc = svgFactory.createSortDescSvg();
+            colDefWrapper.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortAscSvg);
+            colDefWrapper.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortDescSvg);
+            utils.addCssClass(colDefWrapper.eSortAsc, 'ag-header-icon');
+            utils.addCssClass(colDefWrapper.eSortDesc, 'ag-header-icon');
             headerCellLabel.appendChild(colDefWrapper.eSortAsc);
             headerCellLabel.appendChild(colDefWrapper.eSortDesc);
-            colDefWrapper.eSortAsc.setAttribute('display', 'none');
-            colDefWrapper.eSortDesc.setAttribute('display', 'none');
+            colDefWrapper.eSortAsc.style.display = 'none';
+            colDefWrapper.eSortDesc.style.display = 'none';
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
         // add in filter icon
-        colDefWrapper.eFilterIcon = this.createFilterIcon();
+        colDefWrapper.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, colDefWrapper, svgFactory.createFilterSvg);
+        utils.addCssClass(colDefWrapper.eFilterIcon, 'ag-header-icon');
         headerCellLabel.appendChild(colDefWrapper.eFilterIcon);
 
         // render the cell, use a renderer if one is provided
@@ -332,6 +303,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         } else {
             // no renderer, default text render
             var eInnerText = document.createElement("span");
+            eInnerText.className = 'ag-header-cell-text';
             eInnerText.innerHTML = colDef.displayName;
             headerCellLabel.appendChild(eInnerText);
         }
@@ -357,7 +329,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             }
 
             // clear sort on all columns except this one, and update the icons
-            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear, colIndex) {
+            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear) {
                 if (colWrapperToClear!==colDefWrapper) {
                     colWrapperToClear.sort = null;
                 }
@@ -371,8 +343,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 var sortAscending = colWrapperToClear.sort === constants.ASC;
                 var sortDescending = colWrapperToClear.sort === constants.DESC;
 
-                colWrapperToClear.eSortAsc.setAttribute("display", sortAscending ? 'inline' : 'none');
-                colWrapperToClear.eSortDesc.setAttribute("display", sortDescending ? 'inline' : 'none');
+                colWrapperToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
+                colWrapperToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
             });
 
             that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
@@ -491,7 +463,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var that = this;
         this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
             var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
-            var displayStyle = filterPresent ? "inline" : "none";
+            var displayStyle = filterPresent ? 'inline' : 'none';
             colDefWrapper.eFilterIcon.style.display = displayStyle;
         });
     };
