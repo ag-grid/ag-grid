@@ -116,10 +116,6 @@
     overflow: hidden;
 }
 
-.ag-header-cell-sort {
-    padding-right: 2px;
-}
-
 .ag-header-cell-resize {
     height: 100%;
     width: 4px;
@@ -129,7 +125,6 @@
 
 .ag-header-cell-menu-button {
     float: right;
-    /*margin-top: 5px;*/
 }
 
 .ag-body {

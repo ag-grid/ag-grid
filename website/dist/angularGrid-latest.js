@@ -1025,6 +1025,10 @@ define('../src/utils',[], function() {
         );
     };
 
+    Utils.prototype.isNodeOrElement = function(o) {
+        return this.isNode(o) || this.isElement(o);
+    };
+
     //adds all type of change listeners to an element, intended to be a text field
     Utils.prototype.addChangeListener = function(element, listener) {
         element.addEventListener("changed", listener);
@@ -2478,7 +2482,7 @@ define('../src/rowController',[
 
     return RowController;
 });
-define('../src/svgFactory',["./constants"], function(constants) {
+define('../src/svgFactory',["./constants"], function() {
 
     var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -2486,9 +2490,7 @@ define('../src/svgFactory',["./constants"], function(constants) {
     }
 
     SvgFactory.prototype.createFilterSvg = function() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
+        var eSvg = createIconSvg();
 
         var eFunnel = document.createElementNS(SVG_NS, "polygon");
         eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
@@ -2500,7 +2502,7 @@ define('../src/svgFactory',["./constants"], function(constants) {
 
     SvgFactory.prototype.createMenuSvg = function() {
         var eSvg = document.createElementNS(SVG_NS, "svg");
-        var size = "12"
+        var size = "12";
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
 
@@ -2516,32 +2518,30 @@ define('../src/svgFactory',["./constants"], function(constants) {
         return eSvg;
     };
 
-    SvgFactory.prototype.createSortArrowSvg  = function(colIndex) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
+    SvgFactory.prototype.createSortDescSvg = function() {
+        var eSvg = createIconSvg();
 
         var eDescIcon = document.createElementNS(SVG_NS, "polygon");
         eDescIcon.setAttribute("points", "0,10 5,0 10,10");
-        eDescIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
+        eDescIcon.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eDescIcon);
+
+        return eSvg;
+    };
+
+    SvgFactory.prototype.createSortAscSvg = function() {
+        var eSvg = createIconSvg();
 
         var eAscIcon = document.createElementNS(SVG_NS, "polygon");
         eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-        eAscIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
+        eAscIcon.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eAscIcon);
 
         return eSvg;
     };
 
     SvgFactory.prototype.createGroupSvg = function(expanded) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
+        var eSvg = createIconSvg();
 
         if (expanded) {
             var eAscIcon = document.createElementNS(SVG_NS, "polygon");
@@ -2555,24 +2555,14 @@ define('../src/svgFactory',["./constants"], function(constants) {
 
         return eSvg;
     };
-    //SvgFactory.prototype.createGroupSvg = function(expanded) {
-    //    var eSvg = document.createElementNS(SVG_NS, "svg");
-    //    eSvg.setAttribute("width", "10");
-    //    eSvg.setAttribute("height", "10");
-    //    eSvg.setAttribute("class", "ag-header-cell-sort");
-    //
-    //    if (expanded) {
-    //        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-    //        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-    //        eSvg.appendChild(eAscIcon);
-    //    } else {
-    //        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-    //        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-    //        eSvg.appendChild(eDescIcon);
-    //    }
-    //
-    //    return eSvg;
-    //};
+
+    // util function for the above
+    function createIconSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        return eSvg;
+    }
 
     return SvgFactory;
 
@@ -3332,7 +3322,6 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     HeaderRenderer.prototype.insertHeader = function () {
         utils.removeAllChildren(this.ePinnedHeader);
         utils.removeAllChildren(this.eHeaderContainer);
-        this.headerFilterIcons = {};
 
         if (this.childScopes) {
             this.childScopes.forEach(function (childScope) {
@@ -3495,6 +3484,40 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         });
     };
 
+    HeaderRenderer.prototype.createFilterIcon = function() {
+        if (typeof this.gridOptionsWrapper.getFilterIconRenderer() === 'function') {
+            var rendererResult = this.gridOptionsWrapper.getFilterIconRenderer()();
+            if (typeof rendererResult === 'string') {
+                var eSpan = document.createElement('span');
+                eSpan.innerHTML = rendererResult;
+                return eSpan;
+            } else if (utils.isNodeOrElement(rendererResult)) {
+                return rendererResult;
+            } else {
+                throw 'filterIconRenderer - function should return DOM object or String';
+            }
+        } else {
+            return svgFactory.createFilterSvg();
+        }
+    };
+
+    HeaderRenderer.prototype.getIcon = function(iconFromGridOptions, theDefaultFunc) {
+        if (typeof iconFromGridOptions === 'function') {
+            var rendererResult = iconFromGridOptions();
+            if (typeof rendererResult === 'string') {
+                var eSpan = document.createElement('span');
+                eSpan.innerHTML = rendererResult;
+                return eSpan;
+            } else if (utils.isNodeOrElement(rendererResult)) {
+                return rendererResult;
+            } else {
+                throw 'iconRenderer should return back a string or a dom object';
+            }
+        } else {
+            return theDefaultFunc();
+        }
+    };
+
     HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
         var that = this;
         var colDef = colDefWrapper.colDef;
@@ -3544,18 +3567,21 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         // label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
+
         // add in sort icon
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
-            headerCellLabel.appendChild(headerSortIcon);
-            headerSortIcon.setAttribute("display", "none");
+            colDefWrapper.eSortAsc = svgFactory.createSortAscSvg();
+            colDefWrapper.eSortDesc = svgFactory.createSortDescSvg();
+            headerCellLabel.appendChild(colDefWrapper.eSortAsc);
+            headerCellLabel.appendChild(colDefWrapper.eSortDesc);
+            colDefWrapper.eSortAsc.setAttribute('display', 'none');
+            colDefWrapper.eSortDesc.setAttribute('display', 'none');
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
         // add in filter icon
-        var filterIcon = svgFactory.createFilterSvg();
-        this.headerFilterIcons[colDefWrapper.colKey] = filterIcon;
-        headerCellLabel.appendChild(filterIcon);
+        colDefWrapper.eFilterIcon = this.createFilterIcon();
+        headerCellLabel.appendChild(colDefWrapper.eFilterIcon);
 
         // render the cell, use a renderer if one is provided
         var headerCellRenderer;
@@ -3632,18 +3658,11 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 }
 
                 // update visibility of icons
-                var sortAscending = colWrapperToClear.sort===constants.ASC;
-                var sortDescending = colWrapperToClear.sort===constants.DESC;
-                var sortAny = sortAscending || sortDescending;
+                var sortAscending = colWrapperToClear.sort === constants.ASC;
+                var sortDescending = colWrapperToClear.sort === constants.DESC;
 
-                var eSortAscending = that.eHeaderParent.querySelector(".ag-header-cell-sort-asc-" + colIndex);
-                eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eSortDescending = that.eHeaderParent.querySelector(".ag-header-cell-sort-desc-" + colIndex);
-                eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eParentSvg = eSortAscending.parentNode;
-                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
+                colWrapperToClear.eSortAsc.setAttribute("display", sortAscending ? 'inline' : 'none');
+                colWrapperToClear.eSortDesc.setAttribute("display", sortDescending ? 'inline' : 'none');
             });
 
             that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
@@ -3763,7 +3782,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
             var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
             var displayStyle = filterPresent ? "inline" : "none";
-            that.headerFilterIcons[colDefWrapper.colKey].style.display = displayStyle;
+            colDefWrapper.eFilterIcon.style.display = displayStyle;
         });
     };
 
@@ -3804,6 +3823,9 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.getGroupIconRenderer = function() { return this.gridOptions.groupIconRenderer; };
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
+    GridOptionsWrapper.prototype.getFilterIconRenderer = function() { return this.gridOptions.filterIconRenderer; };
+    GridOptionsWrapper.prototype.getSortAscendingIcon = function() { return this.gridOptions.sortAscendingIcon; };
+    GridOptionsWrapper.prototype.getSortDescendingIcon = function() { return this.gridOptions.sortDescendingIcon; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
     GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };
     GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return isTrue(this.gridOptions.angularCompileFilters); };
@@ -4947,7 +4969,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-sort {\r\n    padding-right: 2px;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n    /*margin-top: 5px;*/\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

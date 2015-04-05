@@ -33,6 +33,8 @@ define([], function() {
     GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
     GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.getFilterIconRenderer = function() { return this.gridOptions.filterIconRenderer; };
+    GridOptionsWrapper.prototype.getSortAscendingIcon = function() { return this.gridOptions.sortAscendingIcon; };
+    GridOptionsWrapper.prototype.getSortDescendingIcon = function() { return this.gridOptions.sortDescendingIcon; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
     GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };
     GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return isTrue(this.gridOptions.angularCompileFilters); };

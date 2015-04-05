@@ -77,6 +77,8 @@ define([
             groupIncludeFooter: false,
             groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             filterIconRenderer: function () { return '<i class="fa fa-filter"/>'; },
+            sortAscendingIcon: 'D',
+            sortDescendingIcon: 'U',
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
