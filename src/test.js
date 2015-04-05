@@ -94,7 +94,7 @@ define([
             rowSelected: rowSelected, //callback when row selected
             selectionChanged: selectionChanged, //callback when selection changed,
             icons: {
-                menu: '<i class="fa fa-bars"/>',
+                //menu: '<i class="fa fa-bars"/>',
                 filter: '<i class="fa fa-filter"/>',
                 sortAscending: '<i class="fa fa-long-arrow-down"/>',
                 sortDescending: '<i class="fa fa-long-arrow-up"/>',

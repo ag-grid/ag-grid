@@ -3,7 +3,7 @@ var fileBrowserModule = angular.module('account', ['angularGrid']);
 fileBrowserModule.controller('accountController', function($scope) {
 
     var columnDefs = [
-        {displayName: '', field: 'item', width: 220, cellStyle: function(params) { return params.group ? null : {'padding-left': '20px'} } },
+        {displayName: '', field: 'item', width: 220},
         {displayName: "Units", field: "amount1", group: 'Week 1', width: 75},
         {displayName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
         {displayName: "Units", field: "amount2", group: 'Week 2', width: 75},
@@ -29,11 +29,14 @@ fileBrowserModule.controller('accountController', function($scope) {
         groupKeys: ['category'],
         groupHeaders: true,
         groupDefaultExpanded: true,
-        groupIncludeFooter: true,
+        // groupIncludeFooter: true,
         enableColResize: true,
         enableSorting: false,
         dontUseScrolls: true,
-        groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
+        icons: {
+            groupExpanded: '<i class="fa fa-minus-square-o"/>',
+            groupContracted: '<i class="fa fa-plus-square-o"/>'
+        },
         enableFilter: false
     };
 

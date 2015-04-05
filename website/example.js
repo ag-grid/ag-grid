@@ -67,9 +67,9 @@ gridsModule.controller('mainController', function($scope) {
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //            groupInnerCellRenderer: groupInnerCellRenderer,
-//            groupDefaultExpanded: true, //one of [true, false]
+//            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-        groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
+        groupIncludeFooter: false,
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
         enableColResize: true, //one of [true, false]
@@ -87,27 +87,67 @@ gridsModule.controller('mainController', function($scope) {
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: rowSelected, //callback when row selected
-        selectionChanged: selectionChanged, //callback when selection changed
-        rowClicked: function(params) {console.log("Callback rowClicked: " + params.data + " - " + params.event);}, //callback when row clicked
+        selectionChanged: selectionChanged, //callback when selection changed,
+        icons: {
+            menu: '<i class="fa fa-bars"/>',
+            filter: '<i class="fa fa-filter"/>',
+            sortAscending: '<i class="fa fa-long-arrow-down"/>',
+            sortDescending: '<i class="fa fa-long-arrow-up"/>',
+            groupExpanded: '<i class="fa fa-minus-square-o"/>',
+            groupContracted: '<i class="fa fa-plus-square-o"/>'
+        },
+        rowClicked: function(params) {
+            console.log("Callback rowClicked: " + params.data + " - " + params.event);
+            console.log("info : " + params.event.detail);
+        }, //callback when row clicked
         cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
     };
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
-        {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column"},
-        {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
-            filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
+        {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column",
+            icons: {
+                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            }
         },
-        //'checkboxSelection',
-        {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer},
-        {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; } },
+        {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+            filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
+            icons: {
+                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            }
+        },
+        {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
+            icons: {
+                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            }
+        },
+        {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; },
+            icons: {
+                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            }
+        },
         {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
         {displayName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            filterParams: {cellRenderer: currencyRenderer}},
+            filterParams: {cellRenderer: currencyRenderer},
+            icons: {
+                sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+            }
+        },
         {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
-            filterParams: {cellRenderer: ratingFilterRenderer}},
-        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc}
+            filterParams: {cellRenderer: ratingFilterRenderer}
+        },
+        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+            icons: {
+                sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+            }
+        }
     ];
     //put in the month cols
     months.forEach(function(month) {
@@ -370,17 +410,16 @@ WinningsFilter.prototype.getGui = function () {
 };
 
 WinningsFilter.prototype.doesFilterPass = function (node) {
-    var value = node.value;
     if (this.cbNoFilter.checked) {
         return true;
     } else if (this.cbPositive.checked) {
-        return value >= 0;
+        return node.value >= 0;
     } else if (this.cbNegative.checked) {
-        return value < 0;
+        return node.value < 0;
     } else if (this.cbGreater50.checked) {
-        return value >= 50000;
+        return node.value >= 50000;
     } else if (this.cbGreater90.checked) {
-        return value >= 90000;
+        return node.value >= 90000;
     } else {
         console.error('invalid checkbox selection');
     }

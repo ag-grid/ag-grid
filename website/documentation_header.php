@@ -171,6 +171,12 @@
                     <a class="sidebarLink" href="/angular-grid-styling/index.php">Layout & Styling</a>
                 <?php } ?>
 
+                <?php if ($key == "Icons") { ?>
+                    <span class="sidebarLinkSelected">Icons</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-icons/index.php">Icons</a>
+                <?php } ?>
+
                 <?php if ($key == "No Scrolls") { ?>
                     <span class="sidebarLinkSelected">No Scrolling</span>
                 <?php } else { ?>
