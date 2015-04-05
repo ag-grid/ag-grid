@@ -2855,7 +2855,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 if (node.footer) {
                     groupData = node.data;
                 } else {
-                    groupData = node.expanded ? undefined : node.data;
+                    // we show data in footer only
+                    var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
+                    groupData = (node.expanded && footersEnabled) ? undefined : node.data;
                 }
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
