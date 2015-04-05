@@ -82,6 +82,11 @@ include 'documentation_header.php';
     </h3>
 
     <p>
+        <b>05 April</b> - Checked in support for custom icons in the headers. Documentation
+        page for icons created.
+    </p>
+
+    <p>
         <b>04 April</b> - Checked in support for footers while grouping. Will be available in 1.3, or take trunk. Documentation
         for grouping and example in 'test drive' updated to show.
     </p>
