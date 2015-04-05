@@ -90,6 +90,12 @@ include '../documentation_header.php';
                 another callback.
             </td>
         </tr>
+        <tr>
+            <th>showLoading(show)</th>
+            <td>Show or hide the loading icon. Pass either true or false. If the method onNewRows
+                is called, the loading icon is automatically hidden.
+            </td>
+        </tr>
     </table>
 
 </div>

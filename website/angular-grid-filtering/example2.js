@@ -18,7 +18,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: [],
+        rowData: null,
         enableFilter: true,
         angularCompileFilters: true
     };

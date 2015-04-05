@@ -133,14 +133,18 @@ define([
             this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
         }
 
-        //done when cols change
+        // done when cols change
         this.setupColumns();
 
-        //done when rows change
+        // done when rows change
         this.updateModelAndRefresh(constants.STEP_EVERYTHING);
 
-        //flag to mark when the directive is destroyed
+        // flag to mark when the directive is destroyed
         this.finished = false;
+
+        // if no data provided initially, show the loading panel
+        var showLoading = !this.gridOptionsWrapper.getAllRows();
+        this.showLoadingPanel(showLoading);
     }
 
     Grid.prototype.setFinished = function () {
@@ -206,9 +210,19 @@ define([
         var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
         if (dontUseScrolls) {
             this.eHeaderContainer.style['height'] = headerHeightPixels;
+            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         } else {
             this.eHeader.style['height'] = headerHeightPixels;
             this.eBody.style['padding-top'] = headerHeightPixels;
+            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
+        }
+    };
+
+    Grid.prototype.showLoadingPanel = function (show) {
+        if (show) {
+            this.eLoadingPanel.style.display = 'table';
+        } else {
+            this.eLoadingPanel.style.display = 'none';
         }
     };
 
@@ -244,6 +258,7 @@ define([
                 that.filterManager.onNewRowsLoaded();
                 that.updateModelAndRefresh(constants.STEP_EVERYTHING);
                 that.headerRenderer.updateFilterIcons();
+                that.showLoadingPanel(false);
             },
             onNewCols: function () {
                 that.onNewCols();
@@ -280,6 +295,9 @@ define([
             },
             selectIndex: function(index, tryMulti) {
                 that.selectionController.selectIndex(index, tryMulti);
+            },
+            showLoading: function(show) {
+                that.showLoadingPanel(show);
             }
         };
         this.gridOptions.api = api;
@@ -341,7 +359,8 @@ define([
             this.eRoot = eGridDiv.querySelector(".ag-root");
             this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
             this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
-            // for no-scrolls, all rows live in the body container
+            this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
+                // for no-scrolls, all rows live in the body container
             this.eRowsParent = this.eBodyContainer;
         } else {
             this.eRoot = eGridDiv.querySelector(".ag-root");
@@ -354,6 +373,7 @@ define([
             this.ePinnedHeader = eGridDiv.querySelector(".ag-pinned-header");
             this.eHeader = eGridDiv.querySelector(".ag-header");
             this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
+            this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
             // for scrolls, all rows live in eBody (containing pinned and normal body)
             this.eRowsParent = this.eBody;
         }

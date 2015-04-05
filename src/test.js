@@ -66,7 +66,7 @@ define([
 
         var angularGrid = {
             columnDefs: [],
-            rowData: [],
+            rowData: null,
             rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
             groupHeaders: true,
             groupKeys: undefined, //set as string of keys eg ["region","country"],
@@ -165,8 +165,12 @@ define([
         createData();
 
         $scope.onRowCountChanged = function() {
-            createData();
-            angularGrid.api.onNewRows();
+            angularGrid.api.showLoading(true);
+            // put into a timeout, so browser gets a chance to update the loading panel
+            setTimeout( function () {
+                createData();
+                angularGrid.api.onNewRows();
+            }, 0);
         };
 
         $scope.onPinnedColCountChanged = function() {
@@ -174,10 +178,13 @@ define([
         };
 
         $scope.onColCountChanged = function() {
-            createCols();
-            createData();
-            angularGrid.api.onNewCols();
-            angularGrid.api.onNewRows();
+            angularGrid.api.showLoading(true);
+            setTimeout( function () {
+                createCols();
+                createData();
+                angularGrid.api.onNewCols();
+                angularGrid.api.onNewRows();
+            });
         };
 
         $scope.onSelectionChanged = function() {

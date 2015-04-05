@@ -19,7 +19,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowSelection: 'single',
-        rowData: []
+        rowData: null
     };
 
     $http.get("../olympicWinners.json")

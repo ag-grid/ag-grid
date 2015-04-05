@@ -69,6 +69,18 @@
     background-color: #403E3E;
 }
 
+.ag-dark .ag-loading-panel {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ag-dark .ag-loading-center {
+    background-color: #ffffff;
+    border: 1px solid darkgray;
+    border-radius: 10px;
+    padding: 10px;
+    color: black;
+}
+
 .ag-dark .ag-body {
     background-color: #f0f0f0;
 }

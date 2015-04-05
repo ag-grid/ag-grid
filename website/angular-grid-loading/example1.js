@@ -18,13 +18,15 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowSelection: 'multiple',
-        rowData: null
+        rowData: null // set rowData to null or undefined to show loading panel by default
     };
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            $scope.gridOptions.rowData = res.data;
-            $scope.gridOptions.api.onNewRows();
+            // wait for a second before setting the results into the table
+            setTimeout( function() {
+                $scope.gridOptions.rowData = res.data;
+                $scope.gridOptions.api.onNewRows();
+            }, 2000);
         });
 });

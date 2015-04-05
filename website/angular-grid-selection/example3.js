@@ -19,7 +19,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowSelection: 'multiple',
-        rowData: [],
+        rowData: null,
         rowSelected: rowSelectedFunc,
         selectionChanged: selectionChangedFunc
     };
