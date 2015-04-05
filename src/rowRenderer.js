@@ -524,14 +524,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
-        var groupIconRenderer = this.gridOptionsWrapper.getGroupIconRenderer();
-
-        if (typeof groupIconRenderer === 'function') {
-            utils.useRenderer(eGridGroupRow, groupIconRenderer, expanded);
+        var eGroupIcon;
+        if (expanded) {
+            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
         } else {
-            var eSvg = svgFactory.createGroupSvg(expanded);
-            eGridGroupRow.appendChild(eSvg);
+            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
         }
+
+        eGridGroupRow.appendChild(eGroupIcon);
     };
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {

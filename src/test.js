@@ -75,7 +75,6 @@ define([
 //            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
             groupIncludeFooter: false,
-            groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
             pinnedColumnCount: 0, //and integer, zero or more, default is 0
             rowHeight: 25, // defaults to 25, can be any integer
             enableColResize: true, //one of [true, false]
@@ -95,10 +94,12 @@ define([
             rowSelected: rowSelected, //callback when row selected
             selectionChanged: selectionChanged, //callback when selection changed,
             icons: {
-                filter: '<i class="fa fa-filter"/>',
                 menu: '<i class="fa fa-bars"/>',
+                filter: '<i class="fa fa-filter"/>',
                 sortAscending: '<i class="fa fa-long-arrow-down"/>',
-                sortDescending: '<i class="fa fa-long-arrow-up"/>'
+                sortDescending: '<i class="fa fa-long-arrow-up"/>',
+                groupExpanded: '<i class="fa fa-minus-square-o"/>',
+                groupContracted: '<i class="fa fa-plus-square-o"/>'
             },
             rowClicked: function(params) {
                 console.log("Callback rowClicked: " + params.data + " - " + params.event);

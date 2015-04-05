@@ -54,18 +54,22 @@ define(["./constants"], function() {
         return eSvg;
     };
 
-    SvgFactory.prototype.createGroupSvg = function(expanded) {
+    SvgFactory.prototype.createGroupContractedSvg = function() {
         var eSvg = createIconSvg();
 
-        if (expanded) {
-            var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-            eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-            eSvg.appendChild(eAscIcon);
-        } else {
-            var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-            eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-            eSvg.appendChild(eDescIcon);
-        }
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+        eSvg.appendChild(eDescIcon);
+
+        return eSvg;
+    };
+
+    SvgFactory.prototype.createGroupExpandedSvg = function() {
+        var eSvg = createIconSvg();
+
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+        eSvg.appendChild(eDescIcon);
 
         return eSvg;
     };

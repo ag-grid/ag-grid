@@ -193,7 +193,7 @@ define([], function() {
         var eResult = document.createElement('span');
         var userProvidedIcon;
         // check col for icon first
-        if (colDefWrapper.colDef.icons) {
+        if (colDefWrapper && colDefWrapper.colDef.icons) {
             userProvidedIcon = colDefWrapper.colDef.icons[iconName];
         }
         // it not in col, try grid options
