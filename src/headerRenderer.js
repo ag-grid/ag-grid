@@ -32,7 +32,6 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     HeaderRenderer.prototype.insertHeader = function () {
         utils.removeAllChildren(this.ePinnedHeader);
         utils.removeAllChildren(this.eHeaderContainer);
-        this.headerFilterIcons = {};
 
         if (this.childScopes) {
             this.childScopes.forEach(function (childScope) {
@@ -224,7 +223,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         // filter button
         var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
         if (showMenu) {
-            var eMenuButton = svgFactory.createMenuSvg();
+            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, colDefWrapper, svgFactory.createMenuSvg);
+            utils.addCssClass(eMenuButton, 'ag-header-icon');
+
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
                 that.filterManager.showFilter(colDefWrapper, this);
@@ -244,18 +245,24 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         // label div
         var headerCellLabel = document.createElement("div");
         headerCellLabel.className = "ag-header-cell-label";
-        // add in sort icon
+
+        // add in sort icons
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            var headerSortIcon = svgFactory.createSortArrowSvg(colIndex);
-            headerCellLabel.appendChild(headerSortIcon);
-            headerSortIcon.setAttribute("display", "none");
+            colDefWrapper.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortAscSvg);
+            colDefWrapper.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortDescSvg);
+            utils.addCssClass(colDefWrapper.eSortAsc, 'ag-header-icon');
+            utils.addCssClass(colDefWrapper.eSortDesc, 'ag-header-icon');
+            headerCellLabel.appendChild(colDefWrapper.eSortAsc);
+            headerCellLabel.appendChild(colDefWrapper.eSortDesc);
+            colDefWrapper.eSortAsc.style.display = 'none';
+            colDefWrapper.eSortDesc.style.display = 'none';
             this.addSortHandling(headerCellLabel, colDefWrapper);
         }
 
         // add in filter icon
-        var filterIcon = svgFactory.createFilterSvg();
-        this.headerFilterIcons[colDefWrapper.colKey] = filterIcon;
-        headerCellLabel.appendChild(filterIcon);
+        colDefWrapper.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, colDefWrapper, svgFactory.createFilterSvg);
+        utils.addCssClass(colDefWrapper.eFilterIcon, 'ag-header-icon');
+        headerCellLabel.appendChild(colDefWrapper.eFilterIcon);
 
         // render the cell, use a renderer if one is provided
         var headerCellRenderer;
@@ -296,6 +303,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         } else {
             // no renderer, default text render
             var eInnerText = document.createElement("span");
+            eInnerText.className = 'ag-header-cell-text';
             eInnerText.innerHTML = colDef.displayName;
             headerCellLabel.appendChild(eInnerText);
         }
@@ -321,7 +329,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             }
 
             // clear sort on all columns except this one, and update the icons
-            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear, colIndex) {
+            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear) {
                 if (colWrapperToClear!==colDefWrapper) {
                     colWrapperToClear.sort = null;
                 }
@@ -332,18 +340,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 }
 
                 // update visibility of icons
-                var sortAscending = colWrapperToClear.sort===constants.ASC;
-                var sortDescending = colWrapperToClear.sort===constants.DESC;
-                var sortAny = sortAscending || sortDescending;
+                var sortAscending = colWrapperToClear.sort === constants.ASC;
+                var sortDescending = colWrapperToClear.sort === constants.DESC;
 
-                var eSortAscending = that.eHeaderParent.querySelector(".ag-header-cell-sort-asc-" + colIndex);
-                eSortAscending.setAttribute("style", sortAscending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eSortDescending = that.eHeaderParent.querySelector(".ag-header-cell-sort-desc-" + colIndex);
-                eSortDescending.setAttribute("style", sortDescending ? constants.SORT_STYLE_SHOW : constants.SORT_STYLE_HIDE);
-
-                var eParentSvg = eSortAscending.parentNode;
-                eParentSvg.setAttribute("display", sortAny ? "inline" : "none");
+                colWrapperToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
+                colWrapperToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
             });
 
             that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
@@ -462,8 +463,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var that = this;
         this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
             var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
-            var displayStyle = filterPresent ? "inline" : "none";
-            that.headerFilterIcons[colDefWrapper.colKey].style.display = displayStyle;
+            var displayStyle = filterPresent ? 'inline' : 'none';
+            colDefWrapper.eFilterIcon.style.display = displayStyle;
         });
     };
 

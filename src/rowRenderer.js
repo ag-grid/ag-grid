@@ -262,7 +262,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 if (node.footer) {
                     groupData = node.data;
                 } else {
-                    groupData = node.expanded ? undefined : node.data;
+                    // we show data in footer only
+                    var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
+                    groupData = (node.expanded && footersEnabled) ? undefined : node.data;
                 }
                 columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
@@ -524,14 +526,14 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
-        var groupIconRenderer = this.gridOptionsWrapper.getGroupIconRenderer();
-
-        if (typeof groupIconRenderer === 'function') {
-            utils.useRenderer(eGridGroupRow, groupIconRenderer, expanded);
+        var eGroupIcon;
+        if (expanded) {
+            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
         } else {
-            var eSvg = svgFactory.createGroupSvg(expanded);
-            eGridGroupRow.appendChild(eSvg);
+            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
         }
+
+        eGridGroupRow.appendChild(eGroupIcon);
     };
 
     RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {

@@ -3,7 +3,7 @@ var fileBrowserModule = angular.module('fileBrowser', ['angularGrid']);
 fileBrowserModule.controller('fileBrowserController', function($scope) {
 
     var columnDefs = [
-        {displayName: "Name", field: "name", width: 250, cellStyle: fileCellStyle},
+        {displayName: "Name", field: "name", width: 250},
         {displayName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
         {displayName: "Type", field: "type", width: 150},
         {displayName: "Date Modified", field: "dateModified", width: 150}
@@ -133,7 +133,10 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
         enableColResize: true,
         enableSorting: true,
         rowHeight: 20,
-        groupIconRenderer: function (expanded) { return expanded ? '<i class="fa fa-minus-square-o"/>' : '<i class="fa fa-plus-square-o"/>'; },
+        icons: {
+            groupExpanded: '<i class="fa fa-minus-square-o"/>',
+            groupContracted: '<i class="fa fa-plus-square-o"/>'
+        },
         groupInnerCellRenderer: groupInnerCellRenderer,
         rowClicked: rowClicked
     };
@@ -148,11 +151,6 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
             path = node.data.name + '\\' + path;
         }
         $scope.selectedFile = path;
-    }
-
-    function fileCellStyle(params) {
-        var indent = (20 + (params.node.level * 10)) + 'px';
-        return {'padding-left': indent, 'font-style': 'italic'};
     }
 
     function sizeCellStyle() {

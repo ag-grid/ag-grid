@@ -1,4 +1,4 @@
-define(["./constants"], function(constants) {
+define(["./constants"], function() {
 
     var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -6,9 +6,7 @@ define(["./constants"], function(constants) {
     }
 
     SvgFactory.prototype.createFilterSvg = function() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
+        var eSvg = createIconSvg();
 
         var eFunnel = document.createElementNS(SVG_NS, "polygon");
         eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
@@ -20,7 +18,7 @@ define(["./constants"], function(constants) {
 
     SvgFactory.prototype.createMenuSvg = function() {
         var eSvg = document.createElementNS(SVG_NS, "svg");
-        var size = "12"
+        var size = "12";
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
 
@@ -36,63 +34,53 @@ define(["./constants"], function(constants) {
         return eSvg;
     };
 
-    SvgFactory.prototype.createSortArrowSvg  = function(colIndex) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
+    SvgFactory.prototype.createSortDescSvg = function() {
+        var eSvg = createIconSvg();
 
         var eDescIcon = document.createElementNS(SVG_NS, "polygon");
         eDescIcon.setAttribute("points", "0,10 5,0 10,10");
-        eDescIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eDescIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-desc-"+colIndex);
         eSvg.appendChild(eDescIcon);
+
+        return eSvg;
+    };
+
+    SvgFactory.prototype.createSortAscSvg = function() {
+        var eSvg = createIconSvg();
 
         var eAscIcon = document.createElementNS(SVG_NS, "polygon");
         eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-        eAscIcon.setAttribute("style", constants.SORT_STYLE_HIDE);
-        eAscIcon.setAttribute("class", "ag-header-icon ag-header-cell-sort-asc-"+colIndex);
         eSvg.appendChild(eAscIcon);
 
         return eSvg;
     };
 
-    SvgFactory.prototype.createGroupSvg = function(expanded) {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
-        eSvg.setAttribute("width", "10");
-        eSvg.setAttribute("height", "10");
-        eSvg.setAttribute("class", "ag-header-cell-sort");
+    SvgFactory.prototype.createGroupContractedSvg = function() {
+        var eSvg = createIconSvg();
 
-        if (expanded) {
-            var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-            eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-            eSvg.appendChild(eAscIcon);
-        } else {
-            var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-            eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-            eSvg.appendChild(eDescIcon);
-        }
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+        eSvg.appendChild(eDescIcon);
 
         return eSvg;
     };
-    //SvgFactory.prototype.createGroupSvg = function(expanded) {
-    //    var eSvg = document.createElementNS(SVG_NS, "svg");
-    //    eSvg.setAttribute("width", "10");
-    //    eSvg.setAttribute("height", "10");
-    //    eSvg.setAttribute("class", "ag-header-cell-sort");
-    //
-    //    if (expanded) {
-    //        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-    //        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-    //        eSvg.appendChild(eAscIcon);
-    //    } else {
-    //        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-    //        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-    //        eSvg.appendChild(eDescIcon);
-    //    }
-    //
-    //    return eSvg;
-    //};
+
+    SvgFactory.prototype.createGroupExpandedSvg = function() {
+        var eSvg = createIconSvg();
+
+        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
+        eSvg.appendChild(eDescIcon);
+
+        return eSvg;
+    };
+
+    // util function for the above
+    function createIconSvg() {
+        var eSvg = document.createElementNS(SVG_NS, "svg");
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+        return eSvg;
+    }
 
     return SvgFactory;
 

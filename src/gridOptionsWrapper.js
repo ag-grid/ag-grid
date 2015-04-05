@@ -47,6 +47,8 @@ define([], function() {
     GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
     GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) { return this.gridOptions.selectedNodesById = newSelectedNodes; };
 
+    GridOptionsWrapper.prototype.getIcons = function() { return this.gridOptions.icons; };
+
     GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
         return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
     };

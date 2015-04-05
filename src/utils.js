@@ -24,6 +24,10 @@ define([], function() {
         );
     };
 
+    Utils.prototype.isNodeOrElement = function(o) {
+        return this.isNode(o) || this.isElement(o);
+    };
+
     //adds all type of change listeners to an element, intended to be a text field
     Utils.prototype.addChangeListener = function(element, listener) {
         element.addEventListener("changed", listener);
@@ -117,10 +121,14 @@ define([], function() {
 
     Utils.prototype.addCssClass = function(element, className) {
         var oldClasses = element.className;
-        if (oldClasses.indexOf(className)>=0) {
-            return;
+        if (oldClasses) {
+            if (oldClasses.indexOf(className)>=0) {
+                return;
+            }
+            element.className = oldClasses + " " + className;
+        } else {
+            element.className = className;
         }
-        element.className = oldClasses + " " + className;;
     };
 
     Utils.prototype.removeCssClass = function(element, className) {
@@ -179,26 +187,43 @@ define([], function() {
         }
     };
 
+    // if icon provided, use this (either a string, or a function callback).
+    // if not, then use the second parameter, which is the svgFactory function
+    Utils.prototype.createIcon = function(iconName, gridOptionsWrapper, colDefWrapper, svgFactoryFunc) {
+        var eResult = document.createElement('span');
+        var userProvidedIcon;
+        // check col for icon first
+        if (colDefWrapper && colDefWrapper.colDef.icons) {
+            userProvidedIcon = colDefWrapper.colDef.icons[iconName];
+        }
+        // it not in col, try grid options
+        if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
+            userProvidedIcon = gridOptionsWrapper.getIcons()[iconName];
+        }
+        // now if user provided, use it
+        if (userProvidedIcon) {
+            var rendererResult;
+            if (typeof userProvidedIcon === 'function') {
+                rendererResult = userProvidedIcon();
+            } else if (typeof userProvidedIcon === 'string') {
+                rendererResult = userProvidedIcon;
+            } else {
+                throw 'icon from grid options needs to be a string or a function';
+            }
+            if (typeof rendererResult === 'string') {
+                eResult.innerHTML = rendererResult;
+            } else if (this.isNodeOrElement(rendererResult)) {
+                eResult.appendChild(rendererResult);
+            } else {
+                throw 'iconRenderer should return back a string or a dom object';
+            }
+        } else {
+            // otherwise we use the built in icon
+            eResult.appendChild(svgFactoryFunc());
+        }
+        return eResult;
+    };
+
     return new Utils();
 
 });
-
-
-//13:44CAMPO, Alberto, M&IBthe day you get to the fronty page
-//from then on, on your post, a recurennt 5 visits
-//you need to accumulate posts
-//just make a post entry
-//and put it in dzone
-//disclose yourself as the author of the plattform and encourage disccussion
-//this is the worst site, but the easiest to score
-//second best
-//news.ycombinator.com
-//if you get published here... 1000-1500 visits on the day, and if you are lucky quite a lot recurrent
-//and the gold pot
-//reddit.com/programming if you get in the top spot there... well, that's massive
-//this is the most difficult and you are likely to get some abuse, but is worth it
-
-//from my experience, best hing is aggregator sites
-//facebook, g+ and are also very good
-//if they link you, it will improve your google positioning
-//also having analytics makes google realise immeditaley that you are being visited
