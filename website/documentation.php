@@ -11,6 +11,9 @@ include 'documentation_header.php';
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">The Community is Growing</div  >
 
     <p>
+        4th April 2015
+    </p>
+    <p>
         <span style="font-size: 20px; font-weight: bold;">
             Thank you
         </span>
@@ -82,12 +85,21 @@ include 'documentation_header.php';
     </h3>
 
     <p>
-        <b>05 April</b> - Checked in support for custom icons in the headers. Documentation
+        <b>Current</b> - I am now working on pagination!!
+    </p>
+
+    <p>
+        <b>06 April</b> - Checked in support for 'Loading Panel' to show when fetching data. Will be available in 1.3, or take latest. Documentation
+        page for loading created.
+    </p>
+
+    <p>
+        <b>05 April</b> - Checked in support for custom icons in the headers. Will be available in 1.3, or take latest. Documentation
         page for icons created.
     </p>
 
     <p>
-        <b>04 April</b> - Checked in support for footers while grouping. Will be available in 1.3, or take trunk. Documentation
+        <b>04 April</b> - Checked in support for footers while grouping. Will be available in 1.3, or take latest. Documentation
         for grouping and example in 'test drive' updated to show.
     </p>
 

@@ -18,7 +18,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: [],
+        rowData: null,
         enableColResize: true
     };
 

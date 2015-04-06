@@ -18,7 +18,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: [],
+        rowData: null,
         groupUseEntireRow: false,
         groupKeys: ['country','year'],
         groupAggFunction: groupAggFunction

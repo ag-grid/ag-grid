@@ -42,7 +42,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         groupKeys: ['country','athlete'],
-        rowData: [],
+        rowData: null,
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,

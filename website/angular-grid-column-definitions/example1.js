@@ -32,7 +32,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: []
+        rowData: null
     };
 
     $http.get("../olympicWinners.json")

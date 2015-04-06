@@ -177,6 +177,12 @@
                     <a class="sidebarLink" href="/angular-grid-icons/index.php">Icons</a>
                 <?php } ?>
 
+                <?php if ($key == "Loading Overlay") { ?>
+                    <span class="sidebarLinkSelected">Loading Overlay</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-loading/index.php">Loading Overlay</a>
+                <?php } ?>
+
                 <?php if ($key == "No Scrolls") { ?>
                     <span class="sidebarLinkSelected">No Scrolling</span>
                 <?php } else { ?>
