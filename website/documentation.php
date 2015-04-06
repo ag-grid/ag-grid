@@ -89,6 +89,11 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>06 April</b> - Checked in support for 'Loading Panel' to show when fetching data. Will be available in 1.3, or take latest. Documentation
+        page for loading created.
+    </p>
+
+    <p>
         <b>05 April</b> - Checked in support for custom icons in the headers. Will be available in 1.3, or take latest. Documentation
         page for icons created.
     </p>
