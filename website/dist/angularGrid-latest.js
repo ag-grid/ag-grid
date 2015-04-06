@@ -994,7 +994,7 @@ define('text',['module'], function (module) {
     return text;
 });
 
-define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- The loading panel -->\r\n    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->\r\n    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- The loading panel -->\r\n    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->\r\n    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <!-- Paging -->\r\n    <div class=\'ag-paging-panel\'>\r\n    </div>\r\n</div>\r\n';});
 
 
 define('text!../src/templateNoScrolls.html',[],function () { return '<div class=\'ag-root ag-no-scrolls\'>\r\n    <!-- See comment in template.html for why loading is laid out like so -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header-container\'></div>\r\n    <!-- body -->\r\n    <div class=\'ag-body-container\'></div>\r\n</div>';});
@@ -4372,6 +4372,83 @@ define('../src/selectionController',['./utils'], function(utils) {
     return SelectionController;
 
 });
+define('../src/pagingController',[], function() {
+
+    function PagingController(ePagingPanel, angularGrid) {
+        this.angularGrid = angularGrid;
+        this.populatePanel(ePagingPanel);
+        this.callVersion = 0;
+    }
+
+    PagingController.prototype.setDataSource = function(dataSource) {
+        this.dataSource = dataSource;
+
+        this.totalPages = (dataSource.rowCount / dataSource.pageSize) + 1;
+        this.lbTotal.innerHTML = this.totalPages;
+
+        this.currentPage = 0;
+        this.loadPage();
+    };
+
+    PagingController.prototype.loadPage = function() {
+        var startRow = this.currentPage * this.dataSource.pageSize;
+        var endRow = (this.currentPage + 1) * this.dataSource.pageSize;
+        this.lbCurrent.innerHTML = (this.currentPage + 1);
+        this.callVersion++;
+        var callVersionCopy = this.callVersion;
+        var that = this;
+        this.angularGrid.showLoadingPanel(true);
+        this.dataSource.getRows(startRow, endRow,
+            function success(rows) {
+                if (that.callVersion === callVersionCopy) {
+                    that.angularGrid.onNewRows(rows);
+                }
+            },
+            function fail() {
+                if (that.callVersion === callVersionCopy) {
+                    that.angularGrid.onNewRows([]);
+                }
+            }
+        );
+    };
+
+    PagingController.prototype.onBtNext = function() {
+        this.currentPage++;
+        this.loadPage();
+    };
+
+    PagingController.prototype.onBtPrevious = function() {
+        this.currentPage--;
+        this.loadPage();
+    };
+
+    PagingController.prototype.populatePanel = function(ePagingPanel) {
+
+        var html = '<button class="ag-paging-button" id="btPrevious">Previous</button>' +
+            '<span id="current"></span>' +
+            ' of ' +
+            '<span id="total"></span>' +
+            '<button class="ag-paging-button" id="btNext">Next</button>';
+
+        ePagingPanel.innerHTML = html;
+
+        this.btNext = ePagingPanel.querySelector('#btNext');
+        this.btPrevious = ePagingPanel.querySelector('#btPrevious');
+        this.lbCurrent = ePagingPanel.querySelector('#current');
+        this.lbTotal = ePagingPanel.querySelector('#total');
+
+        var that = this;
+        this.btNext.addEventListener('click', function() {
+            that.onBtNext();
+        });
+        this.btPrevious.addEventListener('click', function() {
+            that.onBtPrevious();
+        });
+    };
+
+    return PagingController;
+
+});
 /*
  * css.normalize.js
  *
@@ -4550,12 +4627,14 @@ define('../src/angularGrid',[
     './colModel',
     './selectionRendererFactory',
     './selectionController',
+    './pagingController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
             RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory, SelectionController) {
+            constants, ColModel, SelectionRendererFactory, SelectionController,
+            PagingController) {
 
     // if angular is present, register the directive
     if (angular) {
@@ -4612,8 +4691,6 @@ define('../src/angularGrid',[
         }
 
         var that = this;
-        this.$scope = $scope;
-        this.$compile = $compile;
         this.quickFilter = null;
 
         // if using angular, watch for quickFilter changes
@@ -4627,25 +4704,9 @@ define('../src/angularGrid',[
 
         this.addApi();
         this.findAllElements(eGridDiv);
-
-        this.rowModel = new RowModel();
-
-        this.selectionController = new SelectionController();
-        var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
-
-        this.colModel = new ColModel(this, selectionRendererFactory);
-        this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
-                                this.filterManager, $scope);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
-                                eGridDiv, this, selectionRendererFactory, $compile, $scope,
-                                this.selectionController);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, eGridDiv, this,
-                                this.filterManager, $scope, $compile);
+        this.createAndWireBeans($scope, $compile, eGridDiv);
 
         this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
-
-        this.selectionController.init(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope, this.rowRenderer);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -4665,6 +4726,66 @@ define('../src/angularGrid',[
         var showLoading = !this.gridOptionsWrapper.getAllRows();
         this.showLoadingPanel(showLoading);
     }
+
+    Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv) {
+
+        var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
+        var gridOptions = this.gridOptions;
+
+        var rowModel = new RowModel();
+        var selectionController = new SelectionController();
+        var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
+        var colModel = new ColModel(this, selectionRendererFactory);
+        var filterManager = new FilterManager(this, rowModel, gridOptionsWrapper, $compile, $scope);
+        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
+        var rowRenderer  = new RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+            selectionRendererFactory, $compile, $scope, selectionController);
+        var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
+            $scope, $compile);
+        var pagingController = new PagingController(this.ePagingPanel, this);
+
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+
+        this.rowModel = rowModel;
+        this.selectionController = selectionController;
+        this.colModel = colModel;
+        this.rowController = rowController;
+        this.rowRenderer = rowRenderer;
+        this.headerRenderer = headerRenderer;
+        this.pagingController = pagingController;
+        this.filterManager = filterManager;
+    };
+
+    Grid.prototype.showAndPositionPagingPanel = function() {
+        // no paging when no-scrolls
+        if (!this.ePagingPanel) {
+            return;
+        }
+
+        if (this.isPaging()) {
+            this.ePagingPanel.style['display'] = null;
+            var heightOfPager = this.ePagingPanel.offsetHeight;
+            this.eBody.style['padding-bottom'] = heightOfPager + 'px';
+            var heightOfRoot = this.eRoot.clientHeight;
+            var topOfPager = heightOfRoot - heightOfPager;
+            this.ePagingPanel.style['top'] = topOfPager + 'px';
+        } else {
+            this.ePagingPanel.style['display'] = 'none';
+            this.eBody.style['padding-bottom'] = null;
+        }
+
+    };
+
+    Grid.prototype.isPaging = function() {
+        return true;
+    };
+
+    Grid.prototype.onNewDataSource = function (dataSource) {
+        if (dataSource) {
+            this.gridOptions.dataSource = dataSource;
+        }
+        this.pagingController.setDataSource(dataSource);
+    };
 
     Grid.prototype.setFinished = function () {
         this.finished = true;
@@ -4768,16 +4889,26 @@ define('../src/angularGrid',[
         this.rowRenderer.refreshView();
     };
 
+    Grid.prototype.onNewRows = function (rows) {
+        if (rows) {
+            this.gridOptions.rowData = rows;
+        }
+        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.selectionController.clearSelection();
+        this.filterManager.onNewRowsLoaded();
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
+        this.headerRenderer.updateFilterIcons();
+        this.showLoadingPanel(false);
+    };
+
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            onNewRows: function () {
-                that.rowController.setAllRows(that.gridOptionsWrapper.getAllRows());
-                that.selectionController.clearSelection();
-                that.filterManager.onNewRowsLoaded();
-                that.updateModelAndRefresh(constants.STEP_EVERYTHING);
-                that.headerRenderer.updateFilterIcons();
-                that.showLoadingPanel(false);
+            onNewDataSource: function(dataSource) {
+                that.onNewDataSource(dataSource);
+            },
+            onNewRows: function (rows) {
+                that.onNewRows(rows);
             },
             onNewCols: function () {
                 that.onNewCols();
@@ -4880,7 +5011,7 @@ define('../src/angularGrid',[
             this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
                 // for no-scrolls, all rows live in the body container
-            this.eRowsParent = this.eBodyContainer;
+            this.eParentOfRows = this.eBodyContainer;
         } else {
             this.eRoot = eGridDiv.querySelector(".ag-root");
             this.eBody = eGridDiv.querySelector(".ag-body");
@@ -4894,7 +5025,8 @@ define('../src/angularGrid',[
             this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
             // for scrolls, all rows live in eBody (containing pinned and normal body)
-            this.eRowsParent = this.eBody;
+            this.eParentOfRows = this.eBody;
+            this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');
         }
     };
 
@@ -4948,9 +5080,12 @@ define('../src/angularGrid',[
         var _this = this;
 
         var bodyHeight = this.eBodyViewport.offsetHeight;
+        var pagingVisible = this.isPaging();
 
-        if (this.bodyHeightLastTime != bodyHeight) {
+        if (this.bodyHeightLastTime != bodyHeight || this.pagingVisibleLastTime != pagingVisible) {
             this.bodyHeightLastTime = bodyHeight;
+            this.pagingVisibleLastTime = pagingVisible;
+
             this.setPinnedColHeight();
 
             //only draw virtual rows if done sort & filter - this
@@ -4958,6 +5093,9 @@ define('../src/angularGrid',[
             if (this.rowModel.getRowsAfterMap()) {
                 this.rowRenderer.drawVirtualRows();
             }
+
+            // show and position paging panel
+            this.showAndPositionPagingPanel();
         }
 
         if (!this.finished) {
@@ -4986,7 +5124,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-paging-panel {\r\n    position: absolute;\r\n}\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-panel {\r\n    background-color: #ddd;\r\n}');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

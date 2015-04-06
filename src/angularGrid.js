@@ -31,12 +31,14 @@ define([
     './colModel',
     './selectionRendererFactory',
     './selectionController',
+    './pagingController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
             RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory, SelectionController) {
+            constants, ColModel, SelectionRendererFactory, SelectionController,
+            PagingController) {
 
     // if angular is present, register the directive
     if (angular) {
@@ -93,8 +95,6 @@ define([
         }
 
         var that = this;
-        this.$scope = $scope;
-        this.$compile = $compile;
         this.quickFilter = null;
 
         // if using angular, watch for quickFilter changes
@@ -108,25 +108,9 @@ define([
 
         this.addApi();
         this.findAllElements(eGridDiv);
-
-        this.rowModel = new RowModel();
-
-        this.selectionController = new SelectionController();
-        var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
-
-        this.colModel = new ColModel(this, selectionRendererFactory);
-        this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
-                                this.filterManager, $scope);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
-                                eGridDiv, this, selectionRendererFactory, $compile, $scope,
-                                this.selectionController);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, eGridDiv, this,
-                                this.filterManager, $scope, $compile);
+        this.createAndWireBeans($scope, $compile, eGridDiv);
 
         this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
-
-        this.selectionController.init(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope, this.rowRenderer);
 
         if (useScrolls) {
             this.addScrollListener();
@@ -146,6 +130,66 @@ define([
         var showLoading = !this.gridOptionsWrapper.getAllRows();
         this.showLoadingPanel(showLoading);
     }
+
+    Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv) {
+
+        var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
+        var gridOptions = this.gridOptions;
+
+        var rowModel = new RowModel();
+        var selectionController = new SelectionController();
+        var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
+        var colModel = new ColModel(this, selectionRendererFactory);
+        var filterManager = new FilterManager(this, rowModel, gridOptionsWrapper, $compile, $scope);
+        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
+        var rowRenderer  = new RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+            selectionRendererFactory, $compile, $scope, selectionController);
+        var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
+            $scope, $compile);
+        var pagingController = new PagingController(this.ePagingPanel, this);
+
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+
+        this.rowModel = rowModel;
+        this.selectionController = selectionController;
+        this.colModel = colModel;
+        this.rowController = rowController;
+        this.rowRenderer = rowRenderer;
+        this.headerRenderer = headerRenderer;
+        this.pagingController = pagingController;
+        this.filterManager = filterManager;
+    };
+
+    Grid.prototype.showAndPositionPagingPanel = function() {
+        // no paging when no-scrolls
+        if (!this.ePagingPanel) {
+            return;
+        }
+
+        if (this.isPaging()) {
+            this.ePagingPanel.style['display'] = null;
+            var heightOfPager = this.ePagingPanel.offsetHeight;
+            this.eBody.style['padding-bottom'] = heightOfPager + 'px';
+            var heightOfRoot = this.eRoot.clientHeight;
+            var topOfPager = heightOfRoot - heightOfPager;
+            this.ePagingPanel.style['top'] = topOfPager + 'px';
+        } else {
+            this.ePagingPanel.style['display'] = 'none';
+            this.eBody.style['padding-bottom'] = null;
+        }
+
+    };
+
+    Grid.prototype.isPaging = function() {
+        return true;
+    };
+
+    Grid.prototype.onNewDataSource = function (dataSource) {
+        if (dataSource) {
+            this.gridOptions.dataSource = dataSource;
+        }
+        this.pagingController.setDataSource(dataSource);
+    };
 
     Grid.prototype.setFinished = function () {
         this.finished = true;
@@ -249,16 +293,26 @@ define([
         this.rowRenderer.refreshView();
     };
 
+    Grid.prototype.onNewRows = function (rows) {
+        if (rows) {
+            this.gridOptions.rowData = rows;
+        }
+        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.selectionController.clearSelection();
+        this.filterManager.onNewRowsLoaded();
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
+        this.headerRenderer.updateFilterIcons();
+        this.showLoadingPanel(false);
+    };
+
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            onNewRows: function () {
-                that.rowController.setAllRows(that.gridOptionsWrapper.getAllRows());
-                that.selectionController.clearSelection();
-                that.filterManager.onNewRowsLoaded();
-                that.updateModelAndRefresh(constants.STEP_EVERYTHING);
-                that.headerRenderer.updateFilterIcons();
-                that.showLoadingPanel(false);
+            onNewDataSource: function(dataSource) {
+                that.onNewDataSource(dataSource);
+            },
+            onNewRows: function (rows) {
+                that.onNewRows(rows);
             },
             onNewCols: function () {
                 that.onNewCols();
@@ -361,7 +415,7 @@ define([
             this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
                 // for no-scrolls, all rows live in the body container
-            this.eRowsParent = this.eBodyContainer;
+            this.eParentOfRows = this.eBodyContainer;
         } else {
             this.eRoot = eGridDiv.querySelector(".ag-root");
             this.eBody = eGridDiv.querySelector(".ag-body");
@@ -375,7 +429,8 @@ define([
             this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
             // for scrolls, all rows live in eBody (containing pinned and normal body)
-            this.eRowsParent = this.eBody;
+            this.eParentOfRows = this.eBody;
+            this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');
         }
     };
 
@@ -429,9 +484,12 @@ define([
         var _this = this;
 
         var bodyHeight = this.eBodyViewport.offsetHeight;
+        var pagingVisible = this.isPaging();
 
-        if (this.bodyHeightLastTime != bodyHeight) {
+        if (this.bodyHeightLastTime != bodyHeight || this.pagingVisibleLastTime != pagingVisible) {
             this.bodyHeightLastTime = bodyHeight;
+            this.pagingVisibleLastTime = pagingVisible;
+
             this.setPinnedColHeight();
 
             //only draw virtual rows if done sort & filter - this
@@ -439,6 +497,9 @@ define([
             if (this.rowModel.getRowsAfterMap()) {
                 this.rowRenderer.drawVirtualRows();
             }
+
+            // show and position paging panel
+            this.showAndPositionPagingPanel();
         }
 
         if (!this.finished) {

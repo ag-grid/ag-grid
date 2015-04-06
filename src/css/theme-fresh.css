@@ -137,3 +137,7 @@
 .ag-fresh .ag-selection-checkbox {
     margin-left: 4px;
 }
+
+.ag-fresh .ag-paging-panel {
+    background-color: #ddd;
+}
