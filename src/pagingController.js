@@ -9,7 +9,7 @@ define([], function() {
     PagingController.prototype.setDataSource = function(dataSource) {
         this.dataSource = dataSource;
 
-        this.totalPages = (dataSource.rowCount / dataSource.pageSize) + 1;
+        this.totalPages = Math.floor( (dataSource.rowCount-1) / dataSource.pageSize) + 1;
         this.lbTotal.innerHTML = this.totalPages;
 
         this.currentPage = 0;
@@ -17,6 +17,7 @@ define([], function() {
     };
 
     PagingController.prototype.loadPage = function() {
+        this.enableOrDisableButtons();
         var startRow = this.currentPage * this.dataSource.pageSize;
         var endRow = (this.currentPage + 1) * this.dataSource.pageSize;
         this.lbCurrent.innerHTML = (this.currentPage + 1);
@@ -48,9 +49,15 @@ define([], function() {
         this.loadPage();
     };
 
+    PagingController.prototype.enableOrDisableButtons = function() {
+        this.btPrevious.disabled = this.currentPage === 0;
+        this.btNext.disabled = this.currentPage === (this.totalPages-1);
+    };
+
     PagingController.prototype.populatePanel = function(ePagingPanel) {
 
-        var html = '<button class="ag-paging-button" id="btPrevious">Previous</button>' +
+        var html =
+            '<button class="ag-paging-button" id="btPrevious">Previous</button>' +
             '<span id="current"></span>' +
             ' of ' +
             '<span id="total"></span>' +

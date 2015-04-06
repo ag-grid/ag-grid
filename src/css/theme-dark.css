@@ -82,15 +82,13 @@
 }
 
 .ag-dark .ag-body {
-    background-color: #f0f0f0;
+    background-color: #ddd;
 }
 
 .ag-dark .ag-body-viewport {
-    background-color: #ddd;
 }
 
 .ag-dark .ag-pinned-cols-viewport {
-    background-color: #ddd;
 }
 
 .ag-dark .ag-row-selected {
@@ -136,4 +134,8 @@
 
 .ag-dark .ag-selection-checkbox {
     margin-left: 4px;
+}
+
+.ag-dark .ag-paging-button {
+    padding: 4px;
 }

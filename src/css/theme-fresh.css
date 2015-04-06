@@ -86,15 +86,13 @@
 }
 
 .ag-fresh .ag-body {
-    background-color: #ffffff;
-}
-
-.ag-fresh .ag-body-viewport {
     background-color: #ddd;
 }
 
+.ag-fresh .ag-body-viewport {
+}
+
 .ag-fresh .ag-pinned-cols-viewport {
-    background-color: #ddd
 }
 
 .ag-fresh .ag-row-selected {
@@ -138,6 +136,6 @@
     margin-left: 4px;
 }
 
-.ag-fresh .ag-paging-panel {
-    background-color: #ddd;
+.ag-fresh .ag-paging-button {
+    margin: 4px;
 }
