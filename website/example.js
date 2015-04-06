@@ -61,7 +61,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var angularGrid = {
         columnDefs: [],
-        rowData: [],
+        rowData: null,
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
         groupHeaders: true,
         groupKeys: undefined, //set as string of keys eg ["region","country"],
@@ -89,7 +89,7 @@ gridsModule.controller('mainController', function($scope) {
         rowSelected: rowSelected, //callback when row selected
         selectionChanged: selectionChanged, //callback when selection changed,
         icons: {
-            menu: '<i class="fa fa-bars"/>',
+            //menu: '<i class="fa fa-bars"/>',
             filter: '<i class="fa fa-filter"/>',
             sortAscending: '<i class="fa fa-long-arrow-down"/>',
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
@@ -160,8 +160,12 @@ gridsModule.controller('mainController', function($scope) {
     createData();
 
     $scope.onRowCountChanged = function() {
-        createData();
-        angularGrid.api.onNewRows();
+        angularGrid.api.showLoading(true);
+        // put into a timeout, so browser gets a chance to update the loading panel
+        setTimeout( function () {
+            createData();
+            angularGrid.api.onNewRows();
+        }, 0);
     };
 
     $scope.onPinnedColCountChanged = function() {
@@ -169,10 +173,13 @@ gridsModule.controller('mainController', function($scope) {
     };
 
     $scope.onColCountChanged = function() {
-        createCols();
-        createData();
-        angularGrid.api.onNewCols();
-        angularGrid.api.onNewRows();
+        angularGrid.api.showLoading(true);
+        setTimeout( function () {
+            createCols();
+            createData();
+            angularGrid.api.onNewCols();
+            angularGrid.api.onNewRows();
+        });
     };
 
     $scope.onSelectionChanged = function() {
