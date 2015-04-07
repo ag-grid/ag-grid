@@ -3832,6 +3832,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
     GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+    GridOptionsWrapper.prototype.getPagingDatasource = function() { return this.gridOptions.pagingDatasource; };
 
     GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
     GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) { return this.gridOptions.selectedNodesById = newSelectedNodes; };
@@ -4399,12 +4400,17 @@ define('../src/pagingController',[], function() {
         this.callVersion = 0;
     }
 
-    PagingController.prototype.setDataSource = function(dataSource) {
-        this.dataSource = dataSource;
+    PagingController.prototype.setPagingDatasource = function(pagingDatasource) {
+        this.pagingDatasource = pagingDatasource;
 
-        this.totalPages = Math.floor( (dataSource.rowCount-1) / dataSource.pageSize) + 1;
+        if (!pagingDatasource) {
+            // only continue if we have a valid datasource to working with
+            return;
+        }
+
+        this.totalPages = Math.floor( (pagingDatasource.rowCount-1) / pagingDatasource.pageSize) + 1;
         this.lbTotal.innerHTML = this.totalPages.toLocaleString();
-        this.lbRecordCount.innerHTML = dataSource.rowCount.toLocaleString();
+        this.lbRecordCount.innerHTML = pagingDatasource.rowCount.toLocaleString();
 
         this.currentPage = 0;
         this.loadPage();
@@ -4412,18 +4418,18 @@ define('../src/pagingController',[], function() {
 
     PagingController.prototype.loadPage = function() {
         this.enableOrDisableButtons();
-        var startRow = this.currentPage * this.dataSource.pageSize;
-        var endRow = (this.currentPage + 1) * this.dataSource.pageSize;
+        var startRow = this.currentPage * this.pagingDatasource.pageSize;
+        var endRow = (this.currentPage + 1) * this.pagingDatasource.pageSize;
 
         this.lbCurrent.innerHTML = (this.currentPage + 1).toLocaleString();
         this.lbFirstRowOnPage.innerHTML = (startRow + 1).toLocaleString();
-        this.lbLastRowOnPage.innerHTML = ((endRow > this.dataSource.rowCount) ? this.dataSource.rowCount : endRow).toLocaleString();
+        this.lbLastRowOnPage.innerHTML = ((endRow > this.pagingDatasource.rowCount) ? this.pagingDatasource.rowCount : endRow).toLocaleString();
 
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
         this.angularGrid.showLoadingPanel(true);
-        this.dataSource.getRows(startRow, endRow,
+        this.pagingDatasource.getRows(startRow, endRow,
             function success(rows) {
                 if (that.callVersion === callVersionCopy) {
                     that.angularGrid.setRows(rows);
@@ -4784,6 +4790,11 @@ define('../src/angularGrid',[
         // if no data provided initially, show the loading panel
         var showLoading = !this.gridOptionsWrapper.getAllRows();
         this.showLoadingPanel(showLoading);
+
+        // if datasource provided, use it
+        if (this.gridOptionsWrapper.getPagingDatasource()) {
+            this.setPagingDatasource();
+        }
     }
 
     Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv) {
@@ -4839,10 +4850,16 @@ define('../src/angularGrid',[
         return this.paging;
     };
 
-    Grid.prototype.setPagingDataSource = function (dataSource) {
-        this.gridOptions.dataSource = dataSource;
-        this.pagingController.setDataSource(dataSource);
-        if (dataSource) {
+    Grid.prototype.setPagingDatasource = function (pagingDatasource) {
+        // if datasource provided, then set it
+        if (pagingDatasource) {
+            this.gridOptions.pagingDatasource = pagingDatasource;
+        }
+        // get the set datasource (if null was passed to this method,
+        // then need to get the actual datasource from options
+        var datasourceToUse = this.gridOptionsWrapper.getPagingDatasource();
+        this.pagingController.setPagingDatasource(datasourceToUse);
+        if (datasourceToUse) {
             this.paging = true;
         } else {
             this.paging = false;
@@ -4970,11 +4987,11 @@ define('../src/angularGrid',[
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            setPagingDataSource: function(pagingDataSource) {
-                that.setPagingDataSource(pagingDataSource);
+            setPagingDatasource: function(pagingDatasource) {
+                that.setPagingDatasource(pagingDatasource);
             },
-            onNewDataSource: function() {
-                that.setPagingDataSource();
+            onNewPagingDatasource: function() {
+                that.setPagingDatasource();
             },
             setRows: function(rows) {
                 that.setRows(rows);

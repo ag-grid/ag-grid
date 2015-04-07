@@ -129,6 +129,11 @@ define([
         // if no data provided initially, show the loading panel
         var showLoading = !this.gridOptionsWrapper.getAllRows();
         this.showLoadingPanel(showLoading);
+
+        // if datasource provided, use it
+        if (this.gridOptionsWrapper.getPagingDatasource()) {
+            this.setPagingDatasource();
+        }
     }
 
     Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv) {
@@ -184,10 +189,16 @@ define([
         return this.paging;
     };
 
-    Grid.prototype.setPagingDataSource = function (dataSource) {
-        this.gridOptions.dataSource = dataSource;
-        this.pagingController.setDataSource(dataSource);
-        if (dataSource) {
+    Grid.prototype.setPagingDatasource = function (pagingDatasource) {
+        // if datasource provided, then set it
+        if (pagingDatasource) {
+            this.gridOptions.pagingDatasource = pagingDatasource;
+        }
+        // get the set datasource (if null was passed to this method,
+        // then need to get the actual datasource from options
+        var datasourceToUse = this.gridOptionsWrapper.getPagingDatasource();
+        this.pagingController.setPagingDatasource(datasourceToUse);
+        if (datasourceToUse) {
             this.paging = true;
         } else {
             this.paging = false;
@@ -315,11 +326,11 @@ define([
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            setPagingDataSource: function(pagingDataSource) {
-                that.setPagingDataSource(pagingDataSource);
+            setPagingDatasource: function(pagingDatasource) {
+                that.setPagingDatasource(pagingDatasource);
             },
-            onNewDataSource: function() {
-                that.setPagingDataSource();
+            onNewPagingDatasource: function() {
+                that.setPagingDatasource();
             },
             setRows: function(rows) {
                 that.setRows(rows);

@@ -25,12 +25,17 @@ define([], function() {
         this.callVersion = 0;
     }
 
-    PagingController.prototype.setDataSource = function(dataSource) {
-        this.dataSource = dataSource;
+    PagingController.prototype.setPagingDatasource = function(pagingDatasource) {
+        this.pagingDatasource = pagingDatasource;
 
-        this.totalPages = Math.floor( (dataSource.rowCount-1) / dataSource.pageSize) + 1;
+        if (!pagingDatasource) {
+            // only continue if we have a valid datasource to working with
+            return;
+        }
+
+        this.totalPages = Math.floor( (pagingDatasource.rowCount-1) / pagingDatasource.pageSize) + 1;
         this.lbTotal.innerHTML = this.totalPages.toLocaleString();
-        this.lbRecordCount.innerHTML = dataSource.rowCount.toLocaleString();
+        this.lbRecordCount.innerHTML = pagingDatasource.rowCount.toLocaleString();
 
         this.currentPage = 0;
         this.loadPage();
@@ -38,18 +43,18 @@ define([], function() {
 
     PagingController.prototype.loadPage = function() {
         this.enableOrDisableButtons();
-        var startRow = this.currentPage * this.dataSource.pageSize;
-        var endRow = (this.currentPage + 1) * this.dataSource.pageSize;
+        var startRow = this.currentPage * this.pagingDatasource.pageSize;
+        var endRow = (this.currentPage + 1) * this.pagingDatasource.pageSize;
 
         this.lbCurrent.innerHTML = (this.currentPage + 1).toLocaleString();
         this.lbFirstRowOnPage.innerHTML = (startRow + 1).toLocaleString();
-        this.lbLastRowOnPage.innerHTML = ((endRow > this.dataSource.rowCount) ? this.dataSource.rowCount : endRow).toLocaleString();
+        this.lbLastRowOnPage.innerHTML = ((endRow > this.pagingDatasource.rowCount) ? this.pagingDatasource.rowCount : endRow).toLocaleString();
 
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
         this.angularGrid.showLoadingPanel(true);
-        this.dataSource.getRows(startRow, endRow,
+        this.pagingDatasource.getRows(startRow, endRow,
             function success(rows) {
                 if (that.callVersion === callVersionCopy) {
                     that.angularGrid.setRows(rows);

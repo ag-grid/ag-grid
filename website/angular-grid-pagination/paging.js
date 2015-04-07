@@ -16,25 +16,37 @@ module.controller("exampleCtrl", function($scope, $http) {
         {displayName: "Total", field: "total", width: 100}
     ];
 
-    $scope.gridOptions = {
-        columnDefs: columnDefs
-    };
-
     var simpleData = [
         {athlete: 'A'},
         {athlete: 'B'},
-        //{athlete: 'C'},
-        //{athlete: 'D'},
-        //{athlete: 'E'},
-        {athlete: 'F'}
-        , {athlete: 'G'}
+        {athlete: 'C'},
+        {athlete: 'D'},
+        {athlete: 'E'},
+        {athlete: 'F'},
+        {athlete: 'G'}
     ];
+
+    var dataSource = {
+        rowCount: simpleData.length,
+        pageSize: 3,
+        getRows: function (start, finish, callbackSuccess, callbackFail) {
+            setTimeout( function() {
+                var rowsThisPage = simpleData.slice(start, finish);
+                callbackSuccess(rowsThisPage);
+            }, 200);
+        }
+    };
+
+    $scope.gridOptions = {
+        //pagingDatasource: dataSource,
+        columnDefs: columnDefs
+    };
 
     $http.get("../olympicWinners.json")
         .then(function(result){
             var allOfTheData = result.data;
             //var allOfTheData = simpleData;
-            // wait for a second before setting the results into the table
+            //wait for a second before setting the results into the table
             var dataSource = {
                 rowCount: allOfTheData.length,
                 pageSize: 1000,
@@ -45,6 +57,8 @@ module.controller("exampleCtrl", function($scope, $http) {
                     }, 200);
                 }
             };
-            $scope.gridOptions.api.setPagingDataSource(dataSource);
+
+            $scope.gridOptions.api.setPagingDatasource(dataSource);
+            //$scope.gridOptions.api.setRows(result.data);
         });
 });
