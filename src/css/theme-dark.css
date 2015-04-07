@@ -136,6 +136,17 @@
     margin-left: 4px;
 }
 
-.ag-dark .ag-paging-button {
+.ag-dark .ag-paging-panel {
+    color: black;
     padding: 4px;
+}
+
+.ag-dark .ag-paging-button {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.ag-dark .ag-paging-row-summary-panel {
+    display: inline-block;
+    width: 300px;
 }

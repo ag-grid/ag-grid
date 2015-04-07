@@ -136,6 +136,16 @@
     margin-left: 4px;
 }
 
+.ag-fresh .ag-paging-panel {
+    padding: 4px;
+}
+
 .ag-fresh .ag-paging-button {
-    margin: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.ag-fresh .ag-paging-row-summary-panel {
+    display: inline-block;
+    width: 300px;
 }

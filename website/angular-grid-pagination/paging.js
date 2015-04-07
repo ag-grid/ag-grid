@@ -20,9 +20,20 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs
     };
 
+    var simpleData = [
+        {athlete: 'A'},
+        {athlete: 'B'},
+        //{athlete: 'C'},
+        //{athlete: 'D'},
+        //{athlete: 'E'},
+        {athlete: 'F'}
+        , {athlete: 'G'}
+    ];
+
     $http.get("../olympicWinners.json")
         .then(function(result){
             var allOfTheData = result.data;
+            //var allOfTheData = simpleData;
             // wait for a second before setting the results into the table
             var dataSource = {
                 rowCount: allOfTheData.length,
@@ -34,6 +45,6 @@ module.controller("exampleCtrl", function($scope, $http) {
                     }, 200);
                 }
             };
-            $scope.gridOptions.api.onNewDataSource(dataSource);
+            $scope.gridOptions.api.setPagingDataSource(dataSource);
         });
 });

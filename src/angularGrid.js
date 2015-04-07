@@ -181,14 +181,21 @@ define([
     };
 
     Grid.prototype.isPaging = function() {
-        return true;
+        return this.paging;
     };
 
-    Grid.prototype.onNewDataSource = function (dataSource) {
-        if (dataSource) {
-            this.gridOptions.dataSource = dataSource;
-        }
+    Grid.prototype.setPagingDataSource = function (dataSource) {
+        this.gridOptions.dataSource = dataSource;
         this.pagingController.setDataSource(dataSource);
+        if (dataSource) {
+            this.paging = true;
+        } else {
+            this.paging = false;
+        }
+        // we may of just shown or hidden the paging panel, so need
+        // to get table to check the body size, which also hides and
+        // shows the paging panel.
+        this.setBodySize();
     };
 
     Grid.prototype.setFinished = function () {
@@ -293,7 +300,7 @@ define([
         this.rowRenderer.refreshView();
     };
 
-    Grid.prototype.onNewRows = function (rows) {
+    Grid.prototype.setRows = function (rows) {
         if (rows) {
             this.gridOptions.rowData = rows;
         }
@@ -308,11 +315,17 @@ define([
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            onNewDataSource: function(dataSource) {
-                that.onNewDataSource(dataSource);
+            setPagingDataSource: function(pagingDataSource) {
+                that.setPagingDataSource(pagingDataSource);
             },
-            onNewRows: function (rows) {
-                that.onNewRows(rows);
+            onNewDataSource: function() {
+                that.setPagingDataSource();
+            },
+            setRows: function(rows) {
+                that.setRows(rows);
+            },
+            onNewRows: function () {
+                that.setRows();
             },
             onNewCols: function () {
                 that.onNewCols();
