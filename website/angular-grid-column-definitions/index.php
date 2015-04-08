@@ -72,7 +72,10 @@ include '../documentation_header.php';
             <th>group</th>
             <td>If grouping columns, the group this column belongs to.</td>
         </tr>
-
+        <tr>
+            <th>newValueHandler, cellValueChanged</th>
+            <td>Callbacks for editing. See editing section for further details.</td>
+        </tr>
     </table>
 
     <h2>cellClass</h2>
