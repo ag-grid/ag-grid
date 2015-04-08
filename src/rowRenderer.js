@@ -98,6 +98,24 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.drawVirtualRows();
     };
 
+    // public - removes the group rows and then redraws them again
+    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
+        // fine all the group rows
+        var rowsToRemove = [];
+        var that = this;
+        Object.keys(this.renderedRows).forEach(function (key) {
+            var renderedRow = that.renderedRows[key];
+            var node = renderedRow.node;
+            if (node.group) {
+                rowsToRemove.push(key);
+            }
+        });
+        // remove the rows
+        this.removeVirtualRows(rowsToRemove);
+        // and draw them back again
+        this.ensureRowsRendered();
+    };
+
     //takes array of row id's
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
         var that = this;
@@ -637,7 +655,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 colDef.cellClicked(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (that.isCellEditable(colDef, node.data)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope);
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex);
             }
         });
 
@@ -662,7 +680,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex) {
         this.editingCell = false;
         var newValue = eInput.value;
 
@@ -672,17 +690,33 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         utils.removeAllChildren(eGridCell);
 
+        var paramsForCallbacks = {
+            node: node,
+            data: node.data,
+            oldValue: node.data[colDef.field],
+            newValue: newValue,
+            rowIndex: rowIndex,
+            colDef: colDef,
+            gridOptions: this.gridOptionsWrapper.getGridOptions()
+        };
+
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(node.data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+            colDef.newValueHandler(paramsForCallbacks);
         } else {
             node.data[colDef.field] = newValue;
+        }
+
+        // at this point, the value has been updated
+        paramsForCallbacks.newValue = node.data[colDef.field];
+        if (typeof colDef.cellValueChanged === 'function') {
+            colDef.cellValueChanged(paramsForCallbacks);
         }
 
         var value = node.data[colDef.field];
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         this.editingCell = true;
@@ -702,7 +736,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.select();
 
         var blurListener = function() {
-            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
+            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
         };
 
         //stop entering if we loose focus
@@ -712,7 +746,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
+                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
             }
         });
 

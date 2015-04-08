@@ -296,6 +296,10 @@ define([
             selectIndex: function(index, tryMulti) {
                 that.selectionController.selectIndex(index, tryMulti);
             },
+            recomputeAggregates: function() {
+                that.rowController.doAggregate();
+                that.rowRenderer.refreshGroupRows();
+            },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
             }

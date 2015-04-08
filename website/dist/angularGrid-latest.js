@@ -2187,6 +2187,7 @@ define('../src/rowController',[
         this.$scope = $scope;
     }
 
+    // public
     RowController.prototype.updateModel = function(step) {
 
         //fallthrough in below switch is on purpose
@@ -2214,6 +2215,7 @@ define('../src/rowController',[
 
     };
 
+    // public - it's possible to recompute the aggregate without doing the other parts
     RowController.prototype.doAggregate = function () {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
@@ -2226,19 +2228,26 @@ define('../src/rowController',[
         this.recursivelyCreateAggData(nodes, groupAggFunction);
     };
 
+    // private
     RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
         for (var i = 0, l = nodes.length; i<l; i++) {
             var node = nodes[i];
             if (node.group) {
-                //agg function needs to start at the bottom, so traverse first
+                // agg function needs to start at the bottom, so traverse first
                 this.recursivelyCreateAggData(node.children, groupAggFunction);
-                //after traversal, we can now do the agg at this level
+                // after traversal, we can now do the agg at this level
                 var data = groupAggFunction(node.children);
                 node.data = data;
+                // if we are grouping, then it's possible there is a sibling footer
+                // to the group, so update the data here also if thers is one
+                if (node.sibling) {
+                    node.sibling.data = data;
+                }
             }
         }
     };
 
+    // private
     RowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
@@ -2263,6 +2272,7 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
     };
 
+    // private
     RowController.prototype.resetSortInGroups = function(rowNodes) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
@@ -2273,6 +2283,7 @@ define('../src/rowController',[
         }
     };
 
+    // private
     RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
         // sort any groups recursively
@@ -2300,6 +2311,7 @@ define('../src/rowController',[
         });
     };
 
+    // private
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
@@ -2312,6 +2324,7 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterGroup(rowsAfterGroup);
     };
 
+    // private
     RowController.prototype.doFilter = function () {
         var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
         var advancedFilterPresent = this.filterManager.isFilterPresent();
@@ -2326,6 +2339,7 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterFilter(rowsAfterFilter);
     };
 
+    // private
     RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
@@ -2351,6 +2365,7 @@ define('../src/rowController',[
         return result;
     };
 
+    // private
     RowController.prototype.setAllRows = function(rows) {
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
@@ -2400,6 +2415,7 @@ define('../src/rowController',[
         }
     };
 
+    // private
     RowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
         for (var i = 0, l = rowNodes.length; i<l; i++) {
@@ -2413,6 +2429,7 @@ define('../src/rowController',[
         return count;
     };
 
+    // private
     RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
             group: true,
@@ -2426,6 +2443,7 @@ define('../src/rowController',[
         };
     };
 
+    // private
     RowController.prototype.doGroupMapping = function () {
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
@@ -2434,6 +2452,7 @@ define('../src/rowController',[
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
+    // private
     RowController.prototype.addToMap = function (mappedData, originalNodes) {
         if (!originalNodes) {
             return;
@@ -2453,6 +2472,7 @@ define('../src/rowController',[
         }
     };
 
+    // private
     RowController.prototype.createFooterNode = function (groupNode) {
         var footerNode = {};
         Object.keys(groupNode).forEach(function (key) {
@@ -2467,6 +2487,7 @@ define('../src/rowController',[
         return footerNode;
     };
 
+    // private
     RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
@@ -2490,6 +2511,7 @@ define('../src/rowController',[
         return true;
     };
 
+    // private
     RowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
@@ -2689,6 +2711,24 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         //add in new rows
         this.drawVirtualRows();
+    };
+
+    // public - removes the group rows and then redraws them again
+    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
+        // fine all the group rows
+        var rowsToRemove = [];
+        var that = this;
+        Object.keys(this.renderedRows).forEach(function (key) {
+            var renderedRow = that.renderedRows[key];
+            var node = renderedRow.node;
+            if (node.group) {
+                rowsToRemove.push(key);
+            }
+        });
+        // remove the rows
+        this.removeVirtualRows(rowsToRemove);
+        // and draw them back again
+        this.ensureRowsRendered();
     };
 
     //takes array of row id's
@@ -3230,7 +3270,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 colDef.cellClicked(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
             if (that.isCellEditable(colDef, node.data)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope);
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex);
             }
         });
 
@@ -3255,7 +3295,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return false;
     };
 
-    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener) {
+    RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex) {
         this.editingCell = false;
         var newValue = eInput.value;
 
@@ -3265,17 +3305,33 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         utils.removeAllChildren(eGridCell);
 
+        var paramsForCallbacks = {
+            node: node,
+            data: node.data,
+            oldValue: node.data[colDef.field],
+            newValue: newValue,
+            rowIndex: rowIndex,
+            colDef: colDef,
+            gridOptions: this.gridOptionsWrapper.getGridOptions()
+        };
+
         if (colDef.newValueHandler) {
-            colDef.newValueHandler(node.data, newValue, colDef, this.gridOptionsWrapper.getGridOptions());
+            colDef.newValueHandler(paramsForCallbacks);
         } else {
             node.data[colDef.field] = newValue;
+        }
+
+        // at this point, the value has been updated
+        paramsForCallbacks.newValue = node.data[colDef.field];
+        if (typeof colDef.cellValueChanged === 'function') {
+            colDef.cellValueChanged(paramsForCallbacks);
         }
 
         var value = node.data[colDef.field];
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         this.editingCell = true;
@@ -3295,7 +3351,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.select();
 
         var blurListener = function() {
-            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
+            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
         };
 
         //stop entering if we loose focus
@@ -3305,7 +3361,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
             if (key == 13) { // 13 is enter
-                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener);
+                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
             }
         });
 
@@ -4814,6 +4870,10 @@ define('../src/angularGrid',[
             },
             selectIndex: function(index, tryMulti) {
                 that.selectionController.selectIndex(index, tryMulti);
+            },
+            recomputeAggregates: function() {
+                that.rowController.doAggregate();
+                that.rowRenderer.refreshGroupRows();
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);

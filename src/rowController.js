@@ -13,6 +13,7 @@ define([
         this.$scope = $scope;
     }
 
+    // public
     RowController.prototype.updateModel = function(step) {
 
         //fallthrough in below switch is on purpose
@@ -40,6 +41,7 @@ define([
 
     };
 
+    // public - it's possible to recompute the aggregate without doing the other parts
     RowController.prototype.doAggregate = function () {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
@@ -52,19 +54,26 @@ define([
         this.recursivelyCreateAggData(nodes, groupAggFunction);
     };
 
+    // private
     RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
         for (var i = 0, l = nodes.length; i<l; i++) {
             var node = nodes[i];
             if (node.group) {
-                //agg function needs to start at the bottom, so traverse first
+                // agg function needs to start at the bottom, so traverse first
                 this.recursivelyCreateAggData(node.children, groupAggFunction);
-                //after traversal, we can now do the agg at this level
+                // after traversal, we can now do the agg at this level
                 var data = groupAggFunction(node.children);
                 node.data = data;
+                // if we are grouping, then it's possible there is a sibling footer
+                // to the group, so update the data here also if thers is one
+                if (node.sibling) {
+                    node.sibling.data = data;
+                }
             }
         }
     };
 
+    // private
     RowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
@@ -89,6 +98,7 @@ define([
         this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
     };
 
+    // private
     RowController.prototype.resetSortInGroups = function(rowNodes) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
@@ -99,6 +109,7 @@ define([
         }
     };
 
+    // private
     RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
         // sort any groups recursively
@@ -126,6 +137,7 @@ define([
         });
     };
 
+    // private
     RowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
@@ -138,6 +150,7 @@ define([
         this.rowModel.setRowsAfterGroup(rowsAfterGroup);
     };
 
+    // private
     RowController.prototype.doFilter = function () {
         var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
         var advancedFilterPresent = this.filterManager.isFilterPresent();
@@ -152,6 +165,7 @@ define([
         this.rowModel.setRowsAfterFilter(rowsAfterFilter);
     };
 
+    // private
     RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
@@ -177,6 +191,7 @@ define([
         return result;
     };
 
+    // private
     RowController.prototype.setAllRows = function(rows) {
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
@@ -226,6 +241,7 @@ define([
         }
     };
 
+    // private
     RowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
         for (var i = 0, l = rowNodes.length; i<l; i++) {
@@ -239,6 +255,7 @@ define([
         return count;
     };
 
+    // private
     RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
             group: true,
@@ -252,6 +269,7 @@ define([
         };
     };
 
+    // private
     RowController.prototype.doGroupMapping = function () {
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
@@ -260,6 +278,7 @@ define([
         this.rowModel.setRowsAfterMap(rowsAfterMap);
     };
 
+    // private
     RowController.prototype.addToMap = function (mappedData, originalNodes) {
         if (!originalNodes) {
             return;
@@ -279,6 +298,7 @@ define([
         }
     };
 
+    // private
     RowController.prototype.createFooterNode = function (groupNode) {
         var footerNode = {};
         Object.keys(groupNode).forEach(function (key) {
@@ -293,6 +313,7 @@ define([
         return footerNode;
     };
 
+    // private
     RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
@@ -316,6 +337,7 @@ define([
         return true;
     };
 
+    // private
     RowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
