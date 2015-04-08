@@ -99,6 +99,23 @@ include '../documentation_header.php';
 
     <show-example example="groupingFooters"></show-example>
 
+    <h3>Recomputing Aggregates</h3>
+
+    <p>
+        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates.
+        This is through throw the api method <i>recomputeAggregates</i>. For example, if you allow editing,
+        and want the aggregates to update as new values are edited, then create code like the following:
+
+        <pre>
+        // add a listener to the editable colDef
+        colDef.cellValueChanged = function() {
+            gridOptions.api.recomputeAggregates();
+        }
+        </pre>
+
+    </p>
+
+
     <h3>Advanced Multi-Level Grouping</h3>
 
     When doing aggregations, it is not always possible to just 'sum' the values, especially if they
