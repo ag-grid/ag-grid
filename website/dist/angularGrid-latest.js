@@ -3269,7 +3269,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             if (colDef.cellClicked) {
                 colDef.cellClicked(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
             }
-            if (that.isCellEditable(colDef, node.data)) {
+            if (that.isCellEditable(colDef, node)) {
                 that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex);
             }
         });
@@ -3279,17 +3279,25 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eGridCell;
     };
 
-    RowRenderer.prototype.isCellEditable = function(colDef, data) {
+    RowRenderer.prototype.isCellEditable = function(colDef, node) {
         if (this.editingCell) {
             return false;
         }
 
+        // never allow editing of groups
+        if (node.group) {
+            return false;
+        }
+
+        // if boolean set, then just use it
         if (typeof colDef.editable === 'boolean') {
             return colDef.editable;
         }
 
+        // if function, then call the function to find out
         if (typeof colDef.editable === 'function') {
-            return colDef.editable(data);
+            // should change this, so it gets passed params with nice useful values
+            return colDef.editable(node.data);
         }
 
         return false;
