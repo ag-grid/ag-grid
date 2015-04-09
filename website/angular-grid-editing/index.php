@@ -22,12 +22,41 @@ include '../documentation_header.php';
     By default, the grid will treat values as string values, and update the row with the
     new string.
 
-    <h4>New Value Handlers</h4>
+    <h4>Callback: New Value Handlers</h4>
 
-    If you want to use the simple text editing, but want to format the result in some way
-    before inserting into the row, then you can provide a newValueHandler to the column.
-    This will allow you to add additional validation or conversation to the value. The example
-    below shows the newValueHandler in action in the 'Upper Case Only' column.
+    <p>
+        If you want to use the simple text editing, but want to format the result in some way
+        before inserting into the row, then you can provide a <i>newValueHandler</i> to the column.
+        This will allow you to add additional validation or conversation to the value. The example
+        below shows the newValueHandler in action in the 'Upper Case Only' column.
+    </p>
+
+    <p>
+        newValueHandler is provided a params object with attributes:<br/>
+        <b>node</b>The grid node in question.<br/>
+        <b>data</b>The row data in question.<br/>
+        <b>oldValue</b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
+        <b>newValue</b>The string value entered into the default editor.<br/>
+        <b>rowIndex</b>The index of the virtualised row.<br/>
+        <b>colDef</b>The column definition.<br/>
+        <b>gridOptions</b>The grid options.<br/>
+    </p>
+
+
+    <h4>Callback: Cell Value Changed</h4>
+
+    <p>
+        After a cell has been changed with default editing (ie not your own custom cell renderer),
+        then <i>cellValueChanged</i>, if provided, is called on the column def. This is used if
+        your application needs to do something after a value has been changed.
+    </p>
+    <p>
+        cellValueChanged is provided with the same parameters as newValueHandler with one difference,
+        the <i>newValue</i>. If 'field' is in the column definition, the newValue contains the value
+        in the data after the edit. So for example, if the cellValueChanged converts the provided
+        string value into a number, then newValue for newValueHandler will have the string, and
+        newValue for cellValueChanged will have the number.
+    </p>
 
     <div class="bigTitle">Custom Editing</div>
 

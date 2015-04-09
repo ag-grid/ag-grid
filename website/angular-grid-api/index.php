@@ -96,6 +96,11 @@ include '../documentation_header.php';
                 is called, the loading icon is automatically hidden.
             </td>
         </tr>
+        <tr>
+            <th>recomputeAggregates()</th>
+            <td>Recomputes the aggregates in the model and refreshes all the group rows.
+            </td>
+        </tr>
     </table>
 
 </div>
