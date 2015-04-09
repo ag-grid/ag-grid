@@ -371,7 +371,7 @@ define([
             setQuickFilter: function(newFilter) {
                 that.onQuickFilterChanged(newFilter)
             },
-            selectIndex: function(index, tryMulti) {
+            selectIndex: function(index, tryMulti, suppressEvents) {
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
             recomputeAggregates: function() {
