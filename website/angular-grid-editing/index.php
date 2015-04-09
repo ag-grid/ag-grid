@@ -48,12 +48,14 @@ include '../documentation_header.php';
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
         then <i>cellValueChanged</i>, if provided, is called on the column def. This is used if
-        your application needs to do something after a values has been changed.
+        your application needs to do something after a value has been changed.
     </p>
     <p>
         cellValueChanged is provided with the same parameters as newValueHandler with one difference,
         the <i>newValue</i>. If 'field' is in the column definition, the newValue contains the value
-        in the data after the edit.
+        in the data after the edit. So for example, if the cellValueChanged converts the provided
+        string value into a number, then newValue for newValueHandler will have the string, and
+        newValue for cellValueChanged will have the number.
     </p>
 
     <div class="bigTitle">Custom Editing</div>
