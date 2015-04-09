@@ -40,9 +40,10 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
-            <th>selectIndex(index, multi)</th>
+            <th>selectIndex(index, multi, suppressEvents)</th>
             <td>Select the row at the given index. If multi is true, then previous selections will be kept (ie allow
-                multi-select). If multi is false, any previously selected row will be unselected.</td>
+                multi-select). If multi is false, any previously selected row will be unselected. If suppressEvents
+                is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
         </tr>
         <tr>
             <th>refreshView()</th>

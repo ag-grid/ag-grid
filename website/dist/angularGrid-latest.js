@@ -4143,7 +4143,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     };
 
     // public
-    SelectionController.prototype.selectNode = function (node, tryMulti) {
+    SelectionController.prototype.selectNode = function (node, tryMulti, suppressEvents) {
         var multiSelect = this.gridOptionsWrapper.isRowSelectionMulti() && tryMulti;
 
         // if the node is a group, then selecting this is the same as selecting the parent,
@@ -4170,17 +4170,17 @@ define('../src/selectionController',['./utils'], function(utils) {
             atLeastOneItemSelected = this.recursivelySelectAllChildren(nodeToSelect);
         } else {
             // see if row needs to be selected
-            atLeastOneItemSelected = this.doWorkOfSelectNode(nodeToSelect);
+            atLeastOneItemSelected = this.doWorkOfSelectNode(nodeToSelect, suppressEvents);
         }
 
         if (atLeastOneItemUnselected || atLeastOneItemSelected) {
-            this.syncSelectedRowsAndCallListener();
+            this.syncSelectedRowsAndCallListener(suppressEvents);
         }
 
         this.updateGroupParentsIfNeeded();
     };
 
-    SelectionController.prototype.recursivelySelectAllChildren = function(node) {
+    SelectionController.prototype.recursivelySelectAllChildren = function(node, suppressEvents) {
         var atLeastOne = false;
         if (node.children) {
             for (var i = 0; i<node.children.length; i++) {
@@ -4190,7 +4190,7 @@ define('../src/selectionController',['./utils'], function(utils) {
                         atLeastOne = true;
                     }
                 } else {
-                    if (this.doWorkOfSelectNode(child)) {
+                    if (this.doWorkOfSelectNode(child, suppressEvents)) {
                         atLeastOne = true;
                     }
                 }
@@ -4216,7 +4216,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     // 1 - selects a node
     // 2 - updates the UI
     // 3 - calls callbacks
-    SelectionController.prototype.doWorkOfSelectNode = function (node) {
+    SelectionController.prototype.doWorkOfSelectNode = function (node, suppressEvents) {
         if (this.selectedNodesById[node.id]) {
             return false;
         }
@@ -4231,7 +4231,7 @@ define('../src/selectionController',['./utils'], function(utils) {
         }
 
         // inform the rowSelected listener, if any
-        if (typeof this.gridOptionsWrapper.getRowSelected() === "function") {
+        if (!suppressEvents && typeof this.gridOptionsWrapper.getRowSelected() === "function") {
             this.gridOptionsWrapper.getRowSelected()(node.data, node);
         }
 
@@ -4315,14 +4315,14 @@ define('../src/selectionController',['./utils'], function(utils) {
     };
 
     // public (selectionRendererFactory & api)
-    SelectionController.prototype.selectIndex = function (index, tryMulti) {
+    SelectionController.prototype.selectIndex = function (index, tryMulti, suppressEvents) {
         var node = this.rowModel.getVirtualRow(index);
-        this.selectNode(node, tryMulti);
+        this.selectNode(node, tryMulti, suppressEvents);
     };
 
     // private
     // updates the selectedRows with the selectedNodes and calls selectionChanged listener
-    SelectionController.prototype.syncSelectedRowsAndCallListener = function () {
+    SelectionController.prototype.syncSelectedRowsAndCallListener = function (suppressEvents) {
         // update selected rows
         var selectedRows = this.selectedRows;
         // clear selected rows
@@ -4335,7 +4335,7 @@ define('../src/selectionController',['./utils'], function(utils) {
             }
         }
 
-        if (typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
+        if (!suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
             this.gridOptionsWrapper.getSelectionChanged()();
         }
 
@@ -4876,8 +4876,8 @@ define('../src/angularGrid',[
             setQuickFilter: function(newFilter) {
                 that.onQuickFilterChanged(newFilter)
             },
-            selectIndex: function(index, tryMulti) {
-                that.selectionController.selectIndex(index, tryMulti);
+            selectIndex: function(index, tryMulti, suppressEvents) {
+                that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
             recomputeAggregates: function() {
                 that.rowController.doAggregate();
