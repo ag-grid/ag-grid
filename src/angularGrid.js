@@ -294,7 +294,7 @@ define([
                 that.onQuickFilterChanged(newFilter)
             },
             selectIndex: function(index, tryMulti) {
-                that.selectionController.selectIndex(index, tryMulti);
+                that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
             recomputeAggregates: function() {
                 that.rowController.doAggregate();
