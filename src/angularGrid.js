@@ -108,7 +108,7 @@ define([
 
         this.addApi();
         this.findAllElements(eGridDiv);
-        this.createAndWireBeans($scope, $compile, eGridDiv);
+        this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
 
         this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
@@ -136,7 +136,7 @@ define([
         }
     }
 
-    Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv) {
+    Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv, useScrolls) {
 
         var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
         var gridOptions = this.gridOptions;
@@ -151,7 +151,11 @@ define([
             selectionRendererFactory, $compile, $scope, selectionController);
         var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
             $scope, $compile);
-        var pagingController = new PagingController(this.ePagingPanel, this);
+
+        var pagingController = null;
+        if (useScrolls) {
+            pagingController = new PagingController(this.ePagingPanel, this);
+        }
 
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
 
@@ -272,17 +276,18 @@ define([
         var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
         if (dontUseScrolls) {
             this.eHeaderContainer.style['height'] = headerHeightPixels;
-            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         } else {
             this.eHeader.style['height'] = headerHeightPixels;
             this.eBody.style['padding-top'] = headerHeightPixels;
-            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
+            this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         }
     };
 
     Grid.prototype.showLoadingPanel = function (show) {
         if (show) {
-            this.eLoadingPanel.style.display = 'table';
+            // setting display to null, actually has the impact of setting it
+            // to 'table', as this is part of the ag-loading-panel core style
+            this.eLoadingPanel.style.display = null;
         } else {
             this.eLoadingPanel.style.display = 'none';
         }
@@ -496,9 +501,9 @@ define([
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };
 
-    //see if a grey box is needed at the bottom of the pinned col
+    // see if a grey box is needed at the bottom of the pinned col
     Grid.prototype.setPinnedColHeight = function () {
-        //var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
+        // var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
         var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
         var bodyHeight = this.eBodyViewport.offsetHeight;
         if (scrollShowing) {
@@ -506,6 +511,8 @@ define([
         } else {
             this.ePinnedColsViewport.style.height = bodyHeight + "px";
         }
+        // also the loading overlay, needs to have it's height adjusted
+        this.eLoadingPanel.style.height = bodyHeight + 'px';
     };
 
     Grid.prototype.setBodySize = function() {

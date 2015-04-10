@@ -39,6 +39,8 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         //pagingDatasource: dataSource,
+        enableSorting: true,
+        enableFilter: true,
         columnDefs: columnDefs
     };
 
@@ -54,7 +56,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                     setTimeout( function() {
                         var rowsThisPage = allOfTheData.slice(start, finish);
                         callbackSuccess(rowsThisPage);
-                    }, 200);
+                    }, 5000);
                 }
             };
 
