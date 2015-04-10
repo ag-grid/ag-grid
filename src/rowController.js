@@ -54,6 +54,22 @@ define([
         this.recursivelyCreateAggData(nodes, groupAggFunction);
     };
 
+    // public
+    RowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
+        // if first call in recursion, we set list to parent list
+        if (rowNodes === null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
+
+        if (!rowNodes) { return; }
+
+        var _this = this;
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
+            }
+        });
+    };
+
     // private
     RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
         for (var i = 0, l = nodes.length; i<l; i++) {

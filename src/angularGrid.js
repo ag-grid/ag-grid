@@ -361,11 +361,11 @@ define([
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
-                that.expandOrCollapseAll(true, null);
+                that.rowController.expandOrCollapseAll(true, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
-                that.expandOrCollapseAll(false, null);
+                that.rowController.expandOrCollapseAll(false, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             addVirtualRowListener: function(rowIndex, callback) {
@@ -420,21 +420,6 @@ define([
         }
         // remove the callbacks
         delete this.virtualRowCallbacks[rowIndex];
-    };
-
-    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
-        //if first call in recursion, we set list to parent list
-        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
-
-        if (!rowNodes) { return; }
-
-        var _this = this;
-        rowNodes.forEach(function(node) {
-            if (node.group) {
-                node.expanded = expand;
-                _this.expandOrCollapseAll(expand, node.children);
-            }
-        });
     };
 
     Grid.prototype.onNewCols = function () {

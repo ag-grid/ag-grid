@@ -64,7 +64,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             // see if the rendered row is in the list of rows we have to update
             var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
-                indexesToRemove.push(renderedRow.rowIndex);
+                indexesToRemove.push(key);
             }
         });
         // remove the rows
@@ -74,17 +74,17 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.refreshAllVirtualRows = function () {
-        //remove all current virtual rows, as they have old data
+        // remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
 
-        //add in new rows
+        // add in new rows
         this.drawVirtualRows();
     };
 
     // public - removes the group rows and then redraws them again
-    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
-        // fine all the group rows
+    RowRenderer.prototype.refreshGroupRows = function () {
+        // find all the group rows
         var rowsToRemove = [];
         var that = this;
         Object.keys(this.renderedRows).forEach(function (key) {
@@ -100,30 +100,34 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.ensureRowsRendered();
     };
 
-    //takes array of row id's
+    // takes array of row indexes
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
         var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
-            var renderedRow = that.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement && that.ePinnedColsContainer) {
-                that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
-            }
-
-            if (renderedRow.bodyElement) {
-                that.eBodyContainer.removeChild(renderedRow.bodyElement);
-            }
-
-            if (renderedRow.scope) {
-                renderedRow.scope.$destroy();
-            }
-
-            if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
-                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
-            }
-            that.angularGrid.onVirtualRowRemoved(indexToRemove);
-
-            delete that.renderedRows[indexToRemove];
+            that.removeVirtualRow(indexToRemove);
         });
+    };
+
+    RowRenderer.prototype.removeVirtualRow = function (indexToRemove) {
+        var renderedRow = this.renderedRows[indexToRemove];
+        if (renderedRow.pinnedElement && this.ePinnedColsContainer) {
+            this.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
+        }
+
+        if (renderedRow.bodyElement) {
+            this.eBodyContainer.removeChild(renderedRow.bodyElement);
+        }
+
+        if (renderedRow.scope) {
+            renderedRow.scope.$destroy();
+        }
+
+        if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
+            this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
+        }
+        this.angularGrid.onVirtualRowRemoved(indexToRemove);
+
+        delete this.renderedRows[indexToRemove];
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {

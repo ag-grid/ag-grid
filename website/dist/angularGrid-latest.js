@@ -2036,8 +2036,9 @@ define('../src/rowModel',[], function() {
         this.rowsAfterMap = null;
     }
 
-    RowModel.prototype.getAllRows = function() { return this.allRows; };
     RowModel.prototype.setAllRows = function(allRows) { this.allRows = allRows; };
+
+    RowModel.prototype.getAllRows = function() { return this.allRows; };
 
     RowModel.prototype.getRowsAfterGroup = function() { return this.rowsAfterGroup; };
     RowModel.prototype.setRowsAfterGroup = function(rowsAfterGroup) { this.rowsAfterGroup = rowsAfterGroup; };
@@ -2227,6 +2228,22 @@ define('../src/rowController',[
         var nodes = this.rowModel.getRowsAfterFilter();
 
         this.recursivelyCreateAggData(nodes, groupAggFunction);
+    };
+
+    // public
+    RowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
+        // if first call in recursion, we set list to parent list
+        if (rowNodes === null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
+
+        if (!rowNodes) { return; }
+
+        var _this = this;
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
+            }
+        });
     };
 
     // private
@@ -2680,7 +2697,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             // see if the rendered row is in the list of rows we have to update
             var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
-                indexesToRemove.push(renderedRow.rowIndex);
+                indexesToRemove.push(key);
             }
         });
         // remove the rows
@@ -2690,17 +2707,17 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.refreshAllVirtualRows = function () {
-        //remove all current virtual rows, as they have old data
+        // remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
 
-        //add in new rows
+        // add in new rows
         this.drawVirtualRows();
     };
 
     // public - removes the group rows and then redraws them again
-    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
-        // fine all the group rows
+    RowRenderer.prototype.refreshGroupRows = function () {
+        // find all the group rows
         var rowsToRemove = [];
         var that = this;
         Object.keys(this.renderedRows).forEach(function (key) {
@@ -2716,30 +2733,34 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.ensureRowsRendered();
     };
 
-    //takes array of row id's
+    // takes array of row indexes
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
         var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
-            var renderedRow = that.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement && that.ePinnedColsContainer) {
-                that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
-            }
-
-            if (renderedRow.bodyElement) {
-                that.eBodyContainer.removeChild(renderedRow.bodyElement);
-            }
-
-            if (renderedRow.scope) {
-                renderedRow.scope.$destroy();
-            }
-
-            if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
-                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
-            }
-            that.angularGrid.onVirtualRowRemoved(indexToRemove);
-
-            delete that.renderedRows[indexToRemove];
+            that.removeVirtualRow(indexToRemove);
         });
+    };
+
+    RowRenderer.prototype.removeVirtualRow = function (indexToRemove) {
+        var renderedRow = this.renderedRows[indexToRemove];
+        if (renderedRow.pinnedElement && this.ePinnedColsContainer) {
+            this.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
+        }
+
+        if (renderedRow.bodyElement) {
+            this.eBodyContainer.removeChild(renderedRow.bodyElement);
+        }
+
+        if (renderedRow.scope) {
+            renderedRow.scope.$destroy();
+        }
+
+        if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
+            this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
+        }
+        this.angularGrid.onVirtualRowRemoved(indexToRemove);
+
+        delete this.renderedRows[indexToRemove];
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
@@ -5066,11 +5087,11 @@ define('../src/angularGrid',[
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
-                that.expandOrCollapseAll(true, null);
+                that.rowController.expandOrCollapseAll(true, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
-                that.expandOrCollapseAll(false, null);
+                that.rowController.expandOrCollapseAll(false, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             addVirtualRowListener: function(rowIndex, callback) {
@@ -5125,21 +5146,6 @@ define('../src/angularGrid',[
         }
         // remove the callbacks
         delete this.virtualRowCallbacks[rowIndex];
-    };
-
-    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
-        //if first call in recursion, we set list to parent list
-        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
-
-        if (!rowNodes) { return; }
-
-        var _this = this;
-        rowNodes.forEach(function(node) {
-            if (node.group) {
-                node.expanded = expand;
-                _this.expandOrCollapseAll(expand, node.children);
-            }
-        });
     };
 
     Grid.prototype.onNewCols = function () {
