@@ -24,12 +24,6 @@ define([], function() {
     RowModel.prototype.getRowsAfterMap = function() { return this.rowsAfterMap; };
     RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
 
-    // returns the virtual row index, or -1 if the row is not currently displayed (due to mapping,
-    // ie the group it belongs to isn't visible)
-    RowModel.prototype.getVirtualIndex = function(row) {
-        return this.rowsAfterMap.indexOf(row);
-    };
-
     RowModel.prototype.getVirtualRow = function(index) {
         return this.rowsAfterMap[index];
     };

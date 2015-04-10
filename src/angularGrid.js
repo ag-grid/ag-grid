@@ -146,7 +146,6 @@ define([
         var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
         var colModel = new ColModel(this, selectionRendererFactory);
         var filterManager = new FilterManager(this, rowModel, gridOptionsWrapper, $compile, $scope);
-        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
         var rowRenderer  = new RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
         var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
@@ -158,6 +157,8 @@ define([
         }
 
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+
+        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
 
         this.rowModel = rowModel;
         this.selectionController = selectionController;

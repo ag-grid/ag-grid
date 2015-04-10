@@ -55,32 +55,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.rowDataChanged = function(rows) {
-        // convert to nodes, and call other function.
-        // we only need to be worried about rendered rows,
-        // as this method is called to whats rendered.
-        // if the row isn't rendered, we don't care
-        var nodes = [];
+        // we only need to be worried about rendered rows, as this method is
+        // called to whats rendered. if the row isn't rendered, we don't care
+        var indexesToRemove = [];
         var renderedRows = this.renderedRows;
         Object.keys(renderedRows).forEach(function (key) {
             var renderedRow = renderedRows[key];
             // see if the rendered row is in the list of rows we have to update
             var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
-                nodes.push(renderedRow.node);
-            }
-        });
-
-        this.rowNodesChanged(nodes);
-    };
-
-    RowRenderer.prototype.rowNodesChanged = function(nodes) {
-        // get indexes for the rows
-        var indexesToRemove = [];
-        var rowsAfterMap = this.rowModel.getRowsAfterMap();
-        nodes.forEach(function(row) {
-            var index = rowsAfterMap.indexOf(row);
-            if (index>=0) {
-                indexesToRemove.push(index);
+                indexesToRemove.push(renderedRow.rowIndex);
             }
         });
         // remove the rows
