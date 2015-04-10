@@ -2048,11 +2048,18 @@ define('../src/rowModel',[], function() {
     RowModel.prototype.getRowsAfterSort = function() { return this.rowsAfterSort; };
     RowModel.prototype.setRowsAfterSort = function(rowsAfterSort) { this.rowsAfterSort = rowsAfterSort; };
 
-    RowModel.prototype.getRowsAfterMap = function() { return this.rowsAfterMap; };
     RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
 
     RowModel.prototype.getVirtualRow = function(index) {
         return this.rowsAfterMap[index];
+    };
+
+    RowModel.prototype.getVirtualRowCount = function() {
+        if (this.rowsAfterMap) {
+            return this.rowsAfterMap.length;
+        } else {
+            return 0;
+        }
     };
 
     return RowModel;
@@ -2654,7 +2661,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getRowsAfterMap().length;
+            var rowCount = this.rowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -2739,16 +2746,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var first;
         var last;
 
-        var rowCount = this.rowModel.getRowsAfterMap().length;
+        var rowCount = this.rowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
-            var rowsAfterMap = this.rowModel.getRowsAfterMap();
-            if (rowsAfterMap) {
-                last = rowCount - 1;
-            } else {
-                last = 0;
-            }
+            last = rowCount;
         } else {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
@@ -4953,7 +4955,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var node = this.rowModel.getRowsAfterMap()[rowIndex];
+        var node = this.rowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);
@@ -5233,7 +5235,7 @@ define('../src/angularGrid',[
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.rowModel.getRowsAfterMap()) {
+            if (this.rowModel.getVirtualRowCount() > 0) {
                 this.rowRenderer.drawVirtualRows();
             }
 

@@ -45,7 +45,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getRowsAfterMap().length;
+            var rowCount = this.rowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -130,16 +130,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var first;
         var last;
 
-        var rowCount = this.rowModel.getRowsAfterMap().length;
+        var rowCount = this.rowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
-            var rowsAfterMap = this.rowModel.getRowsAfterMap();
-            if (rowsAfterMap) {
-                last = rowCount - 1;
-            } else {
-                last = 0;
-            }
+            last = rowCount;
         } else {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;

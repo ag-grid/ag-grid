@@ -250,7 +250,7 @@ define([
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var node = this.rowModel.getRowsAfterMap()[rowIndex];
+        var node = this.rowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);
@@ -530,7 +530,7 @@ define([
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.rowModel.getRowsAfterMap()) {
+            if (this.rowModel.getVirtualRowCount() > 0) {
                 this.rowRenderer.drawVirtualRows();
             }
 

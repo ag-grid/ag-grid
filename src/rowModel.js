@@ -21,11 +21,18 @@ define([], function() {
     RowModel.prototype.getRowsAfterSort = function() { return this.rowsAfterSort; };
     RowModel.prototype.setRowsAfterSort = function(rowsAfterSort) { this.rowsAfterSort = rowsAfterSort; };
 
-    RowModel.prototype.getRowsAfterMap = function() { return this.rowsAfterMap; };
     RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
 
     RowModel.prototype.getVirtualRow = function(index) {
         return this.rowsAfterMap[index];
+    };
+
+    RowModel.prototype.getVirtualRowCount = function() {
+        if (this.rowsAfterMap) {
+            return this.rowsAfterMap.length;
+        } else {
+            return 0;
+        }
     };
 
     return RowModel;
