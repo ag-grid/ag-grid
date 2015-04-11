@@ -22,8 +22,8 @@ define([
     'text!./templateNoScrolls.html',
     './utils',
     './filter/filterManager',
-    './rowModel',
-    './rowController',
+    './inMemoryRowModel',
+    './inMemoryRowController',
     './rowRenderer',
     './headerRenderer',
     './gridOptionsWrapper',
@@ -36,7 +36,7 @@ define([
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
-            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            InMemoryRowModel, InMemoryRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
             constants, ColModel, SelectionRendererFactory, SelectionController,
             PagingController) {
 
@@ -110,7 +110,7 @@ define([
         this.findAllElements(eGridDiv);
         this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
 
-        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         if (useScrolls) {
             this.addScrollListener();
@@ -141,12 +141,12 @@ define([
         var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
         var gridOptions = this.gridOptions;
 
-        var rowModel = new RowModel();
+        var inMemoryRowModel = new InMemoryRowModel();
         var selectionController = new SelectionController();
         var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
         var colModel = new ColModel(this, selectionRendererFactory);
-        var filterManager = new FilterManager(this, rowModel, gridOptionsWrapper, $compile, $scope);
-        var rowRenderer  = new RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+        var filterManager = new FilterManager(this, inMemoryRowModel, gridOptionsWrapper, $compile, $scope);
+        var rowRenderer  = new RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
         var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
             $scope, $compile);
@@ -156,14 +156,14 @@ define([
             pagingController = new PagingController(this.ePagingPanel, this);
         }
 
-        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer);
 
-        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
+        var inMemoryRowController = new InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, this, filterManager, $scope);
 
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
-        this.rowController = rowController;
+        this.inMemoryRowController = inMemoryRowController;
         this.rowRenderer = rowRenderer;
         this.headerRenderer = headerRenderer;
         this.pagingController = pagingController;
@@ -250,7 +250,7 @@ define([
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var node = this.rowModel.getVirtualRow(rowIndex);
+        var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);
@@ -313,7 +313,7 @@ define([
     };
 
     Grid.prototype.updateModelAndRefresh = function (step) {
-        this.rowController.updateModel(step);
+        this.inMemoryRowController.updateModel(step);
         this.rowRenderer.refreshView();
     };
 
@@ -321,7 +321,7 @@ define([
         if (rows) {
             this.gridOptions.rowData = rows;
         }
-        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
         this.selectionController.clearSelection();
         this.filterManager.onNewRowsLoaded();
         this.updateModelAndRefresh(constants.STEP_EVERYTHING);
@@ -515,7 +515,7 @@ define([
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.rowModel.getVirtualRowCount() > 0) {
+            if (this.inMemoryRowModel.getVirtualRowCount() > 0) {
                 this.rowRenderer.drawVirtualRows();
             }
 

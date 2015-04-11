@@ -56,7 +56,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                     setTimeout( function() {
                         var rowsThisPage = allOfTheData.slice(start, finish);
                         callbackSuccess(rowsThisPage);
-                    }, 5000);
+                    }, 1000);
                 }
             };
 

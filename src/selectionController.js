@@ -10,11 +10,11 @@ define(['./utils'], function(utils) {
 
     function SelectionController() {}
 
-    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, rowModel, $scope, rowRenderer) {
+    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer) {
         this.eRowsParent = eRowsParent;
         this.angularGrid = angularGrid;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
 
@@ -193,7 +193,7 @@ define(['./utils'], function(utils) {
 
     // public (selectionRendererFactory)
     SelectionController.prototype.deselectIndex = function (rowIndex) {
-        var node = this.rowModel.getVirtualRow(rowIndex);
+        var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
         if (node) {
             if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
                 // want to deselect children, not this node, so recursively deselect
@@ -208,7 +208,7 @@ define(['./utils'], function(utils) {
 
     // public (selectionRendererFactory & api)
     SelectionController.prototype.selectIndex = function (index, tryMulti, suppressEvents) {
-        var node = this.rowModel.getVirtualRow(index);
+        var node = this.inMemoryRowModel.getVirtualRow(index);
         this.selectNode(node, tryMulti, suppressEvents);
     };
 
@@ -311,7 +311,7 @@ define(['./utils'], function(utils) {
         var lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
             // see if node is a group
-            var node = this.rowModel.getVirtualRow(rowIndex);
+            var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
             if (node.group) {
                 var selected = this.isNodeSelected(node);
                 this.angularGrid.onVirtualRowSelected(rowIndex, selected);

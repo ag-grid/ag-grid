@@ -2,11 +2,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
@@ -45,7 +45,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getVirtualRowCount();
+            var rowCount = this.inMemoryRowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -134,7 +134,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var first;
         var last;
 
-        var rowCount = this.rowModel.getVirtualRowCount();
+        var rowCount = this.inMemoryRowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
@@ -194,7 +194,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.rowModel.getVirtualRow(rowIndex);
+            var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
             if (node) {
                 that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
             }

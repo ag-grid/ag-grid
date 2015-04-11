@@ -159,7 +159,7 @@
                     <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
-                <?php if ($key == "Paging") { ?>
+                <?php if ($key == "Pagination") { ?>
                     <span class="sidebarLinkSelected">Pagination</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-pagination/index.php">Pagination</a>

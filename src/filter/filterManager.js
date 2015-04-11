@@ -5,12 +5,12 @@ define([
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+    function FilterManager(grid, inMemoryRowModel, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.allFilters = {};
     }
 
@@ -127,7 +127,7 @@ define([
             var filterParams = colDef.filterParams;
             var params = {
                 colDef: colDef,
-                rowModel: this.rowModel,
+                rowModel: this.inMemoryRowModel,
                 filterChangedCallback: filterChangedCallback,
                 filterParams: filterParams,
                 scope: filterWrapper.scope

@@ -26,16 +26,16 @@ module.controller("exampleCtrl", function($scope, $timeout) {
         angularCompileRows: true
     };
 
-    function upperCaseNewValueHandler(data, newValue, colDef) {
-        data[colDef.field] = newValue.toUpperCase();
+    function upperCaseNewValueHandler(params) {
+        params.data[params.colDef.field] = params.newValue.toUpperCase();
     }
 
-    function numberNewValueHandler(data, newValue, colDef) {
-        var valueAsNumber = parseInt(newValue);
+    function numberNewValueHandler(params) {
+        var valueAsNumber = parseInt(params.newValue);
         if (isNaN(valueAsNumber)) {
-            window.alert("Invalid value " + newValue + ", must be a number");
+            window.alert("Invalid value " + params.newValue + ", must be a number");
         } else {
-            data[colDef.field] = valueAsNumber;
+            params.data[params.colDef.field] = valueAsNumber;
         }
     }
 

@@ -1840,12 +1840,12 @@ define('../src/filter/filterManager',[
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+    function FilterManager(grid, inMemoryRowModel, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.allFilters = {};
     }
 
@@ -1962,7 +1962,7 @@ define('../src/filter/filterManager',[
             var filterParams = colDef.filterParams;
             var params = {
                 colDef: colDef,
-                rowModel: this.rowModel,
+                rowModel: this.inMemoryRowModel,
                 filterChangedCallback: filterChangedCallback,
                 filterParams: filterParams,
                 scope: filterWrapper.scope
@@ -2025,10 +2025,10 @@ define('../src/filter/filterManager',[
 
 });
 
-define('../src/rowModel',[], function() {
+define('../src/inMemoryRowModel',[], function() {
 
     // pipeline is: group -> filter -> sort -> map
-    function RowModel() {
+    function InMemoryRowModel() {
         this.allRows = null;
         this.rowsAfterGroup = null;
         this.rowsAfterFilter = null;
@@ -2036,26 +2036,28 @@ define('../src/rowModel',[], function() {
         this.rowsAfterMap = null;
     }
 
-    RowModel.prototype.setAllRows = function(allRows) { this.allRows = allRows; };
+    InMemoryRowModel.prototype.setAllRows = function(allRows) { this.allRows = allRows; };
 
-    RowModel.prototype.getAllRows = function() { return this.allRows; };
+    // only used by row controller:
+    InMemoryRowModel.prototype.getAllRows = function() { return this.allRows; };
+    InMemoryRowModel.prototype.getRowsAfterGroup = function() { return this.rowsAfterGroup; };
+    InMemoryRowModel.prototype.setRowsAfterGroup = function(rowsAfterGroup) { this.rowsAfterGroup = rowsAfterGroup; };
+    InMemoryRowModel.prototype.getRowsAfterFilter = function() { return this.rowsAfterFilter; };
+    InMemoryRowModel.prototype.setRowsAfterFilter = function(rowsAfterFilter) { this.rowsAfterFilter = rowsAfterFilter; };
+    InMemoryRowModel.prototype.getRowsAfterSort = function() { return this.rowsAfterSort; };
+    InMemoryRowModel.prototype.setRowsAfterSort = function(rowsAfterSort) { this.rowsAfterSort = rowsAfterSort; };
+    InMemoryRowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
 
-    RowModel.prototype.getRowsAfterGroup = function() { return this.rowsAfterGroup; };
-    RowModel.prototype.setRowsAfterGroup = function(rowsAfterGroup) { this.rowsAfterGroup = rowsAfterGroup; };
-
-    RowModel.prototype.getRowsAfterFilter = function() { return this.rowsAfterFilter; };
-    RowModel.prototype.setRowsAfterFilter = function(rowsAfterFilter) { this.rowsAfterFilter = rowsAfterFilter; };
-
-    RowModel.prototype.getRowsAfterSort = function() { return this.rowsAfterSort; };
-    RowModel.prototype.setRowsAfterSort = function(rowsAfterSort) { this.rowsAfterSort = rowsAfterSort; };
-
-    RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
-
-    RowModel.prototype.getVirtualRow = function(index) {
+    // used by angularGrid (when row clicked)
+    // used by rowRenderer
+    // used by selectionController
+    InMemoryRowModel.prototype.getVirtualRow = function(index) {
         return this.rowsAfterMap[index];
     };
 
-    RowModel.prototype.getVirtualRowCount = function() {
+    // used by angularGrid (to check if any rows, before setting the body size)
+    // used by rowRenderer
+    InMemoryRowModel.prototype.getVirtualRowCount = function() {
         if (this.rowsAfterMap) {
             return this.rowsAfterMap.length;
         } else {
@@ -2063,7 +2065,7 @@ define('../src/rowModel',[], function() {
         }
     };
 
-    return RowModel;
+    return InMemoryRowModel;
 
 });
 define('../src/groupCreator',[
@@ -2635,11 +2637,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
@@ -2678,7 +2680,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getVirtualRowCount();
+            var rowCount = this.inMemoryRowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -2767,7 +2769,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         var first;
         var last;
 
-        var rowCount = this.rowModel.getVirtualRowCount();
+        var rowCount = this.inMemoryRowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
@@ -2827,7 +2829,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 continue;
             }
             //check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.rowModel.getVirtualRow(rowIndex);
+            var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
             if (node) {
                 that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
             }
@@ -4120,11 +4122,11 @@ define('../src/selectionController',['./utils'], function(utils) {
 
     function SelectionController() {}
 
-    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, rowModel, $scope, rowRenderer) {
+    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer) {
         this.eRowsParent = eRowsParent;
         this.angularGrid = angularGrid;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
 
@@ -4303,7 +4305,7 @@ define('../src/selectionController',['./utils'], function(utils) {
 
     // public (selectionRendererFactory)
     SelectionController.prototype.deselectIndex = function (rowIndex) {
-        var node = this.rowModel.getVirtualRow(rowIndex);
+        var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
         if (node) {
             if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
                 // want to deselect children, not this node, so recursively deselect
@@ -4318,7 +4320,7 @@ define('../src/selectionController',['./utils'], function(utils) {
 
     // public (selectionRendererFactory & api)
     SelectionController.prototype.selectIndex = function (index, tryMulti, suppressEvents) {
-        var node = this.rowModel.getVirtualRow(index);
+        var node = this.inMemoryRowModel.getVirtualRow(index);
         this.selectNode(node, tryMulti, suppressEvents);
     };
 
@@ -4421,7 +4423,7 @@ define('../src/selectionController',['./utils'], function(utils) {
         var lastRow = this.rowRenderer.getLastVirtualRenderedRow();
         for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
             // see if node is a group
-            var node = this.rowModel.getVirtualRow(rowIndex);
+            var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
             if (node.group) {
                 var selected = this.isNodeSelected(node);
                 this.angularGrid.onVirtualRowSelected(rowIndex, selected);
@@ -4748,7 +4750,7 @@ define('../src/angularGrid',[
     'text!./templateNoScrolls.html',
     './utils',
     './filter/filterManager',
-    './rowModel',
+    './inMemoryRowModel',
     './rowController',
     './rowRenderer',
     './headerRenderer',
@@ -4762,7 +4764,7 @@ define('../src/angularGrid',[
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
-            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            InMemoryRowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
             constants, ColModel, SelectionRendererFactory, SelectionController,
             PagingController) {
 
@@ -4867,12 +4869,12 @@ define('../src/angularGrid',[
         var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
         var gridOptions = this.gridOptions;
 
-        var rowModel = new RowModel();
+        var inMemoryRowModel = new InMemoryRowModel();
         var selectionController = new SelectionController();
         var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
         var colModel = new ColModel(this, selectionRendererFactory);
-        var filterManager = new FilterManager(this, rowModel, gridOptionsWrapper, $compile, $scope);
-        var rowRenderer  = new RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+        var filterManager = new FilterManager(this, inMemoryRowModel, gridOptionsWrapper, $compile, $scope);
+        var rowRenderer  = new RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
         var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
             $scope, $compile);
@@ -4882,11 +4884,11 @@ define('../src/angularGrid',[
             pagingController = new PagingController(this.ePagingPanel, this);
         }
 
-        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer);
 
-        var rowController = new RowController(gridOptionsWrapper, rowModel, colModel, this, filterManager, $scope);
+        var rowController = new RowController(gridOptionsWrapper, inMemoryRowModel, colModel, this, filterManager, $scope);
 
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
         this.rowController = rowController;
@@ -4976,7 +4978,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var node = this.rowModel.getVirtualRow(rowIndex);
+        var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);
@@ -5241,7 +5243,7 @@ define('../src/angularGrid',[
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.rowModel.getVirtualRowCount() > 0) {
+            if (this.inMemoryRowModel.getVirtualRowCount() > 0) {
                 this.rowRenderer.drawVirtualRows();
             }
 

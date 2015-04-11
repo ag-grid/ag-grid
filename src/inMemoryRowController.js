@@ -4,9 +4,9 @@ define([
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager, $scope) {
+    function InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
+        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
@@ -14,7 +14,7 @@ define([
     }
 
     // public
-    RowController.prototype.updateModel = function(step) {
+    InMemoryRowController.prototype.updateModel = function(step) {
 
         //fallthrough in below switch is on purpose
         switch (step) {
@@ -42,22 +42,22 @@ define([
     };
 
     // public - it's possible to recompute the aggregate without doing the other parts
-    RowController.prototype.doAggregate = function () {
+    InMemoryRowController.prototype.doAggregate = function () {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
         if (typeof groupAggFunction !== 'function') {
             return;
         }
 
-        var nodes = this.rowModel.getRowsAfterFilter();
+        var nodes = this.inMemoryRowModel.getRowsAfterFilter();
 
         this.recursivelyCreateAggData(nodes, groupAggFunction);
     };
 
     // public
-    RowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
+    InMemoryRowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
         // if first call in recursion, we set list to parent list
-        if (rowNodes === null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
+        if (rowNodes === null) { rowNodes = this.inMemoryRowModel.getRowsAfterGroup(); }
 
         if (!rowNodes) { return; }
 
@@ -71,7 +71,7 @@ define([
     };
 
     // private
-    RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
+    InMemoryRowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
         for (var i = 0, l = nodes.length; i<l; i++) {
             var node = nodes[i];
             if (node.group) {
@@ -90,7 +90,7 @@ define([
     };
 
     // private
-    RowController.prototype.doSort = function () {
+    InMemoryRowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
@@ -99,7 +99,7 @@ define([
             }
         });
 
-        var rowNodesBeforeSort = this.rowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.inMemoryRowModel.getRowsAfterFilter().slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
@@ -111,11 +111,11 @@ define([
             this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
+        this.inMemoryRowModel.setRowsAfterSort(rowNodesBeforeSort);
     };
 
     // private
-    RowController.prototype.resetSortInGroups = function(rowNodes) {
+    InMemoryRowController.prototype.resetSortInGroups = function(rowNodes) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
             if (item.group && item.children) {
@@ -126,7 +126,7 @@ define([
     };
 
     // private
-    RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
+    InMemoryRowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
         // sort any groups recursively
         for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
@@ -154,35 +154,35 @@ define([
     };
 
     // private
-    RowController.prototype.doGrouping = function () {
+    InMemoryRowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-            rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
+            rowsAfterGroup = groupCreator.group(this.inMemoryRowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
-            rowsAfterGroup = this.rowModel.getAllRows();
+            rowsAfterGroup = this.inMemoryRowModel.getAllRows();
         }
-        this.rowModel.setRowsAfterGroup(rowsAfterGroup);
+        this.inMemoryRowModel.setRowsAfterGroup(rowsAfterGroup);
     };
 
     // private
-    RowController.prototype.doFilter = function () {
+    InMemoryRowController.prototype.doFilter = function () {
         var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
         var advancedFilterPresent = this.filterManager.isFilterPresent();
         var filterPresent = quickFilterPresent || advancedFilterPresent;
 
         var rowsAfterFilter;
         if (filterPresent) {
-            rowsAfterFilter = this.filterItems(this.rowModel.getRowsAfterGroup(), quickFilterPresent, advancedFilterPresent);
+            rowsAfterFilter = this.filterItems(this.inMemoryRowModel.getRowsAfterGroup(), quickFilterPresent, advancedFilterPresent);
         } else {
-            rowsAfterFilter = this.rowModel.getRowsAfterGroup();
+            rowsAfterFilter = this.inMemoryRowModel.getRowsAfterGroup();
         }
-        this.rowModel.setRowsAfterFilter(rowsAfterFilter);
+        this.inMemoryRowModel.setRowsAfterFilter(rowsAfterFilter);
     };
 
     // private
-    RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
+    InMemoryRowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
         for (var i = 0, l = rowNodes.length; i < l; i++) {
@@ -208,7 +208,7 @@ define([
     };
 
     // private
-    RowController.prototype.setAllRows = function(rows) {
+    InMemoryRowController.prototype.setAllRows = function(rows) {
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
             nodes = rows;
@@ -226,12 +226,12 @@ define([
         }
 
         this.recursivelyAddIdToNodes(nodes, 0);
-        this.rowModel.setAllRows(nodes);
+        this.inMemoryRowModel.setAllRows(nodes);
     };
 
     // add in index - this is used by the selectionController - so quick
     // to look up selected rows
-    RowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+    InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             node.id = index++;
@@ -244,7 +244,7 @@ define([
 
     // add in index - this is used by the selectionController - so quick
     // to look up selected rows
-    RowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
+    InMemoryRowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if (parent) {
@@ -258,7 +258,7 @@ define([
     };
 
     // private
-    RowController.prototype.getTotalChildCount = function(rowNodes) {
+    InMemoryRowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
@@ -272,7 +272,7 @@ define([
     };
 
     // private
-    RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
+    InMemoryRowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
             group: true,
             data: groupNode.data,
@@ -286,16 +286,16 @@ define([
     };
 
     // private
-    RowController.prototype.doGroupMapping = function () {
+    InMemoryRowController.prototype.doGroupMapping = function () {
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var rowsAfterMap = [];
-        this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        this.rowModel.setRowsAfterMap(rowsAfterMap);
+        this.addToMap(rowsAfterMap, this.inMemoryRowModel.getRowsAfterSort());
+        this.inMemoryRowModel.setRowsAfterMap(rowsAfterMap);
     };
 
     // private
-    RowController.prototype.addToMap = function (mappedData, originalNodes) {
+    InMemoryRowController.prototype.addToMap = function (mappedData, originalNodes) {
         if (!originalNodes) {
             return;
         }
@@ -315,7 +315,7 @@ define([
     };
 
     // private
-    RowController.prototype.createFooterNode = function (groupNode) {
+    InMemoryRowController.prototype.createFooterNode = function (groupNode) {
         var footerNode = {};
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
@@ -330,7 +330,7 @@ define([
     };
 
     // private
-    RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
+    InMemoryRowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
             if (!node.quickFilterAggregateText) {
@@ -354,7 +354,7 @@ define([
     };
 
     // private
-    RowController.prototype.aggregateRowForQuickFilter = function (node) {
+    InMemoryRowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
             var data = node.data;
@@ -366,5 +366,5 @@ define([
         node.quickFilterAggregateText = aggregatedText;
     };
 
-    return RowController;
+    return InMemoryRowController;
 });
