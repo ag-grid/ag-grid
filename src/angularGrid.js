@@ -24,6 +24,11 @@
 // bugs:
 // editing a checkbox field fails
 
+// paging: selection, sorting, filtering
+// infinite paging
+// disable grouping when infinite
+// footer panel for infinite
+
 define([
     'angular',
     'text!./template.html',
