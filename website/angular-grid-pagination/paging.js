@@ -38,7 +38,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     $scope.gridOptions = {
-        //pagingDatasource: dataSource,
+        //datasource: dataSource,
         enableSorting: true,
         enableFilter: true,
         columnDefs: columnDefs
@@ -60,7 +60,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                 }
             };
 
-            $scope.gridOptions.api.setPagingDatasource(dataSource);
+            $scope.gridOptions.api.setDatasource(dataSource);
             //$scope.gridOptions.api.setRows(result.data);
         });
 });

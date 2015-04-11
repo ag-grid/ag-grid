@@ -131,16 +131,18 @@ define([
         this.showLoadingPanel(showLoading);
 
         // if datasource provided, use it
-        if (this.gridOptionsWrapper.getPagingDatasource()) {
-            this.setPagingDatasource();
+        if (this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource();
         }
     }
 
     Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv, useScrolls) {
 
-        var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
+        // make local references, to make the below more human readable
+        var gridOptionsWrapper = this.gridOptionsWrapper;
         var gridOptions = this.gridOptions;
 
+        // create all the beans
         var selectionController = new SelectionController();
         var filterManager = new FilterManager();
         var selectionRendererFactory = new SelectionRendererFactory();
@@ -149,14 +151,10 @@ define([
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
 
+        // this is a child bean, get a reference
         var rowModel = inMemoryRowController.getModel();
 
-        var pagingController = null;
-        if (useScrolls) {
-            pagingController = new PagingController();
-            pagingController.init(this.ePagingPanel, this);
-        }
-
+        // initialise lal the beans
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
         filterManager.init(this, rowModel, gridOptionsWrapper, $compile, $scope);
         selectionRendererFactory.init(this, selectionController);
@@ -165,6 +163,13 @@ define([
             selectionRendererFactory, $compile, $scope, selectionController);
         headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
         inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
+
+        // and the last bean, done in it's own section, as it's optional
+        var pagingController = null;
+        if (useScrolls) {
+            pagingController = new PagingController();
+            pagingController.init(this.ePagingPanel, this);
+        }
 
         this.inMemoryRowModel = rowModel;
         this.selectionController = selectionController;
@@ -200,15 +205,15 @@ define([
         return this.paging;
     };
 
-    Grid.prototype.setPagingDatasource = function (pagingDatasource) {
+    Grid.prototype.setDatasource = function (datasource) {
         // if datasource provided, then set it
-        if (pagingDatasource) {
-            this.gridOptions.pagingDatasource = pagingDatasource;
+        if (datasource) {
+            this.gridOptions.datasource = datasource;
         }
         // get the set datasource (if null was passed to this method,
         // then need to get the actual datasource from options
-        var datasourceToUse = this.gridOptionsWrapper.getPagingDatasource();
-        this.pagingController.setPagingDatasource(datasourceToUse);
+        var datasourceToUse = this.gridOptionsWrapper.getDatasource();
+        this.pagingController.setDatasource(datasourceToUse);
         if (datasourceToUse) {
             this.paging = true;
         } else {
@@ -338,11 +343,11 @@ define([
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
-            setPagingDatasource: function(pagingDatasource) {
-                that.setPagingDatasource(pagingDatasource);
+            setDatasource: function(datasource) {
+                that.setDatasource(datasource);
             },
-            onNewPagingDatasource: function() {
-                that.setPagingDatasource();
+            onNewDatasource: function() {
+                that.setDatasource();
             },
             setRows: function(rows) {
                 that.setRows(rows);
