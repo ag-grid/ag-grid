@@ -5,14 +5,17 @@ define([
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, inMemoryRowModel, gridOptionsWrapper, $compile, $scope) {
+    function FilterManager() {
+    }
+
+    FilterManager.prototype.init = function (grid, rowModel, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.inMemoryRowModel = inMemoryRowModel;
+        this.rowModel = rowModel;
         this.allFilters = {};
-    }
+    };
 
     // returns true if at least one filter is active
     FilterManager.prototype.isFilterPresent = function () {
@@ -127,7 +130,7 @@ define([
             var filterParams = colDef.filterParams;
             var params = {
                 colDef: colDef,
-                rowModel: this.inMemoryRowModel,
+                rowModel: this.rowModel,
                 filterChangedCallback: filterChangedCallback,
                 filterParams: filterParams,
                 scope: filterWrapper.scope

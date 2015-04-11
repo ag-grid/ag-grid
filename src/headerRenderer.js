@@ -2,7 +2,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    function HeaderRenderer() {
+    }
+
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
@@ -10,7 +13,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         this.$scope = $scope;
         this.$compile = $compile;
         this.findAllElements(eGrid);
-    }
+    };
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
 

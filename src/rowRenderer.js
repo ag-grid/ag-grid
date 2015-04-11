@@ -2,7 +2,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer() {
+    }
+
+    RowRenderer.prototype.init = function (gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
@@ -22,7 +25,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.renderedRows = {};
 
         this.editingCell = false; //gets set to true when editing a cell
-    }
+    };
 
     RowRenderer.prototype.setMainRowWidths = function() {
         var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";

@@ -1045,23 +1045,6 @@ define('../src/utils',[], function() {
         }
     };
 
-    Utils.prototype.uniqueValuesFromRowWrappers = function(nodes, key) {
-        var uniqueCheck = {};
-        var result = [];
-        for (var i = 0, l = nodes.length; i < l; i++){
-            var data = nodes[i].data;
-            var value = data ? data[key] : null;
-            if (value==="" || value === undefined) {
-                value = null;
-            }
-            if(!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
-        }
-        return result;
-    };
-
     Utils.prototype.removeAllChildren = function(node) {
         if (node) {
             while (node.hasChildNodes()) {
@@ -1235,8 +1218,7 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        var allNodes = rowModel.getAllRows();
-        this.uniqueValues = utils.uniqueValuesFromRowWrappers(allNodes, colDef.field);
+        this.createUniqueValues(rowModel, colDef.field);
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -1251,6 +1233,23 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
         this.selectedValuesMap = {};
         this.selectEverything();
     }
+
+    SetFilterModel.prototype.createUniqueValues = function(rowModel, key) {
+        var uniqueCheck = {};
+        var result = [];
+        for (var i = 0, l = rowModel.getVirtualRowCount(); i < l; i++){
+            var data = rowModel.getVirtualRow(i).data;
+            var value = data ? data[key] : null;
+            if (value==="" || value === undefined) {
+                value = null;
+            }
+            if(!uniqueCheck.hasOwnProperty(value)) {
+                result.push(value);
+                uniqueCheck[value] = 1;
+            }
+        }
+        this.uniqueValues = result;
+    };
 
     //sets mini filter. returns true if it changed from last value, otherwise false
     SetFilterModel.prototype.setMiniFilter = function(newMiniFilter) {
@@ -1840,14 +1839,17 @@ define('../src/filter/filterManager',[
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, inMemoryRowModel, gridOptionsWrapper, $compile, $scope) {
+    function FilterManager() {
+    }
+
+    FilterManager.prototype.init = function (grid, rowModel, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.inMemoryRowModel = inMemoryRowModel;
+        this.rowModel = rowModel;
         this.allFilters = {};
-    }
+    };
 
     // returns true if at least one filter is active
     FilterManager.prototype.isFilterPresent = function () {
@@ -1962,7 +1964,7 @@ define('../src/filter/filterManager',[
             var filterParams = colDef.filterParams;
             var params = {
                 colDef: colDef,
-                rowModel: this.inMemoryRowModel,
+                rowModel: this.rowModel,
                 filterChangedCallback: filterChangedCallback,
                 filterParams: filterParams,
                 scope: filterWrapper.scope
@@ -2182,9 +2184,12 @@ define('../src/inMemoryRowController',[
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, angularGrid, filterManager, $scope) {
+    function InMemoryRowController() {
+        this.createModel();
+    }
+
+    InMemoryRowController.prototype.init = function (gridOptionsWrapper, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
@@ -2195,12 +2200,34 @@ define('../src/inMemoryRowController',[
         this.rowsAfterFilter = null;
         this.rowsAfterSort = null;
         this.rowsAfterMap = null;
-    }
+    };
+
+    // private
+    InMemoryRowController.prototype.createModel = function() {
+        var that = this;
+        this.model = {
+            getVirtualRow: function(index) {
+                return that.rowsAfterMap[index];
+            },
+            getVirtualRowCount: function() {
+                if (that.rowsAfterMap) {
+                    return that.rowsAfterMap.length;
+                } else {
+                    return 0;
+                }
+            }
+        };
+    };
+
+    // public
+    InMemoryRowController.prototype.getModel = function() {
+        return this.model;
+    };
 
     // public
     InMemoryRowController.prototype.updateModel = function(step) {
 
-        //fallthrough in below switch is on purpose
+        // fallthrough in below switch is on purpose
         switch (step) {
             case constants.STEP_EVERYTHING :
                 this.doGrouping();
@@ -2233,15 +2260,13 @@ define('../src/inMemoryRowController',[
             return;
         }
 
-        var nodes = this.inMemoryRowModel.getRowsAfterFilter();
-
-        this.recursivelyCreateAggData(nodes, groupAggFunction);
+        this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
     };
 
     // public
     InMemoryRowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
         // if first call in recursion, we set list to parent list
-        if (rowNodes === null) { rowNodes = this.inMemoryRowModel.getRowsAfterGroup(); }
+        if (rowNodes === null) { rowNodes = this.rowsAfterGroup; }
 
         if (!rowNodes) { return; }
 
@@ -2283,7 +2308,7 @@ define('../src/inMemoryRowController',[
             }
         });
 
-        var rowNodesBeforeSort = this.inMemoryRowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
@@ -2295,7 +2320,7 @@ define('../src/inMemoryRowController',[
             this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.inMemoryRowModel.setRowsAfterSort(rowNodesBeforeSort);
+        this.rowsAfterSort = rowNodesBeforeSort;
     };
 
     // private
@@ -2342,12 +2367,12 @@ define('../src/inMemoryRowController',[
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-            rowsAfterGroup = groupCreator.group(this.inMemoryRowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
+            rowsAfterGroup = groupCreator.group(this.allRows, this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
-            rowsAfterGroup = this.inMemoryRowModel.getAllRows();
+            rowsAfterGroup = this.allRows;
         }
-        this.inMemoryRowModel.setRowsAfterGroup(rowsAfterGroup);
+        this.rowsAfterGroup = rowsAfterGroup;
     };
 
     // private
@@ -2358,11 +2383,11 @@ define('../src/inMemoryRowController',[
 
         var rowsAfterFilter;
         if (filterPresent) {
-            rowsAfterFilter = this.filterItems(this.inMemoryRowModel.getRowsAfterGroup(), quickFilterPresent, advancedFilterPresent);
+            rowsAfterFilter = this.filterItems(this.rowsAfterGroup, quickFilterPresent, advancedFilterPresent);
         } else {
-            rowsAfterFilter = this.inMemoryRowModel.getRowsAfterGroup();
+            rowsAfterFilter = this.rowsAfterGroup;
         }
-        this.inMemoryRowModel.setRowsAfterFilter(rowsAfterFilter);
+        this.rowsAfterFilter = rowsAfterFilter;
     };
 
     // private
@@ -2410,7 +2435,7 @@ define('../src/inMemoryRowController',[
         }
 
         this.recursivelyAddIdToNodes(nodes, 0);
-        this.inMemoryRowModel.setAllRows(nodes);
+        this.allRows = nodes;
     };
 
     // add in index - this is used by the selectionController - so quick
@@ -2474,8 +2499,8 @@ define('../src/inMemoryRowController',[
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var rowsAfterMap = [];
-        this.addToMap(rowsAfterMap, this.inMemoryRowModel.getRowsAfterSort());
-        this.inMemoryRowModel.setRowsAfterMap(rowsAfterMap);
+        this.addToMap(rowsAfterMap, this.rowsAfterSort);
+        this.rowsAfterMap = rowsAfterMap;
     };
 
     // private
@@ -2643,7 +2668,10 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer() {
+    }
+
+    RowRenderer.prototype.init = function (gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
@@ -2663,7 +2691,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.renderedRows = {};
 
         this.editingCell = false; //gets set to true when editing a cell
-    }
+    };
 
     RowRenderer.prototype.setMainRowWidths = function() {
         var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
@@ -3391,7 +3419,10 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    function HeaderRenderer() {
+    }
+
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
@@ -3399,7 +3430,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         this.$scope = $scope;
         this.$compile = $compile;
         this.findAllElements(eGrid);
-    }
+    };
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
 
@@ -3963,10 +3994,13 @@ define('../src/gridOptionsWrapper',[], function() {
 });
 define('../src/colModel',['./constants'], function(constants) {
 
-    function ColModel(angularGrid, selectionRendererFactory) {
+    function ColModel() {
+    }
+
+    ColModel.prototype.init = function (angularGrid, selectionRendererFactory) {
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
-    }
+    };
 
     ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
@@ -4043,10 +4077,13 @@ define('../src/colModel',['./constants'], function(constants) {
 });
 define('../src/selectionRendererFactory',[], function () {
 
-    function SelectionRendererFactory(angularGrid, selectionController) {
+    function SelectionRendererFactory() {
+    }
+
+    SelectionRendererFactory.prototype.init = function (angularGrid, selectionController) {
         this.angularGrid = angularGrid;
         this.selectionController = selectionController;
-    }
+    };
 
     SelectionRendererFactory.prototype.createCheckboxColDef = function () {
         return {
@@ -4467,11 +4504,14 @@ define('../src/pagingController',[], function() {
         '<button class="ag-paging-button" id="btLast">Last</button>' +
         '</span>';
 
-    function PagingController(ePagingPanel, angularGrid) {
+    function PagingController() {
+    }
+
+    PagingController.prototype.init = function (ePagingPanel, angularGrid) {
         this.angularGrid = angularGrid;
         this.populatePanel(ePagingPanel);
         this.callVersion = 0;
-    }
+    };
 
     PagingController.prototype.setPagingDatasource = function(pagingDatasource) {
         this.pagingDatasource = pagingDatasource;
@@ -4875,26 +4915,32 @@ define('../src/angularGrid',[
         var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
         var gridOptions = this.gridOptions;
 
-        var inMemoryRowModel = new InMemoryRowModel();
         var selectionController = new SelectionController();
-        var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
-        var colModel = new ColModel(this, selectionRendererFactory);
-        var filterManager = new FilterManager(this, inMemoryRowModel, gridOptionsWrapper, $compile, $scope);
-        var rowRenderer  = new RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGridDiv, this,
-            selectionRendererFactory, $compile, $scope, selectionController);
-        var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
-            $scope, $compile);
+        var filterManager = new FilterManager();
+        var selectionRendererFactory = new SelectionRendererFactory();
+        var colModel = new ColModel();
+        var rowRenderer  = new RowRenderer();
+        var headerRenderer = new HeaderRenderer();
+        var inMemoryRowController = new InMemoryRowController();
+
+        var rowModel = inMemoryRowController.getModel();
 
         var pagingController = null;
         if (useScrolls) {
-            pagingController = new PagingController(this.ePagingPanel, this);
+            pagingController = new PagingController();
+            pagingController.init(this.ePagingPanel, this);
         }
 
-        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer);
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+        filterManager.init(this, rowModel, gridOptionsWrapper, $compile, $scope);
+        selectionRendererFactory.init(this, selectionController);
+        colModel.init(this, selectionRendererFactory);
+        rowRenderer.init(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+            selectionRendererFactory, $compile, $scope, selectionController);
+        headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
 
-        var inMemoryRowController = new InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, this, filterManager, $scope);
-
-        this.inMemoryRowModel = inMemoryRowModel;
+        this.inMemoryRowModel = rowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
         this.inMemoryRowController = inMemoryRowController;

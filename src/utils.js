@@ -44,23 +44,6 @@ define([], function() {
         }
     };
 
-    Utils.prototype.uniqueValuesFromRowWrappers = function(nodes, key) {
-        var uniqueCheck = {};
-        var result = [];
-        for (var i = 0, l = nodes.length; i < l; i++){
-            var data = nodes[i].data;
-            var value = data ? data[key] : null;
-            if (value==="" || value === undefined) {
-                value = null;
-            }
-            if(!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
-        }
-        return result;
-    };
-
     Utils.prototype.removeAllChildren = function(node) {
         if (node) {
             while (node.hasChildNodes()) {

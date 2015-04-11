@@ -19,11 +19,14 @@ define([], function() {
         '<button class="ag-paging-button" id="btLast">Last</button>' +
         '</span>';
 
-    function PagingController(ePagingPanel, angularGrid) {
+    function PagingController() {
+    }
+
+    PagingController.prototype.init = function (ePagingPanel, angularGrid) {
         this.angularGrid = angularGrid;
         this.populatePanel(ePagingPanel);
         this.callVersion = 0;
-    }
+    };
 
     PagingController.prototype.setPagingDatasource = function(pagingDatasource) {
         this.pagingDatasource = pagingDatasource;

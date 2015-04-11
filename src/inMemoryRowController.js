@@ -4,9 +4,12 @@ define([
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, angularGrid, filterManager, $scope) {
+    function InMemoryRowController() {
+        this.createModel();
+    }
+
+    InMemoryRowController.prototype.init = function (gridOptionsWrapper, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
@@ -17,12 +20,34 @@ define([
         this.rowsAfterFilter = null;
         this.rowsAfterSort = null;
         this.rowsAfterMap = null;
-    }
+    };
+
+    // private
+    InMemoryRowController.prototype.createModel = function() {
+        var that = this;
+        this.model = {
+            getVirtualRow: function(index) {
+                return that.rowsAfterMap[index];
+            },
+            getVirtualRowCount: function() {
+                if (that.rowsAfterMap) {
+                    return that.rowsAfterMap.length;
+                } else {
+                    return 0;
+                }
+            }
+        };
+    };
+
+    // public
+    InMemoryRowController.prototype.getModel = function() {
+        return this.model;
+    };
 
     // public
     InMemoryRowController.prototype.updateModel = function(step) {
 
-        //fallthrough in below switch is on purpose
+        // fallthrough in below switch is on purpose
         switch (step) {
             case constants.STEP_EVERYTHING :
                 this.doGrouping();
@@ -55,15 +80,13 @@ define([
             return;
         }
 
-        var nodes = this.inMemoryRowModel.getRowsAfterFilter();
-
-        this.recursivelyCreateAggData(nodes, groupAggFunction);
+        this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
     };
 
     // public
     InMemoryRowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
         // if first call in recursion, we set list to parent list
-        if (rowNodes === null) { rowNodes = this.inMemoryRowModel.getRowsAfterGroup(); }
+        if (rowNodes === null) { rowNodes = this.rowsAfterGroup; }
 
         if (!rowNodes) { return; }
 
@@ -105,7 +128,7 @@ define([
             }
         });
 
-        var rowNodesBeforeSort = this.inMemoryRowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
@@ -117,7 +140,7 @@ define([
             this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.inMemoryRowModel.setRowsAfterSort(rowNodesBeforeSort);
+        this.rowsAfterSort = rowNodesBeforeSort;
     };
 
     // private
@@ -164,12 +187,12 @@ define([
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-            rowsAfterGroup = groupCreator.group(this.inMemoryRowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
+            rowsAfterGroup = groupCreator.group(this.allRows, this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
-            rowsAfterGroup = this.inMemoryRowModel.getAllRows();
+            rowsAfterGroup = this.allRows;
         }
-        this.inMemoryRowModel.setRowsAfterGroup(rowsAfterGroup);
+        this.rowsAfterGroup = rowsAfterGroup;
     };
 
     // private
@@ -180,11 +203,11 @@ define([
 
         var rowsAfterFilter;
         if (filterPresent) {
-            rowsAfterFilter = this.filterItems(this.inMemoryRowModel.getRowsAfterGroup(), quickFilterPresent, advancedFilterPresent);
+            rowsAfterFilter = this.filterItems(this.rowsAfterGroup, quickFilterPresent, advancedFilterPresent);
         } else {
-            rowsAfterFilter = this.inMemoryRowModel.getRowsAfterGroup();
+            rowsAfterFilter = this.rowsAfterGroup;
         }
-        this.inMemoryRowModel.setRowsAfterFilter(rowsAfterFilter);
+        this.rowsAfterFilter = rowsAfterFilter;
     };
 
     // private
@@ -232,7 +255,7 @@ define([
         }
 
         this.recursivelyAddIdToNodes(nodes, 0);
-        this.inMemoryRowModel.setAllRows(nodes);
+        this.allRows = nodes;
     };
 
     // add in index - this is used by the selectionController - so quick
@@ -296,8 +319,8 @@ define([
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var rowsAfterMap = [];
-        this.addToMap(rowsAfterMap, this.inMemoryRowModel.getRowsAfterSort());
-        this.inMemoryRowModel.setRowsAfterMap(rowsAfterMap);
+        this.addToMap(rowsAfterMap, this.rowsAfterSort);
+        this.rowsAfterMap = rowsAfterMap;
     };
 
     // private

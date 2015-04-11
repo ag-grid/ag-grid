@@ -141,26 +141,32 @@ define([
         var gridOptionsWrapper = this.gridOptionsWrapper; // making local to help with readability of the below
         var gridOptions = this.gridOptions;
 
-        var inMemoryRowModel = new InMemoryRowModel();
         var selectionController = new SelectionController();
-        var selectionRendererFactory = new SelectionRendererFactory(this, selectionController);
-        var colModel = new ColModel(this, selectionRendererFactory);
-        var filterManager = new FilterManager(this, inMemoryRowModel, gridOptionsWrapper, $compile, $scope);
-        var rowRenderer  = new RowRenderer(gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGridDiv, this,
-            selectionRendererFactory, $compile, $scope, selectionController);
-        var headerRenderer = new HeaderRenderer(gridOptionsWrapper, colModel, eGridDiv, this, filterManager,
-            $scope, $compile);
+        var filterManager = new FilterManager();
+        var selectionRendererFactory = new SelectionRendererFactory();
+        var colModel = new ColModel();
+        var rowRenderer  = new RowRenderer();
+        var headerRenderer = new HeaderRenderer();
+        var inMemoryRowController = new InMemoryRowController();
+
+        var rowModel = inMemoryRowController.getModel();
 
         var pagingController = null;
         if (useScrolls) {
-            pagingController = new PagingController(this.ePagingPanel, this);
+            pagingController = new PagingController();
+            pagingController.init(this.ePagingPanel, this);
         }
 
-        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, inMemoryRowModel, $scope, rowRenderer);
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, rowModel, $scope, rowRenderer);
+        filterManager.init(this, rowModel, gridOptionsWrapper, $compile, $scope);
+        selectionRendererFactory.init(this, selectionController);
+        colModel.init(this, selectionRendererFactory);
+        rowRenderer.init(gridOptions, rowModel, colModel, gridOptionsWrapper, eGridDiv, this,
+            selectionRendererFactory, $compile, $scope, selectionController);
+        headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
 
-        var inMemoryRowController = new InMemoryRowController(gridOptionsWrapper, inMemoryRowModel, colModel, this, filterManager, $scope);
-
-        this.inMemoryRowModel = inMemoryRowModel;
+        this.inMemoryRowModel = rowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
         this.inMemoryRowController = inMemoryRowController;
