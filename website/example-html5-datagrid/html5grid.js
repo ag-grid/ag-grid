@@ -149,7 +149,7 @@
     function modelUpdated() {
         var model = gridOptions.api.getModel();
         var totalRows = model.getAllRows().length;
-        var processedRows = model.getRowsAfterMap().length;
+        var processedRows = model.getVirtualRowCount().length;
         var eSpan = document.querySelector('#rowCount');
         eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }

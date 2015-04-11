@@ -11,6 +11,12 @@ define([
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
+
+        this.allRows = null;
+        this.rowsAfterGroup = null;
+        this.rowsAfterFilter = null;
+        this.rowsAfterSort = null;
+        this.rowsAfterMap = null;
     }
 
     // public

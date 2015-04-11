@@ -355,7 +355,7 @@ define([
                 that.rowRenderer.refreshView();
             },
             getModel: function () {
-                return that.rowModel;
+                return that.inMemoryRowModel;
             },
             onGroupExpandedOrCollapsed: function() {
                 that.updateModelAndRefresh(constants.STEP_MAP);
