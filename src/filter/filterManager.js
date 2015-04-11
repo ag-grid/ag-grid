@@ -8,13 +8,16 @@ define([
     function FilterManager() {
     }
 
-    FilterManager.prototype.init = function (grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+    FilterManager.prototype.init = function (grid, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.rowModel = rowModel;
         this.allFilters = {};
+    };
+
+    FilterManager.prototype.setRowModel = function (rowModel) {
+        this.rowModel = rowModel;
     };
 
     // returns true if at least one filter is active

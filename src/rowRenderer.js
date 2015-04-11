@@ -5,11 +5,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     function RowRenderer() {
     }
 
-    RowRenderer.prototype.init = function (gridOptions, inMemoryRowModel, colModel, gridOptionsWrapper, eGrid,
+    RowRenderer.prototype.init = function (gridOptions, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.inMemoryRowModel = inMemoryRowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
@@ -25,6 +24,10 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.renderedRows = {};
 
         this.editingCell = false; //gets set to true when editing a cell
+    };
+
+    RowRenderer.prototype.setRowModel = function (rowModel) {
+        this.rowModel = rowModel;
     };
 
     RowRenderer.prototype.setMainRowWidths = function() {
@@ -48,7 +51,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.inMemoryRowModel.getVirtualRowCount();
+            var rowCount = this.rowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -137,7 +140,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         var first;
         var last;
 
-        var rowCount = this.inMemoryRowModel.getVirtualRowCount();
+        var rowCount = this.rowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
@@ -191,13 +194,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         //add in new rows
         for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
-            //see if item already there, and if yes, take it out of the 'to remove' array
+            // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
-            //check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.inMemoryRowModel.getVirtualRow(rowIndex);
+            // check this row actually exists (in case overflow buffer window exceeds real data)
+            var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
                 that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
             }
