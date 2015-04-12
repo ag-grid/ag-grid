@@ -2547,7 +2547,7 @@ define('../src/inMemoryRowController',[
 */
 define('../src/virtualPageRowController',[], function() {
 
-    var logging = false;
+    var logging = true;
 
     function VirtualPageRowController() {
     }
@@ -2583,16 +2583,27 @@ define('../src/virtualPageRowController',[], function() {
 
         // map of page numbers to rows in that page
         this.pageCache = {};
+        this.pageCacheSize = 0;
 
         // if a number is in this array, it means we are pending a load from it
         this.pageLoadsInProgress = [];
         this.pageLoadsQueued = [];
+        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
+        this.accessTime = 0; // rather than using the clock, we use this counter
 
         // the number of concurrent loads we are allowed to the server
         if (typeof this.datasource.maxConcurrentRequests === 'number' && this.datasource.maxConcurrentRequests > 0) {
             this.maxConcurrentDatasourceRequests = this.datasource.maxConcurrentRequests;
         } else {
             this.maxConcurrentDatasourceRequests = 2;
+        }
+
+        // the number of pages to keep in browser cache
+        if (typeof this.datasource.maxPagesInCache === 'number' && this.datasource.maxPagesInCache > 0) {
+            this.maxPagesInCache = this.datasource.maxPagesInCache;
+        } else {
+            // null is default, means don't  have any max size on the cache
+            this.maxPagesInCache = null;
         }
 
         this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
@@ -2626,9 +2637,42 @@ define('../src/virtualPageRowController',[], function() {
     };
 
     VirtualPageRowController.prototype.pageLoaded = function(pageNumber, rows, lastRow) {
+        this.putPageIntoCacheAndPurge(pageNumber, rows);
+        this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
+        this.removeFromLoading(pageNumber);
+        this.checkQueueForNextLoad();
+    };
 
+    VirtualPageRowController.prototype.putPageIntoCacheAndPurge = function(pageNumber, rows) {
         this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
+        this.pageCacheSize++;
+        if (logging) {console.log('adding page ' + pageNumber); }
 
+        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageCacheSize;
+        if (needToPurge) {
+            // find the LRU page
+            var youngestPageIndex = -1;
+            var youngestPageAccessTime = Number.MAX_VALUE;
+            var that = this;
+
+            Object.keys(this.pageCache).forEach(function (pageIndex) {
+                var accessTimeThisPage = that.pageAccessTimes[pageIndex];
+                if (accessTimeThisPage < youngestPageAccessTime) {
+                    youngestPageAccessTime = accessTimeThisPage;
+                    youngestPageIndex = pageIndex;
+                }
+            });
+
+            if (logging) {
+                console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
+            }
+            delete this.pageCache[youngestPageIndex];
+            this.pageCacheSize--;
+        }
+
+    };
+
+    VirtualPageRowController.prototype.checkMaxRowAndInformRowRenderer = function(pageNumber, lastRow) {
         if (!this.foundMaxRow) {
             // if we know the last row, use if
             if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -2646,9 +2690,6 @@ define('../src/virtualPageRowController',[], function() {
         } else {
             this.rowRenderer.refreshAllVirtualRows();
         }
-
-        this.removeFromLoading(pageNumber);
-        this.checkQueueForNextLoad();
     };
 
     VirtualPageRowController.prototype.isPageAlreadyLoading = function(pageNumber) {
@@ -2723,6 +2764,9 @@ define('../src/virtualPageRowController',[], function() {
 
         var pageNumber = Math.floor(rowIndex / this.pageSize);
         var page = this.pageCache[pageNumber];
+
+        // for LRU cache, track when this page was last hit
+        this.pageAccessTimes[pageNumber] = this.accessTime++;
 
         if (!page) {
             this.doLoadOrQueue(pageNumber);

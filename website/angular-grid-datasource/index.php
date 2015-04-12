@@ -68,7 +68,14 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         <tr>
             <th>maxConcurrentRequests</th>
             <td>Only used in virtual paging. How many requests to hit the server with concurrently. If the max is reached,
-            requests are queued. Default is 1, thus by default, only one request will be active at any given time.</td>
+                requests are queued. Default is 1, thus by default, only one request will be active at any given time.</td>
+        </tr>
+        <tr>
+            <th>maxPagesInCache</th>
+            <td>Only used in virtual paging. How many pages to cache in the client. Default is no limit, so every requested
+                page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
+                sure you have enough pages in cache to display a complete view of the table, otherwise it won't work and an infinite
+                loop of requesting pages will happen.</td>
         </tr>
     </table>
 

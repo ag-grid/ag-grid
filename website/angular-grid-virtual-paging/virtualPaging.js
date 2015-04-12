@@ -38,6 +38,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                 pageSize: 50,
                 overflowSize: 500,
                 maxConcurrentRequests: 2,
+                maxPagesInCache: 2,
                 getRows: function (start, finish, callbackSuccess, callbackFail) {
                     console.log('asking for ' + start + ' to ' + finish);
                     setTimeout( function() {
