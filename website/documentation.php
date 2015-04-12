@@ -78,8 +78,6 @@ include 'documentation_header.php';
                 </a>
 
         </div>
-
-    </h4>
     </div>
 
 </div>
