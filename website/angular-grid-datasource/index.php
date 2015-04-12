@@ -61,9 +61,14 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         </tr>
         <tr>
             <th>overflowSize</th>
-            <td>Only used for in virtual paging. When infinite scrolling is active, this says how many rows beyond the current last row
+            <td>Only used in virtual paging. When infinite scrolling is active, this says how many rows beyond the current last row
                 the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
                 and overflowSize is 50, the scroll will allow scrolling to row 250.</td>
+        </tr>
+        <tr>
+            <th>maxConcurrentRequests</th>
+            <td>Only used in virtual paging. How many requests to hit the server with concurrently. If the max is reached,
+            requests are queued. Default is 1, thus by default, only one request will be active at any given time.</td>
         </tr>
     </table>
 
