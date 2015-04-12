@@ -103,6 +103,11 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>09 April</b> - Checked in support for 'Refresh Aggregate Data'. Will be available in 1.3, or take latest. Documentation
+        page 'Grouping and Aggregating Rows' updated.
+    </p>
+
+    <p>
         <b>06 April</b> - Checked in support for 'Loading Panel' to show when fetching data. Will be available in 1.3, or take latest. Documentation
         page for loading created.
     </p>
