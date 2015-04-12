@@ -217,6 +217,24 @@
                     Examples
                 </h4>
 
+                <?php if ($key == "Basic Table") { ?>
+                    <span class="sidebarLinkSelected">Basic Table</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-basic/index.php">Basic Table</a>
+                <?php } ?>
+
+                <?php if ($key == "Styled Report") { ?>
+                    <span class="sidebarLinkSelected">Styled Report</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-account-report/index.php">Styled Report</a>
+                <?php } ?>
+
+                <?php if ($key == "File Browser") { ?>
+                    <span class="sidebarLinkSelected">File Browser</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-file-browser/index.php">File Browser</a>
+                <?php } ?>
+
                 <?php if ($key == "No Angular") { ?>
                     <span class="sidebarLinkSelected">No AngularJS</span>
                 <?php } else { ?>
