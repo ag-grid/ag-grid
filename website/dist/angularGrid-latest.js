@@ -2545,16 +2545,19 @@ define('../src/inMemoryRowController',[
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
 * or standard pagination, the inMemoryRowController is used.
 */
-define('../src/serverRowController',[], function() {
+define('../src/virtualPageRowController',[], function() {
 
-    function ServerRowController() {
+    var logging = false;
+
+    function VirtualPageRowController() {
     }
 
-    ServerRowController.prototype.init = function (rowRenderer) {
+    VirtualPageRowController.prototype.init = function (rowRenderer) {
         this.rowRenderer = rowRenderer;
+        this.datasourceVersion = 0;
     };
 
-    ServerRowController.prototype.setDatasource = function (datasource) {
+    VirtualPageRowController.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -2565,7 +2568,7 @@ define('../src/serverRowController',[], function() {
         this.reset();
     };
 
-    ServerRowController.prototype.reset = function() {
+    VirtualPageRowController.prototype.reset = function() {
         // see if datasource knows how many rows there are
         if (this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
@@ -2574,16 +2577,31 @@ define('../src/serverRowController',[], function() {
             this.virtualRowCount = 0;
             this.foundMaxRow = false;
         }
-        this.pages = {};
+
+        // in case any daemon requests coming from datasource, we know it ignore them
+        this.datasourceVersion++;
+
+        // map of page numbers to rows in that page
+        this.pageCache = {};
+
         // if a number is in this array, it means we are pending a load from it
-        this.pageLoadAttempted = {};
+        this.pageLoadsInProgress = [];
+        this.pageLoadsQueued = [];
+
+        // the number of concurrent loads we are allowed to the server
+        if (typeof this.datasource.maxConcurrentRequests === 'number' && this.datasource.maxConcurrentRequests > 0) {
+            this.maxConcurrentDatasourceRequests = this.datasource.maxConcurrentRequests;
+        } else {
+            this.maxConcurrentDatasourceRequests = 2;
+        }
+
         this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
 
-        this.loadPage(0);
+        this.doLoadOrQueue(0);
     };
 
-    ServerRowController.prototype.createNodesFromRows = function(pageNumber, rows) {
+    VirtualPageRowController.prototype.createNodesFromRows = function(pageNumber, rows) {
         var nodes = [];
         if (rows) {
             for (var i = 0, j = rows.length; i<j; i++) {
@@ -2597,9 +2615,19 @@ define('../src/serverRowController',[], function() {
         return nodes;
     };
 
-    ServerRowController.prototype.pageLoaded = function(pageNumber, rows, lastRow) {
+    VirtualPageRowController.prototype.removeFromLoading = function(pageNumber) {
+        var index = this.pageLoadsInProgress.indexOf(pageNumber);
+        this.pageLoadsInProgress.splice(index, 1);
+    };
 
-        this.pages[pageNumber] = this.createNodesFromRows(pageNumber, rows);
+    VirtualPageRowController.prototype.pageLoadFailed = function(pageNumber) {
+        this.removeFromLoading(pageNumber);
+        this.checkQueueForNextLoad();
+    };
+
+    VirtualPageRowController.prototype.pageLoaded = function(pageNumber, rows, lastRow) {
+
+        this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
 
         if (!this.foundMaxRow) {
             // if we know the last row, use if
@@ -2618,40 +2646,86 @@ define('../src/serverRowController',[], function() {
         } else {
             this.rowRenderer.refreshAllVirtualRows();
         }
+
+        this.removeFromLoading(pageNumber);
+        this.checkQueueForNextLoad();
     };
 
-    ServerRowController.prototype.loadPage = function(pageNumber) {
+    VirtualPageRowController.prototype.isPageAlreadyLoading = function(pageNumber) {
+        var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0
+            || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
+        return result;
+    };
+
+    VirtualPageRowController.prototype.doLoadOrQueue = function(pageNumber) {
         // if we already tried to load this page, then ignore the request,
         // otherwise server would be hit 50 times just to display one page, the
         // first row to find the page missing is enough.
-        if (this.pageLoadAttempted[pageNumber]) {
+        if (this.isPageAlreadyLoading(pageNumber)) {
             return;
         }
-        this.pageLoadAttempted[pageNumber] = true;
+
+        // try the page load - if not already doing a load, then we can go ahead
+        if (this.pageLoadsInProgress.length < this.maxConcurrentDatasourceRequests) {
+            // go ahead, load the page
+            this.loadPage(pageNumber);
+        } else {
+            if (logging) { console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
+            // otherwise, queue the request
+            this.pageLoadsQueued.push(pageNumber);
+            // if cache size limited, purge the queue
+        }
+    };
+
+    VirtualPageRowController.prototype.checkQueueForNextLoad = function () {
+        if (this.pageLoadsQueued.length>0) {
+            // take from the front of the queue
+            var pageToLoad = this.pageLoadsQueued[0];
+            this.pageLoadsQueued.splice(0, 1);
+
+            if (logging) { console.log('dequeueing ' + pageToLoad + ' - ' + this.pageLoadsQueued); }
+
+            this.loadPage(pageToLoad);
+        }
+    };
+
+    VirtualPageRowController.prototype.loadPage = function(pageNumber) {
+
+        this.pageLoadsInProgress.push(pageNumber);
 
         var startRow = pageNumber * this.pageSize;
         var endRow = (pageNumber + 1) * this.pageSize;
 
         var that = this;
+        var datasourceVersionCopy = this.datasourceVersion;
+
         this.datasource.getRows(startRow, endRow,
             function success(rows, lastRow) {
+                if (that.requestIsDaemon(datasourceVersionCopy)) { return; }
                 that.pageLoaded(pageNumber, rows, lastRow);
             },
             function fail() {
+                if (that.requestIsDaemon(datasourceVersionCopy)) { return; }
+                that.pageLoadFailed(pageNumber);
             }
         );
     };
 
-    ServerRowController.prototype.getVirtualRow = function (rowIndex) {
+    // check that the datasource has not changed since the lats time we did a request
+    VirtualPageRowController.prototype.requestIsDaemon = function (datasourceVersionCopy) {
+        return this.datasourceVersion !== datasourceVersionCopy;
+    };
+
+    VirtualPageRowController.prototype.getVirtualRow = function (rowIndex) {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
 
         var pageNumber = Math.floor(rowIndex / this.pageSize);
-        var page = this.pages[pageNumber];
+        var page = this.pageCache[pageNumber];
 
         if (!page) {
-            this.loadPage(pageNumber);
+            this.doLoadOrQueue(pageNumber);
             // return back an empty row, so table can at least render empty cells
             return {
                 data: {},
@@ -2663,7 +2737,7 @@ define('../src/serverRowController',[], function() {
         }
     };
 
-    ServerRowController.prototype.getModel = function () {
+    VirtualPageRowController.prototype.getModel = function () {
         var that = this;
         return {
             getVirtualRow: function(index) {
@@ -2675,7 +2749,7 @@ define('../src/serverRowController',[], function() {
         };
     };
 
-    return ServerRowController;
+    return VirtualPageRowController;
 
 });
 define('../src/svgFactory',["./constants"], function() {
@@ -4591,7 +4665,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     return SelectionController;
 
 });
-define('../src/pagingController',[], function() {
+define('../src/paginationController',[], function() {
 
     var TEMPLATE =
         '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
@@ -4612,16 +4686,16 @@ define('../src/pagingController',[], function() {
         '<button class="ag-paging-button" id="btLast">Last</button>' +
         '</span>';
 
-    function PagingController() {
+    function PaginationController() {
     }
 
-    PagingController.prototype.init = function (ePagingPanel, angularGrid) {
+    PaginationController.prototype.init = function (ePagingPanel, angularGrid) {
         this.angularGrid = angularGrid;
         this.populatePanel(ePagingPanel);
         this.callVersion = 0;
     };
 
-    PagingController.prototype.setDatasource = function(datasource) {
+    PaginationController.prototype.setDatasource = function(datasource) {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -4632,7 +4706,7 @@ define('../src/pagingController',[], function() {
         this.reset();
     };
 
-    PagingController.prototype.reset = function() {
+    PaginationController.prototype.reset = function() {
         // copy pageSize, to guard against it changing the the datasource between calls
         this.pageSize = this.datasource.pageSize;
         // see if we know the total number of pages, or if it's 'to be decided'
@@ -4655,7 +4729,7 @@ define('../src/pagingController',[], function() {
         this.loadPage();
     };
 
-    PagingController.prototype.setTotalLabels = function() {
+    PaginationController.prototype.setTotalLabels = function() {
         if (this.foundMaxRow) {
             this.lbTotal.innerHTML = this.totalPages.toLocaleString();
             this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
@@ -4665,11 +4739,11 @@ define('../src/pagingController',[], function() {
         }
     };
 
-    PagingController.prototype.calculateTotalPages = function() {
+    PaginationController.prototype.calculateTotalPages = function() {
         this.totalPages = Math.floor( (this.rowCount-1) / this.pageSize) + 1;
     };
 
-    PagingController.prototype.pageLoaded = function(rows, lastRowIndex) {
+    PaginationController.prototype.pageLoaded = function(rows, lastRowIndex) {
         var firstId = this.currentPage * this.pageSize;
         this.angularGrid.setRows(rows, firstId);
         // see if we hit the last row
@@ -4689,7 +4763,7 @@ define('../src/pagingController',[], function() {
         this.updateRowLabels();
     };
 
-    PagingController.prototype.updateRowLabels = function() {
+    PaginationController.prototype.updateRowLabels = function() {
         var startRow = (this.pageSize * this.currentPage) + 1;
         var endRow = startRow + this.pageSize - 1;
         if (this.foundMaxRow && endRow > this.rowCount) {
@@ -4702,7 +4776,7 @@ define('../src/pagingController',[], function() {
         this.ePageRowSummaryPanel.style.visibility = null;
     };
 
-    PagingController.prototype.loadPage = function() {
+    PaginationController.prototype.loadPage = function() {
         this.enableOrDisableButtons();
         var startRow = this.currentPage * this.datasource.pageSize;
         var endRow = (this.currentPage + 1) * this.datasource.pageSize;
@@ -4715,42 +4789,44 @@ define('../src/pagingController',[], function() {
         this.angularGrid.showLoadingPanel(true);
         this.datasource.getRows(startRow, endRow,
             function success(rows, lastRowIndex) {
-                if (that.callVersion === callVersionCopy) {
-                    that.pageLoaded(rows, lastRowIndex);
-                }
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                that.pageLoaded(rows, lastRowIndex);
             },
             function fail() {
-                if (that.callVersion === callVersionCopy) {
-                    // set in an empty set of rows, this will at
-                    // least get rid of the loading panel, and
-                    // stop blocking things
-                    that.angularGrid.setRows([]);
-                }
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                // set in an empty set of rows, this will at
+                // least get rid of the loading panel, and
+                // stop blocking things
+                that.angularGrid.setRows([]);
             }
         );
     };
 
-    PagingController.prototype.onBtNext = function() {
+    PaginationController.prototype.isCallDaemon = function(versionCopy) {
+        return versionCopy !== this.callVersion;
+    };
+
+    PaginationController.prototype.onBtNext = function() {
         this.currentPage++;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtPrevious = function() {
+    PaginationController.prototype.onBtPrevious = function() {
         this.currentPage--;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtFirst = function() {
+    PaginationController.prototype.onBtFirst = function() {
         this.currentPage = 0;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtLast = function() {
+    PaginationController.prototype.onBtLast = function() {
         this.currentPage = this.totalPages - 1;
         this.loadPage();
     };
 
-    PagingController.prototype.enableOrDisableButtons = function() {
+    PaginationController.prototype.enableOrDisableButtons = function() {
         var disablePreviousAndFirst = this.currentPage === 0;
         this.btPrevious.disabled = disablePreviousAndFirst;
         this.btFirst.disabled = disablePreviousAndFirst;
@@ -4762,7 +4838,7 @@ define('../src/pagingController',[], function() {
         this.btLast.disabled = disableLast;
     };
 
-    PagingController.prototype.populatePanel = function(ePagingPanel) {
+    PaginationController.prototype.populatePanel = function(ePagingPanel) {
 
         ePagingPanel.innerHTML = TEMPLATE;
 
@@ -4797,7 +4873,7 @@ define('../src/pagingController',[], function() {
         });
     };
 
-    return PagingController;
+    return PaginationController;
 
 });
 
@@ -4984,7 +5060,7 @@ define('../src/angularGrid',[
     './utils',
     './filter/filterManager',
     './inMemoryRowController',
-    './serverRowController',
+    './virtualPageRowController',
     './rowRenderer',
     './headerRenderer',
     './gridOptionsWrapper',
@@ -4992,14 +5068,14 @@ define('../src/angularGrid',[
     './colModel',
     './selectionRendererFactory',
     './selectionController',
-    './pagingController',
+    './paginationController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
-            InMemoryRowController, ServerRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            InMemoryRowController, VirtualPageRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
             constants, ColModel, SelectionRendererFactory, SelectionController,
-            PagingController) {
+            PaginationController) {
 
     // if angular is present, register the directive
     if (angular) {
@@ -5111,7 +5187,7 @@ define('../src/angularGrid',[
         var rowRenderer  = new RowRenderer();
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
-        var serverRowController = new ServerRowController();
+        var virtualPageRowController = new VirtualPageRowController();
 
         // initialise all the beans
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
@@ -5122,7 +5198,7 @@ define('../src/angularGrid',[
             selectionRendererFactory, $compile, $scope, selectionController);
         headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
         inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
-        serverRowController.init(rowRenderer);
+        virtualPageRowController.init(rowRenderer);
 
         // this is a child bean, get a reference and pass it on
         // CAN WE DELETE THIS? it's done in the setDatasource section
@@ -5132,20 +5208,20 @@ define('../src/angularGrid',[
         rowRenderer.setRowModel(rowModel);
 
         // and the last bean, done in it's own section, as it's optional
-        var pagingController = null;
+        var paginationController = null;
         if (useScrolls) {
-            pagingController = new PagingController();
-            pagingController.init(this.ePagingPanel, this);
+            paginationController = new PaginationController();
+            paginationController.init(this.ePagingPanel, this);
         }
 
         this.rowModel = rowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
         this.inMemoryRowController = inMemoryRowController;
-        this.serverRowController = serverRowController;
+        this.virtualPageRowController = virtualPageRowController;
         this.rowRenderer = rowRenderer;
         this.headerRenderer = headerRenderer;
-        this.pagingController = pagingController;
+        this.paginationController = paginationController;
         this.filterManager = filterManager;
     };
 
@@ -5185,18 +5261,18 @@ define('../src/angularGrid',[
         var pagination = datasourceToUse && !virtualPaging;
 
         if (virtualPaging) {
-            this.pagingController.setDatasource(null);
-            this.serverRowController.setDatasource(datasource);
-            this.rowModel = this.serverRowController.getModel();
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(datasource);
+            this.rowModel = this.virtualPageRowController.getModel();
             this.showPagingPanel = false;
         } else if (pagination) {
-            this.pagingController.setDatasource(datasourceToUse);
-            this.serverRowController.setDatasource(null);
+            this.paginationController.setDatasource(datasourceToUse);
+            this.virtualPageRowController.setDatasource(null);
             this.rowModel = this.inMemoryRowController.getModel();
             this.showPagingPanel = true;
         } else {
-            this.pagingController.setDatasource(null);
-            this.serverRowController.setDatasource(null);
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(null);
             this.rowModel = this.inMemoryRowController.getModel();
             this.showPagingPanel = false;
         }

@@ -19,16 +19,16 @@ define([], function() {
         '<button class="ag-paging-button" id="btLast">Last</button>' +
         '</span>';
 
-    function PagingController() {
+    function PaginationController() {
     }
 
-    PagingController.prototype.init = function (ePagingPanel, angularGrid) {
+    PaginationController.prototype.init = function (ePagingPanel, angularGrid) {
         this.angularGrid = angularGrid;
         this.populatePanel(ePagingPanel);
         this.callVersion = 0;
     };
 
-    PagingController.prototype.setDatasource = function(datasource) {
+    PaginationController.prototype.setDatasource = function(datasource) {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -39,7 +39,7 @@ define([], function() {
         this.reset();
     };
 
-    PagingController.prototype.reset = function() {
+    PaginationController.prototype.reset = function() {
         // copy pageSize, to guard against it changing the the datasource between calls
         this.pageSize = this.datasource.pageSize;
         // see if we know the total number of pages, or if it's 'to be decided'
@@ -62,7 +62,7 @@ define([], function() {
         this.loadPage();
     };
 
-    PagingController.prototype.setTotalLabels = function() {
+    PaginationController.prototype.setTotalLabels = function() {
         if (this.foundMaxRow) {
             this.lbTotal.innerHTML = this.totalPages.toLocaleString();
             this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
@@ -72,11 +72,11 @@ define([], function() {
         }
     };
 
-    PagingController.prototype.calculateTotalPages = function() {
+    PaginationController.prototype.calculateTotalPages = function() {
         this.totalPages = Math.floor( (this.rowCount-1) / this.pageSize) + 1;
     };
 
-    PagingController.prototype.pageLoaded = function(rows, lastRowIndex) {
+    PaginationController.prototype.pageLoaded = function(rows, lastRowIndex) {
         var firstId = this.currentPage * this.pageSize;
         this.angularGrid.setRows(rows, firstId);
         // see if we hit the last row
@@ -96,7 +96,7 @@ define([], function() {
         this.updateRowLabels();
     };
 
-    PagingController.prototype.updateRowLabels = function() {
+    PaginationController.prototype.updateRowLabels = function() {
         var startRow = (this.pageSize * this.currentPage) + 1;
         var endRow = startRow + this.pageSize - 1;
         if (this.foundMaxRow && endRow > this.rowCount) {
@@ -109,7 +109,7 @@ define([], function() {
         this.ePageRowSummaryPanel.style.visibility = null;
     };
 
-    PagingController.prototype.loadPage = function() {
+    PaginationController.prototype.loadPage = function() {
         this.enableOrDisableButtons();
         var startRow = this.currentPage * this.datasource.pageSize;
         var endRow = (this.currentPage + 1) * this.datasource.pageSize;
@@ -122,42 +122,44 @@ define([], function() {
         this.angularGrid.showLoadingPanel(true);
         this.datasource.getRows(startRow, endRow,
             function success(rows, lastRowIndex) {
-                if (that.callVersion === callVersionCopy) {
-                    that.pageLoaded(rows, lastRowIndex);
-                }
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                that.pageLoaded(rows, lastRowIndex);
             },
             function fail() {
-                if (that.callVersion === callVersionCopy) {
-                    // set in an empty set of rows, this will at
-                    // least get rid of the loading panel, and
-                    // stop blocking things
-                    that.angularGrid.setRows([]);
-                }
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                // set in an empty set of rows, this will at
+                // least get rid of the loading panel, and
+                // stop blocking things
+                that.angularGrid.setRows([]);
             }
         );
     };
 
-    PagingController.prototype.onBtNext = function() {
+    PaginationController.prototype.isCallDaemon = function(versionCopy) {
+        return versionCopy !== this.callVersion;
+    };
+
+    PaginationController.prototype.onBtNext = function() {
         this.currentPage++;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtPrevious = function() {
+    PaginationController.prototype.onBtPrevious = function() {
         this.currentPage--;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtFirst = function() {
+    PaginationController.prototype.onBtFirst = function() {
         this.currentPage = 0;
         this.loadPage();
     };
 
-    PagingController.prototype.onBtLast = function() {
+    PaginationController.prototype.onBtLast = function() {
         this.currentPage = this.totalPages - 1;
         this.loadPage();
     };
 
-    PagingController.prototype.enableOrDisableButtons = function() {
+    PaginationController.prototype.enableOrDisableButtons = function() {
         var disablePreviousAndFirst = this.currentPage === 0;
         this.btPrevious.disabled = disablePreviousAndFirst;
         this.btFirst.disabled = disablePreviousAndFirst;
@@ -169,7 +171,7 @@ define([], function() {
         this.btLast.disabled = disableLast;
     };
 
-    PagingController.prototype.populatePanel = function(ePagingPanel) {
+    PaginationController.prototype.populatePanel = function(ePagingPanel) {
 
         ePagingPanel.innerHTML = TEMPLATE;
 
@@ -204,6 +206,6 @@ define([], function() {
         });
     };
 
-    return PagingController;
+    return PaginationController;
 
 });

@@ -22,6 +22,8 @@ include '../documentation_header.php';
         This feature is known in other grids as <b>infinite scrolling</b>.
     </p>
 
+    <p><b>Note:</b> Pagination and Virtual Paging are different solutions to the same problem. It is not possible to apply both at the same time.</p>
+
     <h4>How it Works</h4>
 
     <p>
@@ -30,6 +32,8 @@ include '../documentation_header.php';
 
     <p>
         <img src="high-level.png"/>
+        <br/>
+        (PS I'm not an artist!!! If you can do better, please do and send it to me!!):
     </p>
 
     <p>

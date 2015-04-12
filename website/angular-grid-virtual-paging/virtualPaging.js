@@ -35,8 +35,9 @@ module.controller("exampleCtrl", function($scope, $http) {
             //wait for a second before setting the results into the table
             var dataSource = {
                 //rowCount: allOfTheData.length,
-                pageSize: 500,
+                pageSize: 50,
                 overflowSize: 500,
+                maxConcurrentRequests: 2,
                 getRows: function (start, finish, callbackSuccess, callbackFail) {
                     console.log('asking for ' + start + ' to ' + finish);
                     setTimeout( function() {

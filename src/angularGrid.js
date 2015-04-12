@@ -36,7 +36,7 @@ define([
     './utils',
     './filter/filterManager',
     './inMemoryRowController',
-    './serverRowController',
+    './virtualPageRowController',
     './rowRenderer',
     './headerRenderer',
     './gridOptionsWrapper',
@@ -44,14 +44,14 @@ define([
     './colModel',
     './selectionRendererFactory',
     './selectionController',
-    './pagingController',
+    './paginationController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
-            InMemoryRowController, ServerRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            InMemoryRowController, VirtualPageRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
             constants, ColModel, SelectionRendererFactory, SelectionController,
-            PagingController) {
+            PaginationController) {
 
     // if angular is present, register the directive
     if (angular) {
@@ -163,7 +163,7 @@ define([
         var rowRenderer  = new RowRenderer();
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
-        var serverRowController = new ServerRowController();
+        var virtualPageRowController = new VirtualPageRowController();
 
         // initialise all the beans
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
@@ -174,7 +174,7 @@ define([
             selectionRendererFactory, $compile, $scope, selectionController);
         headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
         inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
-        serverRowController.init(rowRenderer);
+        virtualPageRowController.init(rowRenderer);
 
         // this is a child bean, get a reference and pass it on
         // CAN WE DELETE THIS? it's done in the setDatasource section
@@ -184,20 +184,20 @@ define([
         rowRenderer.setRowModel(rowModel);
 
         // and the last bean, done in it's own section, as it's optional
-        var pagingController = null;
+        var paginationController = null;
         if (useScrolls) {
-            pagingController = new PagingController();
-            pagingController.init(this.ePagingPanel, this);
+            paginationController = new PaginationController();
+            paginationController.init(this.ePagingPanel, this);
         }
 
         this.rowModel = rowModel;
         this.selectionController = selectionController;
         this.colModel = colModel;
         this.inMemoryRowController = inMemoryRowController;
-        this.serverRowController = serverRowController;
+        this.virtualPageRowController = virtualPageRowController;
         this.rowRenderer = rowRenderer;
         this.headerRenderer = headerRenderer;
-        this.pagingController = pagingController;
+        this.paginationController = paginationController;
         this.filterManager = filterManager;
     };
 
@@ -237,18 +237,18 @@ define([
         var pagination = datasourceToUse && !virtualPaging;
 
         if (virtualPaging) {
-            this.pagingController.setDatasource(null);
-            this.serverRowController.setDatasource(datasource);
-            this.rowModel = this.serverRowController.getModel();
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(datasource);
+            this.rowModel = this.virtualPageRowController.getModel();
             this.showPagingPanel = false;
         } else if (pagination) {
-            this.pagingController.setDatasource(datasourceToUse);
-            this.serverRowController.setDatasource(null);
+            this.paginationController.setDatasource(datasourceToUse);
+            this.virtualPageRowController.setDatasource(null);
             this.rowModel = this.inMemoryRowController.getModel();
             this.showPagingPanel = true;
         } else {
-            this.pagingController.setDatasource(null);
-            this.serverRowController.setDatasource(null);
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(null);
             this.rowModel = this.inMemoryRowController.getModel();
             this.showPagingPanel = false;
         }
