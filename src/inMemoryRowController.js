@@ -237,7 +237,9 @@ define([
     };
 
     // private
-    InMemoryRowController.prototype.setAllRows = function(rows) {
+    // rows: the rows to put into the model
+    // firstId: the first id to use, used for paging, where we are not on the first page
+    InMemoryRowController.prototype.setAllRows = function(rows, firstId) {
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
             nodes = rows;
@@ -254,7 +256,9 @@ define([
             }
         }
 
-        this.recursivelyAddIdToNodes(nodes, 0);
+        // if firstId provided, use it, otherwise start at 0
+        var firstIdToUse = firstId ? firstId : 0;
+        this.recursivelyAddIdToNodes(nodes, firstIdToUse);
         this.allRows = nodes;
     };
 

@@ -1,12 +1,12 @@
 define([], function() {
 
     var TEMPLATE =
-        '<span class="ag-paging-row-summary-panel">' +
-        '<span id="recordCount"></span>' +
-        ' records, showing ' +
+        '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
         '<span id="firstRowOnPage"></span>' +
         ' to ' +
         '<span id="lastRowOnPage"></span>' +
+        ' of ' +
+        '<span id="recordCount"></span>' +
         '</span>' +
         '<span clas="ag-paging-page-summary-panel">' +
         '<button class="ag-paging-button" id="btFirst">First</button>' +
@@ -32,16 +32,81 @@ define([], function() {
         this.datasource = datasource;
 
         if (!datasource) {
-            // only continue if we have a valid datasource to working with
+            // only continue if we have a valid datasource to work with
             return;
         }
 
-        this.totalPages = Math.floor( (datasource.rowCount-1) / datasource.pageSize) + 1;
-        this.lbTotal.innerHTML = this.totalPages.toLocaleString();
-        this.lbRecordCount.innerHTML = datasource.rowCount.toLocaleString();
+        this.reset();
+    };
+
+    PagingController.prototype.reset = function() {
+        // copy pageSize, to guard against it changing the the datasource between calls
+        this.pageSize = this.datasource.pageSize;
+        // see if we know the total number of pages, or if it's 'to be decided'
+        if (this.datasource.rowCount >= 0) {
+            this.rowCount = this.datasource.rowCount;
+            this.foundMaxRow = true;
+            this.calculateTotalPages();
+        } else {
+            this.rowCount = 0;
+            this.foundMaxRow = false;
+            this.totalPages = null;
+        }
 
         this.currentPage = 0;
+
+        // hide the summary panel until something is loaded
+        this.ePageRowSummaryPanel.style.visibility = 'hidden';
+
+        this.setTotalLabels();
         this.loadPage();
+    };
+
+    PagingController.prototype.setTotalLabels = function() {
+        if (this.foundMaxRow) {
+            this.lbTotal.innerHTML = this.totalPages.toLocaleString();
+            this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
+        } else {
+            this.lbTotal.innerHTML = 'more';
+            this.lbRecordCount.innerHTML = 'more';
+        }
+    };
+
+    PagingController.prototype.calculateTotalPages = function() {
+        this.totalPages = Math.floor( (this.rowCount-1) / this.pageSize) + 1;
+    };
+
+    PagingController.prototype.pageLoaded = function(rows, lastRowIndex) {
+        var firstId = this.currentPage * this.pageSize;
+        this.angularGrid.setRows(rows, firstId);
+        // see if we hit the last row
+        if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
+            this.foundMaxRow = true;
+            this.rowCount = lastRowIndex;
+            this.calculateTotalPages();
+            this.setTotalLabels();
+
+            // if overshot pages, go back
+            if (this.currentPage > this.totalPages) {
+                this.currentPage = this.totalPages - 1;
+                this.loadPage();
+            }
+        }
+        this.enableOrDisableButtons();
+        this.updateRowLabels();
+    };
+
+    PagingController.prototype.updateRowLabels = function() {
+        var startRow = (this.pageSize * this.currentPage) + 1;
+        var endRow = startRow + this.pageSize - 1;
+        if (this.foundMaxRow && endRow > this.rowCount) {
+            endRow = this.rowCount;
+        }
+        this.lbFirstRowOnPage.innerHTML = (startRow).toLocaleString();
+        this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
+
+        // show the summary panel, when first shown, this is blank
+        this.ePageRowSummaryPanel.style.visibility = null;
     };
 
     PagingController.prototype.loadPage = function() {
@@ -50,17 +115,15 @@ define([], function() {
         var endRow = (this.currentPage + 1) * this.datasource.pageSize;
 
         this.lbCurrent.innerHTML = (this.currentPage + 1).toLocaleString();
-        this.lbFirstRowOnPage.innerHTML = (startRow + 1).toLocaleString();
-        this.lbLastRowOnPage.innerHTML = ((endRow > this.datasource.rowCount) ? this.datasource.rowCount : endRow).toLocaleString();
 
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
         this.angularGrid.showLoadingPanel(true);
         this.datasource.getRows(startRow, endRow,
-            function success(rows) {
+            function success(rows, lastRowIndex) {
                 if (that.callVersion === callVersionCopy) {
-                    that.angularGrid.setRows(rows);
+                    that.pageLoaded(rows, lastRowIndex);
                 }
             },
             function fail() {
@@ -99,7 +162,7 @@ define([], function() {
         this.btPrevious.disabled = onFirstPage;
         this.btFirst.disabled = onFirstPage;
 
-        var onLastPage = this.currentPage === (this.totalPages-1);
+        var onLastPage = this.foundMaxRow && this.currentPage === (this.totalPages-1);
         this.btNext.disabled = onLastPage;
         this.btLast.disabled = onLastPage;
     };
@@ -118,6 +181,7 @@ define([], function() {
         this.lbRecordCount = ePagingPanel.querySelector('#recordCount');
         this.lbFirstRowOnPage = ePagingPanel.querySelector('#firstRowOnPage');
         this.lbLastRowOnPage = ePagingPanel.querySelector('#lastRowOnPage');
+        this.ePageRowSummaryPanel = ePagingPanel.querySelector('#pageRowSummaryPanel');
 
         var that = this;
 

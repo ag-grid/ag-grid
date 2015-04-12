@@ -369,11 +369,11 @@ define([
         this.rowRenderer.refreshView();
     };
 
-    Grid.prototype.setRows = function (rows) {
+    Grid.prototype.setRows = function (rows, firstId) {
         if (rows) {
             this.gridOptions.rowData = rows;
         }
-        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows(), firstId);
         this.selectionController.clearSelection();
         this.filterManager.onNewRowsLoaded();
         this.updateModelAndRefresh(constants.STEP_EVERYTHING);

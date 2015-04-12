@@ -1,3 +1,7 @@
+/*
+* This row controller is used for infinite scrolling only. For normal 'in memory' table,
+* or standard pagination, the inMemoryRowController is used.
+*/
 define([], function() {
 
     function ServerRowController() {
@@ -50,17 +54,21 @@ define([], function() {
         return nodes;
     };
 
-    ServerRowController.prototype.pageLoaded = function(pageNumber, rows, more) {
+    ServerRowController.prototype.pageLoaded = function(pageNumber, rows, lastRow) {
 
         this.pages[pageNumber] = this.createNodesFromRows(pageNumber, rows);
 
         if (!this.foundMaxRow) {
-            if (more) {
-                var maxThisPage = ((pageNumber + 1) * this.pageSize);
-                this.virtualRowCount = maxThisPage + this.overflowSize;
-            } else {
-                this.virtualRowCount = (pageNumber * this.pageSize) + rows.length;
+            // if we know the last row, use if
+            if (typeof lastRow === 'number' && lastRow >= 0) {
+                this.virtualRowCount = lastRow;
                 this.foundMaxRow = true;
+            } else {
+                // otherwise, see if we need to add some virtual rows
+                var thisPagePlusBuffer = ((pageNumber + 1) * this.pageSize) + this.overflowSize;
+                if (this.virtualRowCount < thisPagePlusBuffer) {
+                    this.virtualRowCount = thisPagePlusBuffer;
+                }
             }
             // if rowCount changes, refreshView, otherwise just refreshAllVirtualRows
             this.rowRenderer.refreshView();
@@ -83,8 +91,8 @@ define([], function() {
 
         var that = this;
         this.datasource.getRows(startRow, endRow,
-            function success(rows, more) {
-                that.pageLoaded(pageNumber, rows, more);
+            function success(rows, lastRow) {
+                that.pageLoaded(pageNumber, rows, lastRow);
             },
             function fail() {
             }
