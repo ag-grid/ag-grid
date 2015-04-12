@@ -1,9 +1,12 @@
 define([], function () {
 
-    function SelectionRendererFactory(angularGrid, selectionController) {
+    function SelectionRendererFactory() {
+    }
+
+    SelectionRendererFactory.prototype.init = function (angularGrid, selectionController) {
         this.angularGrid = angularGrid;
         this.selectionController = selectionController;
-    }
+    };
 
     SelectionRendererFactory.prototype.createCheckboxColDef = function () {
         return {

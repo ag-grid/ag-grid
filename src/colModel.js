@@ -1,9 +1,12 @@
 define(['./constants'], function(constants) {
 
-    function ColModel(angularGrid, selectionRendererFactory) {
+    function ColModel() {
+    }
+
+    ColModel.prototype.init = function (angularGrid, selectionRendererFactory) {
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
-    }
+    };
 
     ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;

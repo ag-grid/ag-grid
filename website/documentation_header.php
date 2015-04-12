@@ -159,6 +159,24 @@
                     <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
+                <?php if ($key == "Datasource") { ?>
+                    <span class="sidebarLinkSelected">Datasource</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-datasource/index.php">Datasource</a>
+                <?php } ?>
+
+                <?php if ($key == "Pagination") { ?>
+                    <span class="sidebarLinkSelected">Pagination</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-pagination/index.php">Pagination</a>
+                <?php } ?>
+
+                <?php if ($key == "Virtual Paging") { ?>
+                    <span class="sidebarLinkSelected">Virtual Paging</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging</a>
+                <?php } ?>
+
                 <?php if ($key == "Angular Compiling") { ?>
                     <span class="sidebarLinkSelected">Angular Compiling</span>
                 <?php } else { ?>
@@ -198,6 +216,24 @@
                 <h4>
                     Examples
                 </h4>
+
+                <?php if ($key == "Basic Table") { ?>
+                    <span class="sidebarLinkSelected">Basic Table</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-basic/index.php">Basic Table</a>
+                <?php } ?>
+
+                <?php if ($key == "Styled Report") { ?>
+                    <span class="sidebarLinkSelected">Styled Report</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-account-report/index.php">Styled Report</a>
+                <?php } ?>
+
+                <?php if ($key == "File Browser") { ?>
+                    <span class="sidebarLinkSelected">File Browser</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-file-browser/index.php">File Browser</a>
+                <?php } ?>
 
                 <?php if ($key == "No Angular") { ?>
                     <span class="sidebarLinkSelected">No AngularJS</span>

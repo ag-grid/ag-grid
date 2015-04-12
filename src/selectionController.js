@@ -10,11 +10,10 @@ define(['./utils'], function(utils) {
 
     function SelectionController() {}
 
-    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, rowModel, $scope, rowRenderer) {
+    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
         this.eRowsParent = eRowsParent;
         this.angularGrid = angularGrid;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
 
@@ -23,6 +22,10 @@ define(['./utils'], function(utils) {
 
         gridOptionsWrapper.setSelectedRows(this.selectedRows);
         gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
+    };
+
+    SelectionController.prototype.setRowModel = function(rowModel) {
+        this.rowModel = rowModel;
     };
 
     // public

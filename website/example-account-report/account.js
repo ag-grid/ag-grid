@@ -3,7 +3,7 @@ var fileBrowserModule = angular.module('account', ['angularGrid']);
 fileBrowserModule.controller('accountController', function($scope) {
 
     var columnDefs = [
-        {displayName: '', field: 'item', width: 220},
+        {displayName: '', field: 'item', width: 200},
         {displayName: "Units", field: "amount1", group: 'Week 1', width: 75},
         {displayName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
         {displayName: "Units", field: "amount2", group: 'Week 2', width: 75},

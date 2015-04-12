@@ -994,7 +994,7 @@ define('text',['module'], function (module) {
     return text;
 });
 
-define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- The loading panel -->\r\n    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->\r\n    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n';});
+define('text!../src/template.html',[],function () { return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- The loading panel -->\r\n    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->\r\n    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <!-- Paging -->\r\n    <div class=\'ag-paging-panel\'>\r\n    </div>\r\n</div>\r\n';});
 
 
 define('text!../src/templateNoScrolls.html',[],function () { return '<div class=\'ag-root ag-no-scrolls\'>\r\n    <!-- See comment in template.html for why loading is laid out like so -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header-container\'></div>\r\n    <!-- body -->\r\n    <div class=\'ag-body-container\'></div>\r\n</div>';});
@@ -1043,23 +1043,6 @@ define('../src/utils',[], function() {
         } else {
             return value;
         }
-    };
-
-    Utils.prototype.uniqueValuesFromRowWrappers = function(nodes, key) {
-        var uniqueCheck = {};
-        var result = [];
-        for (var i = 0, l = nodes.length; i < l; i++){
-            var data = nodes[i].data;
-            var value = data ? data[key] : null;
-            if (value==="" || value === undefined) {
-                value = null;
-            }
-            if(!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
-        }
-        return result;
     };
 
     Utils.prototype.removeAllChildren = function(node) {
@@ -1235,8 +1218,7 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        var allNodes = rowModel.getAllRows();
-        this.uniqueValues = utils.uniqueValuesFromRowWrappers(allNodes, colDef.field);
+        this.createUniqueValues(rowModel, colDef.field);
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -1251,6 +1233,23 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
         this.selectedValuesMap = {};
         this.selectEverything();
     }
+
+    SetFilterModel.prototype.createUniqueValues = function(rowModel, key) {
+        var uniqueCheck = {};
+        var result = [];
+        for (var i = 0, l = rowModel.getVirtualRowCount(); i < l; i++){
+            var data = rowModel.getVirtualRow(i).data;
+            var value = data ? data[key] : null;
+            if (value==="" || value === undefined) {
+                value = null;
+            }
+            if(!uniqueCheck.hasOwnProperty(value)) {
+                result.push(value);
+                uniqueCheck[value] = 1;
+            }
+        }
+        this.uniqueValues = result;
+    };
 
     //sets mini filter. returns true if it changed from last value, otherwise false
     SetFilterModel.prototype.setMiniFilter = function(newMiniFilter) {
@@ -1840,14 +1839,20 @@ define('../src/filter/filterManager',[
     "./textFilter"
 ], function(utils, SetFilter, NumberFilter, StringFilter) {
 
-    function FilterManager(grid, rowModel, gridOptionsWrapper, $compile, $scope) {
+    function FilterManager() {
+    }
+
+    FilterManager.prototype.init = function (grid, gridOptionsWrapper, $compile, $scope) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.grid = grid;
-        this.rowModel = rowModel;
         this.allFilters = {};
-    }
+    };
+
+    FilterManager.prototype.setRowModel = function (rowModel) {
+        this.rowModel = rowModel;
+    };
 
     // returns true if at least one filter is active
     FilterManager.prototype.isFilterPresent = function () {
@@ -2025,45 +2030,6 @@ define('../src/filter/filterManager',[
 
 });
 
-define('../src/rowModel',[], function() {
-
-    // pipeline is: group -> filter -> sort -> map
-    function RowModel() {
-        this.allRows = null;
-        this.rowsAfterGroup = null;
-        this.rowsAfterFilter = null;
-        this.rowsAfterSort = null;
-        this.rowsAfterMap = null;
-    }
-
-    RowModel.prototype.getAllRows = function() { return this.allRows; };
-    RowModel.prototype.setAllRows = function(allRows) { this.allRows = allRows; };
-
-    RowModel.prototype.getRowsAfterGroup = function() { return this.rowsAfterGroup; };
-    RowModel.prototype.setRowsAfterGroup = function(rowsAfterGroup) { this.rowsAfterGroup = rowsAfterGroup; };
-
-    RowModel.prototype.getRowsAfterFilter = function() { return this.rowsAfterFilter; };
-    RowModel.prototype.setRowsAfterFilter = function(rowsAfterFilter) { this.rowsAfterFilter = rowsAfterFilter; };
-
-    RowModel.prototype.getRowsAfterSort = function() { return this.rowsAfterSort; };
-    RowModel.prototype.setRowsAfterSort = function(rowsAfterSort) { this.rowsAfterSort = rowsAfterSort; };
-
-    RowModel.prototype.getRowsAfterMap = function() { return this.rowsAfterMap; };
-    RowModel.prototype.setRowsAfterMap = function(rowsAfterMap) { this.rowsAfterMap = rowsAfterMap; };
-
-    // returns the virtual row index, or -1 if the row is not currently displayed (due to mapping,
-    // ie the group it belongs to isn't visible)
-    RowModel.prototype.getVirtualIndex = function(row) {
-        return this.rowsAfterMap.indexOf(row);
-    };
-
-    RowModel.prototype.getVirtualRow = function(index) {
-        return this.rowsAfterMap[index];
-    };
-
-    return RowModel;
-
-});
 define('../src/groupCreator',[
 ],function() {
 
@@ -2172,25 +2138,56 @@ define('../src/constants',[], function() {
 
     return constants;
 });
-define('../src/rowController',[
+define('../src/inMemoryRowController',[
     "./groupCreator",
     "./utils",
     "./constants"
 ], function(groupCreator, utils, constants) {
 
-    function RowController(gridOptionsWrapper, rowModel, colModel, angularGrid, filterManager, $scope) {
+    function InMemoryRowController() {
+        this.createModel();
+    }
+
+    InMemoryRowController.prototype.init = function (gridOptionsWrapper, colModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
-    }
+
+        this.allRows = null;
+        this.rowsAfterGroup = null;
+        this.rowsAfterFilter = null;
+        this.rowsAfterSort = null;
+        this.rowsAfterMap = null;
+    };
+
+    // private
+    InMemoryRowController.prototype.createModel = function() {
+        var that = this;
+        this.model = {
+            getVirtualRow: function(index) {
+                return that.rowsAfterMap[index];
+            },
+            getVirtualRowCount: function() {
+                if (that.rowsAfterMap) {
+                    return that.rowsAfterMap.length;
+                } else {
+                    return 0;
+                }
+            }
+        };
+    };
 
     // public
-    RowController.prototype.updateModel = function(step) {
+    InMemoryRowController.prototype.getModel = function() {
+        return this.model;
+    };
 
-        //fallthrough in below switch is on purpose
+    // public
+    InMemoryRowController.prototype.updateModel = function(step) {
+
+        // fallthrough in below switch is on purpose
         switch (step) {
             case constants.STEP_EVERYTHING :
                 this.doGrouping();
@@ -2216,20 +2213,34 @@ define('../src/rowController',[
     };
 
     // public - it's possible to recompute the aggregate without doing the other parts
-    RowController.prototype.doAggregate = function () {
+    InMemoryRowController.prototype.doAggregate = function () {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
         if (typeof groupAggFunction !== 'function') {
             return;
         }
 
-        var nodes = this.rowModel.getRowsAfterFilter();
+        this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
+    };
 
-        this.recursivelyCreateAggData(nodes, groupAggFunction);
+    // public
+    InMemoryRowController.prototype.expandOrCollapseAll = function(expand, rowNodes) {
+        // if first call in recursion, we set list to parent list
+        if (rowNodes === null) { rowNodes = this.rowsAfterGroup; }
+
+        if (!rowNodes) { return; }
+
+        var _this = this;
+        rowNodes.forEach(function(node) {
+            if (node.group) {
+                node.expanded = expand;
+                _this.expandOrCollapseAll(expand, node.children);
+            }
+        });
     };
 
     // private
-    RowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
+    InMemoryRowController.prototype.recursivelyCreateAggData = function (nodes, groupAggFunction) {
         for (var i = 0, l = nodes.length; i<l; i++) {
             var node = nodes[i];
             if (node.group) {
@@ -2248,7 +2259,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.doSort = function () {
+    InMemoryRowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
@@ -2257,7 +2268,7 @@ define('../src/rowController',[
             }
         });
 
-        var rowNodesBeforeSort = this.rowModel.getRowsAfterFilter().slice(0);
+        var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
 
         if (colDefWrapperForSorting) {
             var ascending = colDefWrapperForSorting.sort === constants.ASC;
@@ -2269,11 +2280,11 @@ define('../src/rowController',[
             this.resetSortInGroups(rowNodesBeforeSort);
         }
 
-        this.rowModel.setRowsAfterSort(rowNodesBeforeSort);
+        this.rowsAfterSort = rowNodesBeforeSort;
     };
 
     // private
-    RowController.prototype.resetSortInGroups = function(rowNodes) {
+    InMemoryRowController.prototype.resetSortInGroups = function(rowNodes) {
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
             if (item.group && item.children) {
@@ -2284,7 +2295,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
+    InMemoryRowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
 
         // sort any groups recursively
         for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
@@ -2312,35 +2323,35 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.doGrouping = function () {
+    InMemoryRowController.prototype.doGrouping = function () {
         var rowsAfterGroup;
         if (this.gridOptionsWrapper.isDoInternalGrouping()) {
             var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-            rowsAfterGroup = groupCreator.group(this.rowModel.getAllRows(), this.gridOptionsWrapper.getGroupKeys(),
+            rowsAfterGroup = groupCreator.group(this.allRows, this.gridOptionsWrapper.getGroupKeys(),
                 this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
         } else {
-            rowsAfterGroup = this.rowModel.getAllRows();
+            rowsAfterGroup = this.allRows;
         }
-        this.rowModel.setRowsAfterGroup(rowsAfterGroup);
+        this.rowsAfterGroup = rowsAfterGroup;
     };
 
     // private
-    RowController.prototype.doFilter = function () {
+    InMemoryRowController.prototype.doFilter = function () {
         var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
         var advancedFilterPresent = this.filterManager.isFilterPresent();
         var filterPresent = quickFilterPresent || advancedFilterPresent;
 
         var rowsAfterFilter;
         if (filterPresent) {
-            rowsAfterFilter = this.filterItems(this.rowModel.getRowsAfterGroup(), quickFilterPresent, advancedFilterPresent);
+            rowsAfterFilter = this.filterItems(this.rowsAfterGroup, quickFilterPresent, advancedFilterPresent);
         } else {
-            rowsAfterFilter = this.rowModel.getRowsAfterGroup();
+            rowsAfterFilter = this.rowsAfterGroup;
         }
-        this.rowModel.setRowsAfterFilter(rowsAfterFilter);
+        this.rowsAfterFilter = rowsAfterFilter;
     };
 
     // private
-    RowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
+    InMemoryRowController.prototype.filterItems = function (rowNodes, quickFilterPresent, advancedFilterPresent) {
         var result = [];
 
         for (var i = 0, l = rowNodes.length; i < l; i++) {
@@ -2366,7 +2377,9 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.setAllRows = function(rows) {
+    // rows: the rows to put into the model
+    // firstId: the first id to use, used for paging, where we are not on the first page
+    InMemoryRowController.prototype.setAllRows = function(rows, firstId) {
         var nodes;
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
             nodes = rows;
@@ -2383,13 +2396,15 @@ define('../src/rowController',[
             }
         }
 
-        this.recursivelyAddIdToNodes(nodes, 0);
-        this.rowModel.setAllRows(nodes);
+        // if firstId provided, use it, otherwise start at 0
+        var firstIdToUse = firstId ? firstId : 0;
+        this.recursivelyAddIdToNodes(nodes, firstIdToUse);
+        this.allRows = nodes;
     };
 
     // add in index - this is used by the selectionController - so quick
     // to look up selected rows
-    RowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+    InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             node.id = index++;
@@ -2402,7 +2417,7 @@ define('../src/rowController',[
 
     // add in index - this is used by the selectionController - so quick
     // to look up selected rows
-    RowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
+    InMemoryRowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if (parent) {
@@ -2416,7 +2431,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.getTotalChildCount = function(rowNodes) {
+    InMemoryRowController.prototype.getTotalChildCount = function(rowNodes) {
         var count = 0;
         for (var i = 0, l = rowNodes.length; i<l; i++) {
             var item = rowNodes[i];
@@ -2430,7 +2445,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
+    InMemoryRowController.prototype.copyGroupNode = function (groupNode, children, allChildrenCount) {
         return {
             group: true,
             data: groupNode.data,
@@ -2444,16 +2459,16 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.doGroupMapping = function () {
+    InMemoryRowController.prototype.doGroupMapping = function () {
         // even if not going grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var rowsAfterMap = [];
-        this.addToMap(rowsAfterMap, this.rowModel.getRowsAfterSort());
-        this.rowModel.setRowsAfterMap(rowsAfterMap);
+        this.addToMap(rowsAfterMap, this.rowsAfterSort);
+        this.rowsAfterMap = rowsAfterMap;
     };
 
     // private
-    RowController.prototype.addToMap = function (mappedData, originalNodes) {
+    InMemoryRowController.prototype.addToMap = function (mappedData, originalNodes) {
         if (!originalNodes) {
             return;
         }
@@ -2473,7 +2488,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.createFooterNode = function (groupNode) {
+    InMemoryRowController.prototype.createFooterNode = function (groupNode) {
         var footerNode = {};
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
@@ -2488,7 +2503,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
+    InMemoryRowController.prototype.doesRowPassFilter = function(node, quickFilterPresent, advancedFilterPresent) {
         //first up, check quick filter
         if (quickFilterPresent) {
             if (!node.quickFilterAggregateText) {
@@ -2512,7 +2527,7 @@ define('../src/rowController',[
     };
 
     // private
-    RowController.prototype.aggregateRowForQuickFilter = function (node) {
+    InMemoryRowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
             var data = node.data;
@@ -2524,7 +2539,284 @@ define('../src/rowController',[
         node.quickFilterAggregateText = aggregatedText;
     };
 
-    return RowController;
+    return InMemoryRowController;
+});
+/*
+* This row controller is used for infinite scrolling only. For normal 'in memory' table,
+* or standard pagination, the inMemoryRowController is used.
+*/
+define('../src/virtualPageRowController',[], function() {
+
+    var logging = true;
+
+    function VirtualPageRowController() {
+    }
+
+    VirtualPageRowController.prototype.init = function (rowRenderer) {
+        this.rowRenderer = rowRenderer;
+        this.datasourceVersion = 0;
+    };
+
+    VirtualPageRowController.prototype.setDatasource = function (datasource) {
+        this.datasource = datasource;
+
+        if (!datasource) {
+            // only continue if we have a valid datasource to working with
+            return;
+        }
+
+        this.reset();
+    };
+
+    VirtualPageRowController.prototype.reset = function() {
+        // see if datasource knows how many rows there are
+        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
+            this.virtualRowCount = this.datasource.rowCount;
+            this.foundMaxRow = true;
+        } else {
+            this.virtualRowCount = 0;
+            this.foundMaxRow = false;
+        }
+
+        // in case any daemon requests coming from datasource, we know it ignore them
+        this.datasourceVersion++;
+
+        // map of page numbers to rows in that page
+        this.pageCache = {};
+        this.pageCacheSize = 0;
+
+        // if a number is in this array, it means we are pending a load from it
+        this.pageLoadsInProgress = [];
+        this.pageLoadsQueued = [];
+        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
+        this.accessTime = 0; // rather than using the clock, we use this counter
+
+        // the number of concurrent loads we are allowed to the server
+        if (typeof this.datasource.maxConcurrentRequests === 'number' && this.datasource.maxConcurrentRequests > 0) {
+            this.maxConcurrentDatasourceRequests = this.datasource.maxConcurrentRequests;
+        } else {
+            this.maxConcurrentDatasourceRequests = 2;
+        }
+
+        // the number of pages to keep in browser cache
+        if (typeof this.datasource.maxPagesInCache === 'number' && this.datasource.maxPagesInCache > 0) {
+            this.maxPagesInCache = this.datasource.maxPagesInCache;
+        } else {
+            // null is default, means don't  have any max size on the cache
+            this.maxPagesInCache = null;
+        }
+
+        this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
+        this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
+
+        this.doLoadOrQueue(0);
+    };
+
+    VirtualPageRowController.prototype.createNodesFromRows = function(pageNumber, rows) {
+        var nodes = [];
+        if (rows) {
+            for (var i = 0, j = rows.length; i<j; i++) {
+                var virtualRowIndex = (pageNumber * this.pageSize) + i;
+                nodes.push({
+                    data: rows[i],
+                    id: virtualRowIndex
+                });
+            }
+        }
+        return nodes;
+    };
+
+    VirtualPageRowController.prototype.removeFromLoading = function(pageNumber) {
+        var index = this.pageLoadsInProgress.indexOf(pageNumber);
+        this.pageLoadsInProgress.splice(index, 1);
+    };
+
+    VirtualPageRowController.prototype.pageLoadFailed = function(pageNumber) {
+        this.removeFromLoading(pageNumber);
+        this.checkQueueForNextLoad();
+    };
+
+    VirtualPageRowController.prototype.pageLoaded = function(pageNumber, rows, lastRow) {
+        this.putPageIntoCacheAndPurge(pageNumber, rows);
+        this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
+        this.removeFromLoading(pageNumber);
+        this.checkQueueForNextLoad();
+    };
+
+    VirtualPageRowController.prototype.putPageIntoCacheAndPurge = function(pageNumber, rows) {
+        this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
+        this.pageCacheSize++;
+        if (logging) {console.log('adding page ' + pageNumber); }
+
+        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageCacheSize;
+        if (needToPurge) {
+            // find the LRU page
+            var youngestPageIndex = this.findLeastRecentlyAccessedPage(Object.keys(this.pageCache));
+
+            if (logging) {
+                console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
+            }
+            delete this.pageCache[youngestPageIndex];
+            this.pageCacheSize--;
+        }
+
+    };
+
+    VirtualPageRowController.prototype.checkMaxRowAndInformRowRenderer = function(pageNumber, lastRow) {
+        if (!this.foundMaxRow) {
+            // if we know the last row, use if
+            if (typeof lastRow === 'number' && lastRow >= 0) {
+                this.virtualRowCount = lastRow;
+                this.foundMaxRow = true;
+            } else {
+                // otherwise, see if we need to add some virtual rows
+                var thisPagePlusBuffer = ((pageNumber + 1) * this.pageSize) + this.overflowSize;
+                if (this.virtualRowCount < thisPagePlusBuffer) {
+                    this.virtualRowCount = thisPagePlusBuffer;
+                }
+            }
+            // if rowCount changes, refreshView, otherwise just refreshAllVirtualRows
+            this.rowRenderer.refreshView();
+        } else {
+            this.rowRenderer.refreshAllVirtualRows();
+        }
+    };
+
+    VirtualPageRowController.prototype.isPageAlreadyLoading = function(pageNumber) {
+        var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0
+            || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
+        return result;
+    };
+
+    VirtualPageRowController.prototype.doLoadOrQueue = function(pageNumber) {
+        // if we already tried to load this page, then ignore the request,
+        // otherwise server would be hit 50 times just to display one page, the
+        // first row to find the page missing is enough.
+        if (this.isPageAlreadyLoading(pageNumber)) {
+            return;
+        }
+
+        // try the page load - if not already doing a load, then we can go ahead
+        if (this.pageLoadsInProgress.length < this.maxConcurrentDatasourceRequests) {
+            // go ahead, load the page
+            this.loadPage(pageNumber);
+        } else {
+            // otherwise, queue the request
+            this.addToQueueAndPurgeQueue(pageNumber);
+        }
+    };
+
+    VirtualPageRowController.prototype.addToQueueAndPurgeQueue = function (pageNumber) {
+        if (logging) { console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
+        this.pageLoadsQueued.push(pageNumber);
+
+        // see if there are more pages queued that are actually in our cache, if so there is
+        // no point in loading them all as some will be purged as soon as loaded
+        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageLoadsQueued.length;
+        if (needToPurge) {
+            // find the LRU page
+            var youngestPageIndex = this.findLeastRecentlyAccessedPage(this.pageLoadsQueued);
+
+            if (logging) { console.log('de-queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
+
+            var indexToRemove = this.pageLoadsQueued.indexOf(youngestPageIndex);
+            this.pageLoadsQueued.splice(indexToRemove, 1);
+        }
+    };
+
+    VirtualPageRowController.prototype.findLeastRecentlyAccessedPage = function (pageIndexes) {
+        var youngestPageIndex = -1;
+        var youngestPageAccessTime = Number.MAX_VALUE;
+        var that = this;
+
+        pageIndexes.forEach(function (pageIndex) {
+            var accessTimeThisPage = that.pageAccessTimes[pageIndex];
+            if (accessTimeThisPage < youngestPageAccessTime) {
+                youngestPageAccessTime = accessTimeThisPage;
+                youngestPageIndex = pageIndex;
+            }
+        });
+
+        return youngestPageIndex;
+    };
+
+    VirtualPageRowController.prototype.checkQueueForNextLoad = function () {
+        if (this.pageLoadsQueued.length>0) {
+            // take from the front of the queue
+            var pageToLoad = this.pageLoadsQueued[0];
+            this.pageLoadsQueued.splice(0, 1);
+
+            if (logging) { console.log('dequeueing ' + pageToLoad + ' - ' + this.pageLoadsQueued); }
+
+            this.loadPage(pageToLoad);
+        }
+    };
+
+    VirtualPageRowController.prototype.loadPage = function(pageNumber) {
+
+        this.pageLoadsInProgress.push(pageNumber);
+
+        var startRow = pageNumber * this.pageSize;
+        var endRow = (pageNumber + 1) * this.pageSize;
+
+        var that = this;
+        var datasourceVersionCopy = this.datasourceVersion;
+
+        this.datasource.getRows(startRow, endRow,
+            function success(rows, lastRow) {
+                if (that.requestIsDaemon(datasourceVersionCopy)) { return; }
+                that.pageLoaded(pageNumber, rows, lastRow);
+            },
+            function fail() {
+                if (that.requestIsDaemon(datasourceVersionCopy)) { return; }
+                that.pageLoadFailed(pageNumber);
+            }
+        );
+    };
+
+    // check that the datasource has not changed since the lats time we did a request
+    VirtualPageRowController.prototype.requestIsDaemon = function (datasourceVersionCopy) {
+        return this.datasourceVersion !== datasourceVersionCopy;
+    };
+
+    VirtualPageRowController.prototype.getVirtualRow = function (rowIndex) {
+        if (rowIndex > this.virtualRowCount) {
+            return null;
+        }
+
+        var pageNumber = Math.floor(rowIndex / this.pageSize);
+        var page = this.pageCache[pageNumber];
+
+        // for LRU cache, track when this page was last hit
+        this.pageAccessTimes[pageNumber] = this.accessTime++;
+
+        if (!page) {
+            this.doLoadOrQueue(pageNumber);
+            // return back an empty row, so table can at least render empty cells
+            return {
+                data: {},
+                id: rowIndex
+            };
+        } else {
+            var indexInThisPage = rowIndex % this.pageSize;
+            return page[indexInThisPage];
+        }
+    };
+
+    VirtualPageRowController.prototype.getModel = function () {
+        var that = this;
+        return {
+            getVirtualRow: function(index) {
+                return that.getVirtualRow(index);
+            },
+            getVirtualRowCount: function() {
+                return that.virtualRowCount;
+            }
+        };
+    };
+
+    return VirtualPageRowController;
+
 });
 define('../src/svgFactory',["./constants"], function() {
 
@@ -2617,11 +2909,13 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer() {
+    }
+
+    RowRenderer.prototype.init = function (gridOptions, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.rowModel = rowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
@@ -2637,7 +2931,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.renderedRows = {};
 
         this.editingCell = false; //gets set to true when editing a cell
-    }
+    };
+
+    RowRenderer.prototype.setRowModel = function (rowModel) {
+        this.rowModel = rowModel;
+    };
 
     RowRenderer.prototype.setMainRowWidths = function() {
         var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
@@ -2660,7 +2958,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getRowsAfterMap().length;
+            var rowCount = this.rowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -2670,32 +2968,16 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.rowDataChanged = function(rows) {
-        // convert to nodes, and call other function.
-        // we only need to be worried about rendered rows,
-        // as this method is called to whats rendered.
-        // if the row isn't rendered, we don't care
-        var nodes = [];
+        // we only need to be worried about rendered rows, as this method is
+        // called to whats rendered. if the row isn't rendered, we don't care
+        var indexesToRemove = [];
         var renderedRows = this.renderedRows;
         Object.keys(renderedRows).forEach(function (key) {
             var renderedRow = renderedRows[key];
             // see if the rendered row is in the list of rows we have to update
             var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
-                nodes.push(renderedRow.node);
-            }
-        });
-
-        this.rowNodesChanged(nodes);
-    };
-
-    RowRenderer.prototype.rowNodesChanged = function(nodes) {
-        // get indexes for the rows
-        var indexesToRemove = [];
-        var rowsAfterMap = this.rowModel.getRowsAfterMap();
-        nodes.forEach(function(row) {
-            var index = rowsAfterMap.indexOf(row);
-            if (index>=0) {
-                indexesToRemove.push(index);
+                indexesToRemove.push(key);
             }
         });
         // remove the rows
@@ -2705,17 +2987,17 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.refreshAllVirtualRows = function () {
-        //remove all current virtual rows, as they have old data
+        // remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
 
-        //add in new rows
+        // add in new rows
         this.drawVirtualRows();
     };
 
     // public - removes the group rows and then redraws them again
-    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
-        // fine all the group rows
+    RowRenderer.prototype.refreshGroupRows = function () {
+        // find all the group rows
         var rowsToRemove = [];
         var that = this;
         Object.keys(this.renderedRows).forEach(function (key) {
@@ -2731,46 +3013,45 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.ensureRowsRendered();
     };
 
-    //takes array of row id's
+    // takes array of row indexes
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
         var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
-            var renderedRow = that.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement && that.ePinnedColsContainer) {
-                that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
-            }
-
-            if (renderedRow.bodyElement) {
-                that.eBodyContainer.removeChild(renderedRow.bodyElement);
-            }
-
-            if (renderedRow.scope) {
-                renderedRow.scope.$destroy();
-            }
-
-            if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
-                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
-            }
-            that.angularGrid.onVirtualRowRemoved(indexToRemove);
-
-            delete that.renderedRows[indexToRemove];
+            that.removeVirtualRow(indexToRemove);
         });
+    };
+
+    RowRenderer.prototype.removeVirtualRow = function (indexToRemove) {
+        var renderedRow = this.renderedRows[indexToRemove];
+        if (renderedRow.pinnedElement && this.ePinnedColsContainer) {
+            this.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
+        }
+
+        if (renderedRow.bodyElement) {
+            this.eBodyContainer.removeChild(renderedRow.bodyElement);
+        }
+
+        if (renderedRow.scope) {
+            renderedRow.scope.$destroy();
+        }
+
+        if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
+            this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
+        }
+        this.angularGrid.onVirtualRowRemoved(indexToRemove);
+
+        delete this.renderedRows[indexToRemove];
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
         var first;
         var last;
 
-        var rowCount = this.rowModel.getRowsAfterMap().length;
+        var rowCount = this.rowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
-            var rowsAfterMap = this.rowModel.getRowsAfterMap();
-            if (rowsAfterMap) {
-                last = rowCount - 1;
-            } else {
-                last = 0;
-            }
+            last = rowCount;
         } else {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
@@ -2820,12 +3101,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
         //add in new rows
         for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
-            //see if item already there, and if yes, take it out of the 'to remove' array
+            // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
-            //check this row actually exists (in case overflow buffer window exceeds real data)
+            // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
                 that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
@@ -3382,7 +3663,10 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     var svgFactory = new SvgFactory();
 
-    function HeaderRenderer(gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    function HeaderRenderer() {
+    }
+
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.colModel = colModel;
         this.angularGrid = angularGrid;
@@ -3390,7 +3674,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         this.$scope = $scope;
         this.$compile = $compile;
         this.findAllElements(eGrid);
-    }
+    };
 
     HeaderRenderer.prototype.findAllElements = function (eGrid) {
 
@@ -3866,6 +4150,7 @@ define('../src/gridOptionsWrapper',[], function() {
 
     GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
     GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
+    GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
     GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
@@ -3896,6 +4181,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
     GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
+    GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
 
     GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) { return this.gridOptions.selectedRows = newSelectedRows; };
     GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) { return this.gridOptions.selectedNodesById = newSelectedNodes; };
@@ -3953,10 +4239,13 @@ define('../src/gridOptionsWrapper',[], function() {
 });
 define('../src/colModel',['./constants'], function(constants) {
 
-    function ColModel(angularGrid, selectionRendererFactory) {
+    function ColModel() {
+    }
+
+    ColModel.prototype.init = function (angularGrid, selectionRendererFactory) {
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
-    }
+    };
 
     ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
@@ -4033,10 +4322,13 @@ define('../src/colModel',['./constants'], function(constants) {
 });
 define('../src/selectionRendererFactory',[], function () {
 
-    function SelectionRendererFactory(angularGrid, selectionController) {
+    function SelectionRendererFactory() {
+    }
+
+    SelectionRendererFactory.prototype.init = function (angularGrid, selectionController) {
         this.angularGrid = angularGrid;
         this.selectionController = selectionController;
-    }
+    };
 
     SelectionRendererFactory.prototype.createCheckboxColDef = function () {
         return {
@@ -4118,11 +4410,10 @@ define('../src/selectionController',['./utils'], function(utils) {
 
     function SelectionController() {}
 
-    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, rowModel, $scope, rowRenderer) {
+    SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
         this.eRowsParent = eRowsParent;
         this.angularGrid = angularGrid;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
 
@@ -4131,6 +4422,10 @@ define('../src/selectionController',['./utils'], function(utils) {
 
         gridOptionsWrapper.setSelectedRows(this.selectedRows);
         gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
+    };
+
+    SelectionController.prototype.setRowModel = function(rowModel) {
+        this.rowModel = rowModel;
     };
 
     // public
@@ -4436,6 +4731,218 @@ define('../src/selectionController',['./utils'], function(utils) {
     return SelectionController;
 
 });
+define('../src/paginationController',[], function() {
+
+    var TEMPLATE =
+        '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
+        '<span id="firstRowOnPage"></span>' +
+        ' to ' +
+        '<span id="lastRowOnPage"></span>' +
+        ' of ' +
+        '<span id="recordCount"></span>' +
+        '</span>' +
+        '<span clas="ag-paging-page-summary-panel">' +
+        '<button class="ag-paging-button" id="btFirst">First</button>' +
+        '<button class="ag-paging-button" id="btPrevious">Previous</button>' +
+        ' Page ' +
+        '<span id="current"></span>' +
+        ' of ' +
+        '<span id="total"></span>' +
+        '<button class="ag-paging-button" id="btNext">Next</button>' +
+        '<button class="ag-paging-button" id="btLast">Last</button>' +
+        '</span>';
+
+    function PaginationController() {
+    }
+
+    PaginationController.prototype.init = function (ePagingPanel, angularGrid) {
+        this.angularGrid = angularGrid;
+        this.populatePanel(ePagingPanel);
+        this.callVersion = 0;
+    };
+
+    PaginationController.prototype.setDatasource = function(datasource) {
+        this.datasource = datasource;
+
+        if (!datasource) {
+            // only continue if we have a valid datasource to work with
+            return;
+        }
+
+        this.reset();
+    };
+
+    PaginationController.prototype.reset = function() {
+        // copy pageSize, to guard against it changing the the datasource between calls
+        this.pageSize = this.datasource.pageSize;
+        // see if we know the total number of pages, or if it's 'to be decided'
+        if (this.datasource.rowCount >= 0) {
+            this.rowCount = this.datasource.rowCount;
+            this.foundMaxRow = true;
+            this.calculateTotalPages();
+        } else {
+            this.rowCount = 0;
+            this.foundMaxRow = false;
+            this.totalPages = null;
+        }
+
+        this.currentPage = 0;
+
+        // hide the summary panel until something is loaded
+        this.ePageRowSummaryPanel.style.visibility = 'hidden';
+
+        this.setTotalLabels();
+        this.loadPage();
+    };
+
+    PaginationController.prototype.setTotalLabels = function() {
+        if (this.foundMaxRow) {
+            this.lbTotal.innerHTML = this.totalPages.toLocaleString();
+            this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
+        } else {
+            this.lbTotal.innerHTML = 'more';
+            this.lbRecordCount.innerHTML = 'more';
+        }
+    };
+
+    PaginationController.prototype.calculateTotalPages = function() {
+        this.totalPages = Math.floor( (this.rowCount-1) / this.pageSize) + 1;
+    };
+
+    PaginationController.prototype.pageLoaded = function(rows, lastRowIndex) {
+        var firstId = this.currentPage * this.pageSize;
+        this.angularGrid.setRows(rows, firstId);
+        // see if we hit the last row
+        if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
+            this.foundMaxRow = true;
+            this.rowCount = lastRowIndex;
+            this.calculateTotalPages();
+            this.setTotalLabels();
+
+            // if overshot pages, go back
+            if (this.currentPage > this.totalPages) {
+                this.currentPage = this.totalPages - 1;
+                this.loadPage();
+            }
+        }
+        this.enableOrDisableButtons();
+        this.updateRowLabels();
+    };
+
+    PaginationController.prototype.updateRowLabels = function() {
+        var startRow = (this.pageSize * this.currentPage) + 1;
+        var endRow = startRow + this.pageSize - 1;
+        if (this.foundMaxRow && endRow > this.rowCount) {
+            endRow = this.rowCount;
+        }
+        this.lbFirstRowOnPage.innerHTML = (startRow).toLocaleString();
+        this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
+
+        // show the summary panel, when first shown, this is blank
+        this.ePageRowSummaryPanel.style.visibility = null;
+    };
+
+    PaginationController.prototype.loadPage = function() {
+        this.enableOrDisableButtons();
+        var startRow = this.currentPage * this.datasource.pageSize;
+        var endRow = (this.currentPage + 1) * this.datasource.pageSize;
+
+        this.lbCurrent.innerHTML = (this.currentPage + 1).toLocaleString();
+
+        this.callVersion++;
+        var callVersionCopy = this.callVersion;
+        var that = this;
+        this.angularGrid.showLoadingPanel(true);
+        this.datasource.getRows(startRow, endRow,
+            function success(rows, lastRowIndex) {
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                that.pageLoaded(rows, lastRowIndex);
+            },
+            function fail() {
+                if (that.isCallDaemon(callVersionCopy)) { return; }
+                // set in an empty set of rows, this will at
+                // least get rid of the loading panel, and
+                // stop blocking things
+                that.angularGrid.setRows([]);
+            }
+        );
+    };
+
+    PaginationController.prototype.isCallDaemon = function(versionCopy) {
+        return versionCopy !== this.callVersion;
+    };
+
+    PaginationController.prototype.onBtNext = function() {
+        this.currentPage++;
+        this.loadPage();
+    };
+
+    PaginationController.prototype.onBtPrevious = function() {
+        this.currentPage--;
+        this.loadPage();
+    };
+
+    PaginationController.prototype.onBtFirst = function() {
+        this.currentPage = 0;
+        this.loadPage();
+    };
+
+    PaginationController.prototype.onBtLast = function() {
+        this.currentPage = this.totalPages - 1;
+        this.loadPage();
+    };
+
+    PaginationController.prototype.enableOrDisableButtons = function() {
+        var disablePreviousAndFirst = this.currentPage === 0;
+        this.btPrevious.disabled = disablePreviousAndFirst;
+        this.btFirst.disabled = disablePreviousAndFirst;
+
+        var disableNext = this.foundMaxRow && this.currentPage === (this.totalPages-1);
+        this.btNext.disabled = disableNext;
+
+        var disableLast = !this.foundMaxRow || this.currentPage === (this.totalPages-1);
+        this.btLast.disabled = disableLast;
+    };
+
+    PaginationController.prototype.populatePanel = function(ePagingPanel) {
+
+        ePagingPanel.innerHTML = TEMPLATE;
+
+        this.btNext = ePagingPanel.querySelector('#btNext');
+        this.btPrevious = ePagingPanel.querySelector('#btPrevious');
+        this.btFirst = ePagingPanel.querySelector('#btFirst');
+        this.btLast = ePagingPanel.querySelector('#btLast');
+        this.lbCurrent = ePagingPanel.querySelector('#current');
+        this.lbTotal = ePagingPanel.querySelector('#total');
+
+        this.lbRecordCount = ePagingPanel.querySelector('#recordCount');
+        this.lbFirstRowOnPage = ePagingPanel.querySelector('#firstRowOnPage');
+        this.lbLastRowOnPage = ePagingPanel.querySelector('#lastRowOnPage');
+        this.ePageRowSummaryPanel = ePagingPanel.querySelector('#pageRowSummaryPanel');
+
+        var that = this;
+
+        this.btNext.addEventListener('click', function() {
+            that.onBtNext();
+        });
+
+        this.btPrevious.addEventListener('click', function() {
+            that.onBtPrevious();
+        });
+
+        this.btFirst.addEventListener('click', function() {
+            that.onBtFirst();
+        });
+
+        this.btLast.addEventListener('click', function() {
+            that.onBtLast();
+        });
+    };
+
+    return PaginationController;
+
+});
+
 /*
  * css.normalize.js
  *
@@ -4596,8 +5103,21 @@ define('css!../src/css/theme-fresh',[],function(){});
 // selecting should be like excel, and have keyboard navigation
 // should not be able to edit groups
 
+// progmatic changing of filters: http://www.angulargrid.com/forum/thread-24.html
+// double click for editing a cell, like in excel: http://www.angulargrid.com/forum/thread-25.html
+
+// have two column sets, one for wide table, one for thin table, so when on thin device (ie phone), items are displayed differently
+
+// check this webinar for adaptive telerik:
+// http://blogs.telerik.com/kendoui/posts/15-03-13/kendo-ui-q1-2015-build-html5-apps-tailored-for-any-device-webinar
+
 // bugs:
 // editing a checkbox field fails
+
+// paging: selection, sorting, filtering
+// infinite paging
+// disable grouping when infinite
+// footer panel for infinite
 
 define('../src/angularGrid',[
     'angular',
@@ -4605,8 +5125,8 @@ define('../src/angularGrid',[
     'text!./templateNoScrolls.html',
     './utils',
     './filter/filterManager',
-    './rowModel',
-    './rowController',
+    './inMemoryRowController',
+    './virtualPageRowController',
     './rowRenderer',
     './headerRenderer',
     './gridOptionsWrapper',
@@ -4614,12 +5134,14 @@ define('../src/angularGrid',[
     './colModel',
     './selectionRendererFactory',
     './selectionController',
+    './paginationController',
     'css!./css/core.css',
     'css!./css/theme-dark.css',
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
-            RowModel, RowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory, SelectionController) {
+            InMemoryRowController, VirtualPageRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
+            constants, ColModel, SelectionRendererFactory, SelectionController,
+            PaginationController) {
 
     // if angular is present, register the directive
     if (angular) {
@@ -4676,8 +5198,6 @@ define('../src/angularGrid',[
         }
 
         var that = this;
-        this.$scope = $scope;
-        this.$compile = $compile;
         this.quickFilter = null;
 
         // if using angular, watch for quickFilter changes
@@ -4691,25 +5211,9 @@ define('../src/angularGrid',[
 
         this.addApi();
         this.findAllElements(eGridDiv);
+        this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
 
-        this.rowModel = new RowModel();
-
-        this.selectionController = new SelectionController();
-        var selectionRendererFactory = new SelectionRendererFactory(this, this.selectionController);
-
-        this.colModel = new ColModel(this, selectionRendererFactory);
-        this.filterManager = new FilterManager(this, this.rowModel, this.gridOptionsWrapper, $compile, $scope);
-        this.rowController = new RowController(this.gridOptionsWrapper, this.rowModel, this.colModel, this,
-                                this.filterManager, $scope);
-        this.rowRenderer = new RowRenderer(this.gridOptions, this.rowModel, this.colModel, this.gridOptionsWrapper,
-                                eGridDiv, this, selectionRendererFactory, $compile, $scope,
-                                this.selectionController);
-        this.headerRenderer = new HeaderRenderer(this.gridOptionsWrapper, this.colModel, eGridDiv, this,
-                                this.filterManager, $scope, $compile);
-
-        this.rowController.setAllRows(this.gridOptionsWrapper.getAllRows());
-
-        this.selectionController.init(this, this.eRowsParent, this.gridOptionsWrapper, this.rowModel, $scope, this.rowRenderer);
+        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
         if (useScrolls) {
             this.addScrollListener();
@@ -4725,10 +5229,132 @@ define('../src/angularGrid',[
         // flag to mark when the directive is destroyed
         this.finished = false;
 
-        // if no data provided initially, show the loading panel
-        var showLoading = !this.gridOptionsWrapper.getAllRows();
+        // if no data provided initially, and not doing infinite scrolling, show the loading panel
+        var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isVirtualPaging();
         this.showLoadingPanel(showLoading);
+
+        // if datasource provided, use it
+        if (this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource();
+        }
     }
+
+    Grid.prototype.createAndWireBeans = function ($scope, $compile, eGridDiv, useScrolls) {
+
+        // make local references, to make the below more human readable
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+        var gridOptions = this.gridOptions;
+
+        // create all the beans
+        var selectionController = new SelectionController();
+        var filterManager = new FilterManager();
+        var selectionRendererFactory = new SelectionRendererFactory();
+        var colModel = new ColModel();
+        var rowRenderer  = new RowRenderer();
+        var headerRenderer = new HeaderRenderer();
+        var inMemoryRowController = new InMemoryRowController();
+        var virtualPageRowController = new VirtualPageRowController();
+
+        // initialise all the beans
+        selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
+        filterManager.init(this, gridOptionsWrapper, $compile, $scope);
+        selectionRendererFactory.init(this, selectionController);
+        colModel.init(this, selectionRendererFactory);
+        rowRenderer.init(gridOptions, colModel, gridOptionsWrapper, eGridDiv, this,
+            selectionRendererFactory, $compile, $scope, selectionController);
+        headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
+        virtualPageRowController.init(rowRenderer);
+
+        // this is a child bean, get a reference and pass it on
+        // CAN WE DELETE THIS? it's done in the setDatasource section
+        var rowModel = inMemoryRowController.getModel();
+        selectionController.setRowModel(rowModel);
+        filterManager.setRowModel(rowModel);
+        rowRenderer.setRowModel(rowModel);
+
+        // and the last bean, done in it's own section, as it's optional
+        var paginationController = null;
+        if (useScrolls) {
+            paginationController = new PaginationController();
+            paginationController.init(this.ePagingPanel, this);
+        }
+
+        this.rowModel = rowModel;
+        this.selectionController = selectionController;
+        this.colModel = colModel;
+        this.inMemoryRowController = inMemoryRowController;
+        this.virtualPageRowController = virtualPageRowController;
+        this.rowRenderer = rowRenderer;
+        this.headerRenderer = headerRenderer;
+        this.paginationController = paginationController;
+        this.filterManager = filterManager;
+    };
+
+    Grid.prototype.showAndPositionPagingPanel = function() {
+        // no paging when no-scrolls
+        if (!this.ePagingPanel) {
+            return;
+        }
+
+        if (this.isShowPagingPanel()) {
+            this.ePagingPanel.style['display'] = null;
+            var heightOfPager = this.ePagingPanel.offsetHeight;
+            this.eBody.style['padding-bottom'] = heightOfPager + 'px';
+            var heightOfRoot = this.eRoot.clientHeight;
+            var topOfPager = heightOfRoot - heightOfPager;
+            this.ePagingPanel.style['top'] = topOfPager + 'px';
+        } else {
+            this.ePagingPanel.style['display'] = 'none';
+            this.eBody.style['padding-bottom'] = null;
+        }
+
+    };
+
+    Grid.prototype.isShowPagingPanel = function() {
+        return this.showPagingPanel;
+    };
+
+    Grid.prototype.setDatasource = function (datasource) {
+        // if datasource provided, then set it
+        if (datasource) {
+            this.gridOptions.datasource = datasource;
+        }
+        // get the set datasource (if null was passed to this method,
+        // then need to get the actual datasource from options
+        var datasourceToUse = this.gridOptionsWrapper.getDatasource();
+        var virtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
+        var pagination = datasourceToUse && !virtualPaging;
+
+        if (virtualPaging) {
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(datasource);
+            this.rowModel = this.virtualPageRowController.getModel();
+            this.showPagingPanel = false;
+        } else if (pagination) {
+            this.paginationController.setDatasource(datasourceToUse);
+            this.virtualPageRowController.setDatasource(null);
+            this.rowModel = this.inMemoryRowController.getModel();
+            this.showPagingPanel = true;
+        } else {
+            this.paginationController.setDatasource(null);
+            this.virtualPageRowController.setDatasource(null);
+            this.rowModel = this.inMemoryRowController.getModel();
+            this.showPagingPanel = false;
+        }
+
+        this.selectionController.setRowModel(this.rowModel);
+        this.filterManager.setRowModel(this.rowModel);
+        this.rowRenderer.setRowModel(this.rowModel);
+
+        // we may of just shown or hidden the paging panel, so need
+        // to get table to check the body size, which also hides and
+        // shows the paging panel.
+        this.setBodySize();
+
+        // because we just set the rowModel, need to update the gui
+        this.rowRenderer.refreshView();
+    };
 
     Grid.prototype.setFinished = function () {
         this.finished = true;
@@ -4766,7 +5392,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.onRowClicked = function (event, rowIndex) {
 
-        var node = this.rowModel.getRowsAfterMap()[rowIndex];
+        var node = this.rowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);
@@ -4793,17 +5419,18 @@ define('../src/angularGrid',[
         var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
         if (dontUseScrolls) {
             this.eHeaderContainer.style['height'] = headerHeightPixels;
-            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         } else {
             this.eHeader.style['height'] = headerHeightPixels;
             this.eBody.style['padding-top'] = headerHeightPixels;
-            //this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
+            this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         }
     };
 
     Grid.prototype.showLoadingPanel = function (show) {
         if (show) {
-            this.eLoadingPanel.style.display = 'table';
+            // setting display to null, actually has the impact of setting it
+            // to 'table', as this is part of the ag-loading-panel core style
+            this.eLoadingPanel.style.display = null;
         } else {
             this.eLoadingPanel.style.display = 'none';
         }
@@ -4828,20 +5455,36 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.updateModelAndRefresh = function (step) {
-        this.rowController.updateModel(step);
+        this.inMemoryRowController.updateModel(step);
         this.rowRenderer.refreshView();
+    };
+
+    Grid.prototype.setRows = function (rows, firstId) {
+        if (rows) {
+            this.gridOptions.rowData = rows;
+        }
+        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows(), firstId);
+        this.selectionController.clearSelection();
+        this.filterManager.onNewRowsLoaded();
+        this.updateModelAndRefresh(constants.STEP_EVERYTHING);
+        this.headerRenderer.updateFilterIcons();
+        this.showLoadingPanel(false);
     };
 
     Grid.prototype.addApi = function () {
         var that = this;
         var api = {
+            setDatasource: function(datasource) {
+                that.setDatasource(datasource);
+            },
+            onNewDatasource: function() {
+                that.setDatasource();
+            },
+            setRows: function(rows) {
+                that.setRows(rows);
+            },
             onNewRows: function () {
-                that.rowController.setAllRows(that.gridOptionsWrapper.getAllRows());
-                that.selectionController.clearSelection();
-                that.filterManager.onNewRowsLoaded();
-                that.updateModelAndRefresh(constants.STEP_EVERYTHING);
-                that.headerRenderer.updateFilterIcons();
-                that.showLoadingPanel(false);
+                that.setRows();
             },
             onNewCols: function () {
                 that.onNewCols();
@@ -4860,11 +5503,11 @@ define('../src/angularGrid',[
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             expandAll: function() {
-                that.expandOrCollapseAll(true, null);
+                that.inMemoryRowController.expandOrCollapseAll(true, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             collapseAll: function() {
-                that.expandOrCollapseAll(false, null);
+                that.inMemoryRowController.expandOrCollapseAll(false, null);
                 that.updateModelAndRefresh(constants.STEP_MAP);
             },
             addVirtualRowListener: function(rowIndex, callback) {
@@ -4880,7 +5523,7 @@ define('../src/angularGrid',[
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
             recomputeAggregates: function() {
-                that.rowController.doAggregate();
+                that.inMemoryRowController.doAggregate();
                 that.rowRenderer.refreshGroupRows();
             },
             showLoading: function(show) {
@@ -4921,21 +5564,6 @@ define('../src/angularGrid',[
         delete this.virtualRowCallbacks[rowIndex];
     };
 
-    Grid.prototype.expandOrCollapseAll = function(expand, rowNodes) {
-        //if first call in recursion, we set list to parent list
-        if (rowNodes==null) { rowNodes = this.rowModel.getRowsAfterGroup(); }
-
-        if (!rowNodes) { return; }
-
-        var _this = this;
-        rowNodes.forEach(function(node) {
-            if (node.group) {
-                node.expanded = expand;
-                _this.expandOrCollapseAll(expand, node.children);
-            }
-        });
-    };
-
     Grid.prototype.onNewCols = function () {
         this.setupColumns();
         this.updateModelAndRefresh(constants.STEP_EVERYTHING);
@@ -4948,7 +5576,7 @@ define('../src/angularGrid',[
             this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
                 // for no-scrolls, all rows live in the body container
-            this.eRowsParent = this.eBodyContainer;
+            this.eParentOfRows = this.eBodyContainer;
         } else {
             this.eRoot = eGridDiv.querySelector(".ag-root");
             this.eBody = eGridDiv.querySelector(".ag-body");
@@ -4962,7 +5590,8 @@ define('../src/angularGrid',[
             this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
             this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
             // for scrolls, all rows live in eBody (containing pinned and normal body)
-            this.eRowsParent = this.eBody;
+            this.eParentOfRows = this.eBody;
+            this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');
         }
     };
 
@@ -5000,9 +5629,9 @@ define('../src/angularGrid',[
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };
 
-    //see if a grey box is needed at the bottom of the pinned col
+    // see if a grey box is needed at the bottom of the pinned col
     Grid.prototype.setPinnedColHeight = function () {
-        //var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
+        // var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
         var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
         var bodyHeight = this.eBodyViewport.offsetHeight;
         if (scrollShowing) {
@@ -5010,22 +5639,30 @@ define('../src/angularGrid',[
         } else {
             this.ePinnedColsViewport.style.height = bodyHeight + "px";
         }
+        // also the loading overlay, needs to have it's height adjusted
+        this.eLoadingPanel.style.height = bodyHeight + 'px';
     };
 
     Grid.prototype.setBodySize = function() {
         var _this = this;
 
         var bodyHeight = this.eBodyViewport.offsetHeight;
+        var pagingVisible = this.isShowPagingPanel();
 
-        if (this.bodyHeightLastTime != bodyHeight) {
+        if (this.bodyHeightLastTime != bodyHeight || this.showPagingPanelVisibleLastTime != pagingVisible) {
             this.bodyHeightLastTime = bodyHeight;
+            this.showPagingPanelVisibleLastTime = pagingVisible;
+
             this.setPinnedColHeight();
 
             //only draw virtual rows if done sort & filter - this
             //means we don't draw rows if table is not yet initialised
-            if (this.rowModel.getRowsAfterMap()) {
+            if (this.rowModel.getVirtualRowCount() > 0) {
                 this.rowRenderer.drawVirtualRows();
             }
+
+            // show and position paging panel
+            this.showAndPositionPagingPanel();
         }
 
         if (!this.finished) {
@@ -5054,7 +5691,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ffffff;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n    background-color: #ddd\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    /* Height is set by javascript, to cover the table */\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-paging-panel {\r\n    position: absolute;\r\n}\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-panel {\r\n    color: black;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-panel {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

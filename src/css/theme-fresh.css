@@ -86,15 +86,13 @@
 }
 
 .ag-fresh .ag-body {
-    background-color: #ffffff;
-}
-
-.ag-fresh .ag-body-viewport {
     background-color: #ddd;
 }
 
+.ag-fresh .ag-body-viewport {
+}
+
 .ag-fresh .ag-pinned-cols-viewport {
-    background-color: #ddd
 }
 
 .ag-fresh .ag-row-selected {
@@ -136,4 +134,18 @@
 
 .ag-fresh .ag-selection-checkbox {
     margin-left: 4px;
+}
+
+.ag-fresh .ag-paging-panel {
+    padding: 4px;
+}
+
+.ag-fresh .ag-paging-button {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.ag-fresh .ag-paging-row-summary-panel {
+    display: inline-block;
+    width: 300px;
 }

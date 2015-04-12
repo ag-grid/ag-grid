@@ -2,11 +2,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     var svgFactory = new SvgFactory();
 
-    function RowRenderer(gridOptions, rowModel, colModel, gridOptionsWrapper, eGrid,
+    function RowRenderer() {
+    }
+
+    RowRenderer.prototype.init = function (gridOptions, colModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.rowModel = rowModel;
         this.colModel = colModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
@@ -22,7 +24,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.renderedRows = {};
 
         this.editingCell = false; //gets set to true when editing a cell
-    }
+    };
+
+    RowRenderer.prototype.setRowModel = function (rowModel) {
+        this.rowModel = rowModel;
+    };
 
     RowRenderer.prototype.setMainRowWidths = function() {
         var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
@@ -45,7 +51,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.refreshView = function() {
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-            var rowCount = this.rowModel.getRowsAfterMap().length;
+            var rowCount = this.rowModel.getVirtualRowCount();
             var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedColsContainer.style.height = containerHeight + "px";
@@ -55,32 +61,16 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.rowDataChanged = function(rows) {
-        // convert to nodes, and call other function.
-        // we only need to be worried about rendered rows,
-        // as this method is called to whats rendered.
-        // if the row isn't rendered, we don't care
-        var nodes = [];
+        // we only need to be worried about rendered rows, as this method is
+        // called to whats rendered. if the row isn't rendered, we don't care
+        var indexesToRemove = [];
         var renderedRows = this.renderedRows;
         Object.keys(renderedRows).forEach(function (key) {
             var renderedRow = renderedRows[key];
             // see if the rendered row is in the list of rows we have to update
             var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
             if (rowNeedsUpdating) {
-                nodes.push(renderedRow.node);
-            }
-        });
-
-        this.rowNodesChanged(nodes);
-    };
-
-    RowRenderer.prototype.rowNodesChanged = function(nodes) {
-        // get indexes for the rows
-        var indexesToRemove = [];
-        var rowsAfterMap = this.rowModel.getRowsAfterMap();
-        nodes.forEach(function(row) {
-            var index = rowsAfterMap.indexOf(row);
-            if (index>=0) {
-                indexesToRemove.push(index);
+                indexesToRemove.push(key);
             }
         });
         // remove the rows
@@ -90,17 +80,17 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.refreshAllVirtualRows = function () {
-        //remove all current virtual rows, as they have old data
+        // remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
 
-        //add in new rows
+        // add in new rows
         this.drawVirtualRows();
     };
 
     // public - removes the group rows and then redraws them again
-    RowRenderer.prototype.refreshGroupRows = function (rowsToRemove) {
-        // fine all the group rows
+    RowRenderer.prototype.refreshGroupRows = function () {
+        // find all the group rows
         var rowsToRemove = [];
         var that = this;
         Object.keys(this.renderedRows).forEach(function (key) {
@@ -116,46 +106,45 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.ensureRowsRendered();
     };
 
-    //takes array of row id's
+    // takes array of row indexes
     RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
         var that = this;
         rowsToRemove.forEach(function (indexToRemove) {
-            var renderedRow = that.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement && that.ePinnedColsContainer) {
-                that.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
-            }
-
-            if (renderedRow.bodyElement) {
-                that.eBodyContainer.removeChild(renderedRow.bodyElement);
-            }
-
-            if (renderedRow.scope) {
-                renderedRow.scope.$destroy();
-            }
-
-            if (that.gridOptionsWrapper.getVirtualRowRemoved()) {
-                that.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
-            }
-            that.angularGrid.onVirtualRowRemoved(indexToRemove);
-
-            delete that.renderedRows[indexToRemove];
+            that.removeVirtualRow(indexToRemove);
         });
+    };
+
+    RowRenderer.prototype.removeVirtualRow = function (indexToRemove) {
+        var renderedRow = this.renderedRows[indexToRemove];
+        if (renderedRow.pinnedElement && this.ePinnedColsContainer) {
+            this.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
+        }
+
+        if (renderedRow.bodyElement) {
+            this.eBodyContainer.removeChild(renderedRow.bodyElement);
+        }
+
+        if (renderedRow.scope) {
+            renderedRow.scope.$destroy();
+        }
+
+        if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
+            this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.data, indexToRemove);
+        }
+        this.angularGrid.onVirtualRowRemoved(indexToRemove);
+
+        delete this.renderedRows[indexToRemove];
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
         var first;
         var last;
 
-        var rowCount = this.rowModel.getRowsAfterMap().length;
+        var rowCount = this.rowModel.getVirtualRowCount();
 
         if (this.gridOptionsWrapper.isDontUseScrolls()) {
             first = 0;
-            var rowsAfterMap = this.rowModel.getRowsAfterMap();
-            if (rowsAfterMap) {
-                last = rowCount - 1;
-            } else {
-                last = 0;
-            }
+            last = rowCount;
         } else {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
@@ -205,12 +194,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
         //add in new rows
         for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
-            //see if item already there, and if yes, take it out of the 'to remove' array
+            // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
-            //check this row actually exists (in case overflow buffer window exceeds real data)
+            // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
                 that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);

@@ -135,8 +135,8 @@ fileBrowserModule.controller('basicController', function($scope) {
 
     function modelUpdated() {
         var model = $scope.gridOptions.api.getModel();
-        var totalRows = model.getAllRows().length;
-        var processedRows = model.getRowsAfterMap().length;
+        var totalRows = $scope.gridOptions.rowData.length;
+        var processedRows = model.getVirtualRowCount();
         $scope.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }
 

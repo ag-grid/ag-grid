@@ -4,8 +4,7 @@ define(["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        var allNodes = rowModel.getAllRows();
-        this.uniqueValues = utils.uniqueValuesFromRowWrappers(allNodes, colDef.field);
+        this.createUniqueValues(rowModel, colDef.field);
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -20,6 +19,23 @@ define(["./../utils"], function(utils) {
         this.selectedValuesMap = {};
         this.selectEverything();
     }
+
+    SetFilterModel.prototype.createUniqueValues = function(rowModel, key) {
+        var uniqueCheck = {};
+        var result = [];
+        for (var i = 0, l = rowModel.getVirtualRowCount(); i < l; i++){
+            var data = rowModel.getVirtualRow(i).data;
+            var value = data ? data[key] : null;
+            if (value==="" || value === undefined) {
+                value = null;
+            }
+            if(!uniqueCheck.hasOwnProperty(value)) {
+                result.push(value);
+                uniqueCheck[value] = 1;
+            }
+        }
+        this.uniqueValues = result;
+    };
 
     //sets mini filter. returns true if it changed from last value, otherwise false
     SetFilterModel.prototype.setMiniFilter = function(newMiniFilter) {
