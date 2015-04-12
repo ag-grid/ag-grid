@@ -20,35 +20,10 @@ module.controller("exampleCtrl", function($scope, $http) {
         {displayName: "Total", field: "total", width: 100}
     ];
 
-    var simpleData = [
-        {athlete: 'A'},
-        {athlete: 'B'},
-        {athlete: 'C'},
-        {athlete: 'D'},
-        {athlete: 'E'},
-        {athlete: 'F'},
-        {athlete: 'G'}
-    ];
-
-    var dataSource = {
-        //rowCount: simpleData.length,
-        pageSize: 3,
-        getRows: function (start, finish, callbackSuccess, callbackFail) {
-            setTimeout( function() {
-                var rowsThisPage = simpleData.slice(start, finish);
-                var lastRow = -1;
-                if (simpleData.length <= finish) {
-                    lastRow = simpleData.length;
-                }
-                callbackSuccess(rowsThisPage, lastRow);
-            }, 2000);
-        }
-    };
-
     $scope.gridOptions = {
-        //datasource: dataSource,
-        //enableSorting: true,
-        //enableFilter: true,
+        // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
+        enableSorting: true,
+        enableFilter: true,
         enableColResize: true,
         columnDefs: columnDefs
     };
@@ -56,17 +31,20 @@ module.controller("exampleCtrl", function($scope, $http) {
     $http.get("../olympicWinners.json")
         .then(function(result){
             var allOfTheData = result.data;
-            //var allOfTheData = simpleData;
-            //wait for a second before setting the results into the table
             var dataSource = {
-                //rowCount: allOfTheData.length,
+                //rowCount: ???, - not setting the row count, infinite paging will be used
                 pageSize: 500,
                 overflowSize: 500,
                 getRows: function (start, finish, callbackSuccess, callbackFail) {
+                    // this code should contact the server for rows. however for the purposes of the demo,
+                    // the data is generated locally, and a timer is used to give the expereince of
+                    // an asynchronous call
                     console.log('asking for ' + start + ' to ' + finish);
                     setTimeout( function() {
+                        // take a chunk of the array, matching the start and finish times
                         var rowsThisPage = allOfTheData.slice(start, finish);
                         var lastRow = -1;
+                        // see if we have come to the last page, and if so, return it
                         if (allOfTheData.length <= finish) {
                             lastRow = allOfTheData.length;
                         }
@@ -76,6 +54,5 @@ module.controller("exampleCtrl", function($scope, $http) {
             };
 
             $scope.gridOptions.api.setDatasource(dataSource);
-            //$scope.gridOptions.api.setRows(result.data);
         });
 });

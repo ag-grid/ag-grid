@@ -4,7 +4,7 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        // this row just shows the row index, doesn't use any data from the row
+        // this row shows the row index, doesn't use any data from the row
         {displayName: "#", width: 50, cellRenderer: function(params) {
             return params.node.id + 1;
         } },
@@ -21,38 +21,38 @@ module.controller("exampleCtrl", function($scope, $http) {
     ];
 
     $scope.gridOptions = {
-        //enableSorting: true,
-        //enableFilter: true,
         enableColResize: true,
-        virtualPaging: true,
+        virtualPaging: true, // this is important, if not set, normal paging will be done
         columnDefs: columnDefs
     };
 
     $http.get("../olympicWinners.json")
         .then(function(result){
             var allOfTheData = result.data;
-            //var allOfTheData = simpleData;
-            //wait for a second before setting the results into the table
             var dataSource = {
-                //rowCount: allOfTheData.length,
-                pageSize: 50,
-                overflowSize: 500,
+                rowCount: null, // behave as infinite scroll
+                pageSize: 100,
+                overflowSize: 100,
                 maxConcurrentRequests: 2,
                 maxPagesInCache: 2,
                 getRows: function (start, finish, callbackSuccess, callbackFail) {
                     console.log('asking for ' + start + ' to ' + finish);
+                    // At this point in your code, you would call the server, using $http if in AngularJS.
+                    // To make the demo look real, wait for 500ms before returning
                     setTimeout( function() {
+                        // take a slice of the total rows
                         var rowsThisPage = allOfTheData.slice(start, finish);
+                        // if on or after the last page, work out the last row.
                         var lastRow = -1;
                         if (allOfTheData.length <= finish) {
                             lastRow = allOfTheData.length;
                         }
+                        // call the success callback
                         callbackSuccess(rowsThisPage, lastRow);
                     }, 500);
                 }
             };
 
             $scope.gridOptions.api.setDatasource(dataSource);
-            //$scope.gridOptions.api.setRows(result.data);
         });
 });

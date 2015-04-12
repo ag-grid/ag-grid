@@ -2570,7 +2570,7 @@ define('../src/virtualPageRowController',[], function() {
 
     VirtualPageRowController.prototype.reset = function() {
         // see if datasource knows how many rows there are
-        if (this.datasource.rowCount >= 0) {
+        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
             this.foundMaxRow = true;
         } else {
@@ -2651,17 +2651,7 @@ define('../src/virtualPageRowController',[], function() {
         var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageCacheSize;
         if (needToPurge) {
             // find the LRU page
-            var youngestPageIndex = -1;
-            var youngestPageAccessTime = Number.MAX_VALUE;
-            var that = this;
-
-            Object.keys(this.pageCache).forEach(function (pageIndex) {
-                var accessTimeThisPage = that.pageAccessTimes[pageIndex];
-                if (accessTimeThisPage < youngestPageAccessTime) {
-                    youngestPageAccessTime = accessTimeThisPage;
-                    youngestPageIndex = pageIndex;
-                }
-            });
+            var youngestPageIndex = this.findLeastRecentlyAccessedPage(Object.keys(this.pageCache));
 
             if (logging) {
                 console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
@@ -2711,11 +2701,43 @@ define('../src/virtualPageRowController',[], function() {
             // go ahead, load the page
             this.loadPage(pageNumber);
         } else {
-            if (logging) { console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
             // otherwise, queue the request
-            this.pageLoadsQueued.push(pageNumber);
-            // if cache size limited, purge the queue
+            this.addToQueueAndPurgeQueue(pageNumber);
         }
+    };
+
+    VirtualPageRowController.prototype.addToQueueAndPurgeQueue = function (pageNumber) {
+        if (logging) { console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
+        this.pageLoadsQueued.push(pageNumber);
+
+        // see if there are more pages queued that are actually in our cache, if so there is
+        // no point in loading them all as some will be purged as soon as loaded
+        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageLoadsQueued.length;
+        if (needToPurge) {
+            // find the LRU page
+            var youngestPageIndex = this.findLeastRecentlyAccessedPage(this.pageLoadsQueued);
+
+            if (logging) { console.log('de-queueing ' + pageNumber + ' - ' + this.pageLoadsQueued); }
+
+            var indexToRemove = this.pageLoadsQueued.indexOf(youngestPageIndex);
+            this.pageLoadsQueued.splice(indexToRemove, 1);
+        }
+    };
+
+    VirtualPageRowController.prototype.findLeastRecentlyAccessedPage = function (pageIndexes) {
+        var youngestPageIndex = -1;
+        var youngestPageAccessTime = Number.MAX_VALUE;
+        var that = this;
+
+        pageIndexes.forEach(function (pageIndex) {
+            var accessTimeThisPage = that.pageAccessTimes[pageIndex];
+            if (accessTimeThisPage < youngestPageAccessTime) {
+                youngestPageAccessTime = accessTimeThisPage;
+                youngestPageIndex = pageIndex;
+            }
+        });
+
+        return youngestPageIndex;
     };
 
     VirtualPageRowController.prototype.checkQueueForNextLoad = function () {

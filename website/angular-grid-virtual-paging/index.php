@@ -69,17 +69,15 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         the entire data set, which is not possible when virtualising the pages.
     </p>
 
-    <h4>Sorting</h4>
+    <h4>Sorting & Filtering</h4>
 
     <p>
-        not yet implemented, keep tuned . . . .
+        Client side sorting & filtering does not make sense. Server side sorting & filtering will be supported soon.
     </p>
 
-    <h4>Filtering</h4>
+    <h4>Example</h4>
 
-    <p>
-        not yet implemented, keep tuned . . . .
-    </p>
+    The example below shows virtual paging. The example makes use of infinite scrolling and caching.
 
     <show-example example="virtualPaging"></show-example>
 </div>

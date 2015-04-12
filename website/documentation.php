@@ -8,7 +8,11 @@ include 'documentation_header.php';
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-    <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">Pagination & Infinite Scrolling Now Implemented</div  >
+    <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
+        <img src="http://www.jstchillin.org/nickdemarco/toocool.gif" width="70px"/>
+        Pagination & Infinite Scrolling Now Implemented
+        <img src="http://www.jstchillin.org/nickdemarco/toocool.gif" width="70px"/>
+    </div>
 
     <p>
         12th April 2015
@@ -87,7 +91,7 @@ include 'documentation_header.php';
     </h3>
 
     <p>
-        <b>Current</b> - Move to Gulp. Triage next items.
+        <b>Next on my list</b> - Move to Gulp. Triage next items.
     </p>
 
     <p>
