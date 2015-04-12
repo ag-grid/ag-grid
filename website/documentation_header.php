@@ -159,10 +159,22 @@
                     <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
+                <?php if ($key == "Datasource") { ?>
+                    <span class="sidebarLinkSelected">Datasource</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-datasource/index.php">Datasource</a>
+                <?php } ?>
+
                 <?php if ($key == "Pagination") { ?>
                     <span class="sidebarLinkSelected">Pagination</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-pagination/index.php">Pagination</a>
+                <?php } ?>
+
+                <?php if ($key == "Virtual Paging") { ?>
+                    <span class="sidebarLinkSelected">Virtual Paging</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging</a>
                 <?php } ?>
 
                 <?php if ($key == "Angular Compiling") { ?>

@@ -4010,7 +4010,7 @@ define('../src/gridOptionsWrapper',[], function() {
 
     GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
     GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
-    GridOptionsWrapper.prototype.isInfiniteScroll = function() { return isTrue(this.gridOptions.infiniteScroll); };
+    GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
     GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
     GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
@@ -4751,13 +4751,15 @@ define('../src/pagingController',[], function() {
     };
 
     PagingController.prototype.enableOrDisableButtons = function() {
-        var onFirstPage = this.currentPage === 0;
-        this.btPrevious.disabled = onFirstPage;
-        this.btFirst.disabled = onFirstPage;
+        var disablePreviousAndFirst = this.currentPage === 0;
+        this.btPrevious.disabled = disablePreviousAndFirst;
+        this.btFirst.disabled = disablePreviousAndFirst;
 
-        var onLastPage = this.foundMaxRow && this.currentPage === (this.totalPages-1);
-        this.btNext.disabled = onLastPage;
-        this.btLast.disabled = onLastPage;
+        var disableNext = this.foundMaxRow && this.currentPage === (this.totalPages-1);
+        this.btNext.disabled = disableNext;
+
+        var disableLast = !this.foundMaxRow || this.currentPage === (this.totalPages-1);
+        this.btLast.disabled = disableLast;
     };
 
     PagingController.prototype.populatePanel = function(ePagingPanel) {
@@ -5086,7 +5088,7 @@ define('../src/angularGrid',[
         this.finished = false;
 
         // if no data provided initially, and not doing infinite scrolling, show the loading panel
-        var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isInfiniteScroll();
+        var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isVirtualPaging();
         this.showLoadingPanel(showLoading);
 
         // if datasource provided, use it
@@ -5179,10 +5181,10 @@ define('../src/angularGrid',[
         // get the set datasource (if null was passed to this method,
         // then need to get the actual datasource from options
         var datasourceToUse = this.gridOptionsWrapper.getDatasource();
-        var infiniteScroll = this.gridOptionsWrapper.isInfiniteScroll() && datasourceToUse;
-        var pagination = datasourceToUse && !infiniteScroll;
+        var virtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
+        var pagination = datasourceToUse && !virtualPaging;
 
-        if (infiniteScroll) {
+        if (virtualPaging) {
             this.pagingController.setDatasource(null);
             this.serverRowController.setDatasource(datasource);
             this.rowModel = this.serverRowController.getModel();

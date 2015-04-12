@@ -20,36 +20,11 @@ module.controller("exampleCtrl", function($scope, $http) {
         {displayName: "Total", field: "total", width: 100}
     ];
 
-    var simpleData = [
-        {athlete: 'A'},
-        {athlete: 'B'},
-        {athlete: 'C'},
-        {athlete: 'D'},
-        {athlete: 'E'},
-        {athlete: 'F'},
-        {athlete: 'G'}
-    ];
-
-    var dataSource = {
-        //rowCount: simpleData.length,
-        pageSize: 3,
-        getRows: function (start, finish, callbackSuccess, callbackFail) {
-            setTimeout( function() {
-                var rowsThisPage = simpleData.slice(start, finish);
-                var lastRow = -1;
-                if (simpleData.length <= finish) {
-                    lastRow = simpleData.length;
-                }
-                callbackSuccess(rowsThisPage, lastRow);
-            }, 2000);
-        }
-    };
-
     $scope.gridOptions = {
-        //datasource: dataSource,
         //enableSorting: true,
         //enableFilter: true,
         enableColResize: true,
+        virtualPaging: true,
         columnDefs: columnDefs
     };
 

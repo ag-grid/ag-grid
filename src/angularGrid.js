@@ -140,7 +140,7 @@ define([
         this.finished = false;
 
         // if no data provided initially, and not doing infinite scrolling, show the loading panel
-        var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isInfiniteScroll();
+        var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isVirtualPaging();
         this.showLoadingPanel(showLoading);
 
         // if datasource provided, use it
@@ -233,10 +233,10 @@ define([
         // get the set datasource (if null was passed to this method,
         // then need to get the actual datasource from options
         var datasourceToUse = this.gridOptionsWrapper.getDatasource();
-        var infiniteScroll = this.gridOptionsWrapper.isInfiniteScroll() && datasourceToUse;
-        var pagination = datasourceToUse && !infiniteScroll;
+        var virtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
+        var pagination = datasourceToUse && !virtualPaging;
 
-        if (infiniteScroll) {
+        if (virtualPaging) {
             this.pagingController.setDatasource(null);
             this.serverRowController.setDatasource(datasource);
             this.rowModel = this.serverRowController.getModel();

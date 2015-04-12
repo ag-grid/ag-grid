@@ -158,13 +158,15 @@ define([], function() {
     };
 
     PagingController.prototype.enableOrDisableButtons = function() {
-        var onFirstPage = this.currentPage === 0;
-        this.btPrevious.disabled = onFirstPage;
-        this.btFirst.disabled = onFirstPage;
+        var disablePreviousAndFirst = this.currentPage === 0;
+        this.btPrevious.disabled = disablePreviousAndFirst;
+        this.btFirst.disabled = disablePreviousAndFirst;
 
-        var onLastPage = this.foundMaxRow && this.currentPage === (this.totalPages-1);
-        this.btNext.disabled = onLastPage;
-        this.btLast.disabled = onLastPage;
+        var disableNext = this.foundMaxRow && this.currentPage === (this.totalPages-1);
+        this.btNext.disabled = disableNext;
+
+        var disableLast = !this.foundMaxRow || this.currentPage === (this.totalPages-1);
+        this.btLast.disabled = disableLast;
     };
 
     PagingController.prototype.populatePanel = function(ePagingPanel) {
