@@ -96,11 +96,18 @@ gridsModule.controller('mainController', function($scope) {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'
         },
+        // callback when row clicked
         rowClicked: function(params) {
-            console.log("Callback rowClicked: " + params.data + " - " + params.event);
-            console.log("info : " + params.event.detail);
-        }, //callback when row clicked
-        cellClicked: function(row, colDef, event) {console.log("Callback cellClicked: " + row + " - " + colDef.field + ' - ' + event);} //callback when cell clicked
+            //console.log("Callback rowClicked: " + params.data + " - " + params.event);
+        },
+        // callback when cell clicked
+        cellClicked: function(params) {
+            console.log("Callback cellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        },
+        // callback when cell double clicked
+        cellDoubleClicked:  function(params) {
+            console.log("Callback cellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        }
     };
     $scope.angularGrid = angularGrid;
 
@@ -340,9 +347,11 @@ var COUNTRY_CODES = {
     Uruguay: "uy"
 };
 
-function numberNewValueHandler(data, newValue, colDef) {
-    var valueAsNumber = parseInt(newValue);
-    data[colDef.field] = valueAsNumber;
+function numberNewValueHandler(params) {
+    var valueAsNumber = parseInt(params.newValue);
+    var field = params.colDef.field;
+    var data = params.data;
+    data[field] = valueAsNumber;
 }
 
 function PersonFilter(params) {

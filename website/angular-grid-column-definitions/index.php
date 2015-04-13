@@ -53,6 +53,10 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
+            <th>cellDoubleClicked</th>
+            <td>Function callback, gets called when a cell is double clicked.</td>
+        </tr>
+        <tr>
             <th>comparator</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
@@ -71,6 +75,11 @@ include '../documentation_header.php';
         <tr>
             <th>group</th>
             <td>If grouping columns, the group this column belongs to.</td>
+        </tr>
+        <tr>
+            <th>editable</th>
+            <td>Set to true if this col is editable, otherwise false. Can also be a function
+                to have different rows editable.</td>
         </tr>
         <tr>
             <th>newValueHandler, cellValueChanged</th>

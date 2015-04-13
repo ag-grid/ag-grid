@@ -2909,6 +2909,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     var svgFactory = new SvgFactory();
 
+    var TAB_KEY = 9;
+    var ENTER_KEY = 13;
+
     function RowRenderer() {
     }
 
@@ -2929,6 +2932,8 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         // are rendered for which rows in the dom. each row object has:
         // [scope, bodyRow, pinnedRow, rowData]
         this.renderedRows = {};
+
+        this.renderedRowStartEditingListeners = {};
 
         this.editingCell = false; //gets set to true when editing a cell
     };
@@ -3041,6 +3046,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.angularGrid.onVirtualRowRemoved(indexToRemove);
 
         delete this.renderedRows[indexToRemove];
+        delete this.renderedRowStartEditingListeners[indexToRemove];
     };
 
     RowRenderer.prototype.drawVirtualRows = function() {
@@ -3148,6 +3154,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             rowIndex: rowIndex
         };
         this.renderedRows[rowIndex] = renderedRow;
+        this.renderedRowStartEditingListeners[rowIndex] = {};
 
         // if group item, insert the first row
         var columnDefWrappers = this.colModel.getColDefWrappers();
@@ -3320,7 +3327,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         if (!groupRow) {
             var _this = this;
             eRow.addEventListener("click", function(event) {
-                _this.angularGrid.onRowClicked(event, Number(this.getAttribute("row")))
+                _this.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), node)
             });
         }
 
@@ -3543,21 +3550,91 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         }
 
-        eGridCell.addEventListener("click", function(event) {
-            if (that.gridOptionsWrapper.getCellClicked()) {
-                that.gridOptionsWrapper.getCellClicked()(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
-            }
-            if (colDef.cellClicked) {
-                colDef.cellClicked(node.data, colDef, event, this, that.gridOptionsWrapper.getGridOptions());
-            }
-            if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex);
-            }
-        });
+        this.addCellClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex);
+        this.addCellDoubleClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope);
 
         eGridCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
 
+        // add the 'start editing' call to the chain of editors
+        this.renderedRowStartEditingListeners[rowIndex][colIndex] = function() {
+            if (that.isCellEditable(colDef, node)) {
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+                return true;
+            } else {
+                return false;
+            }
+        };
+
         return eGridCell;
+    };
+
+    RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope) {
+        var that = this;
+        var colDef = colDefWrapper.colDef;
+        eGridCell.addEventListener("dblclick", function(event) {
+            if (that.gridOptionsWrapper.getCellDoubleClicked()) {
+                var paramsForGrid = {
+                    node: node,
+                    data: node.data,
+                    value: value,
+                    rowIndex: rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    gridOptions: that.gridOptionsWrapper.getGridOptions()
+                };
+                that.gridOptionsWrapper.getCellDoubleClicked()(paramsForGrid);
+            }
+            if (colDef.cellDoubleClicked) {
+                var paramsForColDef = {
+                    node: node,
+                    data: node.data,
+                    value: value,
+                    rowIndex: rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    gridOptions: that.gridOptionsWrapper.getGridOptions()
+                };
+                colDef.cellDoubleClicked(paramsForColDef);
+            }
+            if (that.isCellEditable(colDef, node)) {
+                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+            }
+        });
+    };
+
+    RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWrapper, value, rowIndex) {
+        var that = this;
+        var colDef = colDefWrapper.colDef;
+        eGridCell.addEventListener("click", function(event) {
+            if (that.gridOptionsWrapper.getCellClicked()) {
+                var paramsForGrid = {
+                    node: node,
+                    data: node.data,
+                    value: value,
+                    rowIndex: rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    gridOptions: that.gridOptionsWrapper.getGridOptions()
+                };
+                that.gridOptionsWrapper.getCellClicked()(paramsForGrid);
+            }
+            if (colDef.cellClicked) {
+                var paramsForColDef = {
+                    node: node,
+                    data: node.data,
+                    value: value,
+                    rowIndex: rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    gridOptions: that.gridOptionsWrapper.getGridOptions()
+                };
+                colDef.cellClicked(paramsForColDef);
+            }
+        });
     };
 
     RowRenderer.prototype.isCellEditable = function(colDef, node) {
@@ -3620,7 +3697,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex) {
+    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex) {
         var that = this;
         var colDef = colDefWrapper.colDef;
         this.editingCell = true;
@@ -3649,10 +3726,74 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         //stop editing if enter pressed
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
-            if (key == 13) { // 13 is enter
+            // 13 is enter
+            if (key == ENTER_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
             }
         });
+
+        // tab key doesn't generate keypress, so need keydown to listen for that
+        eInput.addEventListener('keydown', function (event) {
+            var key = event.which || event.keyCode;
+            if (key == TAB_KEY) {
+                that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
+                that.startEditingNextCell(rowIndex, colIndex, event.shiftKey);
+                // we don't want the default tab action, so return false, this stops the event from bubbling
+                event.preventDefault();
+                return false;
+            }
+        });
+    };
+
+    RowRenderer.prototype.startEditingNextCell = function(row, col, shiftKey) {
+
+        var firstRowToCheck = this.firstVirtualRenderedRow;
+        var lastRowToCheck = this.lastVirtualRenderedRow;
+        var currentRow = row;
+        var currentCol = col;
+
+        while (true) {
+
+            // move backward
+            if (shiftKey) {
+                // move along to the previous cell
+                currentCol--;
+                // check if the next cell is the first col of the next row
+                if (currentCol < 0) {
+                    currentCol = this.colModel.getDisplayedColCount() - 1;
+                    currentRow--;
+                }
+
+                // if got to end of rendered rows, then quit looking
+                if (currentRow < firstRowToCheck) {
+                    return;
+                }
+            // move forward
+            } else {
+                // move along to the next cell
+                currentCol++;
+                // check if the next cell is the first col of the next row
+                if (currentCol >= this.colModel.getDisplayedColCount()) {
+                    currentCol = 0;
+                    currentRow++;
+                }
+
+                // if got to end of rendered rows, then quit looking
+                if (currentRow > lastRowToCheck) {
+                    return;
+                }
+            }
+
+            var nextFunc = this.renderedRowStartEditingListeners[currentRow][currentCol];
+            if (nextFunc) {
+                // see if the next cell is editable, and if so, we have come to
+                // the end of our search, so stop looking for the next cell
+                var nextCellAcceptedEdit = nextFunc();
+                if (nextCellAcceptedEdit) {
+                    return;
+                }
+            }
+        }
 
     };
 
@@ -4178,6 +4319,7 @@ define('../src/gridOptionsWrapper',[], function() {
     GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
     GridOptionsWrapper.prototype.getModelUpdated = function() { return this.gridOptions.modelUpdated; };
     GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
+    GridOptionsWrapper.prototype.getCellDoubleClicked = function() { return this.gridOptions.cellDoubleClicked; };
     GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
     GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
     GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
@@ -4295,6 +4437,10 @@ define('../src/colModel',['./constants'], function(constants) {
 
     ColModel.prototype.getTotalPinnedColWidth = function() {
         return this.getTotalColWidth(true);
+    };
+
+    ColModel.prototype.getDisplayedColCount = function(includePinned) {
+        return this.colDefWrappers.length;
     };
 
     ColModel.prototype.getTotalColWidth = function(includePinned) {
@@ -5390,9 +5536,8 @@ define('../src/angularGrid',[
         this.headerRenderer.updateFilterIcons();
     };
 
-    Grid.prototype.onRowClicked = function (event, rowIndex) {
+    Grid.prototype.onRowClicked = function (event, rowIndex, node) {
 
-        var node = this.rowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);

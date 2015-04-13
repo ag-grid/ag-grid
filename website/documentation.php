@@ -93,13 +93,12 @@ include 'documentation_header.php';
     </p>
 
     <p>
-        <b>12 April</b> - Checked in datasources, pagination, virtual paging, infinite scrolling. Will be available in 1.3, or take latest. Documentation
-        pages 'Datasource', 'Pagination' and 'Virtual Paging' created.
+        <b>13 April</b> - Checked in 'tab navigation for editing', so when you hit tab while editing a cell, it goes into editing the next cell.
     </p>
 
     <p>
-        <b>09 April</b> - Checked in support for 'Refresh Aggregate Data'. Will be available in 1.3, or take latest. Documentation
-        page 'Grouping and Aggregating Rows' updated.
+        <b>12 April</b> - Checked in datasources, pagination, virtual paging, infinite scrolling. Will be available in 1.3, or take latest. Documentation
+        pages 'Datasource', 'Pagination' and 'Virtual Paging' created.
     </p>
 
     <p>
