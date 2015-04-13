@@ -31,6 +31,13 @@ gridOptions.datasource = myDataSource;
 // after grid initialised, you can set or change the datasource
 gridOptions.api.setDatasource(myDataSource);</pre>
 
+    <pre>
+Note: If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
+you are trying to set the datasource through the setDatasource method, but the API has not been attached
+to the gridOptions yet by the grid. To get around this, don't set for the first time through the API,
+rather set it the first way above.
+    </pre>
+
     <p>
         Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your
         data changes, eg if a filter or other search criteria is changed outside of the grid.

@@ -300,9 +300,8 @@ define([
         this.headerRenderer.updateFilterIcons();
     };
 
-    Grid.prototype.onRowClicked = function (event, rowIndex) {
+    Grid.prototype.onRowClicked = function (event, rowIndex, node) {
 
-        var node = this.rowModel.getVirtualRow(rowIndex);
         if (this.gridOptions.rowClicked) {
             var params = {node: node, data: node.data, event: event};
             this.gridOptions.rowClicked(params);

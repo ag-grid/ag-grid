@@ -58,6 +58,10 @@ define(['./constants'], function(constants) {
         return this.getTotalColWidth(true);
     };
 
+    ColModel.prototype.getDisplayedColCount = function(includePinned) {
+        return this.colDefWrappers.length;
+    };
+
     ColModel.prototype.getTotalColWidth = function(includePinned) {
         var widthSoFar = 0;
         var pinnedColCount = this.pinnedColumnCount;
