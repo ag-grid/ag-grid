@@ -2169,6 +2169,7 @@ define('../src/constants',[], function() {
     constants.SORT_STYLE_HIDE = "display:none;";
 
     constants.MIN_COL_WIDTH = 10;
+    constants.DEFAULT_COL_WIDTH = 200;
 
     return constants;
 });
@@ -3958,8 +3959,9 @@ define('../src/colModel',['./constants'], function(constants) {
         this.selectionRendererFactory = selectionRendererFactory;
     }
 
-    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
+    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount, gridDivWidth) {
         this.pinnedColumnCount = pinnedColCount;
+        this.gridDivWidth = gridDivWidth;
         var colDefWrappers = [];
 
         var that = this;
@@ -3982,18 +3984,25 @@ define('../src/colModel',['./constants'], function(constants) {
 
     // set the actual widths for each col
     ColModel.prototype.ensureEachColHasSize = function () {
+        var numberOfColumns = this.colDefWrappers.length;
+        var gridDivWidth = this.gridDivWidth;
         this.colDefWrappers.forEach(function (colDefWrapper) {
             var colDef = colDefWrapper.colDef;
             if (colDefWrapper.actualWidth) {
                 // if actual width already set, do nothing
                 return;
             } else if (!colDef.width) {
-                // if no width defined in colDef, default to 200
-                colDefWrapper.actualWidth = 200;
+                //set width based on the size of the grid             
+                if (gridDivWidth) {
+                    colDefWrapper.actualWidth = gridDivWidth / numberOfColumns;
+                } else {
+                    // if no width defined in colDef, default to 200
+                    colDefWrapper.actualWidth = constants.DEFAULT_COL_WIDTH;
+                }
             } else if (colDef.width < constants.MIN_COL_WIDTH) {
                 // if width in col def to small, set to min width
                 colDefWrapper.actualWidth = constants.MIN_COL_WIDTH;
-            } else {
+            } else if (colDef.width) {
                 // otherwise use the provided width
                 colDefWrapper.actualWidth = colDef.width;
             }
@@ -4812,7 +4821,8 @@ define('../src/angularGrid',[
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        var gridDivWidth = this.eBody.clientWidth;
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount, gridDivWidth);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
