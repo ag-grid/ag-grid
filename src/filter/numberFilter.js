@@ -26,7 +26,7 @@ define([
         }
         var value = node.value;
 
-        if (!value) {
+        if (!value && value !== 0) {
             return false;
         }
 
