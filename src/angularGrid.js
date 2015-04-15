@@ -348,7 +348,8 @@ define([
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        var gridDivWidth = this.eBody.clientWidth;
+        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount, gridDivWidth);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.insertHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {

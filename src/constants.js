@@ -15,6 +15,7 @@ define([], function() {
     constants.SORT_STYLE_HIDE = "display:none;";
 
     constants.MIN_COL_WIDTH = 10;
+    constants.DEFAULT_COL_WIDTH = 200;
 
     return constants;
 });
