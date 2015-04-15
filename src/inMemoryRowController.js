@@ -26,6 +26,12 @@ define([
     InMemoryRowController.prototype.createModel = function() {
         var that = this;
         this.model = {
+            // this method is implemented by the inMemory model only,
+            // it gives the top level of the selection. used by the selection
+            // controller, when it needs to do a full traversal
+            getTopLevelNodes: function() {
+                return that.rowsAfterGroup;
+            },
             getVirtualRow: function(index) {
                 return that.rowsAfterMap[index];
             },

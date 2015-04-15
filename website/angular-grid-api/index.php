@@ -46,6 +46,27 @@ include '../documentation_header.php';
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
         </tr>
         <tr>
+            <th>getSelectedNodes()</th>
+            <td>Returns a list of selected nodes. Getting the underlying node (rather than the data) is useful
+                when working with tree / aggregated data, as the node can be traversed.</td>
+        </tr>
+        <tr>
+            <th>isNodeSelected(node)</th>
+            <td>Returns true if the node is selected, or false if it is not selected. If the node is a group node,
+                and the group selection is set to 'children', then this will return true if all child (and grand child)
+                nodes are selected, false if all unselected, of undefined if a mixture. This is particularly useful
+                for group selection 'children' as in this mode, the group nodes never appear in the selected rows (as
+                selecting a group implies selecting children).
+        </tr>
+        <tr>
+            <th>getBestCostNodeSelection()</th>
+            <td>Returns a list of all selected nodes at 'best cost' - a feature to be used
+                with groups / trees. If a group has all it's children selected,
+                then the group appears in the result, but not the children.
+                Designed for use with 'children' as the group selection type,
+                where groups don't actually appear in the selection normally.</td>
+        </tr>
+        <tr>
             <th>refreshView()</th>
             <td>Redraw all visible rows. Handy has a blanked 'redraw all' if changes have been made to the row data.</td>
         </tr>

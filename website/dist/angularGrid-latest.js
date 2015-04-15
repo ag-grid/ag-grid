@@ -2166,6 +2166,12 @@ define('../src/inMemoryRowController',[
     InMemoryRowController.prototype.createModel = function() {
         var that = this;
         this.model = {
+            // this method is implemented by the inMemory model only,
+            // it gives the top level of the selection. used by the selection
+            // controller, when it needs to do a full traversal
+            getTopLevelNodes: function() {
+                return that.rowsAfterGroup;
+            },
             getVirtualRow: function(index) {
                 return that.rowsAfterMap[index];
             },
@@ -3834,7 +3840,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         }
     };
 
-    HeaderRenderer.prototype.insertHeader = function () {
+    HeaderRenderer.prototype.refreshHeader = function () {
         utils.removeAllChildren(this.ePinnedHeader);
         utils.removeAllChildren(this.eHeaderContainer);
 
@@ -4570,6 +4576,49 @@ define('../src/selectionController',['./utils'], function(utils) {
         gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
     };
 
+    SelectionController.prototype.getSelectedNodes = function() {
+        var selectedNodes = [];
+        var keys = Object.keys(this.selectedNodesById);
+        for (var i = 0; i<keys.length; i++) {
+            var id = keys[i];
+            var selectedNode = this.selectedNodesById[id];
+            selectedNodes.push(selectedNode);
+        }
+    };
+
+    // returns a list of all nodes at 'best cost' - a feature to be used
+    // with groups / trees. if a group has all it's children selected,
+    // then the group appears in the result, but not the children.
+    // Designed for use with 'children' as the group selection type,
+    // where groups don't actually appear in the selection normally.
+    SelectionController.prototype.getBestCostNodeSelection = function() {
+
+        var topLevelNodes = this.model.getTopLevelNodes();
+
+        var result = [];
+        var that = this;
+
+        // recursive function, to find the selected nodes
+        function traverse(nodes) {
+            for (var i = 0, l = nodes.length; i<l; i++) {
+                var node = nodes[i];
+                if (that.isNodeSelected(node)) {
+                    result.push(node);
+                } else {
+                    // if not selected, then if it's a group, and the group
+                    // has children, continue to search for selections
+                    if (node.group && node.children) {
+                        traverse(node);
+                    }
+                }
+            }
+        }
+
+        traverse(topLevelNodes);
+
+        return result;
+    };
+
     SelectionController.prototype.setRowModel = function(rowModel) {
         this.rowModel = rowModel;
     };
@@ -4834,7 +4883,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     // returns:
     // true: if selected
     // false: if unselected
-    // undefined: if it's a group and 'children selection' is sued adn 'children' are a mix of selected and unselected
+    // undefined: if it's a group and 'children selection' is used and 'children' are a mix of selected and unselected
     SelectionController.prototype.isNodeSelected = function(node) {
         if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
             // doing child selection, we need to traverse the children
@@ -5586,7 +5635,7 @@ define('../src/angularGrid',[
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
         this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
-        this.headerRenderer.insertHeader();
+        this.headerRenderer.refreshHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
             this.setPinnedColContainerWidth();
             this.setBodyContainerWidth();
@@ -5641,6 +5690,11 @@ define('../src/angularGrid',[
             refreshView: function () {
                 that.rowRenderer.refreshView();
             },
+            refreshHeader: function () {
+                // need to review this - the refreshHeader should also refresh all icons in the header
+                that.headerRenderer.refreshHeader();
+                that.headerRenderer.updateFilterIcons();
+            },
             getModel: function () {
                 return that.rowModel;
             },
@@ -5673,6 +5727,15 @@ define('../src/angularGrid',[
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
+            },
+            isNodeSelected: function(node) {
+                return that.selectionController.isNodeSelected(node);
+            },
+            getSelectedNodes: function() {
+                return that.selectionController.getSelectedNodes();
+            },
+            getBestCostNodeSelection: function() {
+                return that.selectionController.getBestCostNodeSelection();
             }
         };
         this.gridOptions.api = api;

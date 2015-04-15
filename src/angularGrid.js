@@ -350,7 +350,7 @@ define([
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
         this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
-        this.headerRenderer.insertHeader();
+        this.headerRenderer.refreshHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
             this.setPinnedColContainerWidth();
             this.setBodyContainerWidth();
@@ -405,6 +405,11 @@ define([
             refreshView: function () {
                 that.rowRenderer.refreshView();
             },
+            refreshHeader: function () {
+                // need to review this - the refreshHeader should also refresh all icons in the header
+                that.headerRenderer.refreshHeader();
+                that.headerRenderer.updateFilterIcons();
+            },
             getModel: function () {
                 return that.rowModel;
             },
@@ -437,6 +442,15 @@ define([
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
+            },
+            isNodeSelected: function(node) {
+                return that.selectionController.isNodeSelected(node);
+            },
+            getSelectedNodes: function() {
+                return that.selectionController.getSelectedNodes();
+            },
+            getBestCostNodeSelection: function() {
+                return that.selectionController.getBestCostNodeSelection();
             }
         };
         this.gridOptions.api = api;

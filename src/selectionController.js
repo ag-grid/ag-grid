@@ -24,6 +24,49 @@ define(['./utils'], function(utils) {
         gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
     };
 
+    SelectionController.prototype.getSelectedNodes = function() {
+        var selectedNodes = [];
+        var keys = Object.keys(this.selectedNodesById);
+        for (var i = 0; i<keys.length; i++) {
+            var id = keys[i];
+            var selectedNode = this.selectedNodesById[id];
+            selectedNodes.push(selectedNode);
+        }
+    };
+
+    // returns a list of all nodes at 'best cost' - a feature to be used
+    // with groups / trees. if a group has all it's children selected,
+    // then the group appears in the result, but not the children.
+    // Designed for use with 'children' as the group selection type,
+    // where groups don't actually appear in the selection normally.
+    SelectionController.prototype.getBestCostNodeSelection = function() {
+
+        var topLevelNodes = this.model.getTopLevelNodes();
+
+        var result = [];
+        var that = this;
+
+        // recursive function, to find the selected nodes
+        function traverse(nodes) {
+            for (var i = 0, l = nodes.length; i<l; i++) {
+                var node = nodes[i];
+                if (that.isNodeSelected(node)) {
+                    result.push(node);
+                } else {
+                    // if not selected, then if it's a group, and the group
+                    // has children, continue to search for selections
+                    if (node.group && node.children) {
+                        traverse(node);
+                    }
+                }
+            }
+        }
+
+        traverse(topLevelNodes);
+
+        return result;
+    };
+
     SelectionController.prototype.setRowModel = function(rowModel) {
         this.rowModel = rowModel;
     };
@@ -288,7 +331,7 @@ define(['./utils'], function(utils) {
     // returns:
     // true: if selected
     // false: if unselected
-    // undefined: if it's a group and 'children selection' is sued adn 'children' are a mix of selected and unselected
+    // undefined: if it's a group and 'children selection' is used and 'children' are a mix of selected and unselected
     SelectionController.prototype.isNodeSelected = function(node) {
         if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
             // doing child selection, we need to traverse the children

@@ -32,7 +32,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
     };
 
-    HeaderRenderer.prototype.insertHeader = function () {
+    HeaderRenderer.prototype.refreshHeader = function () {
         utils.removeAllChildren(this.ePinnedHeader);
         utils.removeAllChildren(this.eHeaderContainer);
 
