@@ -3860,49 +3860,13 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     };
 
     HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-        // split the columns into groups
-        var currentGroup = null;
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var colDefWrappers = this.colModel.getColDefWrappers();
+        var groups = this.colModel.getColumnGroups();
         var that = this;
-        // this logic is called twice below, so refactored it out here.
-        // not in a public method, keeping it private to this method
-        var addGroupFunc = function () {
-            // see if it's just a normal column
-            var eHeaderCell = that.createGroupedHeaderCell(currentGroup);
-            var eContainerToAddTo = currentGroup.pinned ? that.ePinnedHeader : that.eHeaderContainer;
+        groups.forEach(function(group) {
+            var eHeaderCell = that.createGroupedHeaderCell(group);
+            var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
             eContainerToAddTo.appendChild(eHeaderCell);
-        };
-        colDefWrappers.forEach(function (colDefWrapper, index) {
-            // do we need a new group, because we move from pinned to non-pinned columns?
-            var endOfPinnedHeader = index === pinnedColumnCount;
-            // do we need a new group, because the group names doesn't match from previous col?
-            var groupKeyMismatch = currentGroup && colDefWrapper.colDef.group !== currentGroup.name;
-            // we don't group columns where no group is specified
-            var colNotInGroup = currentGroup && !currentGroup.name;
-            // do we need a new group, because we are just starting
-            var processingFirstCol = index === 0;
-            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
-            // flush the last group out, if it exists
-            if (newGroupNeeded && !processingFirstCol) {
-                addGroupFunc();
-            }
-            // create new group, if it's needed
-            if (newGroupNeeded) {
-                currentGroup = {
-                    colDefWrappers: [],
-                    eHeaderCells: [], // contains the child header cells, they get re-sized when parent width changed
-                    firstIndex: index,
-                    pinned: index < pinnedColumnCount,
-                    name: colDefWrapper.colDef.group
-                };
-            }
-            currentGroup.colDefWrappers.push(colDefWrapper);
         });
-        // one more group to insert, do it here
-        if (currentGroup) {
-            addGroupFunc();
-        }
     };
 
     HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
@@ -3946,7 +3910,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         eHeaderGroup.appendChild(eHeaderGroupCell);
 
         var that = this;
-        currentGroup.colDefWrappers.forEach(function (colDefWrapper, index) {
+        currentGroup.columns.forEach(function (colDefWrapper, index) {
             var colIndex = index + currentGroup.firstIndex;
             var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, currentGroup.pinned, true, currentGroup);
             that.setWidthOfGroupHeaderCell(currentGroup);
@@ -3980,8 +3944,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
         var totalWidth = 0;
-        headerGroup.colDefWrappers.forEach( function (colDefWrapper) {
-            totalWidth += colDefWrapper.actualWidth;
+        headerGroup.columns.forEach( function (column) {
+            totalWidth += column.actualWidth;
         });
         headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
         headerGroup.actualWidth = totalWidth;
@@ -4169,10 +4133,10 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 this.groupWidthStart = currentGroup.actualWidth;
                 this.childrenWidthStarts = [];
                 var that = this;
-                currentGroup.colDefWrappers.forEach( function (colDefWrapper) {
+                currentGroup.columns.forEach( function (colDefWrapper) {
                     that.childrenWidthStarts.push(colDefWrapper.actualWidth);
                 });
-                this.minWidth = currentGroup.colDefWrappers.length * constants.MIN_COL_WIDTH;
+                this.minWidth = currentGroup.columns.length * constants.MIN_COL_WIDTH;
             },
             onDragging: function(dragChange) {
 
@@ -4192,8 +4156,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 // to cater for rounding errors, and min width adjustments
                 var pixelsToDistribute = newWidth;
                 var that = this;
-                currentGroup.colDefWrappers.forEach( function (colDefWrapper, index) {
-                    var notLastCol = index !== (currentGroup.colDefWrappers.length-1);
+                currentGroup.columns.forEach( function (colDefWrapper, index) {
+                    var notLastCol = index !== (currentGroup.columns.length-1);
                     var newChildSize;
                     if (notLastCol) {
                         // if not the last col, calculate the column width as normal
@@ -4385,41 +4349,83 @@ define('../src/gridOptionsWrapper',[], function() {
     return GridOptionsWrapper;
 
 });
-define('../src/colModel',['./constants'], function(constants) {
+define('../src/columnController',['./constants'], function(constants) {
 
-    function ColModel() {
+    function ColumnController() {
     }
 
-    ColModel.prototype.init = function (angularGrid, selectionRendererFactory) {
+    ColumnController.prototype.init = function (angularGrid, selectionRendererFactory, gridOptionsWrapper) {
+        this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
     };
 
-    ColModel.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
+    ColumnController.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
         this.pinnedColumnCount = pinnedColCount;
-        var colDefWrappers = [];
 
+        this.buildColumns(columnDefs);
+        this.buildGroups();
+        this.ensureEachColHasSize();
+    };
+
+    ColumnController.prototype.buildGroups = function() {
+        // if not grouping by headers, do nothing
+        if (!this.gridOptionsWrapper.isGroupHeaders()) {
+            this.columnGroups = null;
+            return;
+        }
+
+        // split the columns into groups
+        var currentGroup = null;
+        this.columnGroups = [];
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        var that = this;
+
+        this.columns.forEach(function (column, index) {
+            // do we need a new group, because we move from pinned to non-pinned columns?
+            var endOfPinnedHeader = index === pinnedColumnCount;
+            // do we need a new group, because the group names doesn't match from previous col?
+            var groupKeyMismatch = currentGroup && column.colDef.group !== currentGroup.name;
+            // we don't group columns where no group is specified
+            var colNotInGroup = currentGroup && !currentGroup.name;
+            // do we need a new group, because we are just starting
+            var processingFirstCol = index === 0;
+            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
+            // create new group, if it's needed
+            if (newGroupNeeded) {
+                var pinned = index < pinnedColumnCount;
+                currentGroup = new ColumnGroup(index, pinned, column.colDef.group);
+                that.columnGroups.push(currentGroup);
+            }
+            currentGroup.columns.push(column);
+        });
+    };
+
+    ColumnController.prototype.getColumnGroups = function () {
+        return this.columnGroups;
+    };
+
+    ColumnController.prototype.buildColumns = function (columnDefs) {
+        this.columns = [];
         var that = this;
         if (columnDefs) {
             columnDefs.forEach(function (colDef, index) {
                 if (colDef === 'checkboxSelection') {
                     colDef = that.selectionRendererFactory.createCheckboxColDef();
                 }
-                var colDefWrapper = new ColDefWrapper(colDef, index);
-                colDefWrappers.push(colDefWrapper);
+                var colDefWrapper = new Column(colDef, index);
+                that.columns.push(colDefWrapper);
             });
         }
-        this.colDefWrappers = colDefWrappers;
-        this.ensureEachColHasSize();
     };
 
-    ColModel.prototype.getColDefWrappers = function () {
-        return this.colDefWrappers;
+    ColumnController.prototype.getColDefWrappers = function () {
+        return this.columns;
     };
 
     // set the actual widths for each col
-    ColModel.prototype.ensureEachColHasSize = function () {
-        this.colDefWrappers.forEach(function (colDefWrapper) {
+    ColumnController.prototype.ensureEachColHasSize = function () {
+        this.columns.forEach(function (colDefWrapper) {
             var colDef = colDefWrapper.colDef;
             if (colDefWrapper.actualWidth) {
                 // if actual width already set, do nothing
@@ -4437,23 +4443,23 @@ define('../src/colModel',['./constants'], function(constants) {
         });
     };
 
-    ColModel.prototype.getTotalUnpinnedColWidth = function() {
+    ColumnController.prototype.getTotalUnpinnedColWidth = function() {
         return this.getTotalColWidth(false);
     };
 
-    ColModel.prototype.getTotalPinnedColWidth = function() {
+    ColumnController.prototype.getTotalPinnedColWidth = function() {
         return this.getTotalColWidth(true);
     };
 
-    ColModel.prototype.getDisplayedColCount = function(includePinned) {
-        return this.colDefWrappers.length;
+    ColumnController.prototype.getDisplayedColCount = function() {
+        return this.columns.length;
     };
 
-    ColModel.prototype.getTotalColWidth = function(includePinned) {
+    ColumnController.prototype.getTotalColWidth = function(includePinned) {
         var widthSoFar = 0;
         var pinnedColCount = this.pinnedColumnCount;
 
-        this.colDefWrappers.forEach(function(colDefWrapper, index) {
+        this.columns.forEach(function(colDefWrapper, index) {
             var columnIsPined = index<pinnedColCount;
             var includeThisCol = columnIsPined === includePinned;
             if (includeThisCol) {
@@ -4464,12 +4470,20 @@ define('../src/colModel',['./constants'], function(constants) {
         return widthSoFar;
     };
 
-    function ColDefWrapper(colDef, colKey) {
+    function ColumnGroup(firstIndex, pinned, name) {
+        this.firstIndex = firstIndex;
+        this.pinned = pinned;
+        this.name = name;
+        this.columns = [];
+        this.eHeaderCells = [];
+    }
+
+    function Column(colDef, colKey) {
         this.colDef = colDef;
         this.colKey = colKey;
     }
 
-    return ColModel;
+    return ColumnController;
 
 });
 define('../src/selectionRendererFactory',[], function () {
@@ -4593,7 +4607,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function() {
 
-        var topLevelNodes = this.model.getTopLevelNodes();
+        var topLevelNodes = this.rowModel.getTopLevelNodes();
 
         var result = [];
         var that = this;
@@ -4608,7 +4622,7 @@ define('../src/selectionController',['./utils'], function(utils) {
                     // if not selected, then if it's a group, and the group
                     // has children, continue to search for selections
                     if (node.group && node.children) {
-                        traverse(node);
+                        traverse(node.children);
                     }
                 }
             }
@@ -5326,7 +5340,7 @@ define('../src/angularGrid',[
     './headerRenderer',
     './gridOptionsWrapper',
     './constants',
-    './colModel',
+    './columnController',
     './selectionRendererFactory',
     './selectionController',
     './paginationController',
@@ -5335,7 +5349,7 @@ define('../src/angularGrid',[
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
             InMemoryRowController, VirtualPageRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory, SelectionController,
+            constants, ColumnController, SelectionRendererFactory, SelectionController,
             PaginationController) {
 
     // if angular is present, register the directive
@@ -5444,7 +5458,7 @@ define('../src/angularGrid',[
         var selectionController = new SelectionController();
         var filterManager = new FilterManager();
         var selectionRendererFactory = new SelectionRendererFactory();
-        var colModel = new ColModel();
+        var columnController = new ColumnController();
         var rowRenderer  = new RowRenderer();
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
@@ -5454,11 +5468,11 @@ define('../src/angularGrid',[
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
         filterManager.init(this, gridOptionsWrapper, $compile, $scope);
         selectionRendererFactory.init(this, selectionController);
-        colModel.init(this, selectionRendererFactory);
-        rowRenderer.init(gridOptions, colModel, gridOptionsWrapper, eGridDiv, this,
+        columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
+        rowRenderer.init(gridOptions, columnController, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
-        headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
-        inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
+        headerRenderer.init(gridOptionsWrapper, columnController, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope);
         virtualPageRowController.init(rowRenderer);
 
         // this is a child bean, get a reference and pass it on
@@ -5477,7 +5491,7 @@ define('../src/angularGrid',[
 
         this.rowModel = rowModel;
         this.selectionController = selectionController;
-        this.colModel = colModel;
+        this.columnController = columnController;
         this.inMemoryRowController = inMemoryRowController;
         this.virtualPageRowController = virtualPageRowController;
         this.rowRenderer = rowRenderer;
@@ -5633,7 +5647,7 @@ define('../src/angularGrid',[
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
         var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        this.columnController.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.refreshHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -5644,7 +5658,7 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.columnController.getTotalUnpinnedColWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
@@ -5832,7 +5846,7 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
-        var pinnedColWidth = this.colModel.getTotalPinnedColWidth() + "px";
+        var pinnedColWidth = this.columnController.getTotalPinnedColWidth() + "px";
         this.ePinnedColsContainer.style.width = pinnedColWidth;
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };

@@ -5,9 +5,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     function HeaderRenderer() {
     }
 
-    HeaderRenderer.prototype.init = function (gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, columnModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
@@ -52,62 +52,27 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     };
 
     HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-        // split the columns into groups
-        var currentGroup = null;
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var colDefWrappers = this.colModel.getColDefWrappers();
+        var groups = this.columnModel.getColumnGroups();
         var that = this;
-        // this logic is called twice below, so refactored it out here.
-        // not in a public method, keeping it private to this method
-        var addGroupFunc = function () {
-            // see if it's just a normal column
-            var eHeaderCell = that.createGroupedHeaderCell(currentGroup);
-            var eContainerToAddTo = currentGroup.pinned ? that.ePinnedHeader : that.eHeaderContainer;
+        groups.forEach(function(group) {
+
+            var eHeaderCell = that.createGroupedHeaderCell(group);
+            var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
             eContainerToAddTo.appendChild(eHeaderCell);
-        };
-        colDefWrappers.forEach(function (colDefWrapper, index) {
-            // do we need a new group, because we move from pinned to non-pinned columns?
-            var endOfPinnedHeader = index === pinnedColumnCount;
-            // do we need a new group, because the group names doesn't match from previous col?
-            var groupKeyMismatch = currentGroup && colDefWrapper.colDef.group !== currentGroup.name;
-            // we don't group columns where no group is specified
-            var colNotInGroup = currentGroup && !currentGroup.name;
-            // do we need a new group, because we are just starting
-            var processingFirstCol = index === 0;
-            var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
-            // flush the last group out, if it exists
-            if (newGroupNeeded && !processingFirstCol) {
-                addGroupFunc();
-            }
-            // create new group, if it's needed
-            if (newGroupNeeded) {
-                currentGroup = {
-                    colDefWrappers: [],
-                    eHeaderCells: [], // contains the child header cells, they get re-sized when parent width changed
-                    firstIndex: index,
-                    pinned: index < pinnedColumnCount,
-                    name: colDefWrapper.colDef.group
-                };
-            }
-            currentGroup.colDefWrappers.push(colDefWrapper);
         });
-        // one more group to insert, do it here
-        if (currentGroup) {
-            addGroupFunc();
-        }
     };
 
-    HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
+    HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
 
         var eHeaderGroup = document.createElement('div');
         eHeaderGroup.className = 'ag-header-group';
 
         var eHeaderGroupCell = document.createElement('div');
-        currentGroup.eHeaderGroupCell = eHeaderGroupCell;
+        group.eHeaderGroupCell = eHeaderGroupCell;
         var classNames = ['ag-header-group-cell'];
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        if (currentGroup.name) {
+        if (group.name) {
             classNames.push('ag-header-group-cell-with-group');
         } else {
             classNames.push('ag-header-group-cell-no-group');
@@ -118,13 +83,13 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var eHeaderCellResize = document.createElement("div");
             eHeaderCellResize.className = "ag-header-cell-resize";
             eHeaderGroupCell.appendChild(eHeaderCellResize);
-            currentGroup.eHeaderCellResize = eHeaderCellResize;
-            var dragCallback = this.groupDragCallbackFactory(currentGroup);
+            group.eHeaderCellResize = eHeaderCellResize;
+            var dragCallback = this.groupDragCallbackFactory(group);
             this.addDragHandler(eHeaderCellResize, dragCallback);
         }
 
         // no renderer, default text render
-        var groupName = currentGroup.name;
+        var groupName = group.name;
         if (groupName && groupName !== '') {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
@@ -138,13 +103,12 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         eHeaderGroup.appendChild(eHeaderGroupCell);
 
         var that = this;
-        currentGroup.colDefWrappers.forEach(function (colDefWrapper, index) {
-            var colIndex = index + currentGroup.firstIndex;
-            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, currentGroup.pinned, true, currentGroup);
-            that.setWidthOfGroupHeaderCell(currentGroup);
+        group.visibleColumns.forEach(function (column) {
+            var eHeaderCell = that.createHeaderCell(column, true, group);
             eHeaderGroup.appendChild(eHeaderCell);
-            currentGroup.eHeaderCells.push(eHeaderCell);
         });
+
+        that.setWidthOfGroupHeaderCell(group);
 
         return eHeaderGroup;
     };
@@ -172,8 +136,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
         var totalWidth = 0;
-        headerGroup.colDefWrappers.forEach( function (colDefWrapper) {
-            totalWidth += colDefWrapper.actualWidth;
+        headerGroup.visibleColumns.forEach( function (column) {
+            totalWidth += column.actualWidth;
         });
         headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
         headerGroup.actualWidth = totalWidth;
@@ -182,25 +146,25 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
         var ePinnedHeader = this.ePinnedHeader;
         var eHeaderContainer = this.eHeaderContainer;
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper, index) {
+        this.columnModel.getVisibleColumns().forEach(function (column, index) {
             // only include the first x cols
-            if (index < pinnedColumnCount) {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, true, false);
+            var headerCell = that.createHeaderCell(column, index, false);
+            if (column.pinned) {
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, false, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
+    HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGroup) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         var eHeaderCell = document.createElement("div");
+        // stick the header cell in column, as we access it when group is re-sized
+        column.eHeaderCell = eHeaderCell;
 
         var headerCellClasses = ['ag-header-cell'];
         if (grouped) {
@@ -219,19 +183,19 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
-            var dragCallback = this.headerDragCallbackFactory(colIndex, colPinned, eHeaderCell, colDefWrapper, headerGroup);
+            var dragCallback = this.headerDragCallbackFactory(eHeaderCell, column, headerGroup);
             this.addDragHandler(headerCellResize, dragCallback)
         }
 
         // filter button
         var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
         if (showMenu) {
-            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, colDefWrapper, svgFactory.createMenuSvg);
+            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, column, svgFactory.createMenuSvg);
             utils.addCssClass(eMenuButton, 'ag-header-icon');
 
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
-                that.filterManager.showFilter(colDefWrapper, this);
+                that.filterManager.showFilter(column, this);
             };
             eHeaderCell.appendChild(eMenuButton);
             eHeaderCell.onmouseenter = function() {
@@ -251,21 +215,21 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
         // add in sort icons
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            colDefWrapper.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortAscSvg);
-            colDefWrapper.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortDescSvg);
-            utils.addCssClass(colDefWrapper.eSortAsc, 'ag-header-icon');
-            utils.addCssClass(colDefWrapper.eSortDesc, 'ag-header-icon');
-            headerCellLabel.appendChild(colDefWrapper.eSortAsc);
-            headerCellLabel.appendChild(colDefWrapper.eSortDesc);
-            colDefWrapper.eSortAsc.style.display = 'none';
-            colDefWrapper.eSortDesc.style.display = 'none';
-            this.addSortHandling(headerCellLabel, colDefWrapper);
+            column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createSortAscSvg);
+            column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createSortDescSvg);
+            utils.addCssClass(column.eSortAsc, 'ag-header-icon');
+            utils.addCssClass(column.eSortDesc, 'ag-header-icon');
+            headerCellLabel.appendChild(column.eSortAsc);
+            headerCellLabel.appendChild(column.eSortDesc);
+            column.eSortAsc.style.display = 'none';
+            column.eSortDesc.style.display = 'none';
+            this.addSortHandling(headerCellLabel, column);
         }
 
         // add in filter icon
-        colDefWrapper.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, colDefWrapper, svgFactory.createFilterSvg);
-        utils.addCssClass(colDefWrapper.eFilterIcon, 'ag-header-icon');
-        headerCellLabel.appendChild(colDefWrapper.eFilterIcon);
+        column.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, column, svgFactory.createFilterSvg);
+        utils.addCssClass(column.eFilterIcon, 'ag-header-icon');
+        headerCellLabel.appendChild(column.eFilterIcon);
 
         // render the cell, use a renderer if one is provided
         var headerCellRenderer;
@@ -295,8 +259,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             // angular compile header if option is turned on
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 newChildScope.colDef = colDef;
-                newChildScope.colIndex = colIndex;
-                newChildScope.colDefWrapper = colDefWrapper;
+                newChildScope.colIndex = colDef.index;
+                newChildScope.colDefWrapper = column;
                 this.childScopes.push(newChildScope);
                 var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
                 headerCellLabel.appendChild(childToAppendCompiled);
@@ -312,7 +276,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         }
 
         eHeaderCell.appendChild(headerCellLabel);
-        eHeaderCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
+        eHeaderCell.style.width = utils.formatWidth(column.actualWidth);
 
         return eHeaderCell;
     };
@@ -332,22 +296,26 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             }
 
             // clear sort on all columns except this one, and update the icons
-            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear) {
-                if (colWrapperToClear!==colDefWrapper) {
-                    colWrapperToClear.sort = null;
+            that.columnModel.getAllColumns().forEach(function(columnToClear) {
+                if (columnToClear!==colDefWrapper) {
+                    columnToClear.sort = null;
                 }
 
                 // check in case no sorting on this particular col, as sorting is optional per col
-                if (colWrapperToClear.colDef.suppressSorting) {
+                if (columnToClear.colDef.suppressSorting) {
                     return;
                 }
 
                 // update visibility of icons
-                var sortAscending = colWrapperToClear.sort === constants.ASC;
-                var sortDescending = colWrapperToClear.sort === constants.DESC;
+                var sortAscending = columnToClear.sort === constants.ASC;
+                var sortDescending = columnToClear.sort === constants.DESC;
 
-                colWrapperToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
-                colWrapperToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
+                if (columnToClear.eSortAsc) {
+                    columnToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
+                }
+                if (columnToClear.eSortDesc) {
+                    columnToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
+                }
             });
 
             that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
@@ -356,15 +324,16 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     HeaderRenderer.prototype.groupDragCallbackFactory = function (currentGroup) {
         var parent = this;
+        var visibleColumns = currentGroup.visibleColumns;
         return {
             onDragStart: function() {
                 this.groupWidthStart = currentGroup.actualWidth;
                 this.childrenWidthStarts = [];
                 var that = this;
-                currentGroup.colDefWrappers.forEach( function (colDefWrapper) {
+                visibleColumns.forEach( function (colDefWrapper) {
                     that.childrenWidthStarts.push(colDefWrapper.actualWidth);
                 });
-                this.minWidth = currentGroup.colDefWrappers.length * constants.MIN_COL_WIDTH;
+                this.minWidth = visibleColumns.length * constants.MIN_COL_WIDTH;
             },
             onDragging: function(dragChange) {
 
@@ -384,8 +353,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                 // to cater for rounding errors, and min width adjustments
                 var pixelsToDistribute = newWidth;
                 var that = this;
-                currentGroup.colDefWrappers.forEach( function (colDefWrapper, index) {
-                    var notLastCol = index !== (currentGroup.colDefWrappers.length-1);
+                currentGroup.visibleColumns.forEach( function (colDefWrapper, index) {
+                    var notLastCol = index !== (visibleColumns.length-1);
                     var newChildSize;
                     if (notLastCol) {
                         // if not the last col, calculate the column width as normal
@@ -399,12 +368,11 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                         // if last col, give it the remaining pixels
                         newChildSize = pixelsToDistribute;
                     }
-                    var childColIndex = currentGroup.firstIndex + index;
-                    var eHeaderCell = currentGroup.eHeaderCells[index];
-                    parent.adjustColumnWidth(newChildSize, childColIndex, colDefWrapper, eHeaderCell);
+                    var eHeaderCell = visibleColumns[index].eHeaderCell;
+                    parent.adjustColumnWidth(newChildSize, colDefWrapper, eHeaderCell);
                 });
 
-                // show not be calling these here, should do something else
+                // should not be calling these here, should do something else
                 if (currentGroup.pinned) {
                     parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
@@ -414,24 +382,24 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         };
     };
 
-    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, colIndex, colDefWrapper, eHeaderCell) {
+    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, column, eHeaderCell) {
         var newWidthPx = newWidth + "px";
-        var selectorForAllColsInCell = ".cell-col-"+colIndex;
+        var selectorForAllColsInCell = ".cell-col-"+column.index;
         var cellsForThisCol = this.eRoot.querySelectorAll(selectorForAllColsInCell);
         for (var i = 0; i<cellsForThisCol.length; i++) {
             cellsForThisCol[i].style.width = newWidthPx;
         }
 
         eHeaderCell.style.width = newWidthPx;
-        colDefWrapper.actualWidth = newWidth;
+        column.actualWidth = newWidth;
     };
 
     // gets called when a header (not a header group) gets resized
-    HeaderRenderer.prototype.headerDragCallbackFactory = function (colIndex, colPinned, headerCell, colDefWrapper, headerGroup) {
+    HeaderRenderer.prototype.headerDragCallbackFactory = function (headerCell, column, headerGroup) {
         var parent = this;
         return {
             onDragStart: function() {
-                this.startWidth = colDefWrapper.actualWidth;
+                this.startWidth = column.actualWidth;
             },
             onDragging: function(dragChange) {
                 var newWidth = this.startWidth + dragChange;
@@ -439,14 +407,14 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                     newWidth = constants.MIN_COL_WIDTH;
                 }
 
-                parent.adjustColumnWidth(newWidth, colIndex, colDefWrapper, headerCell);
+                parent.adjustColumnWidth(newWidth, column, headerCell);
 
                 if (headerGroup) {
                     parent.setWidthOfGroupHeaderCell(headerGroup);
                 }
 
                 // show not be calling these here, should do something else
-                if (colPinned) {
+                if (column.pinned) {
                     parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
                     parent.angularGrid.updateBodyContainerWidthAfterColResize();
@@ -464,10 +432,13 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
     HeaderRenderer.prototype.updateFilterIcons = function() {
         var that = this;
-        this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
-            var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
-            var displayStyle = filterPresent ? 'inline' : 'none';
-            colDefWrapper.eFilterIcon.style.display = displayStyle;
+        this.columnModel.getVisibleColumns().forEach(function(column) {
+            // todo: need to change this, so only updates if column is visible
+            if (column.eFilterIcon) {
+                var filterPresent = that.filterManager.isFilterPresentForCol(column.colKey);
+                var displayStyle = filterPresent ? 'inline' : 'none';
+                column.eFilterIcon.style.display = displayStyle;
+            }
         });
     };
 

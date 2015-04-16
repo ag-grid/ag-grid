@@ -8,11 +8,11 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     function RowRenderer() {
     }
 
-    RowRenderer.prototype.init = function (gridOptions, colModel, gridOptionsWrapper, eGrid,
+    RowRenderer.prototype.init = function (gridOptions, columnModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
@@ -36,7 +36,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     };
 
     RowRenderer.prototype.setMainRowWidths = function() {
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 
         var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
         for (var i = 0; i<unpinnedRows.length; i++) {
@@ -191,8 +191,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
 
     RowRenderer.prototype.ensureRowsRendered = function () {
 
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth();
+        var mainRowWidth = this.columnModel.getBodyContainerWidth();
         var that = this;
 
         //at the end, this array will contain the items we need to remove
@@ -208,7 +207,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
-                that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
+                that.insertRow(node, rowIndex, mainRowWidth);
             }
         }
 
@@ -224,7 +223,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth, pinnedColumnCount) {
+    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         //if no cols, don't draw row
         if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
@@ -250,20 +249,20 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.renderedRowStartEditingListeners[rowIndex] = {};
 
         // if group item, insert the first row
-        var columnDefWrappers = this.colModel.getColDefWrappers();
+        var columns = this.columnModel.getVisibleColumns();
         if (rowIsAGroup) {
-            var firstColWrapper = columnDefWrappers[0];
+            var firstColumn = columns[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
-            if (pinnedColumnCount>0) {
+            var eGroupRow = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
+            if (firstColumn.pinned) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
                 eMainRow.appendChild(eGroupRow);
             }
 
-            if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
+            if (firstColumn.pinned && groupHeaderTakesEntireRow) {
+                var eGroupRowPadding = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
@@ -280,18 +279,19 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                     var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
                     groupData = (node.expanded && footersEnabled) ? undefined : node.data;
                 }
-                columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
+                columns.forEach(function(column, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
-                    var value = groupData ? groupData[colDefWrapper.colDef.field] : undefined;
-                    _this.createCellFromColDef(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+                    var value = groupData ? groupData[column.colDef.field] : undefined;
+                    _this.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
-            columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, node.data[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+            columns.forEach(function(column, index) {
+                var firstCol = index === 0;
+                _this.createCellFromColDef(firstCol, column, node.data[column.colDef.field], node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -325,13 +325,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, value, node, rowIndex, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(isFirstColumn, column, value, node, rowIndex, $childScope);
 
-        if (colIndex>=pinnedColumnCount) {
-            eMainRow.appendChild(eGridCell);
-        } else {
+        if (column.pinned) {
             ePinnedRow.appendChild(eGridCell);
+        } else {
+            eMainRow.appendChild(eGridCell);
         }
     };
 
@@ -438,7 +438,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return -1;
     };
 
-    RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, useEntireRow) {
+    RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, useEntireRow, firstColumnIndex) {
         if (useEntireRow) {
             if (footer) {
                 eGridGroupRow.className = 'ag-footer-cell-entire-row';
@@ -447,17 +447,17 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         } else {
             if (footer) {
-                eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-'+0;
+                eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-'+firstColumnIndex;
             } else {
-                eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+0;
+                eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+firstColumnIndex;
             }
         }
     };
 
-    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex, footer) {
+    RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntireRow, padding, rowIndex, footer) {
         var eGridGroupRow = document.createElement('div');
 
-        this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow);
+        this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow, firstColumn.index);
 
         var expandIconNeeded = !padding && !footer;
         if (expandIconNeeded) {
@@ -486,7 +486,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
 
         if (!useEntireRow) {
-            eGridGroupRow.style.width = utils.formatWidth(firstColDefWrapper.actualWidth);
+            eGridGroupRow.style.width = utils.formatWidth(firstColumn.actualWidth);
         }
 
         // indent with the group level
@@ -572,13 +572,13 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         }
     };
 
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
-        eGridCell.setAttribute("col", colIndex);
+        eGridCell.setAttribute("col", column.index);
 
         // set class, only include ag-group-cell if it's a group cell
-        var classes = ['ag-cell', 'cell-col-'+colIndex];
+        var classes = ['ag-cell', 'cell-col-'+column.index];
         if (node.group) {
             if (node.footer) {
                 classes.push('ag-footer-cell');
@@ -592,12 +592,12 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         eGridCell.appendChild(eCellWrapper);
 
         // see if we need a padding box
-        if (colIndex === 0 && (node.parent)) {
+        if (isFirstColumn && (node.parent)) {
             var pixelsToIndent = 20 + (node.parent.level * 10);
             eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
         }
 
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         if (colDef.checkboxSelection) {
             var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
             eCellWrapper.appendChild(eCheckbox);
@@ -643,15 +643,15 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             }
         }
 
-        this.addCellClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex);
-        this.addCellDoubleClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope);
+        this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
+        this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
 
-        eGridCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
+        eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
         // add the 'start editing' call to the chain of editors
-        this.renderedRowStartEditingListeners[rowIndex][colIndex] = function() {
+        this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
             if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+                that.startEditing(eGridCell, column, node, $childScope, rowIndex, colIndex);
                 return true;
             } else {
                 return false;
@@ -661,9 +661,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         return eGridCell;
     };
 
-    RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         eGridCell.addEventListener("dblclick", function(event) {
             if (that.gridOptionsWrapper.getCellDoubleClicked()) {
                 var paramsForGrid = {
@@ -692,7 +692,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 colDef.cellDoubleClicked(paramsForColDef);
             }
             if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+                that.startEditing(eGridCell, column, node, $childScope, rowIndex);
             }
         });
     };
@@ -790,9 +790,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex) {
+    RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         this.editingCell = true;
         utils.removeAllChildren(eGridCell);
         var eInput = document.createElement('input');
@@ -804,7 +804,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             eInput.value = value;
         }
 
-        eInput.style.width = (colDefWrapper.actualWidth - 14) + 'px';
+        eInput.style.width = (column.actualWidth - 14) + 'px';
         eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();
@@ -830,7 +830,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var key = event.which || event.keyCode;
             if (key == TAB_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
-                that.startEditingNextCell(rowIndex, colIndex, event.shiftKey);
+                that.startEditingNextCell(rowIndex, column.index, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -853,7 +853,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 currentCol--;
                 // check if the next cell is the first col of the next row
                 if (currentCol < 0) {
-                    currentCol = this.colModel.getDisplayedColCount() - 1;
+                    currentCol = this.columnModel.getVisibleColumns().length - 1;
                     currentRow--;
                 }
 
@@ -866,7 +866,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
                 // move along to the next cell
                 currentCol++;
                 // check if the next cell is the first col of the next row
-                if (currentCol >= this.colModel.getDisplayedColCount()) {
+                if (currentCol >= this.columnModel.getVisibleColumns().length) {
                     currentCol = 0;
                     currentRow++;
                 }

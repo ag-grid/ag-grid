@@ -41,7 +41,7 @@ define([
     './headerRenderer',
     './gridOptionsWrapper',
     './constants',
-    './colModel',
+    './columnController',
     './selectionRendererFactory',
     './selectionController',
     './paginationController',
@@ -50,7 +50,7 @@ define([
     'css!./css/theme-fresh.css'
 ], function(angular, template, templateNoScrolls, utils, FilterManager,
             InMemoryRowController, VirtualPageRowController, RowRenderer, HeaderRenderer, GridOptionsWrapper,
-            constants, ColModel, SelectionRendererFactory, SelectionController,
+            constants, ColumnController, SelectionRendererFactory, SelectionController,
             PaginationController) {
 
     // if angular is present, register the directive
@@ -159,21 +159,23 @@ define([
         var selectionController = new SelectionController();
         var filterManager = new FilterManager();
         var selectionRendererFactory = new SelectionRendererFactory();
-        var colModel = new ColModel();
+        var columnController = new ColumnController();
         var rowRenderer  = new RowRenderer();
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
         var virtualPageRowController = new VirtualPageRowController();
 
+        var columnModel = columnController.getModel();
+
         // initialise all the beans
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
         filterManager.init(this, gridOptionsWrapper, $compile, $scope);
         selectionRendererFactory.init(this, selectionController);
-        colModel.init(this, selectionRendererFactory);
-        rowRenderer.init(gridOptions, colModel, gridOptionsWrapper, eGridDiv, this,
+        columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
+        rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
-        headerRenderer.init(gridOptionsWrapper, colModel, eGridDiv, this, filterManager, $scope, $compile);
-        inMemoryRowController.init(gridOptionsWrapper, colModel, this, filterManager, $scope);
+        headerRenderer.init(gridOptionsWrapper, columnModel, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
         virtualPageRowController.init(rowRenderer);
 
         // this is a child bean, get a reference and pass it on
@@ -192,7 +194,8 @@ define([
 
         this.rowModel = rowModel;
         this.selectionController = selectionController;
-        this.colModel = colModel;
+        this.columnController = columnController;
+        this.columnModel = columnModel;
         this.inMemoryRowController = inMemoryRowController;
         this.virtualPageRowController = virtualPageRowController;
         this.rowRenderer = rowRenderer;
@@ -347,8 +350,7 @@ define([
 
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
-        var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.colModel.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        this.columnController.setColumns(this.gridOptions.columnDefs);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.refreshHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -359,7 +361,7 @@ define([
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
@@ -547,7 +549,7 @@ define([
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
-        var pinnedColWidth = this.colModel.getTotalPinnedColWidth() + "px";
+        var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + "px";
         this.ePinnedColsContainer.style.width = pinnedColWidth;
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };

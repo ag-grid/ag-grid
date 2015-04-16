@@ -41,7 +41,7 @@ define(['./utils'], function(utils) {
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function() {
 
-        var topLevelNodes = this.model.getTopLevelNodes();
+        var topLevelNodes = this.rowModel.getTopLevelNodes();
 
         var result = [];
         var that = this;
@@ -56,7 +56,7 @@ define(['./utils'], function(utils) {
                     // if not selected, then if it's a group, and the group
                     // has children, continue to search for selections
                     if (node.group && node.children) {
-                        traverse(node);
+                        traverse(node.children);
                     }
                 }
             }

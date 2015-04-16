@@ -110,20 +110,25 @@ define([
         $scope.angularGrid = angularGrid;
 
         var defaultCols = [
-            {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column",
+            {displayName: "Name", field: "name", checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column",
+                group: 'Participant',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
-            {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+            {displayName: "Country", field: "country", width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+                group: 'Participant',
+                groupShow: 'open',
                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
-            {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
+            {displayName: "Language", field: "language", width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
+                group: 'Participant',
+                groupShow: 'open',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'

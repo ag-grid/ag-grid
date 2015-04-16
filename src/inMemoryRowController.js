@@ -8,9 +8,9 @@ define([
         this.createModel();
     }
 
-    InMemoryRowController.prototype.init = function (gridOptionsWrapper, colModel, angularGrid, filterManager, $scope) {
+    InMemoryRowController.prototype.init = function (gridOptionsWrapper, columnModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
@@ -128,7 +128,7 @@ define([
     InMemoryRowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+        this.columnModel.getAllColumns().forEach(function (colDefWrapper) {
             if (colDefWrapper.sort) {
                 colDefWrapperForSorting = colDefWrapper;
             }
@@ -395,7 +395,7 @@ define([
     // private
     InMemoryRowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+        this.columnModel.getAllColumns().forEach(function (colDefWrapper) {
             var data = node.data;
             var value = data ? data[colDefWrapper.colDef.field] : null;
             if (value && value !== '') {
