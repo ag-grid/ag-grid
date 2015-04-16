@@ -356,7 +356,7 @@ var COUNTRY_CODES = {
 };
 
 function numberNewValueHandler(params) {
-    var valueAsNumber = parseInt(params.newValue);
+    var valueAsNumber = parseFloat(params.newValue);
     var field = params.colDef.field;
     var data = params.data;
     data[field] = valueAsNumber;

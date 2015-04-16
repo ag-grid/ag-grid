@@ -651,7 +651,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         // add the 'start editing' call to the chain of editors
         this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
             if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, column, node, $childScope, rowIndex, colIndex);
+                that.startEditing(eGridCell, column, node, $childScope, rowIndex);
                 return true;
             } else {
                 return false;
@@ -830,7 +830,7 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
             var key = event.which || event.keyCode;
             if (key == TAB_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
-                that.startEditingNextCell(rowIndex, column.index, event.shiftKey);
+                that.startEditingNextCell(rowIndex, column, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -838,46 +838,50 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
         });
     };
 
-    RowRenderer.prototype.startEditingNextCell = function(row, col, shiftKey) {
+    RowRenderer.prototype.startEditingNextCell = function(rowIndex, column, shiftKey) {
 
         var firstRowToCheck = this.firstVirtualRenderedRow;
         var lastRowToCheck = this.lastVirtualRenderedRow;
-        var currentRow = row;
-        var currentCol = col;
+        var currentRowIndex = rowIndex;
+
+        var visibleColumns = this.columnModel.getVisibleColumns();
+        var currentCol = column;
 
         while (true) {
+
+            var indexOfCurrentCol = visibleColumns.indexOf(currentCol);
 
             // move backward
             if (shiftKey) {
                 // move along to the previous cell
-                currentCol--;
-                // check if the next cell is the first col of the next row
-                if (currentCol < 0) {
-                    currentCol = this.columnModel.getVisibleColumns().length - 1;
-                    currentRow--;
+                currentCol = visibleColumns[indexOfCurrentCol-1];
+                // check if end of the row, and if so, go back a row
+                if (!currentCol) {
+                    currentCol = visibleColumns[visibleColumns.length-1];
+                    currentRowIndex--;
                 }
 
                 // if got to end of rendered rows, then quit looking
-                if (currentRow < firstRowToCheck) {
+                if (currentRowIndex < firstRowToCheck) {
                     return;
                 }
             // move forward
             } else {
                 // move along to the next cell
-                currentCol++;
-                // check if the next cell is the first col of the next row
-                if (currentCol >= this.columnModel.getVisibleColumns().length) {
-                    currentCol = 0;
-                    currentRow++;
+                currentCol = visibleColumns[indexOfCurrentCol+1];
+                // check if end of the row, and if so, go forward a row
+                if (!currentCol) {
+                    currentCol = visibleColumns[0];
+                    currentRowIndex++;
                 }
 
                 // if got to end of rendered rows, then quit looking
-                if (currentRow > lastRowToCheck) {
+                if (currentRowIndex > lastRowToCheck) {
                     return;
                 }
             }
 
-            var nextFunc = this.renderedRowStartEditingListeners[currentRow][currentCol];
+            var nextFunc = this.renderedRowStartEditingListeners[currentRowIndex][currentCol.colKey];
             if (nextFunc) {
                 // see if the next cell is editable, and if so, we have come to
                 // the end of our search, so stop looking for the next cell
