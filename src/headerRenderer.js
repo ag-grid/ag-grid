@@ -168,9 +168,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var eHeaderContainer = this.eHeaderContainer;
         var that = this;
 
-        this.columnModel.getVisibleColumns().forEach(function (column, index) {
+        this.columnModel.getVisibleColumns().forEach(function (column) {
             // only include the first x cols
-            var headerCell = that.createHeaderCell(column, index, false);
+            var headerCell = that.createHeaderCell(column, false);
             if (column.pinned) {
                 ePinnedHeader.appendChild(headerCell);
             } else {

@@ -12,17 +12,19 @@ include '../documentation_header.php';
 
     <h4>Enable Sorting</h4>
 
-    Turn sorting on for the grid by enabling sorting in the grid options.
+    <p>
+        Turn sorting on for the grid by enabling sorting in the grid options.
+    </p>
 
-    <p/>
+    <p>
+        Sort a column by clicking on the column header.
+    </p>
 
-    Sort a column by clicking on the column header.
+    <h4>Custom Sorting</h4>
 
-    <p/>
-
-    Custom sorting is provided at a column level via the Column Definition.
-
-    <p/>
+    <p>
+        Custom sorting is provided at a column level by configuring a comparator on the column definition.
+    </p>
 
     <show-example example="example1"></show-example>
 </div>

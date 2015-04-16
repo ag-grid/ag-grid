@@ -129,6 +129,18 @@
                     <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
                 <?php } ?>
 
+                <?php if ($key == "Cell Styling") { ?>
+                    <span class="sidebarLinkSelected">Cell Styling</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-cell-styling/index.php">Cell Styling</a>
+                <?php } ?>
+
+                <?php if ($key == "Cell Rendering") { ?>
+                    <span class="sidebarLinkSelected">Cell Rendering</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-cell-rendering/index.php">Cell Rendering</a>
+                <?php } ?>
+
                 <?php if ($key == "Grouping") { ?>
                     <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
                 <?php } else { ?>
