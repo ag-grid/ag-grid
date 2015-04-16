@@ -3914,9 +3914,9 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expanded) {
         var eGroupIcon;
         if (expanded) {
-            eGroupIcon = utils.createIcon('columnGroupExpanded', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+            eGroupIcon = utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
         } else {
-            eGroupIcon = utils.createIcon('columnGroupContracted', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+            eGroupIcon = utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eHeaderGroup.appendChild(eGroupIcon);

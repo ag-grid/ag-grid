@@ -94,7 +94,9 @@ gridsModule.controller('mainController', function($scope) {
             sortAscending: '<i class="fa fa-long-arrow-down"/>',
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
-            groupContracted: '<i class="fa fa-plus-square-o"/>'
+            groupContracted: '<i class="fa fa-plus-square-o"/>',
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
         // callback when row clicked
         rowClicked: function(params) {
@@ -146,6 +148,12 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
             }
         },
+        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+            cellRenderer: function() { return 'Abra...'; } },
+        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+            cellRenderer: function() { return '...cadabra!'; } },
         {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
