@@ -9,28 +9,20 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        <img src="http://www.jstchillin.org/nickdemarco/toocool.gif" width="70px"/>
         Pagination & Infinite Scrolling Now Implemented
-        <img src="http://www.jstchillin.org/nickdemarco/toocool.gif" width="70px"/>
     </div>
 
     <p>
         12th April 2015
     </p>
     <p>
-        Getting pagination and infinite scrolling in was a big effort!!
-        The grid's core components are refactored and laid out now
-        in a way that paging and infinite scrolling slot right in.
-        This was by far the largest requested feature. Now with this out
-        of the way, I'll start making my way through the other issues
-        and feature requests.
+        Documentation added for pagination and infinite scrolling.
     </p>
     <p>
-        Please start using the new features and get back with feedback! When I've done a sweep of the smaller
-        feature requests, I plan on doing a release, so getting feedback before then would be appreciated.
+        Please start using these new features and give feedback.
     </p>
     <p>
-        Is there somebody you haven't told yet about Angular Grid that might be interested? Please let them know!!
+        <b>Help grow the community.</b> If there is someone you can tell about Angular Grid, please do.
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
