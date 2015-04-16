@@ -34,45 +34,31 @@ define(["./constants"], function() {
         return eSvg;
     };
 
-    SvgFactory.prototype.createSortDescSvg = function() {
+    SvgFactory.prototype.createArrowUpSvg = function() {
+        return createPolygonSvg("0,10 5,0 10,10");
+    };
+
+    SvgFactory.prototype.createArrowLeftSvg = function() {
+        return createPolygonSvg("10,0 0,5 10,10");
+    };
+
+    SvgFactory.prototype.createArrowDownSvg = function() {
+        return createPolygonSvg("0,0 5,10 10,0");
+    };
+
+    SvgFactory.prototype.createArrowRightSvg = function() {
+        return createPolygonSvg("0,0 10,5 0,10");
+    };
+
+    function createPolygonSvg(points) {
         var eSvg = createIconSvg();
 
         var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-        eDescIcon.setAttribute("points", "0,10 5,0 10,10");
+        eDescIcon.setAttribute("points", points);
         eSvg.appendChild(eDescIcon);
 
         return eSvg;
-    };
-
-    SvgFactory.prototype.createSortAscSvg = function() {
-        var eSvg = createIconSvg();
-
-        var eAscIcon = document.createElementNS(SVG_NS, "polygon");
-        eAscIcon.setAttribute("points", "0,0 10,0 5,10");
-        eSvg.appendChild(eAscIcon);
-
-        return eSvg;
-    };
-
-    SvgFactory.prototype.createGroupContractedSvg = function() {
-        var eSvg = createIconSvg();
-
-        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-        eSvg.appendChild(eDescIcon);
-
-        return eSvg;
-    };
-
-    SvgFactory.prototype.createGroupExpandedSvg = function() {
-        var eSvg = createIconSvg();
-
-        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
-        eDescIcon.setAttribute("points", "0,0 10,5 0,10");
-        eSvg.appendChild(eDescIcon);
-
-        return eSvg;
-    };
+    }
 
     // util function for the above
     function createIconSvg() {

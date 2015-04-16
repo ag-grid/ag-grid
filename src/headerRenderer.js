@@ -120,9 +120,9 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expanded) {
         var eGroupIcon;
         if (expanded) {
-            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
+            eGroupIcon = utils.createIcon('columnGroupExpanded', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
         } else {
-            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
+            eGroupIcon = utils.createIcon('columnGroupContracted', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eHeaderGroup.appendChild(eGroupIcon);
@@ -235,8 +235,8 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
 
         // add in sort icons
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createSortAscSvg);
-            column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createSortDescSvg);
+            column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
+            column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
             utils.addCssClass(column.eSortAsc, 'ag-header-icon');
             utils.addCssClass(column.eSortDesc, 'ag-header-icon');
             headerCellLabel.appendChild(column.eSortAsc);

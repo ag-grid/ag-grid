@@ -542,9 +542,9 @@ define(["./constants","./svgFactory","./utils"], function(constants, SvgFactory,
     RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
         var eGroupIcon;
         if (expanded) {
-            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
+            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
         } else {
-            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
+            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
 
         eGridGroupRow.appendChild(eGroupIcon);

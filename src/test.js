@@ -94,12 +94,14 @@ define([
             rowSelected: rowSelected, //callback when row selected
             selectionChanged: selectionChanged, //callback when selection changed,
             icons: {
-                //menu: '<i class="fa fa-bars"/>',
+                menu: '<i class="fa fa-bars"/>',
                 filter: '<i class="fa fa-filter"/>',
                 sortAscending: '<i class="fa fa-long-arrow-down"/>',
                 sortDescending: '<i class="fa fa-long-arrow-up"/>',
                 groupExpanded: '<i class="fa fa-minus-square-o"/>',
-                groupContracted: '<i class="fa fa-plus-square-o"/>'
+                groupContracted: '<i class="fa fa-plus-square-o"/>',
+                columnGroupExpanded: '<i class="fa fa-minus-square-o"/>',
+                columnGroupContracted: '<i class="fa fa-plus-square-o"/>'
             },
             rowClicked: function(params) {
                 console.log("Callback rowClicked: " + params.data + " - " + params.event);
