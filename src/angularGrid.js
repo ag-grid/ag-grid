@@ -24,6 +24,8 @@
 // bugs:
 // editing a checkbox field fails
 
+// put version on top of file
+
 // paging: selection, sorting, filtering
 // infinite paging
 // disable grouping when infinite

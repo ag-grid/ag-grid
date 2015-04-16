@@ -111,3 +111,23 @@ h2 {
 .license {
     font-size: 12px;
 }
+
+.quote-block {
+    margin-top: 50px;
+}
+
+.quote {
+    font-style: italic;
+    font-size: 15px;
+    text-align: center;
+}
+
+.under-quote {
+    font-size: 12px;
+    text-align: center;
+}
+
+.quote-side-panel {
+    border-left: 1px solid grey;
+    padding-left: 50px;
+}

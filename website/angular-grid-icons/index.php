@@ -20,7 +20,8 @@ include '../documentation_header.php';
             <li>Sort icons on header</li>
             <li>Filter icon on header</li>
             <li>Menu icon on header</li>
-            <li>Group icon in rows</li>
+            <li>Group open / close icon in headers</li>
+            <li>Group expand / contact icon in rows</li>
         </ul>
     </p>
 
@@ -44,8 +45,8 @@ gridOptions.icons = {
     sortDescending: mySortDescIcon,
     groupExpanded: myGroupExpandedIcon,
     groupContracted: myGroupContractedIcon,
-    columnGroupExpanded: myGroupExpandedIcon,
-    columnGroupContracted: myGroupContractedIcon
+    columnGroupOpened: myGroupExpandedIcon,
+    columnGroupClosed: myGroupContractedIcon
 }
 </pre>
 

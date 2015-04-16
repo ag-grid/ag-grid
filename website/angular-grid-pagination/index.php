@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Pagination</h2>
 
     <p>
-        Pagination allows the grid to lazy load rows from the server and display the rows on page at a time. The page to display is selected
+        Pagination allows the grid to lazy load rows from the server and display the rows one page at a time. The page to display is selected
         by he user using the pagination panel that appears at the bottom of the page.
     </p>
 
