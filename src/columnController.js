@@ -50,13 +50,22 @@ define(['./constants'], function(constants) {
     // called by angularGrid
     ColumnController.prototype.setColumns = function (columnDefs) {
         this.buildColumns(columnDefs);
-        this.buildGroups();
-        this.buildVisibleColumns();
         this.ensureEachColHasSize();
+        this.buildGroups();
+        this.updateGroups();
+        this.updateVisibleColumns();
+    };
+
+    // called by headerRenderer - when a header is opened or closed
+    ColumnController.prototype.columnGroupOpened = function (group) {
+        group.expanded = !group.expanded;
+        this.updateGroups();
+        this.updateVisibleColumns();
+        this.angularGrid.refreshHeaderAndBody();
     };
 
     // private
-    ColumnController.prototype.buildVisibleColumns = function() {
+    ColumnController.prototype.updateVisibleColumns = function() {
         // if not grouping by headers, then all columns are visible
         if (!this.gridOptionsWrapper.isGroupHeaders()) {
             this.visibleColumns = this.columns;
@@ -105,6 +114,20 @@ define(['./constants'], function(constants) {
             }
             currentGroup.addColumn(column);
         });
+    };
+
+    // private
+    ColumnController.prototype.updateGroups = function() {
+        // if not grouping by headers, do nothing
+        if (!this.gridOptionsWrapper.isGroupHeaders()) {
+            return;
+        }
+
+        for (var i = 0; i<this.columnGroups.length; i++) {
+            var group = this.columnGroups[i];
+            group.calculateExpandable();
+            group.calculateVisibleColumns();
+        }
     };
 
     // private
@@ -172,27 +195,32 @@ define(['./constants'], function(constants) {
 
     ColumnGroup.prototype.addColumn = function (column) {
         this.allColumns.push(column);
-        this.calculateExpandable();
-        this.calculateVisibleColumns();
     };
 
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
     ColumnGroup.prototype.calculateExpandable = function () {
+        // want to make sure the group doesn't disappear when it's open
         var atLeastOneShowingWhenOpen = false;
+        // want to make sure the group doesn't disappear when it's closed
         var atLeastOneShowingWhenClosed = false;
+        // want to make sure the group has something to show / hide
+        var atLeastOneChangeable = false;
         for (var i = 0, j = this.allColumns.length; i<j; i++) {
             var column = this.allColumns[i];
             if (column.colDef.groupShow==='open') {
                 atLeastOneShowingWhenOpen = true;
+                atLeastOneChangeable = true;
             } else if (column.colDef.groupShow==='closed') {
                 atLeastOneShowingWhenClosed = true;
+                atLeastOneChangeable = true;
             } else {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneShowingWhenClosed = true;
             }
         }
-        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed;
+
+        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
     };
 
     ColumnGroup.prototype.calculateVisibleColumns = function () {
@@ -210,6 +238,12 @@ define(['./constants'], function(constants) {
                 case 'open':
                     // when set to open, only show col if group is open
                     if (this.expanded) {
+                        this.visibleColumns.push(column);
+                    }
+                    break;
+                case 'closed':
+                    // when set to open, only show col if group is open
+                    if (!this.expanded) {
                         this.visibleColumns.push(column);
                     }
                     break;

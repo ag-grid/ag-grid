@@ -174,7 +174,7 @@ define([
         columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
         rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
-        headerRenderer.init(gridOptionsWrapper, columnModel, eGridDiv, this, filterManager, $scope, $compile);
+        headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
         inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
         virtualPageRowController.init(rowRenderer);
 
@@ -266,6 +266,15 @@ define([
         this.setBodySize();
 
         // because we just set the rowModel, need to update the gui
+        this.rowRenderer.refreshView();
+    };
+
+    // gets called after columns are shown / hidden from groups expanding
+    Grid.prototype.refreshHeaderAndBody = function () {
+        this.headerRenderer.refreshHeader();
+        this.headerRenderer.updateFilterIcons();
+        this.setBodyContainerWidth();
+        this.setPinnedColContainerWidth();
         this.rowRenderer.refreshView();
     };
 

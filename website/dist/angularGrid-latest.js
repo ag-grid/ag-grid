@@ -2148,9 +2148,9 @@ define('../src/inMemoryRowController',[
         this.createModel();
     }
 
-    InMemoryRowController.prototype.init = function (gridOptionsWrapper, colModel, angularGrid, filterManager, $scope) {
+    InMemoryRowController.prototype.init = function (gridOptionsWrapper, columnModel, angularGrid, filterManager, $scope) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
@@ -2268,7 +2268,7 @@ define('../src/inMemoryRowController',[
     InMemoryRowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
         var colDefWrapperForSorting = null;
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+        this.columnModel.getAllColumns().forEach(function (colDefWrapper) {
             if (colDefWrapper.sort) {
                 colDefWrapperForSorting = colDefWrapper;
             }
@@ -2535,7 +2535,7 @@ define('../src/inMemoryRowController',[
     // private
     InMemoryRowController.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper) {
+        this.columnModel.getAllColumns().forEach(function (colDefWrapper) {
             var data = node.data;
             var value = data ? data[colDefWrapper.colDef.field] : null;
             if (value && value !== '') {
@@ -2921,11 +2921,11 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     function RowRenderer() {
     }
 
-    RowRenderer.prototype.init = function (gridOptions, colModel, gridOptionsWrapper, eGrid,
+    RowRenderer.prototype.init = function (gridOptions, columnModel, gridOptionsWrapper, eGrid,
                          angularGrid, selectionRendererFactory, $compile, $scope,
                          selectionController) {
         this.gridOptions = gridOptions;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.angularGrid = angularGrid;
         this.selectionRendererFactory = selectionRendererFactory;
@@ -2949,7 +2949,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
     };
 
     RowRenderer.prototype.setMainRowWidths = function() {
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 
         var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
         for (var i = 0; i<unpinnedRows.length; i++) {
@@ -3104,8 +3104,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
 
     RowRenderer.prototype.ensureRowsRendered = function () {
 
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
-        var mainRowWidth = this.colModel.getTotalUnpinnedColWidth();
+        var mainRowWidth = this.columnModel.getBodyContainerWidth();
         var that = this;
 
         //at the end, this array will contain the items we need to remove
@@ -3121,7 +3120,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
-                that.insertRow(node, rowIndex, mainRowWidth, pinnedColumnCount);
+                that.insertRow(node, rowIndex, mainRowWidth);
             }
         }
 
@@ -3137,7 +3136,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth, pinnedColumnCount) {
+    RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         //if no cols, don't draw row
         if (!this.gridOptionsWrapper.isColumDefsPresent()) { return; }
 
@@ -3163,20 +3162,20 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.renderedRowStartEditingListeners[rowIndex] = {};
 
         // if group item, insert the first row
-        var columnDefWrappers = this.colModel.getColDefWrappers();
+        var columns = this.columnModel.getVisibleColumns();
         if (rowIsAGroup) {
-            var firstColWrapper = columnDefWrappers[0];
+            var firstColumn = columns[0];
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-            var eGroupRow = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
-            if (pinnedColumnCount>0) {
+            var eGroupRow = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
+            if (firstColumn.pinned) {
                 ePinnedRow.appendChild(eGroupRow);
             } else {
                 eMainRow.appendChild(eGroupRow);
             }
 
-            if (pinnedColumnCount>0 && groupHeaderTakesEntireRow) {
-                var eGroupRowPadding = _this.createGroupElement(node, firstColWrapper, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
+            if (firstColumn.pinned && groupHeaderTakesEntireRow) {
+                var eGroupRowPadding = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
                 eMainRow.appendChild(eGroupRowPadding);
             }
 
@@ -3193,18 +3192,19 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                     var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
                     groupData = (node.expanded && footersEnabled) ? undefined : node.data;
                 }
-                columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
+                columns.forEach(function(column, colIndex) {
                     if (colIndex==0) { //skip first col, as this is the group col we already inserted
                         return;
                     }
-                    var value = groupData ? groupData[colDefWrapper.colDef.field] : undefined;
-                    _this.createCellFromColDef(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+                    var value = groupData ? groupData[column.colDef.field] : undefined;
+                    _this.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
                 });
             }
 
         } else {
-            columnDefWrappers.forEach(function(colDefWrapper, colIndex) {
-                _this.createCellFromColDef(colDefWrapper, node.data[colDefWrapper.colDef.field], node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, newChildScope);
+            columns.forEach(function(column, index) {
+                var firstCol = index === 0;
+                _this.createCellFromColDef(firstCol, column, node.data[column.colDef.field], node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
@@ -3238,13 +3238,13 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createCellFromColDef = function(colDefWrapper, value, node, rowIndex, colIndex, pinnedColumnCount, eMainRow, ePinnedRow, $childScope) {
-        var eGridCell = this.createCell(colDefWrapper, value, node, rowIndex, colIndex, $childScope);
+    RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, value, node, rowIndex, eMainRow, ePinnedRow, $childScope) {
+        var eGridCell = this.createCell(isFirstColumn, column, value, node, rowIndex, $childScope);
 
-        if (colIndex>=pinnedColumnCount) {
-            eMainRow.appendChild(eGridCell);
-        } else {
+        if (column.pinned) {
             ePinnedRow.appendChild(eGridCell);
+        } else {
+            eMainRow.appendChild(eGridCell);
         }
     };
 
@@ -3351,7 +3351,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return -1;
     };
 
-    RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, useEntireRow) {
+    RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, useEntireRow, firstColumnIndex) {
         if (useEntireRow) {
             if (footer) {
                 eGridGroupRow.className = 'ag-footer-cell-entire-row';
@@ -3360,17 +3360,17 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         } else {
             if (footer) {
-                eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-'+0;
+                eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-'+firstColumnIndex;
             } else {
-                eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+0;
+                eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-'+firstColumnIndex;
             }
         }
     };
 
-    RowRenderer.prototype.createGroupElement = function(node, firstColDefWrapper, useEntireRow, padding, rowIndex, footer) {
+    RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntireRow, padding, rowIndex, footer) {
         var eGridGroupRow = document.createElement('div');
 
-        this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow);
+        this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow, firstColumn.index);
 
         var expandIconNeeded = !padding && !footer;
         if (expandIconNeeded) {
@@ -3399,7 +3399,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
 
         if (!useEntireRow) {
-            eGridGroupRow.style.width = utils.formatWidth(firstColDefWrapper.actualWidth);
+            eGridGroupRow.style.width = utils.formatWidth(firstColumn.actualWidth);
         }
 
         // indent with the group level
@@ -3485,13 +3485,13 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         }
     };
 
-    RowRenderer.prototype.createCell = function(colDefWrapper, value, node, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
         var that = this;
         var eGridCell = document.createElement("div");
-        eGridCell.setAttribute("col", colIndex);
+        eGridCell.setAttribute("col", column.index);
 
         // set class, only include ag-group-cell if it's a group cell
-        var classes = ['ag-cell', 'cell-col-'+colIndex];
+        var classes = ['ag-cell', 'cell-col-'+column.index];
         if (node.group) {
             if (node.footer) {
                 classes.push('ag-footer-cell');
@@ -3505,12 +3505,12 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         eGridCell.appendChild(eCellWrapper);
 
         // see if we need a padding box
-        if (colIndex === 0 && (node.parent)) {
+        if (isFirstColumn && (node.parent)) {
             var pixelsToIndent = 20 + (node.parent.level * 10);
             eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
         }
 
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         if (colDef.checkboxSelection) {
             var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
             eCellWrapper.appendChild(eCheckbox);
@@ -3556,15 +3556,15 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             }
         }
 
-        this.addCellClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex);
-        this.addCellDoubleClickedHandler(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope);
+        this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
+        this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
 
-        eGridCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
+        eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
         // add the 'start editing' call to the chain of editors
-        this.renderedRowStartEditingListeners[rowIndex][colIndex] = function() {
+        this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
             if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+                that.startEditing(eGridCell, column, node, $childScope, rowIndex, colIndex);
                 return true;
             } else {
                 return false;
@@ -3574,9 +3574,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         return eGridCell;
     };
 
-    RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, colDefWrapper, value, rowIndex, colIndex, $childScope) {
+    RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         eGridCell.addEventListener("dblclick", function(event) {
             if (that.gridOptionsWrapper.getCellDoubleClicked()) {
                 var paramsForGrid = {
@@ -3605,7 +3605,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 colDef.cellDoubleClicked(paramsForColDef);
             }
             if (that.isCellEditable(colDef, node)) {
-                that.startEditing(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex);
+                that.startEditing(eGridCell, column, node, $childScope, rowIndex);
             }
         });
     };
@@ -3703,9 +3703,9 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
         this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
     };
 
-    RowRenderer.prototype.startEditing = function(eGridCell, colDefWrapper, node, $childScope, rowIndex, colIndex) {
+    RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         this.editingCell = true;
         utils.removeAllChildren(eGridCell);
         var eInput = document.createElement('input');
@@ -3717,7 +3717,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             eInput.value = value;
         }
 
-        eInput.style.width = (colDefWrapper.actualWidth - 14) + 'px';
+        eInput.style.width = (column.actualWidth - 14) + 'px';
         eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();
@@ -3743,7 +3743,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
             var key = event.which || event.keyCode;
             if (key == TAB_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
-                that.startEditingNextCell(rowIndex, colIndex, event.shiftKey);
+                that.startEditingNextCell(rowIndex, column.index, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -3766,7 +3766,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 currentCol--;
                 // check if the next cell is the first col of the next row
                 if (currentCol < 0) {
-                    currentCol = this.colModel.getDisplayedColCount() - 1;
+                    currentCol = this.columnModel.getVisibleColumns().length - 1;
                     currentRow--;
                 }
 
@@ -3779,7 +3779,7 @@ define('../src/rowRenderer',["./constants","./svgFactory","./utils"], function(c
                 // move along to the next cell
                 currentCol++;
                 // check if the next cell is the first col of the next row
-                if (currentCol >= this.colModel.getDisplayedColCount()) {
+                if (currentCol >= this.columnModel.getVisibleColumns().length) {
                     currentCol = 0;
                     currentRow++;
                 }
@@ -3813,9 +3813,10 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     function HeaderRenderer() {
     }
 
-    HeaderRenderer.prototype.init = function (gridOptionsWrapper, colModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, columnController, columnModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.colModel = colModel;
+        this.columnModel = columnModel;
+        this.columnController = columnController;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
@@ -3860,7 +3861,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     };
 
     HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-        var groups = this.colModel.getColumnGroups();
+        var groups = this.columnModel.getColumnGroups();
         var that = this;
         groups.forEach(function(group) {
             var eHeaderCell = that.createGroupedHeaderCell(group);
@@ -3869,17 +3870,17 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         });
     };
 
-    HeaderRenderer.prototype.createGroupedHeaderCell = function(currentGroup) {
+    HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
 
         var eHeaderGroup = document.createElement('div');
         eHeaderGroup.className = 'ag-header-group';
 
         var eHeaderGroupCell = document.createElement('div');
-        currentGroup.eHeaderGroupCell = eHeaderGroupCell;
+        group.eHeaderGroupCell = eHeaderGroupCell;
         var classNames = ['ag-header-group-cell'];
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        if (currentGroup.name) {
+        if (group.name) {
             classNames.push('ag-header-group-cell-with-group');
         } else {
             classNames.push('ag-header-group-cell-no-group');
@@ -3890,35 +3891,54 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             var eHeaderCellResize = document.createElement("div");
             eHeaderCellResize.className = "ag-header-cell-resize";
             eHeaderGroupCell.appendChild(eHeaderCellResize);
-            currentGroup.eHeaderCellResize = eHeaderCellResize;
-            var dragCallback = this.groupDragCallbackFactory(currentGroup);
+            group.eHeaderCellResize = eHeaderCellResize;
+            var dragCallback = this.groupDragCallbackFactory(group);
             this.addDragHandler(eHeaderCellResize, dragCallback);
         }
 
         // no renderer, default text render
-        var groupName = currentGroup.name;
+        var groupName = group.name;
         if (groupName && groupName !== '') {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
             eHeaderGroupCell.appendChild(eGroupCellLabel);
 
             var eInnerText = document.createElement("span");
+            eInnerText.className = 'ag-header-group-text';
             eInnerText.innerHTML = groupName;
             eGroupCellLabel.appendChild(eInnerText);
-        }
 
+            if (group.expandable) {
+                this.addGroupExpandIcon(group, eGroupCellLabel, group.expanded);
+            }
+        }
         eHeaderGroup.appendChild(eHeaderGroupCell);
 
         var that = this;
-        currentGroup.columns.forEach(function (colDefWrapper, index) {
-            var colIndex = index + currentGroup.firstIndex;
-            var eHeaderCell = that.createHeaderCell(colDefWrapper, colIndex, currentGroup.pinned, true, currentGroup);
-            that.setWidthOfGroupHeaderCell(currentGroup);
+        group.visibleColumns.forEach(function (column) {
+            var eHeaderCell = that.createHeaderCell(column, true, group);
             eHeaderGroup.appendChild(eHeaderCell);
-            currentGroup.eHeaderCells.push(eHeaderCell);
         });
 
+        that.setWidthOfGroupHeaderCell(group);
+
         return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expanded) {
+        var eGroupIcon;
+        if (expanded) {
+            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
+        } else {
+            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
+        }
+        eGroupIcon.className = 'ag-header-expand-icon';
+        eHeaderGroup.appendChild(eGroupIcon);
+
+        var that = this;
+        eGroupIcon.onclick = function() {
+            that.columnController.columnGroupOpened(group);
+        };
     };
 
     HeaderRenderer.prototype.addDragHandler = function (eDraggableElement, dragCallback) {
@@ -3944,7 +3964,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
         var totalWidth = 0;
-        headerGroup.columns.forEach( function (column) {
+        headerGroup.visibleColumns.forEach( function (column) {
             totalWidth += column.actualWidth;
         });
         headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
@@ -3954,25 +3974,25 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
     HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
         var ePinnedHeader = this.ePinnedHeader;
         var eHeaderContainer = this.eHeaderContainer;
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.colModel.getColDefWrappers().forEach(function (colDefWrapper, index) {
+        this.columnModel.getVisibleColumns().forEach(function (column, index) {
             // only include the first x cols
-            if (index < pinnedColumnCount) {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, true, false);
+            var headerCell = that.createHeaderCell(column, index, false);
+            if (column.pinned) {
                 ePinnedHeader.appendChild(headerCell);
             } else {
-                var headerCell = that.createHeaderCell(colDefWrapper, index, false, false);
                 eHeaderContainer.appendChild(headerCell);
             }
         });
     };
 
-    HeaderRenderer.prototype.createHeaderCell = function(colDefWrapper, colIndex, colPinned, grouped, headerGroup) {
+    HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGroup) {
         var that = this;
-        var colDef = colDefWrapper.colDef;
+        var colDef = column.colDef;
         var eHeaderCell = document.createElement("div");
+        // stick the header cell in column, as we access it when group is re-sized
+        column.eHeaderCell = eHeaderCell;
 
         var headerCellClasses = ['ag-header-cell'];
         if (grouped) {
@@ -3991,19 +4011,19 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             var headerCellResize = document.createElement("div");
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
-            var dragCallback = this.headerDragCallbackFactory(colIndex, colPinned, eHeaderCell, colDefWrapper, headerGroup);
-            this.addDragHandler(headerCellResize, dragCallback)
+            var dragCallback = this.headerDragCallbackFactory(eHeaderCell, column, headerGroup);
+            this.addDragHandler(headerCellResize, dragCallback);
         }
 
         // filter button
         var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
         if (showMenu) {
-            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, colDefWrapper, svgFactory.createMenuSvg);
+            var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, column, svgFactory.createMenuSvg);
             utils.addCssClass(eMenuButton, 'ag-header-icon');
 
             eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             eMenuButton.onclick = function () {
-                that.filterManager.showFilter(colDefWrapper, this);
+                that.filterManager.showFilter(column, this);
             };
             eHeaderCell.appendChild(eMenuButton);
             eHeaderCell.onmouseenter = function() {
@@ -4023,21 +4043,21 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
         // add in sort icons
         if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-            colDefWrapper.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortAscSvg);
-            colDefWrapper.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, colDefWrapper, svgFactory.createSortDescSvg);
-            utils.addCssClass(colDefWrapper.eSortAsc, 'ag-header-icon');
-            utils.addCssClass(colDefWrapper.eSortDesc, 'ag-header-icon');
-            headerCellLabel.appendChild(colDefWrapper.eSortAsc);
-            headerCellLabel.appendChild(colDefWrapper.eSortDesc);
-            colDefWrapper.eSortAsc.style.display = 'none';
-            colDefWrapper.eSortDesc.style.display = 'none';
-            this.addSortHandling(headerCellLabel, colDefWrapper);
+            column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createSortAscSvg);
+            column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createSortDescSvg);
+            utils.addCssClass(column.eSortAsc, 'ag-header-icon');
+            utils.addCssClass(column.eSortDesc, 'ag-header-icon');
+            headerCellLabel.appendChild(column.eSortAsc);
+            headerCellLabel.appendChild(column.eSortDesc);
+            column.eSortAsc.style.display = 'none';
+            column.eSortDesc.style.display = 'none';
+            this.addSortHandling(headerCellLabel, column);
         }
 
         // add in filter icon
-        colDefWrapper.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, colDefWrapper, svgFactory.createFilterSvg);
-        utils.addCssClass(colDefWrapper.eFilterIcon, 'ag-header-icon');
-        headerCellLabel.appendChild(colDefWrapper.eFilterIcon);
+        column.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, column, svgFactory.createFilterSvg);
+        utils.addCssClass(column.eFilterIcon, 'ag-header-icon');
+        headerCellLabel.appendChild(column.eFilterIcon);
 
         // render the cell, use a renderer if one is provided
         var headerCellRenderer;
@@ -4067,8 +4087,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             // angular compile header if option is turned on
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 newChildScope.colDef = colDef;
-                newChildScope.colIndex = colIndex;
-                newChildScope.colDefWrapper = colDefWrapper;
+                newChildScope.colIndex = colDef.index;
+                newChildScope.colDefWrapper = column;
                 this.childScopes.push(newChildScope);
                 var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
                 headerCellLabel.appendChild(childToAppendCompiled);
@@ -4084,7 +4104,7 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         }
 
         eHeaderCell.appendChild(headerCellLabel);
-        eHeaderCell.style.width = utils.formatWidth(colDefWrapper.actualWidth);
+        eHeaderCell.style.width = utils.formatWidth(column.actualWidth);
 
         return eHeaderCell;
     };
@@ -4104,22 +4124,26 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
             }
 
             // clear sort on all columns except this one, and update the icons
-            that.colModel.getColDefWrappers().forEach(function(colWrapperToClear) {
-                if (colWrapperToClear!==colDefWrapper) {
-                    colWrapperToClear.sort = null;
+            that.columnModel.getAllColumns().forEach(function(columnToClear) {
+                if (columnToClear!==colDefWrapper) {
+                    columnToClear.sort = null;
                 }
 
                 // check in case no sorting on this particular col, as sorting is optional per col
-                if (colWrapperToClear.colDef.suppressSorting) {
+                if (columnToClear.colDef.suppressSorting) {
                     return;
                 }
 
                 // update visibility of icons
-                var sortAscending = colWrapperToClear.sort === constants.ASC;
-                var sortDescending = colWrapperToClear.sort === constants.DESC;
+                var sortAscending = columnToClear.sort === constants.ASC;
+                var sortDescending = columnToClear.sort === constants.DESC;
 
-                colWrapperToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
-                colWrapperToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
+                if (columnToClear.eSortAsc) {
+                    columnToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
+                }
+                if (columnToClear.eSortDesc) {
+                    columnToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
+                }
             });
 
             that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
@@ -4128,15 +4152,16 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     HeaderRenderer.prototype.groupDragCallbackFactory = function (currentGroup) {
         var parent = this;
+        var visibleColumns = currentGroup.visibleColumns;
         return {
             onDragStart: function() {
                 this.groupWidthStart = currentGroup.actualWidth;
                 this.childrenWidthStarts = [];
                 var that = this;
-                currentGroup.columns.forEach( function (colDefWrapper) {
+                visibleColumns.forEach( function (colDefWrapper) {
                     that.childrenWidthStarts.push(colDefWrapper.actualWidth);
                 });
-                this.minWidth = currentGroup.columns.length * constants.MIN_COL_WIDTH;
+                this.minWidth = visibleColumns.length * constants.MIN_COL_WIDTH;
             },
             onDragging: function(dragChange) {
 
@@ -4156,8 +4181,8 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                 // to cater for rounding errors, and min width adjustments
                 var pixelsToDistribute = newWidth;
                 var that = this;
-                currentGroup.columns.forEach( function (colDefWrapper, index) {
-                    var notLastCol = index !== (currentGroup.columns.length-1);
+                currentGroup.visibleColumns.forEach( function (colDefWrapper, index) {
+                    var notLastCol = index !== (visibleColumns.length-1);
                     var newChildSize;
                     if (notLastCol) {
                         // if not the last col, calculate the column width as normal
@@ -4171,12 +4196,11 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                         // if last col, give it the remaining pixels
                         newChildSize = pixelsToDistribute;
                     }
-                    var childColIndex = currentGroup.firstIndex + index;
-                    var eHeaderCell = currentGroup.eHeaderCells[index];
-                    parent.adjustColumnWidth(newChildSize, childColIndex, colDefWrapper, eHeaderCell);
+                    var eHeaderCell = visibleColumns[index].eHeaderCell;
+                    parent.adjustColumnWidth(newChildSize, colDefWrapper, eHeaderCell);
                 });
 
-                // show not be calling these here, should do something else
+                // should not be calling these here, should do something else
                 if (currentGroup.pinned) {
                     parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
@@ -4186,24 +4210,24 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
         };
     };
 
-    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, colIndex, colDefWrapper, eHeaderCell) {
+    HeaderRenderer.prototype.adjustColumnWidth = function(newWidth, column, eHeaderCell) {
         var newWidthPx = newWidth + "px";
-        var selectorForAllColsInCell = ".cell-col-"+colIndex;
+        var selectorForAllColsInCell = ".cell-col-"+column.index;
         var cellsForThisCol = this.eRoot.querySelectorAll(selectorForAllColsInCell);
         for (var i = 0; i<cellsForThisCol.length; i++) {
             cellsForThisCol[i].style.width = newWidthPx;
         }
 
         eHeaderCell.style.width = newWidthPx;
-        colDefWrapper.actualWidth = newWidth;
+        column.actualWidth = newWidth;
     };
 
     // gets called when a header (not a header group) gets resized
-    HeaderRenderer.prototype.headerDragCallbackFactory = function (colIndex, colPinned, headerCell, colDefWrapper, headerGroup) {
+    HeaderRenderer.prototype.headerDragCallbackFactory = function (headerCell, column, headerGroup) {
         var parent = this;
         return {
             onDragStart: function() {
-                this.startWidth = colDefWrapper.actualWidth;
+                this.startWidth = column.actualWidth;
             },
             onDragging: function(dragChange) {
                 var newWidth = this.startWidth + dragChange;
@@ -4211,14 +4235,14 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
                     newWidth = constants.MIN_COL_WIDTH;
                 }
 
-                parent.adjustColumnWidth(newWidth, colIndex, colDefWrapper, headerCell);
+                parent.adjustColumnWidth(newWidth, column, headerCell);
 
                 if (headerGroup) {
                     parent.setWidthOfGroupHeaderCell(headerGroup);
                 }
 
-                // show not be calling these here, should do something else
-                if (colPinned) {
+                // should not be calling these here, should do something else
+                if (column.pinned) {
                     parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {
                     parent.angularGrid.updateBodyContainerWidthAfterColResize();
@@ -4236,10 +4260,13 @@ define('../src/headerRenderer',["./utils", "./svgFactory", "./constants"], funct
 
     HeaderRenderer.prototype.updateFilterIcons = function() {
         var that = this;
-        this.colModel.getColDefWrappers().forEach(function(colDefWrapper) {
-            var filterPresent = that.filterManager.isFilterPresentForCol(colDefWrapper.colKey);
-            var displayStyle = filterPresent ? 'inline' : 'none';
-            colDefWrapper.eFilterIcon.style.display = displayStyle;
+        this.columnModel.getVisibleColumns().forEach(function(column) {
+            // todo: need to change this, so only updates if column is visible
+            if (column.eFilterIcon) {
+                var filterPresent = that.filterManager.isFilterPresentForCol(column.colKey);
+                var displayStyle = filterPresent ? 'inline' : 'none';
+                column.eFilterIcon.style.display = displayStyle;
+            }
         });
     };
 
@@ -4352,6 +4379,7 @@ define('../src/gridOptionsWrapper',[], function() {
 define('../src/columnController',['./constants'], function(constants) {
 
     function ColumnController() {
+        this.createModel();
     }
 
     ColumnController.prototype.init = function (angularGrid, selectionRendererFactory, gridOptionsWrapper) {
@@ -4360,14 +4388,77 @@ define('../src/columnController',['./constants'], function(constants) {
         this.selectionRendererFactory = selectionRendererFactory;
     };
 
-    ColumnController.prototype.setColumnDefs = function (columnDefs, pinnedColCount) {
-        this.pinnedColumnCount = pinnedColCount;
-
-        this.buildColumns(columnDefs);
-        this.buildGroups();
-        this.ensureEachColHasSize();
+    ColumnController.prototype.createModel = function () {
+        var that = this;
+        this.model = {
+            // used by:
+            // + inMemoryRowController -> sorting, building quick filter text
+            // + headerRenderer -> sorting (clearing icon)
+            getAllColumns: function () {
+                return that.columns;
+            },
+            // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
+            // need a newMethod - get next col index
+            getVisibleColumns: function () {
+                return that.visibleColumns;
+            },
+            // used by:
+            // + angularGrid -> for setting body width
+            // + rowController -> setting main row widths (when inserting and resizing)
+            getBodyContainerWidth: function () {
+                return that.getTotalColWidth(false);
+            },
+            // used by:
+            // + angularGrid -> setting pinned body width
+            getPinnedContainerWidth: function () {
+                return that.getTotalColWidth(true);
+            },
+            // used by:
+            // + headerRenderer -> setting pinned body width
+            getColumnGroups: function () {
+                return that.columnGroups;
+            }
+        };
     };
 
+    ColumnController.prototype.getModel = function () {
+        return this.model;
+    };
+
+    // called by angularGrid
+    ColumnController.prototype.setColumns = function (columnDefs) {
+        this.buildColumns(columnDefs);
+        this.ensureEachColHasSize();
+        this.buildGroups();
+        this.updateGroups();
+        this.updateVisibleColumns();
+    };
+
+    // called by headerRenderer - when a header is opened or closed
+    ColumnController.prototype.columnGroupOpened = function (group) {
+        group.expanded = !group.expanded;
+        this.updateGroups();
+        this.updateVisibleColumns();
+        this.angularGrid.refreshHeaderAndBody();
+    };
+
+    // private
+    ColumnController.prototype.updateVisibleColumns = function() {
+        // if not grouping by headers, then all columns are visible
+        if (!this.gridOptionsWrapper.isGroupHeaders()) {
+            this.visibleColumns = this.columns;
+            return;
+        }
+
+        // if grouping, then only show col as per group rules
+        this.visibleColumns = [];
+        for (var i = 0; i<this.columnGroups.length; i++) {
+            var group = this.columnGroups[i];
+            group.addToVisibleColumns(this.visibleColumns);
+        }
+    };
+
+    // private
     ColumnController.prototype.buildGroups = function() {
         // if not grouping by headers, do nothing
         if (!this.gridOptionsWrapper.isGroupHeaders()) {
@@ -4378,51 +4469,65 @@ define('../src/columnController',['./constants'], function(constants) {
         // split the columns into groups
         var currentGroup = null;
         this.columnGroups = [];
-        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
         var that = this;
 
-        this.columns.forEach(function (column, index) {
+        var lastColWasPinned = true;
+
+        this.columns.forEach(function (column) {
             // do we need a new group, because we move from pinned to non-pinned columns?
-            var endOfPinnedHeader = index === pinnedColumnCount;
+            var endOfPinnedHeader = lastColWasPinned && !column.pinned;
+            if (!column.pinned) {lastColWasPinned = false;}
             // do we need a new group, because the group names doesn't match from previous col?
             var groupKeyMismatch = currentGroup && column.colDef.group !== currentGroup.name;
             // we don't group columns where no group is specified
             var colNotInGroup = currentGroup && !currentGroup.name;
             // do we need a new group, because we are just starting
-            var processingFirstCol = index === 0;
+            var processingFirstCol = column.index === 0;
             var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
             // create new group, if it's needed
             if (newGroupNeeded) {
-                var pinned = index < pinnedColumnCount;
-                currentGroup = new ColumnGroup(index, pinned, column.colDef.group);
+                var pinned = column.pinned;
+                currentGroup = new ColumnGroup(pinned, column.colDef.group);
                 that.columnGroups.push(currentGroup);
             }
-            currentGroup.columns.push(column);
+            currentGroup.addColumn(column);
         });
     };
 
-    ColumnController.prototype.getColumnGroups = function () {
-        return this.columnGroups;
-    };
+    // private
+    ColumnController.prototype.updateGroups = function() {
+        // if not grouping by headers, do nothing
+        if (!this.gridOptionsWrapper.isGroupHeaders()) {
+            return;
+        }
 
-    ColumnController.prototype.buildColumns = function (columnDefs) {
-        this.columns = [];
-        var that = this;
-        if (columnDefs) {
-            columnDefs.forEach(function (colDef, index) {
-                if (colDef === 'checkboxSelection') {
-                    colDef = that.selectionRendererFactory.createCheckboxColDef();
-                }
-                var colDefWrapper = new Column(colDef, index);
-                that.columns.push(colDefWrapper);
-            });
+        for (var i = 0; i<this.columnGroups.length; i++) {
+            var group = this.columnGroups[i];
+            group.calculateExpandable();
+            group.calculateVisibleColumns();
         }
     };
 
-    ColumnController.prototype.getColDefWrappers = function () {
-        return this.columns;
+    // private
+    ColumnController.prototype.buildColumns = function (columnDefs) {
+        this.columns = [];
+        var that = this;
+        var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+        if (columnDefs) {
+            for (var i = 0; i<columnDefs.length; i++) {
+                var colDef = columnDefs[i];
+                // this is messy - we swap in another col def if it's checkbox selection - not happy :(
+                if (colDef === 'checkboxSelection') {
+                    colDef = that.selectionRendererFactory.createCheckboxColDef();
+                }
+                var pinned = pinnedColumnCount > i;
+                var column = new Column(colDef, i, pinned);
+                that.columns.push(column);
+            }
+        }
     };
 
+    // private
     // set the actual widths for each col
     ColumnController.prototype.ensureEachColHasSize = function () {
         this.columns.forEach(function (colDefWrapper) {
@@ -4443,44 +4548,104 @@ define('../src/columnController',['./constants'], function(constants) {
         });
     };
 
-    ColumnController.prototype.getTotalUnpinnedColWidth = function() {
-        return this.getTotalColWidth(false);
-    };
-
-    ColumnController.prototype.getTotalPinnedColWidth = function() {
-        return this.getTotalColWidth(true);
-    };
-
-    ColumnController.prototype.getDisplayedColCount = function() {
-        return this.columns.length;
-    };
-
+    // private
     ColumnController.prototype.getTotalColWidth = function(includePinned) {
         var widthSoFar = 0;
-        var pinnedColCount = this.pinnedColumnCount;
 
-        this.columns.forEach(function(colDefWrapper, index) {
-            var columnIsPined = index<pinnedColCount;
-            var includeThisCol = columnIsPined === includePinned;
+        this.visibleColumns.forEach(function(column) {
+            var includeThisCol = column.pinned === includePinned;
             if (includeThisCol) {
-                widthSoFar += colDefWrapper.actualWidth;
+                widthSoFar += column.actualWidth;
             }
         });
 
         return widthSoFar;
     };
 
-    function ColumnGroup(firstIndex, pinned, name) {
-        this.firstIndex = firstIndex;
+    function ColumnGroup(pinned, name) {
         this.pinned = pinned;
         this.name = name;
-        this.columns = [];
-        this.eHeaderCells = [];
+        this.allColumns = [];
+        this.visibleColumns = [];
+        this.expandable = false; // whether this group can be expanded or not
+        this.expanded = false;
     }
 
-    function Column(colDef, colKey) {
+    ColumnGroup.prototype.addColumn = function (column) {
+        this.allColumns.push(column);
+    };
+
+    // need to check that this group has at least one col showing when both expanded and contracted.
+    // if not, then we don't allow expanding and contracting on this group
+    ColumnGroup.prototype.calculateExpandable = function () {
+        // want to make sure the group doesn't disappear when it's open
+        var atLeastOneShowingWhenOpen = false;
+        // want to make sure the group doesn't disappear when it's closed
+        var atLeastOneShowingWhenClosed = false;
+        // want to make sure the group has something to show / hide
+        var atLeastOneChangeable = false;
+        for (var i = 0, j = this.allColumns.length; i<j; i++) {
+            var column = this.allColumns[i];
+            if (column.colDef.groupShow==='open') {
+                atLeastOneShowingWhenOpen = true;
+                atLeastOneChangeable = true;
+            } else if (column.colDef.groupShow==='closed') {
+                atLeastOneShowingWhenClosed = true;
+                atLeastOneChangeable = true;
+            } else {
+                atLeastOneShowingWhenOpen = true;
+                atLeastOneShowingWhenClosed = true;
+            }
+        }
+
+        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+    };
+
+    ColumnGroup.prototype.calculateVisibleColumns = function () {
+        // clear out last time we calculated
+        this.visibleColumns = [];
+        // it not expandable, everything is visible
+        if (!this.expandable) {
+            this.visibleColumns = this.allColumns;
+            return;
+        }
+        // and calculate again
+        for (var i = 0, j = this.allColumns.length; i<j; i++) {
+            var column = this.allColumns[i];
+            switch (column.colDef.groupShow) {
+                case 'open':
+                    // when set to open, only show col if group is open
+                    if (this.expanded) {
+                        this.visibleColumns.push(column);
+                    }
+                    break;
+                case 'closed':
+                    // when set to open, only show col if group is open
+                    if (!this.expanded) {
+                        this.visibleColumns.push(column);
+                    }
+                    break;
+                default :
+                    // default is always show the column
+                    this.visibleColumns.push(column);
+                    break;
+            }
+        }
+    };
+
+    ColumnGroup.prototype.addToVisibleColumns = function (allVisibleColumns) {
+        for (var i = 0; i < this.visibleColumns.length; i++) {
+            var column = this.visibleColumns[i];
+            allVisibleColumns.push(column);
+        }
+    };
+
+    function Column(colDef, index, pinned) {
         this.colDef = colDef;
-        this.colKey = colKey;
+        this.index = index;
+        this.pinned = pinned;
+        // in the future, the colKey might be something other than the index
+        this.colKey = index;
     }
 
     return ColumnController;
@@ -5464,15 +5629,17 @@ define('../src/angularGrid',[
         var inMemoryRowController = new InMemoryRowController();
         var virtualPageRowController = new VirtualPageRowController();
 
+        var columnModel = columnController.getModel();
+
         // initialise all the beans
         selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
         filterManager.init(this, gridOptionsWrapper, $compile, $scope);
         selectionRendererFactory.init(this, selectionController);
         columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
-        rowRenderer.init(gridOptions, columnController, gridOptionsWrapper, eGridDiv, this,
+        rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
             selectionRendererFactory, $compile, $scope, selectionController);
-        headerRenderer.init(gridOptionsWrapper, columnController, eGridDiv, this, filterManager, $scope, $compile);
-        inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope);
+        headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
+        inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
         virtualPageRowController.init(rowRenderer);
 
         // this is a child bean, get a reference and pass it on
@@ -5492,6 +5659,7 @@ define('../src/angularGrid',[
         this.rowModel = rowModel;
         this.selectionController = selectionController;
         this.columnController = columnController;
+        this.columnModel = columnModel;
         this.inMemoryRowController = inMemoryRowController;
         this.virtualPageRowController = virtualPageRowController;
         this.rowRenderer = rowRenderer;
@@ -5562,6 +5730,15 @@ define('../src/angularGrid',[
         this.setBodySize();
 
         // because we just set the rowModel, need to update the gui
+        this.rowRenderer.refreshView();
+    };
+
+    // gets called after columns are shown / hidden from groups expanding
+    Grid.prototype.refreshHeaderAndBody = function () {
+        this.headerRenderer.refreshHeader();
+        this.headerRenderer.updateFilterIcons();
+        this.setBodyContainerWidth();
+        this.setPinnedColContainerWidth();
         this.rowRenderer.refreshView();
     };
 
@@ -5646,8 +5823,7 @@ define('../src/angularGrid',[
 
     Grid.prototype.setupColumns = function () {
         this.setHeaderHeight();
-        var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-        this.columnController.setColumnDefs(this.gridOptions.columnDefs, pinnedColCount);
+        this.columnController.setColumns(this.gridOptions.columnDefs);
         this.showPinnedColContainersIfNeeded();
         this.headerRenderer.refreshHeader();
         if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -5658,7 +5834,7 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.columnController.getTotalUnpinnedColWidth() + "px";
+        var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
         this.eBodyContainer.style.width = mainRowWidth;
     };
 
@@ -5846,7 +6022,7 @@ define('../src/angularGrid',[
     };
 
     Grid.prototype.setPinnedColContainerWidth = function () {
-        var pinnedColWidth = this.columnController.getTotalPinnedColWidth() + "px";
+        var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + "px";
         this.ePinnedColsContainer.style.width = pinnedColWidth;
         this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
     };
@@ -5913,7 +6089,7 @@ define('../src/angularGrid',[
 
 
 (function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
-('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    /* Height is set by javascript, to cover the table */\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-paging-panel {\r\n    position: absolute;\r\n}\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-panel {\r\n    color: black;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-panel {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}');
+('.ag-root {\r\n    font-size: 14px;\r\n    cursor: default;\r\n\r\n    /* Set to relative, so absolute popups appear relative to this */\r\n    position: relative;\r\n\r\n    /*disable user mouse selection */\r\n    -webkit-touch-callout: none;\r\n    -webkit-user-select: none;\r\n    -khtml-user-select: none;\r\n    -moz-user-select: none;\r\n    -ms-user-select: none;\r\n    user-select: none;\r\n\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-no-scrolls {\r\n    white-space: nowrap;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-scrolls {\r\n    height: 100%;\r\n}\r\n\r\n.ag-popup-backdrop {\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 0px;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header {\r\n    position: absolute;\r\n    top: 0px;\r\n    left: 0px;\r\n    white-space: nowrap;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n    box-sizing: border-box;\r\n    width: 100%;\r\n}\r\n\r\n.ag-pinned-header {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-viewport {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    overflow: hidden;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-header-container {\r\n    box-sizing: border-box;\r\n    position: relative;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n}\r\n\r\n.ag-no-scrolls .ag-header-container {\r\n    white-space: nowrap;\r\n}\r\n\r\n.ag-header-cell {\r\n    box-sizing: border-box;\r\n    vertical-align: bottom;\r\n    text-align: center;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-header-cell-grouped {\r\n    height: 50%;\r\n}\r\n\r\n.ag-header-cell-not-grouped {\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group {\r\n    box-sizing: border-box;\r\n    display: inline-block;\r\n    height: 100%;\r\n}\r\n\r\n.ag-header-group-cell {\r\n    box-sizing: border-box;\r\n    text-align: center;\r\n    height: 50%;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n/* When there is no group specified, this style gets used */\r\n.ag-header-group-cell-no-group {\r\n}\r\n\r\n/* When there is a group specified, normally a bottom border is provided */\r\n.ag-header-group-cell-with-group {\r\n}\r\n\r\n.ag-header-group-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-label {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-header-cell-resize {\r\n    height: 100%;\r\n    width: 4px;\r\n    float: right;\r\n    cursor: col-resize;\r\n}\r\n\r\n.ag-header-cell-menu-button {\r\n    float: right;\r\n}\r\n\r\n.ag-loading-panel {\r\n    z-index: 1; /* make the loading panel appear one above the grid*/\r\n    position: absolute;\r\n    display: table; /* this is also set in js, set to \'none\' when we hide the loading panel */\r\n    width: 100%;\r\n    /* Height is set by javascript, to cover the table */\r\n}\r\n\r\n.ag-loading-wrapper {\r\n    display: table-cell;\r\n    vertical-align: middle;\r\n    text-align: center;\r\n}\r\n\r\n.ag-loading-center {\r\n}\r\n\r\n.ag-body {\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n}\r\n\r\n.ag-pinned-cols-viewport {\r\n    float: left;\r\n    position: absolute;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-pinned-cols-container {\r\n    display: inline-block;\r\n    position: relative;\r\n}\r\n\r\n.ag-body-viewport-wrapper {\r\n    height: 100%;\r\n}\r\n\r\n.ag-body-viewport {\r\n    overflow: auto;\r\n    height: 100%;\r\n}\r\n\r\n.ag-scrolls .ag-body-container {\r\n    position: relative;\r\n    display: inline-block;\r\n}\r\n\r\n.ag-no-scrolls .ag-body-container {\r\n}\r\n\r\n.ag-scrolls .ag-row {\r\n    white-space: nowrap;\r\n    position: absolute;\r\n    width: 100%;\r\n}\r\n\r\n.ag-row-odd {\r\n}\r\n\r\n.ag-row-even {\r\n}\r\n\r\n.ag-row-selected {\r\n}\r\n\r\n.agile-gird-row:hover {\r\n    background-color: aliceblue;\r\n}\r\n\r\n.ag-cell {\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-group-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-footer-cell-entire-row {\r\n    position: absolute;\r\n    width: 100%;\r\n    display: inline-block;\r\n    white-space: nowrap;\r\n    height: 100%;\r\n    box-sizing: border-box;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-large .ag-root {\r\n    font-size: 20px;\r\n}\r\n.ag-filter {\r\n    position: absolute;\r\n    z-index: 100;\r\n}\r\n\r\n.ag-filter-list-viewport {\r\n    overflow-x: auto;\r\n    height: 200px;\r\n    width: 200px;\r\n}\r\n\r\n.ag-filter-list-container {\r\n    position: relative;\r\n    overflow: hidden;\r\n}\r\n\r\n.ag-filter-item {\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    position: absolute;\r\n}\r\n\r\n.ag-filter-filter {\r\n    width: 170px;\r\n    margin: 4px;\r\n}\r\n\r\n.ag-filter-select {\r\n    width: 110px;\r\n    margin: 4px 4px 0px 4px;\r\n}\r\n\r\n.ag-paging-panel {\r\n    position: absolute;\r\n}\r\n.ag-dark .ag-root {\r\n    border: 1px solid grey;\r\n    color: #e0e0e0;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-dark .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-container {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-pinned-header {\r\n    background-color: #430000;\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-dark .ag-header-cell-text {\r\n    padding: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-label {\r\n    font-weight: bold;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-group-text {\r\n    margin-right: 2px;\r\n}\r\n\r\n.ag-dark .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button {\r\n    padding: 0px 2px 0px 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-dark .ag-header-cell-menu-button:hover {\r\n    border: 1px solid #e0e0e0;\r\n}\r\n\r\n.ag-dark .ag-header-icon {\r\n    stroke: white;\r\n    fill: white;\r\n}\r\n\r\n.ag-dark .ag-header-expand-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n.ag-dark .ag-row-odd {\r\n    background-color: #302E2E;\r\n}\r\n\r\n.ag-dark .ag-row-even {\r\n    background-color: #403E3E;\r\n}\r\n\r\n.ag-dark .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-dark .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-dark .ag-body-viewport {\r\n}\r\n\r\n.ag-dark .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-dark .ag-row-selected {\r\n    background-color: #000000;\r\n}\r\n\r\n.ag-dark .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    color: black;\r\n}\r\n\r\n.ag-dark .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-dark .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-dark .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-dark .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-panel {\r\n    color: black;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-dark .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}\r\n.ag-fresh .ag-root {\r\n    border: 1px solid grey;\r\n    font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\r\n}\r\n\r\n.ag-fresh .ag-cell {\r\n    border-right: 1px solid grey;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-pinned-header  {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-container {\r\n    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */\r\n    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */\r\n    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */\r\n    background: linear-gradient(white, lightgrey); /* Standard syntax */\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell {\r\n    border-right: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-with-group {\r\n    border-bottom: 1px solid grey;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-label {\r\n    padding: 4px 2px 4px 2px ;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-text {\r\n    padding-left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-group-cell-label {\r\n    padding: 4px;\r\n    font-weight: bold;\r\n}\r\n\r\n.ag-fresh .ag-header-group-text {\r\n    margin-right: 2px;\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button {\r\n    padding: 2px;\r\n    margin-top: 4px;\r\n    border: 1px solid transparent;\r\n    border-radius: 3px;\r\n    box-sizing: content-box; /* When using bootstrap, box-sizing was set to \'border-box\' */\r\n}\r\n\r\n.ag-fresh .ag-header-cell-menu-button:hover {\r\n    border: 1px solid black;\r\n}\r\n\r\n.ag-fresh .ag-header-icon {\r\n    color: maroon;\r\n}\r\n\r\n.ag-fresh .ag-header-expand-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n.ag-fresh .ag-row-odd {\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n.ag-fresh .ag-row-even {\r\n    background-color: white;\r\n}\r\n\r\n.ag-fresh .ag-loading-panel {\r\n    background-color: rgba(255, 255, 255, 0.5);\r\n}\r\n\r\n.ag-fresh .ag-loading-center {\r\n    background-color: #ffffff;\r\n    border: 1px solid darkgray;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n}\r\n\r\n.ag-fresh .ag-body {\r\n    background-color: #ddd;\r\n}\r\n\r\n.ag-fresh .ag-body-viewport {\r\n}\r\n\r\n.ag-fresh .ag-pinned-cols-viewport {\r\n}\r\n\r\n.ag-fresh .ag-row-selected {\r\n    background-color: #B2DFEE;\r\n}\r\n\r\n.ag-fresh .ag-group-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell-entire-row {\r\n    background-color: #aaa;\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-group-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-footer-cell {\r\n    font-style: italic;\r\n}\r\n\r\n.ag-fresh .ag-filter-checkbox {\r\n    position: relative;\r\n    top: 2px;\r\n    left: 2px;\r\n}\r\n\r\n.ag-fresh .ag-filter-header-container {\r\n    border-bottom: 1px solid lightgrey;\r\n}\r\n\r\n.ag-fresh .ag-filter {\r\n    border: 1px solid black;\r\n    background-color: #f0f0f0;\r\n}\r\n\r\n.ag-fresh .ag-selection-checkbox {\r\n    margin-left: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-panel {\r\n    padding: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-button {\r\n    margin-left: 4px;\r\n    margin-right: 4px;\r\n}\r\n\r\n.ag-fresh .ag-paging-row-summary-panel {\r\n    display: inline-block;\r\n    width: 300px;\r\n}');
     //Register in the values from the outer closure for common dependencies
     //as local almond modules
     define('angular', function () {

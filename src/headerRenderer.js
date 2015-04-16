@@ -5,9 +5,10 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
     function HeaderRenderer() {
     }
 
-    HeaderRenderer.prototype.init = function (gridOptionsWrapper, columnModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+    HeaderRenderer.prototype.init = function (gridOptionsWrapper, columnController, columnModel, eGrid, angularGrid, filterManager, $scope, $compile) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnModel = columnModel;
+        this.columnController = columnController;
         this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
@@ -55,7 +56,6 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         var groups = this.columnModel.getColumnGroups();
         var that = this;
         groups.forEach(function(group) {
-
             var eHeaderCell = that.createGroupedHeaderCell(group);
             var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
             eContainerToAddTo.appendChild(eHeaderCell);
@@ -96,10 +96,14 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             eHeaderGroupCell.appendChild(eGroupCellLabel);
 
             var eInnerText = document.createElement("span");
+            eInnerText.className = 'ag-header-group-text';
             eInnerText.innerHTML = groupName;
             eGroupCellLabel.appendChild(eInnerText);
-        }
 
+            if (group.expandable) {
+                this.addGroupExpandIcon(group, eGroupCellLabel, group.expanded);
+            }
+        }
         eHeaderGroup.appendChild(eHeaderGroupCell);
 
         var that = this;
@@ -111,6 +115,22 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
         that.setWidthOfGroupHeaderCell(group);
 
         return eHeaderGroup;
+    };
+
+    HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expanded) {
+        var eGroupIcon;
+        if (expanded) {
+            eGroupIcon = utils.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedSvg);
+        } else {
+            eGroupIcon = utils.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupContractedSvg);
+        }
+        eGroupIcon.className = 'ag-header-expand-icon';
+        eHeaderGroup.appendChild(eGroupIcon);
+
+        var that = this;
+        eGroupIcon.onclick = function() {
+            that.columnController.columnGroupOpened(group);
+        };
     };
 
     HeaderRenderer.prototype.addDragHandler = function (eDraggableElement, dragCallback) {
@@ -184,7 +204,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
             headerCellResize.className = "ag-header-cell-resize";
             eHeaderCell.appendChild(headerCellResize);
             var dragCallback = this.headerDragCallbackFactory(eHeaderCell, column, headerGroup);
-            this.addDragHandler(headerCellResize, dragCallback)
+            this.addDragHandler(headerCellResize, dragCallback);
         }
 
         // filter button
@@ -413,7 +433,7 @@ define(["./utils", "./svgFactory", "./constants"], function(utils, SvgFactory, c
                     parent.setWidthOfGroupHeaderCell(headerGroup);
                 }
 
-                // show not be calling these here, should do something else
+                // should not be calling these here, should do something else
                 if (column.pinned) {
                     parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
                 } else {

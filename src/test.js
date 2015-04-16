@@ -128,7 +128,7 @@ define([
             },
             {displayName: "Language", field: "language", width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
                 group: 'Participant',
-                groupShow: 'open',
+                groupShow: 'closed',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'

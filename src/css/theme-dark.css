@@ -41,6 +41,10 @@
     border-right: 1px solid grey;
 }
 
+.ag-dark .ag-header-group-text {
+    margin-right: 2px;
+}
+
 .ag-dark .ag-header-group-cell-with-group {
     border-bottom: 1px solid grey;
 }
@@ -59,6 +63,10 @@
 .ag-dark .ag-header-icon {
     stroke: white;
     fill: white;
+}
+
+.ag-dark .ag-header-expand-icon:hover {
+    cursor: pointer;
 }
 
 .ag-dark .ag-row-odd {
