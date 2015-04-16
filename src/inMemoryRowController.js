@@ -127,20 +127,20 @@ define([
     // private
     InMemoryRowController.prototype.doSort = function () {
         //see if there is a col we are sorting by
-        var colDefWrapperForSorting = null;
+        var columnForSorting = null;
         this.columnModel.getAllColumns().forEach(function (colDefWrapper) {
             if (colDefWrapper.sort) {
-                colDefWrapperForSorting = colDefWrapper;
+                columnForSorting = colDefWrapper;
             }
         });
 
         var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
 
-        if (colDefWrapperForSorting) {
-            var ascending = colDefWrapperForSorting.sort === constants.ASC;
+        if (columnForSorting) {
+            var ascending = columnForSorting.sort === constants.ASC;
             var inverter = ascending ? 1 : -1;
 
-            this.sortList(rowNodesBeforeSort, colDefWrapperForSorting.colDef, inverter);
+            this.sortList(rowNodesBeforeSort, columnForSorting.colDef, inverter);
         } else {
             //if no sorting, set all group children after sort to the original list
             this.resetSortInGroups(rowNodesBeforeSort);
@@ -161,25 +161,25 @@ define([
     };
 
     // private
-    InMemoryRowController.prototype.sortList = function (nodes, colDefForSorting, inverter) {
+    InMemoryRowController.prototype.sortList = function (nodes, columnForSorting, inverter) {
 
         // sort any groups recursively
         for (var i = 0, l = nodes.length; i<l; i++) { // critical section, no functional programming
             var node = nodes[i];
             if (node.group && node.children) {
                 node.childrenAfterSort = node.children.slice(0);
-                this.sortList(node.childrenAfterSort, colDefForSorting, inverter);
+                this.sortList(node.childrenAfterSort, columnForSorting, inverter);
             }
         }
 
         nodes.sort(function (objA, objB) {
-            var keyForSort = colDefForSorting.field;
+            var keyForSort = columnForSorting.field;
             var valueA = objA.data ? objA.data[keyForSort] : null;
             var valueB = objB.data ? objB.data[keyForSort] : null;
 
-            if (colDefForSorting.comparator) {
+            if (columnForSorting.comparator) {
                 //if comparator provided, use it
-                return colDefForSorting.comparator(valueA, valueB) * inverter;
+                return columnForSorting.comparator(valueA, valueB) * inverter;
             } else {
                 //otherwise do our own comparison
                 return utils.defaultComparator(valueA, valueB) * inverter;
