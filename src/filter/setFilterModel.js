@@ -4,7 +4,12 @@ define(["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        this.createUniqueValues(rowModel, colDef.field);
+        if (colDef.filterParams && colDef.filterParams.values) {
+            this.uniqueValues = colDef.filterParams.values;
+        } else {
+            this.createUniqueValues(rowModel, colDef.field);
+        }
+
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {

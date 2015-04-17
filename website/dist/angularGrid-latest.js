@@ -1218,7 +1218,12 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     function SetFilterModel(colDef, rowModel) {
 
-        this.createUniqueValues(rowModel, colDef.field);
+        if (colDef.filterParams && colDef.filterParams.values) {
+            this.uniqueValues = colDef.filterParams.values;
+        } else {
+            this.createUniqueValues(rowModel, colDef.field);
+        }
+
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -4449,6 +4454,33 @@ define('../src/columnController',['./constants'], function(constants) {
         }
     };
 
+    // public - called from api
+    ColumnController.prototype.sizeColumnsToFit = function (availableWidth) {
+        // avoid divide by zero
+        if (availableWidth<=0 || this.visibleColumns.length===0) {
+            return;
+        }
+
+        var currentTotalWidth = this.getTotalColWidth();
+        var scale = availableWidth / currentTotalWidth;
+
+        // size all cols except the last by the scale
+        for (var i = 0; i<(this.visibleColumns.length - 1); i++) {
+            var column = this.visibleColumns[i];
+            var newWidth = parseInt(column.actualWidth * scale);
+            column.actualWidth = newWidth;
+        }
+
+        // size the last by whats remaining (this avoids rounding errors that could
+        // occur with scaling everything, where it result in some pixels off)
+        var pixelsLeftForLastCol = availableWidth - this.getTotalColWidth();
+        var lastColumn = this.visibleColumns[this.visibleColumns.length-1];
+        lastColumn.actualWidth += pixelsLeftForLastCol;
+
+        // widths set, refresh the gui
+        this.angularGrid.refreshHeaderAndBody();
+    };
+
     // private
     ColumnController.prototype.buildGroups = function() {
         // if not grouping by headers, do nothing
@@ -4540,11 +4572,13 @@ define('../src/columnController',['./constants'], function(constants) {
     };
 
     // private
+    // call with true (pinned), false (not-pinned) or undefined (all columns)
     ColumnController.prototype.getTotalColWidth = function(includePinned) {
         var widthSoFar = 0;
+        var pinedNotImportant = typeof includePinned !== 'boolean';
 
         this.visibleColumns.forEach(function(column) {
-            var includeThisCol = column.pinned === includePinned;
+            var includeThisCol = pinedNotImportant || column.pinned === includePinned;
             if (includeThisCol) {
                 widthSoFar += column.actualWidth;
             }
@@ -4866,7 +4900,7 @@ define('../src/selectionController',['./utils'], function(utils) {
                 if (child.group) {
                     this.recursivelyDeselectAllChildren(child);
                 } else {
-                    this.deselectNode(child);
+                    this.deselectRealNode(child);
                 }
             }
         }
@@ -4928,7 +4962,7 @@ define('../src/selectionController',['./utils'], function(utils) {
             if (nodeToDeselect === nodeToKeepSelected) {
                 continue;
             } else {
-                this.deselectNode(nodeToDeselect);
+                this.deselectRealNode(nodeToDeselect);
                 atLeastOneSelectionChange = true;
             }
         }
@@ -4936,7 +4970,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     };
 
     // private
-    SelectionController.prototype.deselectNode = function (node) {
+    SelectionController.prototype.deselectRealNode = function (node) {
         // deselect the css
         this.removeCssClassForNode(node);
 
@@ -4962,12 +4996,17 @@ define('../src/selectionController',['./utils'], function(utils) {
     // public (selectionRendererFactory)
     SelectionController.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getVirtualRow(rowIndex);
+        this.deselectNode(node);
+    };
+
+    // public (api)
+    SelectionController.prototype.deselectNode = function (node) {
         if (node) {
             if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
                 // want to deselect children, not this node, so recursively deselect
                 this.recursivelyDeselectAllChildren(node);
             } else {
-                this.deselectNode(node);
+                this.deselectRealNode(node);
             }
         }
         this.syncSelectedRowsAndCallListener();
@@ -5479,6 +5518,8 @@ define('css!../src/css/theme-fresh',[],function(){});
 // bugs:
 // editing a checkbox field fails
 
+// put version on top of file
+
 // paging: selection, sorting, filtering
 // infinite paging
 // disable grouping when infinite
@@ -5902,9 +5943,22 @@ define('../src/angularGrid',[
             selectIndex: function(index, tryMulti, suppressEvents) {
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
+            deselectIndex: function(index) {
+                that.selectionController.deselectIndex(index);
+            },
+            selectNode: function(node, tryMulti, suppressEvents) {
+                that.selectionController.selectNode(node, tryMulti, suppressEvents);
+            },
+            deselectNode: function(node) {
+                that.selectionController.deselectNode(node);
+            },
             recomputeAggregates: function() {
                 that.inMemoryRowController.doAggregate();
                 that.rowRenderer.refreshGroupRows();
+            },
+            sizeColumnsToFit: function() {
+                var availableWidth = that.eBody.clientWidth;
+                that.columnController.sizeColumnsToFit(availableWidth);
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);

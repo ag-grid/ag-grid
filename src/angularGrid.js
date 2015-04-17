@@ -449,9 +449,22 @@ define([
             selectIndex: function(index, tryMulti, suppressEvents) {
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
             },
+            deselectIndex: function(index) {
+                that.selectionController.deselectIndex(index);
+            },
+            selectNode: function(node, tryMulti, suppressEvents) {
+                that.selectionController.selectNode(node, tryMulti, suppressEvents);
+            },
+            deselectNode: function(node) {
+                that.selectionController.deselectNode(node);
+            },
             recomputeAggregates: function() {
                 that.inMemoryRowController.doAggregate();
                 that.rowRenderer.refreshGroupRows();
+            },
+            sizeColumnsToFit: function() {
+                var availableWidth = that.eBody.clientWidth;
+                that.columnController.sizeColumnsToFit(availableWidth);
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
