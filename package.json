@@ -23,6 +23,8 @@
   },
   "homepage": "http://www.angulargrid.com/",
   "devDependencies": {
-    "gulp": "^3.8.11"
+    "amd-optimize": "^0.4.3",
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2"
   }
 }
