@@ -243,7 +243,7 @@ define([
 
         if (virtualPaging) {
             this.paginationController.setDatasource(null);
-            this.virtualPageRowController.setDatasource(datasource);
+            this.virtualPageRowController.setDatasource(datasourceToUse);
             this.rowModel = this.virtualPageRowController.getModel();
             this.showPagingPanel = false;
         } else if (pagination) {
