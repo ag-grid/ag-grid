@@ -11,6 +11,48 @@
 
 
     var DEFAULT_ROW_HEIGHT = 20;
+    var angular = window.angular;
+
+    var constants = {};
+
+    constants.STEP_EVERYTHING = 0;
+    constants.STEP_FILTER = 1;
+    constants.STEP_SORT = 2;
+    constants.STEP_MAP = 3;
+
+    constants.ASC = "asc";
+    constants.DESC = "desc";
+
+    constants.ROW_BUFFER_SIZE = 5;
+
+    constants.SORT_STYLE_SHOW = "display:inline;";
+    constants.SORT_STYLE_HIDE = "display:none;";
+
+    constants.MIN_COL_WIDTH = 10;
+
+
+
+    var utils = new Utils();
+    var svgFactory = new SvgFactory();
+
+
+
+
+
+
+    // if angular is present, register the directive
+    if (angular) {
+        var angularModule = angular.module("angularGrid", []);
+        angularModule.directive("angularGrid", function() {
+            return {
+                restrict: "A",
+                controller: ['$element', '$scope', '$compile', AngularDirectiveController],
+                scope: {
+                    angularGrid: "="
+                }
+            };
+        });
+    }
 
 
 
@@ -19,12 +61,54 @@
 
 
     function template() {
-        return '<div class=\'ag-root ag-scrolls\'>\r\n    <!-- The loading panel -->\r\n    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->\r\n    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header\'>\r\n        <div class=\'ag-pinned-header\'></div><div class=\'ag-header-viewport\'><div class=\'ag-header-container\'></div></div>\r\n    </div>\r\n    <!-- body -->\r\n    <div class=\'ag-body\'>\r\n        <div class=\'ag-pinned-cols-viewport\'>\r\n            <div class=\'ag-pinned-cols-container\'></div>\r\n        </div>\r\n        <div class=\'ag-body-viewport-wrapper\'>\r\n            <div class=\'ag-body-viewport\'>\r\n                <div class=\'ag-body-container\'></div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <!-- Paging -->\r\n    <div class=\'ag-paging-panel\'>\r\n    </div>\r\n</div>\r\n';
+        return [
+            '<div class="ag-root ag-scrolls">',
+            '    <!-- The loading panel -->',
+            '    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->',
+            '    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->',
+            '    <div class="ag-loading-panel">',
+            '        <div class="ag-loading-wrapper">',
+            '            <span class="ag-loading-center">Loading...</span>',
+            '        </div>',
+            '    </div>',
+            '    <!-- header -->',
+            '    <div class="ag-header">',
+            '        <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>',
+            '    </div>',
+            '    <!-- body -->',
+            '    <div class="ag-body">',
+            '        <div class="ag-pinned-cols-viewport">',
+            '            <div class="ag-pinned-cols-container"></div>',
+            '        </div>',
+            '        <div class="ag-body-viewport-wrapper">',
+            '            <div class="ag-body-viewport">',
+            '                <div class="ag-body-container"></div>',
+            '            </div>',
+            '        </div>',
+            '    </div>',
+            '    <!-- Paging -->',
+            '    <div class="ag-paging-panel">',
+            '    </div>',
+            '    </div>',
+        ].join('');
     }
 
 
     function templateNoScrolls() {
-        return '<div class=\'ag-root ag-no-scrolls\'>\r\n    <!-- See comment in template.html for why loading is laid out like so -->\r\n    <div class=\'ag-loading-panel\'>\r\n        <div class=\'ag-loading-wrapper\'>\r\n            <span class=\'ag-loading-center\'>Loading...</span>\r\n        </div>\r\n    </div>\r\n    <!-- header -->\r\n    <div class=\'ag-header-container\'></div>\r\n    <!-- body -->\r\n    <div class=\'ag-body-container\'></div>\r\n</div>';
+        return [
+            '<div class="ag-root ag-no-scrolls">',
+            '    <!-- See comment in template.html for why loading is laid out like so -->',
+            '    <div class="ag-loading-panel">',
+            '        <div class="ag-loading-wrapper">',
+            '            <span class="ag-loading-center">Loading...</span>',
+            '        </div>',
+            '    </div>',
+            '    <!-- header -->',
+            '    <div class="ag-header-container"></div>',
+            '    <!-- body -->',
+            '    <div class="ag-body-container"></div>',
+            '</div>'
+        ].join('');
     }
 
 
@@ -109,7 +193,7 @@
     //the dom api to load html directly, eg we cannot do this: document.createElement(template)
     Utils.prototype.loadTemplate = function(template) {
         var tempDiv = document.createElement("div");
-        tempDiv.innerHTML = template;
+        tempDiv.innerHTML = template();
         return tempDiv.firstChild;
     };
 
@@ -249,6 +333,26 @@
         }
         return eResult;
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -603,7 +707,7 @@
 
         eCheckbox.onclick = function() {
             _this.onCheckboxClicked(eCheckbox, value);
-        }
+        };
 
         eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 
@@ -692,15 +796,16 @@
         ].join('');
     }
 
-    var EQUALS = 1;
-    var LESS_THAN = 2;
-    var GREATER_THAN = 3;
-
     function NumberFilter(params) {
+        this.constants = {
+            EQUALS: 1,
+            LESS_THAN: 2,
+            GREATER_THAN: 3,
+        };
         this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterNumber = null;
-        this.filterType = EQUALS;
+        this.filterType = this.constants.EQUALS;
     }
 
     /* public */
@@ -727,11 +832,11 @@
         }
 
         switch (this.filterType) {
-            case EQUALS:
+            case this.constants.EQUALS:
                 return valueAsNumber === this.filterNumber;
-            case LESS_THAN:
+            case this.constants.LESS_THAN:
                 return valueAsNumber <= this.filterNumber;
-            case GREATER_THAN:
+            case this.constants.GREATER_THAN:
                 return valueAsNumber >= this.filterNumber;
             default:
                 // should never happen
@@ -818,16 +923,17 @@
 
 
 
-    var CONTAINS = 1;
-    var EQUALS = 2;
-    var STARTS_WITH = 3;
-    var ENDS_WITH = 4;
-
     function TextFilter(params) {
+        this.constants = {
+            CONTAINS: 1,
+            EQUALS: 2,
+            STARTS_WITH: 3,
+            ENDS_WITH: 4,
+        };
         this.filterChangedCallback = params.filterChangedCallback;
         this.createGui();
         this.filterText = null;
-        this.filterType = CONTAINS;
+        this.filterType = this.constants.CONTAINS;
     }
 
     /* public */
@@ -846,13 +952,13 @@
         }
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {
-            case CONTAINS:
+            case this.constants.CONTAINS:
                 return valueLowerCase.indexOf(this.filterText) >= 0;
-            case EQUALS:
+            case this.constants.EQUALS:
                 return valueLowerCase === this.filterText;
-            case STARTS_WITH:
+            case this.constants.STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
-            case ENDS_WITH:
+            case this.constants.ENDS_WITH:
                 var index = valueLowerCase.indexOf(this.filterText);
                 return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
             default:
@@ -899,7 +1005,14 @@
         this.filterChangedCallback();
     };
 
-    return TextFilter;
+
+
+
+
+
+
+
+
 
 
 
@@ -1184,22 +1297,7 @@
 
 
 
-    var constants = {};
 
-    constants.STEP_EVERYTHING = 0;
-    constants.STEP_FILTER = 1;
-    constants.STEP_SORT = 2;
-    constants.STEP_MAP = 3;
-
-    constants.ASC = "asc";
-    constants.DESC = "desc";
-
-    constants.ROW_BUFFER_SIZE = 5;
-
-    constants.SORT_STYLE_SHOW = "display:inline;";
-    constants.SORT_STYLE_HIDE = "display:none;";
-
-    constants.MIN_COL_WIDTH = 10;
 
 
 
@@ -1263,6 +1361,7 @@
 
     // public
     InMemoryRowController.prototype.updateModel = function(step) {
+
 
         // fallthrough in below switch is on purpose
         switch (step) {
@@ -1467,7 +1566,7 @@
             this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
         } else {
             // place each row into a wrapper
-            var nodes = [];
+            nodes = [];
             if (rows) {
                 for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
                     nodes.push({
@@ -1641,9 +1740,9 @@
 
 
 
-    var logging = true;
-
-    function VirtualPageRowController() {}
+    function VirtualPageRowController() {
+        this.logging = true;
+    }
 
     VirtualPageRowController.prototype.init = function(rowRenderer) {
         this.rowRenderer = rowRenderer;
@@ -1739,7 +1838,7 @@
     VirtualPageRowController.prototype.putPageIntoCacheAndPurge = function(pageNumber, rows) {
         this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
         this.pageCacheSize++;
-        if (logging) {
+        if (this.logging) {
             console.log('adding page ' + pageNumber);
         }
 
@@ -1748,7 +1847,7 @@
             // find the LRU page
             var youngestPageIndex = this.findLeastRecentlyAccessedPage(Object.keys(this.pageCache));
 
-            if (logging) {
+            if (this.logging) {
                 console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
             }
             delete this.pageCache[youngestPageIndex];
@@ -1801,7 +1900,7 @@
     };
 
     VirtualPageRowController.prototype.addToQueueAndPurgeQueue = function(pageNumber) {
-        if (logging) {
+        if (this.logging) {
             console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
         }
         this.pageLoadsQueued.push(pageNumber);
@@ -1813,7 +1912,7 @@
             // find the LRU page
             var youngestPageIndex = this.findLeastRecentlyAccessedPage(this.pageLoadsQueued);
 
-            if (logging) {
+            if (this.logging) {
                 console.log('de-queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
             }
 
@@ -1844,7 +1943,7 @@
             var pageToLoad = this.pageLoadsQueued[0];
             this.pageLoadsQueued.splice(0, 1);
 
-            if (logging) {
+            if (this.logging) {
                 console.log('dequeueing ' + pageToLoad + ' - ' + this.pageLoadsQueued);
             }
 
@@ -1943,14 +2042,15 @@
 
 
 
-    var SVG_NS = "http://www.w3.org/2000/svg";
 
-    function SvgFactory() {}
+    function SvgFactory() {
+        this.SVG_NS = "http://www.w3.org/2000/svg";
+    }
 
     SvgFactory.prototype.createFilterSvg = function() {
         var eSvg = createIconSvg();
 
-        var eFunnel = document.createElementNS(SVG_NS, "polygon");
+        var eFunnel = document.createElementNS(this.SVG_NS, "polygon");
         eFunnel.setAttribute("points", "0,0 4,4 4,10 6,10 6,4 10,0");
         eFunnel.setAttribute("class", "ag-header-icon");
         eSvg.appendChild(eFunnel);
@@ -1959,13 +2059,13 @@
     };
 
     SvgFactory.prototype.createMenuSvg = function() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
+        var eSvg = document.createElementNS(this.SVG_NS, "svg");
         var size = "12";
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
 
         ["0", "5", "10"].forEach(function(y) {
-            var eLine = document.createElementNS(SVG_NS, "rect");
+            var eLine = document.createElementNS(this.SVG_NS, "rect");
             eLine.setAttribute("y", y);
             eLine.setAttribute("width", size);
             eLine.setAttribute("height", "2");
@@ -1995,7 +2095,7 @@
     function createPolygonSvg(points) {
         var eSvg = createIconSvg();
 
-        var eDescIcon = document.createElementNS(SVG_NS, "polygon");
+        var eDescIcon = document.createElementNS(this.SVG_NS, "polygon");
         eDescIcon.setAttribute("points", points);
         eSvg.appendChild(eDescIcon);
 
@@ -2004,7 +2104,7 @@
 
     // util function for the above
     function createIconSvg() {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
+        var eSvg = document.createElementNS(this.SVG_NS, "svg");
         eSvg.setAttribute("width", "10");
         eSvg.setAttribute("height", "10");
         return eSvg;
@@ -2032,10 +2132,10 @@
 
 
 
-    var TAB_KEY = 9;
-    var ENTER_KEY = 13;
-
-    function RowRenderer() {}
+    function RowRenderer() {
+        this.TAB_KEY = 9;
+        this.ENTER_KEY = 13;
+    }
 
     RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
         angularGrid, selectionRendererFactory, $compile, $scope,
@@ -2236,6 +2336,7 @@
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
+
                 that.insertRow(node, rowIndex, mainRowWidth);
             }
         }
@@ -2877,7 +2978,7 @@
         eInput.addEventListener('keypress', function(event) {
             var key = event.which || event.keyCode;
             // 13 is enter
-            if (key == ENTER_KEY) {
+            if (key == this.ENTER_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
             }
         });
@@ -2885,7 +2986,7 @@
         // tab key doesn't generate keypress, so need keydown to listen for that
         eInput.addEventListener('keydown', function(event) {
             var key = event.which || event.keyCode;
-            if (key == TAB_KEY) {
+            if (key == this.TAB_KEY) {
                 that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
                 that.startEditingNextCell(rowIndex, column, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
@@ -3470,9 +3571,9 @@
 
 
 
-    var DEFAULT_ROW_HEIGHT = 30;
 
     function GridOptionsWrapper(gridOptions) {
+        this.DEFAULT_ROW_HEIGHT = 30;
         this.gridOptions = gridOptions;
         this.setupDefaults();
     }
@@ -3626,7 +3727,7 @@
 
     GridOptionsWrapper.prototype.setupDefaults = function() {
         if (!this.gridOptions.rowHeight) {
-            this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
+            this.gridOptions.rowHeight = this.DEFAULT_ROW_HEIGHT;
         }
     };
 
@@ -4073,12 +4174,15 @@
     // these constants are used for determining if groups should
     // be selected or deselected when selecting groups, and the group
     // then selects the children.
-    var SELECTED = 0;
-    var UNSELECTED = 1;
-    var MIXED = 2;
-    var DO_NOT_CARE = 3;
 
-    function SelectionController() {}
+    function SelectionController() {
+        this.constants = {
+            SELECTED: 0,
+            UNSELECTED: 1,
+            MIXED: 2,
+            DO_NOT_CARE: 3,
+        }
+    }
 
     SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
         this.eRowsParent = eRowsParent;
@@ -4365,13 +4469,13 @@
                 if (child.group) {
                     result = this.recursivelyCheckIfSelected(child);
                     switch (result) {
-                        case SELECTED:
+                        case this.constants.SELECTED:
                             foundSelected = true;
                             break;
-                        case UNSELECTED:
+                        case this.constants.UNSELECTED:
                             foundUnselected = true;
                             break;
-                        case MIXED:
+                        case this.constants.MIXED:
                             foundSelected = true;
                             foundUnselected = true;
                             break;
@@ -4388,18 +4492,18 @@
 
                 if (foundSelected && foundUnselected) {
                     // if mixed, then no need to go further, just return up the chain
-                    return MIXED;
+                    return this.constants.MIXED;
                 }
             }
         }
 
         // got this far, so no conflicts, either all children selected, unselected, or neither
         if (foundSelected) {
-            return SELECTED;
+            return this.constants.SELECTED;
         } else if (foundUnselected) {
-            return UNSELECTED;
+            return this.constants.UNSELECTED;
         } else {
-            return DO_NOT_CARE;
+            return this.constants.DO_NOT_CARE;
         }
     };
 
@@ -4413,9 +4517,9 @@
             // doing child selection, we need to traverse the children
             var resultOfChildren = this.recursivelyCheckIfSelected(node);
             switch (resultOfChildren) {
-                case SELECTED:
+                case this.constants.SELECTED:
                     return true;
-                case UNSELECTED:
+                case this.constants.UNSELECTED:
                     return false;
                 default:
                     return undefined;
@@ -4474,25 +4578,6 @@
 
 
 
-
-    var TEMPLATE =
-        '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
-        '<span id="firstRowOnPage"></span>' +
-        ' to ' +
-        '<span id="lastRowOnPage"></span>' +
-        ' of ' +
-        '<span id="recordCount"></span>' +
-        '</span>' +
-        '<span clas="ag-paging-page-summary-panel">' +
-        '<button class="ag-paging-button" id="btFirst">First</button>' +
-        '<button class="ag-paging-button" id="btPrevious">Previous</button>' +
-        ' Page ' +
-        '<span id="current"></span>' +
-        ' of ' +
-        '<span id="total"></span>' +
-        '<button class="ag-paging-button" id="btNext">Next</button>' +
-        '<button class="ag-paging-button" id="btLast">Last</button>' +
-        '</span>';
 
     function PaginationController() {}
 
@@ -4651,7 +4736,25 @@
 
     PaginationController.prototype.populatePanel = function(ePagingPanel) {
 
-        ePagingPanel.innerHTML = TEMPLATE;
+        ePagingPanel.innerHTML = [
+            '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">',
+            '<span id="firstRowOnPage"></span>',
+            ' to ',
+            '<span id="lastRowOnPage"></span>',
+            ' of ',
+            '<span id="recordCount"></span>',
+            '</span>',
+            '<span clas="ag-paging-page-summary-panel">',
+            '<button class="ag-paging-button" id="btFirst">First</button>',
+            '<button class="ag-paging-button" id="btPrevious">Previous</button>',
+            ' Page ',
+            '<span id="current"></span>',
+            ' of ',
+            '<span id="total"></span>',
+            '<button class="ag-paging-button" id="btNext">Next</button>',
+            '<button class="ag-paging-button" id="btLast">Last</button>',
+            '</span>'
+        ].join('');
 
         this.btNext = ePagingPanel.querySelector('#btNext');
         this.btPrevious = ePagingPanel.querySelector('#btPrevious');
@@ -4685,19 +4788,14 @@
     };
 
 
-    // if angular is present, register the directive
-    if (angular) {
-        var angularModule = angular.module("angularGrid", []);
-        angularModule.directive("angularGrid", function() {
-            return {
-                restrict: "A",
-                controller: ['$element', '$scope', '$compile', AngularDirectiveController],
-                scope: {
-                    angularGrid: "="
-                }
-            };
-        });
-    }
+
+
+
+
+
+
+
+
 
     // this function is used for creating a grid, outside of any AngularJS
     function angularGridGlobalFunction(element, gridOptions) {
@@ -4720,6 +4818,7 @@
             console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
             return;
         }
+
         var grid = new Grid(eGridDiv, gridOptions, $scope, $compile);
 
         $scope.$on("$destroy", function() {
@@ -4734,9 +4833,9 @@
 
         var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
         if (useScrolls) {
-            eGridDiv.innerHTML = template;
+            eGridDiv.innerHTML = template();
         } else {
-            eGridDiv.innerHTML = templateNoScrolls;
+            eGridDiv.innerHTML = templateNoScrolls();
         }
 
         var that = this;
@@ -4748,6 +4847,7 @@
                 that.onQuickFilterChanged(newFilter);
             });
         }
+
 
         this.virtualRowCallbacks = {};
 
@@ -4796,6 +4896,7 @@
         var headerRenderer = new HeaderRenderer();
         var inMemoryRowController = new InMemoryRowController();
         var virtualPageRowController = new VirtualPageRowController();
+
 
         var columnModel = columnController.getModel();
 
@@ -4975,9 +5076,9 @@
         var headerHeightPixels = headerHeight + 'px';
         var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
         if (dontUseScrolls) {
-            this.eHeaderContainer.style['height'] = headerHeightPixels;
+            this.eHeaderContainer.style.height = headerHeightPixels;
         } else {
-            this.eHeader.style['height'] = headerHeightPixels;
+            this.eHeader.style.height = headerHeightPixels;
             this.eBody.style['padding-top'] = headerHeightPixels;
             this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
         }
@@ -5029,6 +5130,7 @@
 
     Grid.prototype.addApi = function() {
         var that = this;
+        window.tanner = that;
         var api = {
             setDatasource: function(datasource) {
                 that.setDatasource(datasource);
@@ -5078,7 +5180,7 @@
                 that.rowRenderer.rowDataChanged(rows);
             },
             setQuickFilter: function(newFilter) {
-                that.onQuickFilterChanged(newFilter)
+                that.onQuickFilterChanged(newFilter);
             },
             selectIndex: function(index, tryMulti, suppressEvents) {
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
@@ -5255,8 +5357,6 @@
         this.eHeaderContainer.style.left = -this.eBodyViewport.scrollLeft + "px";
         this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
     };
-
-    return angularGridGlobalFunction;
 
 
 })();
