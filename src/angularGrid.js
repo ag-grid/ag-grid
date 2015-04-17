@@ -453,6 +453,10 @@ define([
                 that.inMemoryRowController.doAggregate();
                 that.rowRenderer.refreshGroupRows();
             },
+            sizeColumnsToFit: function() {
+                var availableWidth = that.eBody.clientWidth;
+                that.columnController.sizeColumnsToFit(availableWidth);
+            },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
             },

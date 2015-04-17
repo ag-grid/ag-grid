@@ -21,6 +21,14 @@ include '../documentation_header.php';
     <p/>
 
     <show-example example="example1"></show-example>
+
+    <h4>Size to Fix</h4>
+
+    Call api.sizeColumnsToFit() to make the currently visible columns fit the screen.
+    The columns will scale (growing or shrinking) to fit the available width.
+
+    <show-example example="example2"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

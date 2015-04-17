@@ -1216,7 +1216,7 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     
 
-    function SetFilterModel(colDef, rowModel, values) {
+    function SetFilterModel(colDef, rowModel) {
 
         if (colDef.filterParams && colDef.filterParams.values) {
             this.uniqueValues = colDef.filterParams.values;
@@ -4454,6 +4454,33 @@ define('../src/columnController',['./constants'], function(constants) {
         }
     };
 
+    // public - called from api
+    ColumnController.prototype.sizeColumnsToFit = function (availableWidth) {
+        // avoid divide by zero
+        if (availableWidth<=0 || this.visibleColumns.length===0) {
+            return;
+        }
+
+        var currentTotalWidth = this.getTotalColWidth();
+        var scale = availableWidth / currentTotalWidth;
+
+        // size all cols except the last by the scale
+        for (var i = 0; i<(this.visibleColumns.length - 1); i++) {
+            var column = this.visibleColumns[i];
+            var newWidth = parseInt(column.actualWidth * scale);
+            column.actualWidth = newWidth;
+        }
+
+        // size the last by whats remaining (this avoids rounding errors that could
+        // occur with scaling everything, where it result in some pixels off)
+        var pixelsLeftForLastCol = availableWidth - this.getTotalColWidth();
+        var lastColumn = this.visibleColumns[this.visibleColumns.length-1];
+        lastColumn.actualWidth += pixelsLeftForLastCol;
+
+        // widths set, refresh the gui
+        this.angularGrid.refreshHeaderAndBody();
+    };
+
     // private
     ColumnController.prototype.buildGroups = function() {
         // if not grouping by headers, do nothing
@@ -4545,11 +4572,13 @@ define('../src/columnController',['./constants'], function(constants) {
     };
 
     // private
+    // call with true (pinned), false (not-pinned) or undefined (all columns)
     ColumnController.prototype.getTotalColWidth = function(includePinned) {
         var widthSoFar = 0;
+        var pinedNotImportant = typeof includePinned !== 'boolean';
 
         this.visibleColumns.forEach(function(column) {
-            var includeThisCol = column.pinned === includePinned;
+            var includeThisCol = pinedNotImportant || column.pinned === includePinned;
             if (includeThisCol) {
                 widthSoFar += column.actualWidth;
             }
@@ -5912,6 +5941,10 @@ define('../src/angularGrid',[
             recomputeAggregates: function() {
                 that.inMemoryRowController.doAggregate();
                 that.rowRenderer.refreshGroupRows();
+            },
+            sizeColumnsToFit: function() {
+                var availableWidth = that.eBody.clientWidth;
+                that.columnController.sizeColumnsToFit(availableWidth);
             },
             showLoading: function(show) {
                 that.showLoadingPanel(show);
