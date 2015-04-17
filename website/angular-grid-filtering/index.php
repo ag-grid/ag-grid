@@ -60,8 +60,24 @@ columnDefinition = {
     displayName: "Athlete",
     field: "athlete",
     filter: 'set',
-    filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20}
+    filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C']}
 }</pre>
+
+    <p>
+        The filter parameters for set filter have the following meaning:
+        <ul>
+        <li><b>cellRenderer:</b> Same as cell renderer for grid (you can use the same one in both locations).
+        Setting it separatly here allows for the value to be rendered differently in the filter.</li>
+        <li><b>cellHeight:</b> The height of the cell.</li>
+        <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
+        takes it's values from what is loaded in the table. Setting it allows you to set values where a) the
+        value may not be present in the list (for example, if you want to show all states in America so
+        that the user is not confused by missing states, even though states are missing from the dataset
+        in the grid) and b) the list is not available (happens when doing server side filtering in pagination
+            and infinite scrolling).</li>
+    </ul>
+
+    </p>
 
     <h3>Quick Filter</h3>
 
@@ -74,15 +90,6 @@ columnDefinition = {
     The example below shows the three types of built in filters, as well as the quick filter, in action.
 
     <show-example example="example1"></show-example>
-
-    <h3>Filter Icon</h3>
-
-    You can provide a custom filter icon to be used in the header. This is done by providing a
-    <i>filterIconRenderer</i> in the grid options. The method can return back a string of HTML
-    or a DOM object. The example below uses the Font Awesome filter icon.
-    <pre>gridOptions.filterIconRenderer: function () {
-        return '&lt;i class="fa fa-filter"/>';
-    }</pre>
 
     <h3>Custom Filtering</h3>
 

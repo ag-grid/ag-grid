@@ -1216,9 +1216,14 @@ define('../src/filter/setFilterModel',["./../utils"], function(utils) {
 
     
 
-    function SetFilterModel(colDef, rowModel) {
+    function SetFilterModel(colDef, rowModel, values) {
 
-        this.createUniqueValues(rowModel, colDef.field);
+        if (colDef.filterParams && colDef.filterParams.values) {
+            this.uniqueValues = colDef.filterParams.values;
+        } else {
+            this.createUniqueValues(rowModel, colDef.field);
+        }
+
         if (colDef.comparator) {
             this.uniqueValues.sort(colDef.comparator);
         } else {
@@ -5478,6 +5483,8 @@ define('css!../src/css/theme-fresh',[],function(){});
 
 // bugs:
 // editing a checkbox field fails
+
+// put version on top of file
 
 // paging: selection, sorting, filtering
 // infinite paging
