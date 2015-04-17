@@ -32,6 +32,7 @@ define(['./utils'], function(utils) {
             var selectedNode = this.selectedNodesById[id];
             selectedNodes.push(selectedNode);
         }
+        return selectedNodes;
     };
 
     // returns a list of all nodes at 'best cost' - a feature to be used
@@ -71,7 +72,8 @@ define(['./utils'], function(utils) {
         this.rowModel = rowModel;
     };
 
-    // public
+    // public - this clears the selection, but doesn't clear down the css - when it is called, the
+    // caller then gets the grid to refresh.
     SelectionController.prototype.clearSelection = function() {
         this.selectedRows.length = 0;
         var keys = Object.keys(this.selectedNodesById);
@@ -224,7 +226,7 @@ define(['./utils'], function(utils) {
         }
 
         // remove the row
-        this.selectedNodesById[node.id] = undefined;
+        delete this.selectedNodesById[node.id];
     };
 
     // private
