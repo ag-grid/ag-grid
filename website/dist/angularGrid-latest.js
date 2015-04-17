@@ -4900,7 +4900,7 @@ define('../src/selectionController',['./utils'], function(utils) {
                 if (child.group) {
                     this.recursivelyDeselectAllChildren(child);
                 } else {
-                    this.deselectNode(child);
+                    this.deselectRealNode(child);
                 }
             }
         }
@@ -4962,7 +4962,7 @@ define('../src/selectionController',['./utils'], function(utils) {
             if (nodeToDeselect === nodeToKeepSelected) {
                 continue;
             } else {
-                this.deselectNode(nodeToDeselect);
+                this.deselectRealNode(nodeToDeselect);
                 atLeastOneSelectionChange = true;
             }
         }
@@ -4970,7 +4970,7 @@ define('../src/selectionController',['./utils'], function(utils) {
     };
 
     // private
-    SelectionController.prototype.deselectNode = function (node) {
+    SelectionController.prototype.deselectRealNode = function (node) {
         // deselect the css
         this.removeCssClassForNode(node);
 
@@ -4996,12 +4996,17 @@ define('../src/selectionController',['./utils'], function(utils) {
     // public (selectionRendererFactory)
     SelectionController.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getVirtualRow(rowIndex);
+        this.deselectNode(node);
+    };
+
+    // public (api)
+    SelectionController.prototype.deselectNode = function (node) {
         if (node) {
             if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
                 // want to deselect children, not this node, so recursively deselect
                 this.recursivelyDeselectAllChildren(node);
             } else {
-                this.deselectNode(node);
+                this.deselectRealNode(node);
             }
         }
         this.syncSelectedRowsAndCallListener();
@@ -5937,6 +5942,15 @@ define('../src/angularGrid',[
             },
             selectIndex: function(index, tryMulti, suppressEvents) {
                 that.selectionController.selectIndex(index, tryMulti, suppressEvents);
+            },
+            deselectIndex: function(index) {
+                that.selectionController.deselectIndex(index);
+            },
+            selectNode: function(node, tryMulti, suppressEvents) {
+                that.selectionController.selectNode(node, tryMulti, suppressEvents);
+            },
+            deselectNode: function(node) {
+                that.selectionController.deselectNode(node);
             },
             recomputeAggregates: function() {
                 that.inMemoryRowController.doAggregate();

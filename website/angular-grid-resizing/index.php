@@ -22,7 +22,7 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h4>Size to Fix</h4>
+    <h4>Size to Fit</h4>
 
     Call api.sizeColumnsToFit() to make the currently visible columns fit the screen.
     The columns will scale (growing or shrinking) to fit the available width.
