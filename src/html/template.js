@@ -1,0 +1,32 @@
+var template = [
+    '<div class="ag-root ag-scrolls">',
+    '    <!-- The loading panel -->',
+    '    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->',
+    '    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->',
+    '    <div class="ag-loading-panel">',
+    '        <div class="ag-loading-wrapper">',
+    '            <span class="ag-loading-center">Loading...</span>',
+    '        </div>',
+    '    </div>',
+    '    <!-- header -->',
+    '    <div class="ag-header">',
+    '        <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>',
+    '    </div>',
+    '    <!-- body -->',
+    '    <div class="ag-body">',
+    '        <div class="ag-pinned-cols-viewport">',
+    '            <div class="ag-pinned-cols-container"></div>',
+    '        </div>',
+    '        <div class="ag-body-viewport-wrapper">',
+    '            <div class="ag-body-viewport">',
+    '                <div class="ag-body-container"></div>',
+    '            </div>',
+    '        </div>',
+    '    </div>',
+    '    <!-- Paging -->',
+    '    <div class="ag-paging-panel">',
+    '    </div>',
+    '    </div>'
+].join('');
+
+module.exports = template;
