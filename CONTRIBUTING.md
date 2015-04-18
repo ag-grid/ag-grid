@@ -1,15 +1,12 @@
 Contributing to Angular Grid
 ========================
 
-Contributions to Angular Grid are welcome and encouraged, but please have a look through the guidelines in this document before raising an issue, or writing code for the project.
-
+To maintain the quality of the project, please don't feel offended if your contributions are not accepted.
 
 Using issues
 ------------
 
 The [issue tracker](https://github.com/ceolter/angular-grid/issues) is the preferred channel for reporting bugs, requesting new features and submitting pull requests.
-
-To keep the library lightweight for everyone, it's unlikely we'll add many more features to the core of Angular Grid, but issues are a good medium to design and spec out how new features could work and look.
 
 Please do not use issues for support requests. For help using Angular Grid, please take a look at the [`angular-grid`](http://stackoverflow.com/questions/tagged/angular-grid) tag on Stack Overflow.
 
@@ -33,19 +30,14 @@ Pull requests
 
 Clear, concise pull requests are excellent at continuing the project's community driven growth. But please review [these guidelines](https://github.com/blog/1943-how-to-write-the-perfect-pull-request) and the guidelines below before starting work on the project.
 
-Guidlines:
+Guidelines:
 
  - Please create an issue first:
    - For bugs, we can discuss the fixing approach
    - For enhancements, we can discuss if it is within the project scope and avoid duplicate effort
  - Please make changes to the files in [`/src`](https://github.com/ceolter/angular-grid/tree/master/src), not `Angular Grid` or `angularGrid.min.js` in the repo root directory, this avoids merge conflicts
- - Tabs for indentation, not spaces please
  - If adding new functionality, please also update the relevant `.md` file in [`/docs`](https://github.com/ceolter/angular-grid/tree/master/docs)
  - Please make your commits in logical sections with clear commit messages
-
-Joining the Project
--------------
- - Active committers and contributors are invited to introduce yourself and request commit access to this project.  Please send an email to hello@nickdownie.com or file an issue. 
 
 License
 -------

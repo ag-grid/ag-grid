@@ -28,7 +28,7 @@ As there is a website, putting feaures here would be duplication. Please check t
 Releases
 --------------
 
-Releases are located in website/dist
+Releases are located in dist
 
 
 Contribute
@@ -46,4 +46,4 @@ To contribute:
 6. `gulp build`
 7. Create Pull Request
 
-All pull requests and contributions are welcome!
+Contributions to Angular Grid are welcome, but need to be of similar standard and style to the project as it is currently.
