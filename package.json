@@ -21,5 +21,14 @@
   "bugs": {
     "url": "https://github.com/ceolter/angular-grid/issues"
   },
-  "homepage": "http://www.angulargrid.com/"
+  "homepage": "http://www.angulargrid.com/",
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "gulp": "^3.8.11",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
+    "streamify": "^0.2.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
 }

@@ -21,7 +21,7 @@ $ npm install angular-grid
 Features
 ==============
 
-As there is a website, putting feaures here would be duplicaiton. Please check the website for a full overview and documentation.
+As there is a website, putting feaures here would be duplication. Please check the website for a full overview and documentation.
 
 [www.angulargrid.com](http://www.angulargrid.com)
 
@@ -29,3 +29,21 @@ Releases
 --------------
 
 Releases are located in website/dist
+
+
+Contribute
+==============
+
+Before contributing, please review our contribution guidelines [here](https://raw.githubusercontent.com/ceolter/angular-grid/master/CONTRIBUTING.md).
+
+To contribute:
+
+1. `npm install`
+2. `npm install gulp -g`
+3. `bower install`
+4. Make your changes in `src/` files only!
+5. Provide documentation and tests
+6. `gulp build`
+7. Create Pull Request
+
+All pull requests and contributions are welcome!
