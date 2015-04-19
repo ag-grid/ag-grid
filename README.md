@@ -38,12 +38,13 @@ Before contributing, please review our contribution guidelines [here](https://ra
 
 To contribute:
 
-1. `npm install`
-2. `npm install gulp -g`
-3. `bower install`
-4. Make your changes in `src/` files only!
-5. Provide documentation and tests
-6. `gulp build`
-7. Create Pull Request
+- `npm install`
+- `npm install gulp -g`
+- `bower install`
+- `gulp` or `gulp guild` or `gulp watch`
+- Make your changes in `src/` files only!
+- Provide documentation and tests
+- Discard all changes to `dist/`
+- Create Pull Request
 
 Contributions to Angular Grid are welcome, but need to be of similar standard and style to the project as it is currently.
