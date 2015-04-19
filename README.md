@@ -50,5 +50,3 @@ Then if contributing:
 - Do manual end to end testing off all examples in documentation
 - Discard all changes to `dist/`
 - Create Pull Request
-
-Contributions to Angular Grid are welcome, but need to be of similar high standard and style to the project as it is currently.

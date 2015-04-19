@@ -9,7 +9,7 @@ However having said that, the author welcomes those who wish to contribute who a
 is meant:
 1) Understanding of clean code concepts including encapsulation and loose coupling.
 2) Understanding why the code in Angular Grid is easy to understand and be able to write similar code.
-3) Appreciate of the full stack . . . if you have 10+ years writing code end to end, then you will be like minded to the author.
+3) Appreciation of the full stack . . . if you have 10+ years writing code end to end, then you will be like minded to the author.
 4) Be able to work in an environment that doesn't have unit tests. This a skill!!
 
 Currently there are no tests in the project. This was done on purpose for the following reasons:
@@ -23,9 +23,9 @@ No unnecessary dependencies should be introduced. Angular Grid should be kept as
 The usage of AngularJS should be kept at an absolute bare minimum. Currently it's only optionally used by
 user defined cell renderers. This is for two reasons a) AngularJS may not be the right choice in a lot
 of areas eg Angular Grid does not use directives internally for speed reasons and b) it is the intent
-the grid works outside of AngularJS, inside Angular 2.0, Web Components and inside any other future framework.
+the grid can work outside any library, or inside Angular 2.0, Web Components or any other future framework.
 
-Similarly no other AngularJS modules should be included.
+Similarly no other AngularJS modules should be included in Angular Grid.
 
 No JQuery, underscore or lodash. These is to keep with minimal footprint of the project.
 
