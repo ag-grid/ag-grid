@@ -46,5 +46,3 @@ To contribute:
 - Provide documentation and tests
 - Discard all changes to `dist/`
 - Create Pull Request
-
-Contributions to Angular Grid are welcome, but need to be of similar standard and style to the project as it is currently.
