@@ -1,5 +1,5 @@
 var utils = require('./../utils');
-var template = require('./../../html/template.js');
+var template = require('./.././template.js');
 
 var EQUALS = 1;
 var LESS_THAN = 2;

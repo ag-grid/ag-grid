@@ -1,0 +1,201 @@
+@import 'nib'
+
+.ag-root
+    font-size: 14px
+    cursor: default
+    /* Set to relative, so absolute popups appear relative to this */
+    position: relative
+    /*disable user mouse selection */
+    user-select: none
+    box-sizing: border-box
+
+    .ag-no-scrolls
+        white-space: nowrap
+        display: inline-block
+
+    .ag-scrolls
+        height: 100%
+
+    .ag-popup-backdrop
+        position: fixed
+        left: 0px
+        top: 0px
+        width: 100%
+        height: 100%
+
+    .ag-header
+        position: absolute
+        top: 0px
+        left: 0px
+        white-space: nowrap
+        box-sizing: border-box
+        overflow: hidden
+        width: 100%
+
+    .ag-pinned-header
+        box-sizing: border-box
+        display: inline-block
+        overflow: hidden
+        height: 100%
+
+    .ag-header-viewport
+        box-sizing: border-box
+        display: inline-block
+        overflow: hidden
+        height: 100%
+
+    .ag-scrolls .ag-header-container
+        box-sizing: border-box
+        position: relative
+        white-space: nowrap
+        height: 100%
+
+    .ag-no-scrolls .ag-header-container
+        white-space: nowrap
+
+    .ag-header-cell
+        box-sizing: border-box
+        vertical-align: bottom
+        text-align: center
+        display: inline-block
+
+    .ag-header-cell-grouped
+        height: 50%
+
+    .ag-header-cell-not-grouped
+        height: 100%
+
+    .ag-header-group
+        box-sizing: border-box
+        display: inline-block
+        height: 100%
+
+    .ag-header-group-cell
+        box-sizing: border-box
+        text-align: center
+        height: 50%
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-header-group-cell-label
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-header-cell-label
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-header-cell-resize
+        height: 100%
+        width: 4px
+        float: right
+        cursor: col-resize
+
+    .ag-header-cell-menu-button
+        float: right
+
+    .ag-loading-panel
+        z-index: 1 /* make the loading panel appear one above the grid*/
+        position: absolute
+        display: table /* this is also set in js, set to 'none' when we hide the loading panel */
+        width: 100%
+        /* Height is set by javascript, to cover the table */
+
+    .ag-loading-wrapper
+        display: table-cell
+        vertical-align: middle
+        text-align: center
+
+    .ag-loading-center
+
+    .ag-body
+        height: 100%
+        box-sizing: border-box
+
+    .ag-pinned-cols-viewport
+        float: left
+        position: absolute
+        overflow: hidden
+
+    .ag-pinned-cols-container
+        display: inline-block
+        position: relative
+
+    .ag-body-viewport-wrapper
+        height: 100%
+
+    .ag-body-viewport
+        overflow: auto
+        height: 100%
+
+    .ag-scrolls .ag-body-container
+        position: relative
+        display: inline-block
+
+    .ag-scrolls .ag-row
+        white-space: nowrap
+        position: absolute
+        width: 100%
+
+    .agile-gird-row:hover
+        background-color: aliceblue
+
+    .ag-cell
+        display: inline-block
+        white-space: nowrap
+        height: 100%
+        box-sizing: border-box
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-group-cell-entire-row
+        position: absolute
+        width: 100%
+        display: inline-block
+        white-space: nowrap
+        height: 100%
+        box-sizing: border-box
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-footer-cell-entire-row
+        position: absolute
+        width: 100%
+        display: inline-block
+        white-space: nowrap
+        height: 100%
+        box-sizing: border-box
+        text-overflow: ellipsis
+        overflow: hidden
+
+    .ag-large .ag-root
+        font-size: 20px
+    .ag-filter
+        position: absolute
+        z-index: 100
+
+    .ag-filter-list-viewport
+        overflow-x: auto
+        height: 200px
+        width: 200px
+
+    .ag-filter-list-container
+        position: relative
+        overflow: hidden
+
+    .ag-filter-item
+        text-overflow: ellipsis
+        overflow: hidden
+        white-space: nowrap
+        position: absolute
+
+    .ag-filter-filter
+        width: 170px
+        margin: 4px
+
+    .ag-filter-select
+        width: 110px
+        margin: 4px 4px 0px 4px
+
+    .ag-paging-panel
+        position: absolute
