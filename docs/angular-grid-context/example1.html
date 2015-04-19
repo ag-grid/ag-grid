@@ -8,7 +8,9 @@
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
     <div style="height: 10%;">
-        <select ng-model="gridOptions.context.month">
+        <select ng-model="gridOptions.context.reportingCurrency"
+                ng-options="currency for currency in currencies"
+                ng-change="currencyChanged()">
         </select>
     </div>
     <div style="height: 90%;" angular-grid="gridOptions" class="ag-fresh"></div>

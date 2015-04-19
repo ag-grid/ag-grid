@@ -268,6 +268,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         var cellRendererParams = {
             colDef: colDef,
             $scope: newChildScope,
+            context: this.gridOptionsWrapper.getContext(),
             gridOptions: this.gridOptionsWrapper.getGridOptions()
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);

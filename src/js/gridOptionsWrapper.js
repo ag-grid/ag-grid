@@ -15,6 +15,9 @@ GridOptionsWrapper.prototype.isRowSelection = function() {
 GridOptionsWrapper.prototype.isRowSelectionMulti = function() {
     return this.gridOptions.rowSelection === 'multiple';
 };
+GridOptionsWrapper.prototype.getContext = function() {
+    return this.gridOptions.context;
+};
 GridOptionsWrapper.prototype.isVirtualPaging = function() {
     return isTrue(this.gridOptions.virtualPaging);
 };

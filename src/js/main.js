@@ -6,7 +6,6 @@
 (function() {
 
     // Establish the root object, `window` or `exports`
-    var root = this;
     var Grid = require('./grid');
 
     // if angular is present, register the directive
@@ -29,7 +28,7 @@
         }
         exports.angularGrid = angularGridGlobalFunction;
     } else {
-        root.angularGrid = angularGridGlobalFunction;
+        window.angularGrid = angularGridGlobalFunction;
     }
 
 
