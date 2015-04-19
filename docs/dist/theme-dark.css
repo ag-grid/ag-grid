@@ -77,8 +77,6 @@
 .ag-dark .ag-body {
   background-color: #ddd;
 }
-.ag-dark .ag-body-viewport,
-.ag-dark .ag-pinned-cols-viewport,
 .ag-dark .ag-row-selected {
   background-color: #000;
 }

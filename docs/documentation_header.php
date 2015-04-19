@@ -171,6 +171,12 @@
                     <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
+                <?php if ($key == "Context") { ?>
+                    <span class="sidebarLinkSelected">Context</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-context/index.php">Context</a>
+                <?php } ?>
+
                 <?php if ($key == "Datasource") { ?>
                     <span class="sidebarLinkSelected">Datasource</span>
                 <?php } else { ?>

@@ -4,9 +4,15 @@
     <script src="../dist/angularGrid.js"></script>
     <link rel="stylesheet" type="text/css" href="../dist/angularGrid.css">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
-    <script src="index.js"></script>
+    <script src="example1.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<div angular-grid="gridOptions" class="ag-fresh"></div>
+    <div style="height: 10%;">
+        <select ng-model="gridOptions.context.reportingCurrency"
+                ng-options="currency for currency in currencies"
+                ng-change="currencyChanged()">
+        </select>
+    </div>
+    <div style="height: 90%;" angular-grid="gridOptions" class="ag-fresh"></div>
 </body>
 </html>

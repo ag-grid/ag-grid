@@ -1,14 +1,40 @@
 Contributing to Angular Grid
 ========================
 
-To maintain the quality of the project, please don't feel offended if your contributions are not accepted.
+The purpose of Angular Grid originally was to assist the author with his work. Having the project on Github was
+done as part of releasing the project as Open Soruce. Placing the project on Github was not done with the
+intention of accumulating contributors.
+
+However having said that, the author welcomes those who wish to contribute who are very strong developers, by which
+is meant:
+1) Understanding of clean code concepts including encapsulation and loose coupling.
+2) Understanding why the code in Angular Grid is easy to understand and be able to write similar code.
+3) Appreciate of the full stack . . . if you have 10+ years writing code end to end, then you will be like minded to the author.
+4) Be able to work in an environment that doesn't have unit tests. This a skill!!
+
+Currently there are no tests in the project. This was done on purpose for the following reasons:
+1. Only one developer working on the project, so he knows where the dependencies are. Tests are more important when more than one developer.
+2. Major re-factoring being done constantly to the core project structure - which would constantly break tests.
+3. Manual tests are in place (via the documentation examples) - and manual tests can pick up things (broken layout for example) that automated tests find difficult.
+
+No unnecessary dependencies should be introduced. Angular Grid should be kept as accessible to everyone. The more
+'cool libraries' that are introduced, the higher the learning curve for others.
+
+The usage of AngularJS should be kept at an absolute bare minimum. Currently it's only optionally used by
+user defined cell renderers. This is for two reasons a) AngularJS may not be the right choice in a lot
+of areas eg Angular Grid does not use directives internally for speed reasons and b) it is the intent
+the grid works outside of AngularJS, inside Angular 2.0, Web Components and inside any other future framework.
+
+Similarly no other AngularJS modules should be included.
+
+No JQuery, underscore or lodash. These is to keep with minimal footprint of the project.
+
+jshint and jslint should not be used. If we need those in the project, then we have the wrong developers.
 
 Using issues
 ------------
 
 The [issue tracker](https://github.com/ceolter/angular-grid/issues) is the preferred channel for reporting bugs, requesting new features and submitting pull requests.
-
-Please do not use issues for support requests. For help using Angular Grid, please take a look at the [`angular-grid`](http://stackoverflow.com/questions/tagged/angular-grid) tag on Stack Overflow.
 
 
 Reporting bugs
@@ -16,7 +42,7 @@ Reporting bugs
 
 Well structured, detailed bug reports are hugely valuable for the project.
 
-Guidlines for reporting bugs:
+Guidelines for reporting bugs:
 
  - Check the issue search to see if it has already been reported
  - Isolate the problem to a simple test case

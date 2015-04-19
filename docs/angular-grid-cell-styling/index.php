@@ -95,6 +95,7 @@ var colDef = {
     value: The value to be rendered.<br/>
     data: The row (from the rowData array, where value was taken) been rendered.<br/>
     colDef: The colDef been rendered.<br/>
+    context: The context as set on the gridOptions.<br/>
     $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
 
 </div>

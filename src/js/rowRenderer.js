@@ -376,6 +376,7 @@ RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
             node: node,
             data: node.data,
             rowIndex: rowIndex,
+            context: this.gridOptionsWrapper.getContext(),
             gridOptions: this.gridOptionsWrapper.getGridOptions()
         };
         var extraRowClasses = this.gridOptionsWrapper.getRowClass()(params);
@@ -484,7 +485,8 @@ RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntire
             data: node.data,
             node: node,
             padding: padding,
-            gridOptions: this.gridOptions
+            gridOptions: this.gridOptions,
+            context: this.gridOptionsWrapper.getContext()
         };
         utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
     } else {
@@ -571,7 +573,8 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
             colDef: colDef,
             $scope: $childScope,
             rowIndex: rowIndex,
-            gridOptions: this.gridOptionsWrapper.getGridOptions()
+            gridOptions: this.gridOptionsWrapper.getGridOptions(),
+            context: this.gridOptionsWrapper.getContext()
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
         if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
@@ -633,6 +636,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
                 node: node,
                 colDef: colDef,
                 $scope: $childScope,
+                context: this.gridOptionsWrapper.getContext(),
                 gridOptions: this.gridOptionsWrapper.getGridOptions()
             };
             cssToUse = colDef.cellStyle(cellStyleParams);
@@ -656,6 +660,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
                 node: node,
                 colDef: colDef,
                 $scope: $childScope,
+                context: this.gridOptionsWrapper.getContext(),
                 gridOptions: this.gridOptionsWrapper.getGridOptions()
             };
             classToUse = colDef.cellClass(cellClassParams);
@@ -800,6 +805,7 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
         newValue: newValue,
         rowIndex: rowIndex,
         colDef: colDef,
+        context: this.gridOptionsWrapper.getContext(),
         gridOptions: this.gridOptionsWrapper.getGridOptions()
     };
 
