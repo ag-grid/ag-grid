@@ -240,6 +240,12 @@ Grid.prototype.onRowClicked = function(event, rowIndex, node) {
         this.gridOptions.rowClicked(params);
     }
 
+    // we do not allow selecting groups by clicking (as the click here expands the group)
+    // so return if it's a group row
+    if (node.group) {
+        return;
+    }
+
     // if no selection method enabled, do nothing
     if (!this.gridOptionsWrapper.isRowSelection()) {
         return;

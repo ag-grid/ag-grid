@@ -2,7 +2,7 @@ Contributing to Angular Grid
 ========================
 
 The purpose of Angular Grid originally was to assist the author with his work. Having the project on Github was
-done as part of releasing the project as Open Soruce. Placing the project on Github was not done with the
+done as part of releasing the project as Open Source. Placing the project on Github was not done with the
 intention of accumulating contributors.
 
 However having said that, the author welcomes those who wish to contribute who are very strong developers, by which

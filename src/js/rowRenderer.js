@@ -425,12 +425,10 @@ RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
         }
     }
 
-    if (!groupRow) {
-        var _this = this;
-        eRow.addEventListener("click", function(event) {
-            _this.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), node)
-        });
-    }
+    var _this = this;
+    eRow.addEventListener("click", function(event) {
+        _this.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), node)
+    });
 
     return eRow;
 };
