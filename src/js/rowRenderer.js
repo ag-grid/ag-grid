@@ -574,17 +574,32 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
             gridOptions: this.gridOptionsWrapper.getGridOptions()
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            eGridCell.appendChild(resultFromRenderer);
+
+        if (resultFromRenderer.then) {
+            resultFromRenderer.then(function(res) {
+                if (!res) {
+                    return;
+                }
+                checkType(res);
+            });
         } else {
-            // otherwise assume it was html, so just insert
-            eGridCell.innerHTML = resultFromRenderer;
+            checkType(resultFromRenderer);
         }
+
     } else {
         // if we insert undefined, then it displays as the string 'undefined', ugly!
         if (value !== undefined && value !== null && value !== '') {
             eGridCell.innerHTML = value;
+        }
+    }
+
+    function checkType(result) {
+        if (utils.isNode(result) || utils.isElement(result)) {
+            // a dom node or element was returned, so add child
+            eGridCell.appendChild(result);
+        } else {
+            // otherwise assume it was html, so just insert
+            eGridCell.innerHTML = result;
         }
     }
 };
