@@ -24,16 +24,16 @@ gulp.task('watch', watchTask);
 
 
 function jsTask() {
-    return browserify('./src/js/main.js')
+    return browserify('./src/js/main.js', {debug: true})
         .bundle()
         .pipe(source('angularGrid.js'))
-        .pipe(gulp.dest('./dist/'))
-        .pipe(gulp.dest('./docs/dist/'))
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulp.dest('./docs/dist'))
         .pipe(buffer())
         .pipe(uglify())
         .pipe(rename('angularGrid.min.js'))
-        .pipe(gulp.dest('./dist/'))
-        .pipe(gulp.dest('./docs/dist/'));
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulp.dest('./docs/dist'));
 }
 
 
@@ -57,7 +57,7 @@ function stylusTask() {
             return stream
                 .pipe(stylus({
                     use: nib(),
-                    compress: true,
+                    compress: true
                 }))
                 .pipe(rename((function() {
                     var name = path.basename(file.path);

@@ -39,6 +39,7 @@ include '../documentation_header.php';
         <b>newValue</b>The string value entered into the default editor.<br/>
         <b>rowIndex</b>The index of the virtualised row.<br/>
         <b>colDef</b>The column definition.<br/>
+        <b>context</b>The context as set in the gridOptions.<br/>
         <b>gridOptions</b>The grid options.<br/>
     </p>
 

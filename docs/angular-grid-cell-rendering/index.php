@@ -88,6 +88,7 @@ var colDef = {
     $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     rowIndex: The index of the row renderer, after sorting and filtering.<br/>
     gridOptions: A reference to the provided grid options.<br/>
+    context: The context as set on the gridOptions.<br/>
 
     <h4>Angular Compiling</h4>
 
