@@ -6,10 +6,11 @@
 (function() {
 
     // Establish the root object, `window` or `exports`
+    var root = this;
     var Grid = require('./grid');
 
     // if angular is present, register the directive
-    if (angular) {
+    if (typeof angular !== 'undefined') {
         var angularModule = angular.module("angularGrid", []);
         angularModule.directive("angularGrid", function() {
             return {
@@ -28,13 +29,8 @@
         }
         exports.angularGrid = angularGridGlobalFunction;
     } else {
-        window.angularGrid = angularGridGlobalFunction;
+        root.angularGrid = angularGridGlobalFunction;
     }
-
-
-
-
-
 
 
     function AngularDirectiveController($element, $scope, $compile) {
@@ -61,6 +57,8 @@
                 console.log('WARNING - was not able to find element ' + element + ' in the DOM, Angular Grid initialisation aborted.');
                 return;
             }
+        } else {
+            eGridDiv = element;
         }
         new Grid(eGridDiv, gridOptions, null, null);
     }
