@@ -10,6 +10,8 @@
     var Grid = require('./grid');
 
 
+    console.log('helllo');
+
     // if angular is present, register the directive
     if (angular) {
         var angularModule = angular.module("angularGrid", []);

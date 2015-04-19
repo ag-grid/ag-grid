@@ -11,6 +11,8 @@
     var Grid = require('./grid');
 
 
+    console.log('helllo');
+
     // if angular is present, register the directive
     if (angular) {
         var angularModule = angular.module("angularGrid", []);
@@ -70,60 +72,7 @@
 
 }).call(this);
 
-},{"./grid":13}],2:[function(require,module,exports){
-var template = [
-    '<div class="ag-root ag-scrolls">',
-    '    <!-- The loading panel -->',
-    '    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->',
-    '    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->',
-    '    <div class="ag-loading-panel">',
-    '        <div class="ag-loading-wrapper">',
-    '            <span class="ag-loading-center">Loading...</span>',
-    '        </div>',
-    '    </div>',
-    '    <!-- header -->',
-    '    <div class="ag-header">',
-    '        <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>',
-    '    </div>',
-    '    <!-- body -->',
-    '    <div class="ag-body">',
-    '        <div class="ag-pinned-cols-viewport">',
-    '            <div class="ag-pinned-cols-container"></div>',
-    '        </div>',
-    '        <div class="ag-body-viewport-wrapper">',
-    '            <div class="ag-body-viewport">',
-    '                <div class="ag-body-container"></div>',
-    '            </div>',
-    '        </div>',
-    '    </div>',
-    '    <!-- Paging -->',
-    '    <div class="ag-paging-panel">',
-    '    </div>',
-    '    </div>'
-].join('');
-
-module.exports = template;
-
-},{}],3:[function(require,module,exports){
-var template = [
-    '<div class="ag-root ag-no-scrolls">',
-    '    <!-- See comment in template.html for why loading is laid out like so -->',
-    '    <div class="ag-loading-panel">',
-    '        <div class="ag-loading-wrapper">',
-    '            <span class="ag-loading-center">Loading...</span>',
-    '        </div>',
-    '    </div>',
-    '    <!-- header -->',
-    '    <div class="ag-header-container"></div>',
-    '    <!-- body -->',
-    '    <div class="ag-body-container"></div>',
-    '</div>'
-].join('');
-
-
-module.exports = template;
-
-},{}],4:[function(require,module,exports){
+},{"./grid":11}],2:[function(require,module,exports){
 var constants = require('./constants');
 
 function ColumnController() {
@@ -429,7 +378,7 @@ function Column(colDef, index, pinned) {
 
 module.exports = ColumnController;
 
-},{"./constants":5}],5:[function(require,module,exports){
+},{"./constants":3}],3:[function(require,module,exports){
 var constants = {
     STEP_EVERYTHING: 0,
     STEP_FILTER: 1,
@@ -445,7 +394,7 @@ var constants = {
 
 module.exports = constants;
 
-},{}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var utils = require('./../utils');
 var SetFilter = require('./setFilter');
 var NumberFilter = require('./numberFilter');
@@ -639,9 +588,9 @@ FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
 
 module.exports = FilterManager;
 
-},{"./../utils":23,"./numberFilter":7,"./setFilter":8,"./textFilter":11}],7:[function(require,module,exports){
+},{"./../utils":23,"./numberFilter":5,"./setFilter":6,"./textFilter":9}],5:[function(require,module,exports){
 var utils = require('./../utils');
-var template = require('./../../html/template.js');
+var template = require('./.././template.js');
 
 var EQUALS = 1;
 var LESS_THAN = 2;
@@ -730,7 +679,7 @@ NumberFilter.prototype.onFilterChanged = function() {
 
 module.exports = NumberFilter;
 
-},{"./../../html/template.js":2,"./../utils":23}],8:[function(require,module,exports){
+},{"./.././template.js":21,"./../utils":23}],6:[function(require,module,exports){
 var utils = require('./../utils');
 var SetFilterModel = require('./setFilterModel');
 var template = require('./setFilterTemplate');
@@ -981,7 +930,7 @@ SetFilter.prototype.addScrollListener = function() {
 
 module.exports = SetFilter;
 
-},{"./../utils":23,"./setFilterModel":9,"./setFilterTemplate":10}],9:[function(require,module,exports){
+},{"./../utils":23,"./setFilterModel":7,"./setFilterTemplate":8}],7:[function(require,module,exports){
     var utils = require('../utils');
 
     function SetFilterModel(colDef, rowModel) {
@@ -1117,7 +1066,7 @@ module.exports = SetFilter;
 
     module.exports = SetFilterModel;
 
-},{"../utils":23}],10:[function(require,module,exports){
+},{"../utils":23}],8:[function(require,module,exports){
 var template = [
     '<div>',
     '    <div class="ag-filter-header-container">',
@@ -1144,7 +1093,7 @@ var template = [
 
 module.exports = template;
 
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var utils = require('../utils');
 var template = require('./textFilterTemplate');
 
@@ -1231,7 +1180,7 @@ TextFilter.prototype.onFilterChanged = function() {
 
 module.exports = TextFilter;
 
-},{"../utils":23,"./textFilterTemplate":12}],12:[function(require,module,exports){
+},{"../utils":23,"./textFilterTemplate":10}],10:[function(require,module,exports){
 var template = [
     '<div>',
     '<div>',
@@ -1250,11 +1199,11 @@ var template = [
 
 module.exports = template;
 
-},{}],13:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var constants = require('./constants');
 var GridOptionsWrapper = require('./gridOptionsWrapper');
-var template = require('../html/template.js');
-var templateNoScrolls = require('../html/templateNoScrolls.js');
+var template = require('./template.js');
+var templateNoScrolls = require('./templateNoScrolls.js');
 var SelectionController = require('./selectionController');
 var FilterManager = require('./filter/filterManager');
 var SelectionRendererFactory = require('./selectionRendererFactory');
@@ -1809,7 +1758,7 @@ Grid.prototype.scrollHeaderAndPinned = function() {
 
 module.exports = Grid;
 
-},{"../html/template.js":2,"../html/templateNoScrolls.js":3,"./columnController":4,"./constants":5,"./filter/filterManager":6,"./gridOptionsWrapper":14,"./headerRenderer":16,"./inMemoryRowController":17,"./paginationController":18,"./rowRenderer":19,"./selectionController":20,"./selectionRendererFactory":21,"./virtualPageRowController":24}],14:[function(require,module,exports){
+},{"./columnController":2,"./constants":3,"./filter/filterManager":4,"./gridOptionsWrapper":12,"./headerRenderer":14,"./inMemoryRowController":15,"./paginationController":16,"./rowRenderer":17,"./selectionController":18,"./selectionRendererFactory":19,"./template.js":21,"./templateNoScrolls.js":22,"./virtualPageRowController":24}],12:[function(require,module,exports){
 var DEFAULT_ROW_HEIGHT = 30;
 
 function GridOptionsWrapper(gridOptions) {
@@ -1986,7 +1935,7 @@ GridOptionsWrapper.prototype.getPinnedColCount = function() {
 
 module.exports = GridOptionsWrapper;
 
-},{}],15:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function GroupCreator() {}
 
 GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunction, expandByDefault) {
@@ -2070,7 +2019,7 @@ GroupCreator.prototype.isExpanded = function(expandByDefault, level) {
 
 module.exports = new GroupCreator();
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var utils = require('./utils');
 var SvgFactory = require('./svgFactory');
 var constants = require('./constants');
@@ -2542,7 +2491,7 @@ HeaderRenderer.prototype.updateFilterIcons = function() {
 
 module.exports = HeaderRenderer;
 
-},{"./constants":5,"./svgFactory":22,"./utils":23}],17:[function(require,module,exports){
+},{"./constants":3,"./svgFactory":20,"./utils":23}],15:[function(require,module,exports){
 var groupCreator = require('./groupCreator');
 var utils = require('./utils');
 var constants = require('./constants');
@@ -2954,7 +2903,7 @@ InMemoryRowController.prototype.aggregateRowForQuickFilter = function(node) {
 
 module.exports = InMemoryRowController;
 
-},{"./constants":5,"./groupCreator":15,"./utils":23}],18:[function(require,module,exports){
+},{"./constants":3,"./groupCreator":13,"./utils":23}],16:[function(require,module,exports){
 var TEMPLATE = [
     '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">',
     '<span id="firstRowOnPage"></span>',
@@ -3167,7 +3116,7 @@ PaginationController.prototype.populatePanel = function(ePagingPanel) {
 
 module.exports = PaginationController;
 
-},{}],19:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var constants = require('./constants');
 var SvgFactory = require('./svgFactory');
 var utils = require('./utils');
@@ -4095,7 +4044,7 @@ RowRenderer.prototype.startEditingNextCell = function(rowIndex, column, shiftKey
 
 module.exports = RowRenderer;
 
-},{"./constants":5,"./svgFactory":22,"./utils":23}],20:[function(require,module,exports){
+},{"./constants":3,"./svgFactory":20,"./utils":23}],18:[function(require,module,exports){
 var utils = require('./utils');
 
 // these constants are used for determining if groups should
@@ -4487,7 +4436,7 @@ SelectionController.prototype.updateGroupParentsIfNeeded = function() {
 
 module.exports = SelectionController;
 
-},{"./utils":23}],21:[function(require,module,exports){
+},{"./utils":23}],19:[function(require,module,exports){
 function SelectionRendererFactory() {}
 
 SelectionRendererFactory.prototype.init = function(angularGrid, selectionController) {
@@ -4562,7 +4511,7 @@ function setCheckboxState(eCheckbox, state) {
 
 module.exports = SelectionRendererFactory;
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var SVG_NS = "http://www.w3.org/2000/svg";
 
 function SvgFactory() {}
@@ -4631,6 +4580,59 @@ function createIconSvg() {
 }
 
 module.exports = SvgFactory;
+
+},{}],21:[function(require,module,exports){
+var template = [
+    '<div class="ag-root ag-scrolls">',
+    '    <!-- The loading panel -->',
+    '    <!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->',
+    '    <!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->',
+    '    <div class="ag-loading-panel">',
+    '        <div class="ag-loading-wrapper">',
+    '            <span class="ag-loading-center">Loading...</span>',
+    '        </div>',
+    '    </div>',
+    '    <!-- header -->',
+    '    <div class="ag-header">',
+    '        <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>',
+    '    </div>',
+    '    <!-- body -->',
+    '    <div class="ag-body">',
+    '        <div class="ag-pinned-cols-viewport">',
+    '            <div class="ag-pinned-cols-container"></div>',
+    '        </div>',
+    '        <div class="ag-body-viewport-wrapper">',
+    '            <div class="ag-body-viewport">',
+    '                <div class="ag-body-container"></div>',
+    '            </div>',
+    '        </div>',
+    '    </div>',
+    '    <!-- Paging -->',
+    '    <div class="ag-paging-panel">',
+    '    </div>',
+    '    </div>'
+].join('');
+
+module.exports = template;
+
+},{}],22:[function(require,module,exports){
+var template = [
+    '<div class="ag-root ag-no-scrolls">',
+    '    <!-- See comment in template.html for why loading is laid out like so -->',
+    '    <div class="ag-loading-panel">',
+    '        <div class="ag-loading-wrapper">',
+    '            <span class="ag-loading-center">Loading...</span>',
+    '        </div>',
+    '    </div>',
+    '    <!-- header -->',
+    '    <div class="ag-header-container"></div>',
+    '    <!-- body -->',
+    '    <div class="ag-body-container"></div>',
+    '</div>'
+].join('');
+
+
+module.exports = template;
 
 },{}],23:[function(require,module,exports){
 function Utils() {}
