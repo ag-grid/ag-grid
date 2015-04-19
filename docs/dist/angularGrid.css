@@ -12,21 +12,21 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.ag-root .ag-no-scrolls {
+.ag-no-scrolls {
   white-space: nowrap;
   display: inline-block;
 }
-.ag-root .ag-scrolls {
+.ag-scrolls {
   height: 100%;
 }
-.ag-root .ag-popup-backdrop {
+.ag-popup-backdrop {
   position: fixed;
   left: 0px;
   top: 0px;
   width: 100%;
   height: 100%;
 }
-.ag-root .ag-header {
+.ag-header {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -37,7 +37,7 @@
   overflow: hidden;
   width: 100%;
 }
-.ag-root .ag-pinned-header {
+.ag-pinned-header {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -45,7 +45,7 @@
   overflow: hidden;
   height: 100%;
 }
-.ag-root .ag-header-viewport {
+.ag-header-viewport {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -53,7 +53,7 @@
   overflow: hidden;
   height: 100%;
 }
-.ag-root .ag-scrolls .ag-header-container {
+.ag-scrolls .ag-header-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -61,10 +61,10 @@
   white-space: nowrap;
   height: 100%;
 }
-.ag-root .ag-no-scrolls .ag-header-container {
+.ag-no-scrolls .ag-header-container {
   white-space: nowrap;
 }
-.ag-root .ag-header-cell {
+.ag-header-cell {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -72,20 +72,20 @@
   text-align: center;
   display: inline-block;
 }
-.ag-root .ag-header-cell-grouped {
+.ag-header-cell-grouped {
   height: 50%;
 }
-.ag-root .ag-header-cell-not-grouped {
+.ag-header-cell-not-grouped {
   height: 100%;
 }
-.ag-root .ag-header-group {
+.ag-header-group {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   height: 100%;
 }
-.ag-root .ag-header-group-cell {
+.ag-header-group-cell {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -95,73 +95,72 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-header-group-cell-label {
+.ag-header-group-cell-label {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-header-cell-label {
+.ag-header-cell-label {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-header-cell-resize {
+.ag-header-cell-resize {
   height: 100%;
   width: 4px;
   float: right;
   cursor: col-resize;
 }
-.ag-root .ag-header-cell-menu-button {
+.ag-header-cell-menu-button {
   float: right;
 }
-.ag-root .ag-loading-panel {
+.ag-loading-panel {
   z-index: 1;
   position: absolute;
   display: table;
   width: 100%;
 /* Height is set by javascript, to cover the table */
 }
-.ag-root .ag-loading-wrapper {
+.ag-loading-wrapper {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
 }
-.ag-root .ag-loading-center,
-.ag-root .ag-body {
+.ag-body {
   height: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.ag-root .ag-pinned-cols-viewport {
+.ag-pinned-cols-viewport {
   float: left;
   position: absolute;
   overflow: hidden;
 }
-.ag-root .ag-pinned-cols-container {
+.ag-pinned-cols-container {
   display: inline-block;
   position: relative;
 }
-.ag-root .ag-body-viewport-wrapper {
+.ag-body-viewport-wrapper {
   height: 100%;
 }
-.ag-root .ag-body-viewport {
+.ag-body-viewport {
   overflow: auto;
   height: 100%;
 }
-.ag-root .ag-scrolls .ag-body-container {
+.ag-scrolls .ag-body-container {
   position: relative;
   display: inline-block;
 }
-.ag-root .ag-scrolls .ag-row {
+.ag-scrolls .ag-row {
   white-space: nowrap;
   position: absolute;
   width: 100%;
 }
-.ag-root .agile-gird-row:hover {
+.agile-gird-row:hover {
   background-color: #f0f8ff;
 }
-.ag-root .ag-cell {
+.ag-cell {
   display: inline-block;
   white-space: nowrap;
   height: 100%;
@@ -172,7 +171,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-group-cell-entire-row {
+.ag-group-cell-entire-row {
   position: absolute;
   width: 100%;
   display: inline-block;
@@ -185,7 +184,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-footer-cell-entire-row {
+.ag-footer-cell-entire-row {
   position: absolute;
   width: 100%;
   display: inline-block;
@@ -198,37 +197,37 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ag-root .ag-large .ag-root {
+.ag-large .ag-root {
   font-size: 20px;
 }
-.ag-root .ag-filter {
+.ag-filter {
   position: absolute;
   z-index: 100;
 }
-.ag-root .ag-filter-list-viewport {
+.ag-filter-list-viewport {
   overflow-x: auto;
   height: 200px;
   width: 200px;
 }
-.ag-root .ag-filter-list-container {
+.ag-filter-list-container {
   position: relative;
   overflow: hidden;
 }
-.ag-root .ag-filter-item {
+.ag-filter-item {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   position: absolute;
 }
-.ag-root .ag-filter-filter {
+.ag-filter-filter {
   width: 170px;
   margin: 4px;
 }
-.ag-root .ag-filter-select {
+.ag-filter-select {
   width: 110px;
   margin: 4px 4px 0px 4px;
 }
-.ag-root .ag-paging-panel {
+.ag-paging-panel {
   position: absolute;
 }

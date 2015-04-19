@@ -82,8 +82,6 @@
 .ag-fresh .ag-body {
   background-color: #ddd;
 }
-.ag-fresh .ag-body-viewport,
-.ag-fresh .ag-pinned-cols-viewport,
 .ag-fresh .ag-row-selected {
   background-color: #b2dfee;
 }
