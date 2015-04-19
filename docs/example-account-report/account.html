@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="account.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+
+    <script src="../dist/angularGrid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angularGrid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+
+    <script src="account.js"></script>
+
+</head>
+
+<body ng-app="account">
+
+    <div ng-controller="accountController" style="width: 800px;">
+        <div style="display: inline-block;"
+             angular-grid="gridOptions"
+             class="ag-account">
+        </div>
+    </div>
+
+</body>
+</html>

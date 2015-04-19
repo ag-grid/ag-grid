@@ -28,10 +28,12 @@ function jsTask() {
         .bundle()
         .pipe(source('angularGrid.js'))
         .pipe(gulp.dest('./dist/'))
+        .pipe(gulp.dest('./docs/dist/'))
         .pipe(buffer())
         .pipe(uglify())
         .pipe(rename('angularGrid.min.js'))
-        .pipe(gulp.dest('./dist/'));
+        .pipe(gulp.dest('./dist/'))
+        .pipe(gulp.dest('./docs/dist/'));
 }
 
 
@@ -45,6 +47,7 @@ function stylusTask() {
                     use: nib(),
                     compress: false,
                 }))
+                .pipe(gulp.dest('./docs/dist/'))
                 .pipe(gulp.dest('./dist/'));
         }));
 
@@ -62,7 +65,8 @@ function stylusTask() {
                     name = name.substring(0, dot) + '.min.css';
                     return name;
                 })()))
-                .pipe(gulp.dest('./dist/'));
+                .pipe(gulp.dest('./dist/'))
+                .pipe(gulp.dest('./docs/dist/'));
         }));
 
 

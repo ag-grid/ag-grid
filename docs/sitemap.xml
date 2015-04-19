@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">	  	  
+<!-- www.check-domains.com sitemap generator -->
+
+<url>
+   <loc>http://www.angulargrid.com/</loc>
+   <lastmod>2015-03-09T21:52:07+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>1.0000</priority>
+</url>
+<url>
+   <loc>http://www.angulargrid.com/index.html</loc>
+   <lastmod>2015-03-09T21:52:07+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+    <loc>http://www.angulargrid.com/example.html</loc>
+    <lastmod>2015-03-09T21:52:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8000</priority>
+</url>
+<url>
+    <loc>http://www.angulargrid.com/why-the-world-needed-another-angularjs-grid/index.html</loc>
+    <lastmod>2015-03-28T21:52:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8000</priority>
+</url>
+
+     <url>    <loc>http://www.angulargrid.com/angular-grid-getting-started/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-loading-rows/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-width-and-height/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-grid-options/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-sorting/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-filtering/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-resizing/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-pinning/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-grouping/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-editing/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-column-definitions/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-selection/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-header-rendering/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-angular-compiling/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-styling/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-no-scrolls/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+     <url>    <loc>http://www.angulargrid.com/angular-grid-api/index.php</loc>    <lastmod>2015-03-09T22:13:23+00:00</lastmod>    <changefreq>monthly</changefreq>    <priority>0.8000</priority> </url>
+
+</urlset>
