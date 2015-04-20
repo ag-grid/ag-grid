@@ -29,7 +29,6 @@ include '../documentation_header.php';
         <b>gridOptions:</b> The grid options to pass to the grid.<br>
     </p>
 
-
     <p>
         All of the grid features are fully supported in this mode with the following three <i>gridOptions</i> exceptions:<br/>
         <b>angularCompileRows</b>: AngularJS compiling of rows is not supported.<br>

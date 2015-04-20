@@ -54,6 +54,9 @@ GridOptionsWrapper.prototype.getGridOptions = function() {
 GridOptionsWrapper.prototype.getHeaderCellRenderer = function() {
     return this.gridOptions.headerCellRenderer;
 };
+GridOptionsWrapper.prototype.getApi = function() {
+    return this.gridOptions.api;
+};
 GridOptionsWrapper.prototype.isEnableSorting = function() {
     return this.gridOptions.enableSorting;
 };
@@ -68,9 +71,6 @@ GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() {
 };
 GridOptionsWrapper.prototype.getGroupKeys = function() {
     return this.gridOptions.groupKeys;
-};
-GridOptionsWrapper.prototype.getGroupIconRenderer = function() {
-    return this.gridOptions.groupIconRenderer;
 };
 GridOptionsWrapper.prototype.getGroupAggFunction = function() {
     return this.gridOptions.groupAggFunction;

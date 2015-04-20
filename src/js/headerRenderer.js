@@ -269,7 +269,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
             colDef: colDef,
             $scope: newChildScope,
             context: this.gridOptionsWrapper.getContext(),
-            gridOptions: this.gridOptionsWrapper.getGridOptions()
+            api: this.gridOptionsWrapper.getApi()
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);
         var childToAppend;

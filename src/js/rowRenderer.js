@@ -377,7 +377,7 @@ RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
             data: node.data,
             rowIndex: rowIndex,
             context: this.gridOptionsWrapper.getContext(),
-            gridOptions: this.gridOptionsWrapper.getGridOptions()
+            api: this.gridOptionsWrapper.getApi()
         };
         var extraRowClasses = this.gridOptionsWrapper.getRowClass()(params);
         if (extraRowClasses) {
@@ -483,7 +483,7 @@ RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntire
             data: node.data,
             node: node,
             padding: padding,
-            gridOptions: this.gridOptions,
+            api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
         utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
@@ -571,7 +571,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
             colDef: colDef,
             $scope: $childScope,
             rowIndex: rowIndex,
-            gridOptions: this.gridOptionsWrapper.getGridOptions(),
+            api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
@@ -635,7 +635,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
                 colDef: colDef,
                 $scope: $childScope,
                 context: this.gridOptionsWrapper.getContext(),
-                gridOptions: this.gridOptionsWrapper.getGridOptions()
+                api: this.gridOptionsWrapper.getApi()
             };
             cssToUse = colDef.cellStyle(cellStyleParams);
         } else {
@@ -659,7 +659,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
                 colDef: colDef,
                 $scope: $childScope,
                 context: this.gridOptionsWrapper.getContext(),
-                gridOptions: this.gridOptionsWrapper.getGridOptions()
+                api: this.gridOptionsWrapper.getApi()
             };
             classToUse = colDef.cellClass(cellClassParams);
         } else {
@@ -706,7 +706,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             that.gridOptionsWrapper.getCellDoubleClicked()(paramsForGrid);
         }
@@ -719,7 +719,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             colDef.cellDoubleClicked(paramsForColDef);
         }
@@ -742,7 +742,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWr
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             that.gridOptionsWrapper.getCellClicked()(paramsForGrid);
         }
@@ -755,7 +755,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWr
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             colDef.cellClicked(paramsForColDef);
         }
@@ -803,8 +803,8 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
         newValue: newValue,
         rowIndex: rowIndex,
         colDef: colDef,
-        context: this.gridOptionsWrapper.getContext(),
-        gridOptions: this.gridOptionsWrapper.getGridOptions()
+        api: this.gridOptionsWrapper.getApi(),
+        context: this.gridOptionsWrapper.getContext()
     };
 
     if (colDef.newValueHandler) {
