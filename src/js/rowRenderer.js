@@ -11,7 +11,7 @@ function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController) {
+    selectionController, expressionService) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
@@ -21,6 +21,7 @@ RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapp
     this.$compile = $compile;
     this.$scope = $scope;
     this.selectionController = selectionController;
+    this.expressionService = expressionService;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom. each row object has:
@@ -225,8 +226,9 @@ RowRenderer.prototype.ensureRowsRendered = function() {
 };
 
 RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
+    var columns = this.columnModel.getVisibleColumns();
     //if no cols, don't draw row
-    if (!this.gridOptionsWrapper.isColumDefsPresent()) {
+    if (!columns || columns.length==0) {
         return;
     }
 
@@ -252,7 +254,6 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     this.renderedRowStartEditingListeners[rowIndex] = {};
 
     // if group item, insert the first row
-    var columns = this.columnModel.getVisibleColumns();
     if (rowIsAGroup) {
         var firstColumn = columns[0];
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
@@ -590,41 +591,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
     }
 };
 
-RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
-    var that = this;
-    var eGridCell = document.createElement("div");
-    eGridCell.setAttribute("col", column.index);
-
-    // set class, only include ag-group-cell if it's a group cell
-    var classes = ['ag-cell', 'cell-col-' + column.index];
-    if (node.group) {
-        if (node.footer) {
-            classes.push('ag-footer-cell');
-        } else {
-            classes.push('ag-group-cell');
-        }
-    }
-    eGridCell.className = classes.join(' ');
-
-    var eCellWrapper = document.createElement('span');
-    eGridCell.appendChild(eCellWrapper);
-
-    // see if we need a padding box
-    if (isFirstColumn && (node.parent)) {
-        var pixelsToIndent = 20 + (node.parent.level * 10);
-        eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
-    }
-
-    var colDef = column.colDef;
-    if (colDef.checkboxSelection) {
-        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
-        eCellWrapper.appendChild(eCheckbox);
-    }
-
-    var eSpanWithValue = document.createElement("span");
-    eCellWrapper.appendChild(eSpanWithValue);
-    this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
-
+RowRenderer.prototype.addStylesFromCollDef = function(colDef, node, $childScope, eGridCell) {
     if (colDef.cellStyle) {
         var cssToUse;
         if (typeof colDef.cellStyle === 'function') {
@@ -648,7 +615,9 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
             });
         }
     }
+};
 
+RowRenderer.prototype.addClassesFromCollDef = function(colDef, node, $childScope, eGridCell) {
     if (colDef.cellClass) {
         var classToUse;
         if (typeof colDef.cellClass === 'function') {
@@ -674,6 +643,81 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
             });
         }
     }
+};
+
+RowRenderer.prototype.addClassesToCell = function(column, node, eGridCell) {
+    var classes = ['ag-cell', 'cell-col-' + column.index];
+    if (node.group) {
+        if (node.footer) {
+            classes.push('ag-footer-cell');
+        } else {
+            classes.push('ag-group-cell');
+        }
+    }
+    eGridCell.className = classes.join(' ');
+};
+
+RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, node, rowIndex) {
+    var classRules = colDef.cellClassRules;
+    if (typeof classRules === 'object') {
+
+        var params = {
+            value: value,
+            data: node.data,
+            node: node,
+            colDef: colDef,
+            rowIndex: rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        var classNames = Object.keys(classRules);
+        for (var i = 0; i<classNames.length; i++) {
+            var className = classNames[i];
+            var rule = classRules[className];
+            var resultOfRule;
+            if (typeof rule === 'string') {
+                resultOfRule = this.expressionService.evaluate(rule, params);
+            } else if (typeof rule === 'function') {
+                resultOfRule = rule(params);
+            }
+            if (resultOfRule) {
+                utils.addCssClass(eGridCell, className);
+                console.log('adding ' + className + ' for ' + value);
+            }
+        }
+    }
+};
+
+RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
+    var that = this;
+    var eGridCell = document.createElement("div");
+    eGridCell.setAttribute("col", column.index);
+
+    this.addClassesToCell(column, node, eGridCell);
+
+    var eCellWrapper = document.createElement('span');
+    eGridCell.appendChild(eCellWrapper);
+
+    // see if we need a padding box
+    if (isFirstColumn && (node.parent)) {
+        var pixelsToIndent = 20 + (node.parent.level * 10);
+        eCellWrapper.style['padding-left'] = pixelsToIndent + 'px';
+    }
+
+    var colDef = column.colDef;
+    if (colDef.checkboxSelection) {
+        var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
+        eCellWrapper.appendChild(eCheckbox);
+    }
+
+    var eSpanWithValue = document.createElement("span");
+    eCellWrapper.appendChild(eSpanWithValue);
+    this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
+
+    this.addStylesFromCollDef(colDef, node, $childScope, eGridCell);
+    this.addClassesFromCollDef(colDef, node, $childScope, eGridCell);
+    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
