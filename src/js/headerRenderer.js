@@ -273,7 +273,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);
         var childToAppend;
-        if (utils.isNode(cellRendererResult) || utils.isElement(cellRendererResult)) {
+        if (utils.isNodeOrElement(cellRendererResult)) {
             // a dom node or element was returned, so add child
             childToAppend = cellRendererResult;
         } else {

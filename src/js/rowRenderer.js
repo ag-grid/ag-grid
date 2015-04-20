@@ -283,7 +283,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
                 if (colIndex == 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                var value = groupData ? that.getValue(groupData, column.colDef) : undefined;
+                var value = groupData ? that.getValue(groupData, column.colDef, node, rowIndex) : undefined;
                 that.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
@@ -291,7 +291,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     } else {
         columns.forEach(function(column, index) {
             var firstCol = index === 0;
-            var value = that.getValue(node.data, column.colDef);
+            var value = that.getValue(node.data, column.colDef, node, rowIndex);
             that.createCellFromColDef(firstCol, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
         });
     }
@@ -301,19 +301,33 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
 };
 
-RowRenderer.prototype.getValue = function(data, colDef) {
+ RowRenderer.prototype.getValue = function(data, colDef, node, rowIndex) {
 
-    //var params = {
-    //    data: node.data,
-    //    node: node,
-    //    colDef: colDef,
-    //    rowIndex: rowIndex,
-    //    api: this.gridOptionsWrapper.getApi(),
-    //    context: this.gridOptionsWrapper.getContext()
-    //};
+    var valueGetter = colDef.valueGetter;
+    var field = colDef.field;
 
-    if (colDef.field) {
-        return data[colDef.field];
+    // if there is a value getter, this gets precedence over a field
+    if (valueGetter) {
+
+        var params = {
+            data: node.data,
+            node: node,
+            colDef: colDef,
+            rowIndex: rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (typeof valueGetter === 'function') {
+            // valueGetter is a function, so just call it
+            return valueGetter(params);
+        } else if (typeof valueGetter === 'string') {
+            // valueGetter is an expression, so execute the expression
+            return this.expressionService.evaluate(valueGetter, params);
+        }
+
+    } else if (field) {
+        return data[field];
     } else {
         return undefined;
     }
@@ -591,7 +605,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
             context: this.gridOptionsWrapper.getContext()
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+        if (utils.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
             eGridCell.appendChild(resultFromRenderer);
         } else {
