@@ -6,7 +6,10 @@
     "Niall Crosby <info@angulargrid.com>"
   ],
   "description": "High performance and feature rich data grid for AngularJS",
-  "main": "main.js",
+  "main": [
+    "dist/angularGrid.js",
+    "dist/angularGrid.css"
+  ],
   "moduleType": [
     "node"
   ],
