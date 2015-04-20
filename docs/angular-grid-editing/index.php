@@ -33,16 +33,15 @@ include '../documentation_header.php';
 
     <p>
         newValueHandler is provided a params object with attributes:<br/>
-        <b>node</b>The grid node in question.<br/>
-        <b>data</b>The row data in question.<br/>
-        <b>oldValue</b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
-        <b>newValue</b>The string value entered into the default editor.<br/>
-        <b>rowIndex</b>The index of the virtualised row.<br/>
-        <b>colDef</b>The column definition.<br/>
-        <b>context</b>The context as set in the gridOptions.<br/>
-        <b>gridOptions</b>The grid options.<br/>
+        <b>node: </b>The grid node in question.<br/>
+        <b>data: </b>The row data in question.<br/>
+        <b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
+        <b>newValue: </b>The string value entered into the default editor.<br/>
+        <b>rowIndex: </b>The index of the virtualised row.<br/>
+        <b>colDef: </b>The column definition.<br/>
+        <b>context: </b>The context as set in the gridOptions.<br/>
+        <b>api: </b>A reference to the Angular Grid API.<br/>
     </p>
-
 
     <h4>Callback: Cell Value Changed</h4>
 

@@ -286,7 +286,7 @@ Grid.prototype.showLoadingPanel = function(show) {
 
 Grid.prototype.setupColumns = function() {
     this.setHeaderHeight();
-    this.columnController.setColumns(this.gridOptions.columnDefs);
+    this.columnController.setColumns(this.gridOptionsWrapper.getColumnDefs());
     this.showPinnedColContainersIfNeeded();
     this.headerRenderer.refreshHeader();
     if (!this.gridOptionsWrapper.isDontUseScrolls()) {
