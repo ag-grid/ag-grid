@@ -65,6 +65,11 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     if (this.gridOptionsWrapper.getDatasource()) {
         this.setDatasource();
     }
+
+    // if ready function provided, use it
+    if (typeof this.gridOptionsWrapper.getReady() == 'function') {
+        this.gridOptionsWrapper.getReady()();
+    }
 }
 
 Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
