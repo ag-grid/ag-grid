@@ -177,6 +177,12 @@
                     <a class="sidebarLink" href="/angular-grid-context/index.php">Context</a>
                 <?php } ?>
 
+                <?php if ($key == "Rules and Expressions") { ?>
+                    <span class="sidebarLinkSelected">Rules and Expressions</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-rules-and-expressions/index.php">Rules and Expressions</a>
+                <?php } ?>
+
                 <?php if ($key == "Datasource") { ?>
                     <span class="sidebarLinkSelected">Datasource</span>
                 <?php } else { ?>
