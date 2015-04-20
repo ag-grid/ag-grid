@@ -11,6 +11,7 @@ var HeaderRenderer = require('./headerRenderer');
 var InMemoryRowController = require('./inMemoryRowController');
 var VirtualPageRowController = require('./virtualPageRowController');
 var PaginationController = require('./paginationController');
+var ExpressionService = require('./expressionService');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
@@ -81,6 +82,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var headerRenderer = new HeaderRenderer();
     var inMemoryRowController = new InMemoryRowController();
     var virtualPageRowController = new VirtualPageRowController();
+    var expressionService = new ExpressionService();
 
     var columnModel = columnController.getModel();
 
@@ -90,7 +92,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
-        selectionRendererFactory, $compile, $scope, selectionController);
+        selectionRendererFactory, $compile, $scope, selectionController, expressionService);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
     virtualPageRowController.init(rowRenderer);
