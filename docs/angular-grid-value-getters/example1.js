@@ -13,13 +13,6 @@ module.controller("exampleCtrl", function($scope, $http) {
         {displayName: "Total Medals", width: 90,
             valueGetter: 'data.gold + data.silver + data.bronze'
         }
-        //{displayName: "Country", field: "country", width: 120},
-        //{displayName: "Date", field: "date", width: 110},
-        //{displayName: "Sport", field: "sport", width: 110},
-        //{displayName: "Gold", field: "gold", width: 100},
-        //{displayName: "Silver", field: "silver", width: 100},
-        //{displayName: "Bronze", field: "bronze", width: 100},
-        //{displayName: "Total", field: "total", width: 100}
     ];
 
     function ageNowValueGetter(params) {
