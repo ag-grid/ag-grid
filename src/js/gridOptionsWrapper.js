@@ -45,6 +45,7 @@ GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptio
 GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
 GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
 GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
+GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };
 
 GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) {
     return this.gridOptions.selectedRows = newSelectedRows;

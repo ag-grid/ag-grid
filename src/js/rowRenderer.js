@@ -179,10 +179,6 @@ RowRenderer.prototype.drawVirtualRows = function() {
     this.ensureRowsRendered();
 };
 
-RowRenderer.prototype.isIndexRendered = function(index) {
-    return index >= this.firstVirtualRenderedRow && index <= this.lastVirtualRenderedRow;
-};
-
 RowRenderer.prototype.getFirstVirtualRenderedRow = function() {
     return this.firstVirtualRenderedRow;
 };
@@ -238,7 +234,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
 
     var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
     var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
-    var _this = this;
+    var that = this;
 
     eMainRow.style.width = mainRowWidth + "px";
 
@@ -258,7 +254,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         var firstColumn = columns[0];
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-        var eGroupRow = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
+        var eGroupRow = that.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
         if (firstColumn.pinned) {
             ePinnedRow.appendChild(eGroupRow);
         } else {
@@ -266,7 +262,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         }
 
         if (firstColumn.pinned && groupHeaderTakesEntireRow) {
-            var eGroupRowPadding = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
+            var eGroupRowPadding = that.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
             eMainRow.appendChild(eGroupRowPadding);
         }
 
@@ -287,21 +283,40 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
                 if (colIndex == 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                var value = groupData ? groupData[column.colDef.field] : undefined;
-                _this.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+                var value = groupData ? that.getValue(groupData, column.colDef) : undefined;
+                that.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
     } else {
         columns.forEach(function(column, index) {
             var firstCol = index === 0;
-            _this.createCellFromColDef(firstCol, column, node.data[column.colDef.field], node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+            var value = that.getValue(node.data, column.colDef);
+            that.createCellFromColDef(firstCol, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
         });
     }
 
     //try compiling as we insert rows
     renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
     renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
+};
+
+RowRenderer.prototype.getValue = function(data, colDef) {
+
+    //var params = {
+    //    data: node.data,
+    //    node: node,
+    //    colDef: colDef,
+    //    rowIndex: rowIndex,
+    //    api: this.gridOptionsWrapper.getApi(),
+    //    context: this.gridOptionsWrapper.getContext()
+    //};
+
+    if (colDef.field) {
+        return data[colDef.field];
+    } else {
+        return undefined;
+    }
 };
 
 RowRenderer.prototype.createChildScopeOrNull = function(data) {

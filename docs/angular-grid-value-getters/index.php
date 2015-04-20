@@ -11,6 +11,7 @@ include '../documentation_header.php';
     <h2>Value Getters</h2>
 
 
+    <show-example example="example1"></show-example>
 
 </div>
 
