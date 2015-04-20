@@ -591,7 +591,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
     }
 };
 
-RowRenderer.prototype.addStylesFromCollDef = function(colDef, node, $childScope, eGridCell) {
+RowRenderer.prototype.addStylesFromCollDef = function(colDef, value, node, $childScope, eGridCell) {
     if (colDef.cellStyle) {
         var cssToUse;
         if (typeof colDef.cellStyle === 'function') {
@@ -617,7 +617,7 @@ RowRenderer.prototype.addStylesFromCollDef = function(colDef, node, $childScope,
     }
 };
 
-RowRenderer.prototype.addClassesFromCollDef = function(colDef, node, $childScope, eGridCell) {
+RowRenderer.prototype.addClassesFromCollDef = function(colDef, value, node, $childScope, eGridCell) {
     if (colDef.cellClass) {
         var classToUse;
         if (typeof colDef.cellClass === 'function') {
@@ -715,8 +715,8 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
     eCellWrapper.appendChild(eSpanWithValue);
     this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
 
-    this.addStylesFromCollDef(colDef, node, $childScope, eGridCell);
-    this.addClassesFromCollDef(colDef, node, $childScope, eGridCell);
+    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
     this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
