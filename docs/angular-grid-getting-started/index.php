@@ -11,10 +11,22 @@ include '../documentation_header.php';
     <h2>Getting Started</h2>
 
     <h4>Dependencies</h4>
-    In your html, include AngularJS (1.2 or later) and AngularGrid (download from this website).
 
-    <p/>
-    AngularGrid has no other dependencies except AngularJS.
+    <p>
+        In your html, include AngularJS (1.2 or later) and AngularGrid (download from <a href="../dist">here</a>).
+    </p>
+
+    <p>
+        If you want non-minified versions, you need to include: angularGrid.js, angularGrid.css, theme-fresh.css
+        (optional if you want bundled fresh theme) and theme-dark.css (optional if you want bundled dark theme).
+    </p>
+    <p>
+        If you want minified versions, download the equivalent '.min' files of the same names.
+    </p>
+
+    <p>
+        AngularGrid has no other dependencies except AngularJS.
+    </p>
 
     <h4>Creating the Angular Module</h4>
     While creating your Angular module, include AngularGrid as a dependency of your module. Eg:

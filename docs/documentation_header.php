@@ -72,7 +72,7 @@
             <div class="col-sm-2">
 
                 <h4>
-                    Documentation
+                    The Basics
                 </h4>
 
                 <?php if ($key == "Getting Started") { ?>
@@ -98,6 +98,11 @@
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
                 <?php } ?>
+
+
+                <h4>
+                    Columns & Cells
+                </h4>
 
                 <?php if ($key == "Column Definitions") { ?>
                     <span class="sidebarLinkSelected">Column Definitions</span>
@@ -129,6 +134,12 @@
                     <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
                 <?php } ?>
 
+                <?php if ($key == "Selection") { ?>
+                    <span class="sidebarLinkSelected">Selection</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
+                <?php } ?>
+
                 <?php if ($key == "Value Getters") { ?>
                     <span class="sidebarLinkSelected">Value Getters</span>
                 <?php } else { ?>
@@ -147,10 +158,16 @@
                     <a class="sidebarLink" href="/angular-grid-cell-rendering/index.php">Cell Rendering</a>
                 <?php } ?>
 
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
+                <?php if ($key == "Editing") { ?>
+                    <span class="sidebarLinkSelected">Editing Cells</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
+                    <a class="sidebarLink" href="/angular-grid-editing/index.php">Editing Cells</a>
+                <?php } ?>
+
+                <?php if ($key == "Context") { ?>
+                    <span class="sidebarLinkSelected">Context</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-context/index.php">Context</a>
                 <?php } ?>
 
                 <?php if ($key == "Grouping Headers") { ?>
@@ -159,28 +176,20 @@
                     <a class="sidebarLink" href="/angular-grid-grouping-headers/index.php">Grouping Headers</a>
                 <?php } ?>
 
-                <?php if ($key == "Editing") { ?>
-                    <span class="sidebarLinkSelected">Editing Cells</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-editing/index.php">Editing Cells</a>
-                <?php } ?>
-
                 <?php if ($key == "Header Rendering") { ?>
                     <span class="sidebarLinkSelected">Header Rendering</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-header-rendering/index.php">Header Rendering</a>
                 <?php } ?>
 
-                <?php if ($key == "Selection") { ?>
-                    <span class="sidebarLinkSelected">Selection</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-selection/index.php">Selection</a>
-                <?php } ?>
+                <h4>
+                    Working with Data
+                </h4>
 
-                <?php if ($key == "Context") { ?>
-                    <span class="sidebarLinkSelected">Context</span>
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-context/index.php">Context</a>
+                    <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Datasource") { ?>
@@ -200,6 +209,10 @@
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging</a>
                 <?php } ?>
+
+                <h4>
+                    Other Bits
+                </h4>
 
                 <?php if ($key == "Angular Compiling") { ?>
                     <span class="sidebarLinkSelected">Angular Compiling</span>

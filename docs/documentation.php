@@ -9,20 +9,34 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Column Groups Open and Close
+        Value Getters, Context, Expressions and Gulp
     </div>
 
     <p>
-        16th April 2015
+        20th April 2015
     </p>
     <p>
-        Now we can let our users shows columns dynamically by expanding the groups. See the example on the test drive page.
+        <b>Value Getters</b> separate the 'getting' of the value from 'rendering' of the value. So you can have one
+        renderer (eg currency renderer) and then many ways to get the value (direct from attribute, or adding two
+        attributes together). See documentation section on Value Getters.
     </p>
     <p>
-        <img src="images/columnGroups.png"/>
+        <b>Context</b> allows passing client specific information into your renderers. See the documentation section
+        on Context.
     </p>
     <p>
-        <b>Help grow the community.</b> If there is someone you can tell about Angular Grid, please do.
+        <b>Expressions</b> allows expression to be used to calculated values and classes. See the documentation sections
+        on Cell Styling (for using Class Rules) and Value Getters (for using expressions to evaluate values).
+    </p>
+    <p>
+        <b>Gulp</b> is now used to build the project. Thank you <b>Tanner Linsley</b> for implementing the Gulp build :)
+    </p>
+    <p>
+        <b>Note: </b> having moved to Gulp (and away from RequireJS) CSS files are no longer included in the angularGrid.js
+        file. You will need to include Angular Grid CSS files sepecifically.
+    </p>
+    <p>
+        Please tell anyone you might know who would benefit from Angular Grid.
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -83,7 +97,20 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
-        <b>Next on my list</b> - Move to Gulp. Triage next items.
+        <b>Next on my list</b> - Sleep. Take it easy. I have hardly left my laptop for two weeks!!!
+    </p>
+
+    <hr/>
+
+    <p>
+        <b>20 April</b> - Value Getters, Context and Expressions. Will be available in 1.3, or take latest.
+        All documented in relevant sections.
+    </p>
+
+    <hr/>
+
+    <p>
+        <b>18 April</b> - Gulp! Thank you Tanner Linsley for implementing Gulp.
     </p>
 
     <hr/>
