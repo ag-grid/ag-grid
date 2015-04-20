@@ -28,9 +28,9 @@
             exports = module.exports = angularGridGlobalFunction;
         }
         exports.angularGrid = angularGridGlobalFunction;
-    } else {
-        root.angularGrid = angularGridGlobalFunction;
     }
+
+    root.angularGrid = angularGridGlobalFunction;
 
 
     function AngularDirectiveController($element, $scope, $compile) {
@@ -63,4 +63,4 @@
         new Grid(eGridDiv, gridOptions, null, null);
     }
 
-}).call(this);
+}).call(window);
