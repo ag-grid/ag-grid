@@ -6,12 +6,13 @@ function InMemoryRowController() {
     this.createModel();
 }
 
-InMemoryRowController.prototype.init = function(gridOptionsWrapper, columnModel, angularGrid, filterManager, $scope) {
+InMemoryRowController.prototype.init = function(gridOptionsWrapper, columnModel, angularGrid, filterManager, $scope, expressionService) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.columnModel = columnModel;
     this.angularGrid = angularGrid;
     this.filterManager = filterManager;
     this.$scope = $scope;
+    this.expressionService = expressionService;
 
     this.allRows = null;
     this.rowsAfterGroup = null;
@@ -74,6 +75,13 @@ InMemoryRowController.prototype.updateModel = function(step) {
         }
     }
 
+};
+
+// private
+InMemoryRowController.prototype.getValue = function(data, colDef, node, rowIndex) {
+    var api = this.gridOptionsWrapper.getApi();
+    var context = this.gridOptionsWrapper.getContext();
+    return utils.getValue(this.expressionService, data, colDef, node, rowIndex, api, context);
 };
 
 // public - it's possible to recompute the aggregate without doing the other parts
@@ -163,25 +171,26 @@ InMemoryRowController.prototype.resetSortInGroups = function(rowNodes) {
 };
 
 // private
-InMemoryRowController.prototype.sortList = function(nodes, columnForSorting, inverter) {
+InMemoryRowController.prototype.sortList = function(nodes, colDef, inverter) {
 
     // sort any groups recursively
     for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
         var node = nodes[i];
         if (node.group && node.children) {
             node.childrenAfterSort = node.children.slice(0);
-            this.sortList(node.childrenAfterSort, columnForSorting, inverter);
+            this.sortList(node.childrenAfterSort, colDef, inverter);
         }
     }
 
+    var that = this;
     nodes.sort(function(objA, objB) {
-        var keyForSort = columnForSorting.field;
-        var valueA = objA.data ? objA.data[keyForSort] : null;
-        var valueB = objB.data ? objB.data[keyForSort] : null;
 
-        if (columnForSorting.comparator) {
+        var valueA = that.getValue(objA.data, colDef, objA);
+        var valueB = that.getValue(objB.data, colDef, objB);
+
+        if (colDef.comparator) {
             //if comparator provided, use it
-            return columnForSorting.comparator(valueA, valueB) * inverter;
+            return colDef.comparator(valueA, valueB) * inverter;
         } else {
             //otherwise do our own comparison
             return utils.defaultComparator(valueA, valueB) * inverter;

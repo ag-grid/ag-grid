@@ -283,7 +283,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
                 if (colIndex == 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                var value = groupData ? that.getValue(groupData, column.colDef, node, rowIndex) : undefined;
+                var value = groupData ? that.getValue(groupData, column.colDef, node) : undefined;
                 that.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
@@ -291,7 +291,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     } else {
         columns.forEach(function(column, index) {
             var firstCol = index === 0;
-            var value = that.getValue(node.data, column.colDef, node, rowIndex);
+            var value = that.getValue(node.data, column.colDef, node);
             that.createCellFromColDef(firstCol, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
         });
     }
@@ -301,36 +301,10 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
 };
 
- RowRenderer.prototype.getValue = function(data, colDef, node, rowIndex) {
-
-    var valueGetter = colDef.valueGetter;
-    var field = colDef.field;
-
-    // if there is a value getter, this gets precedence over a field
-    if (valueGetter) {
-
-        var params = {
-            data: node.data,
-            node: node,
-            colDef: colDef,
-            rowIndex: rowIndex,
-            api: this.gridOptionsWrapper.getApi(),
-            context: this.gridOptionsWrapper.getContext()
-        };
-
-        if (typeof valueGetter === 'function') {
-            // valueGetter is a function, so just call it
-            return valueGetter(params);
-        } else if (typeof valueGetter === 'string') {
-            // valueGetter is an expression, so execute the expression
-            return this.expressionService.evaluate(valueGetter, params);
-        }
-
-    } else if (field) {
-        return data[field];
-    } else {
-        return undefined;
-    }
+RowRenderer.prototype.getValue = function(data, colDef, node) {
+    var api = this.gridOptionsWrapper.getApi();
+    var context = this.gridOptionsWrapper.getContext();
+    return utils.getValue(this.expressionService, data, colDef, node, api, context);
 };
 
 RowRenderer.prototype.createChildScopeOrNull = function(data) {

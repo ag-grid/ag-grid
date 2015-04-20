@@ -99,7 +99,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
         selectionRendererFactory, $compile, $scope, selectionController, expressionService);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
-    inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
+    inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
 
     // this is a child bean, get a reference and pass it on
