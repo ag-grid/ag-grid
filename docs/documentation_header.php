@@ -129,6 +129,12 @@
                     <a class="sidebarLink" href="/angular-grid-pinning/index.php">Pinning</a>
                 <?php } ?>
 
+                <?php if ($key == "Value Getters") { ?>
+                    <span class="sidebarLinkSelected">Value Getters</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-value-getters/index.php">Value Getters</a>
+                <?php } ?>
+
                 <?php if ($key == "Cell Styling") { ?>
                     <span class="sidebarLinkSelected">Cell Styling</span>
                 <?php } else { ?>

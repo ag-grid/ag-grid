@@ -120,6 +120,12 @@ include '../documentation_header.php';
             <td>Function callback, gets called when displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
+            <th>ready</th>
+            <td>Function callback, gets called after Angular Grid has initialised. The name 'ready'
+                was influenced by the authors time programming the Commodore 64. Use this function if,
+                for example, you need to use the grid's API to fix the columns to size.</td>
+        </tr>
+        <tr>
             <th>suppressRowClickSelection</th>
             <td>If true, rows won't be selected when clicked. Use when you want checkbox selection exclusively.</td>
         </tr>

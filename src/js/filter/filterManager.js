@@ -161,7 +161,7 @@ FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
         var eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
         var guiFromFilter = filterWrapper.filter.getGui();
-        if (utils.isNode(guiFromFilter) || utils.isElement(guiFromFilter)) {
+        if (utils.isNodeOrElement(guiFromFilter)) {
             //a dom node or element was returned, so add child
             eFilterGui.appendChild(guiFromFilter);
         } else {

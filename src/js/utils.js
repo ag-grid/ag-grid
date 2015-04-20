@@ -1,5 +1,37 @@
 function Utils() {}
 
+
+Utils.prototype.getValue = function(expressionService, data, colDef, node, api, context) {
+
+    var valueGetter = colDef.valueGetter;
+    var field = colDef.field;
+
+    // if there is a value getter, this gets precedence over a field
+    if (valueGetter) {
+
+        var params = {
+            data: data,
+            node: node,
+            colDef: colDef,
+            api: api,
+            context: context
+        };
+
+        if (typeof valueGetter === 'function') {
+            // valueGetter is a function, so just call it
+            return valueGetter(params);
+        } else if (typeof valueGetter === 'string') {
+            // valueGetter is an expression, so execute the expression
+            return expressionService.evaluate(valueGetter, params);
+        }
+
+    } else if (field) {
+        return data[field];
+    } else {
+        return undefined;
+    }
+};
+
 //Returns true if it is a DOM node
 //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
 Utils.prototype.isNode = function(o) {

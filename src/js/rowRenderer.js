@@ -11,7 +11,7 @@ function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController) {
+    selectionController, expressionService) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
@@ -21,6 +21,7 @@ RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapp
     this.$compile = $compile;
     this.$scope = $scope;
     this.selectionController = selectionController;
+    this.expressionService = expressionService;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom. each row object has:
@@ -178,10 +179,6 @@ RowRenderer.prototype.drawVirtualRows = function() {
     this.ensureRowsRendered();
 };
 
-RowRenderer.prototype.isIndexRendered = function(index) {
-    return index >= this.firstVirtualRenderedRow && index <= this.lastVirtualRenderedRow;
-};
-
 RowRenderer.prototype.getFirstVirtualRenderedRow = function() {
     return this.firstVirtualRenderedRow;
 };
@@ -225,8 +222,9 @@ RowRenderer.prototype.ensureRowsRendered = function() {
 };
 
 RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
+    var columns = this.columnModel.getVisibleColumns();
     //if no cols, don't draw row
-    if (!this.gridOptionsWrapper.isColumDefsPresent()) {
+    if (!columns || columns.length==0) {
         return;
     }
 
@@ -236,7 +234,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
 
     var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
     var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
-    var _this = this;
+    var that = this;
 
     eMainRow.style.width = mainRowWidth + "px";
 
@@ -252,12 +250,11 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     this.renderedRowStartEditingListeners[rowIndex] = {};
 
     // if group item, insert the first row
-    var columns = this.columnModel.getVisibleColumns();
     if (rowIsAGroup) {
         var firstColumn = columns[0];
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
-        var eGroupRow = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
+        var eGroupRow = that.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, false, rowIndex, rowIsAFooter);
         if (firstColumn.pinned) {
             ePinnedRow.appendChild(eGroupRow);
         } else {
@@ -265,7 +262,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         }
 
         if (firstColumn.pinned && groupHeaderTakesEntireRow) {
-            var eGroupRowPadding = _this.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
+            var eGroupRowPadding = that.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
             eMainRow.appendChild(eGroupRowPadding);
         }
 
@@ -286,21 +283,28 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
                 if (colIndex == 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                var value = groupData ? groupData[column.colDef.field] : undefined;
-                _this.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+                var value = groupData ? that.getValue(groupData, column.colDef, node) : undefined;
+                that.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
             });
         }
 
     } else {
         columns.forEach(function(column, index) {
             var firstCol = index === 0;
-            _this.createCellFromColDef(firstCol, column, node.data[column.colDef.field], node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+            var value = that.getValue(node.data, column.colDef, node);
+            that.createCellFromColDef(firstCol, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
         });
     }
 
     //try compiling as we insert rows
     renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
     renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
+};
+
+RowRenderer.prototype.getValue = function(data, colDef, node) {
+    var api = this.gridOptionsWrapper.getApi();
+    var context = this.gridOptionsWrapper.getContext();
+    return utils.getValue(this.expressionService, data, colDef, node, api, context);
 };
 
 RowRenderer.prototype.createChildScopeOrNull = function(data) {
@@ -377,7 +381,7 @@ RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
             data: node.data,
             rowIndex: rowIndex,
             context: this.gridOptionsWrapper.getContext(),
-            gridOptions: this.gridOptionsWrapper.getGridOptions()
+            api: this.gridOptionsWrapper.getApi()
         };
         var extraRowClasses = this.gridOptionsWrapper.getRowClass()(params);
         if (extraRowClasses) {
@@ -483,7 +487,7 @@ RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntire
             data: node.data,
             node: node,
             padding: padding,
-            gridOptions: this.gridOptions,
+            api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
         utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
@@ -571,11 +575,11 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
             colDef: colDef,
             $scope: $childScope,
             rowIndex: rowIndex,
-            gridOptions: this.gridOptionsWrapper.getGridOptions(),
+            api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
-        if (utils.isNode(resultFromRenderer) || utils.isElement(resultFromRenderer)) {
+        if (utils.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
             eGridCell.appendChild(resultFromRenderer);
         } else {
@@ -590,12 +594,61 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScop
     }
 };
 
-RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
-    var that = this;
-    var eGridCell = document.createElement("div");
-    eGridCell.setAttribute("col", column.index);
+RowRenderer.prototype.addStylesFromCollDef = function(colDef, value, node, $childScope, eGridCell) {
+    if (colDef.cellStyle) {
+        var cssToUse;
+        if (typeof colDef.cellStyle === 'function') {
+            var cellStyleParams = {
+                value: value,
+                data: node.data,
+                node: node,
+                colDef: colDef,
+                $scope: $childScope,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            cssToUse = colDef.cellStyle(cellStyleParams);
+        } else {
+            cssToUse = colDef.cellStyle;
+        }
 
-    // set class, only include ag-group-cell if it's a group cell
+        if (cssToUse) {
+            Object.keys(cssToUse).forEach(function(key) {
+                eGridCell.style[key] = cssToUse[key];
+            });
+        }
+    }
+};
+
+RowRenderer.prototype.addClassesFromCollDef = function(colDef, value, node, $childScope, eGridCell) {
+    if (colDef.cellClass) {
+        var classToUse;
+        if (typeof colDef.cellClass === 'function') {
+            var cellClassParams = {
+                value: value,
+                data: node.data,
+                node: node,
+                colDef: colDef,
+                $scope: $childScope,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            classToUse = colDef.cellClass(cellClassParams);
+        } else {
+            classToUse = colDef.cellClass;
+        }
+
+        if (typeof classToUse === 'string') {
+            utils.addCssClass(eGridCell, classToUse);
+        } else if (Array.isArray(classToUse)) {
+            classToUse.forEach(function(cssClassItem) {
+                utils.addCssClass(eGridCell, cssClassItem);
+            });
+        }
+    }
+};
+
+RowRenderer.prototype.addClassesToCell = function(column, node, eGridCell) {
     var classes = ['ag-cell', 'cell-col-' + column.index];
     if (node.group) {
         if (node.footer) {
@@ -605,6 +658,46 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
         }
     }
     eGridCell.className = classes.join(' ');
+};
+
+RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, node, rowIndex) {
+    var classRules = colDef.cellClassRules;
+    if (typeof classRules === 'object') {
+
+        var params = {
+            value: value,
+            data: node.data,
+            node: node,
+            colDef: colDef,
+            rowIndex: rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        var classNames = Object.keys(classRules);
+        for (var i = 0; i<classNames.length; i++) {
+            var className = classNames[i];
+            var rule = classRules[className];
+            var resultOfRule;
+            if (typeof rule === 'string') {
+                resultOfRule = this.expressionService.evaluate(rule, params);
+            } else if (typeof rule === 'function') {
+                resultOfRule = rule(params);
+            }
+            if (resultOfRule) {
+                utils.addCssClass(eGridCell, className);
+                console.log('adding ' + className + ' for ' + value);
+            }
+        }
+    }
+};
+
+RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
+    var that = this;
+    var eGridCell = document.createElement("div");
+    eGridCell.setAttribute("col", column.index);
+
+    this.addClassesToCell(column, node, eGridCell);
 
     var eCellWrapper = document.createElement('span');
     eGridCell.appendChild(eCellWrapper);
@@ -625,55 +718,9 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
     eCellWrapper.appendChild(eSpanWithValue);
     this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
 
-    if (colDef.cellStyle) {
-        var cssToUse;
-        if (typeof colDef.cellStyle === 'function') {
-            var cellStyleParams = {
-                value: value,
-                data: node.data,
-                node: node,
-                colDef: colDef,
-                $scope: $childScope,
-                context: this.gridOptionsWrapper.getContext(),
-                gridOptions: this.gridOptionsWrapper.getGridOptions()
-            };
-            cssToUse = colDef.cellStyle(cellStyleParams);
-        } else {
-            cssToUse = colDef.cellStyle;
-        }
-
-        if (cssToUse) {
-            Object.keys(cssToUse).forEach(function(key) {
-                eGridCell.style[key] = cssToUse[key];
-            });
-        }
-    }
-
-    if (colDef.cellClass) {
-        var classToUse;
-        if (typeof colDef.cellClass === 'function') {
-            var cellClassParams = {
-                value: value,
-                data: node.data,
-                node: node,
-                colDef: colDef,
-                $scope: $childScope,
-                context: this.gridOptionsWrapper.getContext(),
-                gridOptions: this.gridOptionsWrapper.getGridOptions()
-            };
-            classToUse = colDef.cellClass(cellClassParams);
-        } else {
-            classToUse = colDef.cellClass;
-        }
-
-        if (typeof classToUse === 'string') {
-            utils.addCssClass(eGridCell, classToUse);
-        } else if (Array.isArray(classToUse)) {
-            classToUse.forEach(function(cssClassItem) {
-                utils.addCssClass(eGridCell, cssClassItem);
-            });
-        }
-    }
+    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
@@ -706,7 +753,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             that.gridOptionsWrapper.getCellDoubleClicked()(paramsForGrid);
         }
@@ -719,7 +766,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             colDef.cellDoubleClicked(paramsForColDef);
         }
@@ -742,7 +789,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWr
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             that.gridOptionsWrapper.getCellClicked()(paramsForGrid);
         }
@@ -755,7 +802,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWr
                 colDef: colDef,
                 event: event,
                 eventSource: this,
-                gridOptions: that.gridOptionsWrapper.getGridOptions()
+                api: that.gridOptionsWrapper.getApi()
             };
             colDef.cellClicked(paramsForColDef);
         }
@@ -803,8 +850,8 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
         newValue: newValue,
         rowIndex: rowIndex,
         colDef: colDef,
-        context: this.gridOptionsWrapper.getContext(),
-        gridOptions: this.gridOptionsWrapper.getGridOptions()
+        api: this.gridOptionsWrapper.getApi(),
+        context: this.gridOptionsWrapper.getContext()
     };
 
     if (colDef.newValueHandler) {

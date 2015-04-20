@@ -11,6 +11,7 @@ var HeaderRenderer = require('./headerRenderer');
 var InMemoryRowController = require('./inMemoryRowController');
 var VirtualPageRowController = require('./virtualPageRowController');
 var PaginationController = require('./paginationController');
+var ExpressionService = require('./expressionService');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
@@ -64,6 +65,11 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     if (this.gridOptionsWrapper.getDatasource()) {
         this.setDatasource();
     }
+
+    // if ready function provided, use it
+    if (typeof this.gridOptionsWrapper.getReady() == 'function') {
+        this.gridOptionsWrapper.getReady()();
+    }
 }
 
 Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
@@ -81,6 +87,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var headerRenderer = new HeaderRenderer();
     var inMemoryRowController = new InMemoryRowController();
     var virtualPageRowController = new VirtualPageRowController();
+    var expressionService = new ExpressionService();
 
     var columnModel = columnController.getModel();
 
@@ -90,9 +97,9 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
-        selectionRendererFactory, $compile, $scope, selectionController);
+        selectionRendererFactory, $compile, $scope, selectionController, expressionService);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
-    inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope);
+    inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
 
     // this is a child bean, get a reference and pass it on
@@ -286,7 +293,7 @@ Grid.prototype.showLoadingPanel = function(show) {
 
 Grid.prototype.setupColumns = function() {
     this.setHeaderHeight();
-    this.columnController.setColumns(this.gridOptions.columnDefs);
+    this.columnController.setColumns(this.gridOptionsWrapper.getColumnDefs());
     this.showPinnedColContainersIfNeeded();
     this.headerRenderer.refreshHeader();
     if (!this.gridOptionsWrapper.isDontUseScrolls()) {
