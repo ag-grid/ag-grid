@@ -41,7 +41,7 @@ PaginationController.prototype.reset = function() {
     // copy pageSize, to guard against it changing the the datasource between calls
     this.pageSize = this.datasource.pageSize;
     // see if we know the total number of pages, or if it's 'to be decided'
-    if (this.datasource.rowCount >= 0) {
+    if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
         this.rowCount = this.datasource.rowCount;
         this.foundMaxRow = true;
         this.calculateTotalPages();
