@@ -67,6 +67,49 @@ RowRenderer.prototype.refreshView = function() {
     this.refreshAllVirtualRows();
 };
 
+RowRenderer.prototype.softRefreshView = function() {
+
+    var first = this.firstVirtualRenderedRow;
+    var last = this.lastVirtualRenderedRow;
+
+    var columns = this.columnModel.getVisibleColumns();
+    // if no cols, don't draw row
+    if (!columns || columns.length === 0) {
+        return;
+    }
+
+    for (var rowIndex = first; rowIndex<=last; rowIndex++) {
+        var node = this.rowModel.getVirtualRow(rowIndex);
+        if (node) {
+
+            for (var colIndex = 0; colIndex<=columns.length; colIndex++) {
+                var column = columns[colIndex];
+                var renderedRow = this.renderedRows[rowIndex];
+                var eGridCell = renderedRow.eSoftCells[colIndex];
+
+                if (!eGridCell) {
+                    continue;
+                }
+
+                utils.removeAllChildren(eGridCell);
+
+                var isFirstColumn = colIndex === 0;
+                var data = this.getDataForNode(node);
+                var valueGetter = this.createValueGetter(data, column.colDef, node);
+                var scope = renderedRow.scope;
+
+                var value;
+                if (valueGetter) {
+                    value = valueGetter();
+                }
+
+                this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, scope);
+            }
+        }
+    }
+
+};
+
 RowRenderer.prototype.rowDataChanged = function(rows) {
     // we only need to be worried about rendered rows, as this method is
     // called to whats rendered. if the row isn't rendered, we don't care
@@ -192,10 +235,10 @@ RowRenderer.prototype.ensureRowsRendered = function() {
     var mainRowWidth = this.columnModel.getBodyContainerWidth();
     var that = this;
 
-    //at the end, this array will contain the items we need to remove
+    // at the end, this array will contain the items we need to remove
     var rowsToRemove = Object.keys(this.renderedRows);
 
-    //add in new rows
+    // add in new rows
     for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
         // see if item already there, and if yes, take it out of the 'to remove' array
         if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
@@ -209,10 +252,10 @@ RowRenderer.prototype.ensureRowsRendered = function() {
         }
     }
 
-    //at this point, everything in our 'rowsToRemove' . . .
+    // at this point, everything in our 'rowsToRemove' . . .
     this.removeVirtualRows(rowsToRemove);
 
-    //if we are doing angular compiling, then do digest the scope here
+    // if we are doing angular compiling, then do digest the scope here
     if (this.gridOptions.angularCompileRows) {
         // we do it in a timeout, in case we are already in an apply
         setTimeout(function() {
@@ -223,12 +266,12 @@ RowRenderer.prototype.ensureRowsRendered = function() {
 
 RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     var columns = this.columnModel.getVisibleColumns();
-    //if no cols, don't draw row
+    // if no cols, don't draw row
     if (!columns || columns.length==0) {
         return;
     }
 
-    //var rowData = node.rowData;
+    // var rowData = node.rowData;
     var rowIsAGroup = node.group;
     var rowIsAFooter = node.footer;
 
@@ -244,7 +287,8 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     var renderedRow = {
         scope: newChildScope,
         node: node,
-        rowIndex: rowIndex
+        rowIndex: rowIndex,
+        eSoftCells: {}
     };
     this.renderedRows[rowIndex] = renderedRow;
     this.renderedRowStartEditingListeners[rowIndex] = {};
@@ -269,30 +313,26 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         if (!groupHeaderTakesEntireRow) {
 
             // draw in cells for the rest of the row.
-            // if group is a footer, always show the data.
-            // if group is a header, only show data if not expanded
-            var groupData;
-            if (node.footer) {
-                groupData = node.data;
-            } else {
-                // we show data in footer only
-                var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
-                groupData = (node.expanded && footersEnabled) ? undefined : node.data;
-            }
+            var groupData = this.getDataForNode(node);
+
             columns.forEach(function(column, colIndex) {
                 if (colIndex == 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
-                var value = groupData ? that.getValue(groupData, column.colDef, node) : undefined;
-                that.createCellFromColDef(false, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+                var valueGetter;
+                if (groupData) {
+                    valueGetter = that.createValueGetter(groupData, column.colDef, node);
+                }
+                that.createCellFromColDef(false, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
             });
         }
 
     } else {
         columns.forEach(function(column, index) {
             var firstCol = index === 0;
-            var value = that.getValue(node.data, column.colDef, node);
-            that.createCellFromColDef(firstCol, column, value, node, rowIndex, eMainRow, ePinnedRow, newChildScope);
+            var data = that.getDataForNode(node);
+            var valueGetter = that.createValueGetter(data, column.colDef, node);
+            that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
         });
     }
 
@@ -301,10 +341,29 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
 };
 
-RowRenderer.prototype.getValue = function(data, colDef, node) {
-    var api = this.gridOptionsWrapper.getApi();
-    var context = this.gridOptionsWrapper.getContext();
-    return utils.getValue(this.expressionService, data, colDef, node, api, context);
+// if group is a footer, always show the data.
+// if group is a header, only show data if not expanded
+RowRenderer.prototype.getDataForNode = function(node) {
+    if (node.footer) {
+        // if footer, we always show the data
+        return node.data;
+    } else if (node.group) {
+        // if header and header is expanded, we show data in footer only
+        var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
+        return (node.expanded && footersEnabled) ? undefined : node.data;
+    } else {
+        // otherwise it's a normal node, just return data as normal
+        return node.data;
+    }
+};
+
+RowRenderer.prototype.createValueGetter = function(data, colDef, node) {
+    var that = this;
+    return function() {
+        var api = that.gridOptionsWrapper.getApi();
+        var context = that.gridOptionsWrapper.getContext();
+        return utils.getValue(that.expressionService, data, colDef, node, api, context);
+    };
 };
 
 RowRenderer.prototype.createChildScopeOrNull = function(data) {
@@ -332,8 +391,12 @@ RowRenderer.prototype.compileAndAdd = function(container, rowIndex, element, sco
     }
 };
 
-RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, value, node, rowIndex, eMainRow, ePinnedRow, $childScope) {
-    var eGridCell = this.createCell(isFirstColumn, column, value, node, rowIndex, $childScope);
+RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, $childScope, renderedRow) {
+    var eGridCell = this.createCell(isFirstColumn, column, valueGetter, node, rowIndex, $childScope);
+
+    if (column.colDef.volatile) {
+        renderedRow.eSoftCells[column.colKey] = eGridCell;
+    }
 
     if (column.pinned) {
         ePinnedRow.appendChild(eGridCell);
@@ -566,10 +629,11 @@ RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
     eGridGroupRow.appendChild(eGroupIcon);
 };
 
-RowRenderer.prototype.putDataIntoCell = function(colDef, value, node, $childScope, eGridCell, rowIndex) {
+RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex) {
     if (colDef.cellRenderer) {
         var rendererParams = {
             value: value,
+            valueGetter: valueGetter,
             data: node.data,
             node: node,
             colDef: colDef,
@@ -692,13 +756,43 @@ RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, n
     }
 };
 
-RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, rowIndex, $childScope) {
+RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, node, rowIndex, $childScope) {
     var that = this;
     var eGridCell = document.createElement("div");
     eGridCell.setAttribute("col", column.index);
 
     this.addClassesToCell(column, node, eGridCell);
 
+    var value;
+    if (valueGetter) {
+        value = valueGetter();
+    }
+
+    var colDef = column.colDef;
+    this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope);
+
+    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
+    this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
+    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
+
+    eGridCell.style.width = utils.formatWidth(column.actualWidth);
+
+    // add the 'start editing' call to the chain of editors
+    this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
+        if (that.isCellEditable(colDef, node)) {
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex);
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    return eGridCell;
+};
+
+RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope) {
     var eCellWrapper = document.createElement('span');
     eGridCell.appendChild(eCellWrapper);
 
@@ -716,28 +810,8 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, value, node, 
 
     var eSpanWithValue = document.createElement("span");
     eCellWrapper.appendChild(eSpanWithValue);
-    this.putDataIntoCell(colDef, value, node, $childScope, eSpanWithValue, rowIndex);
 
-    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
-    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
-    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
-
-    this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
-    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
-
-    eGridCell.style.width = utils.formatWidth(column.actualWidth);
-
-    // add the 'start editing' call to the chain of editors
-    this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
-        if (that.isCellEditable(colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex);
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    return eGridCell;
+    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex);
 };
 
 RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope) {
@@ -867,7 +941,11 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
     }
 
     var value = node.data[colDef.field];
-    this.putDataIntoCell(colDef, value, node, $childScope, eGridCell);
+
+    //because this is an editable cell, implying that the value getting is a simple type
+    var valueGetter = function() { return value; };
+
+    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eGridCell);
 };
 
 RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex) {

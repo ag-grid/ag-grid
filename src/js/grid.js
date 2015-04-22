@@ -68,7 +68,7 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
     // if ready function provided, use it
     if (typeof this.gridOptionsWrapper.getReady() == 'function') {
-        this.gridOptionsWrapper.getReady()();
+        this.gridOptionsWrapper.getReady()(gridOptions.api);
     }
 }
 
@@ -349,6 +349,9 @@ Grid.prototype.addApi = function() {
         },
         refreshView: function() {
             that.rowRenderer.refreshView();
+        },
+        softRefreshView: function() {
+            that.rowRenderer.softRefreshView();
         },
         refreshHeader: function() {
             // need to review this - the refreshHeader should also refresh all icons in the header

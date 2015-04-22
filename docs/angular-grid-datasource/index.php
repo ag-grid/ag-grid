@@ -34,8 +34,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <pre>
 Note: If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
 you are trying to set the datasource through the setDatasource method, but the API has not been attached
-to the gridOptions yet by the grid. To get around this, don't set for the first time through the API,
-rather set it the first way above.
+to the gridOptions yet by the grid. To get around this, set the datasource in the 'ready()' method.
     </pre>
 
     <p>
