@@ -5,7 +5,7 @@ module.controller("exampleCtrl", function($scope) {
 
     var columnDefs = [
         {displayName: "Person", field: 'name', width: 400,
-            cellStyle:  {'background-color': 'rgba(255, 255, 230, 0.5)'} // light yellow background
+            cellStyle:  {'background-color': 'rgba(255, 255, 180, 0.5)'} // light yellow background
         },
         {displayName: "Monday", group: 'Weekly Editable Values',  field: "mon", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
         {displayName: "Tuesday", group: 'Weekly Editable Values', field: "tue", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
@@ -15,7 +15,7 @@ module.controller("exampleCtrl", function($scope) {
         {displayName: "Total", group: 'Volatile Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
             volatile: true,
-            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'}, // light blue background
+            cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'}, // light blue background
             cellClassRules: {
                 'bold-and-red': 'x>20'
             }
@@ -23,18 +23,18 @@ module.controller("exampleCtrl", function($scope) {
         {displayName: "Avg",  group: 'Volatile Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
             volatile: true,
-            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'} // light blue background
+            cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'} // light blue background
         },
         {displayName: "Total", group: 'Hard Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'}, // light red background
+            cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'}, // light red background
             cellClassRules: {
                 'bold-and-red': 'x>20'
             }
         },
         {displayName: "Avg",  group: 'Hard Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'} // light red background
+            cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'} // light red background
         }
     ];
 

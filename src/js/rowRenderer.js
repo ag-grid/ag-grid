@@ -773,14 +773,14 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
-    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
+    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
     // add the 'start editing' call to the chain of editors
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
             return true;
         } else {
             return false;
@@ -823,7 +823,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
     this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex);
 };
 
-RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope) {
+RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn) {
     var that = this;
     var colDef = column.colDef;
     eGridCell.addEventListener("dblclick", function(event) {
@@ -854,7 +854,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
             colDef.cellDoubleClicked(paramsForColDef);
         }
         if (that.isCellEditable(colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
         }
     });
 };
@@ -916,9 +916,10 @@ RowRenderer.prototype.isCellEditable = function(colDef, node) {
     return false;
 };
 
-RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex) {
+RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn) {
     this.editingCell = false;
     var newValue = eInput.value;
+    var colDef = column.colDef;
 
     //If we don't remove the blur listener first, we get:
     //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
@@ -954,11 +955,10 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
     //because this is an editable cell, implying that the value getting is a simple type
     var valueGetter = function() { return value; };
 
-    //this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
-    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eGridCell);
+    this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 };
 
-RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex) {
+RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn) {
     var that = this;
     var colDef = column.colDef;
     this.editingCell = true;
@@ -978,7 +978,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
     eInput.select();
 
     var blurListener = function() {
-        that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
+        that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
     };
 
     //stop entering if we loose focus
@@ -989,7 +989,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
         var key = event.which || event.keyCode;
         // 13 is enter
         if (key == ENTER_KEY) {
-            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
+            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
         }
     });
 
@@ -997,7 +997,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
     eInput.addEventListener('keydown', function(event) {
         var key = event.which || event.keyCode;
         if (key == TAB_KEY) {
-            that.stopEditing(eGridCell, colDef, node, $childScope, eInput, blurListener, rowIndex);
+            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
             that.startEditingNextCell(rowIndex, column, event.shiftKey);
             // we don't want the default tab action, so return false, this stops the event from bubbling
             event.preventDefault();
