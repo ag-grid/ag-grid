@@ -85,7 +85,7 @@ RowRenderer.prototype.softRefreshView = function() {
             for (var colIndex = 0; colIndex<=columns.length; colIndex++) {
                 var column = columns[colIndex];
                 var renderedRow = this.renderedRows[rowIndex];
-                var eGridCell = renderedRow.eSoftCells[colIndex];
+                var eGridCell = renderedRow.eVolatileCells[colIndex];
 
                 if (!eGridCell) {
                     continue;
@@ -103,7 +103,7 @@ RowRenderer.prototype.softRefreshView = function() {
                     value = valueGetter();
                 }
 
-                this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, scope);
+                this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
             }
         }
     }
@@ -288,7 +288,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         scope: newChildScope,
         node: node,
         rowIndex: rowIndex,
-        eSoftCells: {}
+        eVolatileCells: {}
     };
     this.renderedRows[rowIndex] = renderedRow;
     this.renderedRowStartEditingListeners[rowIndex] = {};
@@ -395,7 +395,7 @@ RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, val
     var eGridCell = this.createCell(isFirstColumn, column, valueGetter, node, rowIndex, $childScope);
 
     if (column.colDef.volatile) {
-        renderedRow.eSoftCells[column.colKey] = eGridCell;
+        renderedRow.eVolatileCells[column.colKey] = eGridCell;
     }
 
     if (column.pinned) {
@@ -750,7 +750,8 @@ RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, n
             }
             if (resultOfRule) {
                 utils.addCssClass(eGridCell, className);
-                console.log('adding ' + className + ' for ' + value);
+            } else {
+                utils.removeCssClass(eGridCell, className);
             }
         }
     }
@@ -761,19 +762,16 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     var eGridCell = document.createElement("div");
     eGridCell.setAttribute("col", column.index);
 
-    this.addClassesToCell(column, node, eGridCell);
-
     var value;
     if (valueGetter) {
         value = valueGetter();
     }
 
-    var colDef = column.colDef;
-    this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope);
+    // these are the grid styles, don't change between soft refreshes
+    this.addClassesToCell(column, node, eGridCell);
 
-    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
-    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
-    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
+    this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
+
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope);
 
@@ -781,7 +779,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
 
     // add the 'start editing' call to the chain of editors
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
-        if (that.isCellEditable(colDef, node)) {
+        if (that.isCellEditable(column.colDef, node)) {
             that.startEditing(eGridCell, column, node, $childScope, rowIndex);
             return true;
         } else {
@@ -790,6 +788,17 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     };
 
     return eGridCell;
+};
+
+RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope) {
+    var colDef = column.colDef;
+
+    // populate
+    this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope);
+    // style
+    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
 };
 
 RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope) {
@@ -945,6 +954,7 @@ RowRenderer.prototype.stopEditing = function(eGridCell, colDef, node, $childScop
     //because this is an editable cell, implying that the value getting is a simple type
     var valueGetter = function() { return value; };
 
+    //this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
     this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eGridCell);
 };
 

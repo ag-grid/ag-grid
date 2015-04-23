@@ -4,8 +4,9 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope) {
 
     var columnDefs = [
-        {displayName: "Person", field: 'name',
-            cellStyle:  {'background-color': 'rgba(255, 255, 230, 0.5)'}},
+        {displayName: "Person", field: 'name', width: 400,
+            cellStyle:  {'background-color': 'rgba(255, 255, 230, 0.5)'} // light yellow background
+        },
         {displayName: "Monday", group: 'Weekly Editable Values',  field: "mon", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
         {displayName: "Tuesday", group: 'Weekly Editable Values', field: "tue", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
         {displayName: "Wednesday", group: 'Weekly Editable Values', field: "wed", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
@@ -13,25 +14,27 @@ module.controller("exampleCtrl", function($scope) {
         {displayName: "Friday", group: 'Weekly Editable Values', field: "fri", newValueHandler: numberNewValueHandler, editable: true, cellValueChanged: cellValueChangedFunction},
         {displayName: "Total", group: 'Volatile Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-            width: 150,
             volatile: true,
-            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'}
+            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'}, // light blue background
+            cellClassRules: {
+                'bold-and-red': 'x>20'
+            }
         },
-        {displayName: "Average",  group: 'Volatile Summary',
+        {displayName: "Avg",  group: 'Volatile Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-            width: 150,
             volatile: true,
-            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'}
+            cellStyle:  {'background-color': 'rgba(230, 255, 255, 0.5)'} // light blue background
         },
         {displayName: "Total", group: 'Hard Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-            width: 150,
-            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'}
+            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'}, // light red background
+            cellClassRules: {
+                'bold-and-red': 'x>20'
+            }
         },
-        {displayName: "Average",  group: 'Hard Summary',
+        {displayName: "Avg",  group: 'Hard Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-            width: 150,
-            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'}
+            cellStyle:  {'background-color': 'rgba(255, 230, 255, 0.5)'} // light red background
         }
     ];
 
@@ -69,6 +72,7 @@ module.controller("exampleCtrl", function($scope) {
         rowData: data,
         groupHeaders: true,
         rowSelection: 'single',
+        enableSorting: true,
         ready: function(api) {
             api.sizeColumnsToFit();
         }
