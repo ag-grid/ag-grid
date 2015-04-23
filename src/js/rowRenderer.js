@@ -91,23 +91,28 @@ RowRenderer.prototype.softRefreshView = function() {
                     continue;
                 }
 
-                utils.removeAllChildren(eGridCell);
-
                 var isFirstColumn = colIndex === 0;
-                var data = this.getDataForNode(node);
-                var valueGetter = this.createValueGetter(data, column.colDef, node);
                 var scope = renderedRow.scope;
 
-                var value;
-                if (valueGetter) {
-                    value = valueGetter();
-                }
-
-                this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
+                this.softRefreshCell(eGridCell, isFirstColumn, node, column, scope, rowIndex);
             }
         }
     }
+};
 
+RowRenderer.prototype.softRefreshCell = function(eGridCell, isFirstColumn, node, column, scope, rowIndex) {
+
+    utils.removeAllChildren(eGridCell);
+
+    var data = this.getDataForNode(node);
+    var valueGetter = this.createValueGetter(data, column.colDef, node);
+
+    var value;
+    if (valueGetter) {
+        value = valueGetter();
+    }
+
+    this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
 };
 
 RowRenderer.prototype.rowDataChanged = function(rows) {
@@ -629,7 +634,7 @@ RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
     eGridGroupRow.appendChild(eGroupIcon);
 };
 
-RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex) {
+RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
     if (colDef.cellRenderer) {
         var rendererParams = {
             value: value,
@@ -640,7 +645,8 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, nod
             $scope: $childScope,
             rowIndex: rowIndex,
             api: this.gridOptionsWrapper.getApi(),
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsWrapper.getContext(),
+            refreshCell: refreshCellFunction
         };
         var resultFromRenderer = colDef.cellRenderer(rendererParams);
         if (utils.isNodeOrElement(resultFromRenderer)) {
@@ -820,7 +826,13 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
     var eSpanWithValue = document.createElement("span");
     eCellWrapper.appendChild(eSpanWithValue);
 
-    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex);
+    var that = this;
+    var refreshCellFunction = function() {
+        that.softRefreshCell(eGridCell, isFirstColumn, node, column, $childScope, rowIndex);
+    }
+
+
+    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
 };
 
 RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn) {

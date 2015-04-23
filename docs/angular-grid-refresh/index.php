@@ -15,6 +15,9 @@ include '../documentation_header.php';
     </p>
 
     <show-example example="example1"></show-example>
+
+    <show-example example="example2"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>
