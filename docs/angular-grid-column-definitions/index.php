@@ -85,6 +85,10 @@ include '../documentation_header.php';
             <th>newValueHandler, cellValueChanged</th>
             <td>Callbacks for editing. See editing section for further details.</td>
         </tr>
+        <tr>
+            <th>volatile</th>
+            <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
+        </tr>
     </table>
 
 <?php include '../documentation_footer.php';?>

@@ -961,6 +961,9 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
     if (typeof colDef.cellValueChanged === 'function') {
         colDef.cellValueChanged(paramsForCallbacks);
     }
+    if (typeof this.gridOptionsWrapper.getCellValueChanged() === 'function') {
+        this.gridOptionsWrapper.getCellValueChanged()(paramsForCallbacks);
+    }
 
     var value = node.data[colDef.field];
 

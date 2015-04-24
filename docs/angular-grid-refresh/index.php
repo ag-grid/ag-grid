@@ -1,8 +1,8 @@
 <?php
-$key = "Pinning";
-$pageTitle = "AngularJS Angular Grid Pinning";
-$pageDescription = "AngularJS Angular Grid Pinning";
-$pageKeyboards = "AngularJS Angular Grid Pinning";
+$key = "Refresh";
+$pageTitle = "AngularJS Angular Grid Refresh";
+$pageDescription = "It is possible to refresh Angular Grid in many ways. This page explains how to refresh cells inside the grid.";
+$pageKeyboards = "AngularJS Angular Grid Refresh";
 include '../documentation_header.php';
 ?>
 

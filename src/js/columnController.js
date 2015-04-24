@@ -181,6 +181,10 @@ ColumnController.prototype.buildColumns = function(columnDefs) {
 // private
 // set the actual widths for each col
 ColumnController.prototype.ensureEachColHasSize = function() {
+    var defaultWidth = this.gridOptionsWrapper.getColWidth();
+    if (typeof defaultWidth !== 'number' || defaultWidth < constants.MIN_COL_WIDTH) {
+        defaultWidth = 200;
+    }
     this.columns.forEach(function(colDefWrapper) {
         var colDef = colDefWrapper.colDef;
         if (colDefWrapper.actualWidth) {
@@ -188,7 +192,7 @@ ColumnController.prototype.ensureEachColHasSize = function() {
             return;
         } else if (!colDef.width) {
             // if no width defined in colDef, default to 200
-            colDefWrapper.actualWidth = 200;
+            colDefWrapper.actualWidth = defaultWidth;
         } else if (colDef.width < constants.MIN_COL_WIDTH) {
             // if width in col def to small, set to min width
             colDefWrapper.actualWidth = constants.MIN_COL_WIDTH;

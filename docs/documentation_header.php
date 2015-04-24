@@ -170,6 +170,12 @@
                     <a class="sidebarLink" href="/angular-grid-context/index.php">Context</a>
                 <?php } ?>
 
+                <?php if ($key == "Refresh") { ?>
+                    <span class="sidebarLinkSelected">Refresh</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-refresh/index.php">Refresh</a>
+                <?php } ?>
+
                 <?php if ($key == "Grouping Headers") { ?>
                     <span class="sidebarLinkSelected">Grouping Headers</span>
                 <?php } else { ?>
