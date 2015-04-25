@@ -68,7 +68,17 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>refreshView()</th>
-            <td>Redraw all visible rows. Handy has a blanked 'redraw all' if changes have been made to the row data.</td>
+            <td>Rip out and re-insert all visible rows. Handy has a blanket 'redraw all' if changes have been made to the row data.</td>
+        </tr>
+        <tr>
+            <th>softRefreshView()</th>
+            <td>Leave the rows intact. Each cell that has been market as volatile (via colDef attribute) will be redrawn. Any cells that
+                are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
+        </tr>
+        <tr>
+            <th>refreshGroupRows()</th>
+            <td>Rip out and re-insert all visible header and footer rows only. Only need to call if update the aggregate data yourself,
+            as this gets called after <i>recomputeAggregates()</i> anyway.</td>
         </tr>
         <tr>
             <th>getModel()</th>

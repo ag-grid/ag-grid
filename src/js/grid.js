@@ -353,6 +353,9 @@ Grid.prototype.addApi = function() {
         softRefreshView: function() {
             that.rowRenderer.softRefreshView();
         },
+        refreshGroupRows: function() {
+            that.rowRenderer.refreshGroupRows();
+        },
         refreshHeader: function() {
             // need to review this - the refreshHeader should also refresh all icons in the header
             that.headerRenderer.refreshHeader();

@@ -89,6 +89,7 @@ var colDef = {
     rowIndex: The index of the row renderer, after sorting and filtering.<br/>
     api: A reference to the Angular Grid api.<br/>
     context: The context as set on the gridOptions.<br/>
+    refreshCell: A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.<br/>
 
     <h4>Angular Compiling</h4>
 

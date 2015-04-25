@@ -829,8 +829,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
     var that = this;
     var refreshCellFunction = function() {
         that.softRefreshCell(eGridCell, isFirstColumn, node, column, $childScope, rowIndex);
-    }
-
+    };
 
     this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
 };
