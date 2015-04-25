@@ -562,15 +562,37 @@ Grid.prototype.setBodySize = function() {
 Grid.prototype.addScrollListener = function() {
     var _this = this;
 
-    this.eBodyViewport.addEventListener("scroll", function() {
-        _this.scrollHeaderAndPinned();
-        _this.rowRenderer.drawVirtualRows();
-    });
+    var currentScrollTop = this.eBodyViewport.scrollTop,
+        currentScrollLeft = this.eBodyViewport.scrollLeft;
+
+
+    this.eBodyViewport.addEventListener("scroll", update);
+
+    function update(e) {
+
+        // Vertical Scroll Updates
+        if (_this.eBodyViewport.scrollTop != currentScrollTop) {
+            _this.rowRenderer.drawVirtualRows();
+            _this.scrollPinned();
+        }
+
+        // Horizontal Scroll Updates
+        if (_this.eBodyViewport.scrollLeft != currentScrollLeft) {
+            _this.scrollHeader();
+        }
+
+        currentScrollTop = _this.eBodyViewport.scrollTop;
+        currentScrollLeft = _this.eBodyViewport.scrollLeft;
+    }
+
 };
 
-Grid.prototype.scrollHeaderAndPinned = function() {
-    this.eHeaderContainer.style.left = -this.eBodyViewport.scrollLeft + "px";
-    this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
+Grid.prototype.scrollHeader = function() {
+    this.eHeaderContainer.style.transform = 'translate3d(' + -this.eBodyViewport.scrollLeft + "px,0,0)";
+};
+
+Grid.prototype.scrollPinned = function() {
+    this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -this.eBodyViewport.scrollTop + "px,0)";
 };
 
 module.exports = Grid;

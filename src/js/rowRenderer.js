@@ -209,8 +209,9 @@ RowRenderer.prototype.drawVirtualRows = function() {
         last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
 
         //add in buffer
-        first = first - constants.ROW_BUFFER_SIZE;
-        last = last + constants.ROW_BUFFER_SIZE;
+        var buffer = this.gridOptionsWrapper.getRowBuffer() || constants.ROW_BUFFER_SIZE;
+        first = first - buffer;
+        last = last + buffer;
 
         // adjust, in case buffer extended actual size
         if (first < 0) {
@@ -320,25 +321,27 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             // draw in cells for the rest of the row.
             var groupData = this.getDataForNode(node);
 
-            columns.forEach(function(column, colIndex) {
-                if (colIndex == 0) { //skip first col, as this is the group col we already inserted
+            for (var i = -1; ++i < columns.length;) {
+                if (!i) { //skip first col, as this is the group col we already inserted
                     return;
                 }
                 var valueGetter;
                 if (groupData) {
-                    valueGetter = that.createValueGetter(groupData, column.colDef, node);
+                    valueGetter = that.createValueGetter(groupData, columns[i].colDef, node);
                 }
-                that.createCellFromColDef(false, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
-            });
+                that.createCellFromColDef(false, columns[i], valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
+            }
+
         }
 
     } else {
-        columns.forEach(function(column, index) {
-            var firstCol = index === 0;
+
+        for (var i = -1; ++i < columns.length;) {
+            var firstCol = !i;
             var data = that.getDataForNode(node);
-            var valueGetter = that.createValueGetter(data, column.colDef, node);
-            that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
-        });
+            var valueGetter = that.createValueGetter(data, columns[i].colDef, node);
+            that.createCellFromColDef(firstCol, columns[i], valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
+        }
     }
 
     //try compiling as we insert rows
