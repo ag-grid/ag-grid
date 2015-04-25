@@ -1,3 +1,4 @@
+var utils = require('./utils');
 var constants = require('./constants');
 var GridOptionsWrapper = require('./gridOptionsWrapper');
 var template = require('./template.js');
@@ -40,6 +41,8 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     this.addApi();
     this.findAllElements(eGridDiv);
     this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
+
+    this.scrollWidth = utils.getScrollbarWidth();
 
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
@@ -522,7 +525,7 @@ Grid.prototype.setPinnedColHeight = function() {
     var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
     var bodyHeight = this.eBodyViewport.offsetHeight;
     if (scrollShowing) {
-        this.ePinnedColsViewport.style.height = (bodyHeight - 20) + "px";
+        this.ePinnedColsViewport.style.height = (bodyHeight - this.scrollWidth) + "px";
     } else {
         this.ePinnedColsViewport.style.height = bodyHeight + "px";
     }
