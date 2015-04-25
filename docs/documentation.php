@@ -113,6 +113,14 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
+        <b>25 April</b> - Bug fixes:
+        https://github.com/ceolter/angular-grid/issues/35<br/>
+
+    </p>
+
+    <hr/>
+
+    <p>
         <b>20 April</b> - Value Getters, Context and Expressions. Will be available in 1.3, or take latest.
         All documented in relevant sections.
     </p>
