@@ -38,7 +38,7 @@ include '../documentation_header.php';
 var colDef = {
     name: 'Static Styles',
     field' 'field1',
-    cellStyle: {color: red, background-color: green}
+    cellStyle: {color: 'red', 'background-color': 'green'}
 }
 // return different styles for each row
 var colDef = {

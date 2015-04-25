@@ -116,6 +116,10 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
+            <th>cellDoubleClicked</th>
+            <td>Function callback, gets called when a cell is double clicked.</td>
+        </tr>
+        <tr>
             <th>modelUpdated</th>
             <td>Function callback, gets called when displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
@@ -134,8 +138,16 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
         <tr>
+            <th>cellValueChanged</th>
+            <td>Function callback, gets called when a value has changed after editing.</td>
+        </tr>
+        <tr>
             <th>getRowClass</th>
             <td>Function callback, to allow adding a css class to a row.</td>
+        </tr>
+        <tr>
+            <th>colWidth</th>
+            <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
         </tr>
         <tr>
             <th>rowsAlreadyGrouped</th>

@@ -126,7 +126,7 @@ InMemoryRowController.prototype.recursivelyCreateAggData = function(nodes, group
             var data = groupAggFunction(node.children);
             node.data = data;
             // if we are grouping, then it's possible there is a sibling footer
-            // to the group, so update the data here also if thers is one
+            // to the group, so update the data here also if there is one
             if (node.sibling) {
                 node.sibling.data = data;
             }

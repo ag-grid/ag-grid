@@ -90,6 +90,16 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+
+    <hr/>
+
+    <p>
+        <b>Anybody got Browserify working in their project?</b> - <a href="http://www.angulargrid.com/forum/thread-54.html">Thomas could use some help </a>
+        getting Browersify working, I can't help becuase I'm not using it!!
+    </p>
+
+    <hr/>
+
     <h3>
         News
     </h3>
@@ -97,7 +107,7 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
-        <b>Next on my list</b> - Sleep. Take it easy. I have hardly left my laptop for two weeks!!!
+        <b>Next on my list</b> - I am now working on refreshing options of the cells.
     </p>
 
     <hr/>

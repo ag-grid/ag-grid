@@ -21,9 +21,8 @@ A few words on other design choices:
   client provided renderers. This is on purpose to a) keep the grid and b) allow
   the grid to be used in other environments (either vanilla Javascript, or with other
   frameworks such as Angular 2 and Web Components).
-+ jshint and jslint are not to be used. The author feels that if you need these,
-  then you need to learn to write clean code!!
-
++ jshint and jslint are not to be used right now. The author intends code reviewing
+  manually any pull requests.
 
 Using issues
 ------------
