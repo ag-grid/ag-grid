@@ -25,7 +25,7 @@ Utils.prototype.getValue = function(expressionService, data, colDef, node, api, 
             return expressionService.evaluate(valueGetter, params);
         }
 
-    } else if (field) {
+    } else if (field && data) {
         return data[field];
     } else {
         return undefined;
@@ -237,6 +237,32 @@ Utils.prototype.createIcon = function(iconName, gridOptionsWrapper, colDefWrappe
         eResult.appendChild(svgFactoryFunc());
     }
     return eResult;
+};
+
+
+Utils.prototype.getScrollbarWidth = function () {
+    var outer = document.createElement("div");
+    outer.style.visibility = "hidden";
+    outer.style.width = "100px";
+    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+    document.body.appendChild(outer);
+
+    var widthNoScroll = outer.offsetWidth;
+    // force scrollbars
+    outer.style.overflow = "scroll";
+
+    // add innerdiv
+    var inner = document.createElement("div");
+    inner.style.width = "100%";
+    outer.appendChild(inner);
+
+    var widthWithScroll = inner.offsetWidth;
+
+    // remove divs
+    outer.parentNode.removeChild(outer);
+
+    return widthNoScroll - widthWithScroll;
 };
 
 module.exports = new Utils();

@@ -1,7 +1,8 @@
 // Angular Grid
 // Written by Niall Crosby
 // www.angulargrid.com
-
+//
+// Version 1.5-SNAPSHOT
 
 (function() {
 

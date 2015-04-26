@@ -89,6 +89,11 @@ include '../documentation_header.php';
             <th>volatile</th>
             <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
         </tr>
+        <tr>
+            <th>cellTemplate, cellTemplateUrl</th>
+            <td>Cell template (or specify URL to load template from) to use for cell.
+                Useful for AngularJS cells.</td>
+        </tr>
     </table>
 
 <?php include '../documentation_footer.php';?>

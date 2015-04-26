@@ -11,7 +11,7 @@ function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController, expressionService) {
+    selectionController, expressionService, templateService) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
@@ -22,6 +22,7 @@ RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapp
     this.$scope = $scope;
     this.selectionController = selectionController;
     this.expressionService = expressionService;
+    this.templateService = templateService;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom. each row object has:
@@ -113,6 +114,11 @@ RowRenderer.prototype.softRefreshCell = function(eGridCell, isFirstColumn, node,
     }
 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
+
+    // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+    if (this.gridOptionsWrapper.isAngularCompileRows()) {
+        this.$compile(eGridCell)(scope);
+    }
 };
 
 RowRenderer.prototype.rowDataChanged = function(rows) {
@@ -262,7 +268,7 @@ RowRenderer.prototype.ensureRowsRendered = function() {
     this.removeVirtualRows(rowsToRemove);
 
     // if we are doing angular compiling, then do digest the scope here
-    if (this.gridOptions.angularCompileRows) {
+    if (this.gridOptionsWrapper.isAngularCompileRows()) {
         // we do it in a timeout, in case we are already in an apply
         setTimeout(function() {
             that.$scope.$apply();
@@ -638,7 +644,15 @@ RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
 };
 
 RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
-    if (colDef.cellRenderer) {
+    // template gets preference, then cellRenderer, then do it ourselves
+    if (colDef.template) {
+        eGridCell.innerHTML = colDef.template;
+    } else if (colDef.templateUrl) {
+        var template = this.templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
+        if (template) {
+            eGridCell.innerHTML = template;
+        }
+    } else if (colDef.cellRenderer) {
         var rendererParams = {
             value: value,
             valueGetter: valueGetter,
@@ -782,14 +796,14 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
-    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn);
+    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
     // add the 'start editing' call to the chain of editors
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
             return true;
         } else {
             return false;
@@ -837,7 +851,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
     this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
 };
 
-RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn) {
+RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter) {
     var that = this;
     var colDef = column.colDef;
     eGridCell.addEventListener("dblclick", function(event) {
@@ -868,7 +882,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
             colDef.cellDoubleClicked(paramsForColDef);
         }
         if (that.isCellEditable(colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
         }
     });
 };
@@ -977,18 +991,19 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 };
 
-RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn) {
+RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter) {
     var that = this;
-    var colDef = column.colDef;
     this.editingCell = true;
     utils.removeAllChildren(eGridCell);
     var eInput = document.createElement('input');
     eInput.type = 'text';
     utils.addCssClass(eInput, 'ag-cell-edit-input');
 
-    var value = node.data[colDef.field];
-    if (value !== null && value !== undefined) {
-        eInput.value = value;
+    if (valueGetter) {
+        var value = valueGetter();
+        if (value !== null && value !== undefined) {
+            eInput.value = value;
+        }
     }
 
     eInput.style.width = (column.actualWidth - 14) + 'px';

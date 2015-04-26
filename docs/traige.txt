@@ -1,0 +1,14 @@
+For anyone:
+https://github.com/ceolter/angular-grid/issues/34 - provide bootstrap demo / integration
+https://github.com/ceolter/angular-grid/issues/37 - right click support
+https://github.com/ceolter/angular-grid/issues/28 - nested properties
+
+For Niall:
+https://github.com/ceolter/angular-grid/issues/47 - allow adding items to menu
+https://github.com/ceolter/angular-grid/issues/58 - update set filter when data changes
+https://github.com/ceolter/angular-grid/issues/62 - extract pagination panel
+https://github.com/ceolter/angular-grid/issues/63 - selection API
+https://github.com/ceolter/angular-grid/issues/64 - filtering for pagination
+https://github.com/ceolter/angular-grid/issues/86 - row deselection api
+https://github.com/ceolter/angular-grid/issues/88 - message when no rows
+https://github.com/ceolter/angular-grid/issues/90 - load cell template

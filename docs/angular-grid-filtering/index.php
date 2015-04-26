@@ -88,6 +88,11 @@ columnDefinition = {
     <h3>Built In Filters Example</h3>
 
     The example below shows the three types of built in filters, as well as the quick filter, in action.
+    Notice that the athlete column is given the set of filters, providing some filter options for which
+    no corresponding rows exist - this can be used if you are missing items in what would otherwise be
+    a complete list, if listing days of the week, and no data for Wednesday exists, then presenting
+    the filter to the user could give the impression that the filter is broken because it is missing
+    Wednesday as an option.
 
     <show-example example="example1"></show-example>
 

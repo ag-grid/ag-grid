@@ -1,3 +1,4 @@
+var utils = require('./utils');
 var constants = require('./constants');
 var GridOptionsWrapper = require('./gridOptionsWrapper');
 var template = require('./template.js');
@@ -12,6 +13,7 @@ var InMemoryRowController = require('./inMemoryRowController');
 var VirtualPageRowController = require('./virtualPageRowController');
 var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
+var TemplateService = require('./templateService');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
@@ -40,6 +42,8 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     this.addApi();
     this.findAllElements(eGridDiv);
     this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
+
+    this.scrollWidth = utils.getScrollbarWidth();
 
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
@@ -88,16 +92,18 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var inMemoryRowController = new InMemoryRowController();
     var virtualPageRowController = new VirtualPageRowController();
     var expressionService = new ExpressionService();
+    var templateService = new TemplateService();
 
     var columnModel = columnController.getModel();
 
     // initialise all the beans
+    templateService.init($scope);
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
     filterManager.init(this, gridOptionsWrapper, $compile, $scope);
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
-        selectionRendererFactory, $compile, $scope, selectionController, expressionService);
+        selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
@@ -522,7 +528,7 @@ Grid.prototype.setPinnedColHeight = function() {
     var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
     var bodyHeight = this.eBodyViewport.offsetHeight;
     if (scrollShowing) {
-        this.ePinnedColsViewport.style.height = (bodyHeight - 20) + "px";
+        this.ePinnedColsViewport.style.height = (bodyHeight - this.scrollWidth) + "px";
     } else {
         this.ePinnedColsViewport.style.height = bodyHeight + "px";
     }
@@ -560,8 +566,12 @@ Grid.prototype.setBodySize = function() {
 };
 
 Grid.prototype.addScrollListener = function() {
-    var _this = this;
+    var that = this;
 
+    var lastLeftPosition = -1;
+    var lastTopPosition = -1;
+
+<<<<<<< HEAD
     var currentScrollTop = this.eBodyViewport.scrollTop,
         currentScrollLeft = this.eBodyViewport.scrollLeft;
 
@@ -593,6 +603,31 @@ Grid.prototype.scrollHeader = function() {
 
 Grid.prototype.scrollPinned = function() {
     this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -this.eBodyViewport.scrollTop + "px,0)";
+=======
+    this.eBodyViewport.addEventListener("scroll", function() {
+        var newLeftPosition = that.eBodyViewport.scrollLeft;
+        var newTopPosition = that.eBodyViewport.scrollTop;
+
+        if (newLeftPosition !== lastLeftPosition) {
+            lastLeftPosition = newLeftPosition;
+            that.scrollHeader(newLeftPosition);
+        }
+
+        if (newTopPosition !== lastTopPosition) {
+            lastTopPosition = newTopPosition;
+            that.scrollPinned(newTopPosition);
+            that.rowRenderer.drawVirtualRows();
+        }
+    });
+};
+
+Grid.prototype.scrollHeader = function(bodyLeftPosition) {
+    this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
+};
+
+Grid.prototype.scrollPinned = function(bodyTopPosition) {
+    this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
+>>>>>>> master
 };
 
 module.exports = Grid;
