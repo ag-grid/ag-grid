@@ -9,34 +9,20 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Value Getters, Context, Expressions and Gulp
+        Volatile Columns, Soft Refresh, Cell Templates . . . and Bug Fixes
     </div>
 
     <p>
-        20th April 2015
+        26th April 2015
     </p>
     <p>
-        <b>Value Getters</b> separate the 'getting' of the value from 'rendering' of the value. So you can have one
-        renderer (eg currency renderer) and then many ways to get the value (direct from attribute, or adding two
-        attributes together). See documentation section on Value Getters.
+        <b>Volatile Columns and Soft Refreshes</b> allow you grid to behave in a dynamic way
+        without the performance drawbacks of two-way binding. Read all about it <a href="angular-grid-refresh">here</a>.
     </p>
     <p>
-        <b>Context</b> allows passing client specific information into your renderers. See the documentation section
-        on Context.
-    </p>
-    <p>
-        <b>Expressions</b> allows expression to be used to calculated values and classes. See the documentation sections
-        on Cell Styling (for using Class Rules) and Value Getters (for using expressions to evaluate values).
-    </p>
-    <p>
-        <b>Gulp</b> is now used to build the project. Thank you <b>Tanner Linsley</b> for implementing the Gulp build :)
-    </p>
-    <p>
-        <b>Note: </b> having moved to Gulp (and away from RequireJS) CSS files are no longer included in the angularGrid.js
-        file. You will need to include Angular Grid CSS files sepecifically.
-    </p>
-    <p>
-        Please tell anyone you might know who would benefit from Angular Grid.
+        <b>Cell Templates</b> allow you to use HTML templates for your cells. If your coming from
+        ui-grid, this will look familiar.
+        Read all about it <a href="angular-grid-refresh">here</a>.
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -88,15 +74,36 @@ include 'documentation_header.php';
 
 </div>
 
+
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <table>
+        <tr>
+            <td valign="top">
+                <img src="http://www.marketingjava.com/wp-content/uploads/stress-at-work.jpg" width="200px"/>
+            </td>
+            <td>
+                <div style="margin-left: 20px">
+                    <p>
+                        Do you or someone you konw suffer from <b>Stress?</b> It is possible this stress is partly
+                        due to your choice of grid component not performing as well as it should. Sometimes,
+                        despite your beautiful code, your application can look as if it's clunky because of
+                        poorly performing third partly libraries. <span style="text-decoration: underline">But this can stop NOW!!!</span>
+                    </p>
+                    <p>
+                        Join hundreds of people from around the world (but mostly America, India and UK according to my
+                        stats) and <b>start using Angular Grid</b>. Angular Grid will leave you with one less thing to
+                        stress about, allowing your brain to focus on more important tasks, like catching up
+                        on Facebook, flirting with someone in the office, watching Game of Thrones or even [insert
+                        the task you need to do here].
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
 <div style="padding: 20px;">
-
-
-    <hr/>
-
-    <p>
-        <b>Anybody got Browserify working in their project?</b> - <a href="http://www.angulargrid.com/forum/thread-54.html">Thomas could use some help </a>
-        getting Browersify working, I can't help becuase I'm not using it!!
-    </p>
 
     <hr/>
 
@@ -107,15 +114,25 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
-        <b>Next on my list</b> - I am now working on refreshing options of the cells.
+        <b>Next on my list</b> - In the back of my head, I'm working on a plan for Cell Selection and Keyboard
+        navigation. The plan isn't ready yet to turn into code. But it's brewing back there. When it's ready,
+        I'll hit the keyboard. But the brain is still working through the initial design.
+    </p>
+
+    <hr/>
+
+    <p>
+        <b>26 April</b> - Volatile Columns, Soft Refresh, Cell Templates.
     </p>
 
     <hr/>
 
     <p>
         <b>25 April</b> - Bug fixes:
-        https://github.com/ceolter/angular-grid/issues/35<br/>
-
+        <a href="https://github.com/ceolter/angular-grid/issues/35">Pinned Blank Space</a>,
+        <a href="https://github.com/ceolter/angular-grid/issues/91">Group Sorting</a>,
+        <a href="https://github.com/ceolter/angular-grid/issues/90">Cell Templates</a>,
+        <a href="https://github.com/ceolter/angular-grid/issues/29">Expand / Collapse</a>
     </p>
 
     <hr/>
