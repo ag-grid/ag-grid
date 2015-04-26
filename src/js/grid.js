@@ -1,3 +1,4 @@
+var utils = require('./utils');
 var constants = require('./constants');
 var GridOptionsWrapper = require('./gridOptionsWrapper');
 var template = require('./template.js');
@@ -40,6 +41,8 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     this.addApi();
     this.findAllElements(eGridDiv);
     this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
+
+    this.scrollWidth = utils.getScrollbarWidth();
 
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
@@ -522,7 +525,7 @@ Grid.prototype.setPinnedColHeight = function() {
     var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
     var bodyHeight = this.eBodyViewport.offsetHeight;
     if (scrollShowing) {
-        this.ePinnedColsViewport.style.height = (bodyHeight - 20) + "px";
+        this.ePinnedColsViewport.style.height = (bodyHeight - this.scrollWidth) + "px";
     } else {
         this.ePinnedColsViewport.style.height = bodyHeight + "px";
     }
@@ -560,17 +563,34 @@ Grid.prototype.setBodySize = function() {
 };
 
 Grid.prototype.addScrollListener = function() {
-    var _this = this;
+    var that = this;
+
+    var lastLeftPosition = -1;
+    var lastTopPosition = -1;
 
     this.eBodyViewport.addEventListener("scroll", function() {
-        _this.scrollHeaderAndPinned();
-        _this.rowRenderer.drawVirtualRows();
+        var newLeftPosition = that.eBodyViewport.scrollLeft;
+        var newTopPosition = that.eBodyViewport.scrollTop;
+
+        if (newLeftPosition !== lastLeftPosition) {
+            lastLeftPosition = newLeftPosition;
+            that.scrollHeader(newLeftPosition);
+        }
+
+        if (newTopPosition !== lastTopPosition) {
+            lastTopPosition = newTopPosition;
+            that.scrollPinned(newTopPosition);
+            that.rowRenderer.drawVirtualRows();
+        }
     });
 };
 
-Grid.prototype.scrollHeaderAndPinned = function() {
-    this.eHeaderContainer.style.left = -this.eBodyViewport.scrollLeft + "px";
-    this.ePinnedColsContainer.style.top = -this.eBodyViewport.scrollTop + "px";
+Grid.prototype.scrollHeader = function(bodyLeftPosition) {
+    this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
+};
+
+Grid.prototype.scrollPinned = function(bodyTopPosition) {
+    this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
 };
 
 module.exports = Grid;
