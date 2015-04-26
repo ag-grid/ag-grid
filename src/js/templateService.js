@@ -4,6 +4,10 @@ function TemplateService() {
     this.waitingCallbacks = {};
 }
 
+TemplateService.prototype.init = function ($scope) {
+    this.$scope = $scope;
+};
+
 // returns the template if it is loaded, or null if it is not loaded
 // but will call the callback when it is loaded
 TemplateService.prototype.getTemplate = function (url, callback) {
@@ -55,8 +59,12 @@ TemplateService.prototype.handleHttpResult = function (httpResult, url) {
         callback();
     }
 
+    if (this.$scope) {
+        var that = this;
+        setTimeout(function() {
+            that.$scope.$apply();
+        }, 0);
+    }
 };
 
-// unlike the other beans, this one returns an instance, as it is global across all
-// instances of Angular Grid in an application
-module.exports = new TemplateService();
+module.exports = TemplateService;

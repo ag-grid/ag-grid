@@ -16,13 +16,13 @@ include 'documentation_header.php';
         26th April 2015
     </p>
     <p>
-        <b>Volatile Columns and Soft Refreshes</b> allow you grid to behave in a dynamic way
-        without the performance drawbacks of two-way binding. Read all about it <a href="angular-grid-refresh">here</a>.
+        <b>Volatile Columns and Soft Refreshes</b> allow your grid to behave in a dynamic way
+        without the performance drawbacks of two-way binding. Read all about it <a href="angular-grid-refresh/">here</a>.
     </p>
     <p>
         <b>Cell Templates</b> allow you to use HTML templates for your cells. If your coming from
         ui-grid, this will look familiar.
-        Read all about it <a href="angular-grid-refresh">here</a>.
+        Read all about it <a href="angular-grid-cell-template/">here</a>.
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -85,7 +85,7 @@ include 'documentation_header.php';
             <td>
                 <div style="margin-left: 20px">
                     <p>
-                        Do you or someone you konw suffer from <b>Stress?</b> It is possible this stress is partly
+                        Do you or someone you know suffer from <b>Stress?</b> It is possible this stress is partly
                         due to your choice of grid component not performing as well as it should. Sometimes,
                         despite your beautiful code, your application can look as if it's clunky because of
                         poorly performing third partly libraries. <span style="text-decoration: underline">But this can stop NOW!!!</span>

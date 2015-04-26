@@ -13,6 +13,7 @@ var InMemoryRowController = require('./inMemoryRowController');
 var VirtualPageRowController = require('./virtualPageRowController');
 var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
+var TemplateService = require('./templateService');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
@@ -91,16 +92,18 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var inMemoryRowController = new InMemoryRowController();
     var virtualPageRowController = new VirtualPageRowController();
     var expressionService = new ExpressionService();
+    var templateService = new TemplateService();
 
     var columnModel = columnController.getModel();
 
     // initialise all the beans
+    templateService.init($scope);
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
     filterManager.init(this, gridOptionsWrapper, $compile, $scope);
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
-        selectionRendererFactory, $compile, $scope, selectionController, expressionService);
+        selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);

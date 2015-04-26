@@ -1,7 +1,6 @@
 var constants = require('./constants');
 var SvgFactory = require('./svgFactory');
 var utils = require('./utils');
-var templateService = require('./templateService');
 
 var svgFactory = new SvgFactory();
 
@@ -12,7 +11,7 @@ function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController, expressionService) {
+    selectionController, expressionService, templateService) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
@@ -23,6 +22,7 @@ RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapp
     this.$scope = $scope;
     this.selectionController = selectionController;
     this.expressionService = expressionService;
+    this.templateService = templateService;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom. each row object has:
@@ -645,7 +645,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, nod
     if (colDef.template) {
         eGridCell.innerHTML = colDef.template;
     } else if (colDef.templateUrl) {
-        var template = templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
+        var template = this.templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
         if (template) {
             eGridCell.innerHTML = template;
         }
