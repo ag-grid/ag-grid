@@ -25,7 +25,7 @@ Utils.prototype.getValue = function(expressionService, data, colDef, node, api, 
             return expressionService.evaluate(valueGetter, params);
         }
 
-    } else if (field) {
+    } else if (field && data) {
         return data[field];
     } else {
         return undefined;
