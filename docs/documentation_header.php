@@ -158,6 +158,12 @@
                     <a class="sidebarLink" href="/angular-grid-cell-rendering/index.php">Cell Rendering</a>
                 <?php } ?>
 
+                <?php if ($key == "Cell Templates") { ?>
+                    <span class="sidebarLinkSelected">Cell Templates</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-cell-template/index.php">Cell Templates</a>
+                <?php } ?>
+
                 <?php if ($key == "Editing") { ?>
                     <span class="sidebarLinkSelected">Editing Cells</span>
                 <?php } else { ?>
