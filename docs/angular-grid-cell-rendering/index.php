@@ -54,7 +54,7 @@ var colDef = {
     }
 }
 
-<b>// example - join two fields together</b>
+<b>// example - join two fields together (but you would probably do this with a value getter)</b>
 var colDef = {
     name: 'Col Name',
     cellRenderer: function(params) {

@@ -1,6 +1,7 @@
 var constants = require('./constants');
 var SvgFactory = require('./svgFactory');
 var utils = require('./utils');
+var templateService = require('./templateService');
 
 var svgFactory = new SvgFactory();
 
@@ -113,6 +114,11 @@ RowRenderer.prototype.softRefreshCell = function(eGridCell, isFirstColumn, node,
     }
 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, scope);
+
+    // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+    if (this.gridOptionsWrapper.isAngularCompileRows()) {
+        this.$compile(eGridCell)(scope);
+    }
 };
 
 RowRenderer.prototype.rowDataChanged = function(rows) {
@@ -261,7 +267,7 @@ RowRenderer.prototype.ensureRowsRendered = function() {
     this.removeVirtualRows(rowsToRemove);
 
     // if we are doing angular compiling, then do digest the scope here
-    if (this.gridOptions.angularCompileRows) {
+    if (this.gridOptionsWrapper.isAngularCompileRows()) {
         // we do it in a timeout, in case we are already in an apply
         setTimeout(function() {
             that.$scope.$apply();
@@ -635,7 +641,15 @@ RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
 };
 
 RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
-    if (colDef.cellRenderer) {
+    // template gets preference, then cellRenderer, then do it ourselves
+    if (colDef.template) {
+        eGridCell.innerHTML = colDef.template;
+    } else if (colDef.templateUrl) {
+        var template = templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
+        if (template) {
+            eGridCell.innerHTML = template;
+        }
+    } else if (colDef.cellRenderer) {
         var rendererParams = {
             value: value,
             valueGetter: valueGetter,
