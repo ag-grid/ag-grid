@@ -23,14 +23,6 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        It doesn't make sense to the author to load templates from the server, as if you are writing
-        enterprise level software, you should be using a module loading framework to embed the static
-        HTML into your Javascript files. Both RequireJS and CommonJS (via Browserify) provide the
-        ability to do this. However given ng-grid and ui-grid provide this feature, it is implemented
-        in Angular Grid as a convenience for people migrating from these grids.
-    </p>
-
-    <p>
         If using templateUrl, then the html is cached. The server is only hit once per template and
         it is reused.
     </p>
@@ -56,7 +48,7 @@ include '../documentation_header.php';
         Note that in the example, as you scroll up and down, the redraw on
         the AngularJS columns has a lag. This is waiting for the AngularJS digest cycle to kick in
         to populate the values into these rows.
-        If you like this effect, then I recommend you look at <a href="http://ui-grid.info/">ui-grid</a>,
+        If you like this effect, then check out <a href="http://ui-grid.info/">ui-grid</a>,
         where all cells are rendered in this fashion.
     </p>
 
