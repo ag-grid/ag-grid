@@ -6,7 +6,7 @@ module.controller("exampleCtrl", function($scope, $timeout) {
     var columnDefs = [
         {displayName: "Default String", field: "defaultString", width: 150, editable: true},
         {displayName: "Upper Case Only", field: "upperCaseOnly", width: 150, editable: true, newValueHandler: upperCaseNewValueHandler},
-        {displayName: "Number", field: "number", width: 150, editable: true, newValueHandler: numberNewValueHandler},
+        {displayName: "Number", valueGetter: 'data.number', width: 150, editable: true, newValueHandler: numberNewValueHandler},
         {displayName: "Custom With Angular", field: "setAngular", width: 175, cellRenderer: customEditorUsingAngular},
         {displayName: "Custom No Angular", field: "setNoAngular", width: 175, cellRenderer: customEditorNoAngular}
     ];
@@ -35,7 +35,7 @@ module.controller("exampleCtrl", function($scope, $timeout) {
         if (isNaN(valueAsNumber)) {
             window.alert("Invalid value " + params.newValue + ", must be a number");
         } else {
-            params.data[params.colDef.field] = valueAsNumber;
+            params.data.number = valueAsNumber;
         }
     }
 

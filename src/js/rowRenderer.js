@@ -941,7 +941,7 @@ RowRenderer.prototype.isCellEditable = function(colDef, node) {
     return false;
 };
 
-RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn) {
+RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter) {
     this.editingCell = false;
     var newValue = eInput.value;
     var colDef = column.colDef;
@@ -970,7 +970,11 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
     }
 
     // at this point, the value has been updated
-    paramsForCallbacks.newValue = node.data[colDef.field];
+    var newValue;
+    if (valueGetter) {
+        newValue = valueGetter();
+    }
+    paramsForCallbacks.newValue = newValue;
     if (typeof colDef.cellValueChanged === 'function') {
         colDef.cellValueChanged(paramsForCallbacks);
     }
@@ -978,12 +982,7 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
         this.gridOptionsWrapper.getCellValueChanged()(paramsForCallbacks);
     }
 
-    var value = node.data[colDef.field];
-
-    //because this is an editable cell, implying that the value getting is a simple type
-    var valueGetter = function() { return value; };
-
-    this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
+    this.populateAndStyleGridCell(valueGetter, newValue, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 };
 
 RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter) {
@@ -1007,7 +1006,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
     eInput.select();
 
     var blurListener = function() {
-        that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
+        that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
     };
 
     //stop entering if we loose focus
@@ -1018,7 +1017,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
         var key = event.which || event.keyCode;
         // 13 is enter
         if (key == ENTER_KEY) {
-            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
+            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
         }
     });
 
@@ -1026,7 +1025,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
     eInput.addEventListener('keydown', function(event) {
         var key = event.which || event.keyCode;
         if (key == TAB_KEY) {
-            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn);
+            that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
             that.startEditingNextCell(rowIndex, column, event.shiftKey);
             // we don't want the default tab action, so return false, this stops the event from bubbling
             event.preventDefault();
