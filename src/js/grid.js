@@ -589,11 +589,11 @@ Grid.prototype.addScrollListener = function() {
 };
 
 Grid.prototype.scrollHeader = function(bodyLeftPosition) {
-    this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
+    this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + "px,0,0)";
 };
 
 Grid.prototype.scrollPinned = function(bodyTopPosition) {
-    this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
+    this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + "px,0)";
 };
 
 module.exports = Grid;
