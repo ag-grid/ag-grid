@@ -78,11 +78,11 @@ RowRenderer.prototype.softRefreshView = function() {
         return;
     }
 
-    for (var rowIndex = first; rowIndex<=last; rowIndex++) {
+    for (var rowIndex = first; rowIndex <= last; rowIndex++) {
         var node = this.rowModel.getVirtualRow(rowIndex);
         if (node) {
 
-            for (var colIndex = 0; colIndex<=columns.length; colIndex++) {
+            for (var colIndex = 0; colIndex <= columns.length; colIndex++) {
                 var column = columns[colIndex];
                 var renderedRow = this.renderedRows[rowIndex];
                 var eGridCell = renderedRow.eVolatileCells[colIndex];
@@ -273,7 +273,7 @@ RowRenderer.prototype.ensureRowsRendered = function() {
 RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     var columns = this.columnModel.getVisibleColumns();
     // if no cols, don't draw row
-    if (!columns || columns.length==0) {
+    if (!columns || columns.length == 0) {
         return;
     }
 
@@ -321,27 +321,27 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             // draw in cells for the rest of the row.
             var groupData = this.getDataForNode(node);
 
-            for (var i = -1; ++i < columns.length;) {
-                if (!i) { //skip first col, as this is the group col we already inserted
+            columns.forEach(function(column, index) {
+                if (index === 0) { //skip first col, as this is the group col we already inserted
                     return;
                 }
                 var valueGetter;
                 if (groupData) {
-                    valueGetter = that.createValueGetter(groupData, columns[i].colDef, node);
+                    valueGetter = that.createValueGetter(groupData, column.colDef, node);
                 }
-                that.createCellFromColDef(false, columns[i], valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
-            }
+                that.createCellFromColDef(false, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
+            });
 
         }
 
     } else {
 
-        for (var i = -1; ++i < columns.length;) {
-            var firstCol = !i;
+        columns.forEach(function(column, index) {
+            var firstCol = index === 0;
             var data = that.getDataForNode(node);
-            var valueGetter = that.createValueGetter(data, columns[i].colDef, node);
-            that.createCellFromColDef(firstCol, columns[i], valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
-        }
+            var valueGetter = that.createValueGetter(data, column.colDef, node);
+            that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
+        });
     }
 
     //try compiling as we insert rows
@@ -748,7 +748,7 @@ RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, n
         };
 
         var classNames = Object.keys(classRules);
-        for (var i = 0; i<classNames.length; i++) {
+        for (var i = 0; i < classNames.length; i++) {
             var className = classNames[i];
             var rule = classRules[className];
             var resultOfRule;
@@ -970,7 +970,9 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
     var value = node.data[colDef.field];
 
     //because this is an editable cell, implying that the value getting is a simple type
-    var valueGetter = function() { return value; };
+    var valueGetter = function() {
+        return value;
+    };
 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 };
