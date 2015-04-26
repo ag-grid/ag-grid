@@ -85,10 +85,10 @@ include 'documentation_header.php';
             <td>
                 <div style="margin-left: 20px">
                     <p>
-                        Do you or someone you know suffer from <b>Stress?</b> It is possible this stress is partly
-                        due to your choice of grid component not performing as well as it should. Sometimes,
-                        despite your beautiful code, your application can look as if it's clunky because of
-                        poorly performing third partly libraries. <span style="text-decoration: underline">But this can stop NOW!!!</span>
+                        Do you or someone you know suffer from <b>Stress?</b> Is it possible this stress is partly
+                        due to your choice of grid component? Sometimes,
+                        despite your beautiful code, your application can look clunky if the grid you use
+                        is performing clunky. <span style="text-decoration: underline">But this can stop NOW!!!</span>
                     </p>
                     <p>
                         Join hundreds of people from around the world (but mostly America, India and UK according to my

@@ -793,14 +793,14 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
-    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn);
+    this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
     // add the 'start editing' call to the chain of editors
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
             return true;
         } else {
             return false;
@@ -848,7 +848,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
     this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
 };
 
-RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn) {
+RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter) {
     var that = this;
     var colDef = column.colDef;
     eGridCell.addEventListener("dblclick", function(event) {
@@ -879,7 +879,7 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
             colDef.cellDoubleClicked(paramsForColDef);
         }
         if (that.isCellEditable(colDef, node)) {
-            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn);
+            that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
         }
     });
 };
@@ -986,18 +986,19 @@ RowRenderer.prototype.stopEditing = function(eGridCell, column, node, $childScop
     this.populateAndStyleGridCell(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope);
 };
 
-RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn) {
+RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter) {
     var that = this;
-    var colDef = column.colDef;
     this.editingCell = true;
     utils.removeAllChildren(eGridCell);
     var eInput = document.createElement('input');
     eInput.type = 'text';
     utils.addCssClass(eInput, 'ag-cell-edit-input');
 
-    var value = node.data[colDef.field];
-    if (value !== null && value !== undefined) {
-        eInput.value = value;
+    if (valueGetter) {
+        var value = valueGetter();
+        if (value !== null && value !== undefined) {
+            eInput.value = value;
+        }
     }
 
     eInput.style.width = (column.actualWidth - 14) + 'px';
