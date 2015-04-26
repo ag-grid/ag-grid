@@ -154,6 +154,10 @@ include '../documentation_header.php';
             <td>Set to true if data provided to the grid is already in node structure (this is for passing
                 already aggregated data to the grid).</td>
         </tr>
+        <tr>
+            <th>rowsBuffer</th>
+            <td>Defaults to 5.  Set higher to increase the number of rows that automatically load before and after the viewport.</td>
+        </tr>
     </table>
 
 </div>
