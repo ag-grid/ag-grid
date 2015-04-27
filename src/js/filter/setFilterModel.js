@@ -26,17 +26,30 @@
     SetFilterModel.prototype.createUniqueValues = function(rowModel, key) {
         var uniqueCheck = {};
         var result = [];
-        for (var i = 0, l = rowModel.getVirtualRowCount(); i < l; i++) {
-            var data = rowModel.getVirtualRow(i).data;
-            var value = data ? data[key] : null;
-            if (value === "" || value === undefined) {
-                value = null;
-            }
-            if (!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
+
+        function recursivelyProcess(nodes) {
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                if (node.group && !node.footer) {
+                    // group node, so dig deeper
+                    recursivelyProcess(node.children);
+                } else {
+                    var data = node.data;
+                    var value = data ? data[key] : null;
+                    if (value === "" || value === undefined) {
+                        value = null;
+                    }
+                    if (!uniqueCheck.hasOwnProperty(value)) {
+                        result.push(value);
+                        uniqueCheck[value] = 1;
+                    }
+                }
             }
         }
+
+        var topLevelNodes = rowModel.getTopLevelNodes();
+        recursivelyProcess(topLevelNodes);
+
         this.uniqueValues = result;
     };
 
