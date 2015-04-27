@@ -589,11 +589,13 @@ Grid.prototype.addScrollListener = function() {
 };
 
 Grid.prototype.scrollHeader = function(bodyLeftPosition) {
-    this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + "px,0,0)";
+    // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + "px,0,0)";
+    this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
 };
 
 Grid.prototype.scrollPinned = function(bodyTopPosition) {
-    this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + "px,0)";
+    // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + "px,0)";
+    this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
 };
 
 module.exports = Grid;
