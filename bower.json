@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "1.2.0",
+  "version": "1.4.1",
   "homepage": "http://angulargrid.com/",
   "authors": [
     "Niall Crosby <info@angulargrid.com>"
@@ -8,7 +8,9 @@
   "description": "High performance and feature rich data grid for AngularJS",
   "main": [
     "dist/angularGrid.js",
-    "dist/angularGrid.css"
+    "dist/angularGrid.css",
+    "dist/theme-fresh.css",
+    "dist/theme-dark.css"
   ],
   "moduleType": [
     "node"
