@@ -109,6 +109,9 @@ gridsModule.controller('mainController', function($scope) {
         // callback when cell double clicked
         cellDoubleClicked:  function(params) {
             console.log("Callback cellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        },
+        ready: function(api) {
+            console.log('Callback ready: api = ' + api);
         }
     };
     $scope.angularGrid = angularGrid;

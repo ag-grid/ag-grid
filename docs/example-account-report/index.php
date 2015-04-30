@@ -10,6 +10,13 @@ include '../documentation_header.php';
 
     <h2>Styled Report</h2>
 
+    <p>
+        Most of the time, grids look like grids. But sometimes, a difference feel is required.
+    </p>
+    <p>
+        Angular Grid was designed to allow different designs be applied to the grid.
+    </p>
+
     <show-example example="account"></show-example>
 
 </div>
