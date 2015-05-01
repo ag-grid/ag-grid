@@ -22,6 +22,9 @@ GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunctio
         node = rowNodes[i];
         data = node.data;
 
+        // all leaf nodes have the same level in this grouping, which is one level after the last group
+        node.level = levelToInsertChild + 1;
+
         for (currentLevel = 0; currentLevel < groupByFields.length; currentLevel++) {
             groupByField = groupByFields[currentLevel];
             groupKey = data[groupByField];
@@ -30,7 +33,7 @@ GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunctio
                 currentGroup = topMostGroup;
             }
 
-            //if group doesn't exist yet, create it
+            // if group doesn't exist yet, create it
             nextGroup = currentGroup.childrenMap[groupKey];
             if (!nextGroup) {
                 nextGroup = {

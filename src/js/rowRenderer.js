@@ -287,14 +287,14 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     var rowIsAGroup = node.group;
     var rowIsAFooter = node.footer;
 
-    var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
-    var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
+    // try compiling as we insert rows
+    var newChildScope = this.createChildScopeOrNull(node.data);
+
+    var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup, newChildScope);
+    var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup, newChildScope);
     var that = this;
 
     eMainRow.style.width = mainRowWidth + "px";
-
-    // try compiling as we insert rows
-    var newChildScope = this.createChildScopeOrNull(node.data);
 
     var renderedRow = {
         scope: newChildScope,
@@ -349,6 +349,11 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
         });
     }
+
+    //if (this.gridOptions.postProcessRowCallback) {
+    //    this.gridOptions.postProcessRowCallback(ePinnedRow, rowIndex, false, newChildScope);
+    //    this.gridOptions.postProcessRowCallback(eMainRow, rowIndex, true, newChildScope);
+    //}
 
     //try compiling as we insert rows
     renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
@@ -477,7 +482,7 @@ RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
     eRow.className = classes;
 };
 
-RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
+RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow, $scope) {
     var eRow = document.createElement("div");
 
     this.addClassesToRow(rowIndex, node, eRow);
@@ -494,7 +499,14 @@ RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
         var cssToUse;
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (typeof rowStyle === 'function') {
-            cssToUse = rowStyle(node.data, rowIndex, groupRow);
+            var params = {
+                data: node.data,
+                node: node,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                $scope: $scope
+            };
+            cssToUse = rowStyle(params);
         } else {
             cssToUse = rowStyle;
         }

@@ -36,7 +36,11 @@ include '../documentation_header.php';
                 open, will stay.</td>
         </tr>
         <tr>
-            <th>unselectAll()</th>
+            <th>selectAll()</th>
+            <td>Select all rows (even rows that are not visible due to grouping being and their groups not expanded).</td>
+        </tr>
+        <tr>
+            <th>deselectAll()</th>
             <td>Clear all row selections.</td>
         </tr>
         <tr>

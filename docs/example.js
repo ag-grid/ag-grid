@@ -114,6 +114,7 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
+        //{displayName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
         {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column",
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -173,6 +174,13 @@ gridsModule.controller('mainController', function($scope) {
 
     createCols();
     createData();
+
+    $scope.jumpToRow = function() {
+        var index = Number($scope.jumpToRowText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            angularGrid.api.ensureIndexVisible(index);
+        }
+    };
 
     $scope.onRowCountChanged = function() {
         angularGrid.api.showLoading(true);

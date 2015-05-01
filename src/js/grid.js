@@ -324,11 +324,69 @@ Grid.prototype.setRows = function(rows, firstId) {
         this.gridOptions.rowData = rows;
     }
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows(), firstId);
-    this.selectionController.clearSelection();
+    this.selectionController.deselectAll();
     this.filterManager.onNewRowsLoaded();
     this.updateModelAndRefresh(constants.STEP_EVERYTHING);
     this.headerRenderer.updateFilterIcons();
     this.showLoadingPanel(false);
+};
+
+Grid.prototype.ensureNodeVisible = function(comparator) {
+    // look for the node index we want to display
+    var rowCount = this.rowModel.getVirtualRowCount();
+    var comparatorIsAFunction = typeof comparator === 'function';
+    var indexToSelect = -1;
+    // go through all the nodes, find the one we want to show
+    for (var i = 0; i < rowCount; i++) {
+        var node = this.rowModel.getVirtualRow(i);
+        if (comparatorIsAFunction) {
+            if (comparator(node)) {
+                indexToSelect = i;
+                break;
+            }
+        } else {
+            // check object equality against node and data
+            if (comparator === node || comparator === node.data) {
+                indexToSelect = i;
+                break;
+            }
+        }
+    }
+    if (indexToSelect >= 0) {
+        this.ensureIndexVisible(indexToSelect);
+    }
+};
+
+Grid.prototype.ensureIndexVisible = function(index) {
+    var lastRow = this.rowModel.getVirtualRowCount();
+    if (typeof index !== 'number' || index < 0 || index >= lastRow) {
+        throw 'invalid row index for ensureIndexVisible: ' + index;
+    }
+
+    var rowHeight = this.gridOptionsWrapper.getRowHeight();
+    var rowTopPixel = rowHeight * index;
+    var rowBottomPixel = rowTopPixel + rowHeight;
+
+    var viewportTopPixel = this.eBodyViewport.scrollTop;
+    var viewportHeight = this.eBodyViewport.offsetHeight;
+    var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+    if (scrollShowing) {
+        viewportHeight -= this.scrollWidth;
+    }
+    var viewportBottomPixel = viewportTopPixel + viewportHeight;
+
+    var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
+    var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+
+    if (viewportScrolledPastRow) {
+        // if row is before, scroll up with row at top
+        this.eBodyViewport.scrollTop = rowTopPixel;
+    } else if (viewportScrolledBeforeRow) {
+        // if row is below, scroll down with row at bottom
+        var newScrollPosition = rowBottomPixel - viewportHeight;
+        this.eBodyViewport.scrollTop = newScrollPosition;
+    }
+    // otherwise, row is already in view, so do nothing
 };
 
 Grid.prototype.addApi = function() {
@@ -350,8 +408,8 @@ Grid.prototype.addApi = function() {
             that.onNewCols();
         },
         unselectAll: function() {
-            that.selectionController.clearSelection();
-            that.rowRenderer.refreshView();
+            console.error("unselectAll deprecated, call deselectAll instead");
+            this.deselectAll();
         },
         refreshView: function() {
             that.rowRenderer.refreshView();
@@ -402,6 +460,14 @@ Grid.prototype.addApi = function() {
         deselectNode: function(node) {
             that.selectionController.deselectNode(node);
         },
+        selectAll: function() {
+            that.selectionController.selectAll();
+            that.rowRenderer.refreshView();
+        },
+        deselectAll: function() {
+            that.selectionController.deselectAll();
+            that.rowRenderer.refreshView();
+        },
         recomputeAggregates: function() {
             that.inMemoryRowController.doAggregate();
             that.rowRenderer.refreshGroupRows();
@@ -421,6 +487,12 @@ Grid.prototype.addApi = function() {
         },
         getBestCostNodeSelection: function() {
             return that.selectionController.getBestCostNodeSelection();
+        },
+        ensureIndexVisible: function(index) {
+            return that.ensureIndexVisible(index);
+        },
+        ensureNodeVisible: function(comparator) {
+            return that.ensureNodeVisible(comparator);
         }
     };
     this.gridOptions.api = api;

@@ -42,6 +42,10 @@ SelectionController.prototype.getSelectedNodes = function() {
 // where groups don't actually appear in the selection normally.
 SelectionController.prototype.getBestCostNodeSelection = function() {
 
+    if (typeof this.rowModel.getTopLevelNodes !== 'function') {
+        throw 'selectAll not available when rows are on the server';
+    }
+
     var topLevelNodes = this.rowModel.getTopLevelNodes();
 
     var result = [];
@@ -74,12 +78,47 @@ SelectionController.prototype.setRowModel = function(rowModel) {
 
 // public - this clears the selection, but doesn't clear down the css - when it is called, the
 // caller then gets the grid to refresh.
-SelectionController.prototype.clearSelection = function() {
+SelectionController.prototype.deselectAll = function() {
     this.selectedRows.length = 0;
     var keys = Object.keys(this.selectedNodesById);
     for (var i = 0; i < keys.length; i++) {
         delete this.selectedNodesById[keys[i]];
     }
+    this.syncSelectedRowsAndCallListener();
+};
+
+// public - this selects everything, but doesn't clear down the css - when it is called, the
+// caller then gets the grid to refresh.
+SelectionController.prototype.selectAll = function() {
+
+    if (typeof this.rowModel.getTopLevelNodes !== 'function') {
+        throw 'selectAll not available when rows are on the server';
+    }
+
+    var selectedNodesById = this.selectedNodesById;
+    // if the selection is "don't include groups", then we don't include them!
+    var includeGroups = !this.gridOptionsWrapper.isGroupCheckboxSelectionChildren();
+
+    function recursivelySelect(nodes) {
+        if (nodes) {
+            for (var i = 0; i<nodes.length; i++) {
+                var node = nodes[i];
+                if (node.group) {
+                    recursivelySelect(node.children);
+                    if (includeGroups) {
+                        selectedNodesById[node.id] = node;
+                    }
+                } else {
+                    selectedNodesById[node.id] = node;
+                }
+            }
+        }
+    }
+
+    var topLevelNodes = this.rowModel.getTopLevelNodes();
+    recursivelySelect(topLevelNodes);
+
+    this.syncSelectedRowsAndCallListener();
 };
 
 // public
