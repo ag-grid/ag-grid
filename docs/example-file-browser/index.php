@@ -1,6 +1,6 @@
 <?php
 $key = "File Browser";
-$pageTitle = "AngularJS as a File Browser";
+$pageTitle = "AngularJS File Browser";
 $pageDescription = "How to make a file browser using Angular Grid. This page gives you an example you can follow.";
 $pageKeyboards = "AngularJS Angular Grid File Browser";
 include '../documentation_header.php';

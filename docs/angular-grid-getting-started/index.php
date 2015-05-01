@@ -10,7 +10,7 @@ include '../documentation_header.php';
 
     <h2>Getting Started</h2>
 
-    <h4>Dependencies</h4>
+    <h3>Dependencies</h3>
 
     <p>
         In your html, include AngularJS (1.2 or later) and AngularGrid (download from <a href="../dist">here</a>).
@@ -49,6 +49,48 @@ include '../documentation_header.php';
     minimum you provide the columns (columnDefs) and the rows (rowData).
 
     <show-example example="example1" example-height="200px"></show-example>
+
+
+    <h2>Loading Rows</h2>
+
+    <h4>Calling onNewRows()</h4>
+
+    If rows are loaded after the grid is initialised, call the grid's API function to update the rows after the load.
+
+    <pre><code>$scope.gridOptions.api.onNewRows()</code></pre>
+
+    <p/>
+
+    The API is explained in full in it's own section.
+
+    <p/>
+
+    <show-example example="example2"></show-example>
+
+
+    <h2>Width and Height</h2>
+
+    <h4>Fixed Width and Height</h4>
+
+    Set the width and height of the table by applying CSS to the containing div. Eg:
+
+    <p/>
+
+    <pre><code>style="width: 100px; height: 100px;"</code></pre>
+
+    <h4>Percent Width and Height</h4>
+
+    The width and / or height can also be set to a percentage. Eg:
+
+    <pre><code>style="width: 100%; height: 100%;"</code></pre>
+
+    <h4>Changing Width and Height</h4>
+
+    If the width and / or height change after the grid is initialised, the grid will
+    automatically resize to fill the new area.
+
+    <show-example example="example3"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

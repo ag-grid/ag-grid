@@ -9,20 +9,21 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Volatile Columns, Soft Refresh, Cell Templates . . . and Bug Fixes
+        Gone for 1 week!
     </div>
 
     <p>
-        26th April 2015
+        <b>1st May 2015</b>
     </p>
     <p>
-        <b>Volatile Columns and Soft Refreshes</b> allow your grid to behave in a dynamic way
-        without the performance drawbacks of two-way binding. Read all about it <a href="angular-grid-refresh/">here</a>.
+        Angular Grid is 4 months old today. Happy 4 month birthday Grid! I'm using it in my work and it's going
+        really well. The Angular community is picking it up and joining me in making the grid the best it
+        can be for everyone.
     </p>
     <p>
-        <b>Cell Templates</b> allow you to use HTML templates for your cells. If your coming from
-        ui-grid, this will look familiar.
-        Read all about it <a href="angular-grid-cell-template/">here</a>.
+        Next week I'm going on a holiday. While I am gone please continue to use the grid,
+        send me feedback and spread the word.  I'll pick it all up when I'm back (10th May) and take
+        the grid to the next level.
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

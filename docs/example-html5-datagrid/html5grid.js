@@ -187,7 +187,7 @@
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data.skills[skill]) {
-                skills.push('<img src="/example-basic/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/example-html5-datagrid/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
