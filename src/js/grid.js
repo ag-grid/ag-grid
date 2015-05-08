@@ -410,6 +410,10 @@ Grid.prototype.addApi = function() {
             var availableWidth = that.eBody.clientWidth;
             that.columnController.sizeColumnsToFit(availableWidth);
         },
+        consumeUnusedColumnWidth: function() {
+            var availableWidth = that.eBody.clientWidth;
+            that.columnController.consumeUnusedColumnWidth(availableWidth);
+        },
         showLoading: function(show) {
             that.showLoadingPanel(show);
         },
