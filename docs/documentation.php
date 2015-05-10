@@ -6,10 +6,11 @@ $pageKeyboards = "AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
+     xmlns="http://www.w3.org/1999/html">
 
     <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Gone for 1 week!
+        4 Months In
     </div>
 
     <p>
@@ -76,32 +77,9 @@ include 'documentation_header.php';
 </div>
 
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <table>
-        <tr>
-            <td valign="top">
-                <img src="http://www.marketingjava.com/wp-content/uploads/stress-at-work.jpg" width="200px"/>
-            </td>
-            <td>
-                <div style="margin-left: 20px">
-                    <p>
-                        Do you or someone you know suffer from <b>Stress?</b> Is it possible this stress is partly
-                        due to your choice of grid component? Sometimes,
-                        despite your beautiful code, your application can look clunky if the grid you use
-                        is performing clunky. <span style="text-decoration: underline">But this can stop NOW!!!</span>
-                    </p>
-                    <p>
-                        Join hundreds of people from around the world (but mostly America, India and UK according to my
-                        stats) and <b>start using Angular Grid</b>. Angular Grid will leave you with one less thing to
-                        stress about, allowing your brain to focus on more important tasks, like catching up
-                        on Facebook, flirting with someone in the office, watching Game of Thrones or even [insert
-                        the task you need to do here].
-                    </p>
-                </div>
-            </td>
-        </tr>
-    </table>
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px; text-align: center;">
+I'm on holidays, back 10th of May.</br>
+I'll follow up with everyone who gets in touch when I'm back.
 </div>
 
 <div style="padding: 20px;">
