@@ -95,10 +95,17 @@ PaginationController.prototype.pageLoaded = function(rows, lastRowIndex) {
 };
 
 PaginationController.prototype.updateRowLabels = function() {
-    var startRow = (this.pageSize * this.currentPage) + 1;
-    var endRow = startRow + this.pageSize - 1;
-    if (this.foundMaxRow && endRow > this.rowCount) {
-        endRow = this.rowCount;
+    var startRow;
+    var endRow;
+    if (this.isZeroPagesToDisplay()) {
+        startRow = 0;
+        endRow = 0;
+    } else {
+        startRow = (this.pageSize * this.currentPage) + 1;
+        endRow = startRow + this.pageSize - 1;
+        if (this.foundMaxRow && endRow > this.rowCount) {
+            endRow = this.rowCount;
+        }
     }
     this.lbFirstRowOnPage.innerHTML = (startRow).toLocaleString();
     this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
@@ -161,15 +168,22 @@ PaginationController.prototype.onBtLast = function() {
     this.loadPage();
 };
 
+PaginationController.prototype.isZeroPagesToDisplay = function() {
+    return this.foundMaxRow && this.totalPages === 0;
+};
+
 PaginationController.prototype.enableOrDisableButtons = function() {
     var disablePreviousAndFirst = this.currentPage === 0;
     this.btPrevious.disabled = disablePreviousAndFirst;
     this.btFirst.disabled = disablePreviousAndFirst;
 
-    var disableNext = this.foundMaxRow && this.currentPage === (this.totalPages - 1);
+    var zeroPagesToDisplay = this.isZeroPagesToDisplay();
+    var onLastPage = this.foundMaxRow && this.currentPage === (this.totalPages - 1);
+
+    var disableNext = onLastPage || zeroPagesToDisplay;
     this.btNext.disabled = disableNext;
 
-    var disableLast = !this.foundMaxRow || this.currentPage === (this.totalPages - 1);
+    var disableLast = !this.foundMaxRow || zeroPagesToDisplay || this.currentPage === (this.totalPages - 1);
     this.btLast.disabled = disableLast;
 };
 
