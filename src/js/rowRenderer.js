@@ -306,7 +306,9 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     this.renderedRowStartEditingListeners[rowIndex] = {};
 
     // if group item, insert the first row
-    if (rowIsAGroup) {
+    var suppressGroupColumn = this.gridOptionsWrapper.isGroupSuppressGroupColumn();
+    var drawGroupRow = rowIsAGroup && !suppressGroupColumn;
+    if (drawGroupRow) {
         var firstColumn = columns[0];
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 

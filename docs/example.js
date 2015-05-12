@@ -69,6 +69,7 @@ gridsModule.controller('mainController', function($scope) {
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
+//        groupSuppressGroupColumn: true,
         groupIncludeFooter: false,
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
