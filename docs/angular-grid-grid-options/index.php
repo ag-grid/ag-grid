@@ -96,7 +96,7 @@ include '../documentation_header.php';
         <tr>
             <th>groupKeys<br/> groupUseEntireRow<br/> groupInnerCellRenderer<br/>
                 groupDefaultExpanded<br/> groupAggFunction<br/> groupIconRenderer<br/>
-                groupCheckboxSelection<br/> suppressGroupColumn</th>
+                groupCheckboxSelection<br/> groupSuppressGroupColumn</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
