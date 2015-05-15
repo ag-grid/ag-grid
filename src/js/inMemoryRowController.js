@@ -137,20 +137,27 @@ InMemoryRowController.prototype.recursivelyCreateAggData = function(nodes, group
 // private
 InMemoryRowController.prototype.doSort = function() {
     //see if there is a col we are sorting by
-    var columnForSorting = null;
+    var sortingOptions = [];
     this.columnModel.getAllColumns().forEach(function(column) {
         if (column.sort) {
-            columnForSorting = column;
+            var ascending = column.sort === constants.ASC;
+            sortingOptions.push({
+                inverter: ascending ? 1 : -1,
+                sortedAt: column.sortedAt,
+                colDef: column.colDef
+            });
         }
+    });
+
+    // The columns are to be sorted in the order that the user selected them:
+    sortingOptions.sort(function(optionA, optionB){
+        return optionA.sortedAt - optionB.sortedAt;
     });
 
     var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
 
-    if (columnForSorting) {
-        var ascending = columnForSorting.sort === constants.ASC;
-        var inverter = ascending ? 1 : -1;
-
-        this.sortList(rowNodesBeforeSort, columnForSorting.colDef, inverter);
+    if (sortingOptions.length) {
+        this.sortList(rowNodesBeforeSort, sortingOptions);
     } else {
         // if no sorting, set all group children after sort to the original list
         this.recursivelyResetSort(rowNodesBeforeSort);
@@ -171,7 +178,7 @@ InMemoryRowController.prototype.recursivelyResetSort = function(rowNodes) {
 };
 
 // private
-InMemoryRowController.prototype.sortList = function(nodes, colDef, inverter) {
+InMemoryRowController.prototype.sortList = function(nodes, sortOptions) {
 
     // sort any groups recursively
     for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
@@ -183,19 +190,29 @@ InMemoryRowController.prototype.sortList = function(nodes, colDef, inverter) {
     }
 
     var that = this;
-    nodes.sort(function(objA, objB) {
-
+    function compare(objA, objB, colDef){
         var valueA = that.getValue(objA.data, colDef, objA);
         var valueB = that.getValue(objB.data, colDef, objB);
-
         if (colDef.comparator) {
             //if comparator provided, use it
-            return colDef.comparator(valueA, valueB, objA, objB) * inverter;
+            return colDef.comparator(valueA, valueB, objA, objB);
         } else {
             //otherwise do our own comparison
-            return utils.defaultComparator(valueA, valueB, objA, objB) * inverter;
+            return utils.defaultComparator(valueA, valueB, objA, objB);
         }
+    }
 
+    nodes.sort(function(objA, objB) {
+        // Iterate columns, return the first that doesn't match
+        for(var i = 0, len = sortOptions.length; i < len; i++){
+            var sortOption = sortOptions[i];
+            var compared = compare(objA, objB, sortOption.colDef);
+            if(compared !== 0){
+                return compared * sortOption.inverter;
+            }
+        }
+        // All matched, these are identical as far as the sort is concerned:
+        return 0;
     });
 };
 
