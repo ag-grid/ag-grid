@@ -81,6 +81,28 @@ ColumnController.prototype.updateVisibleColumns = function() {
 };
 
 // public - called from api
+ColumnController.prototype.consumeUnusedColumnWidth = function(availableWidth) {
+    // avoid divide by zero
+    if (availableWidth <= 0 || this.visibleColumns.length === 0) {
+        return;
+    }
+
+    var colDefined = this.getTotalDefinedColWidth();
+    var leftoverWidth = availableWidth - colDefined.definedWidth;
+
+    if (colDefined.undefinedCols.length > 0) {
+        //Math.floor
+        var colWidth = leftoverWidth / colDefined.undefinedCols.length;
+        colDefined.undefinedCols.forEach(function(column) {
+            column.actualWidth = colWidth;
+        });
+    }
+
+    // widths set, refresh the gui
+    this.angularGrid.refreshHeaderAndBody();
+};
+
+// public - called from api
 ColumnController.prototype.sizeColumnsToFit = function(availableWidth) {
     // avoid divide by zero
     if (availableWidth <= 0 || this.visibleColumns.length === 0) {
@@ -217,6 +239,32 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
     });
 
     return widthSoFar;
+};
+
+// private
+// call with true (pinned), false (not-pinned) or undefined (all columns)
+ColumnController.prototype.getTotalDefinedColWidth = function(includePinned) {
+    var ret = {
+        definedWidth: 0,
+        definedCols: [],
+        undefinedCols: []
+    };
+    var widthSoFar = 0;
+    var pinedNotImportant = typeof includePinned !== 'boolean';
+
+    this.visibleColumns.forEach(function(column) {
+        var includeThisCol = pinedNotImportant || column.pinned === includePinned;
+        if (includeThisCol) {
+            if(column.colDef.width){
+                ret.definedWidth += column.colDef.width;
+                ret.definedCols.push(column);
+            } else {
+                ret.undefinedCols.push(column);
+            }
+        }
+    });
+
+    return ret;
 };
 
 function ColumnGroup(pinned, name) {
