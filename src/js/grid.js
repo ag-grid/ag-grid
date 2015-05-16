@@ -474,11 +474,11 @@ Grid.prototype.addApi = function() {
         },
         sizeColumnsToFit: function() {
             var availableWidth = that.eBody.clientWidth;
+            var scrollShowing = that.eBodyViewport.clientHeight < that.eBodyViewport.scrollHeight;
+            if (scrollShowing) {
+                availableWidth -= that.scrollWidth;
+            }
             that.columnController.sizeColumnsToFit(availableWidth);
-        },
-        consumeUnusedColumnWidth: function() {
-            var availableWidth = that.eBody.clientWidth;
-            that.columnController.consumeUnusedColumnWidth(availableWidth);
         },
         showLoading: function(show) {
             that.showLoadingPanel(show);

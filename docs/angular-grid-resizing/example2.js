@@ -4,8 +4,8 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 150},
-        {displayName: "Age", field: "age", width: 90},
+        {displayName: "Athlete", field: "athlete", width: 150, suppressSizeToFit: true},
+        {displayName: "Age", field: "age", width: 90, suppressSizeToFit: true},
         {displayName: "Country", field: "country", width: 120},
         {displayName: "Year", field: "year", width: 90},
         {displayName: "Date", field: "date", width: 110},

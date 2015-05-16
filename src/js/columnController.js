@@ -81,49 +81,48 @@ ColumnController.prototype.updateVisibleColumns = function() {
 };
 
 // public - called from api
-ColumnController.prototype.consumeUnusedColumnWidth = function(availableWidth) {
+ColumnController.prototype.sizeColumnsToFit = function(gridWidth) {
     // avoid divide by zero
-    if (availableWidth <= 0 || this.visibleColumns.length === 0) {
+    if (gridWidth <= 0 || this.visibleColumns.length === 0) {
         return;
     }
 
-    var colDefined = this.getTotalDefinedColWidth();
-    var leftoverWidth = availableWidth - colDefined.definedWidth;
+    var columnStartWidth = 0; // will contain the starting total width of the cols been spread
+    var colsToSpread = []; // all visible cols, except those with avoidSizeToFit
+    var widthForSpreading = gridWidth; // grid width minus the columns we are not resizing
 
-    if (colDefined.undefinedCols.length > 0) {
-        //Math.floor
-        var colWidth = leftoverWidth / colDefined.undefinedCols.length;
-        colDefined.undefinedCols.forEach(function(column) {
-            column.actualWidth = colWidth;
-        });
+    // get the list of cols to work with
+    for (var j = 0; j < this.visibleColumns.length ; j++) {
+        if (this.visibleColumns[j].colDef.suppressSizeToFit === true) {
+            // don't include col, and remove the width from teh available width
+            widthForSpreading -= this.visibleColumns[j].actualWidth;
+        } else {
+            // include the col
+            colsToSpread.push(this.visibleColumns[j]);
+            columnStartWidth += this.visibleColumns[j].actualWidth;
+        }
     }
 
-    // widths set, refresh the gui
-    this.angularGrid.refreshHeaderAndBody();
-};
-
-// public - called from api
-ColumnController.prototype.sizeColumnsToFit = function(availableWidth) {
-    // avoid divide by zero
-    if (availableWidth <= 0 || this.visibleColumns.length === 0) {
+    // if no width left over to spread with, do nothing
+    if (widthForSpreading <= 0) {
         return;
     }
 
-    var currentTotalWidth = this.getTotalColWidth();
-    var scale = availableWidth / currentTotalWidth;
+    var scale = widthForSpreading / columnStartWidth;
+    var pixelsForLastCol = widthForSpreading;
 
     // size all cols except the last by the scale
-    for (var i = 0; i < (this.visibleColumns.length - 1); i++) {
-        var column = this.visibleColumns[i];
+    for (var i = 0; i < (colsToSpread.length - 1); i++) {
+        var column = colsToSpread[i];
         var newWidth = parseInt(column.actualWidth * scale);
         column.actualWidth = newWidth;
+        pixelsForLastCol -= newWidth;
     }
 
     // size the last by whats remaining (this avoids rounding errors that could
     // occur with scaling everything, where it result in some pixels off)
-    var pixelsLeftForLastCol = availableWidth - this.getTotalColWidth();
-    var lastColumn = this.visibleColumns[this.visibleColumns.length - 1];
-    lastColumn.actualWidth += pixelsLeftForLastCol;
+    var lastColumn = colsToSpread[colsToSpread.length - 1];
+    lastColumn.actualWidth = pixelsForLastCol;
 
     // widths set, refresh the gui
     this.angularGrid.refreshHeaderAndBody();
@@ -239,32 +238,6 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
     });
 
     return widthSoFar;
-};
-
-// private
-// call with true (pinned), false (not-pinned) or undefined (all columns)
-ColumnController.prototype.getTotalDefinedColWidth = function(includePinned) {
-    var ret = {
-        definedWidth: 0,
-        definedCols: [],
-        undefinedCols: []
-    };
-    var widthSoFar = 0;
-    var pinedNotImportant = typeof includePinned !== 'boolean';
-
-    this.visibleColumns.forEach(function(column) {
-        var includeThisCol = pinedNotImportant || column.pinned === includePinned;
-        if (includeThisCol) {
-            if(column.colDef.width){
-                ret.definedWidth += column.colDef.width;
-                ret.definedCols.push(column);
-            } else {
-                ret.undefinedCols.push(column);
-            }
-        }
-    });
-
-    return ret;
 };
 
 function ColumnGroup(pinned, name) {

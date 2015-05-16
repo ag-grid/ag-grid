@@ -24,8 +24,20 @@ include '../documentation_header.php';
 
     <h4>Size to Fit</h4>
 
-    Call api.sizeColumnsToFit() to make the currently visible columns fit the screen.
-    The columns will scale (growing or shrinking) to fit the available width.
+    <p>
+        Call api.sizeColumnsToFit() to make the currently visible columns fit the screen.
+        The columns will scale (growing or shrinking) to fit the available width.
+    </p>
+    <p>
+        If you don't want a particular column to be included in the auto resize, then
+        set the column definition <i>suppressSizeToFit</i> attribute to true. This is helpful
+        if, for example, you want the first column to remain fixed with, but all other
+        columns to fill the width of the table.
+    </p>
+    <p>
+        In the example below, the first two columns are fixed with (ie suppressSizeToFit = true),
+        while the remainder will spread to fill the remaining space after you press the button.
+    </p>
 
     <show-example example="example2"></show-example>
 
