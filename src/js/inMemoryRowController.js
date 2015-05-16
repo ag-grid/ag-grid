@@ -185,7 +185,7 @@ InMemoryRowController.prototype.sortList = function(nodes, sortOptions) {
         var node = nodes[i];
         if (node.group && node.children) {
             node.childrenAfterSort = node.childrenAfterFilter.slice(0);
-            this.sortList(node.childrenAfterSort, colDef, inverter);
+            this.sortList(node.childrenAfterSort, sortOptions);
         }
     }
 
