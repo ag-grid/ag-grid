@@ -6,24 +6,18 @@ $pageKeyboards = "AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
+     xmlns="http://www.w3.org/1999/html">
 
-    <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Gone for 1 week!
+<!--    <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
+        Back From Holidays
     </div>
-
+-->
     <p>
-        <b>1st May 2015</b>
+        <b>10th May 2015</b>
     </p>
     <p>
-        Angular Grid is 4 months old today. Happy 4 month birthday Grid! I'm using it in my work and it's going
-        really well. The Angular community is picking it up and joining me in making the grid the best it
-        can be for everyone.
-    </p>
-    <p>
-        Next week I'm going on a holiday. While I am gone please continue to use the grid,
-        send me feedback and spread the word.  I'll pick it all up when I'm back (10th May) and take
-        the grid to the next level.
+        Just back from my holidays. Its going to take me a day or two to get back into the swing of things!
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -75,38 +69,7 @@ include 'documentation_header.php';
 
 </div>
 
-
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <table>
-        <tr>
-            <td valign="top">
-                <img src="http://www.marketingjava.com/wp-content/uploads/stress-at-work.jpg" width="200px"/>
-            </td>
-            <td>
-                <div style="margin-left: 20px">
-                    <p>
-                        Do you or someone you know suffer from <b>Stress?</b> Is it possible this stress is partly
-                        due to your choice of grid component? Sometimes,
-                        despite your beautiful code, your application can look clunky if the grid you use
-                        is performing clunky. <span style="text-decoration: underline">But this can stop NOW!!!</span>
-                    </p>
-                    <p>
-                        Join hundreds of people from around the world (but mostly America, India and UK according to my
-                        stats) and <b>start using Angular Grid</b>. Angular Grid will leave you with one less thing to
-                        stress about, allowing your brain to focus on more important tasks, like catching up
-                        on Facebook, flirting with someone in the office, watching Game of Thrones or even [insert
-                        the task you need to do here].
-                    </p>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
-
 <div style="padding: 20px;">
-
-    <hr/>
 
     <h3>
         News

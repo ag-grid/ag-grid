@@ -151,6 +151,9 @@
             <!-- Second row of header, has quick filter -->
             <div style="padding: 4px;">
                 <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
+
+                <input placeholder="Line number..." type="text" ng-model="jumpToRowText"/>
+                <button ng-click="jumpToRow()">Go</button>
             </div>
         </div>
         <!-- The table div -->

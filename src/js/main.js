@@ -33,7 +33,6 @@
 
     root.angularGrid = angularGridGlobalFunction;
 
-
     function AngularDirectiveController($element, $scope, $compile) {
         var eGridDiv = $element[0];
         var gridOptions = $scope.angularGrid;

@@ -69,6 +69,7 @@ gridsModule.controller('mainController', function($scope) {
 //            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
+//        groupSuppressGroupColumn: true,
         groupIncludeFooter: false,
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
@@ -117,6 +118,7 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var defaultCols = [
+        //{displayName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
         {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter, headerTooltip: "The Name Column",
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -176,6 +178,13 @@ gridsModule.controller('mainController', function($scope) {
 
     createCols();
     createData();
+
+    $scope.jumpToRow = function() {
+        var index = Number($scope.jumpToRowText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            angularGrid.api.ensureIndexVisible(index);
+        }
+    };
 
     $scope.onRowCountChanged = function() {
         angularGrid.api.showLoading(true);

@@ -26,7 +26,7 @@ include '../documentation_header.php';
     <p/>
     To create a new theme, either create one from scratch (difficult), or start with one of the provided
     themes that can be found on GitHub here:
-    <a href="https://github.com/ceolter/angular-grid/tree/master/src/css">https://github.com/ceolter/angular-grid/tree/master/src/css</a>
+    <a href="https://github.com/ceolter/angular-grid/tree/master/src/styles">https://github.com/ceolter/angular-grid/tree/master/src/styles</a>
 
     <p/>
     This section does not provide an example of building a theme because two themes

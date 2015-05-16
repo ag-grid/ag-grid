@@ -287,14 +287,14 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     var rowIsAGroup = node.group;
     var rowIsAFooter = node.footer;
 
-    var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
-    var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup);
+    // try compiling as we insert rows
+    var newChildScope = this.createChildScopeOrNull(node.data);
+
+    var ePinnedRow = this.createRowContainer(rowIndex, node, rowIsAGroup, newChildScope);
+    var eMainRow = this.createRowContainer(rowIndex, node, rowIsAGroup, newChildScope);
     var that = this;
 
     eMainRow.style.width = mainRowWidth + "px";
-
-    // try compiling as we insert rows
-    var newChildScope = this.createChildScopeOrNull(node.data);
 
     var renderedRow = {
         scope: newChildScope,
@@ -306,7 +306,9 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     this.renderedRowStartEditingListeners[rowIndex] = {};
 
     // if group item, insert the first row
-    if (rowIsAGroup) {
+    var suppressGroupColumn = this.gridOptionsWrapper.isGroupSuppressGroupColumn();
+    var drawGroupRow = rowIsAGroup && !suppressGroupColumn;
+    if (drawGroupRow) {
         var firstColumn = columns[0];
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
 
@@ -349,6 +351,11 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
         });
     }
+
+    //if (this.gridOptions.postProcessRowCallback) {
+    //    this.gridOptions.postProcessRowCallback(ePinnedRow, rowIndex, false, newChildScope);
+    //    this.gridOptions.postProcessRowCallback(eMainRow, rowIndex, true, newChildScope);
+    //}
 
     //try compiling as we insert rows
     renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
@@ -477,7 +484,7 @@ RowRenderer.prototype.addClassesToRow = function(rowIndex, node, eRow) {
     eRow.className = classes;
 };
 
-RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
+RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow, $scope) {
     var eRow = document.createElement("div");
 
     this.addClassesToRow(rowIndex, node, eRow);
@@ -494,7 +501,14 @@ RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow) {
         var cssToUse;
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (typeof rowStyle === 'function') {
-            cssToUse = rowStyle(node.data, rowIndex, groupRow);
+            var params = {
+                data: node.data,
+                node: node,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                $scope: $scope
+            };
+            cssToUse = rowStyle(params);
         } else {
             cssToUse = rowStyle;
         }
@@ -643,8 +657,9 @@ RowRenderer.prototype.addGroupExpandIcon = function(eGridGroupRow, expanded) {
     eGridGroupRow.appendChild(eGroupIcon);
 };
 
-RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
+RowRenderer.prototype.putDataIntoCell = function(column, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
     // template gets preference, then cellRenderer, then do it ourselves
+    var colDef = column.colDef;
     if (colDef.template) {
         eGridCell.innerHTML = colDef.template;
     } else if (colDef.templateUrl) {
@@ -659,6 +674,7 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, nod
             data: node.data,
             node: node,
             colDef: colDef,
+            column: column,
             $scope: $childScope,
             rowIndex: rowIndex,
             api: this.gridOptionsWrapper.getApi(),
@@ -681,7 +697,8 @@ RowRenderer.prototype.putDataIntoCell = function(colDef, value, valueGetter, nod
     }
 };
 
-RowRenderer.prototype.addStylesFromCollDef = function(colDef, value, node, $childScope, eGridCell) {
+RowRenderer.prototype.addStylesFromCollDef = function(column, value, node, $childScope, eGridCell) {
+    var colDef = column.colDef;
     if (colDef.cellStyle) {
         var cssToUse;
         if (typeof colDef.cellStyle === 'function') {
@@ -690,6 +707,7 @@ RowRenderer.prototype.addStylesFromCollDef = function(colDef, value, node, $chil
                 data: node.data,
                 node: node,
                 colDef: colDef,
+                column: column,
                 $scope: $childScope,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()
@@ -819,7 +837,7 @@ RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eG
     // populate
     this.populateGridCell(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope);
     // style
-    this.addStylesFromCollDef(colDef, value, node, $childScope, eGridCell);
+    this.addStylesFromCollDef(column, value, node, $childScope, eGridCell);
     this.addClassesFromCollDef(colDef, value, node, $childScope, eGridCell);
     this.addClassesFromRules(colDef, eGridCell, value, node, rowIndex);
 };
@@ -848,7 +866,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
         that.softRefreshCell(eGridCell, isFirstColumn, node, column, $childScope, rowIndex);
     };
 
-    this.putDataIntoCell(colDef, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
+    this.putDataIntoCell(column, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
 };
 
 RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter) {
