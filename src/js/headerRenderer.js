@@ -310,20 +310,26 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapper) {
     var that = this;
 
-    headerCellLabel.addEventListener("click", function() {
+    headerCellLabel.addEventListener("click", function(e) {
 
         // update sort on current col
-        if (colDefWrapper.sort === constants.ASC) {
-            colDefWrapper.sort = constants.DESC;
-        } else if (colDefWrapper.sort === constants.DESC) {
+        if (colDefWrapper.sort === constants.DESC) {
             colDefWrapper.sort = null
-        } else {
-            colDefWrapper.sort = constants.ASC;
+        }
+        else {
+            if (colDefWrapper.sort === constants.ASC) {
+                colDefWrapper.sort = constants.DESC;
+            } else {
+                colDefWrapper.sort = constants.ASC;
+            }
+            // Useful for determining the order in which the user sorted the columns:
+            colDefWrapper.sortedAt = new Date().valueOf();
         }
 
         // clear sort on all columns except this one, and update the icons
         that.columnModel.getAllColumns().forEach(function(columnToClear) {
-            if (columnToClear !== colDefWrapper) {
+            // Do not clear if either holding shift, or if column in question was clicked
+            if (!(e.shiftKey || columnToClear === colDefWrapper)) {
                 columnToClear.sort = null;
             }
 
