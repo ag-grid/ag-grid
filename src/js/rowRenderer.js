@@ -7,6 +7,11 @@ var svgFactory = new SvgFactory();
 var TAB_KEY = 9;
 var ENTER_KEY = 13;
 
+var DOWN_KEY = 40;
+var UP_KEY = 38;
+var LEFT_KEY = 37;
+var RIGHT_KEY = 39;
+
 function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
@@ -300,6 +305,7 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
         scope: newChildScope,
         node: node,
         rowIndex: rowIndex,
+        eCells: {},
         eVolatileCells: {}
     };
     this.renderedRows[rowIndex] = renderedRow;
@@ -351,11 +357,6 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             that.createCellFromColDef(firstCol, column, valueGetter, node, rowIndex, eMainRow, ePinnedRow, newChildScope, renderedRow);
         });
     }
-
-    //if (this.gridOptions.postProcessRowCallback) {
-    //    this.gridOptions.postProcessRowCallback(ePinnedRow, rowIndex, false, newChildScope);
-    //    this.gridOptions.postProcessRowCallback(eMainRow, rowIndex, true, newChildScope);
-    //}
 
     //try compiling as we insert rows
     renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
@@ -418,6 +419,7 @@ RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, val
     if (column.colDef.volatile) {
         renderedRow.eVolatileCells[column.colKey] = eGridCell;
     }
+    renderedRow.eCells[column.colKey] = eGridCell;
 
     if (column.pinned) {
         ePinnedRow.appendChild(eGridCell);
@@ -548,9 +550,9 @@ RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, 
         }
     } else {
         if (footer) {
-            eGridGroupRow.className = 'ag-footer-cell ag-cell cell-col-' + firstColumnIndex;
+            eGridGroupRow.className = 'ag-footer-cell ag-cell ag-cell-no-focus cell-col-' + firstColumnIndex;
         } else {
-            eGridGroupRow.className = 'ag-group-cell ag-cell cell-col-' + firstColumnIndex;
+            eGridGroupRow.className = 'ag-group-cell ag-cell ag-cell-no-focus cell-col-' + firstColumnIndex;
         }
     }
 };
@@ -754,7 +756,7 @@ RowRenderer.prototype.addClassesFromCollDef = function(colDef, value, node, $chi
 };
 
 RowRenderer.prototype.addClassesToCell = function(column, node, eGridCell) {
-    var classes = ['ag-cell', 'cell-col-' + column.index];
+    var classes = ['ag-cell', 'ag-cell-no-focus', 'cell-col-' + column.index];
     if (node.group) {
         if (node.footer) {
             classes.push('ag-footer-cell');
@@ -803,6 +805,8 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     var eGridCell = document.createElement("div");
     eGridCell.setAttribute("col", column.index);
 
+    eGridCell.setAttribute("tabindex", "-1");
+
     var value;
     if (valueGetter) {
         value = valueGetter();
@@ -815,6 +819,8 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter);
+
+    this.addCellNavigationHandler(eGridCell, rowIndex, column.index);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
@@ -829,6 +835,33 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     };
 
     return eGridCell;
+};
+
+RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, colIndex) {
+    var that = this;
+    eGridCell.addEventListener('keydown', function(event) {
+        var key = event.which || event.keyCode;
+        if (key === DOWN_KEY || key === UP_KEY || key === LEFT_KEY || key === RIGHT_KEY) {
+            event.preventDefault();
+            that.navigateToNextCell(key, rowIndex, colIndex);
+        }
+    });
+};
+
+RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, colIndex) {
+    var nextColIndex = colIndex;
+    var nextRowIndex = rowIndex;
+    switch (key) {
+        case DOWN_KEY : nextRowIndex++; break;
+        case UP_KEY : nextRowIndex--; break;
+        case LEFT_KEY : nextColIndex--; break;
+        case RIGHT_KEY : nextColIndex++; break;
+    }
+    this.angularGrid.focusCell(nextRowIndex, nextColIndex);
+
+    var renderedRow = this.renderedRows[nextRowIndex];
+    var eCell = renderedRow.eCells[nextColIndex];
+    eCell.focus();
 };
 
 RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope) {
@@ -905,10 +938,11 @@ RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, co
     });
 };
 
-RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, colDefWrapper, value, rowIndex) {
+RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, column, value, rowIndex) {
+    var colDef = column.colDef;
     var that = this;
-    var colDef = colDefWrapper.colDef;
     eGridCell.addEventListener("click", function(event) {
+        that.angularGrid.focusCell(rowIndex, column.index);
         if (that.gridOptionsWrapper.getCellClicked()) {
             var paramsForGrid = {
                 node: node,

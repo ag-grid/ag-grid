@@ -242,6 +242,16 @@ Grid.prototype.onFilterChanged = function() {
     this.headerRenderer.updateFilterIcons();
 };
 
+Grid.prototype.focusCell = function(rowIndex, colIndex) {
+    console.log('focusCell: (' + rowIndex + ',' + colIndex + ')');
+
+    // remove any previous focus
+    utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+
+    var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
+    utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+};
+
 Grid.prototype.onRowClicked = function(event, rowIndex, node) {
 
     if (this.gridOptions.rowClicked) {
