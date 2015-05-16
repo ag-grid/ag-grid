@@ -17,7 +17,8 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        Sort a column by clicking on the column header.
+        Sort a column by clicking on the column header. To do multi-column sorting,
+        hold down shift while clicking the column header.
     </p>
 
     <h4>Custom Sorting</h4>

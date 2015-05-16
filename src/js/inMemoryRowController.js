@@ -204,10 +204,10 @@ InMemoryRowController.prototype.sortList = function(nodes, sortOptions) {
 
     nodes.sort(function(objA, objB) {
         // Iterate columns, return the first that doesn't match
-        for(var i = 0, len = sortOptions.length; i < len; i++){
+        for (var i = 0, len = sortOptions.length; i < len; i++) {
             var sortOption = sortOptions[i];
             var compared = compare(objA, objB, sortOption.colDef);
-            if(compared !== 0){
+            if (compared !== 0) {
                 return compared * sortOption.inverter;
             }
         }
