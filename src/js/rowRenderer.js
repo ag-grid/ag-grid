@@ -894,7 +894,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, column, 
     var colDef = column.colDef;
     var that = this;
     eGridCell.addEventListener("click", function(event) {
-        that.focusCell(rowIndex, column.index);
+        //that.focusCell(rowIndex, column.index);
         if (that.gridOptionsWrapper.getCellClicked()) {
             var paramsForGrid = {
                 node: node,

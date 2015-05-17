@@ -137,6 +137,16 @@ include '../documentation_header.php';
             <td>Recomputes the aggregates in the model and refreshes all the group rows.
             </td>
         </tr>
+        <tr>
+            <th>ensureIndexVisible(index)</th>
+            <td>Ensures the index is visible, scrolling the table if needed.</td>
+        </tr>
+        <tr>
+            <th>ensureNodeVisible(comparator)</th>
+            <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
+            b) the data object c) a comparator function (that taks the node as a paramter, and returns
+            true for match, false for no match)</td>
+        </tr>
     </table>
 
 </div>
