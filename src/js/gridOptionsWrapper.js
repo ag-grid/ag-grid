@@ -14,8 +14,7 @@ GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.grid
 GridOptionsWrapper.prototype.getContext = function() { return this.gridOptions.context; };
 GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
 GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
-GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
-GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
+GridOptionsWrapper.prototype.isGroupSelectsChildren = function() { return isTrue(this.gridOptions.groupSelectsChildren); };
 GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
 GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
 GridOptionsWrapper.prototype.isGroupSuppressGroupColumn = function() { return isTrue(this.gridOptions.groupSuppressGroupColumn); };
@@ -64,10 +63,6 @@ GridOptionsWrapper.prototype.getIcons = function() {
 
 GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
     return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
-};
-
-GridOptionsWrapper.prototype.isGroupCheckboxSelection = function() {
-    return this.isGroupCheckboxSelectionChildren() || this.isGroupCheckboxSelectionGroup();
 };
 
 GridOptionsWrapper.prototype.getHeaderHeight = function() {

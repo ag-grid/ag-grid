@@ -17,7 +17,12 @@ include 'documentation_header.php';
         <b>10th May 2015</b>
     </p>
     <p>
-        Just back from my holidays. Its going to take me a day or two to get back into the swing of things!
+        Jump to line number
+        Multi column sort (thanks
+        Fixed rows for 'size to fit'
+        Cell selection and navigation
+        Ensure row visible
+        Double click to expand groups, or click icon
     </p>
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

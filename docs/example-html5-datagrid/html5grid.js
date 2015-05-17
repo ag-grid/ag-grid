@@ -241,7 +241,7 @@
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
         '      <input type="checkbox"/>' +
-        '      <img src="/example-basic/SKILL.png" width="30px"/>' +
+        '      <img src="/example-html5-datagrid/SKILL.png" width="30px"/>' +
         '    </div>' +
         '  </span>' +
         '</label>';

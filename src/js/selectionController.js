@@ -97,7 +97,7 @@ SelectionController.prototype.selectAll = function() {
 
     var selectedNodesById = this.selectedNodesById;
     // if the selection is "don't include groups", then we don't include them!
-    var includeGroups = !this.gridOptionsWrapper.isGroupCheckboxSelectionChildren();
+    var includeGroups = !this.gridOptionsWrapper.isGroupSelectsChildren();
 
     function recursivelySelect(nodes) {
         if (nodes) {
@@ -144,7 +144,7 @@ SelectionController.prototype.selectNode = function(node, tryMulti, suppressEven
         atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
     }
 
-    if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && nodeToSelect.group) {
+    if (this.gridOptionsWrapper.isGroupSelectsChildren() && nodeToSelect.group) {
         // don't select the group, select the children instead
         atLeastOneItemSelected = this.recursivelySelectAllChildren(nodeToSelect);
     } else {
@@ -287,7 +287,7 @@ SelectionController.prototype.deselectIndex = function(rowIndex) {
 // public (api)
 SelectionController.prototype.deselectNode = function(node) {
     if (node) {
-        if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
+        if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
             // want to deselect children, not this node, so recursively deselect
             this.recursivelyDeselectAllChildren(node);
         } else {
@@ -309,6 +309,7 @@ SelectionController.prototype.selectIndex = function(index, tryMulti, suppressEv
 SelectionController.prototype.syncSelectedRowsAndCallListener = function(suppressEvents) {
     // update selected rows
     var selectedRows = this.selectedRows;
+    var oldCount = selectedRows.length;
     // clear selected rows
     selectedRows.length = 0;
     var keys = Object.keys(this.selectedNodesById);
@@ -319,7 +320,11 @@ SelectionController.prototype.syncSelectedRowsAndCallListener = function(suppres
         }
     }
 
-    if (!suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
+    // this stope the event firing the very first the time grid is initialised. without this, the documentation
+    // page had a popup in the 'selection' page as soon as the page was loaded!!
+    var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
+
+    if (!nothingChangedMustBeInitialising && !suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
         this.gridOptionsWrapper.getSelectionChanged()();
     }
 
@@ -385,7 +390,7 @@ SelectionController.prototype.recursivelyCheckIfSelected = function(node) {
 // false: if unselected
 // undefined: if it's a group and 'children selection' is used and 'children' are a mix of selected and unselected
 SelectionController.prototype.isNodeSelected = function(node) {
-    if (this.gridOptionsWrapper.isGroupCheckboxSelectionChildren() && node.group) {
+    if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
         // doing child selection, we need to traverse the children
         var resultOfChildren = this.recursivelyCheckIfSelected(node);
         switch (resultOfChildren) {
@@ -404,7 +409,7 @@ SelectionController.prototype.isNodeSelected = function(node) {
 SelectionController.prototype.updateGroupParentsIfNeeded = function() {
     // we only do this if parent nodes are responsible
     // for selecting their children.
-    if (!this.gridOptionsWrapper.isGroupCheckboxSelectionChildren()) {
+    if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
         return;
     }
 
