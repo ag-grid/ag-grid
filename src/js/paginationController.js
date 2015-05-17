@@ -6,7 +6,7 @@ var TEMPLATE = [
     ' of ',
     '<span id="recordCount"></span>',
     '</span>',
-    '<span clas="ag-paging-page-summary-panel">',
+    '<span class="ag-paging-page-summary-panel">',
     '<button class="ag-paging-button" id="btFirst">First</button>',
     '<button class="ag-paging-button" id="btPrevious">Previous</button>',
     ' Page ',
