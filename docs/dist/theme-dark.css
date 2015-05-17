@@ -82,10 +82,12 @@
 }
 .ag-dark .ag-group-cell-entire-row {
   background-color: #aaa;
+  color: 222;
   padding: 4px;
 }
 .ag-dark .ag-footer-cell-entire-row {
   background-color: #aaa;
+  color: 222;
   padding: 4px;
 }
 .ag-dark .ag-group-cell {

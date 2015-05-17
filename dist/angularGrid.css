@@ -172,7 +172,6 @@
   overflow: hidden;
 }
 .ag-group-cell-entire-row {
-  position: absolute;
   width: 100%;
   display: inline-block;
   white-space: nowrap;
@@ -185,7 +184,6 @@
   overflow: hidden;
 }
 .ag-footer-cell-entire-row {
-  position: absolute;
   width: 100%;
   display: inline-block;
   white-space: nowrap;

@@ -1,5 +1,5 @@
 <?php
-$key = "Basic Grid";
+$key = "Data Grid";
 $pageTitle = "AngularJS Angular Data Grid Example";
 $pageDescription = "How to make a basic data table using AngularJS and Angular Grid. Follow the example below to see how a table can be put together.";
 $pageKeyboards = "AngularJS Angular Data Grid Example";

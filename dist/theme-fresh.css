@@ -3,8 +3,19 @@
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .ag-fresh .ag-cell {
-  border-right: 1px solid #808080;
-  padding: 4px;
+  padding: 2px;
+}
+.ag-fresh .ag-cell:focus {
+  outline: none;
+}
+.ag-fresh .ag-cell-focus {
+  border: 1px solid #a9a9a9;
+}
+.ag-fresh .ag-cell-no-focus {
+  border-right: 1px dotted #808080;
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 .ag-fresh .ag-pinned-header {
   background: -webkit-linear-gradient(#fff, #d3d3d3);
@@ -83,7 +94,7 @@
   background-color: #ddd;
 }
 .ag-fresh .ag-row-selected {
-  background-color: #b2dfee;
+  background-color: #b0e0e6;
 }
 .ag-fresh .ag-group-cell-entire-row {
   background-color: #aaa;
