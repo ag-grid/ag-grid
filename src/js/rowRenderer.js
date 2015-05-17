@@ -533,8 +533,15 @@ RowRenderer.prototype.createGroupElement = function(node, padding) {
     } else {
         var params = {
             node: node,
+            data: node.data,
             rowIndex: 4,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            colDef: {
+                cellRenderer: {
+                    renderer: 'group',
+                    innerRenderer: this.gridOptionsWrapper.getGroupInnerRenderer()
+                }
+            }
         };
         eRow = this.cellRendererMap['group'](params);
     }

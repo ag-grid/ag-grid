@@ -66,7 +66,6 @@ gridsModule.controller('mainController', function($scope) {
         groupHeaders: true,
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-//            groupInnerCellRenderer: groupInnerCellRenderer,
 //            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressGroupColumn: true,
@@ -299,7 +298,7 @@ gridsModule.controller('mainController', function($scope) {
         var columns = defaultCols.slice(0, colCount);
 
         // if not grouping, take out the group column
-        var groupColNeeded = $scope.groupType==='col' || $scope.groupType==='colWithFooter'
+        var groupColNeeded = $scope.groupBy!=='' && ($scope.groupType==='col' || $scope.groupType==='colWithFooter');
         if (!groupColNeeded) {
             columns.splice(0,1);
         } else {
@@ -513,10 +512,6 @@ function headerCellRenderer_angular(params) {
         '   ng-show="showIcon">' +
         '{{colDef.displayName}}' +
         '</span>';
-}
-
-function groupInnerCellRenderer(params) {
-    return "<b>" + params.data.key + "</b>";
 }
 
 function groupAggFunction(nodes) {

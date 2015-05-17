@@ -18,15 +18,14 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
             });
         }
 
-        var checkboxNeeded = params.colDef && params.colDef.cellRenderer.checkbox && !node.footer;
+        var checkboxNeeded = params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.checkbox && !node.footer;
         if (checkboxNeeded) {
             var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex);
             eGroupCell.appendChild(eCheckbox);
         }
 
-
-        if (params.colDef && params.colDef.cellRenderer.innerRenderer) {
-            createFromInnerRenderer(eGroupCell, params.colDef.cellRenderer.innerRenderer);
+        if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.innerRenderer) {
+            createFromInnerRenderer(eGroupCell, params, params.colDef.cellRenderer.innerRenderer);
         } else if (node.footer) {
             createFooterCell(eGroupCell, node);
         } else if (node.group) {
@@ -57,8 +56,8 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
         return eGroupCell;
     };
 
-    function createFromInnerRenderer() {
-
+    function createFromInnerRenderer(eGroupCell, params, renderer) {
+        utils.useRenderer(eGroupCell, renderer, params);
     }
 
     function expandGroup(node, params) {

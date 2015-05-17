@@ -122,7 +122,7 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
         {displayName: "Name", field: "name", width: 250,
             cellRenderer: {
                 renderer: 'group',
-                innerCellRenderer: innerCellRenderer
+                innerRenderer: innerCellRenderer
             }},
         {displayName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
         {displayName: "Type", field: "type", width: 150},
