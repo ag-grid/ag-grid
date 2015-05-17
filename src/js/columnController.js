@@ -39,6 +39,26 @@ ColumnController.prototype.createModel = function() {
         // + headerRenderer -> setting pinned body width
         getColumnGroups: function() {
             return that.columnGroups;
+        },
+        // used by:
+        // + rowRenderer -> for navigation
+        getVisibleColBefore: function(col) {
+            var oldIndex = that.visibleColumns.indexOf(col);
+            if (oldIndex > 0) {
+                return that.visibleColumns[oldIndex - 1];
+            } else {
+                return null;
+            }
+        },
+        // used by:
+        // + rowRenderer -> for navigation
+        getVisibleColAfter: function(col) {
+            var oldIndex = that.visibleColumns.indexOf(col);
+            if (oldIndex < (that.visibleColumns.length - 1)) {
+                return that.visibleColumns[oldIndex + 1];
+            } else {
+                return null;
+            }
         }
     };
 };

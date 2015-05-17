@@ -6,10 +6,21 @@
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 
     .ag-cell
-        border-right: 1px solid grey;
-        padding: 4px;
+        padding: 2px;
 
-    .ag-pinned-header 
+    .ag-cell:focus
+        outline: none;
+
+    .ag-cell-focus
+        border: 1px solid darkgrey;
+
+    .ag-cell-no-focus
+        border-right: 1px dotted grey;
+        border-top: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+
+    .ag-pinned-header
         background: linear-gradient(white, lightgrey);
         border-bottom: 1px solid grey;
 
@@ -78,7 +89,7 @@
     .ag-pinned-cols-viewport {}
 
     .ag-row-selected
-        background-color: #B2DFEE;
+        background-color: powderblue;
 
     .ag-group-cell-entire-row
         background-color: #aaa;

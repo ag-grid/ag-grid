@@ -38,7 +38,7 @@ include '../documentation_header.php';
         <tr>
             <th>groupInnerCellRenderer</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not  happy with the default
-                presentation of the group.</td>
+                presentation of the group. This is only used when groupUseEntireRow=true.</td>
         </tr>
         <tr>
             <th>groupDefaultExpanded</th>

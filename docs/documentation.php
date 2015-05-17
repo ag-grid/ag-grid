@@ -9,16 +9,56 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
 
-<!--    <div style="font-size: 20px; font-weight: bold; text-align: center; text-decoration: underline;">
-        Back From Holidays
-    </div>
--->
     <p>
-        <b>10th May 2015</b>
+        <b>17th May 2015</b>
     </p>
+
     <p>
-        Just back from my holidays. Its going to take me a day or two to get back into the swing of things!
+        This is what I did last week:
+
+    <ul>
+
+        <li>
+            <b>Revamp of grouping</b> - I'm in the process of refactoring the cells to pave the way for keyboard
+            navigation and improved selection (both of which are work in progress). Because of this, how groups
+            are presented is now different. If using grouping, please check the documentation on how to use 'group
+            cell renderer' in your columns, to have them present the groups for selection.
+        </li>
+        <li>
+            <b>Double click to expand groups</b>, or click the icon once. This makes the groups behave in a more natural
+            way. Again this was working in preparation of cell selection and keyboard navigation.
+        </li>
+        <li>
+            <b>ensureIndexVisible</b> and <b>ensureNodeVisible</b> API functions, to scroll the grid to make rows visible.
+        </li>
+        <li>
+            <b>Multi column sort</b> (thanks Dylan Robinson). Hold down shift on the column header to add it to the sort.
+        </li>
+        <li>
+            <b>Fixed width cols</b> for 'size to fit' - add 'suppressSizeToFit' to column definition to have the column
+            width not change during the 'size to fit' operation.
+        </li>
+        <li>
+            <b>Released 1.5.0</b> - contains all the above.
+        </li>
+
+    </ul>
+
+    <p>
+        This is what I'm doing next week:
     </p>
+
+    <ul>
+    <li>
+        I have the back broken on Cell Selection and Keyboard Navigation. I should have that finished in the next week.
+        After that the next on the list will be a) improved selection & API, b) filtering API and c) server side filtering and sorting.
+    </li>
+    </ul>
+
+    <p>
+        I have no blockers.
+    </p>
+
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
@@ -78,9 +118,7 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
-        <b>Next on my list</b> - In the back of my head, I'm working on a plan for Cell Selection and Keyboard
-        navigation. The plan isn't ready yet to turn into code. But it's brewing back there. When it's ready,
-        I'll hit the keyboard. But the brain is still working through the initial design.
+        <b>17th May</b> Revamp of Grouping, ensureIndexVisible, ensureNodeVisible, Multi Column Sort (thanks Dylan Robinson), Fixed Width Cols.
     </p>
 
     <hr/>

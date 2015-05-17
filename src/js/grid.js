@@ -103,7 +103,8 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
-        selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService);
+        selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService,
+        this.eParentOfRows);
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager, $scope, $compile);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
@@ -662,6 +663,15 @@ Grid.prototype.addScrollListener = function() {
             that.rowRenderer.drawVirtualRows();
         }
     });
+
+    this.ePinnedColsViewport.addEventListener("scroll", function() {
+        // this means the pinned panel was moved, which can only
+        // happen when the user is navigating in the pinned container
+        // as the pinned col should never scroll. so we rollback
+        // the scroll on the pinned.
+        that.ePinnedColsViewport.scrollTop = 0;
+    });
+
 };
 
 Grid.prototype.scrollHeader = function(bodyLeftPosition) {

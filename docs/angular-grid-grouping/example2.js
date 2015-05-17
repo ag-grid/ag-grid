@@ -4,7 +4,9 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 200},
+        {displayName: "Athlete", field: "athlete", width: 200, cellRenderer: {
+            renderer: 'group'
+        }},
         {displayName: "Gold", field: "gold", width: 100},
         {displayName: "Silver", field: "silver", width: 100},
         {displayName: "Bronze", field: "bronze", width: 100},

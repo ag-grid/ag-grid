@@ -41,14 +41,20 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        To enable checkbox selection for a row, set the attribute 'checkboxSelection' to true
-        on one of the column definitions.
+        To include checkbox selection for a column, set the attribute 'checkboxSelection' to true
+        on the column definition. You can set this attribute on as many columns as you like, however
+        it doesn't make sense to have it in more one column in a table.
     </p>
 
     <p>
-        To enable checkbox selection for groups, set the attribute 'groupCheckboxSelection' to
-        one of 'group' or 'children'. When set to <b>group</b>, then selecting the group will
-        select the group node. When set to <b>children</b>, then selecting the group will
+        To enable checkbox selection for groups, set the attribute 'checkbox' to true for the
+        group renderer. See the grouping section for details on the group renderer.
+    </p>
+    <p>
+        Selecting groups can have the effect of selecting the group row, or selecting all the children
+        in the group. This is done by setting the attribute 'groupSelectsChildren' to true or false.
+        When set to <b>false</b>, then selecting the group will
+        select the group node. When set to <b>true</b>, then selecting the group will
         either select or deselect all of the children.
     </p>
 
@@ -57,6 +63,12 @@ include '../documentation_header.php';
         effect of selecting the children. Likewise selecting all the children automatically
         selects the group. The group itself will never appear in the <i>selectedRows</i>
         list.
+    </p>
+
+    <p>
+        The example also shows a checkbox for selection on the age column. In practice, it is not
+        normal to have more than two columns for selection, the below is just for demonstration.
+        Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
     <show-example example="groupSelection" example-height="450px"></show-example>

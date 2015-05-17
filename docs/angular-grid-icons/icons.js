@@ -9,6 +9,9 @@ module.controller("exampleCtrl", function($scope, $http) {
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            },
+            cellRenderer: {
+                renderer: 'group'
             }
         },
         {displayName: "Age", field: "age", width: 90,

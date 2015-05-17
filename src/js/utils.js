@@ -128,6 +128,14 @@ Utils.prototype.querySelectorAll_removeCssClass = function(eParent, selector, cs
     }
 };
 
+Utils.prototype.querySelectorAll_replaceCssClass = function(eParent, selector, cssClassToRemove, cssClassToAdd) {
+    var eRows = eParent.querySelectorAll(selector);
+    for (var k = 0; k < eRows.length; k++) {
+        this.removeCssClass(eRows[k], cssClassToRemove);
+        this.addCssClass(eRows[k], cssClassToAdd);
+    }
+};
+
 Utils.prototype.addCssClass = function(element, className) {
     var oldClasses = element.className;
     if (oldClasses) {

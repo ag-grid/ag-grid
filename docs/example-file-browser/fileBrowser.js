@@ -2,13 +2,6 @@ var fileBrowserModule = angular.module('fileBrowser', ['angularGrid']);
 
 fileBrowserModule.controller('fileBrowserController', function($scope) {
 
-    var columnDefs = [
-        {displayName: "Name", field: "name", width: 250},
-        {displayName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
-        {displayName: "Type", field: "type", width: 150},
-        {displayName: "Date Modified", field: "dateModified", width: 150}
-    ];
-
     var rowData = [
         {
             group: true,
@@ -125,6 +118,17 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
         }
     ];
 
+    var columnDefs = [
+        {displayName: "Name", field: "name", width: 250,
+            cellRenderer: {
+                renderer: 'group',
+                innerRenderer: innerCellRenderer
+            }},
+        {displayName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
+        {displayName: "Type", field: "type", width: 150},
+        {displayName: "Date Modified", field: "dateModified", width: 150}
+    ];
+
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: rowData,
@@ -137,7 +141,6 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'
         },
-        groupInnerCellRenderer: groupInnerCellRenderer,
         rowClicked: rowClicked
     };
 
@@ -157,7 +160,7 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
         return {'text-align': 'right'};
     }
 
-    function groupInnerCellRenderer(params) {
+    function innerCellRenderer(params) {
         var image = params.node.level === 0 ? 'disk' : 'folder';
         var imageFullUrl = '/example-file-browser/' + image + '.png';
         return '<img src="'+imageFullUrl+'" style="padding-left: 4px;" /> ' + params.data.name;

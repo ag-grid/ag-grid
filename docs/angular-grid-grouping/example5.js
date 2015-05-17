@@ -37,11 +37,11 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupUseEntireRow: true,
         groupKeys: ['country'],
         groupAggFunction: groupAggFunction,
-        groupInnerCellRenderer: groupInnerCellRendererFunc
+        groupInnerRenderer: groupInnerRendererFunc
     };
 
-    function groupInnerCellRendererFunc(params) {
-        var flagCode = FLAG_CODES[params.data.key];
+    function groupInnerRendererFunc(params) {
+        var flagCode = FLAG_CODES[params.node.key];
 
         var html = '';
         if (flagCode) {
@@ -64,7 +64,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             bronze: 0,
             total: 0,
             minAge: 100,
-            maxAge: 0,
+            maxAge: 0
         };
 
         nodes.forEach(function(node) {

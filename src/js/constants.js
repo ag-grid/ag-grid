@@ -5,10 +5,10 @@ var constants = {
     STEP_MAP: 3,
     ASC: "asc",
     DESC: "desc",
-    ROW_BUFFER_SIZE: 5,
+    ROW_BUFFER_SIZE: 20,
     SORT_STYLE_SHOW: "display:inline;",
     SORT_STYLE_HIDE: "display:none;",
-    MIN_COL_WIDTH: 10,
+    MIN_COL_WIDTH: 10
 };
 
 module.exports = constants;

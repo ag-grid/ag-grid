@@ -54,7 +54,13 @@
 
         <!--style.css-->
         <style>
-            .highlight{font-weight:700}.paragraph{width:800px;padding-top:20px}.big-text{font-size:20px}.dot{font-size:13px;position:relative;top:-3px}.checkitem{color:#006400}.feature{display:inline-block;padding:5px;border:1px solid #d3d3d3;border-radius:10px;margin:5px}h1{font-size:50px}h2{margin-top:90px;margin-bottom:25px}.horizontal-rule{margin-top:50px;margin-bottom:50px}.top-header{padding-top:12px}.top-button{margin-right:15px;color:#888}.top-button:link,.top-button:visited{text-decoration:none}.top-button:hover{text-decoration:none;color:#eee}.top-button:active{text-decoration:none}.top-button-selected{margin-right:15px;color:#eee}.top-button-selected:link,.top-button-selected:visited{text-decoration:none}.top-button-selected:hover{text-decoration:none;color:#eee}.top-button-selected:active{text-decoration:none}.share-link:hover{opacity:.8;text-decoration:none}.share-link{text-decoration:none}.header-icon{font-size:14px}.header-button{margin-left:10px;margin-right:10px}.license{font-size:12px}.quote-block{margin-top:50px}.quote{font-style:italic;font-size:15px;text-align:center}.under-quote{font-size:12px;text-align:center}.quote-side-panel{border-left:1px solid grey;padding-left:50px}
+            .highlight{font-weight:700}.paragraph{width:800px;padding-top:20px}.big-text{font-size:20px}.dot{font-size:13px;position:relative;top:-3px}.checkitem{color:#006400}.feature{display:inline-block;padding:5px;border:1px solid #d3d3d3;border-radius:10px;margin:5px}h1{font-size:50px}h2{margin-top:90px;margin-bottom:25px}.horizontal-rule{margin-top:50px;margin-bottom:50px}.top-header{padding-top:12px}.top-button{margin-right:15px;color:#888}.top-button:link,.top-button:visited{text-decoration:none}.top-button:hover{text-decoration:none;color:#eee}.top-button:active{text-decoration:none}.top-button-selected{margin-right:15px;color:#eee}.top-button-selected:link,.top-button-selected:visited{text-decoration:none}.top-button-selected:hover{text-decoration:none;color:#eee}.top-button-selected:active{text-decoration:none}.share-link:hover{opacity:.8;text-decoration:none}.share-link{text-decoration:none}.header-icon{font-size:14px}.header-button{margin-left:10px;margin-right:10px}.license{font-size:12px}.quote-block{margin-top:50px}.quote{font-style:italic;font-size:15px;text-align:center}.under-quote{font-size:12px;text-align:center}.quote-side-panel{border-left:1px solid grey;padding-left:50px}</style>
+
+        <!-- For example datagrid, should reuse whats in the examle -->
+        <style>
+            .div-percent-bar { display: inline-block;  height: 100%; position: relative; }
+            .div-percent-value { position: absolute; z-index: 1; padding-left: 4px; font-weight: bold; font-size: 13px; }
+            .div-outer-div { display: inline-block; height: 100%; width: 100%; }
         </style>
 
         <script>
@@ -174,20 +180,28 @@
 
         <div class="container">
 
-            <div class="row" style="text-align: center;">
-                <!--<h2>A Data Grid for AngularJS</h2>-->
+            <div class="row">
+                <dv><br/></dv>
                 <dv><br/></dv>
 
-                <div>
-                    Angular Grid will make your AngularJS applications run faster.
+                <div class="col-md-6">
+                    <!--<h2>Introducing Angular Grid</h2>-->
+                    <p>
+                        Feature rich, light weight, minimal footprint, no external dependencies.
+                        Angular Grid will make your applications run faster.
+                    </p>
                 </div>
 
-                <dv><br/></dv>
-
-                <div>
-                    Download and start using, see the difference for yourself.
+                <div class="col-md-6">
+                    <!--<h2>Hybrid AngularJS & DOM Engine</h2>-->
+                    <p>
+                        Angular Grid uses AngularJS
+                        where required and native Javascript at all other times.
+                        A grid written solely in AngularJS will be inherently slower.
+                    </p>
                 </div>
             </div>
+
 <!--            <div class="row">
                 <div class="col-md-6">
                     &lt;!&ndash;<h2>Introducing Angular Grid</h2>&ndash;&gt;
@@ -308,28 +322,6 @@
                     </div>
                 </div>
 
-            </div>
-
-            <div class="horizontal-rule">
-                <hr/>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <!--<h2>Introducing Angular Grid</h2>-->
-                    <p>
-                        Light weight, minimal footprint, no external dependencies.
-                    </p>
-                </div>
-
-                <div class="col-md-6">
-                    <!--<h2>Hybrid AngularJS & DOM Engine</h2>-->
-                    <p>
-                        Angular Grid uses AngularJS
-                        where required and native Javascript at all other times.
-                        A grid written solely in AngularJS will be inherently slower.
-                    </p>
-                </div>
             </div>
 
             <div class="horizontal-rule">
