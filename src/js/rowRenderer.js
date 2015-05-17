@@ -16,7 +16,7 @@ function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController, expressionService, templateService) {
+    selectionController, expressionService, templateService, eParentOfRows) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
@@ -28,6 +28,7 @@ RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapp
     this.selectionController = selectionController;
     this.expressionService = expressionService;
     this.templateService = templateService;
+    this.eParentOfRows = eParentOfRows;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom. each row object has:
@@ -325,6 +326,8 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
             eMainRow.appendChild(eGroupRow);
         }
 
+        renderedRow.eCells[firstColumn.colKey] = eGroupRow;
+
         if (firstColumn.pinned && groupHeaderTakesEntireRow) {
             var eGroupRowPadding = that.createGroupElement(node, firstColumn, groupHeaderTakesEntireRow, true, rowIndex, rowIsAFooter);
             eMainRow.appendChild(eGroupRowPadding);
@@ -491,7 +494,7 @@ RowRenderer.prototype.createRowContainer = function(rowIndex, node, groupRow, $s
 
     this.addClassesToRow(rowIndex, node, eRow);
 
-    eRow.setAttribute("row", rowIndex);
+    eRow.setAttribute('row', rowIndex);
 
     // if showing scrolls, position on the container
     if (!this.gridOptionsWrapper.isDontUseScrolls()) {
@@ -558,19 +561,24 @@ RowRenderer.prototype.setCssClassForGroupCell = function(eGridGroupRow, footer, 
 };
 
 RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntireRow, padding, rowIndex, footer) {
-    var eGridGroupRow = document.createElement('div');
+    var eGroupCell = document.createElement('div');
 
-    this.setCssClassForGroupCell(eGridGroupRow, footer, useEntireRow, firstColumn.index);
+    this.setCssClassForGroupCell(eGroupCell, footer, useEntireRow, firstColumn.index);
+
+    if (!padding) { // need to get the grouping cols behave just like the other cells
+        //eGroupCell.setAttribute('col', '0');
+        //eGroupCell.setAttribute('tabindex', '-1');
+    }
 
     var expandIconNeeded = !padding && !footer;
     if (expandIconNeeded) {
-        this.addGroupExpandIcon(eGridGroupRow, node.expanded);
+        this.addGroupExpandIcon(eGroupCell, node.expanded);
     }
 
     var checkboxNeeded = !padding && !footer && this.gridOptionsWrapper.isGroupCheckboxSelection();
     if (checkboxNeeded) {
         var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(node, rowIndex);
-        eGridGroupRow.appendChild(eCheckbox);
+        eGroupCell.appendChild(eCheckbox);
     }
 
     // try user custom rendering first
@@ -583,19 +591,19 @@ RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntire
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        utils.useRenderer(eGridGroupRow, this.gridOptions.groupInnerCellRenderer, rendererParams);
+        utils.useRenderer(eGroupCell, this.gridOptions.groupInnerCellRenderer, rendererParams);
     } else {
         if (!padding) {
             if (footer) {
-                this.createFooterCell(eGridGroupRow, node);
+                this.createFooterCell(eGroupCell, node);
             } else {
-                this.createGroupCell(eGridGroupRow, node);
+                this.createGroupCell(eGroupCell, node);
             }
         }
     }
 
     if (!useEntireRow) {
-        eGridGroupRow.style.width = utils.formatWidth(firstColumn.actualWidth);
+        eGroupCell.style.width = utils.formatWidth(firstColumn.actualWidth);
     }
 
     // indent with the group level
@@ -608,17 +616,17 @@ RowRenderer.prototype.createGroupElement = function(node, firstColumn, useEntire
             if (footer) {
                 paddingPx += 10;
             }
-            eGridGroupRow.style.paddingLeft = paddingPx + "px";
+            eGroupCell.style.paddingLeft = paddingPx + "px";
         }
     }
 
     var that = this;
-    eGridGroupRow.addEventListener("click", function() {
+    eGroupCell.addEventListener("click", function() {
         node.expanded = !node.expanded;
         that.angularGrid.updateModelAndRefresh(constants.STEP_MAP);
     });
 
-    return eGridGroupRow;
+    return eGroupCell;
 };
 
 // creates cell with 'Total {{key}}' for a group
@@ -820,7 +828,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter);
 
-    this.addCellNavigationHandler(eGridCell, rowIndex, column.index);
+    this.addCellNavigationHandler(eGridCell, rowIndex, column);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
@@ -837,31 +845,77 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     return eGridCell;
 };
 
-RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, colIndex) {
+RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, column) {
     var that = this;
     eGridCell.addEventListener('keydown', function(event) {
         var key = event.which || event.keyCode;
         if (key === DOWN_KEY || key === UP_KEY || key === LEFT_KEY || key === RIGHT_KEY) {
             event.preventDefault();
-            that.navigateToNextCell(key, rowIndex, colIndex);
+            that.navigateToNextCell(key, rowIndex, column);
         }
     });
 };
 
-RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, colIndex) {
-    var nextColIndex = colIndex;
-    var nextRowIndex = rowIndex;
-    switch (key) {
-        case DOWN_KEY : nextRowIndex++; break;
-        case UP_KEY : nextRowIndex--; break;
-        case LEFT_KEY : nextColIndex--; break;
-        case RIGHT_KEY : nextColIndex++; break;
-    }
-    this.angularGrid.focusCell(nextRowIndex, nextColIndex);
+RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
 
-    var renderedRow = this.renderedRows[nextRowIndex];
-    var eCell = renderedRow.eCells[nextColIndex];
+    var rowToFocus;
+    var colToFocus;
+
+    switch (key) {
+        case UP_KEY :
+            // if already on top row, do nothing
+            if (rowIndex === this.firstVirtualRenderedRow) {
+                return;
+            }
+            rowToFocus = rowIndex - 1;
+            colToFocus = column.index;
+            break;
+        case DOWN_KEY :
+            // if already on bottom, do nothing
+            if (rowIndex === this.lastVirtualRenderedRow) {
+                return;
+            }
+            rowToFocus = rowIndex + 1;
+            colToFocus = column.index;
+            break;
+        case RIGHT_KEY :
+            var colToRight = this.columnModel.getVisibleColAfter(column);
+            // if already on right, do nothing
+            if (!colToRight) {
+                return;
+            }
+            rowToFocus = rowIndex ;
+            colToFocus = colToRight.index;
+            break;
+        case LEFT_KEY :
+            var colToLeft = this.columnModel.getVisibleColBefore(column);
+            // if already on right, do nothing
+            if (!colToLeft) {
+                return;
+            }
+            rowToFocus = rowIndex ;
+            colToFocus = colToLeft.index;
+            break;
+    }
+
+    var renderedRow = this.renderedRows[rowToFocus];
+    var eCell = renderedRow.eCells[colToFocus];
+
+    // this scrolls the row into view
+    this.angularGrid.ensureIndexVisible(renderedRow.rowIndex);
+
+    // this changes the css on the cell
+    this.focusCell(rowToFocus, colToFocus);
+    // this puts the browser focus on the cell (so it gets key presses)
     eCell.focus();
+};
+
+RowRenderer.prototype.focusCell = function(rowIndex, colIndex) {
+    // remove any previous focus
+    utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+
+    var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
+    utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
 };
 
 RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope) {
@@ -942,7 +996,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, column, 
     var colDef = column.colDef;
     var that = this;
     eGridCell.addEventListener("click", function(event) {
-        that.angularGrid.focusCell(rowIndex, column.index);
+        that.focusCell(rowIndex, column.index);
         if (that.gridOptionsWrapper.getCellClicked()) {
             var paramsForGrid = {
                 node: node,
