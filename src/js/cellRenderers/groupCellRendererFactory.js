@@ -1,5 +1,6 @@
 var SvgFactory = require('../svgFactory');
 var utils = require('../utils');
+var constants = require('../constants');
 var svgFactory = new SvgFactory();
 
 function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) {
@@ -44,12 +45,19 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
             } else if (!node.group) {
                 paddingPx += 5;
             }
-            eGroupCell.style.paddingLeft = paddingPx + "px";
+            eGroupCell.style.paddingLeft = paddingPx + 'px';
         }
 
         if (node.group) {
-            eGroupCell.addEventListener("dblclick", function () {
+            eGroupCell.addEventListener('dblclick', function () {
                 expandGroup(node, params);
+            });
+            params.parentCell.addEventListener('keydown', function(event) {
+                console.log('groupCellRendererFactory.keydown');
+                var key = event.which || event.keyCode;
+                if (key === constants.KEY_ENTER) {
+                    expandGroup(node, params);
+                }
             });
         }
 
