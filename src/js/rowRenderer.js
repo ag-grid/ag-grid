@@ -740,8 +740,10 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
             that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
+            console.log('editing = true');
             return true;
         } else {
+            console.log('editing = false');
             return false;
         }
     };
@@ -752,10 +754,24 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
 RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, column) {
     var that = this;
     eGridCell.addEventListener('keydown', function(event) {
+        if (that.editingCell) {
+            return;
+        }
         var key = event.which || event.keyCode;
-        if (key === DOWN_KEY || key === UP_KEY || key === LEFT_KEY || key === RIGHT_KEY) {
+
+        var startNavigation = key === DOWN_KEY || key === UP_KEY || key === LEFT_KEY || key === RIGHT_KEY;
+        if (startNavigation) {
             event.preventDefault();
             that.navigateToNextCell(key, rowIndex, column);
+        }
+
+        var startEdit = key === ENTER_KEY;
+        if (startEdit) {
+            event.preventDefault();
+            var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colKey];
+            if (startEditingFunc) {
+                startEditingFunc();
+            }
         }
     });
 };
@@ -809,17 +825,18 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
     this.angularGrid.ensureIndexVisible(renderedRow.rowIndex);
 
     // this changes the css on the cell
-    this.focusCell(rowToFocus, colToFocus);
-    // this puts the browser focus on the cell (so it gets key presses)
-    eCell.focus();
+    this.focusCell(eCell, rowToFocus, colToFocus);
 };
 
-RowRenderer.prototype.focusCell = function(rowIndex, colIndex) {
+RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex) {
     // remove any previous focus
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
 
     var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+
+    // this puts the browser focus on the cell (so it gets key presses)
+    eCell.focus();
 };
 
 RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope) {
@@ -894,7 +911,7 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, column, 
     var colDef = column.colDef;
     var that = this;
     eGridCell.addEventListener("click", function(event) {
-        //that.focusCell(rowIndex, column.index);
+        that.focusCell(eGridCell, rowIndex, column.index);
         if (that.gridOptionsWrapper.getCellClicked()) {
             var paramsForGrid = {
                 node: node,
@@ -1025,6 +1042,7 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
         // 13 is enter
         if (key == ENTER_KEY) {
             that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
+            that.focusCell(eGridCell, rowIndex, column.index);
         }
     });
 
