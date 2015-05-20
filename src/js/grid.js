@@ -15,6 +15,8 @@ var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 
+// focus stops the default editing
+
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
     this.gridOptions = gridOptions;

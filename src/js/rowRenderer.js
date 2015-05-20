@@ -2,14 +2,6 @@ var constants = require('./constants');
 var utils = require('./utils');
 var groupCellRendererFactory = require('./cellRenderers/groupCellRendererFactory');
 
-var TAB_KEY = 9;
-var ENTER_KEY = 13;
-
-var DOWN_KEY = 40;
-var UP_KEY = 38;
-var LEFT_KEY = 37;
-var RIGHT_KEY = 39;
-
 function RowRenderer() {}
 
 RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
@@ -566,7 +558,7 @@ RowRenderer.prototype.putDataIntoCell = function(column, value, valueGetter, nod
             eGridCell.innerHTML = template;
         }
     } else if (colDef.cellRenderer) {
-        this.useCellRenderer(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter);
+        this.useCellRenderer(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter, eGridCell);
     } else {
         // if we insert undefined, then it displays as the string 'undefined', ugly!
         if (value !== undefined && value !== null && value !== '') {
@@ -575,7 +567,7 @@ RowRenderer.prototype.putDataIntoCell = function(column, value, valueGetter, nod
     }
 };
 
-RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter) {
+RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter, eParentCell) {
     var colDef = column.colDef;
     var rendererParams = {
         value: value,
@@ -588,7 +580,8 @@ RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScop
         rowIndex: rowIndex,
         api: this.gridOptionsWrapper.getApi(),
         context: this.gridOptionsWrapper.getContext(),
-        refreshCell: refreshCellFunction
+        refreshCell: refreshCellFunction,
+        parentCell: eParentCell
     };
     var cellRenderer;
     if (typeof colDef.cellRenderer === 'object') {
@@ -717,7 +710,10 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     var eGridCell = document.createElement("div");
     eGridCell.setAttribute("col", column.index);
 
-    eGridCell.setAttribute("tabindex", "-1");
+    // only set tab index if cell selection is enabled
+    if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
+        eGridCell.setAttribute("tabindex", "-1");
+    }
 
     var value;
     if (valueGetter) {
@@ -740,8 +736,10 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
             that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
+            console.log('editing = true');
             return true;
         } else {
+            console.log('editing = false');
             return false;
         }
     };
@@ -752,10 +750,27 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
 RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, column) {
     var that = this;
     eGridCell.addEventListener('keydown', function(event) {
+        console.log('rowRenderer.addCellNavigationHandler.keyDown');
+        if (that.editingCell) {
+            return;
+        }
         var key = event.which || event.keyCode;
-        if (key === DOWN_KEY || key === UP_KEY || key === LEFT_KEY || key === RIGHT_KEY) {
+
+        var startNavigation = key === constants.KEY_DOWN || key === constants.KEY_UP
+            || key === constants.KEY_LEFT || key === constants.KEY_RIGHT;
+        if (startNavigation) {
             event.preventDefault();
             that.navigateToNextCell(key, rowIndex, column);
+        }
+
+        var startEdit = key === constants.KEY_ENTER;
+        if (startEdit) {
+            //console.log('preventDefault');
+            //event.preventDefault();
+            var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colKey];
+            if (startEditingFunc) {
+                startEditingFunc();
+            }
         }
     });
 };
@@ -766,7 +781,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
     var colToFocus;
 
     switch (key) {
-        case UP_KEY :
+        case constants.KEY_UP :
             // if already on top row, do nothing
             if (rowIndex === this.firstVirtualRenderedRow) {
                 return;
@@ -774,7 +789,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
             rowToFocus = rowIndex - 1;
             colToFocus = column.index;
             break;
-        case DOWN_KEY :
+        case constants.KEY_DOWN :
             // if already on bottom, do nothing
             if (rowIndex === this.lastVirtualRenderedRow) {
                 return;
@@ -782,7 +797,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
             rowToFocus = rowIndex + 1;
             colToFocus = column.index;
             break;
-        case RIGHT_KEY :
+        case constants.KEY_RIGHT :
             var colToRight = this.columnModel.getVisibleColAfter(column);
             // if already on right, do nothing
             if (!colToRight) {
@@ -791,7 +806,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
             rowToFocus = rowIndex ;
             colToFocus = colToRight.index;
             break;
-        case LEFT_KEY :
+        case constants.KEY_LEFT :
             var colToLeft = this.columnModel.getVisibleColBefore(column);
             // if already on right, do nothing
             if (!colToLeft) {
@@ -809,17 +824,24 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
     this.angularGrid.ensureIndexVisible(renderedRow.rowIndex);
 
     // this changes the css on the cell
-    this.focusCell(rowToFocus, colToFocus);
-    // this puts the browser focus on the cell (so it gets key presses)
-    eCell.focus();
+    this.focusCell(eCell, rowToFocus, colToFocus, true);
 };
 
-RowRenderer.prototype.focusCell = function(rowIndex, colIndex) {
+RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrowserFocus) {
+    // do nothing if cell selection is off
+    if (this.gridOptionsWrapper.isSuppressCellSelection()) {
+        return;
+    }
     // remove any previous focus
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
 
     var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+
+    // this puts the browser focus on the cell (so it gets key presses)
+    if (forceBrowserFocus) {
+        eCell.focus();
+    }
 };
 
 RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eGridCell, isFirstColumn, node, column, rowIndex, $childScope) {
@@ -894,7 +916,13 @@ RowRenderer.prototype.addCellClickedHandler = function(eGridCell, node, column, 
     var colDef = column.colDef;
     var that = this;
     eGridCell.addEventListener("click", function(event) {
-        //that.focusCell(rowIndex, column.index);
+        // we pass false to focusCell, as we don't want the cell to focus
+        // also get the browser focus. if we did, then the cellRenderer could
+        // have a text field in it, for example, and as the user clicks on the
+        // text field, the text field, the focus doesn't get to the text
+        // field, instead to goes to the div behind, making it impossible to
+        // select the text field.
+        that.focusCell(eGridCell, rowIndex, column.index, false);
         if (that.gridOptionsWrapper.getCellClicked()) {
             var paramsForGrid = {
                 node: node,
@@ -1023,15 +1051,16 @@ RowRenderer.prototype.startEditing = function(eGridCell, column, node, $childSco
     eInput.addEventListener('keypress', function(event) {
         var key = event.which || event.keyCode;
         // 13 is enter
-        if (key == ENTER_KEY) {
+        if (key == constants.KEY_ENTER) {
             that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
+            that.focusCell(eGridCell, rowIndex, column.index, true);
         }
     });
 
     // tab key doesn't generate keypress, so need keydown to listen for that
     eInput.addEventListener('keydown', function(event) {
         var key = event.which || event.keyCode;
-        if (key == TAB_KEY) {
+        if (key == constants.KEY_TAB) {
             that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
             that.startEditingNextCell(rowIndex, column, event.shiftKey);
             // we don't want the default tab action, so return false, this stops the event from bubbling
