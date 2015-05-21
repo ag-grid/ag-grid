@@ -28,9 +28,9 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
         if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.innerRenderer) {
             createFromInnerRenderer(eGroupCell, params, params.colDef.cellRenderer.innerRenderer);
         } else if (node.footer) {
-            createFooterCell(eGroupCell, node);
+            createFooterCell(eGroupCell, params);
         } else if (node.group) {
-            createGroupCell(eGroupCell, node);
+            createGroupCell(eGroupCell, params);
         } else {
             createLeafCell(eGroupCell, params);
         }
@@ -52,13 +52,15 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
             eGroupCell.addEventListener('dblclick', function () {
                 expandGroup(node, params);
             });
-            params.parentCell.addEventListener('keydown', function(event) {
-                console.log('groupCellRendererFactory.keydown');
-                var key = event.which || event.keyCode;
-                if (key === constants.KEY_ENTER) {
-                    expandGroup(node, params);
-                }
-            });
+            if (params.parentCell) {
+                params.parentCell.addEventListener('keydown', function(event) {
+                    console.log('groupCellRendererFactory.keydown');
+                    var key = event.which || event.keyCode;
+                    if (key === constants.KEY_ENTER) {
+                        expandGroup(node, params);
+                    }
+                });
+            }
         }
 
         return eGroupCell;
@@ -82,24 +84,39 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
     }
 
     // creates cell with 'Total {{key}}' for a group
-    function createFooterCell(eParent, node) {
-        var textToDisplay = "Total " + node.key;
+    function createFooterCell(eParent, params) {
+        var textToDisplay = "Total " + getGroupName(params);
         var eText = document.createTextNode(textToDisplay);
         eParent.appendChild(eText);
     }
 
+    function getGroupName(params) {
+        var cellRenderer = params.colDef.cellRenderer;
+        if (cellRenderer && cellRenderer.keyMap
+            && typeof cellRenderer.keyMap === 'object') {
+            var valueFromMap = cellRenderer.keyMap[params.node.key];
+            if (valueFromMap) {
+                return valueFromMap;
+            } else {
+                return params.node.key;
+            }
+        } else {
+            return params.node.key;
+        }
+    }
+
     // creates cell with '{{key}} ({{childCount}})' for a group
-    function createGroupCell(eParent, node) {
-        var textToDisplay = " " + node.key;
+    function createGroupCell(eParent, params) {
+        var textToDisplay = " " + getGroupName(params);
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        if (node.allChildrenCount >= 0) {
-            textToDisplay += " (" + node.allChildrenCount + ")";
+        var suppressCount = params.colDef.cellRenderer && params.colDef.cellRenderer.suppressCount;
+        if (!suppressCount && params.node.allChildrenCount >= 0) {
+            textToDisplay += " (" + params.node.allChildrenCount + ")";
         }
         var eText = document.createTextNode(textToDisplay);
         eParent.appendChild(eText);
     }
-
 
     // creates cell with '{{key}} ({{childCount}})' for a group
     function createLeafCell(eParent, params) {

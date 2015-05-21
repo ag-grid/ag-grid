@@ -16,12 +16,17 @@ SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOpti
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.$scope = $scope;
     this.rowRenderer = rowRenderer;
+    this.gridOptionsWrapper = gridOptionsWrapper;
 
-    this.selectedNodesById = {};
+    this.initSelectedNodesById();
+
     this.selectedRows = [];
-
     gridOptionsWrapper.setSelectedRows(this.selectedRows);
-    gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
+};
+
+SelectionController.prototype.initSelectedNodesById = function() {
+    this.selectedNodesById = {};
+    this.gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
 };
 
 SelectionController.prototype.getSelectedNodes = function() {
@@ -79,11 +84,11 @@ SelectionController.prototype.setRowModel = function(rowModel) {
 // public - this clears the selection, but doesn't clear down the css - when it is called, the
 // caller then gets the grid to refresh.
 SelectionController.prototype.deselectAll = function() {
-    this.selectedRows.length = 0;
-    var keys = Object.keys(this.selectedNodesById);
-    for (var i = 0; i < keys.length; i++) {
-        delete this.selectedNodesById[keys[i]];
-    }
+    this.initSelectedNodesById();
+    //var keys = Object.keys(this.selectedNodesById);
+    //for (var i = 0; i < keys.length; i++) {
+    //    delete this.selectedNodesById[keys[i]];
+    //}
     this.syncSelectedRowsAndCallListener();
 };
 
