@@ -2,7 +2,7 @@
   "name": "angular-grid",
   "version": "1.5.0",
   "description": "High performance and feature rich data grid for AngularJS",
-  "main": "main.js",
+  "main": "src/js/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
