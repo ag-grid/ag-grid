@@ -786,11 +786,10 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
         var selectRow = key === constants.KEY_SPACE;
         if (selectRow) {
             var selected = that.selectionController.isNodeSelected(node);
-            var tryMulti = event.ctrlKey || event.metaKey;
             if (selected) {
                 that.selectionController.deselectNode(node);
             } else {
-                that.selectionController.selectNode(node, tryMulti);
+                that.selectionController.selectNode(node, true);
             }
             event.preventDefault();
         }

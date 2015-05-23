@@ -188,6 +188,12 @@
                     <a class="sidebarLink" href="/angular-grid-header-rendering/index.php">Header Rendering</a>
                 <?php } ?>
 
+                <?php if ($key == "Keyboard Navigation") { ?>
+                    <span class="sidebarLinkSelected">Keyboard Navigation</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-keyboard-navigation/index.php">Keyboard Navigation</a>
+                <?php } ?>
+
                 <h4>
                     Working with Data
                 </h4>

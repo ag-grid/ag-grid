@@ -156,7 +156,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>rowsBuffer</th>
-            <td>Defaults to 5.  Set higher to increase the number of rows that automatically load before and after the viewport.</td>
+            <td>Defaults to 20.  Set higher to increase the number of rows that automatically load before and after the viewport.</td>
         </tr>
     </table>
 
