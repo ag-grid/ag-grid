@@ -317,9 +317,13 @@ Grid.prototype.setBodyContainerWidth = function() {
     this.eBodyContainer.style.width = mainRowWidth;
 };
 
-Grid.prototype.updateModelAndRefresh = function(step) {
+// rowsToRefresh is at what index to start refreshing the rows. the assumption is
+// if we are expanding or collapsing a group, then only he rows below the group
+// need to be refresh. this allows the context (eg focus) of the other cells to
+// remain.
+Grid.prototype.updateModelAndRefresh = function(step, refreshFromIndex) {
     this.inMemoryRowController.updateModel(step);
-    this.rowRenderer.refreshView();
+    this.rowRenderer.refreshView(refreshFromIndex);
 };
 
 Grid.prototype.setRows = function(rows, firstId) {
@@ -431,8 +435,8 @@ Grid.prototype.addApi = function() {
         getModel: function() {
             return that.rowModel;
         },
-        onGroupExpandedOrCollapsed: function() {
-            that.updateModelAndRefresh(constants.STEP_MAP);
+        onGroupExpandedOrCollapsed: function(refreshFromIndex) {
+            that.updateModelAndRefresh(constants.STEP_MAP, refreshFromIndex);
         },
         expandAll: function() {
             that.inMemoryRowController.expandOrCollapseAll(true, null);

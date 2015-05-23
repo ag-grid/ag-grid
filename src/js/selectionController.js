@@ -81,6 +81,12 @@ SelectionController.prototype.setRowModel = function(rowModel) {
     this.rowModel = rowModel;
 };
 
+// called when use hits 'space' when cell is focused
+SelectionController.prototype.isNodeSelected = function(node) {
+    // if it's set, the id is a number, otherwise it's undefined
+    return typeof this.selectedNodesById[node.id] === 'number';
+};
+
 // public - this clears the selection, but doesn't clear down the css - when it is called, the
 // caller then gets the grid to refresh.
 SelectionController.prototype.deselectAll = function() {

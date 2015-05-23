@@ -273,4 +273,17 @@ Utils.prototype.getScrollbarWidth = function () {
     return widthNoScroll - widthWithScroll;
 };
 
+Utils.prototype.isKeyPressed = function(event, keyToCheck) {
+    var pressedKey = event.which || event.keyCode;
+    return pressedKey === keyToCheck;
+};
+
+Utils.prototype.setVisible = function(element, visible) {
+    if (visible) {
+        element.style.display = 'inline';
+    } else {
+        element.style.display = 'none';
+    }
+};
+
 module.exports = new Utils();

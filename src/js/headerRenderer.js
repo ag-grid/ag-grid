@@ -343,10 +343,10 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapp
             var sortDescending = columnToClear.sort === constants.DESC;
 
             if (columnToClear.eSortAsc) {
-                columnToClear.eSortAsc.style.display = sortAscending ? 'inline' : 'none';
+                utils.setVisible(columnToClear.eSortAsc, sortAscending);
             }
             if (columnToClear.eSortDesc) {
-                columnToClear.eSortDesc.style.display = sortDescending ? 'inline' : 'none';
+                utils.setVisible(columnToClear.eSortDesc, sortDescending);
             }
         });
 

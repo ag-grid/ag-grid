@@ -25,7 +25,14 @@ include '../documentation_header.php';
 
     <p>
         Custom sorting is provided at a column level by configuring a comparator on the column definition.
+        The sort methods gets the value as well as the entire data row.
     </p>
+
+    <pre>
+colDef.comparator = function (value1, value2, data1, data2) {
+    return value1 - value2;
+}</pre>
+
 
     <show-example example="example1"></show-example>
 </div>
