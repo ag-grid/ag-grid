@@ -55,7 +55,6 @@ gridsModule.controller('mainController', function($scope) {
     $scope.style = 'ag-fresh';
     $scope.groupBy = '';
     $scope.groupType = 'col';
-    $scope.editable = 'false';
     $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
 
@@ -289,7 +288,7 @@ gridsModule.controller('mainController', function($scope) {
     };
 
     function editableFunc() {
-        return $scope.editable === 'true';
+        return true;
     }
 
     function createCols() {

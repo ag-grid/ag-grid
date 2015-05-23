@@ -54,8 +54,8 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
         eGroupCell.appendChild(eExpandIcon);
         eGroupCell.appendChild(eContractIcon);
 
-        eExpandIcon.addEventListener("click", expandOrContract);
-        eContractIcon.addEventListener("click", expandOrContract);
+        eExpandIcon.addEventListener('click', expandOrContract);
+        eContractIcon.addEventListener('click', expandOrContract);
         eGroupCell.addEventListener('dblclick', expandOrContract);
 
         showAndHideExpandAndContract(eExpandIcon, eContractIcon, params.node.expanded);

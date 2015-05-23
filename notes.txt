@@ -1,0 +1,7 @@
+
+Doing releases:
+1. Update version in bower.json
+2. Update version in package.json
+3. Update version in grid.js
+-- build
+4. Push to node npm: npm publish ./

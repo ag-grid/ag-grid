@@ -289,7 +289,6 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
 
     // var rowData = node.rowData;
     var rowIsAGroup = node.group;
-    var rowIsAFooter = node.footer;
 
     // try compiling as we insert rows
     var newChildScope = this.createChildScopeOrNull(node.data);
@@ -317,17 +316,15 @@ RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
     if (drawGroupRow) {
         var firstColumn = columns[0];
 
-        var eGroupRow = that.createGroupElement(node, false);
+        var eGroupRow = that.createGroupElement(node, rowIndex, false);
         if (firstColumn.pinned) {
             ePinnedRow.appendChild(eGroupRow);
 
-            var eGroupRowPadding = that.createGroupElement(node, true);
+            var eGroupRowPadding = that.createGroupElement(node, rowIndex, true);
             eMainRow.appendChild(eGroupRowPadding);
         } else {
             eMainRow.appendChild(eGroupRow);
         }
-
-        //renderedRow.eCells[firstColumn.colKey] = eGroupRow;
 
     } else {
 
@@ -522,15 +519,17 @@ RowRenderer.prototype.getIndexOfRenderedNode = function(node) {
     return -1;
 };
 
-RowRenderer.prototype.createGroupElement = function(node, padding) {
+RowRenderer.prototype.createGroupElement = function(node, rowIndex, padding) {
     var eRow;
+    // padding means we are on the right hand side of a pinned table, ie
+    // in the main body.
     if (padding) {
         eRow = document.createElement('span');
     } else {
         var params = {
             node: node,
             data: node.data,
-            rowIndex: 4,
+            rowIndex: rowIndex,
             api: this.gridOptionsWrapper.getApi(),
             colDef: {
                 cellRenderer: {
@@ -732,7 +731,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.addCellClickedHandler(eGridCell, node, column, value, rowIndex);
     this.addCellDoubleClickedHandler(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter);
 
-    this.addCellNavigationHandler(eGridCell, rowIndex, column);
+    this.addCellNavigationHandler(eGridCell, rowIndex, column, node);
 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
@@ -740,10 +739,8 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
         if (that.isCellEditable(column.colDef, node)) {
             that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
-            console.log('editing = true');
             return true;
         } else {
-            console.log('editing = false');
             return false;
         }
     };
@@ -751,13 +748,19 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     return eGridCell;
 };
 
-RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, column) {
+RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, column, node) {
     var that = this;
     eGridCell.addEventListener('keydown', function(event) {
-        console.log('rowRenderer.addCellNavigationHandler.keyDown');
         if (that.editingCell) {
             return;
         }
+        // only interested on key presses that are directly on this element, not any children elements. this
+        // stops navigation if the user is in, for example, a text field inside the cell, and user hits
+        // on of the keys we are looking for.
+        if (event.currentTarget !== eGridCell) {
+            return;
+        }
+
         var key = event.which || event.keyCode;
 
         var startNavigation = key === constants.KEY_DOWN || key === constants.KEY_UP
@@ -779,59 +782,95 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
                 }
             }
         }
+
+        var selectRow = key === constants.KEY_SPACE;
+        if (selectRow) {
+            var selected = that.selectionController.isNodeSelected(node);
+            var tryMulti = event.ctrlKey || event.metaKey;
+            if (selected) {
+                that.selectionController.deselectNode(node);
+            } else {
+                that.selectionController.selectNode(node, tryMulti);
+            }
+            event.preventDefault();
+        }
     });
 };
 
+// we use index for rows, but column object for columns, as the next column (by index) might not
+// be visible (header grouping) so it's not reliable, so using the column object instead.
 RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
 
-    var rowToFocus;
-    var colToFocus;
+    var cellToFocus = {rowIndex: rowIndex, column: column};
+    var renderedRow;
+    var eCell;
 
-    switch (key) {
-        case constants.KEY_UP :
-            // if already on top row, do nothing
-            if (rowIndex === this.firstVirtualRenderedRow) {
-                return;
-            }
-            rowToFocus = rowIndex - 1;
-            colToFocus = column.index;
-            break;
-        case constants.KEY_DOWN :
-            // if already on bottom, do nothing
-            if (rowIndex === this.lastVirtualRenderedRow) {
-                return;
-            }
-            rowToFocus = rowIndex + 1;
-            colToFocus = column.index;
-            break;
-        case constants.KEY_RIGHT :
-            var colToRight = this.columnModel.getVisibleColAfter(column);
-            // if already on right, do nothing
-            if (!colToRight) {
-                return;
-            }
-            rowToFocus = rowIndex ;
-            colToFocus = colToRight.index;
-            break;
-        case constants.KEY_LEFT :
-            var colToLeft = this.columnModel.getVisibleColBefore(column);
-            // if already on right, do nothing
-            if (!colToLeft) {
-                return;
-            }
-            rowToFocus = rowIndex ;
-            colToFocus = colToLeft.index;
-            break;
+    // we keep searching for a next cell until we find one. this is how the group rows get skipped
+    while (!eCell) {
+        cellToFocus = this.getNextCellToFocus(key, cellToFocus);
+        // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
+        if (!cellToFocus) {
+            return;
+        }
+        // see if the next cell is selectable, if yes, use it, if not, skip it
+        renderedRow = this.renderedRows[cellToFocus.rowIndex];
+        eCell = renderedRow.eCells[cellToFocus.column.index];
     }
-
-    var renderedRow = this.renderedRows[rowToFocus];
-    var eCell = renderedRow.eCells[colToFocus];
 
     // this scrolls the row into view
     this.angularGrid.ensureIndexVisible(renderedRow.rowIndex);
 
     // this changes the css on the cell
-    this.focusCell(eCell, rowToFocus, colToFocus, true);
+    this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, true);
+};
+
+RowRenderer.prototype.getNextCellToFocus = function(key, lastCellToFocus) {
+    var lastRowIndex = lastCellToFocus.rowIndex;
+    var lastColumn = lastCellToFocus.column;
+
+    var nextRowToFocus;
+    var nextColumnToFocus;
+    switch (key) {
+        case constants.KEY_UP :
+            // if already on top row, do nothing
+            if (lastRowIndex === this.firstVirtualRenderedRow) {
+                return null;
+            }
+            nextRowToFocus = lastRowIndex - 1;
+            nextColumnToFocus = lastColumn;
+            break;
+        case constants.KEY_DOWN :
+            // if already on bottom, do nothing
+            if (lastRowIndex === this.lastVirtualRenderedRow) {
+                return null;
+            }
+            nextRowToFocus = lastRowIndex + 1;
+            nextColumnToFocus = lastColumn;
+            break;
+        case constants.KEY_RIGHT :
+            var colToRight = this.columnModel.getVisibleColAfter(lastColumn);
+            // if already on right, do nothing
+            if (!colToRight) {
+                return null;
+            }
+            nextRowToFocus = lastRowIndex ;
+            nextColumnToFocus = colToRight;
+            break;
+        case constants.KEY_LEFT :
+            var colToLeft = this.columnModel.getVisibleColBefore(lastColumn);
+            // if already on left, do nothing
+            if (!colToLeft) {
+                return null;
+            }
+            nextRowToFocus = lastRowIndex ;
+            nextColumnToFocus = colToLeft;
+            break;
+    }
+
+    return {
+        rowIndex: nextRowToFocus,
+        column: nextColumnToFocus
+    };
 };
 
 RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrowserFocus) {
