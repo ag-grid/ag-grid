@@ -21,8 +21,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowSelection: 'multiple',
         rowData: null,
         rowSelected: rowSelectedFunc,
-        selectionChanged: selectionChangedFunc,
-        selectionChanging: selectionChangingFunc
+        selectionChanged: selectionChangedFunc        
     };
 
     function rowSelectedFunc(row) {
@@ -49,5 +48,6 @@ module.controller("exampleCtrl", function($scope, $http) {
         .then(function(res){
             $scope.gridOptions.rowData = res.data;
             $scope.gridOptions.api.onNewRows();
+            $scope.gridOptions.selectionChanging = selectionChangingFunc;
         });
 });
