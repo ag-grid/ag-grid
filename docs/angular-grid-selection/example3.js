@@ -21,7 +21,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowSelection: 'multiple',
         rowData: null,
         rowSelected: rowSelectedFunc,
-        selectionChanged: selectionChangedFunc
+        selectionChanged: selectionChangedFunc,
+        selectionChanging: selectionChangingFunc
     };
 
     function rowSelectedFunc(row) {
@@ -30,6 +31,18 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     function selectionChangedFunc() {
         window.alert('selection changed, ' + $scope.gridOptions.selectedRows.length + ' rows selected');
+    }
+
+    function selectionChangingFunc(params) {
+        if (window.confirm('Change selection to ' + 
+                (!params.selectedRowsAfterChange.length ? 
+                    'nothing' :
+                    params.selectedRowsAfterChange.map(function(row) { return row.athlete; }).join(', ')) 
+                + '?')) {
+            params.ok();
+        } else {
+            params.cancel();
+        }
     }
 
     $http.get("../olympicWinners.json")

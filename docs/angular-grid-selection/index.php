@@ -81,9 +81,13 @@ include '../documentation_header.php';
     <h3>Selection Callbacks</h3>
 
     <p>
-        There are two callbacks with regards selection:<br/>
+        There are three callbacks with regards selection:<br/>
         rowSelected(row): Gets called when a row is selected and passes the selected row.<br/>
         selectionChanged(): Gets called when a row is selected or deselected.<br/>
+        selectionChanging(params): Gets called before row selection changes and allows to suppress the change. 
+          For this purpose params contains a function 'cancel()' to suppress the change and a function 'ok()' to 
+          allow it. To support the decision params offers the property 'selectedRowsAfterChange' containing the rows 
+          that would be selected when the change would be allowed.<br/>
     </p>
 
     <show-example example="example3" example-height="450px"></show-example>
