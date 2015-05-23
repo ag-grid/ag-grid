@@ -57,7 +57,7 @@ RowRenderer.prototype.findAllElements = function(eGrid) {
     }
 };
 
-RowRenderer.prototype.refreshView = function() {
+RowRenderer.prototype.refreshView = function(refreshFromIndex) {
     if (!this.gridOptionsWrapper.isDontUseScrolls()) {
         var rowCount = this.rowModel.getVirtualRowCount();
         var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
@@ -65,7 +65,7 @@ RowRenderer.prototype.refreshView = function() {
         this.ePinnedColsContainer.style.height = containerHeight + "px";
     }
 
-    this.refreshAllVirtualRows();
+    this.refreshAllVirtualRows(refreshFromIndex);
 };
 
 RowRenderer.prototype.softRefreshView = function() {
@@ -140,10 +140,10 @@ RowRenderer.prototype.rowDataChanged = function(rows) {
     this.drawVirtualRows();
 };
 
-RowRenderer.prototype.refreshAllVirtualRows = function() {
+RowRenderer.prototype.refreshAllVirtualRows = function(fromIndex) {
     // remove all current virtual rows, as they have old data
     var rowsToRemove = Object.keys(this.renderedRows);
-    this.removeVirtualRows(rowsToRemove);
+    this.removeVirtualRows(rowsToRemove, fromIndex);
 
     // add in new rows
     this.drawVirtualRows();
@@ -168,10 +168,14 @@ RowRenderer.prototype.refreshGroupRows = function() {
 };
 
 // takes array of row indexes
-RowRenderer.prototype.removeVirtualRows = function(rowsToRemove) {
+RowRenderer.prototype.removeVirtualRows = function(rowsToRemove, fromIndex) {
     var that = this;
+    // if no from inde then set to -1, which will refresh everything
+    var realFromIndex = (typeof fromIndex === 'number') ? fromIndex : -1;
     rowsToRemove.forEach(function(indexToRemove) {
-        that.removeVirtualRow(indexToRemove);
+        if (indexToRemove >= realFromIndex) {
+            that.removeVirtualRow(indexToRemove);
+        }
     });
 };
 
@@ -547,27 +551,27 @@ RowRenderer.prototype.createGroupElement = function(node, padding) {
     return eRow;
 };
 
-RowRenderer.prototype.putDataIntoCell = function(column, value, valueGetter, node, $childScope, eGridCell, rowIndex, refreshCellFunction) {
+RowRenderer.prototype.putDataIntoCell = function(column, value, valueGetter, node, $childScope, eSpanWithValue, eGridCell, rowIndex, refreshCellFunction) {
     // template gets preference, then cellRenderer, then do it ourselves
     var colDef = column.colDef;
     if (colDef.template) {
-        eGridCell.innerHTML = colDef.template;
+        eSpanWithValue.innerHTML = colDef.template;
     } else if (colDef.templateUrl) {
         var template = this.templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
         if (template) {
-            eGridCell.innerHTML = template;
+            eSpanWithValue.innerHTML = template;
         }
     } else if (colDef.cellRenderer) {
-        this.useCellRenderer(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter, eGridCell);
+        this.useCellRenderer(column, value, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction, valueGetter, eGridCell);
     } else {
         // if we insert undefined, then it displays as the string 'undefined', ugly!
         if (value !== undefined && value !== null && value !== '') {
-            eGridCell.innerHTML = value;
+            eSpanWithValue.innerHTML = value;
         }
     }
 };
 
-RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScope, eGridCell, rowIndex, refreshCellFunction, valueGetter, eParentCell) {
+RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction, valueGetter, eGridCell) {
     var colDef = column.colDef;
     var rendererParams = {
         value: value,
@@ -581,7 +585,7 @@ RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScop
         api: this.gridOptionsWrapper.getApi(),
         context: this.gridOptionsWrapper.getContext(),
         refreshCell: refreshCellFunction,
-        parentCell: eParentCell
+        eGridCell: eGridCell
     };
     var cellRenderer;
     if (typeof colDef.cellRenderer === 'object') {
@@ -597,10 +601,10 @@ RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScop
     var resultFromRenderer = cellRenderer(rendererParams);
     if (utils.isNodeOrElement(resultFromRenderer)) {
         // a dom node or element was returned, so add child
-        eGridCell.appendChild(resultFromRenderer);
+        eSpanWithValue.appendChild(resultFromRenderer);
     } else {
         // otherwise assume it was html, so just insert
-        eGridCell.innerHTML = resultFromRenderer;
+        eSpanWithValue.innerHTML = resultFromRenderer;
     }
 };
 
@@ -765,11 +769,14 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
 
         var startEdit = key === constants.KEY_ENTER;
         if (startEdit) {
-            //console.log('preventDefault');
-            //event.preventDefault();
             var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colKey];
             if (startEditingFunc) {
-                startEditingFunc();
+                var editingStarted = startEditingFunc();
+                if (editingStarted) {
+                    // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
+                    // press, and stops editing immediately, hence giving he user experience that nothing happened
+                    event.preventDefault();
+                }
             }
         }
     });
@@ -873,7 +880,7 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
         that.softRefreshCell(eGridCell, isFirstColumn, node, column, $childScope, rowIndex);
     };
 
-    this.putDataIntoCell(column, value, valueGetter, node, $childScope, eSpanWithValue, rowIndex, refreshCellFunction);
+    this.putDataIntoCell(column, value, valueGetter, node, $childScope, eSpanWithValue, eGridCell, rowIndex, refreshCellFunction);
 };
 
 RowRenderer.prototype.addCellDoubleClickedHandler = function(eGridCell, node, column, value, rowIndex, $childScope, isFirstColumn, valueGetter) {

@@ -12,6 +12,7 @@ var constants = {
 
     KEY_TAB: 9,
     KEY_ENTER: 13,
+    KEY_SPACE: 32,
     KEY_DOWN: 40,
     KEY_UP: 38,
     KEY_LEFT: 37,
