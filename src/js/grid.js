@@ -101,7 +101,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     // initialise all the beans
     templateService.init($scope);
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
-    filterManager.init(this, gridOptionsWrapper, $compile, $scope);
+    filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService);
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,

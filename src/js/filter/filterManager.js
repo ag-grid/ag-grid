@@ -5,12 +5,13 @@ var StringFilter = require('./textFilter');
 
 function FilterManager() {}
 
-FilterManager.prototype.init = function(grid, gridOptionsWrapper, $compile, $scope) {
+FilterManager.prototype.init = function(grid, gridOptionsWrapper, $compile, $scope, expressionService) {
     this.$compile = $compile;
     this.$scope = $scope;
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.grid = grid;
     this.allFilters = {};
+    this.expressionService = expressionService;
 };
 
 FilterManager.prototype.setRowModel = function(rowModel) {
@@ -116,6 +117,15 @@ FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot
     ePopup.style.top = y + "px";
 };
 
+FilterManager.prototype.createValueGetter = function(colDef) {
+    var that = this;
+    return function valueGetter(node) {
+        var api = that.gridOptionsWrapper.getApi();
+        var context = that.gridOptionsWrapper.getContext();
+        return utils.getValue(that.expressionService, node.data, colDef, node, api, context);
+    };
+};
+
 FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
 
     var filterWrapper = this.allFilters[colDefWrapper.colKey];
@@ -134,7 +144,8 @@ FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
             filterChangedCallback: filterChangedCallback,
             filterParams: filterParams,
             scope: filterWrapper.scope,
-            localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc()
+            localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
+            valueGetter: this.createValueGetter(colDef)
         };
         if (typeof colDef.filter === 'function') {
             // if user provided a filter, just use it

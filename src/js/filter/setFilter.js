@@ -7,8 +7,9 @@ var DEFAULT_ROW_HEIGHT = 20;
 function SetFilter(params) {
     var filterParams = params.filterParams;
     this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
-    this.model = new SetFilterModel(params.colDef, params.rowModel);
+    this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
     this.filterChangedCallback = params.filterChangedCallback;
+    this.valueGetter = params.valueGetter;
     this.rowsInBodyContainer = {};
     this.colDef = params.colDef;
     this.localeTextFunc = params.localeTextFunc;
@@ -33,7 +34,6 @@ SetFilter.prototype.isFilterActive = function() {
 
 /* public */
 SetFilter.prototype.doesFilterPass = function(node) {
-    var value = node.value;
     var model = node.model;
     //if no filter, always pass
     if (model.isEverythingSelected()) {
@@ -44,7 +44,9 @@ SetFilter.prototype.doesFilterPass = function(node) {
         return false;
     }
 
+    var value = this.valueGetter(node);
     value = utils.makeNull(value);
+
     var filterPassed = model.selectedValuesMap[value] !== undefined;
     return filterPassed;
 };

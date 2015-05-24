@@ -9,6 +9,7 @@ var ENDS_WITH = 4;
 function TextFilter(params) {
     this.filterChangedCallback = params.filterChangedCallback;
     this.localeTextFunc = params.localeTextFunc;
+    this.valueGetter = params.valueGetter;
     this.createGui();
     this.filterText = null;
     this.filterType = CONTAINS;
@@ -24,7 +25,7 @@ TextFilter.prototype.doesFilterPass = function(node) {
     if (!this.filterText) {
         return true;
     }
-    var value = node.value;
+    var value = this.valueGetter(node);
     if (!value) {
         return false;
     }

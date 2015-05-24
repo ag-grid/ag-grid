@@ -1,11 +1,11 @@
     var utils = require('../utils');
 
-    function SetFilterModel(colDef, rowModel) {
+    function SetFilterModel(colDef, rowModel, valueGetter) {
 
         if (colDef.filterParams && colDef.filterParams.values) {
             this.uniqueValues = colDef.filterParams.values;
         } else {
-            this.createUniqueValues(rowModel, colDef.field);
+            this.createUniqueValues(rowModel, colDef.field, valueGetter);
         }
 
         if (colDef.comparator) {
@@ -23,7 +23,7 @@
         this.selectEverything();
     }
 
-    SetFilterModel.prototype.createUniqueValues = function(rowModel, key) {
+    SetFilterModel.prototype.createUniqueValues = function(rowModel, key, valueGetter) {
         var uniqueCheck = {};
         var result = [];
 
@@ -34,8 +34,7 @@
                     // group node, so dig deeper
                     recursivelyProcess(node.children);
                 } else {
-                    var data = node.data;
-                    var value = data ? data[key] : null;
+                    var value = valueGetter(node);
                     if (value === "" || value === undefined) {
                         value = null;
                     }

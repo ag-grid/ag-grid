@@ -8,6 +8,7 @@ var GREATER_THAN = 3;
 function NumberFilter(params) {
     this.filterChangedCallback = params.filterChangedCallback;
     this.localeTextFunc = params.localeTextFunc;
+    this.valueGetter = params.valueGetter;
     this.createGui();
     this.filterNumber = null;
     this.filterType = EQUALS;
@@ -23,7 +24,7 @@ NumberFilter.prototype.doesFilterPass = function(node) {
     if (this.filterNumber === null) {
         return true;
     }
-    var value = node.value;
+    var value = this.valueGetter(node);
 
     if (!value && value !== 0) {
         return false;
