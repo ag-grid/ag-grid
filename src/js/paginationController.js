@@ -1,26 +1,27 @@
 var TEMPLATE = [
     '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">',
     '<span id="firstRowOnPage"></span>',
-    ' to ',
+    ' [TO] ',
     '<span id="lastRowOnPage"></span>',
-    ' of ',
+    ' [OF] ',
     '<span id="recordCount"></span>',
     '</span>',
     '<span class="ag-paging-page-summary-panel">',
-    '<button class="ag-paging-button" id="btFirst">First</button>',
-    '<button class="ag-paging-button" id="btPrevious">Previous</button>',
-    ' Page ',
+    '<button class="ag-paging-button" id="btFirst">[FIRST]</button>',
+    '<button class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>',
+    ' [PAGE] ',
     '<span id="current"></span>',
-    ' of ',
+    ' [OF] ',
     '<span id="total"></span>',
-    '<button class="ag-paging-button" id="btNext">Next</button>',
-    '<button class="ag-paging-button" id="btLast">Last</button>',
+    '<button class="ag-paging-button" id="btNext">[NEXT]</button>',
+    '<button class="ag-paging-button" id="btLast">[LAST]</button>',
     '</span>'
 ].join('');
 
 function PaginationController() {}
 
-PaginationController.prototype.init = function(ePagingPanel, angularGrid) {
+PaginationController.prototype.init = function(ePagingPanel, angularGrid, gridOptionsWrapper) {
+    this.gridOptionsWrapper = gridOptionsWrapper;
     this.angularGrid = angularGrid;
     this.populatePanel(ePagingPanel);
     this.callVersion = 0;
@@ -65,8 +66,9 @@ PaginationController.prototype.setTotalLabels = function() {
         this.lbTotal.innerHTML = this.totalPages.toLocaleString();
         this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
     } else {
-        this.lbTotal.innerHTML = 'more';
-        this.lbRecordCount.innerHTML = 'more';
+        var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
+        this.lbTotal.innerHTML = moreText;
+        this.lbRecordCount.innerHTML = moreText;
     }
 };
 
@@ -187,9 +189,22 @@ PaginationController.prototype.enableOrDisableButtons = function() {
     this.btLast.disabled = disableLast;
 };
 
+PaginationController.prototype.createTemplate = function() {
+    var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+    return TEMPLATE
+        .replace('[PAGE]', localeTextFunc('page', 'Page'))
+        .replace('[TO]', localeTextFunc('to', 'to'))
+        .replace('[OF]', localeTextFunc('of', 'of'))
+        .replace('[OF]', localeTextFunc('of', 'of'))
+        .replace('[FIRST]', localeTextFunc('first', 'First'))
+        .replace('[PREVIOUS]', localeTextFunc('previous', 'Previous'))
+        .replace('[NEXT]', localeTextFunc('next', 'Next'))
+        .replace('[LAST]', localeTextFunc('last', 'Last'));
+};
+
 PaginationController.prototype.populatePanel = function(ePagingPanel) {
 
-    ePagingPanel.innerHTML = TEMPLATE;
+    ePagingPanel.innerHTML = this.createTemplate();
 
     this.btNext = ePagingPanel.querySelector('#btNext');
     this.btPrevious = ePagingPanel.querySelector('#btPrevious');

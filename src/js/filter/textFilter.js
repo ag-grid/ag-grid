@@ -8,6 +8,7 @@ var ENDS_WITH = 4;
 
 function TextFilter(params) {
     this.filterChangedCallback = params.filterChangedCallback;
+    this.localeTextFunc = params.localeTextFunc;
     this.createGui();
     this.filterText = null;
     this.filterType = CONTAINS;
@@ -55,8 +56,24 @@ TextFilter.prototype.isFilterActive = function() {
     return this.filterText !== null;
 };
 
+TextFilter.prototype.createTemplate = function() {
+    return template
+        .replace('[FILTER...]', this.localeTextFunc('filterOoo', 'Filter...'))
+        .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
+        .replace('[CONTAINS]', this.localeTextFunc('contains', 'Contains'))
+        .replace('[STARTS WITH]', this.localeTextFunc('startsWith', 'Starts with'))
+        .replace('[ENDS WITH]', this.localeTextFunc('endsWith', 'Ends with'))
+;
+};
+
+'<option value="1">Contains</option>',
+    '<option value="2">Equals</option>',
+    '<option value="3">Starts with</option>',
+    '<option value="4">Ends with</option>',
+
+
 TextFilter.prototype.createGui = function() {
-    this.eGui = utils.loadTemplate(template);
+    this.eGui = utils.loadTemplate(this.createTemplate());
     this.eFilterTextField = this.eGui.querySelector("#filterText");
     this.eTypeSelect = this.eGui.querySelector("#filterType");
 

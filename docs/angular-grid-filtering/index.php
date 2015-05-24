@@ -43,7 +43,7 @@ include '../documentation_header.php';
             <td>A number comparison filter. Functionality for matching on {equals, less than, greater than}.</td>
         </tr>
         <tr>
-            <th>string</th>
+            <th>text</th>
             <td>A string comparison filter. Functionality for mating on {contains, starts with, ends with, equals}.</td>
         </tr>
     </table>

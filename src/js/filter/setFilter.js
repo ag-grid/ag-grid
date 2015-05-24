@@ -11,6 +11,7 @@ function SetFilter(params) {
     this.filterChangedCallback = params.filterChangedCallback;
     this.rowsInBodyContainer = {};
     this.colDef = params.colDef;
+    this.localeTextFunc = params.localeTextFunc;
     if (filterParams) {
         this.cellRenderer = filterParams.cellRenderer;
     }
@@ -64,10 +65,16 @@ SetFilter.prototype.getModel = function() {
     return this.model;
 };
 
+SetFilter.prototype.createTemplate = function() {
+    return template
+        .replace('[SELECT ALL]', this.localeTextFunc('selectAll', 'Select All'))
+        .replace('[SEARCH...]', this.localeTextFunc('searchOoo', 'Search...'));
+};
+
 SetFilter.prototype.createGui = function() {
     var _this = this;
 
-    this.eGui = utils.loadTemplate(template);
+    this.eGui = utils.loadTemplate(this.createTemplate());
 
     this.eListContainer = this.eGui.querySelector(".ag-filter-list-container");
     this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
@@ -166,7 +173,8 @@ SetFilter.prototype.insertRow = function(value, rowIndex) {
 
     } else {
         //otherwise display as a string
-        var displayNameOfValue = value === null ? "(Blanks)" : value;
+        var blanksText = '(' + this.localeTextFunc('blanks', 'Blanks') + ')';
+        var displayNameOfValue = value === null ? blanksText : value;
         valueElement.innerHTML = displayNameOfValue;
     }
     var eCheckbox = eFilterValue.querySelector("input");
@@ -174,7 +182,7 @@ SetFilter.prototype.insertRow = function(value, rowIndex) {
 
     eCheckbox.onclick = function() {
         _this.onCheckboxClicked(eCheckbox, value);
-    }
+    };
 
     eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 
