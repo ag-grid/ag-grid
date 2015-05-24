@@ -134,6 +134,11 @@ include '../documentation_header.php';
             <td>If true, rows won't be selected when clicked. Use when you want checkbox selection exclusively.</td>
         </tr>
         <tr>
+            <th>suppressCellSelection</th>
+            <td>If true, cells won't be selectable. This means cells will not get keyboard focus when you
+                click on them.</td>
+        </tr>
+        <tr>
             <th>selectionChanged</th>
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
