@@ -194,6 +194,12 @@
                     <a class="sidebarLink" href="/angular-grid-keyboard-navigation/index.php">Keyboard Navigation</a>
                 <?php } ?>
 
+                <?php if ($key == "Internationalisation") { ?>
+                    <span class="sidebarLinkSelected">Internationalisation</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-internationalisation/index.php">Internationalisation</a>
+                <?php } ?>
+
                 <h4>
                     Working with Data
                 </h4>

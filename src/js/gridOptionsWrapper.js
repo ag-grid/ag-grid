@@ -100,4 +100,16 @@ GridOptionsWrapper.prototype.getPinnedColCount = function() {
     }
 };
 
+GridOptionsWrapper.prototype.getLocaleTextFunc = function() {
+    var that = this;
+    return function (key, defaultValue) {
+        var localeText = that.gridOptions.localeText;
+        if (localeText && localeText[key]) {
+            return localeText[key];
+        } else {
+            return defaultValue;
+        }
+    };
+};
+
 module.exports = GridOptionsWrapper;

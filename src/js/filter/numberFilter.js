@@ -7,6 +7,7 @@ var GREATER_THAN = 3;
 
 function NumberFilter(params) {
     this.filterChangedCallback = params.filterChangedCallback;
+    this.localeTextFunc = params.localeTextFunc;
     this.createGui();
     this.filterNumber = null;
     this.filterType = EQUALS;
@@ -59,8 +60,16 @@ NumberFilter.prototype.isFilterActive = function() {
     return this.filterNumber !== null;
 };
 
+NumberFilter.prototype.createTemplate = function() {
+    return template
+        .replace('[FILTER...]', this.localeTextFunc('filterOoo', 'Filter...'))
+        .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
+        .replace('[LESS THAN]', this.localeTextFunc('lessThan', 'Less than'))
+        .replace('[GREATER THAN]', this.localeTextFunc('greaterThan', 'Greater than'));
+};
+
 NumberFilter.prototype.createGui = function() {
-    this.eGui = utils.loadTemplate(template);
+    this.eGui = utils.loadTemplate(this.createTemplate());
     this.eFilterTextField = this.eGui.querySelector("#filterText");
     this.eTypeSelect = this.eGui.querySelector("#filterType");
 

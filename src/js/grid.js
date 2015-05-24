@@ -122,7 +122,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var paginationController = null;
     if (useScrolls) {
         paginationController = new PaginationController();
-        paginationController.init(this.ePagingPanel, this);
+        paginationController.init(this.ePagingPanel, this, gridOptionsWrapper);
     }
 
     this.rowModel = rowModel;

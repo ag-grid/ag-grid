@@ -133,7 +133,8 @@ FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
             rowModel: this.rowModel,
             filterChangedCallback: filterChangedCallback,
             filterParams: filterParams,
-            scope: filterWrapper.scope
+            scope: filterWrapper.scope,
+            localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc()
         };
         if (typeof colDef.filter === 'function') {
             // if user provided a filter, just use it
