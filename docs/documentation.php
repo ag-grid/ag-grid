@@ -26,48 +26,50 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>17th May 2015</b>
+        <b>25th May 2015</b>
     </p>
 
     <p>
         This is what I did last week:
-
     <ul>
 
         <li>
-            <b>Revamp of grouping</b> - I'm in the process of refactoring the cells to pave the way for keyboard
-            navigation and improved selection (both of which are work in progress). Because of this, how groups
-            are presented is now different. If using grouping, please check the documentation on how to use 'group
-            cell renderer' in your columns, to have them present the groups for selection.
+            <b>Keyboard Navigation: </b> Select a cell, then use the arrow keys to navigate through the grid.
+            <b>Enter key</b> will start editing the currently focused cell, or expand / collapse the group if a group cell
+            is focused. <b>Space key</b> will select / un-select the currently focused row.
         </li>
+
         <li>
-            <b>Double click to expand groups</b>, or click the icon once. This makes the groups behave in a more natural
-            way. Again this was working in preparation of cell selection and keyboard navigation.
+            <b>Multilingual Support: </b> Now you can override all the texts in he grid, such as 'next' and 'previousy'
+            in the paging panel.
         </li>
+
         <li>
-            <b>ensureIndexVisible</b> and <b>ensureNodeVisible</b> API functions, to scroll the grid to make rows visible.
+            <b>Filtering with Value Getters: </b> Now filtering works with value getters.
         </li>
+
         <li>
-            <b>Multi column sort</b> (thanks Dylan Robinson). Hold down shift on the column header to add it to the sort.
+            <b>IE Issues: </b> Loading panel and paging panel now working in IE.
         </li>
+
         <li>
-            <b>Fixed width cols</b> for 'size to fit' - add 'suppressSizeToFit' to column definition to have the column
-            width not change during the 'size to fit' operation.
-        </li>
-        <li>
-            <b>Released 1.5.0</b> - contains all the above.
+            <b>Released 1.6.0</b> - contains all the above.
         </li>
 
     </ul>
 
     <p>
-        This is what I'm doing next week:
+        This is what I'm doing this week:
     </p>
 
     <ul>
         <li>
-            I have the back broken on Cell Selection and Keyboard Navigation. I should have that finished in the next week.
-            After that the next on the list will be a) improved selection & API, b) filtering API and c) server side filtering and sorting.
+            My 'to do' list as as follows: a) Improved selection & API, b) Filtering API and c) Server side filtering and sorting.
+            so will see how much of it I get done.
+        </li>
+        <li>
+            Are you in London? Catch me at the meet-up "Solving real world problems with AngularJS on Thursday 28th May 2015"
+            where I will be presenting a live demonstration of Angular Grid.
         </li>
     </ul>
 
@@ -130,6 +132,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>25th May</b> Keyboard Navigation and general improvements
+    </p>
 
     <hr/>
 

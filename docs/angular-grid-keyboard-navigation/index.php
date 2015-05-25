@@ -59,6 +59,12 @@ include '../documentation_header.php';
         go into edit mode when the Enter key is pressed.
     </p>
 
+    <h4>Suppress Cell Selection</h4>
+
+    <p>
+        If you want keyboard navigation turned off, then set <i>suppressCellSelection=true</i> in the <i>gridOptions</i>.
+    </p>
+
     <h4>Example</h4>
 
     <p>

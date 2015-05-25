@@ -5,9 +5,6 @@
 .ag-fresh .ag-cell {
   padding: 2px;
 }
-.ag-fresh .ag-cell:focus {
-  outline: none;
-}
 .ag-fresh .ag-cell-focus {
   border: 1px solid #a9a9a9;
 }
