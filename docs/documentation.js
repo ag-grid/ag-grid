@@ -15,11 +15,13 @@
         var example = $attrs["example"];
         $scope.source =  example + ".html";
         $scope.selectedTab = 'example';
+
         if ($attrs.exampleHeight) {
-            $scope.exampleHeight = $attrs.exampleHeight;
+            $scope.iframeStyle = {height: $attrs.exampleHeight};
         } else {
-            $scope.exampleHeight = '500px';
+            $scope.iframeStyle = {height: '500px'}
         }
+
         $http.get("./"+example+".html").
             success(function(data, status, headers, config) {
                 $scope.html = data;

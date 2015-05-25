@@ -144,7 +144,7 @@ Grid.prototype.showAndPositionPagingPanel = function() {
     }
 
     if (this.isShowPagingPanel()) {
-        this.ePagingPanel.style['display'] = null;
+        this.ePagingPanel.style['display'] = 'inline';
         var heightOfPager = this.ePagingPanel.offsetHeight;
         this.eBody.style['padding-bottom'] = heightOfPager + 'px';
         var heightOfRoot = this.eRoot.clientHeight;
@@ -294,7 +294,7 @@ Grid.prototype.showLoadingPanel = function(show) {
     if (show) {
         // setting display to null, actually has the impact of setting it
         // to 'table', as this is part of the ag-loading-panel core style
-        this.eLoadingPanel.style.display = null;
+        this.eLoadingPanel.style.display = 'table';
     } else {
         this.eLoadingPanel.style.display = 'none';
     }

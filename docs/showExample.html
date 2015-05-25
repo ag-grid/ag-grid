@@ -7,7 +7,7 @@
     </ul>
 
     <div class="tab-pane" ng-show="selectedTab=='example'">
-        <iframe frameBorder="0" style="width: 820px; height: {{exampleHeight}};" ng-if="source" ng-src="{{source}}"></iframe>
+        <iframe frameBorder="0" style="width: 820px;" ng-style="iframeStyle" ng-if="source" ng-src="{{source}}"></iframe>
     </div>
     <div class="tab-pane" ng-show="selectedTab=='html'" style="height: 200px; overflow: auto;">
         <pre><code>{{html}}</code></pre>
