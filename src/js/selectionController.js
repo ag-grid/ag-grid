@@ -334,9 +334,11 @@ SelectionController.prototype.syncSelectedRowsAndCallListener = function(suppres
     }
 
     var that = this;
-    setTimeout(function() {
-        that.$scope.$apply();
-    }, 0);
+    if (this.$scope) {
+        setTimeout(function() {
+            that.$scope.$apply();
+        }, 0);
+    }
 };
 
 // private
