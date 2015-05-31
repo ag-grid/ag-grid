@@ -144,7 +144,7 @@ include '../documentation_header.php';
         <tr>
             <th>ensureNodeVisible(comparator)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
-            b) the data object c) a comparator function (that taks the node as a paramter, and returns
+            b) the data object c) a comparator function (that takes the node as a parameter, and returns
             true for match, false for no match)</td>
         </tr>
     </table>
