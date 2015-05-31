@@ -78,6 +78,27 @@ InMemoryRowController.prototype.updateModel = function(step) {
 };
 
 // private
+InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(aggFields) {
+    return function groupAggFunction(rows) {
+        var data = {};
+
+        for (var j = 0; j<aggFields.length; j++) {
+            data[aggFields[j]] = 0;
+        }
+
+        for (var i = 0; i<rows.length; i++) {
+            for (var k = 0; k<aggFields.length; k++) {
+                var aggField = aggFields[k];
+                var row = rows[i];
+                data[aggField] += row.data[aggField];
+            }
+        }
+
+        return data;
+    };
+};
+
+// private
 InMemoryRowController.prototype.getValue = function(data, colDef, node, rowIndex) {
     var api = this.gridOptionsWrapper.getApi();
     var context = this.gridOptionsWrapper.getContext();
@@ -88,11 +109,18 @@ InMemoryRowController.prototype.getValue = function(data, colDef, node, rowIndex
 InMemoryRowController.prototype.doAggregate = function() {
 
     var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
-    if (typeof groupAggFunction !== 'function') {
+    if (typeof groupAggFunction === 'function') {
+        this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
         return;
     }
 
-    this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
+    var groupAggFields = this.gridOptionsWrapper.getGroupAggFields();
+    if (groupAggFields) {
+        var defaultAggFunction = this.defaultGroupAggFunctionFactory(groupAggFields);
+        this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction);
+        return;
+    }
+
 };
 
 // public
