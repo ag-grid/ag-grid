@@ -182,7 +182,7 @@ InMemoryRowController.prototype.doSort = function() {
         return optionA.sortedAt - optionB.sortedAt;
     });
 
-    var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
+    var rowNodesBeforeSort = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
 
     if (sortingOptions.length) {
         this.sortList(rowNodesBeforeSort, sortingOptions);
@@ -196,6 +196,9 @@ InMemoryRowController.prototype.doSort = function() {
 
 // private
 InMemoryRowController.prototype.recursivelyResetSort = function(rowNodes) {
+    if (!rowNodes) {
+        return;
+    }
     for (var i = 0, l = rowNodes.length; i < l; i++) {
         var item = rowNodes[i];
         if (item.group && item.children) {
@@ -300,6 +303,9 @@ InMemoryRowController.prototype.filterItems = function(rowNodes, quickFilterPres
 
 // private
 InMemoryRowController.prototype.recursivelyResetFilter = function(nodes) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0, l = nodes.length; i < l; i++) {
         var node = nodes[i];
         if (node.group && node.children) {
@@ -339,6 +345,9 @@ InMemoryRowController.prototype.setAllRows = function(rows, firstId) {
 // add in index - this is used by the selectionController - so quick
 // to look up selected rows
 InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         node.id = index++;
@@ -352,6 +361,9 @@ InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index)
 // add in index - this is used by the selectionController - so quick
 // to look up selected rows
 InMemoryRowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         if (parent) {
