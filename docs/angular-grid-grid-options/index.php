@@ -43,6 +43,11 @@ include '../documentation_header.php';
             <td>Type of row selection, set to either 'single' or 'multiple' to enable selection.</td>
         </tr>
         <tr>
+            <th>rowDeselection</th>
+            <td>Set to true or false (default is false). If true, then rows will be deselected if you
+            hold down ctrl + click the row.</td>
+        </tr>
+        <tr>
             <th>pinnedColumnCount</th>
             <td>Number of columns to pin. Default is 0.</td>
         </tr>

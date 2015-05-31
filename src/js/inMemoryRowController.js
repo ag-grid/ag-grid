@@ -40,6 +40,9 @@ InMemoryRowController.prototype.createModel = function() {
             } else {
                 return 0;
             }
+        },
+        forEachInMemory: function(callback) {
+            that.forEachInMemory(callback);
         }
     };
 };
@@ -47,6 +50,25 @@ InMemoryRowController.prototype.createModel = function() {
 // public
 InMemoryRowController.prototype.getModel = function() {
     return this.model;
+};
+
+// public
+InMemoryRowController.prototype.forEachInMemory = function(callback) {
+
+    // iterates through each item in memory, and calls the callback function
+    function doCallback(list, callback) {
+        if (list) {
+            for (var i = 0; i<list.length; i++) {
+                var item = list[i];
+                callback(item);
+                if (item.group && group.children) {
+                    doCallback(group.children);
+                }
+            }
+        }
+    }
+
+    doCallback(this.rowsAfterGroup, callback);
 };
 
 // public
@@ -78,6 +100,27 @@ InMemoryRowController.prototype.updateModel = function(step) {
 };
 
 // private
+InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(aggFields) {
+    return function groupAggFunction(rows) {
+        var data = {};
+
+        for (var j = 0; j<aggFields.length; j++) {
+            data[aggFields[j]] = 0;
+        }
+
+        for (var i = 0; i<rows.length; i++) {
+            for (var k = 0; k<aggFields.length; k++) {
+                var aggField = aggFields[k];
+                var row = rows[i];
+                data[aggField] += row.data[aggField];
+            }
+        }
+
+        return data;
+    };
+};
+
+// private
 InMemoryRowController.prototype.getValue = function(data, colDef, node, rowIndex) {
     var api = this.gridOptionsWrapper.getApi();
     var context = this.gridOptionsWrapper.getContext();
@@ -88,11 +131,18 @@ InMemoryRowController.prototype.getValue = function(data, colDef, node, rowIndex
 InMemoryRowController.prototype.doAggregate = function() {
 
     var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
-    if (typeof groupAggFunction !== 'function') {
+    if (typeof groupAggFunction === 'function') {
+        this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
         return;
     }
 
-    this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
+    var groupAggFields = this.gridOptionsWrapper.getGroupAggFields();
+    if (groupAggFields) {
+        var defaultAggFunction = this.defaultGroupAggFunctionFactory(groupAggFields);
+        this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction);
+        return;
+    }
+
 };
 
 // public
@@ -154,7 +204,7 @@ InMemoryRowController.prototype.doSort = function() {
         return optionA.sortedAt - optionB.sortedAt;
     });
 
-    var rowNodesBeforeSort = this.rowsAfterFilter.slice(0);
+    var rowNodesBeforeSort = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
 
     if (sortingOptions.length) {
         this.sortList(rowNodesBeforeSort, sortingOptions);
@@ -168,6 +218,9 @@ InMemoryRowController.prototype.doSort = function() {
 
 // private
 InMemoryRowController.prototype.recursivelyResetSort = function(rowNodes) {
+    if (!rowNodes) {
+        return;
+    }
     for (var i = 0, l = rowNodes.length; i < l; i++) {
         var item = rowNodes[i];
         if (item.group && item.children) {
@@ -272,6 +325,9 @@ InMemoryRowController.prototype.filterItems = function(rowNodes, quickFilterPres
 
 // private
 InMemoryRowController.prototype.recursivelyResetFilter = function(nodes) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0, l = nodes.length; i < l; i++) {
         var node = nodes[i];
         if (node.group && node.children) {
@@ -311,6 +367,9 @@ InMemoryRowController.prototype.setAllRows = function(rows, firstId) {
 // add in index - this is used by the selectionController - so quick
 // to look up selected rows
 InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         node.id = index++;
@@ -324,6 +383,9 @@ InMemoryRowController.prototype.recursivelyAddIdToNodes = function(nodes, index)
 // add in index - this is used by the selectionController - so quick
 // to look up selected rows
 InMemoryRowController.prototype.recursivelyCheckUserProvidedNodes = function(nodes, parent, level) {
+    if (!nodes) {
+        return;
+    }
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         if (parent) {

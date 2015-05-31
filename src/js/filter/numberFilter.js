@@ -12,6 +12,7 @@ function NumberFilter(params) {
     this.createGui();
     this.filterNumber = null;
     this.filterType = EQUALS;
+    this.createApi();
 }
 
 /* public */
@@ -94,6 +95,32 @@ NumberFilter.prototype.onFilterChanged = function() {
         this.filterNumber = null;
     }
     this.filterChangedCallback();
+};
+
+NumberFilter.prototype.createApi = function() {
+    var that = this;
+    this.api = {
+        EQUALS: EQUALS,
+        LESS_THAN: LESS_THAN,
+        GREATER_THAN: GREATER_THAN,
+        setType: function(type) {
+            that.filterType = type;
+            that.eTypeSelect.value = type;
+        },
+        setFilter: function(filter) {
+            filter = utils.makeNull(filter);
+
+            if (filter!==null && !typeof filter === 'number') {
+                filter = parseFloat(filter);
+            }
+            that.filterNumber = filter;
+            that.eFilterTextField.value = filter;
+        }
+    };
+};
+
+NumberFilter.prototype.getApi = function() {
+    return this.api;
 };
 
 module.exports = NumberFilter;

@@ -23,6 +23,8 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         enableColResize: true,
         virtualPaging: true, // this is important, if not set, normal paging will be done
+        rowSelection: 'single',
+        rowDeselection: true,
         columnDefs: columnDefs
     };
 

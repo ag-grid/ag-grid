@@ -10,6 +10,7 @@ function isTrue(value) {
 }
 
 GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
+GridOptionsWrapper.prototype.isRowDeselection = function() { return isTrue(this.gridOptions.rowDeselection); };
 GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
 GridOptionsWrapper.prototype.getContext = function() { return this.gridOptions.context; };
 GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
@@ -33,6 +34,7 @@ GridOptionsWrapper.prototype.getColWidth = function() { return this.gridOptions.
 GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
 GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
 GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
+GridOptionsWrapper.prototype.getGroupAggFields = function() { return this.gridOptions.groupAggFields; };
 GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
 GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
 GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };

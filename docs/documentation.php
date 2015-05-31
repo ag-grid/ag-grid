@@ -6,6 +6,67 @@ $pageKeyboards = "AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
+     xmlns="http://www.w3.org/1999/html">
+
+    <p>
+        <b>31th May 2015</b>
+    </p>
+
+    <p>
+        This is what I did last week:
+    <ul>
+
+
+
+        <li>
+            <b>BREAKING CHANGE: Dist files now 'angular-grid' and not 'angularGrid': </b> Camel case is a problem with *nix systems as they are case insenstivie.
+        </li>
+
+        <li>
+            <b>Default aggregation: </b> Now the grid has default aggregation. If just doing 'sum' aggregation,
+            no need to provide your own groupAggFunction. See <a href="angular-grid-grouping/index.php">grouping documentation</a>.
+        </li>
+
+        <li>
+            <b>Filtering API: </b> You can now interact with all the filters through their APIs. See
+            <a href="angular-grid-filtering/index.php">filtering documentation</a> for details.
+        </li>
+
+        <li>
+            <b>De-Selection: </b> Now, if gridOptions.rowDeselection=true, you can deselect rows with ctrl+click.
+        </li>
+
+        <li>
+            <b>forEachInMemory: </b> New callback for iterating through each row in memory. See the selection example
+            <a href="angular-grid-selection/index.php">"Using forEachInMemory"</a> for it being used.
+        </li>
+
+        <li>
+            <b>Released 1.7.0</b> - contains all the above.
+        </li>
+
+    </ul>
+
+    <p>
+        This is what I'm doing this week:
+    </p>
+
+    <ul>
+        <li>
+            My 'to do' list as as follows: a) Improved selection & API, b) Filtering API and c) Server side filtering and sorting.
+            so will see how much of it I get done.
+        </li>
+    </ul>
+
+    <p>
+        I have no blockers.
+    </p>
+
+    <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
 <div style="text-align: center; font-weight: bold; margin: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding: 10px;">
         <div style="padding-bottom: 10px">
@@ -20,65 +81,6 @@ include 'documentation_header.php';
             </form>
         </div>
     </div>
-</div>
-
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
-     xmlns="http://www.w3.org/1999/html">
-
-    <p>
-        <b>25th May 2015</b>
-    </p>
-
-    <p>
-        This is what I did last week:
-    <ul>
-
-        <li>
-            <b>Keyboard Navigation: </b> Select a cell, then use the arrow keys to navigate through the grid.
-            <b>Enter key</b> will start editing the currently focused cell, or expand / collapse the group if a group cell
-            is focused. <b>Space key</b> will select / un-select the currently focused row.
-        </li>
-
-        <li>
-            <b>Multilingual Support: </b> Now you can override all the texts in he grid, such as 'next' and 'previousy'
-            in the paging panel.
-        </li>
-
-        <li>
-            <b>Filtering with Value Getters: </b> Now filtering works with value getters.
-        </li>
-
-        <li>
-            <b>IE Issues: </b> Loading panel and paging panel now working in IE.
-        </li>
-
-        <li>
-            <b>Released 1.6.0</b> - contains all the above.
-        </li>
-
-    </ul>
-
-    <p>
-        This is what I'm doing this week:
-    </p>
-
-    <ul>
-        <li>
-            My 'to do' list as as follows: a) Improved selection & API, b) Filtering API and c) Server side filtering and sorting.
-            so will see how much of it I get done.
-        </li>
-        <li>
-            Are you in London? Catch me at the meet-up "Solving real world problems with AngularJS on Thursday 28th May 2015"
-            where I will be presenting a live demonstration of Angular Grid.
-        </li>
-    </ul>
-
-    <p>
-        I have no blockers.
-    </p>
-
-    <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
 <div style="padding: 20px; margin: 5px;">

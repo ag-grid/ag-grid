@@ -23,28 +23,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowData: null,
         groupUseEntireRow: false,
         groupKeys: ['country'],
-        groupAggFunction: groupAggFunction
+        groupAggFields: ['gold','silver','bronze','total']
     };
-
-    function groupAggFunction(nodes) {
-
-        var sums = {
-            gold: 0,
-            silver: 0,
-            bronze: 0,
-            total: 0
-        };
-
-        nodes.forEach(function(node) {
-            var data = node.data;
-            sums.gold += data.gold;
-            sums.silver += data.silver;
-            sums.bronze += data.bronze;
-            sums.total += data.total;
-        });
-
-        return sums;
-    }
 
     $http.get("../olympicWinners.json")
         .then(function(res){

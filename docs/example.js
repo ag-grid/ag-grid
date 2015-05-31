@@ -75,7 +75,8 @@ gridsModule.controller('mainController', function($scope) {
         enableSorting: true, //one of [true, false]
         enableFilter: true, //one of [true, false]
         rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
-        groupSelectsChildren: true, // one of ['group','children']
+        rowDeselection: true,
+        groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         //suppressCellSelection: true,
         groupAggFunction: groupAggFunction,
@@ -188,6 +189,10 @@ gridsModule.controller('mainController', function($scope) {
 
     createCols();
     createData();
+
+    //setInterval(function() {
+    //    $scope.angularGrid.api.ensureIndexVisible(Math.random*() * 100000);
+    //});
 
     $scope.jumpToRow = function() {
         var index = Number($scope.jumpToRowText);

@@ -269,6 +269,18 @@ VirtualPageRowController.prototype.getVirtualRow = function(rowIndex) {
     }
 };
 
+VirtualPageRowController.prototype.forEachInMemory = function(callback) {
+    var pageKeys = Object.keys(this.pageCache);
+    for (var i = 0; i<pageKeys.length; i++) {
+        var pageKey = pageKeys[i];
+        var page = this.pageCache[pageKey];
+        for (var j = 0; j<page.length; j++) {
+            var node = page[j];
+            callback(node);
+        }
+    }
+};
+
 VirtualPageRowController.prototype.getModel = function() {
     var that = this;
     return {
@@ -277,6 +289,9 @@ VirtualPageRowController.prototype.getModel = function() {
         },
         getVirtualRowCount: function() {
             return that.virtualRowCount;
+        },
+        forEachInMemory: function( callback ) {
+            that.forEachInMemory(callback);
         }
     };
 };

@@ -26,12 +26,12 @@ gulp.task('watch', watchTask);
 function jsTask() {
     return browserify('./src/js/main.js', {debug: true})
         .bundle()
-        .pipe(source('angularGrid.js'))
+        .pipe(source('angular-grid.js'))
         .pipe(gulp.dest('./dist'))
         .pipe(gulp.dest('./docs/dist'))
         .pipe(buffer())
         .pipe(uglify())
-        .pipe(rename('angularGrid.min.js'))
+        .pipe(rename('angular-grid.min.js'))
         .pipe(gulp.dest('./dist'))
         .pipe(gulp.dest('./docs/dist'));
 }

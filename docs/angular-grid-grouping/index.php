@@ -47,11 +47,15 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>groupAggFields</th>
+            <td>If grouping, used to create simple 'sum' aggregates. Provide an array of field names that should be
+                summed into the parent group. Use this over groupAggFunction if you want simple 'sum' aggregation.
+            </td>
+        </tr>
+        <tr>
             <th>groupAggFunction</th>
-            <td>If grouping, used to create aggregates. The aggregation function takes an array of rows and should return
-                one row that's an aggregate of the passed rows. For example, if each row has a field called 'price', and
-                you want the total price, then return an object with the total price in a field 'price'. This will then
-                get rendered in the price column on in the group row.
+            <td>If grouping, used to create complex aggregates. Provide a function to do the aggregation. Use this
+                if the simple 'sum' aggregates provided is not enough.
             </td>
         </tr>
         <tr>
@@ -65,25 +69,77 @@ include '../documentation_header.php';
 
     <h3>Grouping Example</h3>
 
-    Below shows a simple grouping example, using one attribute to group, the entire row is used and no aggregation function.
+    <p>
+        Below shows a simple grouping example, using one attribute to group, the entire row is used and no aggregation function.
+    </p>
 
     <show-example example="example1"></show-example>
 
+
+    <h3>Group Cell Renderer</h3>
+
+    <p>
+        If grouping, you will need to dedicate a column to displaying the group (unless you are using groupUseEntireRow=true).
+        To do this, you specify the gorup cell renderer to the column definition as follows:
+        <pre>colDef.cellRenderer = {
+        renderer: 'group',
+        keyMap: {from: 'to'},
+        suppressCount: false,
+        checkbox: true
+}</pre>
+
+    <p>
+        The attributes are:
+        <ul>
+            <li><b>renderer:</b> This picks the built in renderer, in this case the group renderer. At the time of writing,
+                no other built in renderers are provided.</li>
+            <li><b>keyMap:</b> Map of key value pairs to display alternatives instead of the group keys. For example,
+                if the group was 'LDN', you could display it as 'London'.</li>
+            <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
+            <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
+        </ul>
+    </p>
+
     <h3>Grouping with Aggregation</h3>
 
-    Below shows a more complex example, using aggregation to sum the number of medals for each country.
+    <p>
+        You have two options for creating aggregates.
+        <ul>
+            <li>
+                Option 1 - provide an array of field names that should be summed to create the aggregate.
+            </li>
+            <li>
+                Option 2 - provide an function to do the aggregation.
+            </li>
+        </ul>
+    </p>
+
+    <h4>Example Option 1 - Summing Fields</h4>
+
+    <p>
+        The example below shows simple sum aggregation. The fields gold, silver, bronze and total and aggregated
+        using simple sum aggregation.
+    </p>
 
     <show-example example="example2"></show-example>
 
+    <h4>Example Option 2 - Custom Aggregation Function</h4>
+
+    <p>
+        The example below shows a complex custom aggregation over age giving
+        a min and a max age. The aggregation function takes an array of rows and returns
+        one row that's an aggregate of the passed rows.
+    </p>
+
+    <show-example example="example4"></show-example>
+
+
     <h3>Multi-Level Grouping with Aggregation</h3>
 
-    Even more complicated, multiple levels of grouping and aggregation.
-
-    <p/>
-    When aggregating rows in multi-level, the rows been aggregated can contain aggregation rows themselves.
-    This is checked using the 'group' property on the node. If it is set, then that row
-    is a group row and has attributes relevant to the group. When aggregating, the results of
-    the aggregation for the group is stored in the node attribute data.
+    <p>
+        There is no limit to the number of fields you group on. The aggregation works regardless of the number
+        of levels been grouped. The example below shows multi level aggregation.
+    </p>
 
     <show-example example="example3"></show-example>
 
@@ -122,25 +178,21 @@ include '../documentation_header.php';
 
     </p>
 
-
-    <h3>Advanced Multi-Level Grouping</h3>
-
-    When doing aggregations, it is not always possible to just 'sum' the values, especially if they
-    are not number values. The example below shows a complex custom aggregation over age giving
-    a min and a max age. The grouping row is also styled in bold.
-
-    <show-example example="example4"></show-example>
-
     <h3>Group Row Rendering</h3>
 
-    It is possible to override the rendering of the group row. Below shows an example of aggregating,
-    then using the entire row to give a summary.
+    <p>
+        It is possible to override the rendering of the group row. Below shows an example of aggregating,
+        then using the entire row to give a summary.
+    </p>
 
     <show-example example="example5"></show-example>
 
     <h3>Custom Expand / Contract Icons</h3>
 
-    See the section on icons for customising the expand / contract icons.
+    <p>
+        See the section on icons for customising the expand / contract icons.
+    </p>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

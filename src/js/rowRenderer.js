@@ -784,7 +784,7 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
         }
 
         var selectRow = key === constants.KEY_SPACE;
-        if (selectRow) {
+        if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
             var selected = that.selectionController.isNodeSelected(node);
             if (selected) {
                 that.selectionController.deselectNode(node);

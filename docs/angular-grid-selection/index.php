@@ -78,6 +78,25 @@ include '../documentation_header.php';
         as it's own entity.
     </p>
 
+    <h3>Click De-Selection</h3>
+
+    <p>
+        Normal behaviour with the grid disallows deselection of nodes (ie once a node is selected,
+        it remains selected until another row is selected in it's place). To allow deselection,
+        set rowDeselection=true in the grid options.
+    </p>
+
+    <h3>Using <i>forEachInMemory</i></h3>
+
+    <p>
+        There is an api function <i>forEachInMemory</i>. This is useful for doing group selections
+        on a business key. The example below shows selecting all rows with country = 'United States'.
+        This method is also useful when you load data and need to know the node equivalent of the
+        data for selection purposes.
+    </p>
+
+    <show-example example="example4" example-height="450px"></show-example>
+
     <h3>Selection Callbacks</h3>
 
     <p>

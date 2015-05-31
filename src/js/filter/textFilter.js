@@ -13,6 +13,7 @@ function TextFilter(params) {
     this.createGui();
     this.filterText = null;
     this.filterType = CONTAINS;
+    this.createApi();
 }
 
 /* public */
@@ -98,6 +99,30 @@ TextFilter.prototype.onFilterChanged = function() {
         this.filterText = null;
     }
     this.filterChangedCallback();
+};
+
+TextFilter.prototype.createApi = function() {
+    var that = this;
+    this.api = {
+        EQUALS: EQUALS,
+        CONTAINS: CONTAINS,
+        STARTS_WITH: STARTS_WITH,
+        ENDS_WITH: ENDS_WITH,
+        setType: function(type) {
+            that.filterType = type;
+            that.eTypeSelect.value = type;
+        },
+        setFilter: function(filter) {
+            filter = utils.makeNull(filter);
+
+            that.filterNumber = filter;
+            that.eFilterTextField.value = filter;
+        }
+    };
+};
+
+TextFilter.prototype.getApi = function() {
+    return this.api;
 };
 
 module.exports = TextFilter;

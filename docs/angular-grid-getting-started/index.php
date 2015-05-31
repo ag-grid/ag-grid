@@ -13,11 +13,11 @@ include '../documentation_header.php';
     <h3>Dependencies</h3>
 
     <p>
-        In your html, include AngularJS (1.2 or later) and AngularGrid (download from <a href="../dist">here</a>).
+        In your html, include AngularJS (1.2 or later) and AngularGrid.
     </p>
 
     <p>
-        If you want non-minified versions, you need to include: angularGrid.js, angularGrid.css, theme-fresh.css
+        If you want non-minified versions, you need to include: angular-grid.js, angular-grid.css, theme-fresh.css
         (optional if you want bundled fresh theme) and theme-dark.css (optional if you want bundled dark theme).
     </p>
     <p>

@@ -18,6 +18,7 @@ function SetFilter(params) {
     }
     this.createGui();
     this.addScrollListener();
+    this.createApi();
 }
 
 // we need to have the gui attached before we can draw the virtual rows, as the
@@ -254,6 +255,52 @@ SetFilter.prototype.addScrollListener = function() {
     this.eListViewport.addEventListener("scroll", function() {
         _this.drawVirtualRows();
     });
+};
+
+SetFilter.prototype.getApi = function() {
+    return this.api;
+};
+
+SetFilter.prototype.createApi = function() {
+    var model = this.model;
+    this.api = {
+        setMiniFilter: function(newMiniFilter) {
+            model.setMiniFilter(newMiniFilter);
+        },
+        getMiniFilter: function() {
+            return model.getMiniFilter();
+        },
+        selectEverything: function() {
+            model.selectEverything();
+        },
+        isFilterActive: function() {
+            return model.isFilterActive();
+        },
+        selectNothing: function() {
+            model.selectNothing();
+        },
+        unselectValue: function(value) {
+            model.unselectValue(value);
+        },
+        selectValue: function(value) {
+            model.selectValue(value);
+        },
+        isValueSelected: function(value) {
+            return model.isValueSelected(value);
+        },
+        isEverythingSelected: function() {
+            return model.isEverythingSelected();
+        },
+        isNothingSelected: function() {
+            return model.isNothingSelected();
+        },
+        getUniqueValueCount: function() {
+            return model.getUniqueValueCount();
+        },
+        getUniqueValue: function(index) {
+            return model.getUniqueValue(index);
+        }
+    };
 };
 
 module.exports = SetFilter;
