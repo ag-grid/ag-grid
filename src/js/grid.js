@@ -169,15 +169,15 @@ Grid.prototype.setDatasource = function(datasource) {
     // get the set datasource (if null was passed to this method,
     // then need to get the actual datasource from options
     var datasourceToUse = this.gridOptionsWrapper.getDatasource();
-    var virtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
-    var pagination = datasourceToUse && !virtualPaging;
+    this.doingVirtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
+    this.doingPagination = datasourceToUse && !this.doingVirtualPaging;
 
-    if (virtualPaging) {
+    if (this.doingVirtualPaging) {
         this.paginationController.setDatasource(null);
         this.virtualPageRowController.setDatasource(datasourceToUse);
         this.rowModel = this.virtualPageRowController.getModel();
         this.showPagingPanel = false;
-    } else if (pagination) {
+    } else if (this.doingPagination) {
         this.paginationController.setDatasource(datasourceToUse);
         this.virtualPageRowController.setDatasource(null);
         this.rowModel = this.inMemoryRowController.getModel();
@@ -353,6 +353,9 @@ Grid.prototype.setRows = function(rows, firstId) {
 };
 
 Grid.prototype.ensureNodeVisible = function(comparator) {
+    if (this.doingVirtualPaging) {
+        throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
+    }
     // look for the node index we want to display
     var rowCount = this.rowModel.getVirtualRowCount();
     var comparatorIsAFunction = typeof comparator === 'function';
@@ -518,6 +521,9 @@ Grid.prototype.addApi = function() {
         },
         ensureNodeVisible: function(comparator) {
             return that.ensureNodeVisible(comparator);
+        },
+        forEachInMemory: function(callback) {
+            that.rowModel.forEachInMemory(callback);
         }
     };
     this.gridOptions.api = api;

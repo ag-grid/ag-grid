@@ -40,6 +40,9 @@ InMemoryRowController.prototype.createModel = function() {
             } else {
                 return 0;
             }
+        },
+        forEachInMemory: function(callback) {
+            that.forEachInMemory(callback);
         }
     };
 };
@@ -47,6 +50,25 @@ InMemoryRowController.prototype.createModel = function() {
 // public
 InMemoryRowController.prototype.getModel = function() {
     return this.model;
+};
+
+// public
+InMemoryRowController.prototype.forEachInMemory = function(callback) {
+
+    // iterates through each item in memory, and calls the callback function
+    function doCallback(list, callback) {
+        if (list) {
+            for (var i = 0; i<list.length; i++) {
+                var item = list[i];
+                callback(item);
+                if (item.group && group.children) {
+                    doCallback(group.children);
+                }
+            }
+        }
+    }
+
+    doCallback(this.rowsAfterGroup, callback);
 };
 
 // public

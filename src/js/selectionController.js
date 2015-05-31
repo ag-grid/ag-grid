@@ -10,11 +10,6 @@ var DO_NOT_CARE = 3;
 
 function SelectionController() {}
 
-//Add: keepLastSelected option that would allow de-selection of the selected row in "single" selection mode when the selected row is clicked.
-//Add: api.getSelectionIndices() to get indices of current selections. This would allow api.selectIndex() to be used externally to implement a previous/next functionality.
-//Add: api.selectRow(input) to select a row based on row.data === input, or alternatively input(row) === true if input is a function
-
-
 SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
     this.eRowsParent = eRowsParent;
     this.angularGrid = angularGrid;
