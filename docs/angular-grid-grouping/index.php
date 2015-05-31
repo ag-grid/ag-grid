@@ -69,9 +69,36 @@ include '../documentation_header.php';
 
     <h3>Grouping Example</h3>
 
-    Below shows a simple grouping example, using one attribute to group, the entire row is used and no aggregation function.
+    <p>
+        Below shows a simple grouping example, using one attribute to group, the entire row is used and no aggregation function.
+    </p>
 
     <show-example example="example1"></show-example>
+
+
+    <h3>Group Cell Renderer</h3>
+
+    <p>
+        If grouping, you will need to dedicate a column to displaying the group (unless you are using groupUseEntireRow=true).
+        To do this, you specify the gorup cell renderer to the column definition as follows:
+        <pre>colDef.cellRenderer = {
+        renderer: 'group',
+        keyMap: {from: 'to'},
+        suppressCount: false,
+        checkbox: true
+}</pre>
+
+    <p>
+        The attributes are:
+        <ul>
+            <li><b>renderer:</b> This picks the built in renderer, in this case the group renderer. At the time of writing,
+                no other built in renderers are provided.</li>
+            <li><b>keyMap:</b> Map of key value pairs to display alternatives instead of the group keys. For example,
+                if the group was 'LDN', you could display it as 'London'.</li>
+            <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
+            <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
+        </ul>
+    </p>
 
     <h3>Grouping with Aggregation</h3>
 
