@@ -62,7 +62,6 @@ FilterManager.prototype.doesFilterPass = function(node) {
             continue;
         }
 
-        var value = data[filterWrapper.field];
         if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method doesFilterPass');
         }
@@ -72,7 +71,6 @@ FilterManager.prototype.doesFilterPass = function(node) {
             model = filterWrapper.filter.getModel();
         }
         var params = {
-            value: value,
             model: model,
             node: node,
             data: data
@@ -126,70 +124,88 @@ FilterManager.prototype.createValueGetter = function(colDef) {
     };
 };
 
-FilterManager.prototype.showFilter = function(colDefWrapper, eventSource) {
+FilterManager.prototype.getFilterApi = function(column) {
+    var filterWrapper = this.getOrCreateFilterWrapper(column);
+    if (filterWrapper) {
+        if (typeof filterWrapper.filter.getApi === 'function') {
+            return filterWrapper.filter.getApi();
+        }
+    }
+};
 
-    var filterWrapper = this.allFilters[colDefWrapper.colKey];
-    var colDef = colDefWrapper.colDef;
+FilterManager.prototype.getOrCreateFilterWrapper = function(column) {
+    var filterWrapper = this.allFilters[column.colKey];
 
     if (!filterWrapper) {
-        filterWrapper = {
-            colKey: colDefWrapper.colKey,
-            field: colDef.field
-        };
-        var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
-        var filterParams = colDef.filterParams;
-        var params = {
-            colDef: colDef,
-            rowModel: this.rowModel,
-            filterChangedCallback: filterChangedCallback,
-            filterParams: filterParams,
-            scope: filterWrapper.scope,
-            localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
-            valueGetter: this.createValueGetter(colDef)
-        };
-        if (typeof colDef.filter === 'function') {
-            // if user provided a filter, just use it
-            // first up, create child scope if needed
-            if (this.gridOptionsWrapper.isAngularCompileFilters()) {
-                var scope = this.$scope.$new();
-                filterWrapper.scope = scope;
-                params.$scope = scope;
-            }
-            // now create filter
-            filterWrapper.filter = new colDef.filter(params);
-        } else if (colDef.filter === 'text') {
-            filterWrapper.filter = new StringFilter(params);
-        } else if (colDef.filter === 'number') {
-            filterWrapper.filter = new NumberFilter(params);
-        } else {
-            filterWrapper.filter = new SetFilter(params);
-        }
-        this.allFilters[colDefWrapper.colKey] = filterWrapper;
-
-        if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
-            console.error('Filter is missing method getGui');
-        }
-
-        var eFilterGui = document.createElement('div');
-        eFilterGui.className = 'ag-filter';
-        var guiFromFilter = filterWrapper.filter.getGui();
-        if (utils.isNodeOrElement(guiFromFilter)) {
-            //a dom node or element was returned, so add child
-            eFilterGui.appendChild(guiFromFilter);
-        } else {
-            //otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = guiFromFilter;
-            eFilterGui.appendChild(eTextSpan);
-        }
-
-        if (filterWrapper.scope) {
-            filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
-        } else {
-            filterWrapper.gui = eFilterGui;
-        }
-
+        filterWrapper = this.createFilterWrapper(column);
+        this.allFilters[column.colKey] = filterWrapper;
     }
+
+    return filterWrapper;
+};
+
+FilterManager.prototype.createFilterWrapper = function(column) {
+    var colDef = column.colDef;
+
+    var filterWrapper = {};
+    var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
+    var filterParams = colDef.filterParams;
+    var params = {
+        colDef: colDef,
+        rowModel: this.rowModel,
+        filterChangedCallback: filterChangedCallback,
+        filterParams: filterParams,
+        scope: filterWrapper.scope,
+        localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
+        valueGetter: this.createValueGetter(colDef)
+    };
+    if (typeof colDef.filter === 'function') {
+        // if user provided a filter, just use it
+        // first up, create child scope if needed
+        if (this.gridOptionsWrapper.isAngularCompileFilters()) {
+            var scope = this.$scope.$new();
+            filterWrapper.scope = scope;
+            params.$scope = scope;
+        }
+        // now create filter
+        filterWrapper.filter = new colDef.filter(params);
+    } else if (colDef.filter === 'text') {
+        filterWrapper.filter = new StringFilter(params);
+    } else if (colDef.filter === 'number') {
+        filterWrapper.filter = new NumberFilter(params);
+    } else {
+        filterWrapper.filter = new SetFilter(params);
+    }
+
+    if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
+        throw 'Filter is missing method getGui';
+    }
+
+    var eFilterGui = document.createElement('div');
+    eFilterGui.className = 'ag-filter';
+    var guiFromFilter = filterWrapper.filter.getGui();
+    if (utils.isNodeOrElement(guiFromFilter)) {
+        //a dom node or element was returned, so add child
+        eFilterGui.appendChild(guiFromFilter);
+    } else {
+        //otherwise assume it was html, so just insert
+        var eTextSpan = document.createElement('span');
+        eTextSpan.innerHTML = guiFromFilter;
+        eFilterGui.appendChild(eTextSpan);
+    }
+
+    if (filterWrapper.scope) {
+        filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
+    } else {
+        filterWrapper.gui = eFilterGui;
+    }
+
+    return filterWrapper;
+};
+
+FilterManager.prototype.showFilter = function(column, eventSource) {
+
+    var filterWrapper = this.getOrCreateFilterWrapper(column);
 
     var ePopupParent = this.grid.getPopupParent();
     this.positionPopup(eventSource, filterWrapper.gui, ePopupParent);

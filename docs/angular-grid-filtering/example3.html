@@ -1,0 +1,28 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="../dist/angular-grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+    <script src="example3.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+<div>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button ng-click="irelandAndUk()">Ireland & UK</button>
+        <button ng-click="endingStan()">Countries Ending 'stan'</button>
+        <button ng-click="clearCountryFilter()">Clear Country Filter</button>
+    </span>
+    <br/>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button ng-click="ageBelow25()">Age Below 25</button>
+        <button ng-click="ageAbove30()">Age Above 30</button>
+        <button ng-click="clearAgeFilter()">Clear Age Filter</button>
+    </span>
+
+</div>
+<div angular-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

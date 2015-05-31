@@ -180,11 +180,15 @@ columnDefinition = {
             </td>
         </tr>
         <tr>
+            <th>getApi</th>
+            <td>Returns the API for the filter. Useful if you want your filter manipulated vai an API.</td>
+        </tr>
+        <tr>
             <th>getModel</th>
             <td>Returns the model for the filter. At the moment, the only purpose of this is to have it passed
-            into the 'doesFilterPass' method. In the future, the grid will be enhanced to have separate classes
-            create the filter and check the filter passing. However for now this isn't implemented so you can
-            ignore the 'getModel' method and the corresponding 'model' passed to 'does filter pass'.</td>
+                into the 'doesFilterPass' method. In the future, the grid will be enhanced to have separate classes
+                create the filter and check the filter passing. However for now this isn't implemented so you can
+                ignore the 'getModel' method and the corresponding 'model' passed to 'does filter pass'.</td>
         </tr>
     </table>
 
@@ -192,6 +196,64 @@ columnDefinition = {
     The example below shows a custom filter on the Athlete column.
 
     <show-example example="example2"></show-example>
+
+    <h3>Filter API</h3>
+
+    <p>
+        It is possible to set filters via the API. You do this by first getting an API to the filter
+        in question (ie for a particular column) and then making calls on the filter API. Getting
+        the API is done via the gridOptions api method getFilterApiForColDef(colDef).
+    </p>
+    <p>
+        Each column has it's own private filter and associated API. So if you want to change filters
+        on more than one column, you have to call getFilterApiForColDef(colDef) for each column.
+    </p>
+    <p>
+        Each filter type has it's own API. So if it's a set filter, the filter API is specific
+        to set filters. If it's a custom filter, it's up to you to provide the API.
+    </p>
+
+    <p>
+        The example below shows controlling the contry filter via the API.
+    </p>
+    <show-example example="example3"></show-example>
+
+    <h4>Set Filter API</h4>
+    <p>
+        The set filter API is as follows:
+    <ul>
+        <li><b>setMiniFilter(newMiniFilter)</b>: Sets the filter at the top of the filter (the 'quick search' in the popup)</li>
+        <li><b>getMiniFilter()</b>: Gets the mini filter text.</li>
+        <li><b>selectEverything()</b>: Selects everything</li>
+        <li><b>selectNothing()</b>: Clears the selection</li>
+        <li><b>isFilterActive()</b>: Returns true if anything except 'everything selected'</li>
+        <li><b>unselectValue(value)</b>: Unselects a value</li>
+        <li><b>selectValue(value)</b>: Selects a value</li>
+        <li><b>isValueSelected(value)</b>: Returns true if a value is selected</li>
+        <li><b>isEverythingSelected()</b>: Returns true if everything selected (inverse of isFilterActive())</li>
+        <li><b>isNothingSelected()</b>: Returns true if nothing is selected</li>
+        <li><b>getUniqueValueCount()</b>: Returns number of unique values. Useful for iterating with getUniqueValue(index)</li>
+        <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
+    </ul>
+    </p>
+
+    <h4>Number Filter API</h4>
+    <p>
+        The number filter API is as follows:
+    <ul>
+        <li><b>setType(type)</b>: Sets the type. Select from the provided constants on the API of EQUALS, LESS_THAN and GREATER_THAN</li>
+        <li><b>setFilter(filter)</b>: Sets the filter text (which should be a number).</li>
+    </ul>
+    </p>
+
+    <h4>Text Filter API</h4>
+    <p>
+        The text filter API is as follows:
+    <ul>
+        <li><b>setType(type)</b>: Sets the type. Select from the provided constants on the API of EQUALS, CONTAINS, STARTS_WITH and ENDS_WITH</li>
+        <li><b>setFilter(filter)</b>: Sets the filter text (which should be a number).</li>
+    </ul>
+    </p>
 
 </div>
 

@@ -524,6 +524,13 @@ Grid.prototype.addApi = function() {
         },
         forEachInMemory: function(callback) {
             that.rowModel.forEachInMemory(callback);
+        },
+        getFilterApiForColDef: function(colDef) {
+            var column = that.columnModel.getColumnForColDef(colDef);
+            return that.filterManager.getFilterApi(column);
+        },
+        onFilterChanged: function() {
+            that.onFilterChanged();
         }
     };
     this.gridOptions.api = api;

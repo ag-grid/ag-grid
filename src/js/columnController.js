@@ -41,6 +41,15 @@ ColumnController.prototype.createModel = function() {
             return that.columnGroups;
         },
         // used by:
+        // + api.getFilterModel() -> to map colDef to column
+        getColumnForColDef: function(colDef) {
+            for (var i = 0; i<that.columns.length; i++) {
+                if (that.columns[i].colDef === colDef) {
+                    return that.columns[i];
+                }
+            }
+        },
+        // used by:
         // + rowRenderer -> for navigation
         getVisibleColBefore: function(col) {
             var oldIndex = that.visibleColumns.indexOf(col);

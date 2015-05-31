@@ -150,11 +150,23 @@ include '../documentation_header.php';
         <tr>
             <th>forEachInMemory(callback)</th>
             <td>The callback gets called once for each node that is in browser memory. If pagination,
-            then gets called for the currently loaded page. If virtual paging, then gets called
-            for each virtual page loaded in the page cache. If doing neither pagination or virtual
+                then gets called for the currently loaded page. If virtual paging, then gets called
+                for each virtual page loaded in the page cache. If doing neither pagination or virtual
                 paging, then gets called for every single node (including group nodes).
             </td>
         </tr>
+        <tr>
+            <th>getFilterApiForColDef(colDef)</th>
+            <td>Returns the API for the filter for the provided colDef.
+            </td>
+        </tr>
+        <tr>
+            <th>onFilterChanged()</th>
+            <td>Informs the grid that a filter has changed. This is typically called after a filter
+                change through one of the filter APIs.
+            </td>
+        </tr>
+
     </table>
 
 </div>
