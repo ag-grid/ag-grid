@@ -144,8 +144,16 @@ include '../documentation_header.php';
         <tr>
             <th>ensureNodeVisible(comparator)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
-            b) the data object c) a comparator function (that takes the node as a parameter, and returns
-            true for match, false for no match)</td>
+                b) the data object c) a comparator function (that takes the node as a parameter, and returns
+                true for match, false for no match)</td>
+        </tr>
+        <tr>
+            <th>forEachInMemory(callback)</th>
+            <td>The callback gets called once for each node that is in browser memory. If pagination,
+            then gets called for the currently loaded page. If virtual paging, then gets called
+            for each virtual page loaded in the page cache. If doing neither pagination or virtual
+                paging, then gets called for every single node (including group nodes).
+            </td>
         </tr>
     </table>
 

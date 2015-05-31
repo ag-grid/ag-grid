@@ -24,7 +24,17 @@ include 'documentation_header.php';
         </li>
 
         <li>
-            <b>Default aggregation: </b> Now the grid has default aggregation. If just doing 'sum' aggregation, no need to provie your own groupAggFunction. See <a href="angular-grid-grouping/index.php">grouping documentation</a>.
+            <b>Default aggregation: </b> Now the grid has default aggregation. If just doing 'sum' aggregation,
+            no need to provide your own groupAggFunction. See <a href="angular-grid-grouping/index.php">grouping documentation</a>.
+        </li>
+
+        <li>
+            <b>De-Selection: </b> Now, if gridOptions.rowDeselection=true, you can deselect rows with ctrl+click.
+        </li>
+
+        <li>
+            <b>forEachInMemory: </b> New callback for iterating through each row in memory. See the selection example
+            <a href="angular-grid-selection/index.php">"Using forEachInMemory"</a> for it being used.
         </li>
 
         <li>
