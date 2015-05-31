@@ -2,7 +2,7 @@
   "name": "angular-grid",
   "version": "1.6.0",
   "description": "High performance and feature rich data grid for AngularJS",
-  "main": "dist/angularGrid.min.js",
+  "main": "dist/angular-grid.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
