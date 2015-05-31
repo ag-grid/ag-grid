@@ -29,6 +29,11 @@ include 'documentation_header.php';
         </li>
 
         <li>
+            <b>Filtering API: </b> You can now interact with all the filters through their APIs. See
+            <a href="angular-grid-filtering/index.php">filtering documentation</a> for details.
+        </li>
+
+        <li>
             <b>De-Selection: </b> Now, if gridOptions.rowDeselection=true, you can deselect rows with ctrl+click.
         </li>
 
