@@ -78,6 +78,14 @@ include '../documentation_header.php';
         as it's own entity.
     </p>
 
+    <h3>Click De-Selection</h3>
+
+    <p>
+        Normal behaviour with the grid disallows deselection of nodes (ie once a node is selected,
+        it remains selected until another row is selected in it's place). To allow deselection,
+        set rowDeselection=true in the grid options.
+    </p>
+
     <h3>Selection Callbacks</h3>
 
     <p>

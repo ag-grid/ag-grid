@@ -262,19 +262,33 @@ Grid.prototype.onRowClicked = function(event, rowIndex, node) {
         return;
     }
 
+    // making local variables to make the below more readable
+    var gridOptionsWrapper = this.gridOptionsWrapper;
+    var selectionController = this.selectionController;
+
     // if no selection method enabled, do nothing
-    if (!this.gridOptionsWrapper.isRowSelection()) {
+    if (!gridOptionsWrapper.isRowSelection()) {
         return;
     }
 
     // if click selection suppressed, do nothing
-    if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
+    if (gridOptionsWrapper.isSuppressRowClickSelection()) {
         return;
     }
 
     // ctrlKey for windows, metaKey for Apple
-    var tryMulti = event.ctrlKey || event.metaKey;
-    this.selectionController.selectNode(node, tryMulti);
+    var ctrlKeyPressed = event.ctrlKey || event.metaKey;
+
+    var doDeselect = ctrlKeyPressed
+        && selectionController.isNodeSelected(node)
+        && gridOptionsWrapper.isRowDeselection() ;
+
+    if (doDeselect) {
+        selectionController.deselectNode(node);
+    } else {
+        var tryMulti = ctrlKeyPressed;
+        selectionController.selectNode(node, tryMulti);
+    }
 };
 
 Grid.prototype.setHeaderHeight = function() {

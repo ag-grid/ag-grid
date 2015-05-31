@@ -10,6 +10,11 @@ var DO_NOT_CARE = 3;
 
 function SelectionController() {}
 
+//Add: keepLastSelected option that would allow de-selection of the selected row in "single" selection mode when the selected row is clicked.
+//Add: api.getSelectionIndices() to get indices of current selections. This would allow api.selectIndex() to be used externally to implement a previous/next functionality.
+//Add: api.selectRow(input) to select a row based on row.data === input, or alternatively input(row) === true if input is a function
+
+
 SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
     this.eRowsParent = eRowsParent;
     this.angularGrid = angularGrid;
@@ -79,12 +84,6 @@ SelectionController.prototype.getBestCostNodeSelection = function() {
 
 SelectionController.prototype.setRowModel = function(rowModel) {
     this.rowModel = rowModel;
-};
-
-// called when use hits 'space' when cell is focused
-SelectionController.prototype.isNodeSelected = function(node) {
-    // if it's set, the id is a number, otherwise it's undefined
-    return typeof this.selectedNodesById[node.id] === 'number';
 };
 
 // public - this clears the selection, but doesn't clear down the css - when it is called, the
