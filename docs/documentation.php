@@ -20,7 +20,7 @@ include 'documentation_header.php';
 
 
         <li>
-            <b>BREAKING CHANGE: Dist files now 'angular-grid' and not 'angularGrid': </b> Camel case is a problem with *nix systems as they are case insenstivie.
+            <b>BREAKING CHANGE: Dist files now 'angular-grid' and not 'angularGrid': </b> Camel case is a problem with *nix systems as they are case insensitive.
         </li>
 
         <li>
@@ -54,8 +54,7 @@ include 'documentation_header.php';
 
     <ul>
         <li>
-            My 'to do' list as as follows: a) Improved selection & API, b) Filtering API and c) Server side filtering and sorting.
-            so will see how much of it I get done.
+            My 'to do' list as as follows: a) Sorting API and b) Server side filtering and sorting.
         </li>
     </ul>
 
