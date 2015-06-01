@@ -15,7 +15,8 @@ GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.grid
 GridOptionsWrapper.prototype.getContext = function() { return this.gridOptions.context; };
 GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
 GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
-GridOptionsWrapper.prototype.isGroupSelectsChildren = function() { return isTrue(this.gridOptions.groupSelectsChildren); };
+GridOptionsWrapper.prototype.isGroupCheckboxSelectionGroup = function() { return this.gridOptions.groupCheckboxSelection === 'group'; };
+GridOptionsWrapper.prototype.isGroupCheckboxSelectionChildren = function() { return this.gridOptions.groupCheckboxSelection === 'children'; };
 GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
 GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
 GridOptionsWrapper.prototype.isSuppressCellSelection = function() { return isTrue(this.gridOptions.suppressCellSelection); };
@@ -67,6 +68,17 @@ GridOptionsWrapper.prototype.getIcons = function() {
 GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
     return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
 };
+
+GridOptionsWrapper.prototype.isGroupCheckboxSelection = function() {
+    return this.isGroupCheckboxSelectionChildren() || this.isGroupCheckboxSelectionGroup();
+};
+
+GridOptionsWrapper.prototype.setHeaderHeight = function(value) { 
+	if (!(typeof this.gridOptions.headerHeight === 'number')) {	
+        this.gridOptions.headerHeight=25;
+    } 
+	this.gridOptions.headerHeight=this.gridOptions.headerHeight*value;
+ };
 
 GridOptionsWrapper.prototype.getHeaderHeight = function() {
     if (typeof this.gridOptions.headerHeight === 'number') {
