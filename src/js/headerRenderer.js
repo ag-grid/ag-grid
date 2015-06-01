@@ -54,15 +54,15 @@ HeaderRenderer.prototype.refreshHeader = function() {
 };
 
 HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-    var groups = this.columnModel.getColumnGroups();
-    var that = this;
+    var groups = this.columnModel.getColumnGroups();	
+    var that = this;	
     groups.forEach(function(group) {
         var eHeaderCell = that.createGroupedHeaderCell(group);
         var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
         eContainerToAddTo.appendChild(eHeaderCell);
     });
 };
-
+	
 HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
 
     var eHeaderGroup = document.createElement('div');
@@ -75,6 +75,8 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     // on the group header, if no group is specified
     if (group.name) {
         classNames.push('ag-header-group-cell-with-group');
+        if(group.name.trim())
+         classNames.push('ag-header-group-cell-with-group-border-bottom');
     } else {
         classNames.push('ag-header-group-cell-no-group');
     }
@@ -108,6 +110,11 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     eHeaderGroup.appendChild(eHeaderGroupCell);
 
     var that = this;
+	group.subGroups.forEach(function(subGroup){
+            var eHeaderCell = that.createGroupedHeaderCell(subGroup);
+            eHeaderGroup.appendChild(eHeaderCell);
+	});
+	
     group.visibleColumns.forEach(function(column) {
         var eHeaderCell = that.createHeaderCell(column, true, group);
         eHeaderGroup.appendChild(eHeaderCell);
@@ -160,8 +167,22 @@ HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
     headerGroup.visibleColumns.forEach(function(column) {
         totalWidth += column.actualWidth;
     });
+    totalWidth+=this.setWidthOfGroupHeaderCellbySubGroups(headerGroup.subGroups);
     headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
     headerGroup.actualWidth = totalWidth;
+};
+
+HeaderRenderer.prototype.setWidthOfGroupHeaderCellbySubGroups = function(groupList) {
+	var width=0;
+	for(var i=0;i < groupList.length;i++){
+		headerGroup=groupList[i];
+		headerGroup.visibleColumns.forEach(function(column) {
+			width += column.actualWidth;
+		});
+		width+=this.setWidthOfGroupHeaderCellbySubGroups(headerGroup.subGroups);
+	}
+	return width;
+    
 };
 
 HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
@@ -314,7 +335,7 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapp
 
         // update sort on current col
         if (colDefWrapper.sort === constants.DESC) {
-            colDefWrapper.sort = null
+            colDefWrapper.sort = null;
         }
         else {
             if (colDefWrapper.sort === constants.ASC) {
@@ -325,7 +346,7 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapp
             // Useful for determining the order in which the user sorted the columns:
             colDefWrapper.sortedAt = new Date().valueOf();
         }
-
+        
         // clear sort on all columns except this one, and update the icons
         that.columnModel.getAllColumns().forEach(function(columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
