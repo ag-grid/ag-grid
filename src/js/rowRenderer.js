@@ -587,7 +587,7 @@ RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScop
         eGridCell: eGridCell
     };
     var cellRenderer;
-    if (typeof colDef.cellRenderer === 'object') {
+    if (typeof colDef.cellRenderer === 'object' && colDef.cellRenderer !== null) {
         cellRenderer = this.cellRendererMap[colDef.cellRenderer.renderer];
         if (!cellRenderer) {
             throw 'Cell renderer ' + colDef.cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
@@ -677,7 +677,7 @@ RowRenderer.prototype.addClassesToCell = function(column, node, eGridCell) {
 
 RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, node, rowIndex) {
     var classRules = colDef.cellClassRules;
-    if (typeof classRules === 'object') {
+    if (typeof classRules === 'object' && classRules !== null) {
 
         var params = {
             value: value,
