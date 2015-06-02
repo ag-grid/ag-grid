@@ -83,7 +83,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  height: 100%;
+  height: auto;
 }
 .ag-header-group-cell {
   -webkit-box-sizing: border-box;

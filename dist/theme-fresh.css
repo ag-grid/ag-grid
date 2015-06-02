@@ -37,7 +37,7 @@
   border-right: 1px solid #808080;
 }
 .ag-fresh .ag-header-group-cell-with-group {
-  border-bottom: 1px solid #808080;
+  border-bottom: none;
 }
 .ag-fresh .ag-header-cell-label {
   padding: 4px 2px 4px 2px;
@@ -132,4 +132,7 @@
 .ag-fresh .ag-paging-row-summary-panel {
   display: inline-block;
   width: 300px;
+}
+.ag-fresh .ag-header-group-cell-with-group-border-bottom {
+  border-bottom: 1px solid #808080;
 }

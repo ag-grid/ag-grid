@@ -35,7 +35,7 @@
   margin-right: 2px;
 }
 .ag-dark .ag-header-group-cell-with-group {
-  border-bottom: 1px solid #808080;
+  border-bottom: none;
 }
 .ag-dark .ag-header-cell-menu-button {
   padding: 2px;
@@ -125,4 +125,7 @@
 .ag-dark .ag-paging-row-summary-panel {
   display: inline-block;
   width: 300px;
+}
+.ag-dark .ag-header-group-cell-with-group-border-bottom {
+  border-bottom: 1px solid #808080;
 }
