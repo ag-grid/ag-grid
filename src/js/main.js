@@ -25,7 +25,8 @@
         angularModule.directive("agGrid", function() {
             return {
                 restrict: "A",
-                controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController]
+                controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController],
+                scope: true
             };
         });
     }
