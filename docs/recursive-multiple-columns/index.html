@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+    <meta charset="UTF-8">
+        <title>Angular Grid - Recursive Mutiple</title>
+        <meta name="description" content="A high performance and feature rich data grid for AngularJS. This grid is faster than ui-grid and ng-grid.">
+        <meta name="keywords" content="angularjs angular grid table ui-grid ng-grid">
+        <meta property="og:image" content="http://www.angulargrid.com/images/angular-grid.png">
+        
+        <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />       
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
+        <link href="http://172.24.24.166:8000/dist/angular-grid.min.css" rel="stylesheet" type="text/css" >
+        <link href="http://172.24.24.166:8000/dist/theme-fresh.min.css" rel="stylesheet" type="text/css" >
+        <link href="consoles.css" rel="stylesheet"  type="text/css">
+    </head>
+
+
+    <body ng-app="consoles" class="big-text">
+        <div class="container">
+            <div class="container">
+                <div class="row" style="padding: 30px" >
+                    <div class="col-md-12" ng-controller="consolesController">
+                        <div style="border: 1px solid darkgrey; background-color: lightgrey;  border-radius: 5px; padding: 3px;">
+                            <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 14px;"> &nbsp; {{selectedFile}}
+                            </div>
+                            <div angular-grid="gridOptions" class="ag-fresh">
+                            </div>
+                        </div>
+                        <button ng-click="createRowData()"> reload</button>
+                        <button ng-click="exportar()"> Exportar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+<script src="http://172.24.24.166:8000/dist/angular-grid.js"></script>
+<script src="consoles.js"></script>

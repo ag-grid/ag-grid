@@ -1,0 +1,52 @@
+[
+    {
+        "group": true,
+        "expanded": true,
+        "data": {"name": "Consoles" },
+        "children": [
+            {"group": true,
+                "data": {"name": "XBOX 360","icon":"xbox"},
+                "children": [
+                    {"group": false, "data": {"name": "Call of Duty Advanced Warfare"}},
+                    {"group": false, "data": {"name": "Guitar Hero"}},
+                    {"group": false, "data": {"name": "Grand Theft Auto IV"}},
+                    {"group": false, "data": {"name": "Portal 2"}}
+                ]
+            },
+            {"group": true,
+                "data": {"name": "Playstation"},
+                "expanded": false,
+                "children": [
+                    {"group": true,
+                        "data": {"name": "Playstation 3","icon":"ps"},
+                        "children": [
+                            {"group": false, "data": {"name": "FIFA 15"}},
+                            {"group": false, "data": {"name": "God of War III"}},
+                            {"group": false, "data": {"name": "Metal Gear Solid 4"}},
+                            {"group": false, "data": {"name": "Little Big Planet 3"}}
+                        ]
+                    },
+                    {"group": true,
+                        "data": {"name": "Playstation 4","icon":"ps"},
+                        "children": [
+                            {"group": false, "data": {"name": "FIFA 15"}},
+                            {"group": false, "data": {"name": "God of War III"}},
+                            {"group": false, "data": {"name": "Metal Gear Solid 4"}},
+                            {"group": false, "data": {"name": "Little Big Planet 3"}}
+                        ]
+                    }]
+            },
+            {
+                "group": true,
+                "data": {"name": "PC Game","icon":"pc"},
+                "children": [
+                    {"group": false, "data": {"name": "Barbie" }},
+                    {"group": false, "data": {"name": "Aladdin"}},
+                    {"group": false, "data": {"name": "My little Bakery"}},
+                    {"group": false, "data": {"name": "Assasins Creed"}}
+                ]
+            }
+        ]
+    }
+    
+]
