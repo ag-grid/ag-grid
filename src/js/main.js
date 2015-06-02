@@ -22,6 +22,12 @@
                 }
             };
         });
+        angularModule.directive("agGrid", function() {
+            return {
+                restrict: "A",
+                controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController]
+            };
+        });
     }
 
     if (typeof exports !== 'undefined') {
@@ -33,13 +39,27 @@
 
     root.angularGrid = angularGridGlobalFunction;
 
-    function AngularDirectiveController($element, $scope, $compile) {
-        var eGridDiv = $element[0];
-        var gridOptions = $scope.angularGrid;
-        if (!gridOptions) {
-            console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
-            return;
+    function AngularDirectiveController($element, $scope, $compile, $attrs) {
+        var gridOptions;
+        if ($attrs) {
+            // new directive of ag-grid
+            var keyOfGridInScope = $attrs.agGrid;
+            gridOptions = $scope.$eval(keyOfGridInScope);
+            if (!gridOptions) {
+                console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
+                return;
+            }
+        } else {
+            // old directive of angular-grid
+            console.warn("WARNING - Directive angular-grid is deprecated, you should use the ag-grid directive instead.");
+            gridOptions = $scope.angularGrid;
+            if (!gridOptions) {
+                console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
+                return;
+            }
         }
+
+        var eGridDiv = $element[0];
         var grid = new Grid(eGridDiv, gridOptions, $scope, $compile);
 
         $scope.$on("$destroy", function() {

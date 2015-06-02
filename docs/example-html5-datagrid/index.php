@@ -61,7 +61,7 @@ include '../documentation_header.php';
             AngularJS script is not loaded.
         </li>
         <li>
-            The div has an ID, instead of using the angular-grid attribute.
+            The div has an ID, instead of using the ag-grid attribute.
         </li>
         <li>
             The angularGrid method is called, passing in the ID of the div to use for the table and the grid options.
