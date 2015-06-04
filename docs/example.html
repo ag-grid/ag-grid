@@ -146,10 +146,16 @@
             <div style="padding: 4px;">
                 <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
 
-<!--
-                <input placeholder="Line number..." type="text" ng-model="jumpToRowText"/>
-                <button ng-click="jumpToRow()">Go</button>
--->
+                <span style="padding-left: 20px; display: inline-block;">
+                    Jump to:
+                    <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
+                    <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
+                </span>
+
+                <!--
+                                <input placeholder="Line number..." type="text" ng-model="jumpToRowText"/>
+                                <button ng-click="jumpToRow()">Go</button>
+                -->
             </div>
         </div>
         <!-- The table div -->

@@ -384,7 +384,8 @@ Grid.prototype.ensureNodeVisible = function(comparator) {
 Grid.prototype.ensureIndexVisible = function(index) {
     var lastRow = this.rowModel.getVirtualRowCount();
     if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-        throw 'invalid row index for ensureIndexVisible: ' + index;
+        console.warn('invalid row index for ensureIndexVisible: ' + index);
+        return;
     }
 
     var rowHeight = this.gridOptionsWrapper.getRowHeight();
@@ -411,6 +412,59 @@ Grid.prototype.ensureIndexVisible = function(index) {
         this.eBodyViewport.scrollTop = newScrollPosition;
     }
     // otherwise, row is already in view, so do nothing
+};
+
+Grid.prototype.ensureColIndexVisible = function(index) {
+    if (typeof index !== 'number') {
+        console.warn('col index must be a number: ' + index);
+        return;
+    }
+
+    var columns = this.columnModel.getVisibleColumns();
+    if (typeof index !== 'number' || index < 0 || index >= columns.length) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', should be between 0 and ' + (columns.length - 1));
+        return;
+    }
+
+    var column = columns[index];
+    var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
+    if (index < pinnedColCount) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', scrolling to a pinned col makes no sense');
+        return;
+    }
+
+    // sum up all col width to the let to get the start pixel
+    var colLeftPixel = 0;
+    for (var i = pinnedColCount; i<index; i++) {
+        colLeftPixel += columns[i].actualWidth;
+    }
+
+    var colRightPixel = colLeftPixel + column.actualWidth;
+
+    var viewportLeftPixel = this.eBodyViewport.scrollLeft;
+    var viewportWidth = this.eBodyViewport.offsetWidth;
+
+    var scrollShowing = this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight;
+    if (scrollShowing) {
+        viewportWidth -= this.scrollWidth;
+    }
+   
+    var viewportRightPixel = viewportLeftPixel + viewportWidth;
+
+    var viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
+    var viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
+
+    if (viewportScrolledPastCol) {
+        // if viewport's left side is after col's left side, scroll right to pull col into viewport at left
+        this.eBodyViewport.scrollLeft = colLeftPixel;
+    } else if (viewportScrolledBeforeCol) {
+        // if viewport's right side is before col's right side, scroll left to pull col into viewport at right
+        var newScrollPosition = colRightPixel - viewportWidth;
+        this.eBodyViewport.scrollLeft = newScrollPosition;
+    }
+    // otherwise, col is already in view, so do nothing
 };
 
 Grid.prototype.addApi = function() {
@@ -515,6 +569,9 @@ Grid.prototype.addApi = function() {
         },
         getBestCostNodeSelection: function() {
             return that.selectionController.getBestCostNodeSelection();
+        },
+        ensureColIndexVisible: function(index) {
+            return that.ensureColIndexVisible(index);
         },
         ensureIndexVisible: function(index) {
             return that.ensureIndexVisible(index);
