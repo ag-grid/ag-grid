@@ -757,7 +757,7 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
         // only interested on key presses that are directly on this element, not any children elements. this
         // stops navigation if the user is in, for example, a text field inside the cell, and user hits
         // on of the keys we are looking for.
-        if (event.currentTarget !== eGridCell) {
+        if (event.target !== eGridCell) {
             return;
         }
 
