@@ -24,12 +24,8 @@ include '../documentation_header.php';
         APi method.
     </p>
 
-        <pre>
-// before grid initialised
-gridOptions.datasource = myDataSource;
-
-// after grid initialised, you can set or change the datasource
-gridOptions.api.setDatasource(myDataSource);</pre>
+        <pre>// before grid initialised
+gridOptions.datasource = myDataSource;</pre>
 
     <pre>
 Note: If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
@@ -37,10 +33,29 @@ you are trying to set the datasource through the setDatasource method, but the A
 to the gridOptions yet by the grid. To get around this, set the datasource in the 'ready()' method.
     </pre>
 
+    <h4>Changing up a Datasource</h4>
+
     <p>
         Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your
         data changes, eg if a filter or other search criteria is changed outside of the grid.
     </p>
+
+            <pre>// way 1 - set the the datasource using the API
+gridOptions.api.setDatasource(myDataSource);
+
+// way 2 - set the the datasource directly and inform the grid a new datasource is there
+gridOptions.datasource = myNewDatasource;
+gridOptions.api.onNewDatasource();</pre>
+
+    <p>
+        <b>Note:</b> If you call <i>setDatasource</i> or <i>onNewDatasource</i>, the grid will act assuming
+        it's a new datasource, resetting the paging. However you can pass in the same datasource instance.
+        So your application, for example, might have one isntance of a datasource that is aware of some
+        external filters, and when the filters change, you want to reset, but still keep the same datasource
+        instance. In this case, just call onNewDatasource() without actually changing the datasource.
+    </p>
+
+    <h4>The Datasource Object</h4>
 
     <p>
         The datasource you provide should contain the following items:

@@ -26,8 +26,23 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>onNewRows()</th>
-            <td>Call to inform the grid that the rows have changed. The grid will assume the rows are brand new
+            <td>Inform the grid that the rows have changed. The grid will assume the rows are brand new
                 and draw all rows from scratch.</td>
+        </tr>
+        <tr>
+            <th>setRows(rows)</th>
+            <td>Set new rows into the grid. This is the same as setting new rows in gridOptions and then calling
+                onNewRows()</td>
+        </tr>
+        <tr>
+            <th>onNewDatasource()</th>
+            <td>Inform the grid that a new datasource has been set. The grid will reset all paging
+                and load the first page..</td>
+        </tr>
+        <tr>
+            <th>setDatasource(datasource)</th>
+            <td>Set new datasource into the gird. This is the same as setting a new datasource in gridOptions
+            and then calling onNewDatasource()</td>
         </tr>
         <tr>
             <th>onNewCols()</th>
