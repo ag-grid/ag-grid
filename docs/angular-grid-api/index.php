@@ -157,6 +157,10 @@ include '../documentation_header.php';
             <td>Ensures the index is visible, scrolling the table if needed.</td>
         </tr>
         <tr>
+            <th>ensureColIndexVisible(index)</th>
+            <td>Ensures the column index is visible, scrolling the table if needed.</td>
+        </tr>
+        <tr>
             <th>ensureNodeVisible(comparator)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
                 b) the data object c) a comparator function (that takes the node as a parameter, and returns

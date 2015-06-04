@@ -381,10 +381,11 @@ Grid.prototype.ensureNodeVisible = function(comparator) {
     }
 };
 
-Grid.prototype.ensureIndexVisible = function(index, colIndex) {
+Grid.prototype.ensureIndexVisible = function(index) {
     var lastRow = this.rowModel.getVirtualRowCount();
     if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-        throw 'invalid row index for ensureIndexVisible: ' + index;
+        console.warn('invalid row index for ensureIndexVisible: ' + index);
+        return;
     }
 
     var rowHeight = this.gridOptionsWrapper.getRowHeight();
@@ -411,25 +412,41 @@ Grid.prototype.ensureIndexVisible = function(index, colIndex) {
         this.eBodyViewport.scrollTop = newScrollPosition;
     }
     // otherwise, row is already in view, so do nothing
+};
 
-    // Optional colIndex paramater
-    if (typeof colIndex !== 'number')
+Grid.prototype.ensureColIndexVisible = function(index) {
+    if (typeof index !== 'number') {
+        console.warn('col index must be a number: ' + index);
         return;
-
-    var columnDefs = this.gridOptionsWrapper.getColumnDefs();
-
-    if (colIndex < 0 || colIndex >= columnDefs.length) {
-        throw 'invalid column index for ensureIndexVisible: ' + colIndex;
     }
-  
-    var colWidth = this.gridOptionsWrapper.getColWidth();
-    var colRightPixel = colWidth * colIndex;
-    var colLeftPixel = colRightPixel - colWidth;
+
+    var columns = this.columnModel.getVisibleColumns();
+    if (typeof index !== 'number' || index < 0 || index >= columns.length) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', should be between 0 and ' + (columns.length - 1));
+        return;
+    }
+
+    var column = columns[index];
+    var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
+    if (index < pinnedColCount) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', scrolling to a pinned col makes no sense');
+        return;
+    }
+
+    // sum up all col width to the let to get the start pixel
+    var colLeftPixel = 0;
+    for (var i = pinnedColCount; i<index; i++) {
+        colLeftPixel += columns[i].actualWidth;
+    }
+
+    var colRightPixel = colLeftPixel + column.actualWidth;
 
     var viewportLeftPixel = this.eBodyViewport.scrollLeft;
     var viewportWidth = this.eBodyViewport.offsetWidth;
 
-    scrollShowing = this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight;
+    var scrollShowing = this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight;
     if (scrollShowing) {
         viewportWidth -= this.scrollWidth;
     }
@@ -553,8 +570,11 @@ Grid.prototype.addApi = function() {
         getBestCostNodeSelection: function() {
             return that.selectionController.getBestCostNodeSelection();
         },
-        ensureIndexVisible: function(index, colIndex) {
-            return that.ensureIndexVisible(index, colIndex);
+        ensureColIndexVisible: function(index) {
+            return that.ensureColIndexVisible(index);
+        },
+        ensureIndexVisible: function(index) {
+            return that.ensureIndexVisible(index);
         },
         ensureNodeVisible: function(comparator) {
             return that.ensureNodeVisible(comparator);

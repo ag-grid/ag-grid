@@ -194,6 +194,13 @@ gridsModule.controller('mainController', function($scope) {
     //    $scope.angularGrid.api.ensureIndexVisible(Math.random*() * 100000);
     //});
 
+    $scope.jumpToCol = function() {
+        var index = Number($scope.jumpToColText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            angularGrid.api.ensureColIndexVisible(index);
+        }
+    };
+
     $scope.jumpToRow = function() {
         var index = Number($scope.jumpToRowText);
         if (typeof index === 'number' && !isNaN(index)) {
