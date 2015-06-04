@@ -115,7 +115,7 @@ TextFilter.prototype.createApi = function() {
         setFilter: function(filter) {
             filter = utils.makeNull(filter);
 
-            that.filterNumber = filter;
+            that.filterText = filter;
             that.eFilterTextField.value = filter;
         }
     };
