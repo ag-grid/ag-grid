@@ -59,10 +59,14 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
-            <th>selectIndex(index, multi, suppressEvents)</th>
-            <td>Select the row at the given index. If multi is true, then previous selections will be kept (ie allow
+            <th>selectIndex(index, multi, suppressEvents)<br/>selectNode(node, multi, suppressEvents)</th>
+            <td>Select the row at the given index / node. If multi is true, then previous selections will be kept (ie allow
                 multi-select). If multi is false, any previously selected row will be unselected. If suppressEvents
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
+        </tr>
+        <tr>
+            <th>deselectIndex(index)<br/>deselectNode(node</th>
+            <td>Deselects the row node at the given index / node.</td>
         </tr>
         <tr>
             <th>getSelectedNodes()</th>
