@@ -109,7 +109,7 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
     function getGroupName(params) {
         var cellRenderer = params.colDef.cellRenderer;
         if (cellRenderer && cellRenderer.keyMap
-            && typeof cellRenderer.keyMap === 'object' && colDef.cellRenderer !== null) {
+            && typeof cellRenderer.keyMap === 'object' && params.colDef.cellRenderer !== null) {
             var valueFromMap = cellRenderer.keyMap[params.node.key];
             if (valueFromMap) {
                 return valueFromMap;
