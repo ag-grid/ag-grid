@@ -84,7 +84,8 @@ gridsModule.controller('mainController', function($scope) {
         angularCompileFilters: true,
         angularCompileHeaders: true,
         //dontUseScrolls: true,
-        rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
+        //rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
+        rowClass: 'ngRow',
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: rowSelected, //callback when row selected
