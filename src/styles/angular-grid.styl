@@ -147,6 +147,9 @@
     box-sizing: border-box
     text-overflow: ellipsis
     overflow: hidden
+    // this float was needed for layout in safari, without it, when images were used (eg country flags),
+    // then the layout was broken
+    float: left
 
 .ag-group-cell-entire-row
     //position: absolute // took this out because of https://github.com/ceolter/angular-grid/issues/115

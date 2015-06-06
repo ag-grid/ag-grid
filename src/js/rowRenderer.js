@@ -902,6 +902,7 @@ RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eG
 
 RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope) {
     var eCellWrapper = document.createElement('span');
+    utils.addCssClass(eCellWrapper, "ag-cell-wrapper");
     eGridCell.appendChild(eCellWrapper);
 
     var colDef = column.colDef;
@@ -910,7 +911,10 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
         eCellWrapper.appendChild(eCheckbox);
     }
 
+    // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
     var eSpanWithValue = document.createElement("span");
+    utils.addCssClass(eSpanWithValue, "ag-cell-value");
+
     eCellWrapper.appendChild(eSpanWithValue);
 
     var that = this;

@@ -119,6 +119,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var groupColumn = {
         displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
+        floatCell: true,
             cellRenderer: {
                 renderer: "group",
                 checkbox: true
@@ -126,6 +127,7 @@ gridsModule.controller('mainController', function($scope) {
         };
 
     var firstColumn = {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter,
+        floatCell: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -137,6 +139,7 @@ gridsModule.controller('mainController', function($scope) {
         groupColumn,
         firstColumn,
         {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+            floatCell: true,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -155,7 +158,9 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
+            cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+            floatCell: true,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
         {displayName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
@@ -171,6 +176,7 @@ gridsModule.controller('mainController', function($scope) {
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
             cellRenderer: function() { return '...cadabra!'; } },
         {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
+            floatCell: true,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
         {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
