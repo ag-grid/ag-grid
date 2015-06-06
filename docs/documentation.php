@@ -17,6 +17,9 @@ include 'documentation_header.php';
         This is what I did last week:
     <ul>
 
+        <li>
+            ensureColIndexVisible, move to ag-grid and no longer isolated scope
+        </li>
 
 
         <li>
