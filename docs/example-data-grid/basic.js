@@ -314,6 +314,7 @@ fileBrowserModule.controller('basicController', function($scope) {
     function ProficiencyFilter(params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
+        this.valueGetter = params.valueGetter;
     }
 
     ProficiencyFilter.prototype.getGui = function () {
@@ -346,7 +347,8 @@ fileBrowserModule.controller('basicController', function($scope) {
 
     ProficiencyFilter.prototype.doesFilterPass = function (node) {
 
-        var valueAsNumber = parseFloat(node.value);
+        var value = this.valueGetter(node);
+        var valueAsNumber = parseFloat(value);
 
         switch (this.selected) {
             case PROFICIENCY_ABOVE40 : return valueAsNumber >= 40;

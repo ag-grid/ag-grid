@@ -15,9 +15,9 @@ var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 
-// focus stops the default editing
-
 function Grid(eGridDiv, gridOptions, $scope, $compile) {
+
+    this.addEnvironmentClasses(eGridDiv);
 
     this.gridOptions = gridOptions;
     this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
@@ -77,6 +77,11 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
         this.gridOptionsWrapper.getReady()(gridOptions.api);
     }
 }
+
+Grid.prototype.addEnvironmentClasses = function(eGridDiv) {
+    var platformAndBrowser = 'ag-env-' + constants.PLATFORM + "-" + constants.BROWSER;
+    utils.addCssClass(eGridDiv, platformAndBrowser);
+};
 
 Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
 

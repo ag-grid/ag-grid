@@ -85,7 +85,6 @@ gridsModule.controller('mainController', function($scope) {
         angularCompileHeaders: true,
         //dontUseScrolls: true,
         //rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
-        rowClass: 'ngRow',
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: rowSelected, //callback when row selected
@@ -476,6 +475,7 @@ function WinningsFilter(params) {
     this.cbNegative.onclick = this.filterChangedCallback;
     this.cbGreater50.onclick = this.filterChangedCallback;
     this.cbGreater90.onclick = this.filterChangedCallback;
+    this.valueGetter = params.valueGetter;
 }
 
 WinningsFilter.prototype.getGui = function () {
@@ -483,16 +483,17 @@ WinningsFilter.prototype.getGui = function () {
 };
 
 WinningsFilter.prototype.doesFilterPass = function (node) {
+    var value = this.valueGetter(node);
     if (this.cbNoFilter.checked) {
         return true;
     } else if (this.cbPositive.checked) {
-        return node.value >= 0;
+        return value >= 0;
     } else if (this.cbNegative.checked) {
-        return node.value < 0;
+        return value < 0;
     } else if (this.cbGreater50.checked) {
-        return node.value >= 50000;
+        return value >= 50000;
     } else if (this.cbGreater90.checked) {
-        return node.value >= 90000;
+        return value >= 90000;
     } else {
         console.error('invalid checkbox selection');
     }
