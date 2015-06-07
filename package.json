@@ -1,6 +1,6 @@
 {
   "name": "angular-grid",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "High performance and feature rich data grid for AngularJS",
   "main": "dist/angular-grid.min.js",
   "scripts": {
