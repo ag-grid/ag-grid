@@ -18,9 +18,9 @@ include 'documentation_header.php';
     <ul>
 
         <li>
-            ensureColIndexVisible, move to ag-grid and no longer isolated scope
+            ensureColIndexVisible, move to ag-grid and no longer isolated scope, API for sorting, fixed layout in Safari,
+            other minor bug fixes and documentation changes.
         </li>
-
 
         <li>
             <b>BREAKING CHANGE: Dist files now 'angular-grid' and not 'angularGrid': </b> Camel case is a problem with *nix systems as they are case insensitive.

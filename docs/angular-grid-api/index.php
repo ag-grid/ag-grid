@@ -189,6 +189,18 @@ include '../documentation_header.php';
                 change through one of the filter APIs.
             </td>
         </tr>
+        <tr>
+            <th>setSortModel(model)</th>
+            <td>Sets the sort state of the grid.
+            </td>
+        </tr>
+        <tr>
+            <th>getSortModel()</th>
+            <td>Returns the sort state of the grid.
+            </td>
+        </tr>
+
+
 
     </table>
 

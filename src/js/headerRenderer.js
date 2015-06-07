@@ -236,8 +236,8 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 
     // add in sort icons
     if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-        column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
-        column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
+        column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
+        column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
         utils.addCssClass(column.eSortAsc, 'ag-header-icon');
         utils.addCssClass(column.eSortDesc, 'ag-header-icon');
         headerCellLabel.appendChild(column.eSortAsc);
@@ -307,50 +307,52 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     return eHeaderCell;
 };
 
-HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, colDefWrapper) {
+HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
     var that = this;
 
     headerCellLabel.addEventListener("click", function(e) {
 
         // update sort on current col
-        if (colDefWrapper.sort === constants.DESC) {
-            colDefWrapper.sort = null
+        if (column.sort === constants.DESC) {
+            column.sort = null;
+        } else if (column.sort === constants.ASC) {
+            column.sort = constants.DESC;
+        } else {
+            column.sort = constants.ASC;
         }
-        else {
-            if (colDefWrapper.sort === constants.ASC) {
-                colDefWrapper.sort = constants.DESC;
-            } else {
-                colDefWrapper.sort = constants.ASC;
-            }
-            // Useful for determining the order in which the user sorted the columns:
-            colDefWrapper.sortedAt = new Date().valueOf();
+
+        // sortedAt used for knowing order of cols when multi-col sort
+        if (column.sort) {
+            column.sortedAt = new Date().valueOf();
+        } else {
+            column.sortedAt = null;
         }
 
         // clear sort on all columns except this one, and update the icons
         that.columnModel.getAllColumns().forEach(function(columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!(e.shiftKey || columnToClear === colDefWrapper)) {
+            if (!(e.shiftKey || columnToClear === column)) {
                 columnToClear.sort = null;
-            }
-
-            // check in case no sorting on this particular col, as sorting is optional per col
-            if (columnToClear.colDef.suppressSorting) {
-                return;
-            }
-
-            // update visibility of icons
-            var sortAscending = columnToClear.sort === constants.ASC;
-            var sortDescending = columnToClear.sort === constants.DESC;
-
-            if (columnToClear.eSortAsc) {
-                utils.setVisible(columnToClear.eSortAsc, sortAscending);
-            }
-            if (columnToClear.eSortDesc) {
-                utils.setVisible(columnToClear.eSortDesc, sortDescending);
             }
         });
 
+        that.updateSortIcons();
         that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
+    });
+};
+
+HeaderRenderer.prototype.updateSortIcons = function() {
+    this.columnModel.getAllColumns().forEach(function(column) {
+        // update visibility of icons
+        var sortAscending = column.sort === constants.ASC;
+        var sortDescending = column.sort === constants.DESC;
+
+        if (column.eSortAsc) {
+            utils.setVisible(column.eSortAsc, sortAscending);
+        }
+        if (column.eSortDesc) {
+            utils.setVisible(column.eSortDesc, sortDescending);
+        }
     });
 };
 

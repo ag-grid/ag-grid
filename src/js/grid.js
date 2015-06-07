@@ -593,9 +593,76 @@ Grid.prototype.addApi = function() {
         },
         onFilterChanged: function() {
             that.onFilterChanged();
-        }
+        },
+        setSortModel: function(sortModel) {
+            that.setSortModel(sortModel);
+        },
+        getSortModel: function() {
+            return that.getSortModel();
+        },
+        ASC: constants.ASC,
+        DESC: constants.DESC
     };
     this.gridOptions.api = api;
+};
+
+Grid.prototype.getSortModel = function() {
+    var allColumns = this.columnModel.getAllColumns();
+    var columnsWithSorting = [];
+    var i;
+    for (i = 0; i<allColumns.length; i++) {
+        if (allColumns[i].sort) {
+            columnsWithSorting.push(allColumns[i]);
+        }
+    }
+    columnsWithSorting.sort( function(a,b) {
+        return a.sortedAt - b.sortedAt;
+    });
+
+    var result = [];
+    for (i = 0; i<columnsWithSorting.length; i++) {
+        var resultEntry = {
+            field: columnsWithSorting[i].colDef.field,
+            sort: columnsWithSorting[i].sort
+        };
+        result.push(resultEntry);
+    }
+
+    return result;
+};
+
+Grid.prototype.setSortModel = function(sortModel) {
+    // first up, clear any previous sort
+    var sortModelProvided = sortModel!==null && sortModel!==undefined && sortModel.length>0;
+    var allColumns = this.columnModel.getAllColumns();
+    for (var i = 0; i<allColumns.length; i++) {
+        var column = allColumns[i];
+
+        var sortForCol = null;
+        var sortedAt = -1;
+        if (sortModelProvided && !column.colDef.suppressSorting) {
+            for (var j = 0; j<sortModel.length; j++) {
+                var sortModelEntry = sortModel[j];
+                if (typeof sortModelEntry.field === 'string'
+                    && typeof column.colDef.field === 'string'
+                    && sortModelEntry.field === column.colDef.field) {
+                    sortForCol = sortModelEntry.sort;
+                    sortedAt = j;
+                }
+            }
+        }
+
+        if (sortForCol) {
+            column.sort = sortForCol;
+            column.sortedAt = sortedAt;
+        } else {
+            column.sort = null;
+            column.sortedAt = null;
+        }
+    }
+
+    this.headerRenderer.updateSortIcons();
+    this.updateModelAndRefresh(constants.STEP_SORT);
 };
 
 Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {
