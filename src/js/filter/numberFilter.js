@@ -110,11 +110,35 @@ NumberFilter.prototype.createApi = function() {
         setFilter: function(filter) {
             filter = utils.makeNull(filter);
 
-            if (filter!==null && !typeof filter === 'number') {
+            if (filter!==null && !(typeof filter === 'number')) {
                 filter = parseFloat(filter);
             }
             that.filterNumber = filter;
             that.eFilterTextField.value = filter;
+        },
+        getType: function() {
+            return that.filterType;
+        },
+        getFilter: function() {
+            return that.filterNumber;
+        },
+        getModel: function() {
+            if (that.isFilterActive()) {
+                return {
+                    type: that.filterType,
+                    filter: that.filterNumber
+                };
+            } else {
+                return null;
+            }
+        },
+        setModel: function(dataModel) {
+            if (dataModel) {
+                this.setType(dataModel.type);
+                this.setFilter(dataModel.filter);
+            } else {
+                this.setFilter(null);
+            }
         }
     };
 };

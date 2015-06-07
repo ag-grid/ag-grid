@@ -41,10 +41,12 @@ ColumnController.prototype.createModel = function() {
             return that.columnGroups;
         },
         // used by:
-        // + api.getFilterModel() -> to map colDef to column
-        getColumnForColDef: function(colDef) {
+        // + api.getFilterModel() -> to map colDef to column, key can be colDef or field
+        getColumn: function(key) {
             for (var i = 0; i<that.columns.length; i++) {
-                if (that.columns[i].colDef === colDef) {
+                var colDefMatches = that.columns[i].colDef === key;
+                var fieldMatches = that.columns[i].colDef.field === key;
+                if (colDefMatches || fieldMatches) {
                     return that.columns[i];
                 }
             }

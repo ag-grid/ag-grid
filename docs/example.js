@@ -421,6 +421,7 @@ function PersonFilter(params) {
     this.$scope.onFilterChanged = function() {
         params.filterChangedCallback();
     };
+    this.valueGetter = params.valueGetter;
 }
 
 PersonFilter.prototype.getGui = function () {
@@ -436,15 +437,16 @@ PersonFilter.prototype.getGui = function () {
         '</div>';
 };
 
-PersonFilter.prototype.doesFilterPass = function (node) {
+PersonFilter.prototype.doesFilterPass = function (params) {
     var filterText = this.$scope.filterText;
     if (!filterText) {
         return true;
     }
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
+    var value = this.valueGetter(params);
     filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-        if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
+        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
             passed = false;
         }
     });

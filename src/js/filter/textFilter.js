@@ -115,8 +115,37 @@ TextFilter.prototype.createApi = function() {
         setFilter: function(filter) {
             filter = utils.makeNull(filter);
 
-            that.filterText = filter;
-            that.eFilterTextField.value = filter;
+            if (filter) {
+                that.filterText = filter.toLowerCase();
+                that.eFilterTextField.value = filter;
+            } else {
+                that.filterText = null;
+                that.eFilterTextField.value = null;
+            }
+        },
+        getType: function() {
+            return that.filterType;
+        },
+        getFilter: function() {
+            return that.filterText;
+        },
+        getModel: function() {
+            if (that.isFilterActive()) {
+                return {
+                    type: that.filterType,
+                    filter: that.filterText
+                };
+            } else {
+                return null;
+            }
+        },
+        setModel: function(dataModel) {
+            if (dataModel) {
+                this.setType(dataModel.type);
+                this.setFilter(dataModel.filter);
+            } else {
+                this.setFilter(null);
+            }
         }
     };
 };

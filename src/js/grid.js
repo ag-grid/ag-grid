@@ -106,7 +106,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     // initialise all the beans
     templateService.init($scope);
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
-    filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService);
+    filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel);
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
@@ -588,7 +588,11 @@ Grid.prototype.addApi = function() {
             that.rowModel.forEachInMemory(callback);
         },
         getFilterApiForColDef: function(colDef) {
-            var column = that.columnModel.getColumnForColDef(colDef);
+            console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
+            return this.getFilterApi(colDef);
+        },
+        getFilterApi: function(key) {
+            var column = that.columnModel.getColumn(key);
             return that.filterManager.getFilterApi(column);
         },
         onFilterChanged: function() {
@@ -600,8 +604,12 @@ Grid.prototype.addApi = function() {
         getSortModel: function() {
             return that.getSortModel();
         },
-        ASC: constants.ASC,
-        DESC: constants.DESC
+        setFilterModel: function(model) {
+            that.filterManager.setFilterModel(model);
+        },
+        getFilterModel: function() {
+            return that.filterManager.getFilterModel();
+        }
     };
     this.gridOptions.api = api;
 };

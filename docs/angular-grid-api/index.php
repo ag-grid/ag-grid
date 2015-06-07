@@ -179,8 +179,10 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>getFilterApiForColDef(colDef)</th>
-            <td>Returns the API for the filter for the provided colDef.
+            <th>getFilterApi(col)</th>
+            <td>Returns the API for the filter for the column. Either provide the colDef (matches on object
+                reference) or the column field attribute (matches on string comparison). Matching by field
+                is normal. Matching by colDef is useful when field is missing or not unique.
             </td>
         </tr>
         <tr>
@@ -199,7 +201,6 @@ include '../documentation_header.php';
             <td>Returns the sort state of the grid.
             </td>
         </tr>
-
 
 
     </table>

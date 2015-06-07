@@ -227,7 +227,7 @@ fileBrowserModule.controller('basicController', function($scope) {
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
         '      <input type="checkbox"/>' +
-        '      <img src="/example-basic/SKILL.png" width="30px"/>' +
+        '      <img src="/example-data-grid/SKILL.png" width="30px"/>' +
         '    </div>' +
         '  </span>' +
         '</label>';
@@ -274,9 +274,9 @@ fileBrowserModule.controller('basicController', function($scope) {
         return eGui;
     };
 
-    SkillFilter.prototype.doesFilterPass = function (node) {
+    SkillFilter.prototype.doesFilterPass = function (params) {
 
-        var rowSkills = node.data.skills;
+        var rowSkills = params.data.skills;
         var model = this.model;
         var passed = true;
 
@@ -345,9 +345,9 @@ fileBrowserModule.controller('basicController', function($scope) {
         return eGui;
     };
 
-    ProficiencyFilter.prototype.doesFilterPass = function (node) {
+    ProficiencyFilter.prototype.doesFilterPass = function (params) {
 
-        var value = this.valueGetter(node);
+        var value = this.valueGetter(params);
         var valueAsNumber = parseFloat(value);
 
         switch (this.selected) {

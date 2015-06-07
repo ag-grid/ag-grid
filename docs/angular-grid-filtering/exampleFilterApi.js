@@ -24,8 +24,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
     };
 
     $scope.irelandAndUk = function() {
-        var countryColDef = $scope.gridOptions.columnDefs[2];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(countryColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('country');
         filterApi.selectNothing();
         filterApi.selectValue('Ireland');
         filterApi.selectValue('Great Britain');
@@ -33,15 +32,13 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
     };
 
     $scope.clearCountryFilter = function() {
-        var countryColDef = $scope.gridOptions.columnDefs[2];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(countryColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('country');
         filterApi.selectEverything();
         $scope.gridOptions.api.onFilterChanged();
     };
 
     $scope.endingStan = function() {
-        var countryColDef = $scope.gridOptions.columnDefs[2];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(countryColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('country');
         filterApi.selectNothing();
         for (var i = 0; i<filterApi.getUniqueValueCount(); i++) {
             var value = filterApi.getUniqueValue(i);
@@ -53,25 +50,39 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
         $scope.gridOptions.api.onFilterChanged();
     };
 
+    $scope.setCountryModel = function() {
+        var filterApi = $scope.gridOptions.api.getFilterApi('country');
+        var model = ['Algeria','Argentina'];
+        filterApi.setModel(model);
+        $scope.gridOptions.api.onFilterChanged();
+    };
+
+    $scope.printCountryModel = function() {
+        var filterApi = $scope.gridOptions.api.getFilterApi('country');
+        var model = filterApi.getModel();
+        if (model) {
+            console.log('Country model is: [' + model.join(',') + ']');
+        } else {
+            console.log('Country model filter is not active');
+        }
+    };
+
     $scope.ageBelow25 = function() {
-        var ageColDef = $scope.gridOptions.columnDefs[1];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(ageColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('age');
         filterApi.setType(filterApi.LESS_THAN);
         filterApi.setFilter(25);
         $scope.gridOptions.api.onFilterChanged();
     };
 
     $scope.ageAbove30 = function() {
-        var ageColDef = $scope.gridOptions.columnDefs[1];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(ageColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('age');
         filterApi.setType(filterApi.GREATER_THAN);
         filterApi.setFilter(30);
         $scope.gridOptions.api.onFilterChanged();
     };
 
     $scope.clearAgeFilter = function() {
-        var ageColDef = $scope.gridOptions.columnDefs[1];
-        var filterApi = $scope.gridOptions.api.getFilterApiForColDef(ageColDef);
+        var filterApi = $scope.gridOptions.api.getFilterApi('age');
         filterApi.setFilter('');
         $scope.gridOptions.api.onFilterChanged();
     };

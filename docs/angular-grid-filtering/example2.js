@@ -48,7 +48,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
             '</div>';
     };
 
-    PersonFilter.prototype.doesFilterPass = function (node) {
+    PersonFilter.prototype.doesFilterPass = function (params) {
         var filterText = this.$scope.filterText;
         if (!filterText) {
             return true;
@@ -57,7 +57,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
         var passed = true;
         var valueGetter = this.valueGetter;
         filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-            var value = valueGetter(node);
+            var value = valueGetter(params);
             if (value.toString().toLowerCase().indexOf(filterWord)<0) {
                 passed = false;
             }

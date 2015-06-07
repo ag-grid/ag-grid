@@ -10,43 +10,41 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>31th May 2015</b>
+        <b>7th June 2015</b>
     </p>
 
     <p>
         This is what I did last week:
     <ul>
-
         <li>
-            ensureColIndexVisible, move to ag-grid and no longer isolated scope, API for sorting, fixed layout in Safari,
-            other minor bug fixes and documentation changes.
+            <b>Ensure Col Index Visible: </b> Now you can get grid to jump to a column as well as to a row.
+            See the new addition in the test drive.
         </li>
 
         <li>
-            <b>BREAKING CHANGE: Dist files now 'angular-grid' and not 'angularGrid': </b> Camel case is a problem with *nix systems as they are case insensitive.
+            <b>No Isolated Scope:</b> The directive is now ag-grid and not angular-grid. The
+            new directive does not use isolated scope, so if using Angular, you can access data on your main scope.
+            (note: although angular-grid and isolated scope is still supported for a while, it's considered depreciated)
         </li>
 
         <li>
-            <b>Default aggregation: </b> Now the grid has default aggregation. If just doing 'sum' aggregation,
-            no need to provide your own groupAggFunction. See <a href="angular-grid-grouping/index.php">grouping documentation</a>.
+            <b>API for Sorting:</b> Sorting can no be controlled via the API, See <a href="angular-grid-sorting/index.php">sorting documentation</a>.
         </li>
 
         <li>
-            <b>Filtering API: </b> You can now interact with all the filters through their APIs. See
-            <a href="angular-grid-filtering/index.php">filtering documentation</a> for details.
+            <b>API for Saving / Setting Filters:</b> Now you can save and restore the state of the filters. See <a href="angular-grid-filtering/index.php">filtering documentation</a>.
         </li>
 
         <li>
-            <b>De-Selection: </b> Now, if gridOptions.rowDeselection=true, you can deselect rows with ctrl+click.
+            <b>Safari Layout Fix:</b> Did you notice the test drive layout was wonky in Safari? Now no longer.
         </li>
 
         <li>
-            <b>forEachInMemory: </b> New callback for iterating through each row in memory. See the selection example
-            <a href="angular-grid-selection/index.php">"Using forEachInMemory"</a> for it being used.
+            <b>Other minor fixes & improvements.</b>
         </li>
 
         <li>
-            <b>Released 1.7.0</b> - contains all the above.
+            <b>Released 1.8.0</b> - contains all the above.
         </li>
 
     </ul>
@@ -57,7 +55,9 @@ include 'documentation_header.php';
 
     <ul>
         <li>
-            My 'to do' list as as follows: a) Sorting API and b) Server side filtering and sorting.
+            The improved API's for Sorting and Filtering were done in preparation for 'Server side Filtering and Sorting'.
+            I hoped to have that done by now, sorry to those who are waiting, but once starting I realised I needed
+            to introduce the said API's before it would all work togther.
         </li>
     </ul>
 
@@ -69,9 +69,10 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="text-align: center; font-weight: bold; margin: 50px;">
+<div style="text-align: center; margin: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding: 10px;">
         <div style="padding-bottom: 10px">
+            Thank you <b>Nicholas Phillips</b> and <b>Christopher Perreault</b> for donating. The rest of you, where is the love???
             Has the grid helped? Please donate to show your support and appreciation. Thanks.
         </div>
         <div>
@@ -136,6 +137,10 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <p>
+        <b>31st May</b> New features: Default aggregation, filtering API, de-selection, foeEachInMemory.
+    </p>
 
     <hr/>
 
