@@ -20,7 +20,7 @@ consolesModule.controller('consolesController', function($scope, $http) {
                     name: "15 or younger"               
                 }
             },
-            displayName: "Like", field: "1", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
+            displayName: "Like", field: "1", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer, groupShow:'open'
         },
         {
             group: {
@@ -29,7 +29,7 @@ consolesModule.controller('consolesController', function($scope, $http) {
                     name:  "15 or younger"               
                 }
             },
-            displayName: "Not Like", field: "2", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
+            displayName: "Not Like", field: "2", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer, groupShow:'closed'
         },
          {
             group: {
