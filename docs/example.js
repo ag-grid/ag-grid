@@ -158,7 +158,7 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
+        {displayName: "Bought", field: "bought", filter: 'set', group: {name:'Game', parent:"Main Group"}, editable: editableFunc, width: 100,
             cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
             floatCell: true,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
