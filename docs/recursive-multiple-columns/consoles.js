@@ -182,7 +182,7 @@ consolesModule.controller('consolesController', function($scope, $http) {
     }
 
     $scope.resize = function() {
-        $scope.gridOptions.api.sizeColumnsToFit();
+//        $scope.gridOptions.api.sizeColumnsToFit();
     };
 
 
