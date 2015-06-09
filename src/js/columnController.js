@@ -22,8 +22,6 @@ ColumnController.prototype.createModel = function() {
         // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
         // need a newMethod - get next col index
         getVisibleColumns: function() {
-			if(that.visibleColumns.length===0)
-				that.visibleColumns=that.columns;		
             return that.visibleColumns;
         },
         // used by:
@@ -98,6 +96,7 @@ ColumnController.prototype.columnGroupOpened = function(group) {
 // private
 ColumnController.prototype.updateVisibleColumns = function() {
     // if not grouping by headers, then all columns are visible
+    this.visibleColumns = [];
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
         this.visibleColumns = this.columns;
         return;
@@ -109,7 +108,6 @@ ColumnController.prototype.updateVisibleColumns = function() {
 // add allVisibleColumns
 ColumnController.prototype.updateVisibleColumnsByGroups = function(groupList) {
     // if grouping, then only show col as per group rules
-    this.visibleColumns = [];
     for (var i = 0; i < groupList.length; i++) {
         var group = groupList[i];
         group.addToVisibleColumns(this.visibleColumns);
@@ -161,13 +159,12 @@ ColumnController.prototype.buildGroups = function() {
     var lastColWasPinned = true;
 
     this.columns.forEach(function(column) {
-		currentGroup = that.addGroupToStack(column.colDef.group);
+		lastColWasPinned=lastColWasPinned&&column.pinned;
+		currentGroup = that.addGroupToStack(column.colDef.group,lastColWasPinned);
 		currentGroup.addColumn(column);		
     });
 	var level=this.groupLevel(this.columnGroups);	
-	this.extructure(this.columnGroups,level);
-	
-   
+	this.extructure(this.columnGroups,level);  
 	
 	this.gridOptionsWrapper.setHeaderHeight((level+1));
 	this.angularGrid.setHeaderHeight();
@@ -186,14 +183,15 @@ for( var x= 0;x<columnGroups.length;x++){
 		if(miGroup.allColumns.length>0){
 			var currentGroup=miGroup;
 			var c=size-1;		
-			while(currentGroup.subGroups.length>0&& !currentGroup.subGroups[currentGroup.subGroups.length-1].name.trim())
+			while(currentGroup.subGroups.length>0&& currentGroup.subGroups[currentGroup.subGroups.length-1].name.trim())
 			{
 				currentGroup=currentGroup.subGroups[currentGroup.subGroups.length-1];
 				c--;
 			} 
 			
 			for(var i=0;i<c;i++){
-				var currGroup =new ColumnGroup(false," ");
+				var currGroup =new ColumnGroup(currentGroup.pinned," ");
+				currGroup.parentGroup=currentGroup;
 				currentGroup.subGroups.push(currGroup);				
 				currentGroup =currGroup;
 			}	
@@ -311,7 +309,7 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
 };
 
 //lagb
-ColumnController.prototype.addGroupToStack = function(group) {
+ColumnController.prototype.addGroupToStack = function(group,pinned) {
     var groupsList =this.model.getColumnGroups();
     var parentGroup=null;
     if (typeof group == 'object' && group.parent != null) {
@@ -320,11 +318,12 @@ ColumnController.prototype.addGroupToStack = function(group) {
     }    
     var currGroup=null;	
     //  groupsList.forEach(function(columnGroup){
-    if(groupsList.length>0&&groupsList[groupsList.length-1].name==(typeof group == 'object'?group.name:group))
+    if(groupsList.length>0&&groupsList[groupsList.length-1].name==(typeof group == 'object'?group.name:group) && groupsList[groupsList.length-1].name)
         currGroup=groupsList[groupsList.length-1];
     //  });    
     if(currGroup==null){
-        currGroup =new ColumnGroup(false,(typeof group == 'object'?group.name:group) );
+        currGroup =new ColumnGroup(pinned,(typeof group == 'object'?group.name:group) );
+        currGroup.parentGroup=parentGroup;
         groupsList.push(currGroup);
     }
     return currGroup;
@@ -340,6 +339,7 @@ function ColumnGroup(pinned, name) {
     this.expandable = false; // whether this group can be expanded or not
     this.expanded = false;
     this.level=0;
+    this.parentGroup=null;
 }
 
 ColumnGroup.prototype.addColumn = function(column) {
@@ -374,6 +374,9 @@ ColumnGroup.prototype.calculateExpandable = function() {
     }
 
     this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+    this.subGroups.forEach(function (group){
+	group.calculateExpandable();	
+    });
 };
 
 ColumnGroup.prototype.calculateVisibleColumns = function() {

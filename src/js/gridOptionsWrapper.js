@@ -3,6 +3,8 @@ var DEFAULT_ROW_HEIGHT = 30;
 function GridOptionsWrapper(gridOptions) {
     this.gridOptions = gridOptions;
     this.setupDefaults();
+    this.singleHeaderHeight=25;
+    this.sw=true;
 }
 
 function isTrue(value) {
@@ -55,6 +57,7 @@ GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOption
 GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };
 GridOptionsWrapper.prototype.getRowBuffer = function() { return this.gridOptions.rowBuffer; };
 
+GridOptionsWrapper.prototype.getSingleHeaderHeight = function() { return this.singleHeaderHeight; };
 GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) {
     return this.gridOptions.selectedRows = newSelectedRows;
 };
@@ -75,10 +78,18 @@ GridOptionsWrapper.prototype.isGroupCheckboxSelection = function() {
 };
 
 GridOptionsWrapper.prototype.setHeaderHeight = function(value) { 
-	if (!(typeof this.gridOptions.headerHeight === 'number')) {	
-        this.gridOptions.headerHeight=25;
+   if (!(typeof this.gridOptions.headerHeight === 'number')) {	
+        this.gridOptions.headerHeight=this.singleHeaderHeight;
     } 
-	this.gridOptions.headerHeight=this.gridOptions.headerHeight*value;
+    if(this.sw){
+	/*
+	*check if the value of this.gridOptions.headerHeight
+	*is from client or calculated for levels of groups
+	*/
+	this.sw=false;
+	this.singleHeaderHeight=this.gridOptions.headerHeight;	
+    }
+	this.gridOptions.headerHeight=this.singleHeaderHeight*value;
  };
 
 GridOptionsWrapper.prototype.getHeaderHeight = function() {
