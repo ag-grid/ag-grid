@@ -151,13 +151,13 @@ Grid.prototype.showAndPositionPagingPanel = function() {
     if (this.isShowPagingPanel()) {
         this.ePagingPanel.style['display'] = 'inline';
         var heightOfPager = this.ePagingPanel.offsetHeight;
-        this.eBody.style['padding-bottom'] = heightOfPager + 'px';
+        this.eBody.style['paddingBottom'] = heightOfPager + 'px';
         var heightOfRoot = this.eRoot.clientHeight;
         var topOfPager = heightOfRoot - heightOfPager;
         this.ePagingPanel.style['top'] = topOfPager + 'px';
     } else {
         this.ePagingPanel.style['display'] = 'none';
-        this.eBody.style['padding-bottom'] = null;
+        this.eBody.style['paddingBottom'] = null;
     }
 
 };
@@ -304,8 +304,8 @@ Grid.prototype.setHeaderHeight = function() {
         this.eHeaderContainer.style['height'] = headerHeightPixels;
     } else {
         this.eHeader.style['height'] = headerHeightPixels;
-        this.eBody.style['padding-top'] = headerHeightPixels;
-        this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
+        this.eBody.style['paddingTop'] = headerHeightPixels;
+        this.eLoadingPanel.style['marginTop'] = headerHeightPixels;
     }
 };
 
