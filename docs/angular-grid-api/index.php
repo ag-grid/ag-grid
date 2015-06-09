@@ -26,8 +26,23 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>onNewRows()</th>
-            <td>Call to inform the grid that the rows have changed. The grid will assume the rows are brand new
+            <td>Inform the grid that the rows have changed. The grid will assume the rows are brand new
                 and draw all rows from scratch.</td>
+        </tr>
+        <tr>
+            <th>setRows(rows)</th>
+            <td>Set new rows into the grid. This is the same as setting new rows in gridOptions and then calling
+                onNewRows()</td>
+        </tr>
+        <tr>
+            <th>onNewDatasource()</th>
+            <td>Inform the grid that a new datasource has been set. The grid will reset all paging
+                and load the first page..</td>
+        </tr>
+        <tr>
+            <th>setDatasource(datasource)</th>
+            <td>Set new datasource into the gird. This is the same as setting a new datasource in gridOptions
+            and then calling onNewDatasource()</td>
         </tr>
         <tr>
             <th>onNewCols()</th>
@@ -44,10 +59,14 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
-            <th>selectIndex(index, multi, suppressEvents)</th>
-            <td>Select the row at the given index. If multi is true, then previous selections will be kept (ie allow
+            <th>selectIndex(index, multi, suppressEvents)<br/>selectNode(node, multi, suppressEvents)</th>
+            <td>Select the row at the given index / node. If multi is true, then previous selections will be kept (ie allow
                 multi-select). If multi is false, any previously selected row will be unselected. If suppressEvents
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
+        </tr>
+        <tr>
+            <th>deselectIndex(index)<br/>deselectNode(node</th>
+            <td>Deselects the row node at the given index / node.</td>
         </tr>
         <tr>
             <th>getSelectedNodes()</th>
@@ -142,6 +161,10 @@ include '../documentation_header.php';
             <td>Ensures the index is visible, scrolling the table if needed.</td>
         </tr>
         <tr>
+            <th>ensureColIndexVisible(index)</th>
+            <td>Ensures the column index is visible, scrolling the table if needed.</td>
+        </tr>
+        <tr>
             <th>ensureNodeVisible(comparator)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
                 b) the data object c) a comparator function (that takes the node as a parameter, and returns
@@ -156,8 +179,10 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>getFilterApiForColDef(colDef)</th>
-            <td>Returns the API for the filter for the provided colDef.
+            <th>getFilterApi(col)</th>
+            <td>Returns the API for the filter for the column. Either provide the colDef (matches on object
+                reference) or the column field attribute (matches on string comparison). Matching by field
+                is normal. Matching by colDef is useful when field is missing or not unique.
             </td>
         </tr>
         <tr>
@@ -166,6 +191,17 @@ include '../documentation_header.php';
                 change through one of the filter APIs.
             </td>
         </tr>
+        <tr>
+            <th>setSortModel(model)</th>
+            <td>Sets the sort state of the grid.
+            </td>
+        </tr>
+        <tr>
+            <th>getSortModel()</th>
+            <td>Returns the sort state of the grid.
+            </td>
+        </tr>
+
 
     </table>
 

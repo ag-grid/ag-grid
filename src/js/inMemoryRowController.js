@@ -100,23 +100,28 @@ InMemoryRowController.prototype.updateModel = function(step) {
 };
 
 // private
-InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(aggFields) {
+InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(groupAggFields) {
     return function groupAggFunction(rows) {
-        var data = {};
 
-        for (var j = 0; j<aggFields.length; j++) {
-            data[aggFields[j]] = 0;
-        }
+        var sums = {};
 
-        for (var i = 0; i<rows.length; i++) {
-            for (var k = 0; k<aggFields.length; k++) {
-                var aggField = aggFields[k];
+        for (var j = 0; j<groupAggFields.length; j++) {
+            var colKey = groupAggFields[j];
+            var totalForColumn = null;
+            for (var i = 0; i<rows.length; i++) {
                 var row = rows[i];
-                data[aggField] += row.data[aggField];
+                var thisColumnValue = row.data[colKey];
+                // only include if the value is a number
+                if (typeof thisColumnValue === 'number') {
+                    totalForColumn += thisColumnValue;
+                }
             }
+            // at this point, if no values were numbers, the result is null (not zero)
+            sums[colKey] = totalForColumn;
         }
 
-        return data;
+        return sums;
+
     };
 };
 

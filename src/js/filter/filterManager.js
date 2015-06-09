@@ -5,13 +5,86 @@ var StringFilter = require('./textFilter');
 
 function FilterManager() {}
 
-FilterManager.prototype.init = function(grid, gridOptionsWrapper, $compile, $scope, expressionService) {
+FilterManager.prototype.init = function(grid, gridOptionsWrapper, $compile, $scope, expressionService, columnModel) {
     this.$compile = $compile;
     this.$scope = $scope;
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.grid = grid;
     this.allFilters = {};
     this.expressionService = expressionService;
+    this.columnModel = columnModel;
+};
+
+FilterManager.prototype.setFilterModel = function(model) {
+    var that = this;
+    if (model) {
+        // mark the filters as we set them, so any active filters left over we stop
+        var processedFields = Object.keys(model);
+        utils.iterateObject(this.allFilters, function(key, filterWrapper) {
+            var field = filterWrapper.column.colDef.field;
+            utils.removeFromArray(processedFields, field);
+            if (field) {
+                var newModel = model[field];
+                that.setModelOnFilterWrapper(filterWrapper.filter, newModel);
+            } else {
+                console.warn('Warning ag-grid - no field found for column while doing setFilterModel');
+            }
+        });
+        // at this point, processedFields contains data for which we don't have a filter working yet
+        utils.iterateArray(processedFields, function(field) {
+            var column = that.columnModel.getColumn(field);
+            if (!column) {
+                console.warn('Warning ag-grid - no column found for field ' + field);
+                return;
+            }
+            var filterWrapper = that.getOrCreateFilterWrapper(column);
+            that.setModelOnFilterWrapper(filterWrapper.filter, model[field]);
+        });
+    } else {
+        utils.iterateObject(this.allFilters, function(key, filterWrapper) {
+            that.setModelOnFilterWrapper(filterWrapper.filter, null);
+        });
+    }
+};
+
+FilterManager.prototype.setModelOnFilterWrapper = function(filter, newModel) {
+    // because user can provide filters, we provide useful error checking and messages
+    if (typeof filter.getApi !== 'function') {
+        console.warn('Warning ag-grid - filter missing getApi method, which is needed for getFilterModel');
+        return;
+    }
+    var filterApi = filter.getApi();
+    if (typeof filterApi.setModel !== 'function') {
+        console.warn('Warning ag-grid - filter API missing setModel method, which is needed for setFilterModel');
+        return;
+    }
+    filterApi.setModel(newModel);
+};
+
+FilterManager.prototype.getFilterModel = function() {
+    var result = {};
+    utils.iterateObject(this.allFilters, function(key, filterWrapper) {
+        // because user can provide filters, we provide useful error checking and messages
+        if (typeof filterWrapper.filter.getApi !== 'function') {
+            console.warn('Warning ag-grid - filter missing getApi method, which is needed for getFilterModel');
+            return;
+        }
+        var filterApi = filterWrapper.filter.getApi();
+        if (typeof filterApi.getModel !== 'function') {
+            console.warn('Warning ag-grid - filter API missing getModel method, which is needed for getFilterModel');
+            return;
+        }
+        var model = filterApi.getModel();
+        if (model) {
+            var field = filterWrapper.column.colDef.field;
+            if (!field) {
+                console.warn('Warning ag-grid - cannot get filter model when no field value present for column');
+            } else {
+                result[field] = model;
+            }
+        }
+    });
+    return result;
 };
 
 FilterManager.prototype.setRowModel = function(rowModel) {
@@ -65,13 +138,7 @@ FilterManager.prototype.doesFilterPass = function(node) {
         if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
             console.error('Filter is missing method doesFilterPass');
         }
-        var model;
-        // if model is exposed, grab it
-        if (filterWrapper.filter.getModel) {
-            model = filterWrapper.filter.getModel();
-        }
         var params = {
-            model: model,
             node: node,
             data: data
         };
@@ -147,7 +214,9 @@ FilterManager.prototype.getOrCreateFilterWrapper = function(column) {
 FilterManager.prototype.createFilterWrapper = function(column) {
     var colDef = column.colDef;
 
-    var filterWrapper = {};
+    var filterWrapper = {
+        column: column
+    };
     var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
     var filterParams = colDef.filterParams;
     var params = {
@@ -155,7 +224,6 @@ FilterManager.prototype.createFilterWrapper = function(column) {
         rowModel: this.rowModel,
         filterChangedCallback: filterChangedCallback,
         filterParams: filterParams,
-        scope: filterWrapper.scope,
         localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
         valueGetter: this.createValueGetter(colDef)
     };

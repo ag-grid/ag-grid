@@ -1,0 +1,32 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="../dist/angular-grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+    <script src="exampleFilterModel.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button ng-click="saveFilterModel()">Save Filter Model</button>
+            <button ng-click="restoreFilterModel()">Restore from Save</button>
+            <button ng-click="clearFilters()">Clear Filters</button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <button ng-click="restoreFromHardCoded()">Name = 'Mich%', Country = ['Ireland', 'United States'], Age < 30</button>
+        </span>
+    </div>
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            Saved Filters: {{savedFilters}}
+        </span>
+    </div>
+
+    <div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

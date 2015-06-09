@@ -4,7 +4,7 @@
     <script src="../dist/angular-grid.js"></script>
     <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
-    <script src="example3.js"></script>
+    <script src="exampleFilterApi.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
 
@@ -12,6 +12,8 @@
     <span style="padding-bottom: 4px; display: inline-block;">
         <button ng-click="irelandAndUk()">Ireland & UK</button>
         <button ng-click="endingStan()">Countries Ending 'stan'</button>
+        <button ng-click="setCountryModel()">Set Model ['Algeria','Argentina']</button>
+        <button ng-click="printCountryModel()">Print Country Model</button>
         <button ng-click="clearCountryFilter()">Clear Country Filter</button>
     </span>
     <br/>
@@ -22,7 +24,7 @@
     </span>
 
 </div>
-<div angular-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+<div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
 
 </body>
 </html>

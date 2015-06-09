@@ -147,4 +147,31 @@ SetFilterModel.prototype.isNothingSelected = function() {
     return this.uniqueValues.length === 0;
 };
 
+SetFilterModel.prototype.getModel = function() {
+    if (!this.isFilterActive()) {
+        return null;
+    }
+    var selectedValues = [];
+    utils.iterateObject(this.selectedValuesMap, function(key) {
+        selectedValues.push(key);
+    });
+    return selectedValues;
+};
+
+SetFilterModel.prototype.setModel = function(model) {
+    if (model) {
+        this.selectNothing();
+        for (var i = 0; i<model.length; i++) {
+            var newValue = model[i];
+            if (this.uniqueValues.indexOf(newValue)>=0) {
+                this.selectValue(model[i]);
+            } else {
+                console.warn('Value ' + newValue + ' is not a valid value for filter');
+            }
+        }
+    } else {
+        this.selectEverything();
+    }
+};
+
 module.exports = SetFilterModel;

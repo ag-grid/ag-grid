@@ -15,9 +15,9 @@ var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 
-// focus stops the default editing
+function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
-function Grid(eGridDiv, gridOptions, $scope, $compile) {
+    this.addEnvironmentClasses(eGridDiv);
 
     this.gridOptions = gridOptions;
     this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
@@ -34,7 +34,7 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
     // if using angular, watch for quickFilter changes
     if ($scope) {
-        $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
+        $scope.$watch(quickFilterOnScope, function(newFilter) {
             that.onQuickFilterChanged(newFilter);
         });
     }
@@ -78,6 +78,11 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
     }
 }
 
+Grid.prototype.addEnvironmentClasses = function(eGridDiv) {
+    var platformAndBrowser = 'ag-env-' + constants.PLATFORM + "-" + constants.BROWSER;
+    utils.addCssClass(eGridDiv, platformAndBrowser);
+};
+
 Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
 
     // make local references, to make the below more human readable
@@ -101,7 +106,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     // initialise all the beans
     templateService.init($scope);
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
-    filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService);
+    filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel);
     selectionRendererFactory.init(this, selectionController);
     columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
@@ -146,13 +151,13 @@ Grid.prototype.showAndPositionPagingPanel = function() {
     if (this.isShowPagingPanel()) {
         this.ePagingPanel.style['display'] = 'inline';
         var heightOfPager = this.ePagingPanel.offsetHeight;
-        this.eBody.style['padding-bottom'] = heightOfPager + 'px';
+        this.eBody.style['paddingBottom'] = heightOfPager + 'px';
         var heightOfRoot = this.eRoot.clientHeight;
         var topOfPager = heightOfRoot - heightOfPager;
         this.ePagingPanel.style['top'] = topOfPager + 'px';
     } else {
         this.ePagingPanel.style['display'] = 'none';
-        this.eBody.style['padding-bottom'] = null;
+        this.eBody.style['paddingBottom'] = null;
     }
 
 };
@@ -206,6 +211,7 @@ Grid.prototype.setDatasource = function(datasource) {
 Grid.prototype.refreshHeaderAndBody = function() {
     this.headerRenderer.refreshHeader();
     this.headerRenderer.updateFilterIcons();
+    this.headerRenderer.updateSortIcons();
     this.setBodyContainerWidth();
     this.setPinnedColContainerWidth();
     this.rowRenderer.refreshView();
@@ -299,8 +305,8 @@ Grid.prototype.setHeaderHeight = function() {
         this.eHeaderContainer.style['height'] = headerHeightPixels;
     } else {
         this.eHeader.style['height'] = headerHeightPixels;
-        this.eBody.style['padding-top'] = headerHeightPixels;
-        this.eLoadingPanel.style['margin-top'] = headerHeightPixels;
+        this.eBody.style['paddingTop'] = headerHeightPixels;
+        this.eLoadingPanel.style['marginTop'] = headerHeightPixels;
     }
 };
 
@@ -384,7 +390,8 @@ Grid.prototype.ensureNodeVisible = function(comparator) {
 Grid.prototype.ensureIndexVisible = function(index) {
     var lastRow = this.rowModel.getVirtualRowCount();
     if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-        throw 'invalid row index for ensureIndexVisible: ' + index;
+        console.warn('invalid row index for ensureIndexVisible: ' + index);
+        return;
     }
 
     var rowHeight = this.gridOptionsWrapper.getRowHeight();
@@ -411,6 +418,59 @@ Grid.prototype.ensureIndexVisible = function(index) {
         this.eBodyViewport.scrollTop = newScrollPosition;
     }
     // otherwise, row is already in view, so do nothing
+};
+
+Grid.prototype.ensureColIndexVisible = function(index) {
+    if (typeof index !== 'number') {
+        console.warn('col index must be a number: ' + index);
+        return;
+    }
+
+    var columns = this.columnModel.getVisibleColumns();
+    if (typeof index !== 'number' || index < 0 || index >= columns.length) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', should be between 0 and ' + (columns.length - 1));
+        return;
+    }
+
+    var column = columns[index];
+    var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
+    if (index < pinnedColCount) {
+        console.warn('invalid col index for ensureColIndexVisible: ' + index
+            + ', scrolling to a pinned col makes no sense');
+        return;
+    }
+
+    // sum up all col width to the let to get the start pixel
+    var colLeftPixel = 0;
+    for (var i = pinnedColCount; i<index; i++) {
+        colLeftPixel += columns[i].actualWidth;
+    }
+
+    var colRightPixel = colLeftPixel + column.actualWidth;
+
+    var viewportLeftPixel = this.eBodyViewport.scrollLeft;
+    var viewportWidth = this.eBodyViewport.offsetWidth;
+
+    var scrollShowing = this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight;
+    if (scrollShowing) {
+        viewportWidth -= this.scrollWidth;
+    }
+   
+    var viewportRightPixel = viewportLeftPixel + viewportWidth;
+
+    var viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
+    var viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
+
+    if (viewportScrolledPastCol) {
+        // if viewport's left side is after col's left side, scroll right to pull col into viewport at left
+        this.eBodyViewport.scrollLeft = colLeftPixel;
+    } else if (viewportScrolledBeforeCol) {
+        // if viewport's right side is before col's right side, scroll left to pull col into viewport at right
+        var newScrollPosition = colRightPixel - viewportWidth;
+        this.eBodyViewport.scrollLeft = newScrollPosition;
+    }
+    // otherwise, col is already in view, so do nothing
 };
 
 Grid.prototype.addApi = function() {
@@ -516,6 +576,9 @@ Grid.prototype.addApi = function() {
         getBestCostNodeSelection: function() {
             return that.selectionController.getBestCostNodeSelection();
         },
+        ensureColIndexVisible: function(index) {
+            return that.ensureColIndexVisible(index);
+        },
         ensureIndexVisible: function(index) {
             return that.ensureIndexVisible(index);
         },
@@ -526,14 +589,89 @@ Grid.prototype.addApi = function() {
             that.rowModel.forEachInMemory(callback);
         },
         getFilterApiForColDef: function(colDef) {
-            var column = that.columnModel.getColumnForColDef(colDef);
+            console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
+            return this.getFilterApi(colDef);
+        },
+        getFilterApi: function(key) {
+            var column = that.columnModel.getColumn(key);
             return that.filterManager.getFilterApi(column);
         },
         onFilterChanged: function() {
             that.onFilterChanged();
+        },
+        setSortModel: function(sortModel) {
+            that.setSortModel(sortModel);
+        },
+        getSortModel: function() {
+            return that.getSortModel();
+        },
+        setFilterModel: function(model) {
+            that.filterManager.setFilterModel(model);
+        },
+        getFilterModel: function() {
+            return that.filterManager.getFilterModel();
         }
     };
     this.gridOptions.api = api;
+};
+
+Grid.prototype.getSortModel = function() {
+    var allColumns = this.columnModel.getAllColumns();
+    var columnsWithSorting = [];
+    var i;
+    for (i = 0; i<allColumns.length; i++) {
+        if (allColumns[i].sort) {
+            columnsWithSorting.push(allColumns[i]);
+        }
+    }
+    columnsWithSorting.sort( function(a,b) {
+        return a.sortedAt - b.sortedAt;
+    });
+
+    var result = [];
+    for (i = 0; i<columnsWithSorting.length; i++) {
+        var resultEntry = {
+            field: columnsWithSorting[i].colDef.field,
+            sort: columnsWithSorting[i].sort
+        };
+        result.push(resultEntry);
+    }
+
+    return result;
+};
+
+Grid.prototype.setSortModel = function(sortModel) {
+    // first up, clear any previous sort
+    var sortModelProvided = sortModel!==null && sortModel!==undefined && sortModel.length>0;
+    var allColumns = this.columnModel.getAllColumns();
+    for (var i = 0; i<allColumns.length; i++) {
+        var column = allColumns[i];
+
+        var sortForCol = null;
+        var sortedAt = -1;
+        if (sortModelProvided && !column.colDef.suppressSorting) {
+            for (var j = 0; j<sortModel.length; j++) {
+                var sortModelEntry = sortModel[j];
+                if (typeof sortModelEntry.field === 'string'
+                    && typeof column.colDef.field === 'string'
+                    && sortModelEntry.field === column.colDef.field) {
+                    sortForCol = sortModelEntry.sort;
+                    sortedAt = j;
+                }
+            }
+        }
+
+        if (sortForCol) {
+            column.sort = sortForCol;
+            column.sortedAt = sortedAt;
+        } else {
+            column.sort = null;
+            column.sortedAt = null;
+        }
+    }
+
+    this.headerRenderer.updateSortIcons();
+    this.updateModelAndRefresh(constants.STEP_SORT);
 };
 
 Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {

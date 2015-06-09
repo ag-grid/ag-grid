@@ -2,7 +2,7 @@
 // Written by Niall Crosby
 // www.angulargrid.com
 //
-// Version 1.7.0
+// Version 1.8.0
 
 (function() {
 
@@ -22,6 +22,13 @@
                 }
             };
         });
+        angularModule.directive("agGrid", function() {
+            return {
+                restrict: "A",
+                controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController],
+                scope: true
+            };
+        });
     }
 
     if (typeof exports !== 'undefined') {
@@ -33,14 +40,31 @@
 
     root.angularGrid = angularGridGlobalFunction;
 
-    function AngularDirectiveController($element, $scope, $compile) {
-        var eGridDiv = $element[0];
-        var gridOptions = $scope.angularGrid;
-        if (!gridOptions) {
-            console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
-            return;
+    function AngularDirectiveController($element, $scope, $compile, $attrs) {
+        var gridOptions;
+        var quickFilterOnScope;
+        if ($attrs) {
+            // new directive of ag-grid
+            var keyOfGridInScope = $attrs.agGrid;
+            var quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
+            gridOptions = $scope.$eval(keyOfGridInScope);
+            if (!gridOptions) {
+                console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
+                return;
+            }
+        } else {
+            // old directive of angular-grid
+            console.warn("WARNING - Directive angular-grid is deprecated, you should use the ag-grid directive instead.");
+            gridOptions = $scope.angularGrid;
+            quickFilterOnScope = 'angularGrid.quickFilterText';
+            if (!gridOptions) {
+                console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
+                return;
+            }
         }
-        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile);
+
+        var eGridDiv = $element[0];
+        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.setFinished();

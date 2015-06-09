@@ -84,7 +84,7 @@ gridsModule.controller('mainController', function($scope) {
         angularCompileFilters: true,
         angularCompileHeaders: true,
         //dontUseScrolls: true,
-        rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
+        //rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: rowSelected, //callback when row selected
@@ -119,6 +119,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var groupColumn = {
         displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
+        floatCell: true,
             cellRenderer: {
                 renderer: "group",
                 checkbox: true
@@ -126,6 +127,7 @@ gridsModule.controller('mainController', function($scope) {
         };
 
     var firstColumn = {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter,
+        floatCell: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -137,6 +139,7 @@ gridsModule.controller('mainController', function($scope) {
         groupColumn,
         firstColumn,
         {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+            floatCell: true,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -155,7 +158,9 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Bought", field: "bought", filter: 'set', group: {name:'Game', parent:"Main Group"}, editable: editableFunc, width: 100, cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
+            cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+            floatCell: true,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
         {displayName: "Bank Balance", field: "bankBalance", group:{name: 'Performance', parent:"Main Group"}, width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
@@ -171,6 +176,7 @@ gridsModule.controller('mainController', function($scope) {
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
             cellRenderer: function() { return '...cadabra!'; } },
         {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
+            floatCell: true,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
         {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
@@ -193,6 +199,13 @@ gridsModule.controller('mainController', function($scope) {
     //setInterval(function() {
     //    $scope.angularGrid.api.ensureIndexVisible(Math.random*() * 100000);
     //});
+
+    $scope.jumpToCol = function() {
+        var index = Number($scope.jumpToColText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            angularGrid.api.ensureColIndexVisible(index);
+        }
+    };
 
     $scope.jumpToRow = function() {
         var index = Number($scope.jumpToRowText);
@@ -408,6 +421,7 @@ function PersonFilter(params) {
     this.$scope.onFilterChanged = function() {
         params.filterChangedCallback();
     };
+    this.valueGetter = params.valueGetter;
 }
 
 PersonFilter.prototype.getGui = function () {
@@ -423,15 +437,16 @@ PersonFilter.prototype.getGui = function () {
         '</div>';
 };
 
-PersonFilter.prototype.doesFilterPass = function (node) {
+PersonFilter.prototype.doesFilterPass = function (params) {
     var filterText = this.$scope.filterText;
     if (!filterText) {
         return true;
     }
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
+    var value = this.valueGetter(params);
     filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-        if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
+        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
             passed = false;
         }
     });
@@ -468,6 +483,7 @@ function WinningsFilter(params) {
     this.cbNegative.onclick = this.filterChangedCallback;
     this.cbGreater50.onclick = this.filterChangedCallback;
     this.cbGreater90.onclick = this.filterChangedCallback;
+    this.valueGetter = params.valueGetter;
 }
 
 WinningsFilter.prototype.getGui = function () {
@@ -475,16 +491,17 @@ WinningsFilter.prototype.getGui = function () {
 };
 
 WinningsFilter.prototype.doesFilterPass = function (node) {
+    var value = this.valueGetter(node);
     if (this.cbNoFilter.checked) {
         return true;
     } else if (this.cbPositive.checked) {
-        return node.value >= 0;
+        return value >= 0;
     } else if (this.cbNegative.checked) {
-        return node.value < 0;
+        return value < 0;
     } else if (this.cbGreater50.checked) {
-        return node.value >= 50000;
+        return value >= 50000;
     } else if (this.cbGreater90.checked) {
-        return node.value >= 90000;
+        return value >= 90000;
     } else {
         console.error('invalid checkbox selection');
     }

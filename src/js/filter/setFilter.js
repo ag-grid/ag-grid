@@ -35,20 +35,20 @@ SetFilter.prototype.isFilterActive = function() {
 
 /* public */
 SetFilter.prototype.doesFilterPass = function(node) {
-    var model = node.model;
+
     //if no filter, always pass
-    if (model.isEverythingSelected()) {
+    if (this.model.isEverythingSelected()) {
         return true;
     }
     //if nothing selected in filter, always fail
-    if (model.isNothingSelected()) {
+    if (this.model.isNothingSelected()) {
         return false;
     }
 
     var value = this.valueGetter(node);
     value = utils.makeNull(value);
 
-    var filterPassed = model.selectedValuesMap[value] !== undefined;
+    var filterPassed = this.model.isValueSelected(value);
     return filterPassed;
 };
 
@@ -61,11 +61,6 @@ SetFilter.prototype.getGui = function() {
 SetFilter.prototype.onNewRowsLoaded = function() {
     this.model.selectEverything();
     this.updateAllCheckboxes(true);
-};
-
-/* public */
-SetFilter.prototype.getModel = function() {
-    return this.model;
 };
 
 SetFilter.prototype.createTemplate = function() {
@@ -89,7 +84,7 @@ SetFilter.prototype.createGui = function() {
     this.setContainerHeight();
     this.eMiniFilter.value = this.model.getMiniFilter();
     utils.addChangeListener(this.eMiniFilter, function() {
-        _this.onFilterChanged();
+        _this.onMiniFilterChanged();
     });
     utils.removeAllChildren(this.eListContainer);
 
@@ -217,13 +212,17 @@ SetFilter.prototype.onCheckboxClicked = function(eCheckbox, value) {
     this.filterChangedCallback();
 };
 
-SetFilter.prototype.onFilterChanged = function() {
+SetFilter.prototype.onMiniFilterChanged = function() {
     var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
     if (miniFilterChanged) {
         this.setContainerHeight();
-        this.clearVirtualRows();
-        this.drawVirtualRows();
+        this.refreshVirtualRows();
     }
+};
+
+SetFilter.prototype.refreshVirtualRows = function() {
+    this.clearVirtualRows();
+    this.drawVirtualRows();
 };
 
 SetFilter.prototype.clearVirtualRows = function() {
@@ -263,6 +262,7 @@ SetFilter.prototype.getApi = function() {
 
 SetFilter.prototype.createApi = function() {
     var model = this.model;
+    var that = this;
     this.api = {
         setMiniFilter: function(newMiniFilter) {
             model.setMiniFilter(newMiniFilter);
@@ -281,9 +281,11 @@ SetFilter.prototype.createApi = function() {
         },
         unselectValue: function(value) {
             model.unselectValue(value);
+            that.refreshVirtualRows();
         },
         selectValue: function(value) {
             model.selectValue(value);
+            that.refreshVirtualRows();
         },
         isValueSelected: function(value) {
             return model.isValueSelected(value);
@@ -299,6 +301,13 @@ SetFilter.prototype.createApi = function() {
         },
         getUniqueValue: function(index) {
             return model.getUniqueValue(index);
+        },
+        getModel: function() {
+            return model.getModel();
+        },
+        setModel: function(dataModel) {
+            model.setModel(dataModel);
+            that.refreshVirtualRows();
         }
     };
 };

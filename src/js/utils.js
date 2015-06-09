@@ -1,5 +1,20 @@
 function Utils() {}
 
+Utils.prototype.iterateObject = function(object, callback) {
+    var keys = Object.keys(object);
+    for (var i = 0; i<keys.length; i++) {
+        var key = keys[i];
+        var value = object[key];
+        callback(key, value);
+    }
+};
+
+Utils.prototype.iterateArray = function(array, callback) {
+    for (var index = 0; index<array.length; index++) {
+        var value = array[index];
+        callback(value, index);
+    }
+};
 
 Utils.prototype.getValue = function(expressionService, data, colDef, node, api, context) {
 

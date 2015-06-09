@@ -587,7 +587,7 @@ RowRenderer.prototype.useCellRenderer = function(column, value, node, $childScop
         eGridCell: eGridCell
     };
     var cellRenderer;
-    if (typeof colDef.cellRenderer === 'object') {
+    if (typeof colDef.cellRenderer === 'object' && colDef.cellRenderer !== null) {
         cellRenderer = this.cellRendererMap[colDef.cellRenderer.renderer];
         if (!cellRenderer) {
             throw 'Cell renderer ' + colDef.cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
@@ -677,7 +677,7 @@ RowRenderer.prototype.addClassesToCell = function(column, node, eGridCell) {
 
 RowRenderer.prototype.addClassesFromRules = function(colDef, eGridCell, value, node, rowIndex) {
     var classRules = colDef.cellClassRules;
-    if (typeof classRules === 'object') {
+    if (typeof classRules === 'object' && classRules !== null) {
 
         var params = {
             value: value,
@@ -757,7 +757,7 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
         // only interested on key presses that are directly on this element, not any children elements. this
         // stops navigation if the user is in, for example, a text field inside the cell, and user hits
         // on of the keys we are looking for.
-        if (event.currentTarget !== eGridCell) {
+        if (event.target !== eGridCell) {
             return;
         }
 
@@ -902,6 +902,7 @@ RowRenderer.prototype.populateAndStyleGridCell = function(valueGetter, value, eG
 
 RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node, column, rowIndex, value, valueGetter, $childScope) {
     var eCellWrapper = document.createElement('span');
+    utils.addCssClass(eCellWrapper, "ag-cell-wrapper");
     eGridCell.appendChild(eCellWrapper);
 
     var colDef = column.colDef;
@@ -910,7 +911,10 @@ RowRenderer.prototype.populateGridCell = function(eGridCell, isFirstColumn, node
         eCellWrapper.appendChild(eCheckbox);
     }
 
+    // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
     var eSpanWithValue = document.createElement("span");
+    utils.addCssClass(eSpanWithValue, "ag-cell-value");
+
     eCellWrapper.appendChild(eSpanWithValue);
 
     var that = this;
