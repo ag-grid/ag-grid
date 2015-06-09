@@ -75,7 +75,7 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     // on the group header, if no group is specified
     if (group.name) {
         classNames.push('ag-header-group-cell-with-group');
-        if(group.name.trim())
+        if(group.visibleColumns.length>1||group.subGroups.length>1)
          classNames.push('ag-header-group-cell-with-group-border-bottom');
     } else {
         classNames.push('ag-header-group-cell-no-group');
