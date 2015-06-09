@@ -48,7 +48,7 @@ ColumnController.prototype.createModel = function() {
                 var fieldMatches = that.columns[i].colDef.field === key;
                 if (colDefMatches || fieldMatches) {
                     return that.columns[i];
-                }
+        }
             }
         },
         // used by:
@@ -98,68 +98,54 @@ ColumnController.prototype.columnGroupOpened = function(group) {
 // private
 ColumnController.prototype.updateVisibleColumns = function() {
     // if not grouping by headers, then all columns are visible
+    this.visibleColumns = [];
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
         this.visibleColumns = this.columns;
         return;
     }
-
+	
+	this.updateVisibleColumnsByGroups(this.columnGroups);    
+};
+// private
+// add allVisibleColumns
+ColumnController.prototype.updateVisibleColumnsByGroups = function(groupList) {
     // if grouping, then only show col as per group rules
-    this.visibleColumns = [];
-    for (var i = 0; i < this.columnGroups.length; i++) {
-        var group = this.columnGroups[i];
+    for (var i = 0; i < groupList.length; i++) {
+        var group = groupList[i];
         group.addToVisibleColumns(this.visibleColumns);
+	this.updateVisibleColumnsByGroups(group.subGroups);
     }
 };
 
 // public - called from api
-ColumnController.prototype.sizeColumnsToFit = function(gridWidth) {
+ColumnController.prototype.sizeColumnsToFit = function(availableWidth) {
     // avoid divide by zero
-    if (gridWidth <= 0 || this.visibleColumns.length === 0) {
+    if (availableWidth <= 0 || this.visibleColumns.length === 0) {
         return;
     }
 
-    var columnStartWidth = 0; // will contain the starting total width of the cols been spread
-    var colsToSpread = []; // all visible cols, except those with avoidSizeToFit
-    var widthForSpreading = gridWidth; // grid width minus the columns we are not resizing
-
-    // get the list of cols to work with
-    for (var j = 0; j < this.visibleColumns.length ; j++) {
-        if (this.visibleColumns[j].colDef.suppressSizeToFit === true) {
-            // don't include col, and remove the width from teh available width
-            widthForSpreading -= this.visibleColumns[j].actualWidth;
-        } else {
-            // include the col
-            colsToSpread.push(this.visibleColumns[j]);
-            columnStartWidth += this.visibleColumns[j].actualWidth;
-        }
-    }
-
-    // if no width left over to spread with, do nothing
-    if (widthForSpreading <= 0) {
-        return;
-    }
-
-    var scale = widthForSpreading / columnStartWidth;
-    var pixelsForLastCol = widthForSpreading;
+    var currentTotalWidth = this.getTotalColWidth();
+    var scale = availableWidth / currentTotalWidth;
 
     // size all cols except the last by the scale
-    for (var i = 0; i < (colsToSpread.length - 1); i++) {
-        var column = colsToSpread[i];
+    for (var i = 0; i < (this.visibleColumns.length - 1); i++) {
+        var column = this.visibleColumns[i];
         var newWidth = parseInt(column.actualWidth * scale);
         column.actualWidth = newWidth;
-        pixelsForLastCol -= newWidth;
     }
 
     // size the last by whats remaining (this avoids rounding errors that could
     // occur with scaling everything, where it result in some pixels off)
-    var lastColumn = colsToSpread[colsToSpread.length - 1];
-    lastColumn.actualWidth = pixelsForLastCol;
+    var pixelsLeftForLastCol = availableWidth - this.getTotalColWidth();
+    var lastColumn = this.visibleColumns[this.visibleColumns.length - 1];
+    lastColumn.actualWidth += pixelsLeftForLastCol;
 
     // widths set, refresh the gui
     this.angularGrid.refreshHeaderAndBody();
 };
 
 // private
+// build groups recursively
 ColumnController.prototype.buildGroups = function() {
     // if not grouping by headers, do nothing
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
@@ -175,39 +161,92 @@ ColumnController.prototype.buildGroups = function() {
     var lastColWasPinned = true;
 
     this.columns.forEach(function(column) {
-        // do we need a new group, because we move from pinned to non-pinned columns?
-        var endOfPinnedHeader = lastColWasPinned && !column.pinned;
-        if (!column.pinned) {
-            lastColWasPinned = false;
-        }
-        // do we need a new group, because the group names doesn't match from previous col?
-        var groupKeyMismatch = currentGroup && column.colDef.group !== currentGroup.name;
-        // we don't group columns where no group is specified
-        var colNotInGroup = currentGroup && !currentGroup.name;
-        // do we need a new group, because we are just starting
-        var processingFirstCol = column.index === 0;
-        var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
-        // create new group, if it's needed
-        if (newGroupNeeded) {
-            var pinned = column.pinned;
-            currentGroup = new ColumnGroup(pinned, column.colDef.group);
-            that.columnGroups.push(currentGroup);
-        }
-        currentGroup.addColumn(column);
+		lastColWasPinned=lastColWasPinned&&column.pinned;
+		currentGroup = that.addGroupToStack(column.colDef.group,lastColWasPinned);
+		currentGroup.addColumn(column);		
     });
+	var level=this.groupLevel(this.columnGroups);	
+	this.extructure(this.columnGroups,level);  
+	
+	this.gridOptionsWrapper.setHeaderHeight((level+1));
+	this.angularGrid.setHeaderHeight();
+	
+};
+
+//lagb
+//makes that the group have size levels if level is less that size
+ColumnController.prototype.extructure = function(columnGroups,size) {
+
+for( var x= 0;x<columnGroups.length;x++){
+	var miGroup=columnGroups[x];
+	this.extructure(miGroup.subGroups,size-1);
+    // if(miGroup.level<size)
+	//{	var c=size-miGroup.level;		
+		if(miGroup.allColumns.length>0){
+			var currentGroup=miGroup;
+			var c=size-1;		
+			while(currentGroup.subGroups.length>0&& currentGroup.subGroups[currentGroup.subGroups.length-1].name.trim())
+			{
+				currentGroup=currentGroup.subGroups[currentGroup.subGroups.length-1];
+				c--;
+			} 
+			
+			for(var i=0;i<c;i++){
+				var currGroup =new ColumnGroup(currentGroup.pinned," ");
+				currGroup.parentGroup=currentGroup;
+				currentGroup.subGroups.push(currGroup);				
+				currentGroup =currGroup;
+			}	
+			if(currentGroup!=miGroup){
+				currentGroup.allColumns=miGroup.allColumns;
+				miGroup.allColumns=[];
+			}
+		}		
+	//}
+}
+};
+
+//lagb
+ColumnController.prototype.groupLevel = function(groups, level) {
+    if(level==undefined) level=0;
+    var out=level;
+    for(var i=0;i< groups.length;i++){        
+        var c1=1+this.groupLevel(groups[i].subGroups,level);  
+        groups[i].level=c1;
+        if(c1>out) out=c1;           
+    }
+    return out;
+};
+
+//lagb
+ColumnController.prototype.groupLevel = function(groups, level) {
+    if(level==undefined) level=0;
+    var out=level;
+    for(var i=0;i< groups.length;i++){        
+        var c1=1+this.groupLevel(groups[i].subGroups,level);  
+        groups[i].level=c1;
+        if(c1>out) out=c1;           
+    }
+    return out;
 };
 
 // private
+// if it has grouped  calculeExpandable and visibleColumns to all
 ColumnController.prototype.updateGroups = function() {
     // if not grouping by headers, do nothing
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
         return;
     }
+    this.updateGroupList(this.columnGroups);    
+};
 
-    for (var i = 0; i < this.columnGroups.length; i++) {
-        var group = this.columnGroups[i];
+// if it has grouped  calculeExpandable and visibleColumns to all recursively
+ColumnController.prototype.updateGroupList = function(groupList) {   
+    for (var i = 0; i < groupList.length; i++) {
+        var group = groupList[i];
         group.calculateExpandable();
         group.calculateVisibleColumns();
+	this.updateGroupList(group.subGroups);
     }
 };
 
@@ -271,17 +310,46 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
     return widthSoFar;
 };
 
+//lagb
+ColumnController.prototype.addGroupToStack = function(group,pinned) {
+    var groupsList =this.model.getColumnGroups();
+    var parentGroup=null;
+    if (typeof group == 'object' && group.parent != null) {
+         parentGroup = this.addGroupToStack(group.parent);
+         groupsList=parentGroup.subGroups;
+    }    
+    var currGroup=null;	
+    //  groupsList.forEach(function(columnGroup){
+    if(groupsList.length>0&&groupsList[groupsList.length-1].name==(typeof group == 'object'?group.name:group) && groupsList[groupsList.length-1].name)
+        currGroup=groupsList[groupsList.length-1];
+    //  });    
+    if(currGroup==null){
+        currGroup =new ColumnGroup(pinned,(typeof group == 'object'?group.name:group) );
+        currGroup.parentGroup=parentGroup;
+        groupsList.push(currGroup);
+    }
+    return currGroup;
+};
+
+
 function ColumnGroup(pinned, name) {
     this.pinned = pinned;
     this.name = name;
     this.allColumns = [];
+    this.subGroups = [];
     this.visibleColumns = [];
     this.expandable = false; // whether this group can be expanded or not
     this.expanded = false;
+    this.level=0;
+    this.parentGroup=null;
 }
 
 ColumnGroup.prototype.addColumn = function(column) {
     this.allColumns.push(column);
+};
+
+ColumnGroup.prototype.push = function(column) {
+    this.subGroups.push(column);
 };
 
 // need to check that this group has at least one col showing when both expanded and contracted.
@@ -308,6 +376,9 @@ ColumnGroup.prototype.calculateExpandable = function() {
     }
 
     this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+    this.subGroups.forEach(function (group){
+	group.calculateExpandable();	
+    });
 };
 
 ColumnGroup.prototype.calculateVisibleColumns = function() {
@@ -315,8 +386,8 @@ ColumnGroup.prototype.calculateVisibleColumns = function() {
     this.visibleColumns = [];
     // it not expandable, everything is visible
     if (!this.expandable) {
-        this.visibleColumns = this.allColumns;
-        return;
+       this.pushAllToVisibleColumns();//visibleColumns = this.allColumns;
+       return;
     }
     // and calculate again
     for (var i = 0, j = this.allColumns.length; i < j; i++) {
@@ -341,6 +412,13 @@ ColumnGroup.prototype.calculateVisibleColumns = function() {
         }
     }
 };
+
+ColumnGroup.prototype.pushAllToVisibleColumns = function() {	
+	this.visibleColumns = this.allColumns;
+	this.subGroups.forEach(function (group){
+		group.pushAllToVisibleColumns();
+	});
+}
 
 ColumnGroup.prototype.addToVisibleColumns = function(allVisibleColumns) {
     for (var i = 0; i < this.visibleColumns.length; i++) {

@@ -152,27 +152,27 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; },
+        {displayName: "Game of Choice", field: "game", group: {name:'Game', parent:"Main Group"}, width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; },
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
+        {displayName: "Bought", field: "bought", filter: 'set', group: {name:'Game', parent:"Main Group"}, editable: editableFunc, width: 100,
             cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
             floatCell: true,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
-        {displayName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        {displayName: "Bank Balance", field: "bankBalance", group:{name: 'Performance', parent:"Main Group"}, width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
             }
         },
-        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {displayName: "Extra Info", groupShow: 'open', group: {name: 'Performance', parent:"Main Group"}, width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
             cellRenderer: function() { return 'Abra...'; } },
-        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {displayName: "Extra Info", groupShow: 'open', group: {name: 'Performance', parent:"Main Group"}, width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
             cellRenderer: function() { return '...cadabra!'; } },
         {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,

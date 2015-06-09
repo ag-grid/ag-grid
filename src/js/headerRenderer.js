@@ -54,15 +54,15 @@ HeaderRenderer.prototype.refreshHeader = function() {
 };
 
 HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-    var groups = this.columnModel.getColumnGroups();
-    var that = this;
+    var groups = this.columnModel.getColumnGroups();	
+    var that = this;	
     groups.forEach(function(group) {
         var eHeaderCell = that.createGroupedHeaderCell(group);
         var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
         eContainerToAddTo.appendChild(eHeaderCell);
     });
 };
-
+	
 HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
 
     var eHeaderGroup = document.createElement('div');
@@ -75,10 +75,13 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     // on the group header, if no group is specified
     if (group.name) {
         classNames.push('ag-header-group-cell-with-group');
+        if(group.visibleColumns.length>1||group.subGroups.length>1)
+         classNames.push('ag-header-group-cell-with-group-border-bottom');
     } else {
         classNames.push('ag-header-group-cell-no-group');
-    }
+    }    
     eHeaderGroupCell.className = classNames.join(' ');
+    eHeaderGroupCell.style.height = this.gridOptionsWrapper.getSingleHeaderHeight()+'px';
 
     if (this.gridOptionsWrapper.isEnableColResize()) {
         var eHeaderCellResize = document.createElement("div");
@@ -108,6 +111,11 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     eHeaderGroup.appendChild(eHeaderGroupCell);
 
     var that = this;
+	group.subGroups.forEach(function(subGroup){
+            var eHeaderCell = that.createGroupedHeaderCell(subGroup);
+            eHeaderGroup.appendChild(eHeaderCell);
+	});
+	
     group.visibleColumns.forEach(function(column) {
         var eHeaderCell = that.createHeaderCell(column, true, group);
         eHeaderGroup.appendChild(eHeaderCell);
@@ -160,8 +168,24 @@ HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
     headerGroup.visibleColumns.forEach(function(column) {
         totalWidth += column.actualWidth;
     });
+    totalWidth+=this.setWidthOfGroupHeaderCellbySubGroups(headerGroup.subGroups);
     headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
     headerGroup.actualWidth = totalWidth;
+    if(headerGroup.parentGroup!=null)
+	this.setWidthOfGroupHeaderCell(headerGroup.parentGroup);
+};
+
+HeaderRenderer.prototype.setWidthOfGroupHeaderCellbySubGroups = function(groupList) {
+	var width=0;
+	for(var i=0;i < groupList.length;i++){
+		headerGroup=groupList[i];
+		headerGroup.visibleColumns.forEach(function(column) {
+			width += column.actualWidth;
+		});
+		width+=this.setWidthOfGroupHeaderCellbySubGroups(headerGroup.subGroups);
+	}
+	return width;
+    
 };
 
 HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
@@ -327,7 +351,7 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
         } else {
             column.sortedAt = null;
         }
-
+        
         // clear sort on all columns except this one, and update the icons
         that.columnModel.getAllColumns().forEach(function(columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
@@ -358,7 +382,18 @@ HeaderRenderer.prototype.updateSortIcons = function() {
 
 HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
     var parent = this;
-    var visibleColumns = currentGroup.visibleColumns;
+    var visibleColumns = [];
+    currentGroup.visibleColumns.forEach(function (column){
+          visibleColumns.push(column);
+    });
+    var foreach=function(group){
+        group.visibleColumns.forEach(function (column){
+              visibleColumns.push(column);
+        });
+        group.subGroups.forEach(foreach);
+    };
+    currentGroup.subGroups.forEach(foreach);
+
     return {
         onDragStart: function() {
             this.groupWidthStart = currentGroup.actualWidth;
@@ -370,7 +405,6 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
             this.minWidth = visibleColumns.length * constants.MIN_COL_WIDTH;
         },
         onDragging: function(dragChange) {
-
             var newWidth = this.groupWidthStart + dragChange;
             if (newWidth < this.minWidth) {
                 newWidth = this.minWidth;
@@ -387,8 +421,8 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
             // to cater for rounding errors, and min width adjustments
             var pixelsToDistribute = newWidth;
             var that = this;
-            currentGroup.visibleColumns.forEach(function(colDefWrapper, index) {
-                var notLastCol = index !== (visibleColumns.length - 1);
+            visibleColumns.forEach(function(colDefWrapper, index) {
+		var notLastCol = index !== (visibleColumns.length - 1);
                 var newChildSize;
                 if (notLastCol) {
                     // if not the last col, calculate the column width as normal
@@ -404,7 +438,8 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
                 }
                 var eHeaderCell = visibleColumns[index].eHeaderCell;
                 parent.adjustColumnWidth(newChildSize, colDefWrapper, eHeaderCell);
-            });
+	    });
+
 
             // should not be calling these here, should do something else
             if (currentGroup.pinned) {
@@ -412,6 +447,14 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
             } else {
                 parent.angularGrid.updateBodyContainerWidthAfterColResize();
             }
+	    if(currentGroup.parentGroup!=null)
+	        parent.setWidthOfGroupHeaderCell(currentGroup.parentGroup);
+	    var resizeSubGroups=function (group){
+                parent.setWidthOfGroupHeaderCell(group);
+		group.subGroups.forEach(resizeSubGroups);
+            };
+
+	    currentGroup.subGroups.forEach(resizeSubGroups);
         }
     };
 };
