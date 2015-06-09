@@ -15,7 +15,7 @@ var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 
-function Grid(eGridDiv, gridOptions, $scope, $compile) {
+function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.addEnvironmentClasses(eGridDiv);
 
@@ -34,7 +34,7 @@ function Grid(eGridDiv, gridOptions, $scope, $compile) {
 
     // if using angular, watch for quickFilter changes
     if ($scope) {
-        $scope.$watch("angularGrid.quickFilterText", function(newFilter) {
+        $scope.$watch(quickFilterOnScope, function(newFilter) {
             that.onQuickFilterChanged(newFilter);
         });
     }

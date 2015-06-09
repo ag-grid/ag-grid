@@ -42,9 +42,11 @@
 
     function AngularDirectiveController($element, $scope, $compile, $attrs) {
         var gridOptions;
+        var quickFilterOnScope;
         if ($attrs) {
             // new directive of ag-grid
             var keyOfGridInScope = $attrs.agGrid;
+            var quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
             gridOptions = $scope.$eval(keyOfGridInScope);
             if (!gridOptions) {
                 console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
@@ -54,6 +56,7 @@
             // old directive of angular-grid
             console.warn("WARNING - Directive angular-grid is deprecated, you should use the ag-grid directive instead.");
             gridOptions = $scope.angularGrid;
+            quickFilterOnScope = 'angularGrid.quickFilterText';
             if (!gridOptions) {
                 console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute angular-grid points to a valid object on the scope");
                 return;
@@ -61,7 +64,7 @@
         }
 
         var eGridDiv = $element[0];
-        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile);
+        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.setFinished();
