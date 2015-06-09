@@ -211,6 +211,7 @@ Grid.prototype.setDatasource = function(datasource) {
 Grid.prototype.refreshHeaderAndBody = function() {
     this.headerRenderer.refreshHeader();
     this.headerRenderer.updateFilterIcons();
+    this.headerRenderer.updateSortIcons();
     this.setBodyContainerWidth();
     this.setPinnedColContainerWidth();
     this.rowRenderer.refreshView();
