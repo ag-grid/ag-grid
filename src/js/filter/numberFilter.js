@@ -6,6 +6,7 @@ var LESS_THAN = 2;
 var GREATER_THAN = 3;
 
 function NumberFilter(params) {
+    this.filterParams = params.filterParams;
     this.filterChangedCallback = params.filterChangedCallback;
     this.localeTextFunc = params.localeTextFunc;
     this.valueGetter = params.valueGetter;
@@ -14,6 +15,15 @@ function NumberFilter(params) {
     this.filterType = EQUALS;
     this.createApi();
 }
+
+/* public */
+NumberFilter.prototype.onNewRowsLoaded = function() {
+    var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+    if (!keepSelection) {
+        this.api.setType(EQUALS);
+        this.api.setFilter(null);
+    }
+};
 
 /* public */
 NumberFilter.prototype.afterGuiAttached = function() {

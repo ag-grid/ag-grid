@@ -13,6 +13,14 @@ include 'documentation_header.php';
         <b>7th June 2015</b>
     </p>
 
+    <!--
+        <li>
+            <b>headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
+            Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
+        </li>
+
+    -->
+
     <p>
         This is what I did last week:
     <ul>
@@ -69,10 +77,23 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
+<div style="text-align: center; padding: 20px;;">
+<span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
+    <p>
+        <img src="images/flags/gb.png"/>
+        <b>9th June 2015</b>
+        <img src="images/flags/gb.png"/>
+    </p>
+    <p>
+        There was a bug with new ag-grid directive and Quick Filter in 1.8.0. This is now fixed in 1.8.1.
+    </p>
+</span>
+</div>
+
+
 <div style="text-align: center; margin: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding: 10px;">
         <div style="padding-bottom: 10px">
-            Thank you <b>Nicholas Phillips</b> and <b>Christopher Perreault</b> for donating. The rest of you, where is the love???
             Has the grid helped? Please donate to show your support and appreciation. Thanks.
         </div>
         <div>

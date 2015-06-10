@@ -349,12 +349,20 @@ ColumnGroup.prototype.addToVisibleColumns = function(allVisibleColumns) {
     }
 };
 
+var colIdSequence = 0;
+
 function Column(colDef, index, pinned) {
     this.colDef = colDef;
     this.index = index;
     this.pinned = pinned;
     // in the future, the colKey might be something other than the index
-    this.colKey = index;
+    if (colDef.colId) {
+        this.colId = colDef.colId;
+    }else if (colDef.field) {
+        this.colId = colDef.field;
+    } else {
+        this.colId = '' + colIdSequence++;
+    }
 }
 
 module.exports = ColumnController;

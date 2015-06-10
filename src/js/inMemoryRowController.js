@@ -77,7 +77,6 @@ InMemoryRowController.prototype.updateModel = function(step) {
     // fallthrough in below switch is on purpose
     switch (step) {
         case constants.STEP_EVERYTHING:
-            this.doGrouping();
         case constants.STEP_FILTER:
             this.doFilter();
             this.doAggregate();
@@ -367,6 +366,9 @@ InMemoryRowController.prototype.setAllRows = function(rows, firstId) {
     var firstIdToUse = firstId ? firstId : 0;
     this.recursivelyAddIdToNodes(nodes, firstIdToUse);
     this.allRows = nodes;
+
+    // aggregate here, so filters have the agg data ready
+    this.doGrouping();
 };
 
 // add in index - this is used by the selectionController - so quick

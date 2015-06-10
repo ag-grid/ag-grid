@@ -1,19 +1,13 @@
 var utils = require('../utils');
 
 function SetFilterModel(colDef, rowModel, valueGetter) {
+    this.colDef = colDef;
+    this.rowModel = rowModel;
+    this.valueGetter = valueGetter;
 
-    if (colDef.filterParams && colDef.filterParams.values) {
-        this.uniqueValues = colDef.filterParams.values;
-    } else {
-        this.createUniqueValues(rowModel, colDef.field, valueGetter);
-    }
+    this.createUniqueValues();
 
-    if (colDef.comparator) {
-        this.uniqueValues.sort(colDef.comparator);
-    } else {
-        this.uniqueValues.sort(utils.defaultComparator);
-    }
-
+    // by default, no filter, so we display everything
     this.displayedValues = this.uniqueValues;
     this.miniFilter = null;
     //we use a map rather than an array for the selected values as the lookup
@@ -23,9 +17,40 @@ function SetFilterModel(colDef, rowModel, valueGetter) {
     this.selectEverything();
 }
 
-SetFilterModel.prototype.createUniqueValues = function(rowModel, key, valueGetter) {
+SetFilterModel.prototype.refreshUniqueValues = function(keepSelection) {
+    this.createUniqueValues();
+
+    var oldModel = Object.keys(this.selectedValuesMap);
+
+    this.selectedValuesMap = {};
+    this.filterDisplayedValues();
+
+    if (keepSelection) {
+        this.setModel(oldModel);
+    } else {
+        this.selectEverything();
+    }
+};
+
+SetFilterModel.prototype.createUniqueValues = function() {
+    if (this.colDef.filterParams && this.colDef.filterParams.values) {
+        this.uniqueValues = this.colDef.filterParams.values;
+    } else {
+        this.uniqueValues = this.iterateThroughNodesForValues();
+    }
+
+    if (this.colDef.comparator) {
+        this.uniqueValues.sort(this.colDef.comparator);
+    } else {
+        this.uniqueValues.sort(utils.defaultComparator);
+    }
+};
+
+SetFilterModel.prototype.iterateThroughNodesForValues = function() {
     var uniqueCheck = {};
     var result = [];
+
+    var that = this;
 
     function recursivelyProcess(nodes) {
         for (var i = 0; i < nodes.length; i++) {
@@ -34,7 +59,7 @@ SetFilterModel.prototype.createUniqueValues = function(rowModel, key, valueGette
                 // group node, so dig deeper
                 recursivelyProcess(node.children);
             } else {
-                var value = valueGetter(node);
+                var value = that.valueGetter(node);
                 if (value === "" || value === undefined) {
                     value = null;
                 }
@@ -46,10 +71,10 @@ SetFilterModel.prototype.createUniqueValues = function(rowModel, key, valueGette
         }
     }
 
-    var topLevelNodes = rowModel.getTopLevelNodes();
+    var topLevelNodes = this.rowModel.getTopLevelNodes();
     recursivelyProcess(topLevelNodes);
 
-    this.uniqueValues = result;
+    return result;
 };
 
 //sets mini filter. returns true if it changed from last value, otherwise false

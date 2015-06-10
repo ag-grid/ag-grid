@@ -7,6 +7,7 @@ var STARTS_WITH = 3;
 var ENDS_WITH = 4;
 
 function TextFilter(params) {
+    this.filterParams = params.filterParams;
     this.filterChangedCallback = params.filterChangedCallback;
     this.localeTextFunc = params.localeTextFunc;
     this.valueGetter = params.valueGetter;
@@ -15,6 +16,15 @@ function TextFilter(params) {
     this.filterType = CONTAINS;
     this.createApi();
 }
+
+/* public */
+TextFilter.prototype.onNewRowsLoaded = function() {
+    var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+    if (!keepSelection) {
+        this.api.setType(CONTAINS);
+        this.api.setFilter(null);
+    }
+};
 
 /* public */
 TextFilter.prototype.afterGuiAttached = function() {

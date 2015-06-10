@@ -7,6 +7,15 @@
     <script src="paging.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-    <div ag-grid="gridOptions" class="ag-fresh"></div>
+    <div style="height: 6%;">
+        Page Size:
+        <select ng-model="pageSize" ng-change="onPageSizeChanged()">
+            <option value="10">10</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+        </select>
+    </div>
+    <div style="height: 94%;" ag-grid="gridOptions" class="ag-fresh"></div>
 </body>
 </html>

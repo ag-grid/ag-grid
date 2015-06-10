@@ -5,16 +5,16 @@ var template = require('./setFilterTemplate');
 var DEFAULT_ROW_HEIGHT = 20;
 
 function SetFilter(params) {
-    var filterParams = params.filterParams;
-    this.rowHeight = (filterParams && filterParams.cellHeight) ? filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
+    this.filterParams = params.filterParams;
+    this.rowHeight = (this.filterParams && this.filterParams.cellHeight) ? this.filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
     this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
     this.filterChangedCallback = params.filterChangedCallback;
     this.valueGetter = params.valueGetter;
     this.rowsInBodyContainer = {};
     this.colDef = params.colDef;
     this.localeTextFunc = params.localeTextFunc;
-    if (filterParams) {
-        this.cellRenderer = filterParams.cellRenderer;
+    if (this.filterParams) {
+        this.cellRenderer = this.filterParams.cellRenderer;
     }
     this.createGui();
     this.addScrollListener();
@@ -59,8 +59,11 @@ SetFilter.prototype.getGui = function() {
 
 /* public */
 SetFilter.prototype.onNewRowsLoaded = function() {
-    this.model.selectEverything();
-    this.updateAllCheckboxes(true);
+    var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+    // default is reset
+    this.model.refreshUniqueValues(keepSelection);
+    this.setContainerHeight();
+    this.refreshVirtualRows();
 };
 
 SetFilter.prototype.createTemplate = function() {

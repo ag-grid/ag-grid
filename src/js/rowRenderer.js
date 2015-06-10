@@ -395,9 +395,9 @@ RowRenderer.prototype.createCellFromColDef = function(isFirstColumn, column, val
     var eGridCell = this.createCell(isFirstColumn, column, valueGetter, node, rowIndex, $childScope);
 
     if (column.colDef.volatile) {
-        renderedRow.eVolatileCells[column.colKey] = eGridCell;
+        renderedRow.eVolatileCells[column.colId] = eGridCell;
     }
-    renderedRow.eCells[column.colKey] = eGridCell;
+    renderedRow.eCells[column.colId] = eGridCell;
 
     if (column.pinned) {
         ePinnedRow.appendChild(eGridCell);
@@ -772,7 +772,7 @@ RowRenderer.prototype.addCellNavigationHandler = function(eGridCell, rowIndex, c
 
         var startEdit = key === constants.KEY_ENTER;
         if (startEdit) {
-            var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colKey];
+            var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colId];
             if (startEditingFunc) {
                 var editingStarted = startEditingFunc();
                 if (editingStarted) {
@@ -1162,7 +1162,7 @@ RowRenderer.prototype.startEditingNextCell = function(rowIndex, column, shiftKey
             }
         }
 
-        var nextFunc = this.renderedRowStartEditingListeners[currentRowIndex][currentCol.colKey];
+        var nextFunc = this.renderedRowStartEditingListeners[currentRowIndex][currentCol.colId];
         if (nextFunc) {
             // see if the next cell is editable, and if so, we have come to
             // the end of our search, so stop looking for the next cell

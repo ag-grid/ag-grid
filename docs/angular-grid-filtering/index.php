@@ -48,35 +48,59 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    If no filter type is specified, the default 'set' filter is used.
+    <p>
+        If no filter type is specified, the default 'set' filter is used.
+    </p>
 
     <h3>Filter Parameters</h3>
 
-    An additional attribute on the column definition, filterParams, can be used to provide extra information to
-    the filter. Currently only set filter makes use of this nad takes a cellRenderer and rowHeight as follows:
+    <p>
+        An additional attribute on the column definition, filterParams, can be used to provide extra information to
+        the filter. Set the filterParams on the columnDefinition as follows:
+    </p>
 
     <pre>
 columnDefinition = {
     headerName: "Athlete",
     field: "athlete",
     filter: 'set',
-    filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C']}
+    filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C'], newRowsAction: 'keep'}
 }</pre>
 
     <p>
+        The filter params are specific to each filter and have the following meanings:
+    </p>
+
+    <h4>Set Filter Parameters</h4>
+    <p>
         The filter parameters for set filter have the following meaning:
         <ul>
-        <li><b>cellRenderer:</b> Same as cell renderer for grid (you can use the same one in both locations).
-        Setting it separatly here allows for the value to be rendered differently in the filter.</li>
-        <li><b>cellHeight:</b> The height of the cell.</li>
-        <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
-        takes it's values from what is loaded in the table. Setting it allows you to set values where a) the
-        value may not be present in the list (for example, if you want to show all states in America so
-        that the user is not confused by missing states, even though states are missing from the dataset
-        in the grid) and b) the list is not available (happens when doing server side filtering in pagination
-            and infinite scrolling).</li>
-    </ul>
+            <li><b>cellRenderer:</b> Same as cell renderer for grid (you can use the same one in both locations).
+            Setting it separatly here allows for the value to be rendered differently in the filter.</li>
+            <li><b>cellHeight:</b> The height of the cell.</li>
+            <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
+                takes it's values from what is loaded in the table. Setting it allows you to set values where a) the
+                value may not be present in the list (for example, if you want to show all states in America so
+                that the user is not confused by missing states, even though states are missing from the dataset
+                in the grid) and b) the list is not available (happens when doing server side filtering in pagination
+                and infinite scrolling).</li>
+            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
+                as the set of values to select from can have changed. If you want to keep the selection, then
+                set this value to 'keep'. This can be useful if you are using values (above) or otherwise know that the
+                list to select from will not change. If the list does change, then it can be confusing what
+                to do with new values into the set (should they be selected or not??).</li>
+        </ul>
 
+    </p>
+
+    <h4>Text and Number Filter Parameters</h4>
+    <p>
+        The filter parameters for set filter have the following meaning:
+        <ul>
+            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
+                to keep it in line with 'set' filters. If you want to keep the selection, then set this value
+                to 'keep'.</li>
+        </ul>
     </p>
 
     <h3>Quick Filter</h3>

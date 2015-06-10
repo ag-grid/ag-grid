@@ -40,6 +40,9 @@ PaginationController.prototype.setDatasource = function(datasource) {
 
 PaginationController.prototype.reset = function() {
     // copy pageSize, to guard against it changing the the datasource between calls
+    if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
+        console.warn('datasource.pageSize should be a number');
+    }
     this.pageSize = this.datasource.pageSize;
     // see if we know the total number of pages, or if it's 'to be decided'
     if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {

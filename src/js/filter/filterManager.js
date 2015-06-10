@@ -110,8 +110,8 @@ FilterManager.prototype.isFilterPresent = function() {
 };
 
 // returns true if given col has a filter active
-FilterManager.prototype.isFilterPresentForCol = function(colKey) {
-    var filterWrapper = this.allFilters[colKey];
+FilterManager.prototype.isFilterPresentForCol = function(colId) {
+    var filterWrapper = this.allFilters[colId];
     if (!filterWrapper) {
         return false;
     }
@@ -127,8 +127,8 @@ FilterManager.prototype.doesFilterPass = function(node) {
     var colKeys = Object.keys(this.allFilters);
     for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
 
-        var colKey = colKeys[i];
-        var filterWrapper = this.allFilters[colKey];
+        var colId = colKeys[i];
+        var filterWrapper = this.allFilters[colId];
 
         // if no filter, always pass
         if (filterWrapper === undefined) {
@@ -201,11 +201,11 @@ FilterManager.prototype.getFilterApi = function(column) {
 };
 
 FilterManager.prototype.getOrCreateFilterWrapper = function(column) {
-    var filterWrapper = this.allFilters[column.colKey];
+    var filterWrapper = this.allFilters[column.colId];
 
     if (!filterWrapper) {
         filterWrapper = this.createFilterWrapper(column);
-        this.allFilters[column.colKey] = filterWrapper;
+        this.allFilters[column.colId] = filterWrapper;
     }
 
     return filterWrapper;

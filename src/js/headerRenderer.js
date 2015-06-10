@@ -505,7 +505,7 @@ HeaderRenderer.prototype.updateFilterIcons = function() {
     this.columnModel.getVisibleColumns().forEach(function(column) {
         // todo: need to change this, so only updates if column is visible
         if (column.eFilterIcon) {
-            var filterPresent = that.filterManager.isFilterPresentForCol(column.colKey);
+            var filterPresent = that.filterManager.isFilterPresentForCol(column.colId);
             var displayStyle = filterPresent ? 'inline' : 'none';
             column.eFilterIcon.style.display = displayStyle;
         }
