@@ -96,7 +96,7 @@ columnDefinition = {
 
     <show-example example="example1"></show-example>
 
-    <h3>Custom Filtering</h3>
+    <h2>Custom Filtering</h2>
 
     If the filters provided don't provide what you want, then it's time to build your own filter class.
 
@@ -114,12 +114,11 @@ columnDefinition = {
     // mandatory methods
     MyCustomFilter.prototype.getGui = function () {}
     MyCustomFilter.prototype.isFilterActive = function() {}
-    MyCustomFilter.prototype.doesFilterPass = function (value, model) {}
+    MyCustomFilter.prototype.doesFilterPass = function (params) {}
 
     // optional methods
     MyCustomFilter.prototype.afterGuiAttached = function() {}
     MyCustomFilter.prototype.onNewRowsLoaded = function () {}
-    MyCustomFilter.prototype.getModel = function () {}
 
     </pre>
 
@@ -181,14 +180,7 @@ columnDefinition = {
         </tr>
         <tr>
             <th>getApi</th>
-            <td>Returns the API for the filter. Useful if you want your filter manipulated vai an API.</td>
-        </tr>
-        <tr>
-            <th>getModel</th>
-            <td>Returns the model for the filter. At the moment, the only purpose of this is to have it passed
-                into the 'doesFilterPass' method. In the future, the grid will be enhanced to have separate classes
-                create the filter and check the filter passing. However for now this isn't implemented so you can
-                ignore the 'getModel' method and the corresponding 'model' passed to 'does filter pass'.</td>
+            <td>Returns the API for the filter. Useful if you want your filter manipulated via an API.</td>
         </tr>
     </table>
 
@@ -197,7 +189,7 @@ columnDefinition = {
 
     <show-example example="example2"></show-example>
 
-    <h3>Filter API</h3>
+    <h2>Filter API</h2>
 
     <p>
         It is possible to set filters via the API. You do this by first getting an API to the filter
@@ -210,13 +202,9 @@ columnDefinition = {
     </p>
     <p>
         Each filter type has it's own API. So if it's a set filter, the filter API is specific
-        to set filters. If it's a custom filter, it's up to you to provide the API.
+        to set filters. If it's a custom filter, it's up to you to provide the API. The below
+        details the filter API for each of the built in filter types.
     </p>
-
-    <p>
-        The example below shows controlling the contry filter via the API.
-    </p>
-    <show-example example="example3"></show-example>
 
     <h4>Set Filter API</h4>
     <p>
@@ -234,6 +222,7 @@ columnDefinition = {
         <li><b>isNothingSelected()</b>: Returns true if nothing is selected</li>
         <li><b>getUniqueValueCount()</b>: Returns number of unique values. Useful for iterating with getUniqueValue(index)</li>
         <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
+        <li><b>getModel() / setModel()</b>: Gets the filter as a model, good for saving and restoring.</li>
     </ul>
     </p>
 
@@ -241,8 +230,9 @@ columnDefinition = {
     <p>
         The number filter API is as follows:
     <ul>
-        <li><b>setType(type)</b>: Sets the type. Select from the provided constants on the API of EQUALS, LESS_THAN and GREATER_THAN</li>
-        <li><b>setFilter(filter)</b>: Sets the filter text (which should be a number).</li>
+        <li><b>getType() / setType(type)</b>: Gets / Sets the type. Select from the provided constants on the API of EQUALS, LESS_THAN and GREATER_THAN</li>
+        <li><b>getFilter() / setFilter(filter)</b>: Gets / Sets the filter text (which should be a number).</li>
+        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
     </ul>
     </p>
 
@@ -250,10 +240,49 @@ columnDefinition = {
     <p>
         The text filter API is as follows:
     <ul>
-        <li><b>setType(type)</b>: Sets the type. Select from the provided constants on the API of EQUALS, CONTAINS, STARTS_WITH and ENDS_WITH</li>
-        <li><b>setFilter(filter)</b>: Sets the filter text (which should be a number).</li>
+        <li><b>getType() / setType(type)</b>: Gets / Sets the type. Select from the provided constants on the API of EQUALS, CONTAINS, STARTS_WITH and ENDS_WITH</li>
+        <li><b>getFilter() / setFilter(filter)</b>: Gets / Sets the filter text (a string).</li>
+        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
     </ul>
+
+    <h4>Custom Filter API</h4>
+    <p>
+        You can provide any API methods you wish on your custom filters. There is only one resriction, you must
+        implement the following if you want your filter to work with the gridOptions.api.setModel and gridOptions.api.getModel
+        methods:
+    <ul>
+        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
+    </ul>
+
+    <h4>Example Filter API</h4>
+
+    <p>
+        The example below shows controlling the country and age filters via the API.
     </p>
+    <show-example example="exampleFilterApi"></show-example>
+
+    <h2>Get / Set All Filter Models</h2>
+
+    <p>
+        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>gridOptions.api.getFilterModel</i>
+        and <i>gridOptions.api.setFilterModel</i>. These methods manage the filters states via the <i>getModel</i> and <i>setModel</i>
+        methods of the individual filters.
+    </p>
+    <p>
+        This is useful if you want to save the filter state and apply it at a later
+        state. It is also useful for server side filtering, where you want to pass the filter state to the
+        server.
+    </p>
+
+    <h4>Example Get / Set All Filter Models</h4>
+
+    <p>
+        The example below shows getting and setting all the filter models in action. The 'save' and 'restore' buttons
+        mimic what you would do to save and restore the state of the filters. The big button (Name = 'Mich%'... etc)
+        shows how you can hand craft a model and then set that into the filters.
+    </p>
+
+    <show-example example="exampleFilterModel"></show-example>
 
 </div>
 

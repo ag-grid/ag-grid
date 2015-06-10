@@ -33,8 +33,40 @@ colDef.comparator = function (value1, value2, data1, data2) {
     return value1 - value2;
 }</pre>
 
+    <p>
+        Example below shows custom sorting on the Date column.
+    </p>
 
     <show-example example="example1"></show-example>
+
+    <h4>Sorting API</h4>
+
+    <p>
+        Sorting can be controlled via the Sorting API via the following methods:
+        <ul>
+        <li><b>setSortModel(sortModel):</b> To set the sort.</li>
+        <li><b>getSortModel():</b> To return the state of the currently active sort.</li>
+    </ul>
+    </p>
+
+    <p>
+        Both methods work with a list of sort objects, each object containing a sort field
+        and direction. The order of the sort objects depicts the order in which the columns
+        are sorted. For example, the below array represents the model of firstly sorting
+        by country ascending, and then by sport descending.
+    </p>
+
+    <pre>[
+    {field: country, sort: 'asc'},
+    {field: sport, sort: 'desc'}
+]</pre>
+
+    <p>
+        The example below shows the API in action.
+    </p>
+
+    <show-example example="sortingApi"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

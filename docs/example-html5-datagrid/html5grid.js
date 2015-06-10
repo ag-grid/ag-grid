@@ -288,9 +288,9 @@
         return eGui;
     };
 
-    SkillFilter.prototype.doesFilterPass = function (node) {
+    SkillFilter.prototype.doesFilterPass = function (params) {
 
-        var rowSkills = node.data.skills;
+        var rowSkills = params.data.skills;
         var model = this.model;
         var passed = true;
 
@@ -328,6 +328,7 @@
     function ProficiencyFilter(params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
+        this.valueGetter = params.valueGetter;
     }
 
     ProficiencyFilter.prototype.getGui = function () {
@@ -358,9 +359,10 @@
         return eGui;
     };
 
-    ProficiencyFilter.prototype.doesFilterPass = function (node) {
+    ProficiencyFilter.prototype.doesFilterPass = function (params) {
 
-        var valueAsNumber = parseFloat(node.value);
+        var value = this.valueGetter(params);
+        var valueAsNumber = parseFloat(value);
 
         switch (this.selected) {
             case PROFICIENCY_ABOVE40 : return valueAsNumber >= 40;

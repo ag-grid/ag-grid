@@ -18,10 +18,10 @@ include '../documentation_header.php';
     To use a theme, add the theme class name to the div element where the Angular Grid directive is attached.
     <p/>
     The following is an example of using the ag-fresh theme:<br/>
-    <pre>&lt;div angular-grid="gridOptions" class="ag-fresh">&lt;/div></pre>
+    <pre>&lt;div ag-grid="gridOptions" class="ag-fresh">&lt;/div></pre>
     <p/>
     The following is an example of using the ag-dark theme:<br/>
-    <pre>&lt;div angular-grid="gridOptions" class="ag-dark">&lt;/div></pre>
+    <pre>&lt;div ag-grid="gridOptions" class="ag-dark">&lt;/div></pre>
 
     <p/>
     To create a new theme, either create one from scratch (difficult), or start with one of the provided

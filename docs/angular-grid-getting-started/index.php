@@ -35,21 +35,28 @@ include '../documentation_header.php';
 
     <h4>Angular Grid Div</h4>
 
-    To include a grid in your html, add the AngularGrid attribute to a div. The value
-    of the div should be the provided grid options on the scope.
+    <p>
+        To include a grid in your html, add the AngularGrid attribute to a div. The value
+        of the div should be the provided grid options on the scope.
+    </p>
 
-    <p/>
-    It is also usual (although not neccessary) to provide a styling theme to
-    the grid. Two themes come with the grid, ag-fresh and ag-dark. Each one is
-    set by applying the corresponding class of the same name to the div. In the
-    example, ag-fresh is used.
+    <p>
+        It is also usual (although not necessary) to provide a styling theme to
+        the grid. Two themes come with the grid, ag-fresh and ag-dark. Each one is
+        set by applying the corresponding class of the same name to the div. In the
+        example, ag-fresh is used.
+    </p>
 
     <h4>Grid Options</h4>
-    The grid options provide AngularGrid with the details needed to render. At a
-    minimum you provide the columns (columnDefs) and the rows (rowData).
+    <p>
+        The grid options provide AngularGrid with the details needed to render. At a
+        minimum you provide the columns (columnDefs) and the rows (rowData).
+    </p>
 
+    <pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh"</b>>&lt;/div></pre>
+
+    <h4>Very Simple Example</h4>
     <show-example example="example1" example-height="200px"></show-example>
-
 
     <h2>Loading Rows</h2>
 

@@ -1,0 +1,28 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="../dist/angular-grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+    <script src="sortingApi.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button ng-click="sortByAthleteAsc()">Athlete Ascending</button>
+            <button ng-click="sortByAthleteDesc()">Athlete Descending</button>
+            <button ng-click="sortByCountryThenSport()">Country, then Sport</button>
+            <button ng-click="sortBySportThenCountry()">Sport, then Country</button>
+        </span>
+        <br/>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button ng-click="clearSort()">Clear Sort</button>
+            <button ng-click="printSortStateToConsole()">Print Sort State to Console</button>
+        </span>
+
+    </div>
+    <div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

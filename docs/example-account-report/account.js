@@ -3,7 +3,9 @@ var fileBrowserModule = angular.module('account', ['angularGrid']);
 fileBrowserModule.controller('accountController', function($scope) {
 
     var columnDefs = [
-        {displayName: '', field: 'item', width: 200},
+        {displayName: '', field: 'item', width: 200, cellRenderer: {
+            renderer: 'group'
+        }},
         {displayName: "Units", field: "amount1", group: 'Week 1', width: 75},
         {displayName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
         {displayName: "Units", field: "amount2", group: 'Week 2', width: 75},
@@ -29,7 +31,8 @@ fileBrowserModule.controller('accountController', function($scope) {
         groupKeys: ['category'],
         groupHeaders: true,
         groupDefaultExpanded: true,
-        // groupIncludeFooter: true,
+        groupIncludeFooter: true,
+        groupAggFields: ['amount1','gbp1','amount2','gbp2','amount3','gbp3','amount4','gbp4'],
         enableColResize: true,
         enableSorting: false,
         dontUseScrolls: true,

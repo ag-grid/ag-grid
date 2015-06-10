@@ -170,6 +170,7 @@
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
+  float: left;
 }
 .ag-group-cell-entire-row {
   width: 100%;

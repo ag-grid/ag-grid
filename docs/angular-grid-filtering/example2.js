@@ -35,6 +35,7 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
         this.$scope.onFilterChanged = function() {
             params.filterChangedCallback();
         };
+        this.valueGetter = params.valueGetter;
     }
 
     PersonFilter.prototype.getGui = function () {
@@ -47,15 +48,17 @@ module.controller("exampleCtrl", function($scope, $http, $timeout) {
             '</div>';
     };
 
-    PersonFilter.prototype.doesFilterPass = function (node) {
+    PersonFilter.prototype.doesFilterPass = function (params) {
         var filterText = this.$scope.filterText;
         if (!filterText) {
             return true;
         }
         // make sure each word passes separately, ie search for firstname, lastname
         var passed = true;
+        var valueGetter = this.valueGetter;
         filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-            if (node.value.toString().toLowerCase().indexOf(filterWord)<0) {
+            var value = valueGetter(params);
+            if (value.toString().toLowerCase().indexOf(filterWord)<0) {
                 passed = false;
             }
         });
