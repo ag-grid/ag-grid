@@ -19,16 +19,16 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 200},
-        {displayName: "Age", field: "age", width: 90},
-        {displayName: "Gold", field: "gold", width: 100},
-        {displayName: "Silver", field: "silver", width: 100},
-        {displayName: "Bronze", field: "bronze", width: 100},
-        {displayName: "Total", field: "total", width: 100},
-        {displayName: "Country", field: "country", width: 120},
-        {displayName: "Year", field: "year", width: 90},
-        {displayName: "Date", field: "date", width: 110},
-        {displayName: "Sport", field: "sport", width: 110}
+        {headerName: "Athlete", field: "athlete", width: 200},
+        {headerName: "Age", field: "age", width: 90},
+        {headerName: "Gold", field: "gold", width: 100},
+        {headerName: "Silver", field: "silver", width: 100},
+        {headerName: "Bronze", field: "bronze", width: 100},
+        {headerName: "Total", field: "total", width: 100},
+        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Date", field: "date", width: 110},
+        {headerName: "Sport", field: "sport", width: 110}
     ];
 
     $scope.gridOptions = {

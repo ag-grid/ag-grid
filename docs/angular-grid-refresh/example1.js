@@ -4,15 +4,15 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope) {
 
     var columnDefs = [
-        {displayName: "Person", field: 'name', width: 400,
+        {headerName: "Person", field: 'name', width: 400,
             cellStyle:  {'background-color': 'rgba(255, 255, 180, 0.5)'} // light yellow background
         },
-        {displayName: "Monday", group: 'Weekly Editable Values',  field: "mon", newValueHandler: numberNewValueHandler, editable: true},
-        {displayName: "Tuesday", group: 'Weekly Editable Values', field: "tue", newValueHandler: numberNewValueHandler, editable: true},
-        {displayName: "Wednesday", group: 'Weekly Editable Values', field: "wed", newValueHandler: numberNewValueHandler, editable: true},
-        {displayName: "Thursday", group: 'Weekly Editable Values', field: "thur", newValueHandler: numberNewValueHandler, editable: true},
-        {displayName: "Friday", group: 'Weekly Editable Values', field: "fri", newValueHandler: numberNewValueHandler, editable: true},
-        {displayName: "Total", group: 'Volatile Summary',
+        {headerName: "Monday", group: 'Weekly Editable Values',  field: "mon", newValueHandler: numberNewValueHandler, editable: true},
+        {headerName: "Tuesday", group: 'Weekly Editable Values', field: "tue", newValueHandler: numberNewValueHandler, editable: true},
+        {headerName: "Wednesday", group: 'Weekly Editable Values', field: "wed", newValueHandler: numberNewValueHandler, editable: true},
+        {headerName: "Thursday", group: 'Weekly Editable Values', field: "thur", newValueHandler: numberNewValueHandler, editable: true},
+        {headerName: "Friday", group: 'Weekly Editable Values', field: "fri", newValueHandler: numberNewValueHandler, editable: true},
+        {headerName: "Total", group: 'Volatile Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
             volatile: true,
             cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'}, // light blue background
@@ -20,19 +20,19 @@ module.controller("exampleCtrl", function($scope) {
                 'bold-and-red': 'x>20'
             }
         },
-        {displayName: "Avg",  group: 'Volatile Summary',
+        {headerName: "Avg",  group: 'Volatile Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
             volatile: true,
             cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'} // light blue background
         },
-        {displayName: "Total", group: 'Hard Summary',
+        {headerName: "Total", group: 'Hard Summary',
             valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
             cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'}, // light red background
             cellClassRules: {
                 'bold-and-red': 'x>20'
             }
         },
-        {displayName: "Avg",  group: 'Hard Summary',
+        {headerName: "Avg",  group: 'Hard Summary',
             valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
             cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'} // light red background
         }

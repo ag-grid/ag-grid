@@ -4,9 +4,9 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope) {
 
     var columnDefs = [
-        {displayName: "Make", field: "make"},
-        {displayName: "Model", field: "model"},
-        {displayName: "Price", field: "price", filter: "number"}
+        {headerName: "Make", field: "make"},
+        {headerName: "Model", field: "model"},
+        {headerName: "Price", field: "price", filter: "number"}
     ];
 
     var rowData = [

@@ -119,14 +119,14 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
     ];
 
     var columnDefs = [
-        {displayName: "Name", field: "name", width: 250,
+        {headerName: "Name", field: "name", width: 250,
             cellRenderer: {
                 renderer: 'group',
                 innerRenderer: innerCellRenderer
             }},
-        {displayName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
-        {displayName: "Type", field: "type", width: 150},
-        {displayName: "Date Modified", field: "dateModified", width: 150}
+        {headerName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
+        {headerName: "Type", field: "type", width: 150},
+        {headerName: "Date Modified", field: "dateModified", width: 150}
     ];
 
     $scope.gridOptions = {

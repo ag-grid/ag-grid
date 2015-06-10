@@ -2,9 +2,9 @@
 // this example has items declared globally. bad javascript. but keeps the example simple.
 
 var columnDefs = [
-    {displayName: "Make", field: "make"},
-    {displayName: "Model", field: "model"},
-    {displayName: "Price", field: "price"}
+    {headerName: "Make", field: "make"},
+    {headerName: "Model", field: "model"},
+    {headerName: "Price", field: "price"}
 ];
 
 var rowData = [

@@ -107,15 +107,15 @@
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {displayName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
-        {displayName: "Name", field: "name", group: 'Employee', width: 150},
-        {displayName: "Country", field: "country", group: 'Employee', width: 150, cellRenderer: countryCellRenderer,
+        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
+        {headerName: "Name", field: "name", group: 'Employee', width: 150},
+        {headerName: "Country", field: "country", group: 'Employee', width: 150, cellRenderer: countryCellRenderer,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
-        {displayName: "Skills", width: 125, group: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-        {displayName: "Proficiency", field: "proficiency", group: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
-        {displayName: "Mobile", field: "mobile", group: 'Contact', width: 150, filter: 'text'},
-        {displayName: "Land-line", field: "landline", group: 'Contact', width: 150, filter: 'text'},
-        {displayName: "Address", field: "address", group: 'Contact', width: 500, filter: 'text'}
+        {headerName: "Skills", width: 125, group: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
+        {headerName: "Proficiency", field: "proficiency", group: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+        {headerName: "Mobile", field: "mobile", group: 'Contact', width: 150, filter: 'text'},
+        {headerName: "Land-line", field: "landline", group: 'Contact', width: 150, filter: 'text'},
+        {headerName: "Address", field: "address", group: 'Contact', width: 500, filter: 'text'}
     ];
 
     var gridOptions = {

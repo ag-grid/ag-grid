@@ -99,6 +99,10 @@ include '../documentation_header.php';
                 are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
         </tr>
         <tr>
+            <th>refreshHeader()</th>
+            <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
+        </tr>
+        <tr>
             <th>refreshGroupRows()</th>
             <td>Rip out and re-insert all visible header and footer rows only. Only need to call if update the aggregate data yourself,
             as this gets called after <i>recomputeAggregates()</i> anyway.</td>

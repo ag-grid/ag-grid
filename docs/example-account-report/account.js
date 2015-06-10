@@ -3,17 +3,17 @@ var fileBrowserModule = angular.module('account', ['angularGrid']);
 fileBrowserModule.controller('accountController', function($scope) {
 
     var columnDefs = [
-        {displayName: '', field: 'item', width: 200, cellRenderer: {
+        {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
         }},
-        {displayName: "Units", field: "amount1", group: 'Week 1', width: 75},
-        {displayName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
-        {displayName: "Units", field: "amount2", group: 'Week 2', width: 75},
-        {displayName: "GBP", field: "gbp2", group: 'Week 2', width: 75, cellRenderer: currencyRenderer},
-        {displayName: "Units", field: "amount3", group: 'Week 3', width: 75},
-        {displayName: "GBP", field: "gbp3", group: 'Week 3', width: 75, cellRenderer: currencyRenderer},
-        {displayName: "Units", field: "amountTotal", group: 'Period Total', width: 75},
-        {displayName: "GBP", field: "gbpTotal", group: 'Period Total', width: 75, cellRenderer: currencyRenderer}
+        {headerName: "Units", field: "amount1", group: 'Week 1', width: 75},
+        {headerName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount2", group: 'Week 2', width: 75},
+        {headerName: "GBP", field: "gbp2", group: 'Week 2', width: 75, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount3", group: 'Week 3', width: 75},
+        {headerName: "GBP", field: "gbp3", group: 'Week 3', width: 75, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amountTotal", group: 'Period Total', width: 75},
+        {headerName: "GBP", field: "gbpTotal", group: 'Period Total', width: 75, cellRenderer: currencyRenderer}
     ];
 
     function currencyRenderer(params) {

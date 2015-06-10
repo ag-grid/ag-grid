@@ -21,8 +21,12 @@ include '../documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>displayName</th>
+            <th>headerName</th>
             <td>The name to render in the column header</td>
+        </tr>
+        <tr>
+            <th>headerValueGetter(params)</th>
+            <td>Expression or function to get the cells value.</td>
         </tr>
         <tr>
             <th>headerTooltip</th>
@@ -31,6 +35,10 @@ include '../documentation_header.php';
         <tr>
             <th>field</th>
             <td>The field of the row to get the cells data from</td>
+        </tr>
+        <tr>
+            <th>valueGetter(params)</th>
+            <td>Expression or function to get the cells value.</td>
         </tr>
         <tr>
             <th>width</th>
@@ -45,19 +53,19 @@ include '../documentation_header.php';
             <td>An object of css values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
-            <th>cellRenderer</th>
+            <th>cellRenderer(params)</th>
             <td>A function for rendering a cell.</td>
         </tr>
         <tr>
-            <th>cellClicked</th>
+            <th>cellClicked(params)</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
-            <th>cellDoubleClicked</th>
+            <th>cellDoubleClicked(params)</th>
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
-            <th>comparator</th>
+            <th>comparator()</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
         <tr>
@@ -86,7 +94,7 @@ include '../documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
-            <th>newValueHandler, cellValueChanged</th>
+            <th>newValueHandler(params)<br/>cellValueChanged(params)</th>
             <td>Callbacks for editing. See editing section for further details.</td>
         </tr>
         <tr>
@@ -94,7 +102,7 @@ include '../documentation_header.php';
             <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
         </tr>
         <tr>
-            <th>cellTemplate, cellTemplateUrl</th>
+            <th>cellTemplate<br/>cellTemplateUrl</th>
             <td>Cell template (or specify URL to load template from) to use for cell.
                 Useful for AngularJS cells.</td>
         </tr>

@@ -6,7 +6,8 @@ var svgFactory = new SvgFactory();
 
 function HeaderRenderer() {}
 
-HeaderRenderer.prototype.init = function(gridOptionsWrapper, columnController, columnModel, eGrid, angularGrid, filterManager, $scope, $compile) {
+HeaderRenderer.prototype.init = function(gridOptionsWrapper, columnController, columnModel, eGrid, angularGrid, filterManager, $scope, $compile, expressionService) {
+    this.expressionService = expressionService;
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.columnModel = columnModel;
     this.columnController = columnController;
@@ -259,16 +260,25 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
         headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
     }
+
+    var newChildScope;
+    if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
+        newChildScope = this.$scope.$new();
+        newChildScope.colDef = colDef;
+        newChildScope.colIndex = colDef.index;
+        newChildScope.colDefWrapper = column;
+        this.childScopes.push(newChildScope);
+    }
+
+    var headerNameValue = this.getHeaderName(colDef, newChildScope);
+
     if (headerCellRenderer) {
         // renderer provided, use it
-        var newChildScope;
-        if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
-            newChildScope = this.$scope.$new();
-        }
         var cellRendererParams = {
             colDef: colDef,
             $scope: newChildScope,
             context: this.gridOptionsWrapper.getContext(),
+            value: headerNameValue,
             api: this.gridOptionsWrapper.getApi()
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);
@@ -284,10 +294,6 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         }
         // angular compile header if option is turned on
         if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
-            newChildScope.colDef = colDef;
-            newChildScope.colIndex = colDef.index;
-            newChildScope.colDefWrapper = column;
-            this.childScopes.push(newChildScope);
             var childToAppendCompiled = this.$compile(childToAppend)(newChildScope)[0];
             headerCellLabel.appendChild(childToAppendCompiled);
         } else {
@@ -297,7 +303,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         // no renderer, default text render
         var eInnerText = document.createElement("span");
         eInnerText.className = 'ag-header-cell-text';
-        eInnerText.innerHTML = colDef.displayName;
+        eInnerText.innerHTML = headerNameValue;
         headerCellLabel.appendChild(eInnerText);
     }
 
@@ -305,6 +311,36 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     eHeaderCell.style.width = utils.formatWidth(column.actualWidth);
 
     return eHeaderCell;
+};
+
+HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
+
+    var headerValueGetter = colDef.headerValueGetter;
+
+    if (headerValueGetter) {
+        var params = {
+            colDef: colDef,
+            $scope: $scope,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (typeof headerValueGetter === 'function') {
+            // valueGetter is a function, so just call it
+            return headerValueGetter(params);
+        } else if (typeof headerValueGetter === 'string') {
+            // valueGetter is an expression, so execute the expression
+            return this.expressionService.evaluate(headerValueGetter, params);
+        }
+
+        return utils.getValue(this.expressionService, undefined, colDef, undefined, api, context);
+    } else if (colDef.displayName) {
+        console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
+        return colDef.displayName;
+    } else {
+        return colDef.headerName;
+    }
+
 };
 
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {

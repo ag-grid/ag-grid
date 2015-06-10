@@ -118,7 +118,7 @@ gridsModule.controller('mainController', function($scope) {
     $scope.angularGrid = angularGrid;
 
     var groupColumn = {
-        displayName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
+        headerName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
         floatCell: true,
             cellRenderer: {
                 renderer: "group",
@@ -126,7 +126,7 @@ gridsModule.controller('mainController', function($scope) {
             }
         };
 
-    var firstColumn = {displayName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter,
+    var firstColumn = {headerName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter,
         floatCell: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -135,10 +135,10 @@ gridsModule.controller('mainController', function($scope) {
     };
 
     var defaultCols = [
-        //{displayName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
+        //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
         groupColumn,
         firstColumn,
-        {displayName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
+        {headerName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
             floatCell: true,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
             icons: {
@@ -146,40 +146,40 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
+        {headerName: "Language", field: "language", group: 'Participant', width: 150, editable: editableFunc, filter: 'set', cellRenderer: languageCellRenderer,
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; },
+        {headerName: "Game of Choice", field: "game", group: 'Game', width: 180, editable: editableFunc, filter: 'set', cellClass: function() { return 'alphabet'; },
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
-        {displayName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
+        {headerName: "Bought", field: "bought", filter: 'set', group: 'Game', editable: editableFunc, width: 100,
             cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
             floatCell: true,
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
-        {displayName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        {headerName: "Bank Balance", field: "bankBalance", group: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
             }
         },
-        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {headerName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
             cellRenderer: function() { return 'Abra...'; } },
-        {displayName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {headerName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
             cellRenderer: function() { return '...cadabra!'; } },
-        {displayName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
+        {headerName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,
             floatCell: true,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
-        {displayName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -188,7 +188,7 @@ gridsModule.controller('mainController', function($scope) {
     ];
     //put in the month cols
     months.forEach(function(month) {
-        defaultCols.push({displayName: month, group: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
+        defaultCols.push({headerName: month, group: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
             newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})
     });
@@ -325,7 +325,7 @@ gridsModule.controller('mainController', function($scope) {
 
         for (var col = defaultCols.length; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
-            var colDef = {displayName: colName, field: "col"+col, width: 200, editable: editableFunc};
+            var colDef = {headerName: colName, field: "col"+col, width: 200, editable: editableFunc};
             columns.push(colDef);
         }
         angularGrid.columnDefs = columns;

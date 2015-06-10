@@ -61,6 +61,31 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
+    <h2>Header Value Getters</h2>
+
+    <p>
+        Headers can also have values that change or are dependent on some extra data. For example,
+        you might have a column that has the name of the current calendar month, and changes depending
+        on what month the report is looking at.
+    </p>
+
+    <p>
+        As with cell valueGetters, a headerValueGetter can be a function or an expression. It supports
+        the following parameters:
+
+        <ul>
+            <li><b>colDef</b>: maps colDef</li>
+            <li><b>ctx</b>: maps context</li>
+            <li><b>api</b>: maps api</li>
+        </ul>
+
+    </p>
+
+    <p>
+        If you what to update the columns (say after a change in the data which requires a new column name)
+        then get the grid to update by calling <i>api.refreshHeader()</i>.
+    </p>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

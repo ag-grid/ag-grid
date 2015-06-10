@@ -29,10 +29,12 @@ module.controller("exampleCtrl", function($scope, $http) {
     ];
 
     var columnDefs = [
-        {displayName: "Product", field: "product", width: 150},
-        {displayName: "Currency", field: "currency", width: 150},
-        {displayName: "Price Local", field: "price", width: 150},
-        {displayName: "Report Price", field: "xxx", width: 150, cellRenderer: reportingCurrencyCellRenderer, headerCellRenderer: reportingCurrencyHeaderRenderer}
+        {headerName: "Product", field: "product", width: 150},
+        {headerName: "Currency", field: "currency", width: 150},
+        {headerName: "Price Local", field: "price", width: 150},
+        {headerName: "Report Price", width: 150,
+            cellRenderer: reportingCurrencyCellRenderer,
+            headerValueGetter: 'ctx.reportingCurrency'}
     ];
 
     // in the future, change this to a value getter
@@ -44,10 +46,6 @@ module.controller("exampleCtrl", function($scope, $http) {
         } else {
             return params.data.price;
         }
-    }
-
-    function reportingCurrencyHeaderRenderer(params) {
-        return params.context.reportingCurrency;
     }
 
     $scope.currencies = ['EUR','GBP','USD'];

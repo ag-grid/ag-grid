@@ -4,16 +4,16 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http, $timeout) {
 
     var columnDefs = [
-        {displayName: "Athlete", field: "athlete", width: 150, filter: PersonFilter},
-        {displayName: "Age", field: "age", width: 90, filter: 'number'},
-        {displayName: "Country", field: "country", width: 120},
-        {displayName: "Year", field: "year", width: 90},
-        {displayName: "Date", field: "date", width: 110},
-        {displayName: "Sport", field: "sport", width: 110},
-        {displayName: "Gold", field: "gold", width: 100, filter: 'number'},
-        {displayName: "Silver", field: "silver", width: 100, filter: 'number'},
-        {displayName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-        {displayName: "Total", field: "total", width: 100, filter: 'number'}
+        {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter},
+        {headerName: "Age", field: "age", width: 90, filter: 'number'},
+        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Date", field: "date", width: 110},
+        {headerName: "Sport", field: "sport", width: 110},
+        {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
+        {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
+        {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
+        {headerName: "Total", field: "total", width: 100, filter: 'number'}
     ];
 
     $scope.gridOptions = {

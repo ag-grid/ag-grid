@@ -4,11 +4,11 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $timeout) {
 
     var columnDefs = [
-        {displayName: "Default String", field: "defaultString", width: 150, editable: true},
-        {displayName: "Upper Case Only", field: "upperCaseOnly", width: 150, editable: true, newValueHandler: upperCaseNewValueHandler},
-        {displayName: "Number", valueGetter: 'data.number', width: 150, editable: true, newValueHandler: numberNewValueHandler},
-        {displayName: "Custom With Angular", field: "setAngular", width: 175, cellRenderer: customEditorUsingAngular},
-        {displayName: "Custom No Angular", field: "setNoAngular", width: 175, cellRenderer: customEditorNoAngular}
+        {headerName: "Default String", field: "defaultString", width: 150, editable: true},
+        {headerName: "Upper Case Only", field: "upperCaseOnly", width: 150, editable: true, newValueHandler: upperCaseNewValueHandler},
+        {headerName: "Number", valueGetter: 'data.number', width: 150, editable: true, newValueHandler: numberNewValueHandler},
+        {headerName: "Custom With Angular", field: "setAngular", width: 175, cellRenderer: customEditorUsingAngular},
+        {headerName: "Custom No Angular", field: "setNoAngular", width: 175, cellRenderer: customEditorNoAngular}
     ];
 
     var data = [

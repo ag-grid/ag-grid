@@ -57,7 +57,7 @@ include '../documentation_header.php';
 
     <pre>
 columnDefinition = {
-    displayName: "Athlete",
+    headerName: "Athlete",
     field: "athlete",
     filter: 'set',
     filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C']}

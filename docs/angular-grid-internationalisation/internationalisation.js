@@ -5,19 +5,19 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
         // this row just shows the row index, doesn't use any data from the row
-        {displayName: "#", width: 50, cellRenderer: function(params) {
+        {headerName: "#", width: 50, cellRenderer: function(params) {
             return params.node.id + 1;
         } },
-        {displayName: "Athlete", field: "athlete", width: 150},
-        {displayName: "Age", field: "age", width: 90},
-        {displayName: "Country", field: "country", width: 120},
-        {displayName: "Year", field: "year", width: 90, filter: 'number'},
-        {displayName: "Date", field: "date", width: 110},
-        {displayName: "Sport", field: "sport", width: 110, filter: 'text'},
-        {displayName: "Gold", field: "gold", width: 100},
-        {displayName: "Silver", field: "silver", width: 100},
-        {displayName: "Bronze", field: "bronze", width: 100},
-        {displayName: "Total", field: "total", width: 100}
+        {headerName: "Athlete", field: "athlete", width: 150},
+        {headerName: "Age", field: "age", width: 90},
+        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Year", field: "year", width: 90, filter: 'number'},
+        {headerName: "Date", field: "date", width: 110},
+        {headerName: "Sport", field: "sport", width: 110, filter: 'text'},
+        {headerName: "Gold", field: "gold", width: 100},
+        {headerName: "Silver", field: "silver", width: 100},
+        {headerName: "Bronze", field: "bronze", width: 100},
+        {headerName: "Total", field: "total", width: 100}
     ];
 
     $scope.gridOptions = {
