@@ -15,8 +15,17 @@ include 'documentation_header.php';
 
     <!--
         <li>
-            <b>headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
+            <b>Column headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
             Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
+        </li>
+        <li>
+            <b>Filter newRowsAction:</b> Now you can specify the default behaviour of filters when new rows are loaded,
+            either reset them, or keep the old state. Read about it in
+            <a href="angular-grid-filtering/index.php">filters documentation</a>
+        </li>
+
+        <li>
+            <b>suppressUnSort</b>
         </li>
 
     -->

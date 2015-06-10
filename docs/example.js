@@ -79,6 +79,7 @@ gridsModule.controller('mainController', function($scope) {
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         //suppressCellSelection: true,
+        //suppressUnSort: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,

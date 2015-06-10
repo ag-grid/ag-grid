@@ -64,6 +64,10 @@ include '../documentation_header.php';
             <td>Set to true or false (default is false)</td>
         </tr>
         <tr>
+            <th>suppressUnSort</th>
+            <td>Set to true or false (default is false). If true, clicking column header cannot remove the sort.</td>
+        </tr>
+        <tr>
             <th>enableFilter</th>
             <td>Set to true or false (default is false)</td>
         </tr>

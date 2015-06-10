@@ -350,7 +350,11 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
 
         // update sort on current col
         if (column.sort === constants.DESC) {
-            column.sort = null;
+            if (that.gridOptionsWrapper.isSuppressUnSort()) {
+                column.sort = constants.ASC;
+            } else {
+                column.sort = null;
+            }
         } else if (column.sort === constants.ASC) {
             column.sort = constants.DESC;
         } else {
