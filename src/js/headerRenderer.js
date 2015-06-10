@@ -368,10 +368,12 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
             column.sortedAt = null;
         }
 
+        var doingMultiSort = !that.gridOptionsWrapper.isSuppressMultiSort() && e.shiftKey;
+
         // clear sort on all columns except this one, and update the icons
         that.columnModel.getAllColumns().forEach(function(columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!(e.shiftKey || columnToClear === column)) {
+            if (!(doingMultiSort || columnToClear === column)) {
                 columnToClear.sort = null;
             }
         });

@@ -80,6 +80,7 @@ gridsModule.controller('mainController', function($scope) {
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         //suppressCellSelection: true,
         //suppressUnSort: true,
+        //suppressMultiSort: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,

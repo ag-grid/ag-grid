@@ -25,7 +25,7 @@ include 'documentation_header.php';
         </li>
 
         <li>
-            <b>suppressUnSort</b>
+            <b>Sorting Options: </b> New sorting optiosn of suppressUnSort and suppressMultiSort.
         </li>
 
     -->
