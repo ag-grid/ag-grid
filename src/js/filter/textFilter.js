@@ -1,5 +1,5 @@
 var utils = require('../utils');
-var template = require('./textFilterTemplate');
+var template = require('./textFilter.html');
 
 var CONTAINS = 1;
 var EQUALS = 2;

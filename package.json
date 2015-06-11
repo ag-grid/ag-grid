@@ -30,7 +30,7 @@
     "gulp-stylus": "^2.0.1",
     "gulp-uglify": "^1.2.0",
     "nib": "^1.1.0",
-    "streamify": "^0.2.4",
+    "stringify": "3.1.0",
     "stylus": "^0.50.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

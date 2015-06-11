@@ -1,6 +1,6 @@
 var utils = require('./../utils');
 var SetFilterModel = require('./setFilterModel');
-var template = require('./setFilterTemplate');
+var template = require('./setFilter.html');
 
 var DEFAULT_ROW_HEIGHT = 20;
 

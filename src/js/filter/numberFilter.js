@@ -1,5 +1,5 @@
 var utils = require('./../utils');
-var template = require('./numberFilterTemplate.js');
+var template = require('./numberFilter.html');
 
 var EQUALS = 1;
 var LESS_THAN = 2;

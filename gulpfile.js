@@ -7,9 +7,8 @@ var stylus = require('gulp-stylus');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var streamify = require("streamify");
 var nib = require('nib');
-
+var stringify = require('stringify');
 
 gulp.task('default', ['build', 'watch']);
 
@@ -25,6 +24,12 @@ gulp.task('watch', watchTask);
 
 function jsTask() {
     return browserify('./src/js/main.js', {debug: true})
+        .transform(
+            stringify({
+                extensions: ['.html', '.json'],
+                minify: true
+            })
+        )
         .bundle()
         .pipe(source('angular-grid.js'))
         .pipe(gulp.dest('./dist'))
