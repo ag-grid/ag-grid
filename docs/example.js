@@ -81,6 +81,7 @@ gridsModule.controller('mainController', function($scope) {
         //suppressCellSelection: true,
         //suppressUnSort: true,
         //suppressMultiSort: true,
+        showToolPanel: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,
@@ -171,10 +172,10 @@ gridsModule.controller('mainController', function($scope) {
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
             }
         },
-        {headerName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {headerName: "Extra Info 1", groupShow: 'open', group: 'Performance', width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
             cellRenderer: function() { return 'Abra...'; } },
-        {headerName: "Extra Info", groupShow: 'open', group: 'Performance', width: 150, editable: false,
+        {headerName: "Extra Info 2", groupShow: 'open', group: 'Performance', width: 150, editable: false,
             suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
             cellRenderer: function() { return '...cadabra!'; } },
         {headerName: "Rating", field: "rating", width: 100, editable: editableFunc, cellRenderer: ratingRenderer,

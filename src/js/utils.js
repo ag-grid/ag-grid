@@ -164,29 +164,35 @@ Utils.prototype.querySelectorAll_replaceCssClass = function(eParent, selector, c
     }
 };
 
+Utils.prototype.addOrRemoveCssClass = function(element, className, addOrRemove) {
+    if (addOrRemove) {
+        this.addCssClass(element, className);
+    } else {
+        this.removeCssClass(element, className);
+    }
+};
+
 Utils.prototype.addCssClass = function(element, className) {
-    var oldClasses = element.className;
-    if (oldClasses) {
-        if (oldClasses.indexOf(className) >= 0) {
-            return;
+    if (element.className && element.className.length > 0) {
+        var cssClasses = element.className.split(' ');
+        if (cssClasses.indexOf(className) < 0) {
+            cssClasses.push(className);
+            element.className = cssClasses.join(' ');
         }
-        element.className = oldClasses + " " + className;
     } else {
         element.className = className;
     }
 };
 
 Utils.prototype.removeCssClass = function(element, className) {
-    var oldClasses = element.className;
-    if (oldClasses.indexOf(className) < 0) {
-        return;
+    if (element.className && element.className.length > 0) {
+        var cssClasses = element.className.split(' ');
+        var index = cssClasses.indexOf(className);
+        if (index >= 0) {
+            cssClasses.splice(index, 1);
+            element.className = cssClasses.join(' ');
+        }
     }
-    var newClasses = oldClasses.replace(" " + className, "");
-    newClasses = newClasses.replace(className + " ", "");
-    if (newClasses == className) {
-        newClasses = "";
-    }
-    element.className = newClasses;
 };
 
 Utils.prototype.removeFromArray = function(array, object) {

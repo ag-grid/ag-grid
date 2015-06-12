@@ -1,13 +1,16 @@
 var constants = require('./constants');
+var utils = require('./utils');
 
 function ColumnController() {
+    this.listeners = [];
     this.createModel();
 }
 
-ColumnController.prototype.init = function(angularGrid, selectionRendererFactory, gridOptionsWrapper) {
+ColumnController.prototype.init = function(angularGrid, selectionRendererFactory, gridOptionsWrapper, expressionService) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.angularGrid = angularGrid;
     this.selectionRendererFactory = selectionRendererFactory;
+    this.expressionService = expressionService;
 };
 
 ColumnController.prototype.createModel = function() {
@@ -21,8 +24,8 @@ ColumnController.prototype.createModel = function() {
         },
         // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
         // need a newMethod - get next col index
-        getVisibleColumns: function() {
-            return that.visibleColumns;
+        getDisplayedColumns: function() {
+            return that.displayedColumns;
         },
         // used by:
         // + angularGrid -> for setting body width
@@ -70,8 +73,50 @@ ColumnController.prototype.createModel = function() {
             } else {
                 return null;
             }
+        },
+        getDisplayNameForCol: function(column) {
+            return that.getDisplayNameForCol(column);
         }
     };
+};
+
+ColumnController.prototype.getDisplayNameForCol = function(column) {
+
+    var colDef = column.colDef;
+    var headerValueGetter = colDef.headerValueGetter;
+
+    if (headerValueGetter) {
+        var params = {
+            colDef: colDef,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (typeof headerValueGetter === 'function') {
+            // valueGetter is a function, so just call it
+            return headerValueGetter(params);
+        } else if (typeof headerValueGetter === 'string') {
+            // valueGetter is an expression, so execute the expression
+            return this.expressionService.evaluate(headerValueGetter, params);
+        }
+
+        return utils.getValue(this.expressionService, undefined, colDef, undefined, api, context);
+    } else if (colDef.displayName) {
+        console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
+        return colDef.displayName;
+    } else {
+        return colDef.headerName;
+    }
+};
+
+ColumnController.prototype.addListener = function(listener) {
+    this.listeners.push(listener);
+};
+
+ColumnController.prototype.fireColumnsChanged = function() {
+    for (var i = 0; i<this.listeners.length; i++) {
+        this.listeners[i].columnsChanged(this.columns);
+    }
 };
 
 ColumnController.prototype.getModel = function() {
@@ -80,41 +125,59 @@ ColumnController.prototype.getModel = function() {
 
 // called by angularGrid
 ColumnController.prototype.setColumns = function(columnDefs) {
-    this.buildColumns(columnDefs);
-    this.ensureEachColHasSize();
-    this.buildGroups();
-    this.updateGroups();
-    this.updateVisibleColumns();
+    this.createColumns(columnDefs);
+    this.updateModel();
+    this.fireColumnsChanged();
 };
 
 // called by headerRenderer - when a header is opened or closed
 ColumnController.prototype.columnGroupOpened = function(group) {
     group.expanded = !group.expanded;
     this.updateGroups();
-    this.updateVisibleColumns();
+    this.updateDisplayedColumns();
     this.angularGrid.refreshHeaderAndBody();
 };
 
+// called by toolPanel - when change in columns happens
+ColumnController.prototype.onColumnStateChanged = function() {
+    this.updateModel();
+    this.angularGrid.refreshHeaderAndBody();
+};
+
+ColumnController.prototype.updateModel= function() {
+    this.updateVisibleColumns();
+    this.updatePinnedColumns();
+    this.buildGroups();
+    this.updateGroups();
+    this.updateDisplayedColumns();
+};
+
 // private
-ColumnController.prototype.updateVisibleColumns = function() {
-    // if not grouping by headers, then all columns are visible
+ColumnController.prototype.updateDisplayedColumns = function() {
+    this.displayedColumns = [];
+
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
-        this.visibleColumns = this.columns;
-        return;
+        // if not grouping by headers, then pull visible cols
+        for (var j = 0; j < this.columns.length; j++) {
+            var column = this.columns[j];
+            if (column.visible) {
+                this.displayedColumns.push(column);
+            }
+        }
+    } else {
+        // if grouping, then only show col as per group rules
+        for (var i = 0; i < this.columnGroups.length; i++) {
+            var group = this.columnGroups[i];
+            group.addToVisibleColumns(this.displayedColumns);
+        }
     }
 
-    // if grouping, then only show col as per group rules
-    this.visibleColumns = [];
-    for (var i = 0; i < this.columnGroups.length; i++) {
-        var group = this.columnGroups[i];
-        group.addToVisibleColumns(this.visibleColumns);
-    }
 };
 
 // public - called from api
 ColumnController.prototype.sizeColumnsToFit = function(gridWidth) {
     // avoid divide by zero
-    if (gridWidth <= 0 || this.visibleColumns.length === 0) {
+    if (gridWidth <= 0 || this.displayedColumns.length === 0) {
         return;
     }
 
@@ -123,14 +186,14 @@ ColumnController.prototype.sizeColumnsToFit = function(gridWidth) {
     var widthForSpreading = gridWidth; // grid width minus the columns we are not resizing
 
     // get the list of cols to work with
-    for (var j = 0; j < this.visibleColumns.length ; j++) {
-        if (this.visibleColumns[j].colDef.suppressSizeToFit === true) {
+    for (var j = 0; j < this.displayedColumns.length ; j++) {
+        if (this.displayedColumns[j].colDef.suppressSizeToFit === true) {
             // don't include col, and remove the width from teh available width
-            widthForSpreading -= this.visibleColumns[j].actualWidth;
+            widthForSpreading -= this.displayedColumns[j].actualWidth;
         } else {
             // include the col
-            colsToSpread.push(this.visibleColumns[j]);
-            columnStartWidth += this.visibleColumns[j].actualWidth;
+            colsToSpread.push(this.displayedColumns[j]);
+            columnStartWidth += this.displayedColumns[j].actualWidth;
         }
     }
 
@@ -174,7 +237,7 @@ ColumnController.prototype.buildGroups = function() {
 
     var lastColWasPinned = true;
 
-    this.columns.forEach(function(column) {
+    this.visibleColumns.forEach(function(column) {
         // do we need a new group, because we move from pinned to non-pinned columns?
         var endOfPinnedHeader = lastColWasPinned && !column.pinned;
         if (!column.pinned) {
@@ -185,7 +248,7 @@ ColumnController.prototype.buildGroups = function() {
         // we don't group columns where no group is specified
         var colNotInGroup = currentGroup && !currentGroup.name;
         // do we need a new group, because we are just starting
-        var processingFirstCol = column.index === 0;
+        var processingFirstCol = currentGroup === null;
         var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
         // create new group, if it's needed
         if (newGroupNeeded) {
@@ -207,15 +270,36 @@ ColumnController.prototype.updateGroups = function() {
     for (var i = 0; i < this.columnGroups.length; i++) {
         var group = this.columnGroups[i];
         group.calculateExpandable();
-        group.calculateVisibleColumns();
+        group.calculateDisplayedColumns();
     }
 };
 
 // private
-ColumnController.prototype.buildColumns = function(columnDefs) {
+ColumnController.prototype.updateVisibleColumns = function() {
+    this.visibleColumns = [];
+
+    for (var i = 0; i < this.columns.length; i++) {
+        var column = this.columns[i];
+        if (column.visible) {
+            column.index = i;
+            this.visibleColumns.push(this.columns[i]);
+        }
+    }
+};
+
+// private
+ColumnController.prototype.updatePinnedColumns = function() {
+    var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
+    for (var i = 0; i < this.visibleColumns.length; i++) {
+        var pinned = i < pinnedColumnCount;
+        this.visibleColumns[i].pinned = pinned;
+    }
+};
+
+// private
+ColumnController.prototype.createColumns = function(columnDefs) {
     this.columns = [];
     var that = this;
-    var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
     if (columnDefs) {
         for (var i = 0; i < columnDefs.length; i++) {
             var colDef = columnDefs[i];
@@ -223,36 +307,26 @@ ColumnController.prototype.buildColumns = function(columnDefs) {
             if (colDef === 'checkboxSelection') {
                 colDef = that.selectionRendererFactory.createCheckboxColDef();
             }
-            var pinned = pinnedColumnCount > i;
-            var column = new Column(colDef, i, pinned);
+            var width = that.calculateColInitialWidth(colDef);
+            var visible = true;
+            var column = new Column(colDef, width, visible);
             that.columns.push(column);
         }
     }
 };
 
 // private
-// set the actual widths for each col
-ColumnController.prototype.ensureEachColHasSize = function() {
-    var defaultWidth = this.gridOptionsWrapper.getColWidth();
-    if (typeof defaultWidth !== 'number' || defaultWidth < constants.MIN_COL_WIDTH) {
-        defaultWidth = 200;
+ColumnController.prototype.calculateColInitialWidth = function(colDef) {
+    if (!colDef.width) {
+        // if no width defined in colDef, use default
+        return this.gridOptionsWrapper.getColWidth();
+    } else if (colDef.width < constants.MIN_COL_WIDTH) {
+        // if width in col def to small, set to min width
+        return constants.MIN_COL_WIDTH;
+    } else {
+        // otherwise use the provided width
+        return colDef.width;
     }
-    this.columns.forEach(function(colDefWrapper) {
-        var colDef = colDefWrapper.colDef;
-        if (colDefWrapper.actualWidth) {
-            // if actual width already set, do nothing
-            return;
-        } else if (!colDef.width) {
-            // if no width defined in colDef, default to 200
-            colDefWrapper.actualWidth = defaultWidth;
-        } else if (colDef.width < constants.MIN_COL_WIDTH) {
-            // if width in col def to small, set to min width
-            colDefWrapper.actualWidth = constants.MIN_COL_WIDTH;
-        } else {
-            // otherwise use the provided width
-            colDefWrapper.actualWidth = colDef.width;
-        }
-    });
 };
 
 // private
@@ -261,7 +335,7 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
     var widthSoFar = 0;
     var pinedNotImportant = typeof includePinned !== 'boolean';
 
-    this.visibleColumns.forEach(function(column) {
+    this.displayedColumns.forEach(function(column) {
         var includeThisCol = pinedNotImportant || column.pinned === includePinned;
         if (includeThisCol) {
             widthSoFar += column.actualWidth;
@@ -275,7 +349,7 @@ function ColumnGroup(pinned, name) {
     this.pinned = pinned;
     this.name = name;
     this.allColumns = [];
-    this.visibleColumns = [];
+    this.displayedColumns = [];
     this.expandable = false; // whether this group can be expanded or not
     this.expanded = false;
 }
@@ -310,12 +384,12 @@ ColumnGroup.prototype.calculateExpandable = function() {
     this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
 };
 
-ColumnGroup.prototype.calculateVisibleColumns = function() {
+ColumnGroup.prototype.calculateDisplayedColumns = function() {
     // clear out last time we calculated
-    this.visibleColumns = [];
+    this.displayedColumns = [];
     // it not expandable, everything is visible
     if (!this.expandable) {
-        this.visibleColumns = this.allColumns;
+        this.displayedColumns = this.allColumns;
         return;
     }
     // and calculate again
@@ -325,36 +399,37 @@ ColumnGroup.prototype.calculateVisibleColumns = function() {
             case 'open':
                 // when set to open, only show col if group is open
                 if (this.expanded) {
-                    this.visibleColumns.push(column);
+                    this.displayedColumns.push(column);
                 }
                 break;
             case 'closed':
                 // when set to open, only show col if group is open
                 if (!this.expanded) {
-                    this.visibleColumns.push(column);
+                    this.displayedColumns.push(column);
                 }
                 break;
             default:
                 // default is always show the column
-                this.visibleColumns.push(column);
+                this.displayedColumns.push(column);
                 break;
         }
     }
 };
 
-ColumnGroup.prototype.addToVisibleColumns = function(allVisibleColumns) {
-    for (var i = 0; i < this.visibleColumns.length; i++) {
-        var column = this.visibleColumns[i];
-        allVisibleColumns.push(column);
+// should replace with utils method 'add all'
+ColumnGroup.prototype.addToVisibleColumns = function(colsToAdd) {
+    for (var i = 0; i < this.displayedColumns.length; i++) {
+        var column = this.displayedColumns[i];
+        colsToAdd.push(column);
     }
 };
 
 var colIdSequence = 0;
 
-function Column(colDef, index, pinned) {
+function Column(colDef, actualWidth, visible) {
     this.colDef = colDef;
-    this.index = index;
-    this.pinned = pinned;
+    this.actualWidth = actualWidth;
+    this.visible = visible;
     // in the future, the colKey might be something other than the index
     if (colDef.colId) {
         this.colId = colDef.colId;

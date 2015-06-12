@@ -109,7 +109,7 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
     eHeaderGroup.appendChild(eHeaderGroupCell);
 
     var that = this;
-    group.visibleColumns.forEach(function(column) {
+    group.displayedColumns.forEach(function(column) {
         var eHeaderCell = that.createHeaderCell(column, true, group);
         eHeaderGroup.appendChild(eHeaderCell);
     });
@@ -137,28 +137,36 @@ HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expa
 
 HeaderRenderer.prototype.addDragHandler = function(eDraggableElement, dragCallback) {
     var that = this;
-    eDraggableElement.onmousedown = function(downEvent) {
+    eDraggableElement.addEventListener('mousedown', function(downEvent) {
         dragCallback.onDragStart();
         that.eRoot.style.cursor = "col-resize";
         that.dragStartX = downEvent.clientX;
 
-        that.eRoot.onmousemove = function(moveEvent) {
+        var listenersToRemove = {};
+
+        listenersToRemove.mousemove = function (moveEvent) {
             var newX = moveEvent.clientX;
             var change = newX - that.dragStartX;
             dragCallback.onDragging(change);
         };
-        that.eRoot.onmouseup = function() {
-            that.stopDragging();
+
+        listenersToRemove.mouseup = function () {
+            that.stopDragging(listenersToRemove);
         };
-        that.eRoot.onmouseleave = function() {
-            that.stopDragging();
+
+        listenersToRemove.mouseleave = function () {
+            that.stopDragging(listenersToRemove);
         };
-    };
+
+        that.eRoot.addEventListener('mousemove', listenersToRemove.mousemove);
+        that.eRoot.addEventListener('mouseup', listenersToRemove.mouseup);
+        that.eRoot.addEventListener('mouseleave', listenersToRemove.mouseleave);
+    });
 };
 
 HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
     var totalWidth = 0;
-    headerGroup.visibleColumns.forEach(function(column) {
+    headerGroup.displayedColumns.forEach(function(column) {
         totalWidth += column.actualWidth;
     });
     headerGroup.eHeaderGroupCell.style.width = utils.formatWidth(totalWidth);
@@ -170,7 +178,7 @@ HeaderRenderer.prototype.insertHeadersWithoutGrouping = function() {
     var eHeaderContainer = this.eHeaderContainer;
     var that = this;
 
-    this.columnModel.getVisibleColumns().forEach(function(column) {
+    this.columnModel.getDisplayedColumns().forEach(function(column) {
         // only include the first x cols
         var headerCell = that.createHeaderCell(column, false);
         if (column.pinned) {
@@ -270,7 +278,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         this.childScopes.push(newChildScope);
     }
 
-    var headerNameValue = this.getHeaderName(colDef, newChildScope);
+    var headerNameValue = this.columnModel.getDisplayNameForCol(column);
 
     if (headerCellRenderer) {
         // renderer provided, use it
@@ -312,6 +320,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 
     return eHeaderCell;
 };
+/*
 
 HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
 
@@ -342,6 +351,7 @@ HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
     }
 
 };
+*/
 
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
     var that = this;
@@ -400,16 +410,16 @@ HeaderRenderer.prototype.updateSortIcons = function() {
 
 HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
     var parent = this;
-    var visibleColumns = currentGroup.visibleColumns;
+    var displayedColumns = currentGroup.displayedColumns;
     return {
         onDragStart: function() {
             this.groupWidthStart = currentGroup.actualWidth;
             this.childrenWidthStarts = [];
             var that = this;
-            visibleColumns.forEach(function(colDefWrapper) {
+            displayedColumns.forEach(function(colDefWrapper) {
                 that.childrenWidthStarts.push(colDefWrapper.actualWidth);
             });
-            this.minWidth = visibleColumns.length * constants.MIN_COL_WIDTH;
+            this.minWidth = displayedColumns.length * constants.MIN_COL_WIDTH;
         },
         onDragging: function(dragChange) {
 
@@ -429,8 +439,8 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
             // to cater for rounding errors, and min width adjustments
             var pixelsToDistribute = newWidth;
             var that = this;
-            currentGroup.visibleColumns.forEach(function(colDefWrapper, index) {
-                var notLastCol = index !== (visibleColumns.length - 1);
+            currentGroup.displayedColumns.forEach(function(colDefWrapper, index) {
+                var notLastCol = index !== (displayedColumns.length - 1);
                 var newChildSize;
                 if (notLastCol) {
                     // if not the last col, calculate the column width as normal
@@ -444,7 +454,7 @@ HeaderRenderer.prototype.groupDragCallbackFactory = function(currentGroup) {
                     // if last col, give it the remaining pixels
                     newChildSize = pixelsToDistribute;
                 }
-                var eHeaderCell = visibleColumns[index].eHeaderCell;
+                var eHeaderCell = displayedColumns[index].eHeaderCell;
                 parent.adjustColumnWidth(newChildSize, colDefWrapper, eHeaderCell);
             });
 
@@ -499,16 +509,17 @@ HeaderRenderer.prototype.headerDragCallbackFactory = function(headerCell, column
     };
 };
 
-HeaderRenderer.prototype.stopDragging = function() {
+HeaderRenderer.prototype.stopDragging = function(listenersToRemove) {
     this.eRoot.style.cursor = "";
-    this.eRoot.onmouseup = null;
-    this.eRoot.onmouseleave = null;
-    this.eRoot.onmousemove = null;
+    var that = this;
+    utils.iterateObject(listenersToRemove, function(key, listener) {
+        that.eRoot.removeEventListener(key, listener);
+    });
 };
 
 HeaderRenderer.prototype.updateFilterIcons = function() {
     var that = this;
-    this.columnModel.getVisibleColumns().forEach(function(column) {
+    this.columnModel.getDisplayedColumns().forEach(function(column) {
         // todo: need to change this, so only updates if column is visible
         if (column.eFilterIcon) {
             var filterPresent = that.filterManager.isFilterPresentForCol(column.colId);

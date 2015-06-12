@@ -14,6 +14,7 @@ var VirtualPageRowController = require('./virtualPageRowController');
 var PaginationController = require('./paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
+var ToolPanel = require('./toolPanel/toolPanel');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
@@ -100,6 +101,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var virtualPageRowController = new VirtualPageRowController();
     var expressionService = new ExpressionService();
     var templateService = new TemplateService();
+    var toolPanel = new ToolPanel();
 
     var columnModel = columnController.getModel();
 
@@ -108,7 +110,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     selectionController.init(this, this.eParentOfRows, gridOptionsWrapper, $scope, rowRenderer);
     filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel);
     selectionRendererFactory.init(this, selectionController);
-    columnController.init(this, selectionRendererFactory, gridOptionsWrapper);
+    columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService);
     rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, eGridDiv, this,
         selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService,
         this.eParentOfRows);
@@ -116,6 +118,13 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
         $scope, $compile, expressionService);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
+
+    if (this.eToolPanelContainer && gridOptionsWrapper.isShowToolPanel()) {
+        toolPanel.init(this.eToolPanelContainer, columnController);
+        this.eRoot.style.marginRight = '200px';
+    } else {
+        this.eToolPanelContainer.style.layout = 'none';
+    }
 
     // this is a child bean, get a reference and pass it on
     // CAN WE DELETE THIS? it's done in the setDatasource section
@@ -427,7 +436,7 @@ Grid.prototype.ensureColIndexVisible = function(index) {
         return;
     }
 
-    var columns = this.columnModel.getVisibleColumns();
+    var columns = this.getDisplayedColumns.getVisibleColumns();
     if (typeof index !== 'number' || index < 0 || index >= columns.length) {
         console.warn('invalid col index for ensureColIndexVisible: ' + index
             + ', should be between 0 and ' + (columns.length - 1));
@@ -558,6 +567,10 @@ Grid.prototype.addApi = function() {
             that.rowRenderer.refreshGroupRows();
         },
         sizeColumnsToFit: function() {
+            if (that.gridOptionsWrapper.isDontUseScrolls()) {
+                console.warn('ag-grid: sizeColumnsToFit does not work when dontUseScrolls=true');
+                return;
+            }
             var availableWidth = that.eBody.clientWidth;
             var scrollShowing = that.eBodyViewport.clientHeight < that.eBodyViewport.scrollHeight;
             if (scrollShowing) {
@@ -731,6 +744,7 @@ Grid.prototype.findAllElements = function(eGridDiv) {
         this.eHeader = eGridDiv.querySelector(".ag-header");
         this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
         this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
+        this.eToolPanelContainer = eGridDiv.querySelector('.ag-tool-panel-container');
         // for scrolls, all rows live in eBody (containing pinned and normal body)
         this.eParentOfRows = this.eBody;
         this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');

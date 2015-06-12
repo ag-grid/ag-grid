@@ -23,7 +23,6 @@ include '../documentation_header.php';
     <p>
         You can use a cell renderer for the following reasons:
         <ul>
-            <li>The data comes from a place other than a field in the data.</li>
             <li>The data needs to be formatted before displaying.</li>
             <li>The cell should be rendered using more complex HTML thanks just a string.</li>
         </ul>
@@ -46,7 +45,7 @@ var colDef = {
     }
 }
 
-<b>// example - grab the field from a complex object</b>
+<b>// example - grab the field from a complex object (although possible, you should do this in a valueGetter)</b>
 var colDef = {
     name: 'Col Name',
     cellRenderer: function(params) {
