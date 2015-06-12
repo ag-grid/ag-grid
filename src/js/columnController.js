@@ -1,14 +1,16 @@
 var constants = require('./constants');
+var utils = require('./utils');
 
 function ColumnController() {
     this.listeners = [];
     this.createModel();
 }
 
-ColumnController.prototype.init = function(angularGrid, selectionRendererFactory, gridOptionsWrapper) {
+ColumnController.prototype.init = function(angularGrid, selectionRendererFactory, gridOptionsWrapper, expressionService) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.angularGrid = angularGrid;
     this.selectionRendererFactory = selectionRendererFactory;
+    this.expressionService = expressionService;
 };
 
 ColumnController.prototype.createModel = function() {
@@ -71,8 +73,40 @@ ColumnController.prototype.createModel = function() {
             } else {
                 return null;
             }
+        },
+        getDisplayNameForCol: function(column) {
+            return that.getDisplayNameForCol(column);
         }
     };
+};
+
+ColumnController.prototype.getDisplayNameForCol = function(column) {
+
+    var colDef = column.colDef;
+    var headerValueGetter = colDef.headerValueGetter;
+
+    if (headerValueGetter) {
+        var params = {
+            colDef: colDef,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (typeof headerValueGetter === 'function') {
+            // valueGetter is a function, so just call it
+            return headerValueGetter(params);
+        } else if (typeof headerValueGetter === 'string') {
+            // valueGetter is an expression, so execute the expression
+            return this.expressionService.evaluate(headerValueGetter, params);
+        }
+
+        return utils.getValue(this.expressionService, undefined, colDef, undefined, api, context);
+    } else if (colDef.displayName) {
+        console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
+        return colDef.displayName;
+    } else {
+        return colDef.headerName;
+    }
 };
 
 ColumnController.prototype.addListener = function(listener) {

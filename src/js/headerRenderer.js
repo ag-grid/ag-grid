@@ -278,7 +278,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         this.childScopes.push(newChildScope);
     }
 
-    var headerNameValue = this.getHeaderName(colDef, newChildScope);
+    var headerNameValue = this.columnModel.getDisplayNameForCol(column);
 
     if (headerCellRenderer) {
         // renderer provided, use it
@@ -320,6 +320,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 
     return eHeaderCell;
 };
+/*
 
 HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
 
@@ -350,6 +351,7 @@ HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
     }
 
 };
+*/
 
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
     var that = this;

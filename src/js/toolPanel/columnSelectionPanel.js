@@ -21,12 +21,17 @@ ColumnSelectionPanel.prototype.setupComponents = function() {
 
     var columnItemProxy = this.createColumnItemProxy();
     this.cColumnList.setItemProxy(columnItemProxy);
+
+    var that = this;
+    this.cColumnList.addItemMovedListener( function() {
+        that.columnController.onColumnStateChanged();
+    });
 };
 
 ColumnSelectionPanel.prototype.createColumnItemProxy = function() {
     var that = this;
     return {
-        getText: function(item) { return item.colId},
+        getText: function(item) { return that.columnController.getDisplayNameForCol(item)},
         isSelected: function(item) { return item.visible},
         setSelected: function(item, selected) { that.setSelected(item, selected); }
     };
