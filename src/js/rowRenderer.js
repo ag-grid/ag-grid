@@ -73,7 +73,7 @@ RowRenderer.prototype.softRefreshView = function() {
     var first = this.firstVirtualRenderedRow;
     var last = this.lastVirtualRenderedRow;
 
-    var columns = this.columnModel.getVisibleColumns();
+    var columns = this.columnModel.getDisplayedColumns();
     // if no cols, don't draw row
     if (!columns || columns.length === 0) {
         return;
@@ -281,7 +281,7 @@ RowRenderer.prototype.ensureRowsRendered = function() {
 };
 
 RowRenderer.prototype.insertRow = function(node, rowIndex, mainRowWidth) {
-    var columns = this.columnModel.getVisibleColumns();
+    var columns = this.columnModel.getDisplayedColumns();
     // if no cols, don't draw row
     if (!columns || columns.length == 0) {
         return;
@@ -1125,7 +1125,7 @@ RowRenderer.prototype.startEditingNextCell = function(rowIndex, column, shiftKey
     var lastRowToCheck = this.lastVirtualRenderedRow;
     var currentRowIndex = rowIndex;
 
-    var visibleColumns = this.columnModel.getVisibleColumns();
+    var visibleColumns = this.columnModel.getDisplayedColumns();
     var currentCol = column;
 
     while (true) {

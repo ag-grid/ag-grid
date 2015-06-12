@@ -1,5 +1,6 @@
 var DEFAULT_ROW_HEIGHT = 30;
 
+var constants = require('./constants');
 function GridOptionsWrapper(gridOptions) {
     this.gridOptions = gridOptions;
     this.setupDefaults();
@@ -14,6 +15,7 @@ GridOptionsWrapper.prototype.isRowDeselection = function() { return isTrue(this.
 GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
 GridOptionsWrapper.prototype.getContext = function() { return this.gridOptions.context; };
 GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
+GridOptionsWrapper.prototype.isShowToolPanel = function() { return isTrue(this.gridOptions.showToolPanel); };
 GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
 GridOptionsWrapper.prototype.isGroupSelectsChildren = function() { return isTrue(this.gridOptions.groupSelectsChildren); };
 GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
@@ -32,7 +34,6 @@ GridOptionsWrapper.prototype.getApi = function() { return this.gridOptions.api; 
 GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
 GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
 GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
-GridOptionsWrapper.prototype.getColWidth = function() { return this.gridOptions.colWidth; };
 GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
 GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
 GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
@@ -54,6 +55,14 @@ GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gri
 GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
 GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };
 GridOptionsWrapper.prototype.getRowBuffer = function() { return this.gridOptions.rowBuffer; };
+
+GridOptionsWrapper.prototype.getColWidth = function() {
+    if (typeof this.gridOptions.colWidth !== 'number' ||  this.gridOptions.colWidth < constants.MIN_COL_WIDTH) {
+        return 200;
+    } else  {
+        return this.gridOptions.colWidth;
+    }
+};
 
 GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) {
     return this.gridOptions.selectedRows = newSelectedRows;
