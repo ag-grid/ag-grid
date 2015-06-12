@@ -137,23 +137,31 @@ HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expa
 
 HeaderRenderer.prototype.addDragHandler = function(eDraggableElement, dragCallback) {
     var that = this;
-    eDraggableElement.onmousedown = function(downEvent) {
+    eDraggableElement.addEventListener('mousedown', function(downEvent) {
         dragCallback.onDragStart();
         that.eRoot.style.cursor = "col-resize";
         that.dragStartX = downEvent.clientX;
 
-        that.eRoot.onmousemove = function(moveEvent) {
+        var listenersToRemove = {};
+
+        listenersToRemove.mousemove = function (moveEvent) {
             var newX = moveEvent.clientX;
             var change = newX - that.dragStartX;
             dragCallback.onDragging(change);
         };
-        that.eRoot.onmouseup = function() {
-            that.stopDragging();
+
+        listenersToRemove.mouseup = function () {
+            that.stopDragging(listenersToRemove);
         };
-        that.eRoot.onmouseleave = function() {
-            that.stopDragging();
+
+        listenersToRemove.mouseleave = function () {
+            that.stopDragging(listenersToRemove);
         };
-    };
+
+        that.eRoot.addEventListener('mousemove', listenersToRemove.mousemove);
+        that.eRoot.addEventListener('mouseup', listenersToRemove.mouseup);
+        that.eRoot.addEventListener('mouseleave', listenersToRemove.mouseleave);
+    });
 };
 
 HeaderRenderer.prototype.setWidthOfGroupHeaderCell = function(headerGroup) {
@@ -499,11 +507,12 @@ HeaderRenderer.prototype.headerDragCallbackFactory = function(headerCell, column
     };
 };
 
-HeaderRenderer.prototype.stopDragging = function() {
+HeaderRenderer.prototype.stopDragging = function(listenersToRemove) {
     this.eRoot.style.cursor = "";
-    this.eRoot.onmouseup = null;
-    this.eRoot.onmouseleave = null;
-    this.eRoot.onmousemove = null;
+    var that = this;
+    utils.iterateObject(listenersToRemove, function(key, listener) {
+        that.eRoot.removeEventListener(key, listener);
+    });
 };
 
 HeaderRenderer.prototype.updateFilterIcons = function() {
