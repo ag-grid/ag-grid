@@ -271,6 +271,12 @@
                     <a class="sidebarLink" href="/angular-grid-no-scrolls/index.php">No Scrolling</a>
                 <?php } ?>
 
+                <?php if ($key == "No Vertical Scroll") { ?>
+                    <span class="sidebarLinkSelected">No Vertical Scroll</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-no-vertical-scroll/index.php">No Vertical Scroll</a>
+                <?php } ?>
+
                 <?php if ($key == "API") { ?>
                     <span class="sidebarLinkSelected">API</span>
                 <?php } else { ?>

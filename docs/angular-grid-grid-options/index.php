@@ -10,12 +10,18 @@ include '../documentation_header.php';
 
     <h2>Grid Options</h2>
 
-    Each grid needs to be provided with a set of grid options. All the possible
-    parameters for the grid options are listed below with a brief description.
-    Full details of the options can be found in the relevant sections.
+    <p>
+        Each grid needs to be provided with a set of grid options. All the possible
+        parameters for the grid options are listed below with a brief description.
+        Full details of the options can be found in the relevant sections.
+    </p>
 
-    <p/>
-    <p/>
+    <p>
+        Where the value is a boolean (true or false), then false (or leave blank) is the default value.
+        For this reason, on / off items are presented in such was as the most common usage is
+        false, eg suppressCellSelection is worded as such as most people will want cell selection
+        to be turned on.
+    </p>
 
     <table class="table">
         <tr>
@@ -28,7 +34,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupHeaders</th>
-            <td>Whether to group the headers. Default is false.</td>
+            <td>Whether to group the headers.</td>
         </tr>
         <tr>
             <th>headerHeight</th>
@@ -44,7 +50,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>rowDeselection</th>
-            <td>Set to true or false (default is false). If true, then rows will be deselected if you
+            <td>Set to true or false. If true, then rows will be deselected if you
             hold down ctrl + click the row.</td>
         </tr>
         <tr>
@@ -57,7 +63,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>enableColResize</th>
-            <td>Set to true or false (default is false)</td>
+            <td>Set to true or false.</td>
         </tr>
         <tr>
             <th>enableSorting, enableServerSideSorting</th>
@@ -67,11 +73,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>suppressUnSort</th>
-            <td>Set to true or false (default is false). If true, clicking column header cannot remove the sort.</td>
+            <td>Set to true or false. If true, clicking column header cannot remove the sort.</td>
         </tr>
         <tr>
             <th>suppressMultiSort</th>
-            <td>Set to true or false (default is false). If true, shift-clicking column header doesn't multi sort.</td>
+            <td>Set to true or false. If true, shift-clicking column header doesn't multi sort.</td>
         </tr>
         <tr>
             <th>enableFilter, enableServerSideFilter</th>
@@ -118,7 +124,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>dontUseScrolls</th>
-            <td>Set to true or false (default is false). When true, scrollbars are not used.</td>
+            <td>Set to true or false. When true, scrollbars are not used.</td>
+        </tr>
+        <tr>
+            <th>suppressVerticalScroll</th>
+            <td>Set to true or false. If true, then the grid will size it's height to it's content.</td>
         </tr>
         <tr>
             <th>rowSelected</th>

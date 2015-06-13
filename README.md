@@ -1,12 +1,6 @@
 
-Angular Grid
+ag-Grid
 ==============
-
-[![Join the chat at https://gitter.im/ceolter/angular-grid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceolter/angular-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Angular Grid is the first high performance and feature rich data grid for AngularJS.
-
-Light weight, minimal footprint, no external dependencies.
 
 #### Install with Bower
 ```sh
@@ -18,25 +12,11 @@ $ bower install ag-grid
 $ npm install angular-grid
 ```
 
-Features
-==============
-
 See the website for overview and documentation.
-
 [www.angulargrid.com](http://www.angulargrid.com)
 
-Releases
---------------
-
-Releases are located in dist
-
-
-Contribute
+Building
 ==============
-
-If you are a very strong developer and wish to contribute, please get in touch.
-
-Before contributing, please review our contribution guidelines [here](https://raw.githubusercontent.com/ceolter/angular-grid/master/CONTRIBUTING.md).
 
 To build:
 - `npm install`
@@ -44,9 +24,38 @@ To build:
 - `bower install`
 - `gulp` or `gulp guild` or `gulp watch`
 
-Then if contributing:
-- Make your changes in `src/` files only!
-- Provide documentation
+If you are doing a Pull Request:
+- Make your code changes in `src/` files only, don't update dist files
+- Make your doc changes in `docs/`, a feature is not complete unless it's documented
 - Do manual end to end testing off all examples in documentation
 - Discard all changes to `dist/`
 - Create Pull Request
+
+Asking Questions
+==============
+
+Please do not use GitHub issues to ask questions. Ask questions on the
+[website forum](http://www.angulargrid.com/forum).
+
+
+Contributing
+==============
+
+I am not looking for contributors for this project. If you have ideas, feel free to
+get in touch and let me know.
+
+Automated Testing
+==============
+
+ag-Grid has no automated tests. This is the choice of the author, not because he
+can't write tests, but because he has chosen not to for this particular project.
+Reasons include a) only one developer and b) the one developer knows he design, he
+knows what changes are breaking changes. The grid is also in an evolving state,
+with the core design been refactored regularly - this reduces the overall benefit
+of tests.
+
+If you are worried about ag-Grid not having tests, then take assurance in the fact
+that there are pretty much no bugs in ag-Grid (all the issues reported are feature
+requests, not bugs). The quality of the product is far beyond that of other projects
+who do focus heavily on testing. The grid is being used by a very large community
+now and has a reputation for been solid (again unlike other grids / projects).

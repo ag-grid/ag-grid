@@ -30,6 +30,10 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
         eGridDiv.innerHTML = templateNoScrolls;
     }
 
+    if (this.gridOptionsWrapper.isSuppressVerticalScroll() && !this.gridOptionsWrapper.isDontUseScrolls()) {
+        utils.addCssClass(eGridDiv, 'ag-no-vertical-scroll');
+    }
+
     var that = this;
     this.quickFilter = null;
 

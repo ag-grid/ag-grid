@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="../dist/angular-grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+    <script src="exampleNoVerticalScroll.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button ng-click="showData(5)">Show 5</button>
+            <button ng-click="showData(8)">Show 8</button>
+            <button ng-click="showData(12)">Show 12</button>
+        </span>
+    </div>
+    <div ag-grid="gridOptions" class="ag-fresh"></div>
+    <div style="margin: 5px; padding: 5px; border: 1px solid darkcyan;">
+        Some content below the grid
+    </div>
+</body>
+</html>

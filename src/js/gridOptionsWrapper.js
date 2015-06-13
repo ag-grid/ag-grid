@@ -10,6 +10,7 @@ function isTrue(value) {
     return value === true || value === 'true';
 }
 
+GridOptionsWrapper.prototype.isSuppressVerticalScroll = function() { return isTrue(this.gridOptions.suppressVerticalScroll); };
 GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
 GridOptionsWrapper.prototype.isRowDeselection = function() { return isTrue(this.gridOptions.rowDeselection); };
 GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
