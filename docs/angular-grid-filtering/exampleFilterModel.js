@@ -21,7 +21,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var hardcodedFilter = {
         country: ['Ireland', 'United States'],
-        age: {type: 2, filter: 30},
+        age: {type: 2, filter: '30'},
         athlete: {type: 3, filter: 'Mich'}
     };
 

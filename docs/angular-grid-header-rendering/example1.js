@@ -25,7 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     function headerCellRendererFunc(params) {
         var eHeader = document.createElement('span');
 
-        var eTitle = document.createTextNode('> ' + params.colDef.displayName + ' <');
+        var eTitle = document.createTextNode('> ' + params.colDef.headerName + ' <');
         eHeader.appendChild(eTitle);
 
         eHeader.addEventListener('click', function() {

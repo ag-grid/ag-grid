@@ -119,11 +119,13 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer);
 
-    if (this.eToolPanelContainer && gridOptionsWrapper.isShowToolPanel()) {
-        toolPanel.init(this.eToolPanelContainer, columnController);
-        this.eRoot.style.marginRight = '200px';
-    } else {
-        this.eToolPanelContainer.style.layout = 'none';
+    if (this.eToolPanelContainer) {
+        if (gridOptionsWrapper.isShowToolPanel()) {
+            toolPanel.init(this.eToolPanelContainer, columnController);
+            this.eRoot.style.marginRight = '200px';
+        } else {
+            this.eToolPanelContainer.style.layout = 'none';
+        }
     }
 
     // this is a child bean, get a reference and pass it on

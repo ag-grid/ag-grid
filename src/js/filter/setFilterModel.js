@@ -34,9 +34,9 @@ SetFilterModel.prototype.refreshUniqueValues = function(keepSelection) {
 
 SetFilterModel.prototype.createUniqueValues = function() {
     if (this.colDef.filterParams && this.colDef.filterParams.values) {
-        this.uniqueValues = this.colDef.filterParams.values;
+        this.uniqueValues = utils.toStrings(this.colDef.filterParams.values);
     } else {
-        this.uniqueValues = this.iterateThroughNodesForValues();
+        this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues());
     }
 
     if (this.colDef.comparator) {

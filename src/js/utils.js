@@ -9,6 +9,26 @@ Utils.prototype.iterateObject = function(object, callback) {
     }
 };
 
+Utils.prototype.map = function(array, callback) {
+    var result = [];
+    for (var i = 0; i<array.length; i++) {
+        var item = array[i];
+        var mappedItem = callback(item);
+        result.push(mappedItem);
+    }
+    return result;
+};
+
+Utils.prototype.toStrings = function(array) {
+    return this.map(array, function (item) {
+        if (item === undefined || item === null || !item.toString) {
+            return null;
+        } else {
+            return item.toString();
+        }
+    });
+};
+
 /*
 Utils.prototype.objectValuesToArray = function(object) {
     var keys = Object.keys(object);
