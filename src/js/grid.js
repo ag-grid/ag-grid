@@ -9,9 +9,9 @@ var SelectionRendererFactory = require('./selectionRendererFactory');
 var ColumnController = require('./columnController');
 var RowRenderer = require('./rowRenderer');
 var HeaderRenderer = require('./headerRenderer');
-var InMemoryRowController = require('./inMemoryRowController');
-var VirtualPageRowController = require('./virtualPageRowController');
-var PaginationController = require('./paginationController');
+var InMemoryRowController = require('./rowControllers/inMemoryRowController');
+var VirtualPageRowController = require('./rowControllers/virtualPageRowController');
+var PaginationController = require('./rowControllers/paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 var ToolPanel = require('./toolPanel/toolPanel');
@@ -117,7 +117,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     headerRenderer.init(gridOptionsWrapper, columnController, columnModel, eGridDiv, this, filterManager,
         $scope, $compile, expressionService);
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
-    virtualPageRowController.init(rowRenderer);
+    virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
 
     if (this.eToolPanelContainer) {
         if (gridOptionsWrapper.isShowToolPanel()) {
@@ -246,6 +246,11 @@ Grid.prototype.onQuickFilterChanged = function(newFilter) {
         newFilter = null;
     }
     if (this.quickFilter !== newFilter) {
+        if (this.gridOptionsWrapper.isVirtualPaging()) {
+            console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+            return;
+        }
+
         //want 'null' to mean to filter, so remove undefined and empty string
         if (newFilter === undefined || newFilter === "") {
             newFilter = null;
@@ -259,8 +264,15 @@ Grid.prototype.onQuickFilterChanged = function(newFilter) {
 };
 
 Grid.prototype.onFilterChanged = function() {
-    this.updateModelAndRefresh(constants.STEP_FILTER);
     this.headerRenderer.updateFilterIcons();
+    if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        // if doing server side filtering, changing the sort has the impact
+        // of resetting the datasource
+        this.setDatasource();
+    } else {
+        // if doing in memory filtering, we just update the in memory data
+        this.updateModelAndRefresh(constants.STEP_FILTER);
+    }
 };
 
 Grid.prototype.onRowClicked = function(event, rowIndex, node) {
@@ -485,6 +497,10 @@ Grid.prototype.ensureColIndexVisible = function(index) {
     // otherwise, col is already in view, so do nothing
 };
 
+Grid.prototype.getFilterModel = function() {
+    return this.filterManager.getFilterModel();
+};
+
 Grid.prototype.addApi = function() {
     var that = this;
     var api = {
@@ -625,7 +641,7 @@ Grid.prototype.addApi = function() {
             that.filterManager.setFilterModel(model);
         },
         getFilterModel: function() {
-            return that.filterManager.getFilterModel();
+            return that.getFilterModel();
         }
     };
     this.gridOptions.api = api;
@@ -657,6 +673,10 @@ Grid.prototype.getSortModel = function() {
 };
 
 Grid.prototype.setSortModel = function(sortModel) {
+    if (this.gridOptionsWrapper.isEnableSorting()) {
+        console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
+        return;
+    }
     // first up, clear any previous sort
     var sortModelProvided = sortModel!==null && sortModel!==undefined && sortModel.length>0;
     var allColumns = this.columnModel.getAllColumns();
@@ -686,8 +706,19 @@ Grid.prototype.setSortModel = function(sortModel) {
         }
     }
 
+    this.onSortingChanged();
+};
+
+Grid.prototype.onSortingChanged = function() {
     this.headerRenderer.updateSortIcons();
-    this.updateModelAndRefresh(constants.STEP_SORT);
+    if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        // if doing server side sorting, changing the sort has the impact
+        // of resetting the datasource
+        this.setDatasource();
+    } else {
+        // if doing in memory sorting, we just update the in memory data
+        this.updateModelAndRefresh(constants.STEP_SORT);
+    }
 };
 
 Grid.prototype.addVirtualRowListener = function(rowIndex, callback) {

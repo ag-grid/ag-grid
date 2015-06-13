@@ -44,13 +44,13 @@ include '../documentation_header.php';
         </ul>
     </p>
 
-    <p>
-        Note that in the example, as you scroll up and down, the redraw on
+    <note>
+        In the example, as you scroll up and down, the redraw on
         the AngularJS columns has a lag. This is waiting for the AngularJS digest cycle to kick in
         to populate the values into these rows.
         If you like this effect, then check out <a href="http://ui-grid.info/">ui-grid</a>,
         where all cells are rendered in this fashion.
-    </p>
+    </note>
 
     <show-example example="example1"></show-example>
 </div>

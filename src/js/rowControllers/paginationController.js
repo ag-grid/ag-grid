@@ -1,22 +1,6 @@
-var TEMPLATE = [
-    '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">',
-    '<span id="firstRowOnPage"></span>',
-    ' [TO] ',
-    '<span id="lastRowOnPage"></span>',
-    ' [OF] ',
-    '<span id="recordCount"></span>',
-    '</span>',
-    '<span class="ag-paging-page-summary-panel">',
-    '<button class="ag-paging-button" id="btFirst">[FIRST]</button>',
-    '<button class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>',
-    ' [PAGE] ',
-    '<span id="current"></span>',
-    ' [OF] ',
-    '<span id="total"></span>',
-    '<button class="ag-paging-button" id="btNext">[NEXT]</button>',
-    '<button class="ag-paging-button" id="btLast">[LAST]</button>',
-    '</span>'
-].join('');
+var template = require('./paginationPanel.html');
+
+var utils = require('./../utils');
 
 function PaginationController() {}
 
@@ -130,23 +114,51 @@ PaginationController.prototype.loadPage = function() {
     var callVersionCopy = this.callVersion;
     var that = this;
     this.angularGrid.showLoadingPanel(true);
-    this.datasource.getRows(startRow, endRow,
-        function success(rows, lastRowIndex) {
-            if (that.isCallDaemon(callVersionCopy)) {
-                return;
-            }
-            that.pageLoaded(rows, lastRowIndex);
-        },
-        function fail() {
-            if (that.isCallDaemon(callVersionCopy)) {
-                return;
-            }
-            // set in an empty set of rows, this will at
-            // least get rid of the loading panel, and
-            // stop blocking things
-            that.angularGrid.setRows([]);
+
+    var sortModel;
+    if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        sortModel = this.angularGrid.getSortModel();
+    }
+
+    var filterModel;
+    if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        filterModel = this.angularGrid.getFilterModel();
+    }
+
+    var params = {
+        startRow: startRow,
+        endRow: endRow,
+        successCallback: successCallback,
+        failCallback: failCallback,
+        sortModel: sortModel,
+        filterModel: filterModel
+    };
+
+    // check if old version of datasource used
+    var getRowsParams = utils.getFunctionParameters(this.datasource.getRows);
+    if (getRowsParams.length > 1) {
+        console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
+        console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+    }
+
+    this.datasource.getRows(params);
+
+    function successCallback(rows, lastRowIndex) {
+        if (that.isCallDaemon(callVersionCopy)) {
+            return;
         }
-    );
+        that.pageLoaded(rows, lastRowIndex);
+    }
+
+    function failCallback() {
+        if (that.isCallDaemon(callVersionCopy)) {
+            return;
+        }
+        // set in an empty set of rows, this will at
+        // least get rid of the loading panel, and
+        // stop blocking things
+        that.angularGrid.setRows([]);
+    }
 };
 
 PaginationController.prototype.isCallDaemon = function(versionCopy) {
@@ -194,7 +206,7 @@ PaginationController.prototype.enableOrDisableButtons = function() {
 
 PaginationController.prototype.createTemplate = function() {
     var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-    return TEMPLATE
+    return template
         .replace('[PAGE]', localeTextFunc('page', 'Page'))
         .replace('[TO]', localeTextFunc('to', 'to'))
         .replace('[OF]', localeTextFunc('of', 'of'))

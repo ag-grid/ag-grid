@@ -31,9 +31,7 @@ GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.
 GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
 GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
 GridOptionsWrapper.prototype.getApi = function() { return this.gridOptions.api; };
-GridOptionsWrapper.prototype.isEnableSorting = function() { return this.gridOptions.enableSorting; };
 GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
-GridOptionsWrapper.prototype.isEnableFilter = function() { return this.gridOptions.enableFilter; };
 GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
 GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
 GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
@@ -63,6 +61,12 @@ GridOptionsWrapper.prototype.getColWidth = function() {
         return this.gridOptions.colWidth;
     }
 };
+
+GridOptionsWrapper.prototype.isEnableSorting = function() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
+GridOptionsWrapper.prototype.isEnableServerSideSorting = function() { return isTrue(this.gridOptions.enableServerSideSorting); };
+
+GridOptionsWrapper.prototype.isEnableFilter = function() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); };
+GridOptionsWrapper.prototype.isEnableServerSideFilter = function() { return this.gridOptions.enableServerSideFilter; };
 
 GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) {
     return this.gridOptions.selectedRows = newSelectedRows;

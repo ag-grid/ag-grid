@@ -1,6 +1,6 @@
-var groupCreator = require('./groupCreator');
-var utils = require('./utils');
-var constants = require('./constants');
+var groupCreator = require('./../groupCreator');
+var utils = require('./../utils');
+var constants = require('./../constants');
 
 function InMemoryRowController() {
     this.createModel();
@@ -190,34 +190,46 @@ InMemoryRowController.prototype.recursivelyCreateAggData = function(nodes, group
 
 // private
 InMemoryRowController.prototype.doSort = function() {
-    //see if there is a col we are sorting by
-    var sortingOptions = [];
-    this.columnModel.getAllColumns().forEach(function(column) {
-        if (column.sort) {
-            var ascending = column.sort === constants.ASC;
-            sortingOptions.push({
-                inverter: ascending ? 1 : -1,
-                sortedAt: column.sortedAt,
-                colDef: column.colDef
-            });
-        }
-    });
+    var sorting;
 
-    // The columns are to be sorted in the order that the user selected them:
-    sortingOptions.sort(function(optionA, optionB){
-        return optionA.sortedAt - optionB.sortedAt;
-    });
-
-    var rowNodesBeforeSort = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
-
-    if (sortingOptions.length) {
-        this.sortList(rowNodesBeforeSort, sortingOptions);
+    // if the sorting is already done by the server, then we should not do it here
+    if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        sorting = false;
     } else {
-        // if no sorting, set all group children after sort to the original list
-        this.recursivelyResetSort(rowNodesBeforeSort);
+        //see if there is a col we are sorting by
+        var sortingOptions = [];
+        this.columnModel.getAllColumns().forEach(function(column) {
+            if (column.sort) {
+                var ascending = column.sort === constants.ASC;
+                sortingOptions.push({
+                    inverter: ascending ? 1 : -1,
+                    sortedAt: column.sortedAt,
+                    colDef: column.colDef
+                });
+            }
+        });
+        if (sortingOptions.length >= 0) {
+            sorting = true;
+        }
     }
 
-    this.rowsAfterSort = rowNodesBeforeSort;
+    var rowNodesReadyForSorting = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
+
+    if (sorting) {
+        // The columns are to be sorted in the order that the user selected them:
+        sortingOptions.sort(function(optionA, optionB){
+            return optionA.sortedAt - optionB.sortedAt;
+        });
+        this.sortList(rowNodesReadyForSorting, sortingOptions);
+    } else {
+        // if no sorting, set all group children after sort to the original list.
+        // note: it is important to do this, even if doing server side sorting,
+        // to allow the rows to pass to the next stage (ie set the node value
+        // childrenAfterSort)
+        this.recursivelyResetSort(rowNodesReadyForSorting);
+    }
+
+    this.rowsAfterSort = rowNodesReadyForSorting;
 };
 
 // private
@@ -288,12 +300,18 @@ InMemoryRowController.prototype.doGrouping = function() {
 
 // private
 InMemoryRowController.prototype.doFilter = function() {
-    var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
-    var advancedFilterPresent = this.filterManager.isFilterPresent();
-    var filterPresent = quickFilterPresent || advancedFilterPresent;
+    var doingFilter;
+
+    if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        doingFilter = false;
+    } else {
+        var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
+        var advancedFilterPresent = this.filterManager.isFilterPresent();
+        doingFilter = quickFilterPresent || advancedFilterPresent;
+    }
 
     var rowsAfterFilter;
-    if (filterPresent) {
+    if (doingFilter) {
         rowsAfterFilter = this.filterItems(this.rowsAfterGroup, quickFilterPresent, advancedFilterPresent);
     } else {
         // do it here

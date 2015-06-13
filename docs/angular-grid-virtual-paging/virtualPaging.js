@@ -37,20 +37,20 @@ module.controller("exampleCtrl", function($scope, $http) {
                 overflowSize: 100,
                 maxConcurrentRequests: 2,
                 maxPagesInCache: 2,
-                getRows: function (start, finish, callbackSuccess, callbackFail) {
-                    console.log('asking for ' + start + ' to ' + finish);
+                getRows: function (params) {
+                    console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                     // At this point in your code, you would call the server, using $http if in AngularJS.
                     // To make the demo look real, wait for 500ms before returning
                     setTimeout( function() {
                         // take a slice of the total rows
-                        var rowsThisPage = allOfTheData.slice(start, finish);
+                        var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
                         // if on or after the last page, work out the last row.
                         var lastRow = -1;
-                        if (allOfTheData.length <= finish) {
+                        if (allOfTheData.length <= params.endRow) {
                             lastRow = allOfTheData.length;
                         }
                         // call the success callback
-                        callbackSuccess(rowsThisPage, lastRow);
+                        params.successCallback(rowsThisPage, lastRow);
                     }, 500);
                 }
             };

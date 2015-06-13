@@ -60,8 +60,10 @@ include '../documentation_header.php';
             <td>Set to true or false (default is false)</td>
         </tr>
         <tr>
-            <th>enableSorting</th>
-            <td>Set to true or false (default is false)</td>
+            <th>enableSorting, enableServerSideSorting</th>
+            <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
+                sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks
+                and show sort icons, but the sorting will be deferred to your datasource.</td>
         </tr>
         <tr>
             <th>suppressUnSort</th>
@@ -72,12 +74,14 @@ include '../documentation_header.php';
             <td>Set to true or false (default is false). If true, shift-clicking column header doesn't multi sort.</td>
         </tr>
         <tr>
-            <th>enableFilter</th>
-            <td>Set to true or false (default is false)</td>
+            <th>enableFilter, enableServerSideFilter</th>
+            <td>Set one of these to true to enable filtering. <i>enableFilter</i> will present filters
+                and do the filtering within the grid. <i>enableServerSideFilter</i> will present filters
+                but defer the filtering to your datasource.</td>
         </tr>
         <tr>
             <th>quickFilterText</th>
-            <td>Rows are filtered using this text as a 'quick filter'</td>
+            <td>Rows are filtered using this text as a 'quick filter'.</td>
         </tr>
         <tr>
             <th>rowClass</th>

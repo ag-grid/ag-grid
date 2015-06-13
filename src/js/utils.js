@@ -1,5 +1,8 @@
 function Utils() {}
 
+var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+
 Utils.prototype.iterateObject = function(object, callback) {
     var keys = Object.keys(object);
     for (var i = 0; i<keys.length; i++) {
@@ -17,6 +20,16 @@ Utils.prototype.map = function(array, callback) {
         result.push(mappedItem);
     }
     return result;
+};
+
+Utils.prototype.getFunctionParameters = function(func) {
+    var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
+    var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
+    if (result === null) {
+        return [];
+    } else {
+        return result;
+    }
 };
 
 Utils.prototype.toStrings = function(array) {

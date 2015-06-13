@@ -11,22 +11,36 @@ include '../documentation_header.php';
     <h2>Filtering</h2>
 
 
-    You have two options for filtering, one is use on of the default built-in filters (easy but limited),
-    or bake your own custom filters (powerful but more difficult).
+    <p>
+        You have two options for filtering, one is use on of the default built-in filters (easy but restricted to
+        what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
+    </p>
+
+    <note>
+        This page discusses filtering outside of the context of paging. To see how to implement server
+        side filtering, see the sections
+        <a href="/angular-grid-pagination/index.php">pagination</a>
+        and
+        <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
+    </note>
 
     <h3>Enable Filtering</h3>
 
-    Turn filtering on for the grid by enabling filtering in the grid options. When on, each column header will have
-    the filter menu icon appear when the mouse hovers over it. When clicked, a filter menu will appear. The menu
-    will either contain a default provided filter, or your own custom built filter.
+    <p>
+        Turn filtering on for the grid by enabling filtering in the grid options. When on, each column header will have
+        the filter menu icon appear when the mouse hovers over it. When clicked, a filter menu will appear. The menu
+        will either contain a default provided filter, or your own custom built filter.
+    </p>
 
-    <p/>
-
-    When a filter is active on a column, the filter icon appears before the column name in the header.
+    <p>
+        When a filter is active on a column, the filter icon appears before the column name in the header.
+    </p>
 
     <h3>Default Built-In Filters</h3>
 
-    The following filter options can be set for a column definition:
+    <p>
+        The following filter options can be set for a column definition:
+    </p>
 
     <table class="table">
         <tr>
@@ -105,30 +119,36 @@ columnDefinition = {
 
     <h3>Quick Filter</h3>
 
-    In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
-    GMail) can also be applied. Set the quick filter text into the grid options and tell the grid, via the API,
-    to filter the data (which will include the new quick filter).
+    <p>
+        In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
+        GMail) can also be applied. Set the quick filter text into the grid options and tell the grid, via the API,
+        to filter the data (which will include the new quick filter).
+    </p>
 
     <h3>Built In Filters Example</h3>
 
-    The example below shows the three types of built in filters, as well as the quick filter, in action.
-    Notice that the athlete column is given the set of filters, providing some filter options for which
-    no corresponding rows exist - this can be used if you are missing items in what would otherwise be
-    a complete list, if listing days of the week, and no data for Wednesday exists, then presenting
-    the filter to the user could give the impression that the filter is broken because it is missing
-    Wednesday as an option.
+    <p>
+        The example below shows the three types of built in filters, as well as the quick filter, in action.
+        Notice that the athlete column is given the set of filters, providing some filter options for which
+        no corresponding rows exist - this can be used if you are missing items in what would otherwise be
+        a complete list, if listing days of the week, and no data for Wednesday exists, then presenting
+        the filter to the user could give the impression that the filter is broken because it is missing
+        Wednesday as an option.
+    </p>
 
     <show-example example="example1"></show-example>
 
     <h2>Custom Filtering</h2>
 
-    If the filters provided don't provide what you want, then it's time to build your own filter class.
+    <p>
+        If the filters provided don't provide what you want, then it's time to build your own filter class.
+    </p>
 
-    <p/>
-
-    To provide a custom filter, instead of providing a string (eg set, text or number) for the filter in
-    the column definition, provide a function. Angular Grid will call 'new' on this function and use
-    the generated class as a filter. Angular Grid expects the filter class to have the following interface:
+    <p>
+        To provide a custom filter, instead of providing a string (eg set, text or number) for the filter in
+        the column definition, provide a function. Angular Grid will call 'new' on this function and use
+        the generated class as a filter. Angular Grid expects the filter class to have the following interface:
+    </p>
 
     <pre>
 
@@ -209,7 +229,10 @@ columnDefinition = {
     </table>
 
     <h3>Custom Filter Example</h3>
-    The example below shows a custom filter on the Athlete column.
+
+    <p>
+        The example below shows a custom filter on the Athlete column.
+    </p>
 
     <show-example example="example2"></show-example>
 

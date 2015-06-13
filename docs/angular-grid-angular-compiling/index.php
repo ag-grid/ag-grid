@@ -45,10 +45,12 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    Note: When scrolling the example above up and down, the cells rendered using Angular are blank
-    initially, and filled in during the next Angular digest cycle. This behaviour the author
-    has observed in other Angular Grid implementations. This is another reason why the author
-    prefers non-Angular rendering for large grids.
+    <note>
+        When scrolling the example above up and down, the cells rendered using Angular are blank
+        initially, and filled in during the next Angular digest cycle. This behaviour the author
+        has observed in other Angular Grid implementations. This is another reason why the author
+        prefers non-Angular rendering for large grids.
+    </note>
 </div>
 
 <?php include '../documentation_footer.php';?>

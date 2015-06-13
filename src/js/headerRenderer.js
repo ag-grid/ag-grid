@@ -320,38 +320,6 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 
     return eHeaderCell;
 };
-/*
-
-HeaderRenderer.prototype.getHeaderName = function(colDef, $scope) {
-
-    var headerValueGetter = colDef.headerValueGetter;
-
-    if (headerValueGetter) {
-        var params = {
-            colDef: colDef,
-            $scope: $scope,
-            api: this.gridOptionsWrapper.getApi(),
-            context: this.gridOptionsWrapper.getContext()
-        };
-
-        if (typeof headerValueGetter === 'function') {
-            // valueGetter is a function, so just call it
-            return headerValueGetter(params);
-        } else if (typeof headerValueGetter === 'string') {
-            // valueGetter is an expression, so execute the expression
-            return this.expressionService.evaluate(headerValueGetter, params);
-        }
-
-        return utils.getValue(this.expressionService, undefined, colDef, undefined, api, context);
-    } else if (colDef.displayName) {
-        console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
-        return colDef.displayName;
-    } else {
-        return colDef.headerName;
-    }
-
-};
-*/
 
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
     var that = this;
@@ -388,8 +356,7 @@ HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
             }
         });
 
-        that.updateSortIcons();
-        that.angularGrid.updateModelAndRefresh(constants.STEP_SORT);
+        that.angularGrid.onSortingChanged();
     });
 };
 

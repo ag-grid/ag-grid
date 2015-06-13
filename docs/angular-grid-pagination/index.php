@@ -36,17 +36,54 @@ include '../documentation_header.php';
     <h4>Sorting & Filtering</h4>
 
     <p>
-        Sorting and filtering behave on the currently loaded page only. Server side sorting and paging is yet to be implemented.
+        You have two options for both sorting and filtering. Either you can allow the grid to do it on a particular page
+        (in-grid) or you do it on the server side across the entire data-set.
     </p>
+
     <p>
-        Server side sorting & filtering will be supported soon.
+        For sorting, you must choose whether you want in-grid sorting or server side sorting, you cannot mix.
     </p>
 
-    <h4>Example</h4>
+    <p>
+        For filtering, you must choose whether you want in-grid filtering or server side filtering, you cannot mix.
+    </p>
 
-    The example below shows virtual paging. The example makes use of infinite scrolling and caching.
+    <p>
+        It is possible to mix between in-grid sorting / filtering with server side filtering / sorting. Eg if you
+        are doing in-grid sorting, you can do server side filtering, and vice versa.
+    </p>
+
+    <h4>Example - In Grid Sorting and Filtering</h4>
+
+    <p>
+        The following example shows pagination. The sorting and filtering is all done in the grid.
+    </p>
 
     <show-example example="paging"></show-example>
+
+    <h4>Example - Server Side Sorting and Filtering</h4>
+
+    <p>
+        The following example extends the example above by adding server side filtering and sorting.
+    </p>
+
+    <p>
+        Any column can be sorted by clicking the header. When this happens, the datasource is called
+        again with the new sort options.
+    </p>
+
+    <p>
+        The columns <b><i>Age</i></b>, <b><i>Country</i></b> and <b><i>Year</i></b> can be filtered. When this happens, the datasource is called
+        again with the new filtering options.
+    </p>
+
+    <p>
+        Note that the set filters are provided with the list of available values. This is because it is not
+        possible for the grid to know the entire set of values as they reside on the server.
+    </p>
+
+    <show-example example="pagingServerSide"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

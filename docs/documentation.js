@@ -6,12 +6,12 @@
     module.directive("showExample", function() {
         return {
             scope: true,
-            controller: Controller,
+            controller: ShowExampleController,
             templateUrl: "/showExample.html"
         }
     });
 
-    function Controller($scope, $http, $attrs) {
+    function ShowExampleController($scope, $http, $attrs) {
         var example = $attrs["example"];
         $scope.source =  example + ".html";
         $scope.selectedTab = 'example';
@@ -38,6 +38,11 @@
             });
     }
 
-
+    module.directive("note", function() {
+        return {
+            templateUrl: "/note.html",
+            transclude: true
+        }
+    });
 
 })();

@@ -41,7 +41,12 @@
     margin: 5px;
     color: grey;
 }
-
+.note {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+    background-color: lightyellow;
+}
 
 .sidebarLink {
     font-weight: bold;

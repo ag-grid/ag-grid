@@ -10,6 +10,18 @@ include '../documentation_header.php';
 
     <h2>Sorting</h2>
 
+    <p>
+        This page describes how get your grid data soring.
+    </p>
+
+    <note>
+        This page discusses sorting outside of the context of paging. To see how to implement server
+        side sorting, see the sections
+        <a href="/angular-grid-pagination/index.php">pagination</a>
+        and
+        <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
+    </note>
+
     <h4>Enable Sorting</h4>
 
     <p>

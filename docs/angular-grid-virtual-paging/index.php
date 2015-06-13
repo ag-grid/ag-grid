@@ -72,14 +72,37 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <h4>Sorting & Filtering</h4>
 
     <p>
-        Client side sorting & filtering does not make sense. Server side sorting & filtering will be supported soon.
+        Client side sorting & filtering does not make sense in virtual paging and is just not supported.
     </p>
 
-    <h4>Example</h4>
+    <p>
+        Server side sorting & filtering is supported.
+    </p>
+
+    <h4>Simple Example - No Sorting or Filtering</h4>
 
     The example below shows virtual paging. The example makes use of infinite scrolling and caching.
 
     <show-example example="virtualPaging"></show-example>
+
+    <h4>A Wee Bit More Complex Example - Sorting & Filtering</h4>
+
+    <p>
+        The following example extends the example above by adding server side sorting and filtering.
+    </p>
+
+    <p>
+        Any column can be sorted by clicking the header. When this happens, the datasource is called
+        again with the new sort options.
+    </p>
+
+    <p>
+        The columns <b><i>Age</i></b>, <b><i>Country</i></b> and <b><i>Year</i></b> can be filtered.
+        When this happens, the datasource is called again with the new filtering options.
+    </p>
+
+    <show-example example="virtualPagingServerSide"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

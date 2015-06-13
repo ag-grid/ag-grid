@@ -27,14 +27,14 @@ include '../documentation_header.php';
     <p>
         This section goes through the options available as an alternative to calling <i>api.refreshView()</i>.
     </p>
-    <p>
-        <b>Note:</b> if you are using AnguarJS to build your cells, then you may be benefiting from two-way-binding.
+    <note>
+        If you are using AnguarJS to build your cells, then you may be benefiting from two-way-binding.
         If you are, then you might be wondering what all this refresh rubbish is all about and do you need it?
         Well if you are happy with what you have, that's totally fine, you can keep it. It is the authors
         opinion to avoid two-way-binding inside a grid as it gives poor performance, especially when displaying large
         amounts of data and virtualising the rows. On top of that, it is also the authors goal to have a grid that
         is not dependent on AngularJS, to allow the grid to work in other frameworks.
-    </p>
+    </note>
 
     <h3>Volatile Cells</h3>
 

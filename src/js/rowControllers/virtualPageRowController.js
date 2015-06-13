@@ -2,14 +2,16 @@
  * This row controller is used for infinite scrolling only. For normal 'in memory' table,
  * or standard pagination, the inMemoryRowController is used.
  */
-
+var utils = require('./../utils');
 var logging = true;
 
 function VirtualPageRowController() {}
 
-VirtualPageRowController.prototype.init = function(rowRenderer) {
+VirtualPageRowController.prototype.init = function(rowRenderer, gridOptionsWrapper, angularGrid) {
     this.rowRenderer = rowRenderer;
     this.datasourceVersion = 0;
+    this.gridOptionsWrapper = gridOptionsWrapper;
+    this.angularGrid = angularGrid;
 };
 
 VirtualPageRowController.prototype.setDatasource = function(datasource) {
@@ -224,20 +226,47 @@ VirtualPageRowController.prototype.loadPage = function(pageNumber) {
     var that = this;
     var datasourceVersionCopy = this.datasourceVersion;
 
-    this.datasource.getRows(startRow, endRow,
-        function success(rows, lastRow) {
-            if (that.requestIsDaemon(datasourceVersionCopy)) {
-                return;
-            }
-            that.pageLoaded(pageNumber, rows, lastRow);
-        },
-        function fail() {
-            if (that.requestIsDaemon(datasourceVersionCopy)) {
-                return;
-            }
-            that.pageLoadFailed(pageNumber);
+    var sortModel;
+    if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        sortModel = this.angularGrid.getSortModel();
+    }
+
+    var filterModel;
+    if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        filterModel = this.angularGrid.getFilterModel();
+    }
+
+    var params = {
+        startRow: startRow,
+        endRow: endRow,
+        successCallback: successCallback,
+        failCallback: failCallback,
+        sortModel: sortModel,
+        filterModel: filterModel
+    };
+
+    // check if old version of datasource used
+    var getRowsParams = utils.getFunctionParameters(this.datasource.getRows);
+    if (getRowsParams.length > 1) {
+        console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
+        console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+    }
+
+    this.datasource.getRows(params);
+
+    function successCallback(rows, lastRowIndex) {
+        if (that.requestIsDaemon(datasourceVersionCopy)) {
+            return;
         }
-    );
+        that.pageLoaded(pageNumber, rows, lastRowIndex);
+    }
+
+    function failCallback() {
+        if (that.requestIsDaemon(datasourceVersionCopy)) {
+            return;
+        }
+        that.pageLoadFailed(pageNumber);
+    }
 };
 
 // check that the datasource has not changed since the lats time we did a request
