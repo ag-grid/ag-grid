@@ -205,6 +205,14 @@ include '../documentation_header.php';
             <td>Returns the sort state of the grid.
             </td>
         </tr>
+        <tr>
+            <th>getFocusedCell()</th>
+            <td>Returns the focused cell as an object containing the rowIndex, colIndex and cell node.</td>
+        </tr>
+        <tr>
+            <th>setFocusedCell(rowIndex, colIndex)</th>
+            <td>Scrolls the grid to ensure the cell is visible and then puts focus on the cell.</td>
+        </tr>
 
 
     </table>

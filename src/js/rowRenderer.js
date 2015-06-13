@@ -170,11 +170,16 @@ RowRenderer.prototype.refreshGroupRows = function() {
 // takes array of row indexes
 RowRenderer.prototype.removeVirtualRows = function(rowsToRemove, fromIndex) {
     var that = this;
-    // if no from inde then set to -1, which will refresh everything
+    // if no fromIndex then set to -1, which will refresh everything
     var realFromIndex = (typeof fromIndex === 'number') ? fromIndex : -1;
     rowsToRemove.forEach(function(indexToRemove) {
         if (indexToRemove >= realFromIndex) {
             that.removeVirtualRow(indexToRemove);
+
+            // if the row was last to have focus, we remove the fact that it has focus
+            if (that.focusedCell && that.focusedCell.rowIndex == indexToRemove) {
+                that.focusedCell = null;
+            }
         }
     });
 };
@@ -736,7 +741,7 @@ RowRenderer.prototype.createCell = function(isFirstColumn, column, valueGetter, 
     eGridCell.style.width = utils.formatWidth(column.actualWidth);
 
     // add the 'start editing' call to the chain of editors
-    this.renderedRowStartEditingListeners[rowIndex][column.index] = function() {
+    this.renderedRowStartEditingListeners[rowIndex][column.colId] = function() {
         if (that.isCellEditable(column.colDef, node)) {
             that.startEditing(eGridCell, column, node, $childScope, rowIndex, isFirstColumn, valueGetter);
             return true;
@@ -813,7 +818,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
         }
         // see if the next cell is selectable, if yes, use it, if not, skip it
         renderedRow = this.renderedRows[cellToFocus.rowIndex];
-        eCell = renderedRow.eCells[cellToFocus.column.index];
+        eCell = renderedRow.eCells[cellToFocus.column.colId];
     }
 
     // this scrolls the row into view
@@ -872,6 +877,7 @@ RowRenderer.prototype.getNextCellToFocus = function(key, lastCellToFocus) {
     };
 };
 
+// called internally
 RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrowserFocus) {
     // do nothing if cell selection is off
     if (this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -883,9 +889,26 @@ RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrows
     var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
 
+    this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex)};
+
     // this puts the browser focus on the cell (so it gets key presses)
     if (forceBrowserFocus) {
         eCell.focus();
+    }
+};
+
+// for API
+RowRenderer.prototype.getFocusedCell = function() {
+    return this.focusedCell;
+};
+
+// called via API
+RowRenderer.prototype.setFocusedCell = function(rowIndex, colIndex) {
+    var renderedRow = this.renderedRows[rowIndex];
+    var column = this.columnModel.getDisplayedColumns()[colIndex];
+    if (renderedRow && column) {
+        var eCell = renderedRow.eCells[column.colId];
+        this.focusCell(eCell, rowIndex, colIndex, true);
     }
 };
 

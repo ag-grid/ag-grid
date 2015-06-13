@@ -450,7 +450,7 @@ Grid.prototype.ensureColIndexVisible = function(index) {
         return;
     }
 
-    var columns = this.getDisplayedColumns.getVisibleColumns();
+    var columns = this.columnModel.getDisplayedColumns();
     if (typeof index !== 'number' || index < 0 || index >= columns.length) {
         console.warn('invalid col index for ensureColIndexVisible: ' + index
             + ', should be between 0 and ' + (columns.length - 1));
@@ -609,13 +609,13 @@ Grid.prototype.addApi = function() {
             return that.selectionController.getBestCostNodeSelection();
         },
         ensureColIndexVisible: function(index) {
-            return that.ensureColIndexVisible(index);
+            that.ensureColIndexVisible(index);
         },
         ensureIndexVisible: function(index) {
-            return that.ensureIndexVisible(index);
+            that.ensureIndexVisible(index);
         },
         ensureNodeVisible: function(comparator) {
-            return that.ensureNodeVisible(comparator);
+            that.ensureNodeVisible(comparator);
         },
         forEachInMemory: function(callback) {
             that.rowModel.forEachInMemory(callback);
@@ -642,9 +642,24 @@ Grid.prototype.addApi = function() {
         },
         getFilterModel: function() {
             return that.getFilterModel();
+        },
+        getFocusedCell: function() {
+            return that.rowRenderer.getFocusedCell();
+        },
+        setFocusedCell: function(rowIndex, colIndex) {
+            that.setFocusedCell(rowIndex, colIndex);
         }
     };
     this.gridOptions.api = api;
+};
+
+Grid.prototype.setFocusedCell = function(rowIndex, colIndex) {
+    this.ensureIndexVisible(rowIndex);
+    this.ensureColIndexVisible(colIndex);
+    var that = this;
+    setTimeout( function() {
+        that.rowRenderer.setFocusedCell(rowIndex, colIndex);
+    }, 10);
 };
 
 Grid.prototype.getSortModel = function() {
