@@ -114,6 +114,9 @@ gridsModule.controller('mainController', function($scope) {
         cellDoubleClicked:  function(params) {
             console.log("Callback cellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
+        cellFocused: function(params) {
+            console.log('Callback cellFocused: ' + params.rowIndex + " - " + params.colIndex);
+        },
         ready: function(api) {
             console.log('Callback ready: api = ' + api);
         }

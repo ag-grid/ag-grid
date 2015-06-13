@@ -137,6 +137,10 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
+            <th>cellFocused</th>
+            <td>Function callback, gets called when a cell is focused.</td>
+        </tr>
+        <tr>
             <th>modelUpdated</th>
             <td>Function callback, gets called when displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>

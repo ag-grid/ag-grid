@@ -883,6 +883,7 @@ RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrows
     if (this.gridOptionsWrapper.isSuppressCellSelection()) {
         return;
     }
+
     // remove any previous focus
     utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
 
@@ -894,6 +895,10 @@ RowRenderer.prototype.focusCell = function(eCell, rowIndex, colIndex, forceBrows
     // this puts the browser focus on the cell (so it gets key presses)
     if (forceBrowserFocus) {
         eCell.focus();
+    }
+
+    if (typeof this.gridOptionsWrapper.getCellFocused() === 'function') {
+        this.gridOptionsWrapper.getCellFocused()(this.focusedCell);
     }
 };
 

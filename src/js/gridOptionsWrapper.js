@@ -47,6 +47,7 @@ GridOptionsWrapper.prototype.getModelUpdated = function() { return this.gridOpti
 GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
 GridOptionsWrapper.prototype.getCellDoubleClicked = function() { return this.gridOptions.cellDoubleClicked; };
 GridOptionsWrapper.prototype.getCellValueChanged = function() { return this.gridOptions.cellValueChanged; };
+GridOptionsWrapper.prototype.getCellFocused = function() { return this.gridOptions.cellFocused; };
 GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
 GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
 GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
