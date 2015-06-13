@@ -12,8 +12,8 @@ $ bower install ag-grid
 $ npm install angular-grid
 ```
 
-See the website for overview and documentation.
-[www.angulargrid.com](http://www.angulargrid.com)
+See the [www.angulargrid.com](http://www.angulargrid.com) for overview and documentation.
+
 
 Building
 ==============
@@ -42,7 +42,17 @@ Contributing
 ==============
 
 I am not looking for contributors for this project. If you have ideas, feel free to
-get in touch and let me know.
+get in touch and let me know. Or if you want to suggest something, feel free to
+create a pull request with your ideas.
+
+My reason for not looking for contributors is that this grid is my hobby,
+something I work on in my spare time and enjoy. The design is something of a passion,
+and I'm bringing the grid into a particular direction. To take on contributors
+would require overhead of organisation, as well as agreeing direction (both
+technical implementation and functional requirements).
+
+If you would like to help, then where I actually do need help is in answering questions
+on the forum and spreading the word to grow the user community.
 
 Automated Testing
 ==============
