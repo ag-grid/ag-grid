@@ -133,3 +133,24 @@
   display: inline-block;
   width: 300px;
 }
+.ag-fresh .ag-drop-target-above {
+  border: 1px solid transparent;
+  border-top: 1px solid #a9a9a9;
+}
+.ag-fresh .ag-drop-target-below {
+  border: 1px solid transparent;
+  border-bottom: 1px solid #a9a9a9;
+}
+.ag-fresh .ag-not-drop-target {
+  border: 1px solid transparent;
+}
+.ag-fresh .ag-dragging {
+  border: 1px dotted #d3d3d3;
+}
+.ag-fresh .ag-list-item-selected {
+  color: #f0f0f0;
+}
+.ag-fresh .ag-list-item-not-selected {
+  font-style: italic;
+  color: #a0a0a0;
+}
