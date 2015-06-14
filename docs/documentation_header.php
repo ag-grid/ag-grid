@@ -305,6 +305,12 @@
                     <a class="sidebarLink" href="/example-file-browser/index.php">File Browser</a>
                 <?php } ?>
 
+                <?php if ($key == "Expressions and Context") { ?>
+                    <span class="sidebarLinkSelected">Expressions and Context</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-expressions-and-context/index.php">Expressions and Context</a>
+                <?php } ?>
+
                 <?php if ($key == "No Angular") { ?>
                     <span class="sidebarLinkSelected">No AngularJS</span>
                 <?php } else { ?>

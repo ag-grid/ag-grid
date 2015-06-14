@@ -59,7 +59,7 @@ Automated Testing
 
 ag-Grid has no automated tests. This is the choice of the author, not because he
 can't write tests, but because he has chosen not to for this particular project.
-Reasons include a) only one developer and b) the one developer knows he design, he
+Reasons include a) only one developer and b) the one developer knows the design, he
 knows what changes are breaking changes. The grid is also in an evolving state,
 with the core design been refactored regularly - this reduces the overall benefit
 of tests.

@@ -10,58 +10,34 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>7th June 2015</b>
+        <b>14th June 2015</b>
     </p>
-
-    <!--
-        <li>
-            <b>Column headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
-            Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
-        </li>
-        <li>
-            <b>Filter newRowsAction:</b> Now you can specify the default behaviour of filters when new rows are loaded,
-            either reset them, or keep the old state. Read about it in
-            <a href="angular-grid-filtering/index.php">filters documentation</a>
-        </li>
-
-        <li>
-            <b>Sorting Options: </b> New sorting optiosn of suppressUnSort and suppressMultiSort.
-        </li>
-
-    -->
 
     <p>
         This is what I did last week:
     <ul>
         <li>
-            <b>Ensure Col Index Visible: </b> Now you can get grid to jump to a column as well as to a row.
-            See the new addition in the test drive.
+            <b>Server side sorting and filtering:</b> Using pagination or infinite scrolling? Now you can sort and
+            filter on the server side. Check it out in <a href="/angular-grid-pagination/index.php">pagination</a>
+            and <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
+        </li>
+        <li>
+            <b>Column headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
+            Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
+        </li>
+        <li>
+            <b>Filter 'newRowsAction':</b> Now you can specify the default behaviour of filters when new rows are loaded,
+            either reset them, or keep the old state. Read about it in <a href="angular-grid-filtering/index.php">filters documentation</a>
+        </li>
+        <li>
+            <b>Sorting Options: </b> New sorting options of 'suppressUnSort' and 'suppressMultiSort'.
+        </li>
+        <li>
+            <b>Mail List Created: </b> Stay up to date, sign up below.
         </li>
 
         <li>
-            <b>No Isolated Scope:</b> The directive is now ag-grid and not angular-grid. The
-            new directive does not use isolated scope, so if using Angular, you can access data on your main scope.
-            (note: although angular-grid and isolated scope is still supported for a while, it's considered depreciated)
-        </li>
-
-        <li>
-            <b>API for Sorting:</b> Sorting can no be controlled via the API, See <a href="angular-grid-sorting/index.php">sorting documentation</a>.
-        </li>
-
-        <li>
-            <b>API for Saving / Setting Filters:</b> Now you can save and restore the state of the filters. See <a href="angular-grid-filtering/index.php">filtering documentation</a>.
-        </li>
-
-        <li>
-            <b>Safari Layout Fix:</b> Did you notice the test drive layout was wonky in Safari? Now no longer.
-        </li>
-
-        <li>
-            <b>Other minor fixes & improvements.</b>
-        </li>
-
-        <li>
-            <b>Released 1.8.0</b> - contains all the above.
+            <b>Released 1.9.0</b> - contains all the above.
         </li>
 
     </ul>
@@ -72,9 +48,8 @@ include 'documentation_header.php';
 
     <ul>
         <li>
-            The improved API's for Sorting and Filtering were done in preparation for 'Server side Filtering and Sorting'.
-            I hoped to have that done by now, sorry to those who are waiting, but once starting I realised I needed
-            to introduce the said API's before it would all work togther.
+            Finally, 'Server side Filtering and Sorting' is in!!! That took longer than I was expecting.
+            Next up - I'm going to go crazy on Column Reordering, Column Visibility and Slice and Dice capabilities.
         </li>
     </ul>
 
@@ -86,17 +61,65 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="text-align: center; padding: 20px;;">
-<span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
-    <p>
-        <img src="images/flags/gb.png"/>
-        <b>9th June 2015</b>
-        <img src="images/flags/gb.png"/>
-    </p>
-    <p>
-        There was a bug with new ag-grid directive and Quick Filter in 1.8.0. This is now fixed in 1.8.1.
-    </p>
-</span>
+<div style="text-align: center; margin-top: 50px;">
+    <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
+
+        <!-- Begin MailChimp Signup Form -->
+        <link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
+        <style type="text/css">
+            #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+            /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+               We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+        </style>
+
+        <div id="mc_embed_signup">
+            <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
+                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                <div id="mc_embed_signup_scroll">
+                    <div style="text-align: center; padding-bottom: 5px;">
+                        Join the mailing list to get updates of new features and releases
+                    </div>
+                    <table>
+                        <tr>
+                            <td style="padding: 4px;">
+                                <i class="fa fa-envelope"></i>
+                            </td>
+                            <td style="padding: 4px;">
+                                <input style="width: 200px" placeholder="Email Address..." type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+                            </td>
+                            <td style="padding: 4px;">
+                                <i class="fa fa-user" style="padding-left: 4px;"></i>
+                            </td>
+                            <td style="padding: 4px;">
+                                <input style="width: 200px" placeholder="First Name" type="text" value="" name="FNAME" class="" id="mce-FNAME">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="padding: 4px;">
+                                <input style="width: 200px" placeholder="Last Name" type="text" value="" name="LNAME" class="" id="mce-LNAME">
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                    </div>
+                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                    <div style="position: absolute; left: -5000px;"><input type="text" name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988" tabindex="-1" value=""></div>
+                    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                </div>
+            </form>
+        </div>
+        <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        <!--End mc_embed_signup-->
+
+    </div>
 </div>
 
 
@@ -167,6 +190,11 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <p>
+        <b>7th June</b> New features: Ensure Col Index Visible, No Isolated Scope, API for Sorting,
+        API for Saving / Setting Filters
+    </p>
 
     <p>
         <b>31st May</b> New features: Default aggregation, filtering API, de-selection, foeEachInMemory.
