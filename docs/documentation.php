@@ -22,6 +22,10 @@ include 'documentation_header.php';
             and <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
         </li>
         <li>
+            <b>New Example:</b> Trying to get your head around value getters and expressions? Here is an
+            <a href="/example-expressions-and-context/index.php">end-to-end example.</a>
+        </li>
+        <li>
             <b>Column headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
             Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
         </li>

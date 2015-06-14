@@ -32,11 +32,11 @@ include '../documentation_header.php';
 
     <p>
         Notice that the example (including calculating the expression on the fly, the grid only calculates
-        what's needed to be displayed) runs very fast (once the data is loaded) despite over 86,000 rows.
+        what's needed to be displayed) runs very fast (once the data is loaded) despite over 6,000 rows.
     </p>
 
     <p>
-        This example is best viewed by opening it in a new tab (click the link on the top righ of the example).
+        This example is best viewed by opening it in a new tab (click the link on the top right of the example).
     </p>
 
     <show-example example="monthlySales"></show-example>
