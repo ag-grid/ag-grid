@@ -83,10 +83,10 @@ RowRenderer.prototype.softRefreshView = function() {
         var node = this.rowModel.getVirtualRow(rowIndex);
         if (node) {
 
-            for (var colIndex = 0; colIndex <= columns.length; colIndex++) {
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
                 var column = columns[colIndex];
                 var renderedRow = this.renderedRows[rowIndex];
-                var eGridCell = renderedRow.eVolatileCells[colIndex];
+                var eGridCell = renderedRow.eVolatileCells[column.colId];
 
                 if (!eGridCell) {
                     continue;
