@@ -1,6 +1,6 @@
 var CheckboxSelection = require("../widgets/checkboxSelection");
-var constants = require('./../constants');
-var utils = require('./../utils');
+var constants = require('../constants');
+var utils = require('../utils');
 
 function GroupSelectionPanel(columnController, inMemoryRowController) {
     this.eGui = document.createElement('div');
@@ -55,8 +55,6 @@ GroupSelectionPanel.prototype.setupComponents = function() {
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
     this.eGui.appendChild(this.cColumnList.getGui());
 
-    var columnItemProxy = this.createColumnItemProxy();
-    this.cColumnList.setItemProxy(columnItemProxy);
     this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
 };
 
@@ -64,15 +62,6 @@ GroupSelectionPanel.prototype.onGroupingChanged = function() {
     this.inMemoryRowController.doGrouping();
     this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
     this.columnController.onColumnStateChanged();
-};
-
-GroupSelectionPanel.prototype.createColumnItemProxy = function() {
-    var that = this;
-    return {
-        getText: function(item) { return that.columnController.getDisplayNameForCol(item)},
-        isSelected: function(item) { },
-        setSelected: function(item, selected) {  }
-    };
 };
 
 GroupSelectionPanel.prototype.getGui = function() {

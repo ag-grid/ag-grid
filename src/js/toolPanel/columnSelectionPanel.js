@@ -48,15 +48,11 @@ ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
     eValue.innerHTML = colDisplayName;
     eResult.appendChild(eValue);
 
+    if (!column.visible) {
+        utils.addCssClass(eResult, 'ag-column-not-visible');
+    }
+
     return eResult;
-};
-
-ColumnSelectionPanel.prototype.styleListItemSelected = function(eListItem, eCheckbox, selected) {
-    utils.addOrRemoveCssClass(eCheckbox, 'fa-eye', selected);
-    utils.addOrRemoveCssClass(eCheckbox, 'fa-eye-slash', !selected);
-
-    utils.addOrRemoveCssClass(eListItem, 'ag-list-item-selected', !selected);
-    utils.addOrRemoveCssClass(eListItem, 'ag-list-item-not-selected', !selected);
 };
 
 ColumnSelectionPanel.prototype.setupComponents = function() {
@@ -64,22 +60,10 @@ ColumnSelectionPanel.prototype.setupComponents = function() {
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
     this.eGui.appendChild(this.cColumnList.getGui());
 
-    var columnItemProxy = this.createColumnItemProxy();
-    this.cColumnList.setItemProxy(columnItemProxy);
-
     var that = this;
     this.cColumnList.addModelChangedListener( function() {
         that.columnController.onColumnStateChanged();
     });
-};
-
-ColumnSelectionPanel.prototype.createColumnItemProxy = function() {
-    var that = this;
-    return {
-        getText: function(item) { return that.columnController.getDisplayNameForCol(item)},
-        isSelected: function(item) { return item.visible},
-        setSelected: function(item, selected) { that.setSelected(item, selected); }
-    };
 };
 
 ColumnSelectionPanel.prototype.setSelected = function(column, selected) {

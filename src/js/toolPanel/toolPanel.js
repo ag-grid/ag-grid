@@ -16,7 +16,7 @@ ToolPanel.prototype.init = function(eToolPanelContainer, columnController, inMem
     var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController);
     eGui.appendChild(groupSelectionPanel.getGui());
 
-    groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList());
+    groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
 };
 
 module.exports = ToolPanel;
