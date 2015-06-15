@@ -81,7 +81,7 @@ gridsModule.controller('mainController', function($scope) {
         //suppressCellSelection: true,
         //suppressUnSort: true,
         //suppressMultiSort: true,
-        //showToolPanel: true,
+        showToolPanel: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,

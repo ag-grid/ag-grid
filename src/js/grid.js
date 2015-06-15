@@ -52,15 +52,15 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.scrollWidth = utils.getScrollbarWidth();
 
+    // done when cols change
+    this.setupColumns();
+
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
     if (useScrolls) {
         this.addScrollListener();
         this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
     }
-
-    // done when cols change
-    this.setupColumns();
 
     // done when rows change
     this.updateModelAndRefresh(constants.STEP_EVERYTHING);

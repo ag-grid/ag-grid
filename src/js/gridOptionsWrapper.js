@@ -81,10 +81,6 @@ GridOptionsWrapper.prototype.getIcons = function() {
     return this.gridOptions.icons;
 };
 
-GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
-    return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
-};
-
 GridOptionsWrapper.prototype.getHeaderHeight = function() {
     if (typeof this.gridOptions.headerHeight === 'number') {
         // if header height provided, used it

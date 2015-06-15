@@ -288,9 +288,14 @@ InMemoryRowController.prototype.sortList = function(nodes, sortOptions) {
 // private
 InMemoryRowController.prototype.doGrouping = function() {
     var rowsAfterGroup;
-    if (this.gridOptionsWrapper.isDoInternalGrouping()) {
+    var groupedCols = this.columnModel.getGroupedColumns();
+    var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
+
+    var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
+
+    if (doingGrouping) {
         var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-        rowsAfterGroup = groupCreator.group(this.allRows, this.gridOptionsWrapper.getGroupKeys(),
+        rowsAfterGroup = groupCreator.group(this.allRows, groupedCols,
             this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
     } else {
         rowsAfterGroup = this.allRows;

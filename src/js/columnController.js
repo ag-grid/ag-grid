@@ -27,6 +27,10 @@ ColumnController.prototype.createModel = function() {
         getDisplayedColumns: function() {
             return that.displayedColumns;
         },
+        // + toolPanel
+        getGroupedColumns: function() {
+            return that.groupedColumns;
+        },
         // used by:
         // + angularGrid -> for setting body width
         // + rowController -> setting main row widths (when inserting and resizing)
@@ -46,13 +50,7 @@ ColumnController.prototype.createModel = function() {
         // used by:
         // + api.getFilterModel() -> to map colDef to column, key can be colDef or field
         getColumn: function(key) {
-            for (var i = 0; i<that.columns.length; i++) {
-                var colDefMatches = that.columns[i].colDef === key;
-                var fieldMatches = that.columns[i].colDef.field === key;
-                if (colDefMatches || fieldMatches) {
-                    return that.columns[i];
-                }
-            }
+            return that.getColumn(key);
         },
         // used by:
         // + rowRenderer -> for navigation
@@ -78,6 +76,16 @@ ColumnController.prototype.createModel = function() {
             return that.getDisplayNameForCol(column);
         }
     };
+};
+
+ColumnController.prototype.getColumn = function(key) {
+    for (var i = 0; i<this.columns.length; i++) {
+        var colDefMatches = this.columns[i].colDef === key;
+        var fieldMatches = this.columns[i].colDef.field === key;
+        if (colDefMatches || fieldMatches) {
+            return this.columns[i];
+        }
+    }
 };
 
 ColumnController.prototype.getDisplayNameForCol = function(column) {
@@ -115,7 +123,7 @@ ColumnController.prototype.addListener = function(listener) {
 
 ColumnController.prototype.fireColumnsChanged = function() {
     for (var i = 0; i<this.listeners.length; i++) {
-        this.listeners[i].columnsChanged(this.columns);
+        this.listeners[i].columnsChanged(this.columns, this.groupedColumns);
     }
 };
 
@@ -126,6 +134,7 @@ ColumnController.prototype.getModel = function() {
 // called by angularGrid
 ColumnController.prototype.setColumns = function(columnDefs) {
     this.createColumns(columnDefs);
+    this.createGroupedColumns();
     this.updateModel();
     this.fireColumnsChanged();
 };
@@ -313,6 +322,34 @@ ColumnController.prototype.createColumns = function(columnDefs) {
             that.columns.push(column);
         }
     }
+};
+
+// private
+ColumnController.prototype.createGroupedColumns = function() {
+    this.groupedColumns = [];
+    var groupKeys = this.gridOptionsWrapper.getGroupKeys();
+    if (!groupKeys || groupKeys.length <= 0) {
+        return;
+    }
+    for (var i = 0; i < groupKeys.length; i++) {
+        var groupKey = groupKeys[i];
+        var column = this.getColumn(groupKey);
+        if (!column) {
+            column = this.createDummyColumn(groupKey);
+        }
+        this.groupedColumns.push(column);
+    }
+};
+
+// private
+ColumnController.prototype.createDummyColumn = function(field) {
+    var colDef = {
+        field: field,
+        headerName: field
+    };
+    var width = this.gridOptionsWrapper.getColWidth();
+    var column = new Column(colDef, width, false);
+    return column;
 };
 
 // private
