@@ -692,7 +692,7 @@ Grid.prototype.getSortModel = function() {
 };
 
 Grid.prototype.setSortModel = function(sortModel) {
-    if (this.gridOptionsWrapper.isEnableSorting()) {
+    if (!this.gridOptionsWrapper.isEnableSorting()) {
         console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
         return;
     }
