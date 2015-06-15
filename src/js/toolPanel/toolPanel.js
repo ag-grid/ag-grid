@@ -5,7 +5,7 @@ var GroupSelectionPanel = require('./groupSelectionPanel');
 function ToolPanel() {
 }
 
-ToolPanel.prototype.init = function(eToolPanelContainer, columnController) {
+ToolPanel.prototype.init = function(eToolPanelContainer, columnController, inMemoryRowController) {
     var eGui = document.createElement('div');
     eGui.style.height = '100%';
     eToolPanelContainer.appendChild(eGui);
@@ -13,9 +13,10 @@ ToolPanel.prototype.init = function(eToolPanelContainer, columnController) {
     var columnSelectionPanel = new ColumnSelectionPanel(columnController);
     eGui.appendChild(columnSelectionPanel.getGui());
 
-
-    var groupSelectionPanel = new GroupSelectionPanel(columnController);
+    var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController);
     eGui.appendChild(groupSelectionPanel.getGui());
+
+    groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList());
 };
 
 module.exports = ToolPanel;

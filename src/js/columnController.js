@@ -134,7 +134,7 @@ ColumnController.prototype.getModel = function() {
 // called by angularGrid
 ColumnController.prototype.setColumns = function(columnDefs) {
     this.createColumns(columnDefs);
-    this.createGroupedColumns();
+    this.createAggColumns();
     this.updateModel();
     this.fireColumnsChanged();
 };
@@ -153,7 +153,7 @@ ColumnController.prototype.onColumnStateChanged = function() {
     this.angularGrid.refreshHeaderAndBody();
 };
 
-ColumnController.prototype.updateModel= function() {
+ColumnController.prototype.updateModel = function() {
     this.updateVisibleColumns();
     this.updatePinnedColumns();
     this.buildGroups();
@@ -163,18 +163,13 @@ ColumnController.prototype.updateModel= function() {
 
 // private
 ColumnController.prototype.updateDisplayedColumns = function() {
-    this.displayedColumns = [];
 
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
         // if not grouping by headers, then pull visible cols
-        for (var j = 0; j < this.columns.length; j++) {
-            var column = this.columns[j];
-            if (column.visible) {
-                this.displayedColumns.push(column);
-            }
-        }
+        this.displayedColumns = this.visibleColumns;
     } else {
         // if grouping, then only show col as per group rules
+        this.displayedColumns = [];
         for (var i = 0; i < this.columnGroups.length; i++) {
             var group = this.columnGroups[i];
             group.addToVisibleColumns(this.displayedColumns);
@@ -287,10 +282,27 @@ ColumnController.prototype.updateGroups = function() {
 ColumnController.prototype.updateVisibleColumns = function() {
     this.visibleColumns = [];
 
+    // if grouping, we add in the extra group column here
+    if (this.groupedColumns.length > 0) {
+        // if one provided by user, use it, otherwise create one
+        var groupColDef = this.gridOptionsWrapper.getGroupColumn();
+        if (!groupColDef) {
+            groupColDef = {
+                headerName: "*Group",
+                cellRenderer: {
+                    renderer: "group"
+                }
+            };
+        }
+        // no group column provided, need to create one here
+        var groupColumn = new Column(groupColDef, this.gridOptionsWrapper.getColWidth(), false);
+        this.visibleColumns.push(groupColumn);
+    }
+
     for (var i = 0; i < this.columns.length; i++) {
         var column = this.columns[i];
         if (column.visible) {
-            column.index = i;
+            column.index = this.visibleColumns.length;
             this.visibleColumns.push(this.columns[i]);
         }
     }
@@ -325,7 +337,7 @@ ColumnController.prototype.createColumns = function(columnDefs) {
 };
 
 // private
-ColumnController.prototype.createGroupedColumns = function() {
+ColumnController.prototype.createAggColumns = function() {
     this.groupedColumns = [];
     var groupKeys = this.gridOptionsWrapper.getGroupKeys();
     if (!groupKeys || groupKeys.length <= 0) {

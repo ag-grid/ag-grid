@@ -125,7 +125,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
 
     if (this.eToolPanelContainer) {
         if (gridOptionsWrapper.isShowToolPanel()) {
-            toolPanel.init(this.eToolPanelContainer, columnController);
+            toolPanel.init(this.eToolPanelContainer, columnController, inMemoryRowController);
             this.eRoot.style.marginRight = '200px';
         } else {
             this.eToolPanelContainer.style.layout = 'none';

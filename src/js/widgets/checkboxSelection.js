@@ -8,16 +8,22 @@ var DROP_TARGET_BELOW = -11;
 function CheckboxSelection() {
     this.setupComponents();
     this.uniqueId = 'CheckboxSelection-' + Math.random();
-    this.itemMovedListeners = [];
+    this.modelChangedListeners = [];
+    this.dragSources = [];
+    this.addDragAndDrop();
 }
 
-CheckboxSelection.prototype.addItemMovedListener = function(listener) {
-    this.itemMovedListeners.push(listener);
+CheckboxSelection.prototype.addDragSource = function(dragSource) {
+    this.dragSources.push(dragSource);
 };
 
-CheckboxSelection.prototype.fireItemMoved = function() {
-    for (var i = 0; i<this.itemMovedListeners.length; i++) {
-        this.itemMovedListeners[i]();
+CheckboxSelection.prototype.addModelChangedListener = function(listener) {
+    this.modelChangedListeners.push(listener);
+};
+
+CheckboxSelection.prototype.fireModelChanged = function() {
+    for (var i = 0; i<this.modelChangedListeners.length; i++) {
+        this.modelChangedListeners[i]();
     }
 };
 
@@ -36,10 +42,18 @@ CheckboxSelection.prototype.setupComponents = function() {
 
 CheckboxSelection.prototype.setModel = function(model) {
     this.model = model;
-    this.drawListItems();
+    this.refreshView();
 };
 
-CheckboxSelection.prototype.drawListItems = function() {
+CheckboxSelection.prototype.getModel = function(model) {
+    return this.model;
+};
+
+CheckboxSelection.prototype.setCellRenderer = function(cellRenderer) {
+    this.cellRenderer = cellRenderer;
+};
+
+CheckboxSelection.prototype.refreshView = function() {
     utils.removeAllChildren(this.eListParent);
 
     if (!this.model) {
@@ -48,29 +62,20 @@ CheckboxSelection.prototype.drawListItems = function() {
 
     for (var i = 0; i<this.model.length; i++) {
         var item = this.model[i];
-        var text = this.getText(item);
-        var selected = this.isSelected(item);
+        //var text = this.getText(item);
+        //var selected = this.isSelected(item);
         var eListItem = this.eFilterValueTemplate.cloneNode(true);
 
-        var eCheckbox = eListItem.querySelector('.ag-checkbox-selection-checkbox');
-        this.styleListItemSelected(eListItem, eCheckbox, selected);
+        if (this.cellRenderer) {
+            var params = {value: item};
+            utils.useRenderer(eListItem, this.cellRenderer, params);
+        } else {
+            eListItem.innerHTML = item;
+        }
 
-        var eValue = eListItem.querySelector(".ag-checkbox-selection-value");
-        eValue.innerHTML = text;
-
-        this.addChangeListener(eListItem, eCheckbox, item);
-        this.addDragAndDrop(eListItem, item);
-
+        this.addDragAndDropToListItem(eListItem, item);
         this.eListParent.appendChild(eListItem);
     }
-};
-
-CheckboxSelection.prototype.styleListItemSelected = function(eListItem, eCheckbox, selected) {
-    utils.addOrRemoveCssClass(eCheckbox, 'fa-eye', selected);
-    utils.addOrRemoveCssClass(eCheckbox, 'fa-eye-slash', !selected);
-
-    utils.addOrRemoveCssClass(eListItem, 'ag-list-item-selected', !selected);
-    utils.addOrRemoveCssClass(eListItem, 'ag-list-item-not-selected', !selected);
 };
 
 CheckboxSelection.prototype.dragAfterThisItem = function(item) {
@@ -89,7 +94,52 @@ CheckboxSelection.prototype.setDragCssClasses = function(eListItem, dragging) {
     utils.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
 };
 
-CheckboxSelection.prototype.addDragAndDrop = function(eListItem, item) {
+CheckboxSelection.prototype.getDragItem = function() {
+    return this.dragItem;
+};
+
+CheckboxSelection.prototype.addDragAndDrop = function() {
+    var that = this;
+    this.eGui.addEventListener('dragover', function() {
+        var dragItem = that.getDragItemFromSource();
+        if (dragItem) {
+            that.eGui.style.backgroundColor = 'lightgreen';
+        }
+        event.preventDefault();
+    });
+
+    this.eGui.addEventListener('drop', function(event) {
+        var dragItem = that.getDragItemFromSource();
+        if (dragItem) {
+            that.addItemToList(dragItem);
+        }
+        that.eGui.style.backgroundColor = '';
+        event.preventDefault();
+    });
+
+    this.eGui.addEventListener('dragleave', function(event) {
+        that.eGui.style.backgroundColor = '';
+        event.preventDefault();
+    });
+};
+
+CheckboxSelection.prototype.addItemToList = function(newItem) {
+    this.model.push(newItem);
+    this.refreshView();
+    this.fireModelChanged();
+};
+
+CheckboxSelection.prototype.getDragItemFromSource = function() {
+    for (var i = 0; i < this.dragSources.length; i++) {
+        var dragItem = this.dragSources[i].getDragItem();
+        if (dragItem && this.model.indexOf(dragItem)<0) {
+            return dragItem;
+        }
+    }
+    return null;
+};
+
+CheckboxSelection.prototype.addDragAndDropToListItem = function(eListItem, item) {
 
     this.setDropCssClasses(eListItem, NOT_DROP_TARGET);
 
@@ -136,29 +186,8 @@ CheckboxSelection.prototype.onItemDropped = function(targetColumn, draggedColumn
     this.model.splice(oldIndex, 1);
     this.model.splice(newIndex, 0, draggedColumn);
 
-    this.drawListItems();
-    this.fireItemMoved();
-};
-
-CheckboxSelection.prototype.addChangeListener = function(eListItem, eCheckbox, item) {
-    var that = this;
-    eListItem.addEventListener('click', function() {
-        var selected = !that.isSelected(item);
-        that.styleListItemSelected(eListItem, eCheckbox, selected);
-        that.itemProxy.setSelected(item, selected);
-    });
-};
-
-CheckboxSelection.prototype.setSelected = function(item, selected) {
-    return this.itemProxy.setSelected(item, selected);
-};
-
-CheckboxSelection.prototype.isSelected = function(item) {
-    return this.itemProxy.isSelected(item);
-};
-
-CheckboxSelection.prototype.getText = function(item) {
-    return this.itemProxy.getText(item);
+    this.refreshView();
+    this.fireModelChanged();
 };
 
 CheckboxSelection.prototype.getGui = function() {

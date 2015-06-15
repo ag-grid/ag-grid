@@ -58,6 +58,14 @@ gridsModule.controller('mainController', function($scope) {
     $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
 
+    var groupColumn = {
+        headerName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
+        cellRenderer: {
+            renderer: "group",
+            checkbox: true
+        }
+    };
+
     var angularGrid = {
         columnDefs: [],
         rowData: null,
@@ -65,7 +73,7 @@ gridsModule.controller('mainController', function($scope) {
         groupHeaders: true,
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-//            groupDefaultExpanded: false, //one of [true, false], or an integer if greater than 1
+        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressGroupColumn: true,
         groupIncludeFooter: false,
@@ -78,6 +86,7 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+        //groupColumn: groupColumn,
         //suppressCellSelection: true,
         //suppressUnSort: true,
         //suppressMultiSort: true,
@@ -123,15 +132,6 @@ gridsModule.controller('mainController', function($scope) {
     };
     $scope.angularGrid = angularGrid;
 
-    var groupColumn = {
-        headerName: "Name", field: "name", group: 'Participant', width: 200, editable: editableFunc, filter: PersonFilter,
-        floatCell: true,
-            cellRenderer: {
-                renderer: "group",
-                checkbox: true
-            }
-        };
-
     var firstColumn = {headerName: "Name", field: "name", group: 'Participant', checkboxSelection: true, width: 200, editable: editableFunc, filter: PersonFilter,
         floatCell: true,
         icons: {
@@ -142,7 +142,6 @@ gridsModule.controller('mainController', function($scope) {
 
     var defaultCols = [
         //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-        groupColumn,
         firstColumn,
         {headerName: "Country", field: "country", group: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
             floatCell: true,
@@ -247,26 +246,26 @@ gridsModule.controller('mainController', function($scope) {
         switch ($scope.rowSelection) {
             case 'checkbox' :
                 firstColumn.checkboxSelection = true;
-                groupColumn.cellRenderer.checkbox = true;
+                //groupColumn.cellRenderer.checkbox = true;
                 angularGrid.rowSelection = 'multiple';
                 angularGrid.suppressRowClickSelection = true;
                 break;
             case 'single' :
                 firstColumn.checkboxSelection = false;
-                groupColumn.cellRenderer.checkbox = false;
+                //groupColumn.cellRenderer.checkbox = false;
                 angularGrid.rowSelection = 'single';
                 angularGrid.suppressRowClickSelection = false;
                 break;
             case 'multiple' :
                 firstColumn.checkboxSelection = false;
-                groupColumn.cellRenderer.checkbox = false;
+                //groupColumn.cellRenderer.checkbox = false;
                 angularGrid.rowSelection = 'multiple';
                 angularGrid.suppressRowClickSelection = false;
                 break;
             default :
                 // turn selection off
                 firstColumn.checkboxSelection = false;
-                groupColumn.cellRenderer.checkbox = false;
+                //groupColumn.cellRenderer.checkbox = false;
                 angularGrid.rowSelection = null;
                 angularGrid.suppressRowClickSelection = false;
                 break;
@@ -320,14 +319,6 @@ gridsModule.controller('mainController', function($scope) {
 
         // start with a copy of the default cols
         var columns = defaultCols.slice(0, colCount);
-
-        // if not grouping, take out the group column
-        var groupColNeeded = $scope.groupBy!=='' && ($scope.groupType==='col' || $scope.groupType==='colWithFooter');
-        if (!groupColNeeded) {
-            columns.splice(0,1);
-        } else {
-            columns.splice(1,1);
-        }
 
         for (var col = defaultCols.length; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
