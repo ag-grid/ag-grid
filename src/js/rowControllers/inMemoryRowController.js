@@ -208,7 +208,7 @@ InMemoryRowController.prototype.doSort = function() {
                 });
             }
         });
-        if (sortingOptions.length >= 0) {
+        if (sortingOptions.length > 0) {
             sorting = true;
         }
     }
