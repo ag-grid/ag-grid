@@ -91,7 +91,6 @@ Grid.prototype.setupBorderLayout = function(eGridDiv) {
     var eInnerElement = utils.loadTemplate(templateToUse);
     this.eToolPanelContainer = document.createElement('div');
     utils.addCssClass(this.eToolPanelContainer, 'ag-tool-panel-container');
-    this.eToolPanelContainer.style.width = '200';
 
     //var eEast = document.createElement('div');
     //eEast.style.width = 200;

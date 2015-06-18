@@ -6,56 +6,49 @@ function BorderLayout(params) {
         '<div style="height: 100%;">' +
         '<div id="north"></div>' +
         '<div id="centerRow" style="height: 100%; overflow: auto;">' +
-          '<div id="west" style="height: 100%; float: left;"></div>' +
-          '<div id="east" style="height: 100%; float: right;"></div>' +
-          '<div id="center" style="height: 100%;"></div>' +
-        '</div>' +
-        '<div id="south"></div>' +
-        '</div>';
-
-    var templateOld =
-        '<div style="height: 100%;">' +
-        '<div id="north"></div>' +
-        '<div id="centerRow" style="height: 100%;">' +
-        '<div id="west" style="height: 100%; display: inline-block;"></div>' +
-        '<div id="center" style="height: 100%; display: inline-block;"></div>' +
-        '<div id="east" style="height: 100%; display: inline-block;"></div>' +
+        '<div id="west" style="height: 100%; float: left;"></div>' +
+        '<div id="east" style="height: 100%; float: right;"></div>' +
+        '<div id="center" style="height: 100%;"></div>' +
         '</div>' +
         '<div id="south"></div>' +
         '</div>';
 
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = template;
-    this.eNorthWrapper = this.eGui.querySelector('#north');
-    if (params && params.north) {
-        this.eNorthWrapper.appendChild(params.north);
-    }
-    this.eSouthWrapper = this.eGui.querySelector('#south');
-    if (params && params.south) {
-        this.eSouthWrapper.appendChild(params.north);
-    }
-    this.eEastWrapper = this.eGui.querySelector('#east');
-    if (params && params.east) {
-        this.eEastWrapper.appendChild(params.east);
-    }
-    this.eWestWrapper = this.eGui.querySelector('#west');
-    if (params && params.west) {
-        this.eWestWrapper.appendChild(params.west);
-    }
-    this.eCenterWrapper = this.eGui.querySelector('#center');
-    if (params && params.center) {
-        this.eCenterWrapper.appendChild(params.center);
-        params.center.style.height = '100%';
-    }
 
-    this.eCenterRow = this.eGui.querySelector('#centerRow');
+    if (params) {
+        this.setupPanels(params);
+    }
 
     var that = this;
-    setInterval(function() {
+    setInterval(function () {
         that.doLayout();
     }, 200);
     console.warn('ag-grid: need to shut down the border layout');
 }
+
+BorderLayout.prototype.setupPanels = function(params) {
+
+    this.eNorthWrapper = this.setupPanel(params.north, '#north');
+    this.eSouthWrapper = this.setupPanel(params.south, '#south');
+    this.eEastWrapper = this.setupPanel(params.east, '#east');
+    this.eWestWrapper = this.setupPanel(params.west, '#west');
+    this.eCenterWrapper = this.setupPanel(params.center, '#center');
+
+    // center row is not provided by user, so we always grab this
+    this.eCenterRow = this.eGui.querySelector('#centerRow');
+};
+
+BorderLayout.prototype.setupPanel = function(content, cssSelector) {
+    var ePanel = this.eGui.querySelector(cssSelector);
+    if (content) {
+        ePanel.appendChild(content);
+        return ePanel;
+    } else {
+        ePanel.parentNode.removeChild(ePanel);
+        return  null;
+    }
+};
 
 BorderLayout.prototype.getGui = function() {
     return this.eGui;
@@ -101,8 +94,10 @@ BorderLayout.prototype.layoutWidth = function() {
 };
 
 BorderLayout.prototype.setEastVisible = function(visible) {
-    this.eEastWrapper.style.display = visible ? '' : 'none';
-    this.doLayout();
+    if (this.eEastWrapper) {
+        this.eEastWrapper.style.display = visible ? '' : 'none';
+        this.doLayout();
+    }
 };
 
 module.exports = BorderLayout;

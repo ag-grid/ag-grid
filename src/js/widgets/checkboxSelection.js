@@ -110,29 +110,6 @@ CheckboxSelection.prototype.setupAsDropTarget = function() {
         drop: this.externalDrop.bind(this),
         noDrop: this.externalNoDrop.bind(this)
     });
-
-    //var that = this;
-    //this.eGui.addEventListener('dragover', function() {
-    //    var dragItem = that.getDragItemFromSource();
-    //    if (dragItem) {
-    //        that.eGui.style.backgroundColor = 'lightgreen';
-    //    }
-    //    event.preventDefault();
-    //});
-    //
-    //this.eGui.addEventListener('drop', function(event) {
-    //    var dragItem = that.getDragItemFromSource();
-    //    if (dragItem) {
-    //        that.addItemToList(dragItem);
-    //    }
-    //    that.eGui.style.backgroundColor = '';
-    //    event.preventDefault();
-    //});
-    //
-    //this.eGui.addEventListener('dragleave', function(event) {
-    //    that.eGui.style.backgroundColor = '';
-    //    event.preventDefault();
-    //});
 };
 
 CheckboxSelection.prototype.externalAcceptDrag = function(dragEvent) {

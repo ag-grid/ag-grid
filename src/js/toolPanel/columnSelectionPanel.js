@@ -66,7 +66,7 @@ ColumnSelectionPanel.prototype.setupComponents = function() {
     });
 
     var eNorthPanel = document.createElement('div');
-    eNorthPanel.innerHTML = '<div style="text-align: center;">Grid Columns</div>';
+    eNorthPanel.innerHTML = '<div style="text-align: center;">Columns</div>';
 
     this.eRootPanel = new BorderLayout({
         center: this.cColumnList.getGui(),
