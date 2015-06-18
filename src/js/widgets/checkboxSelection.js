@@ -14,6 +14,11 @@ function CheckboxSelection() {
     this.setupAsDropTarget();
 }
 
+CheckboxSelection.prototype.setEmptyMessage = function(emptyMessage) {
+    return this.emptyMessage = emptyMessage;
+    this.refreshView();
+};
+
 CheckboxSelection.prototype.getUniqueId = function() {
     return this.uniqueId;
 };
@@ -57,10 +62,14 @@ CheckboxSelection.prototype.setCellRenderer = function(cellRenderer) {
 CheckboxSelection.prototype.refreshView = function() {
     utils.removeAllChildren(this.eListParent);
 
-    if (!this.model) {
-        return;
+    if (this.model && this.model.length > 0) {
+        this.insertRows();
+    } else {
+        this.insertBlankMessage();
     }
+};
 
+CheckboxSelection.prototype.insertRows = function() {
     for (var i = 0; i<this.model.length; i++) {
         var item = this.model[i];
         //var text = this.getText(item);
@@ -76,6 +85,17 @@ CheckboxSelection.prototype.refreshView = function() {
 
         this.addDragAndDropToListItem(eListItem, item);
         this.eListParent.appendChild(eListItem);
+    }
+};
+
+CheckboxSelection.prototype.insertBlankMessage = function() {
+    if (this.emptyMessage) {
+        var eMessage = document.createElement('div');
+        eMessage.style.color = 'grey';
+        eMessage.style.padding = '20px';
+        eMessage.style.textAlign = 'center';
+        eMessage.innerHTML = this.emptyMessage;
+        this.eListParent.appendChild(eMessage);
     }
 };
 

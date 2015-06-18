@@ -15,20 +15,18 @@ var PaginationController = require('./rowControllers/paginationController');
 var ExpressionService = require('./expressionService');
 var TemplateService = require('./templateService');
 var ToolPanel = require('./toolPanel/toolPanel');
+var BorderLayout = require('./layout/borderLayout');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
-
-    this.addEnvironmentClasses(eGridDiv);
 
     this.gridOptions = gridOptions;
     this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
 
     var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
-    if (useScrolls) {
-        eGridDiv.innerHTML = template;
-    } else {
-        eGridDiv.innerHTML = templateNoScrolls;
-    }
+
+    this.setupBorderLayout(eGridDiv);
+
+    this.findAllElements(eGridDiv);
 
     if (this.gridOptionsWrapper.isSuppressVerticalScroll() && !this.gridOptionsWrapper.isDontUseScrolls()) {
         utils.addCssClass(eGridDiv, 'ag-no-vertical-scroll');
@@ -47,7 +45,6 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
     this.virtualRowCallbacks = {};
 
     this.addApi();
-    this.findAllElements(eGridDiv);
     this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
 
     this.scrollWidth = utils.getScrollbarWidth();
@@ -83,9 +80,33 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
     }
 }
 
-Grid.prototype.addEnvironmentClasses = function(eGridDiv) {
-    var platformAndBrowser = 'ag-env-' + constants.PLATFORM + "-" + constants.BROWSER;
-    utils.addCssClass(eGridDiv, platformAndBrowser);
+Grid.prototype.setupBorderLayout = function(eGridDiv) {
+    var templateToUse;
+    var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
+    if (useScrolls) {
+        templateToUse = template;
+    } else {
+        templateToUse = templateNoScrolls;
+    }
+    var eInnerElement = utils.loadTemplate(templateToUse);
+    this.eToolPanelContainer = document.createElement('div');
+    utils.addCssClass(this.eToolPanelContainer, 'ag-tool-panel-container');
+    this.eToolPanelContainer.style.width = '200';
+
+    //var eEast = document.createElement('div');
+    //eEast.style.width = 200;
+    //eEast.style.height = '100%';
+    //eEast.style.border = '10px solid black';
+    //eEast.style.padding = 10;
+    //eEast.innerHTML = 'inside';
+    //eEast.style.backgroundColor = 'lightblue';
+
+    this.eRootPanel = new BorderLayout({
+        center: eInnerElement
+        //, east: eEast
+        , east: this.eToolPanelContainer
+    });
+    eGridDiv.appendChild(this.eRootPanel.getGui());
 };
 
 Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
@@ -123,14 +144,12 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
 
+
     if (this.eToolPanelContainer) {
-        if (gridOptionsWrapper.isShowToolPanel()) {
-            toolPanel.init(this.eToolPanelContainer, columnController, inMemoryRowController);
-            this.eRoot.style.marginRight = '200px';
-        } else {
-            this.eToolPanelContainer.style.layout = 'none';
-        }
+        // tool panel container is not visible on 'noScrolls'
+        toolPanel.init(this.eToolPanelContainer, columnController, inMemoryRowController);
     }
+    this.showToolPanel(gridOptionsWrapper.isShowToolPanel());
 
     // this is a child bean, get a reference and pass it on
     // CAN WE DELETE THIS? it's done in the setDatasource section
@@ -156,6 +175,20 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     this.headerRenderer = headerRenderer;
     this.paginationController = paginationController;
     this.filterManager = filterManager;
+};
+
+Grid.prototype.showToolPanel = function(show) {
+    if (!this.eToolPanelContainer) {
+        this.toolPanelShowing = false;
+        return;
+    }
+
+    this.toolPanelShowing = show;
+    this.eRootPanel.setEastVisible(show);
+};
+
+Grid.prototype.isToolPanelShowing = function() {
+    return this.toolPanelShowing;
 };
 
 Grid.prototype.showAndPositionPagingPanel = function() {
@@ -285,7 +318,8 @@ Grid.prototype.onRowClicked = function(event, rowIndex, node) {
         var params = {
             node: node,
             data: node.data,
-            event: event
+            event: event,
+            rowIndex: rowIndex
         };
         this.gridOptions.rowClicked(params);
     }
@@ -652,6 +686,12 @@ Grid.prototype.addApi = function() {
         },
         setFocusedCell: function(rowIndex, colIndex) {
             that.setFocusedCell(rowIndex, colIndex);
+        },
+        showToolPanel: function(show) {
+            that.showToolPanel(show);
+        },
+        isToolPanelShowing: function() {
+            return that.isToolPanelShowing();
         }
     };
     this.gridOptions.api = api;
@@ -796,7 +836,6 @@ Grid.prototype.findAllElements = function(eGridDiv) {
         this.eHeader = eGridDiv.querySelector(".ag-header");
         this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
         this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
-        this.eToolPanelContainer = eGridDiv.querySelector('.ag-tool-panel-container');
         // for scrolls, all rows live in eBody (containing pinned and normal body)
         this.eParentOfRows = this.eBody;
         this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');

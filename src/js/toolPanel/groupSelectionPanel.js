@@ -1,6 +1,7 @@
 var CheckboxSelection = require("../widgets/checkboxSelection");
 var constants = require('../constants');
 var utils = require('../utils');
+var BorderLayout = require('../layout/borderLayout');
 
 function GroupSelectionPanel(columnController, inMemoryRowController) {
     this.eGui = document.createElement('div');
@@ -53,9 +54,19 @@ GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
 GroupSelectionPanel.prototype.setupComponents = function() {
     this.cColumnList = new CheckboxSelection();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
+    this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
+    this.cColumnList.setEmptyMessage("Drag columns down from above to pivot by those columns");
+
     this.eGui.appendChild(this.cColumnList.getGui());
 
-    this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
+    var eNorthPanel = document.createElement('div');
+    eNorthPanel.style.paddingTop = '10px';
+    eNorthPanel.innerHTML = '<div style="text-align: center;">Pivoted Columns</div>';
+
+    this.eRootPanel = new BorderLayout({
+        center: this.cColumnList.getGui(),
+        north: eNorthPanel
+    });
 };
 
 GroupSelectionPanel.prototype.onGroupingChanged = function() {
@@ -65,7 +76,7 @@ GroupSelectionPanel.prototype.onGroupingChanged = function() {
 };
 
 GroupSelectionPanel.prototype.getGui = function() {
-    return this.eGui;
+    return this.eRootPanel.getGui();
 };
 
 module.exports = GroupSelectionPanel;

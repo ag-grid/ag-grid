@@ -1,8 +1,8 @@
 var CheckboxSelection = require("../widgets/checkboxSelection");
 var utils = require('./../utils');
+var BorderLayout = require('../layout/BorderLayout');
 
 function ColumnSelectionPanel(columnController) {
-    this.eGui = document.createElement('div');
     this.setupComponents();
     this.columnController = columnController;
 
@@ -56,13 +56,21 @@ ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
 };
 
 ColumnSelectionPanel.prototype.setupComponents = function() {
+
     this.cColumnList = new CheckboxSelection();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
-    this.eGui.appendChild(this.cColumnList.getGui());
 
     var that = this;
     this.cColumnList.addModelChangedListener( function() {
         that.columnController.onColumnStateChanged();
+    });
+
+    var eNorthPanel = document.createElement('div');
+    eNorthPanel.innerHTML = '<div style="text-align: center;">Grid Columns</div>';
+
+    this.eRootPanel = new BorderLayout({
+        center: this.cColumnList.getGui(),
+        north: eNorthPanel
     });
 };
 
@@ -72,7 +80,7 @@ ColumnSelectionPanel.prototype.setSelected = function(column, selected) {
 };
 
 ColumnSelectionPanel.prototype.getGui = function() {
-    return this.eGui;
+    return this.eRootPanel.getGui();
 };
 
 module.exports = ColumnSelectionPanel;

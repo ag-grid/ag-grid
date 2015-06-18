@@ -217,6 +217,14 @@ Utils.prototype.addCssClass = function(element, className) {
     }
 };
 
+Utils.prototype.offsetHeight = function(element) {
+    return element && element.offsetHeight ? element.offsetHeight : 0;
+};
+
+Utils.prototype.offsetWidth = function(element) {
+    return element && element.offsetWidth ? element.offsetWidth : 0;
+};
+
 Utils.prototype.removeCssClass = function(element, className) {
     if (element.className && element.className.length > 0) {
         var cssClasses = element.className.split(' ');

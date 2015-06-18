@@ -90,7 +90,8 @@ gridsModule.controller('mainController', function($scope) {
         //suppressCellSelection: true,
         //suppressUnSort: true,
         //suppressMultiSort: true,
-        showToolPanel: true,
+        //showToolPanel: true,
+        //suppressAutoGroupColumn: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,
@@ -308,6 +309,11 @@ gridsModule.controller('mainController', function($scope) {
         createCols();
         angularGrid.api.onNewCols();
         angularGrid.api.onNewRows();
+    };
+
+    $scope.toggleToolPanel = function() {
+        var showing = angularGrid.api.isToolPanelShowing();
+        angularGrid.api.showToolPanel(!showing);
     };
 
     function editableFunc() {
