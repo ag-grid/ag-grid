@@ -321,23 +321,37 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     return eHeaderCell;
 };
 
+HeaderRenderer.prototype.getNextSortDirection = function(direction) {
+    var suppressUnSort = this.gridOptionsWrapper.isSuppressUnSort();
+    var suppressDescSort = this.gridOptionsWrapper.isSuppressDescSort();
+
+    switch (direction) {
+        case constants.DESC:
+            if (suppressUnSort) {
+                return constants.ASC;
+            } else {
+                return null;
+            }
+        case constants.ASC:
+            if (suppressUnSort && suppressDescSort) {
+                return constants.ASC;
+            } else if (suppressDescSort) {
+                return null;
+            } else {
+                return constants.DESC;
+            }
+        default :
+            return constants.ASC;
+    }
+};
+
 HeaderRenderer.prototype.addSortHandling = function(headerCellLabel, column) {
     var that = this;
 
     headerCellLabel.addEventListener("click", function(e) {
 
         // update sort on current col
-        if (column.sort === constants.DESC) {
-            if (that.gridOptionsWrapper.isSuppressUnSort()) {
-                column.sort = constants.ASC;
-            } else {
-                column.sort = null;
-            }
-        } else if (column.sort === constants.ASC) {
-            column.sort = constants.DESC;
-        } else {
-            column.sort = constants.ASC;
-        }
+        column.sort = that.getNextSortDirection(column.sort);
 
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.sort) {

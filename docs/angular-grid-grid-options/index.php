@@ -76,6 +76,10 @@ include '../documentation_header.php';
             <td>Set to true or false. If true, clicking column header cannot remove the sort.</td>
         </tr>
         <tr>
+            <th>suppressDescSort</th>
+            <td>Set to true or false. If true, sorting descending is disabled.</td>
+        </tr>
+        <tr>
             <th>suppressMultiSort</th>
             <td>Set to true or false. If true, shift-clicking column header doesn't multi sort.</td>
         </tr>

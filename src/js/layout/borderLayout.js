@@ -3,18 +3,17 @@ var utils = require('../utils');
 function BorderLayout(params) {
 
     var template =
-        '<div style="height: 100%;">' +
-        '<div id="north"></div>' +
-        '<div id="centerRow" style="height: 100%; overflow: auto;">' +
-        '<div id="west" style="height: 100%; float: left;"></div>' +
-        '<div id="east" style="height: 100%; float: right;"></div>' +
-        '<div id="center" style="height: 100%;"></div>' +
-        '</div>' +
-        '<div id="south"></div>' +
+        '<div id="borderLayout" style="height: 100%;">' +
+            '<div id="north"></div>' +
+            '<div id="centerRow" style="height: 100%; overflow: auto;">' +
+                '<div id="west" style="height: 100%; float: left;"></div>' +
+                '<div id="east" style="height: 100%; float: right;"></div>' +
+                '<div id="center" style="height: 100%;"></div>' +
+            '</div>' +
+            '<div id="south"></div>' +
         '</div>';
 
-    this.eGui = document.createElement('div');
-    this.eGui.innerHTML = template;
+    this.eGui = utils.loadTemplate(template);
 
     if (params) {
         this.setupPanels(params);

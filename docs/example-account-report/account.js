@@ -6,14 +6,14 @@ fileBrowserModule.controller('accountController', function($scope) {
         {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Units", field: "amount1", group: 'Week 1', width: 75},
-        {headerName: "GBP", field: "gbp1", group: 'Week 1', width: 75, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount2", group: 'Week 2', width: 75},
-        {headerName: "GBP", field: "gbp2", group: 'Week 2', width: 75, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount3", group: 'Week 3', width: 75},
-        {headerName: "GBP", field: "gbp3", group: 'Week 3', width: 75, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amountTotal", group: 'Period Total', width: 75},
-        {headerName: "GBP", field: "gbpTotal", group: 'Period Total', width: 75, cellRenderer: currencyRenderer}
+        {headerName: "Units", field: "amount1", group: 'Week 1', width: 70},
+        {headerName: "GBP", field: "gbp1", group: 'Week 1', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount2", group: 'Week 2', width: 70},
+        {headerName: "GBP", field: "gbp2", group: 'Week 2', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount3", group: 'Week 3', width: 70},
+        {headerName: "GBP", field: "gbp3", group: 'Week 3', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amountTotal", group: 'Period Total', width: 70},
+        {headerName: "GBP", field: "gbpTotal", group: 'Period Total', width: 70, cellRenderer: currencyRenderer}
     ];
 
     function currencyRenderer(params) {
@@ -36,6 +36,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         enableColResize: true,
         enableSorting: false,
         dontUseScrolls: true,
+        suppressAutoGroupColumn: true,
         icons: {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'

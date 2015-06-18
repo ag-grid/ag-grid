@@ -1,4 +1,19 @@
-            <hr>
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+
+            <h4>Don't ask questions below!!!</h4>
+
+            <p>
+                Can you add to the documentation? Add a comment below to supplement the documentation.
+            </p>
+
+            <p>
+                If you have a question, please ask it on <a href="/forum">the forum</a>.
+            </p>
 
             <div id="disqus_thread"></div>
             <script type="text/javascript">

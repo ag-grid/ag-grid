@@ -65,6 +65,20 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
+<div style="text-align: center; padding: 20px;;">
+<span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
+    <p>
+        <img src="images/panda.png"/>
+        <b>15th June 2015</b>
+        <img src="images/panda.png"/>
+    </p>
+    <p>
+        Two small bugs found in 1.9.0 (issues with 'soft refresh' and 'setSortModel').
+        Both of these fixed in 1.9.2.
+    </p>
+</span>
+</div>
+
 <div style="text-align: center; margin-top: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
 
