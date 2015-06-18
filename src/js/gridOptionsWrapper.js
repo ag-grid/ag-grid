@@ -24,6 +24,7 @@ GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return i
 GridOptionsWrapper.prototype.isSuppressCellSelection = function() { return isTrue(this.gridOptions.suppressCellSelection); };
 GridOptionsWrapper.prototype.isSuppressUnSort = function() { return isTrue(this.gridOptions.suppressUnSort); };
 GridOptionsWrapper.prototype.isSuppressMultiSort = function() { return isTrue(this.gridOptions.suppressMultiSort); };
+GridOptionsWrapper.prototype.isSuppressAutoGroupColumn = function() { return isTrue(this.gridOptions.suppressAutoGroupColumn); };
 GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
 GridOptionsWrapper.prototype.getGroupInnerRenderer = function() { return this.gridOptions.groupInnerRenderer; };
 GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
@@ -39,6 +40,7 @@ GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.grid
 GridOptionsWrapper.prototype.getGroupAggFields = function() { return this.gridOptions.groupAggFields; };
 GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
 GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
+GridOptionsWrapper.prototype.getGroupColumn = function() { return this.gridOptions.groupColumn; };
 GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };
 GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return isTrue(this.gridOptions.angularCompileFilters); };
 GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return isTrue(this.gridOptions.angularCompileHeaders); };
@@ -79,10 +81,6 @@ GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) {
 
 GridOptionsWrapper.prototype.getIcons = function() {
     return this.gridOptions.icons;
-};
-
-GridOptionsWrapper.prototype.isDoInternalGrouping = function() {
-    return !this.isRowsAlreadyGrouped() && this.gridOptions.groupKeys;
 };
 
 GridOptionsWrapper.prototype.getHeaderHeight = function() {

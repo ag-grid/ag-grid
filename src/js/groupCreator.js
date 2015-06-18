@@ -1,6 +1,6 @@
 function GroupCreator() {}
 
-GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunction, expandByDefault) {
+GroupCreator.prototype.group = function(rowNodes, groupedCols, groupAggFunction, expandByDefault) {
 
     var topMostGroup = {
         level: -1,
@@ -11,7 +11,7 @@ GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunctio
     var allGroups = [];
     allGroups.push(topMostGroup);
 
-    var levelToInsertChild = groupByFields.length - 1;
+    var levelToInsertChild = groupedCols.length - 1;
     var i, currentLevel, node, data, currentGroup, groupByField, groupKey, nextGroup;
 
     // start at -1 and go backwards, as all the positive indexes
@@ -25,8 +25,8 @@ GroupCreator.prototype.group = function(rowNodes, groupByFields, groupAggFunctio
         // all leaf nodes have the same level in this grouping, which is one level after the last group
         node.level = levelToInsertChild + 1;
 
-        for (currentLevel = 0; currentLevel < groupByFields.length; currentLevel++) {
-            groupByField = groupByFields[currentLevel];
+        for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
+            groupByField = groupedCols[currentLevel].colDef.field;
             groupKey = data[groupByField];
 
             if (currentLevel == 0) {
