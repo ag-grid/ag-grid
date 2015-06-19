@@ -46,7 +46,7 @@
         if ($attrs) {
             // new directive of ag-grid
             var keyOfGridInScope = $attrs.agGrid;
-            var quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
+            quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
             gridOptions = $scope.$eval(keyOfGridInScope);
             if (!gridOptions) {
                 console.warn("WARNING - grid options for Angular Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");

@@ -22,11 +22,11 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
     this.gridOptions = gridOptions;
     this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
 
-    var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
-
     this.setupBorderLayout(eGridDiv);
-
     this.findAllElements(eGridDiv);
+
+    // default is we don't show paging panel, this is set to true when datasource is set
+    this.eGridPanel.setSouthVisible(false);
 
     var that = this;
     this.quickFilter = null;
@@ -40,8 +40,9 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.virtualRowCallbacks = {};
 
+    var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
     this.addApi();
-    this.createAndWireBeans($scope, $compile, eGridDiv, useScrolls);
+    this.createAndWireBeans($scope, $compile, eGridDiv, forPrint);
 
     this.scrollWidth = utils.getScrollbarWidth();
 
@@ -50,7 +51,7 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
-    if (useScrolls) {
+    if (!forPrint) {
         this.addScrollListener();
         this.doLayout(); //setting sizes of body (containing viewports), doesn't change container sizes
         window.addEventListener('resize', this.doLayout.bind(this));
@@ -72,30 +73,46 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
     if (typeof this.gridOptionsWrapper.getReady() == 'function') {
         this.gridOptionsWrapper.getReady()(gridOptions.api);
     }
+
+    this.doLayout();
 }
 
 Grid.prototype.setupBorderLayout = function(eGridDiv) {
-    var templateToUse;
-    var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
+
+    var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
     var toolPanelLayout = null;
-    if (!dontUseScrolls) {
-        templateToUse = template;
+
+    var eInnerElement;
+    if (forPrint) {
+        eInnerElement = utils.loadTemplate(templateNoScrolls);
+        utils.addCssClass(eInnerElement, 'ag-root ag-no-scrolls');
+    } else {
+        eInnerElement = utils.loadTemplate(template);
         this.eToolPanelContainer = new ToolPanel();
         toolPanelLayout = this.eToolPanelContainer.layout;
-    } else {
-        templateToUse = templateNoScrolls;
+        utils.addCssClass(eInnerElement, 'ag-root ag-scrolls');
     }
-    var eInnerElement = utils.loadTemplate(templateToUse);
+
+    var ePagingPanel = utils.loadTemplate('<div class="ag-paging-panel"></div>');
+
+    this.eGridPanel = new BorderLayout({
+        center: eInnerElement,
+        south: ePagingPanel,
+        dontFill: forPrint,
+        name: 'eGridPanel'
+    });
 
     this.eRootPanel = new BorderLayout({
-        center: eInnerElement,
+        center: this.eGridPanel,
         east: toolPanelLayout,
-        dontFill: dontUseScrolls
+        dontFill: forPrint,
+        name: 'eRootPanel'
     });
+
     eGridDiv.appendChild(this.eRootPanel.getGui());
 };
 
-Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScrolls) {
+Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, forPrint) {
 
     // make local references, to make the below more human readable
     var gridOptionsWrapper = this.gridOptionsWrapper;
@@ -144,7 +161,7 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
 
     // and the last bean, done in it's own section, as it's optional
     var paginationController = null;
-    if (useScrolls) {
+    if (!forPrint) {
         paginationController = new PaginationController();
         paginationController.init(this.ePagingPanel, this, gridOptionsWrapper);
     }
@@ -175,30 +192,6 @@ Grid.prototype.isToolPanelShowing = function() {
     return this.toolPanelShowing;
 };
 
-Grid.prototype.showAndPositionPagingPanel = function() {
-    // no paging when no-scrolls
-    if (!this.ePagingPanel) {
-        return;
-    }
-
-    if (this.isShowPagingPanel()) {
-        this.ePagingPanel.style['display'] = 'inline';
-        var heightOfPager = this.ePagingPanel.offsetHeight;
-        this.eBody.style['paddingBottom'] = heightOfPager + 'px';
-        var heightOfRoot = this.eRoot.clientHeight;
-        var topOfPager = heightOfRoot - heightOfPager;
-        this.ePagingPanel.style['top'] = topOfPager + 'px';
-    } else {
-        this.ePagingPanel.style['display'] = 'none';
-        this.eBody.style['paddingBottom'] = null;
-    }
-
-};
-
-Grid.prototype.isShowPagingPanel = function() {
-    return this.showPagingPanel;
-};
-
 Grid.prototype.setDatasource = function(datasource) {
     // if datasource provided, then set it
     if (datasource) {
@@ -209,32 +202,30 @@ Grid.prototype.setDatasource = function(datasource) {
     var datasourceToUse = this.gridOptionsWrapper.getDatasource();
     this.doingVirtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
     this.doingPagination = datasourceToUse && !this.doingVirtualPaging;
+    var showPagingPanel;
 
     if (this.doingVirtualPaging) {
         this.paginationController.setDatasource(null);
         this.virtualPageRowController.setDatasource(datasourceToUse);
         this.rowModel = this.virtualPageRowController.getModel();
-        this.showPagingPanel = false;
+        showPagingPanel = false;
     } else if (this.doingPagination) {
         this.paginationController.setDatasource(datasourceToUse);
         this.virtualPageRowController.setDatasource(null);
         this.rowModel = this.inMemoryRowController.getModel();
-        this.showPagingPanel = true;
+        showPagingPanel = true;
     } else {
         this.paginationController.setDatasource(null);
         this.virtualPageRowController.setDatasource(null);
         this.rowModel = this.inMemoryRowController.getModel();
-        this.showPagingPanel = false;
+        showPagingPanel = false;
     }
 
     this.selectionController.setRowModel(this.rowModel);
     this.filterManager.setRowModel(this.rowModel);
     this.rowRenderer.setRowModel(this.rowModel);
 
-    // we may of just shown or hidden the paging panel, so need
-    // to get table to check the body size, which also hides and
-    // shows the paging panel.
-    this.doLayout();
+    this.eGridPanel.setSouthVisible(showPagingPanel);
 
     // because we just set the rowModel, need to update the gui
     this.rowRenderer.refreshView();
@@ -352,7 +343,6 @@ Grid.prototype.setHeaderHeight = function() {
     } else {
         this.eHeader.style['height'] = headerHeightPixels;
         this.eBody.style['paddingTop'] = headerHeightPixels;
-        this.eLoadingPanel.style['marginTop'] = headerHeightPixels;
     }
 };
 
@@ -805,7 +795,7 @@ Grid.prototype.findAllElements = function(eGridDiv) {
         this.eRoot = eGridDiv.querySelector(".ag-root");
         this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
         this.eBodyContainer = eGridDiv.querySelector(".ag-body-container");
-        this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
+        this.eLoadingPanel = document.createElement('div');// eGridDiv.querySelector('.ag-loading-panel');
         // for no-scrolls, all rows live in the body container
         this.eParentOfRows = this.eBodyContainer;
     } else {
@@ -819,7 +809,7 @@ Grid.prototype.findAllElements = function(eGridDiv) {
         this.ePinnedHeader = eGridDiv.querySelector(".ag-pinned-header");
         this.eHeader = eGridDiv.querySelector(".ag-header");
         this.eHeaderContainer = eGridDiv.querySelector(".ag-header-container");
-        this.eLoadingPanel = eGridDiv.querySelector('.ag-loading-panel');
+        this.eLoadingPanel = document.createElement('div');// eGridDiv.querySelector('.ag-loading-panel');
         // for scrolls, all rows live in eBody (containing pinned and normal body)
         this.eParentOfRows = this.eBody;
         this.ePagingPanel = eGridDiv.querySelector('.ag-paging-panel');
@@ -862,40 +852,19 @@ Grid.prototype.setPinnedColContainerWidth = function() {
 
 // see if a grey box is needed at the bottom of the pinned col
 Grid.prototype.setPinnedColHeight = function() {
-    // var bodyHeight = utils.pixelStringToNumber(this.eBody.style.height);
-    var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
-    var bodyHeight = this.eBodyViewport.offsetHeight;
-    if (scrollShowing) {
-        this.ePinnedColsViewport.style.height = (bodyHeight - this.scrollWidth) + "px";
-    } else {
+    if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+        var bodyHeight = this.eBodyViewport.offsetHeight;
         this.ePinnedColsViewport.style.height = bodyHeight + "px";
+        this.eLoadingPanel.style.height = bodyHeight + 'px';
     }
-    // also the loading overlay, needs to have it's height adjusted
-    this.eLoadingPanel.style.height = bodyHeight + 'px';
 };
 
 Grid.prototype.doLayout = function() {
-
-    var bodyHeight = this.eBodyViewport.offsetHeight;
-    var pagingVisible = this.isShowPagingPanel();
-
-    if (this.bodyHeightLastTime != bodyHeight || this.showPagingPanelVisibleLastTime != pagingVisible) {
-        this.bodyHeightLastTime = bodyHeight;
-        this.showPagingPanelVisibleLastTime = pagingVisible;
-
-        this.setPinnedColHeight();
-
-        //only draw virtual rows if done sort & filter - this
-        //means we don't draw rows if table is not yet initialised
-        if (this.rowModel.getVirtualRowCount() > 0) {
-            this.rowRenderer.drawVirtualRows();
-        }
-
-        // show and position paging panel
-        this.showAndPositionPagingPanel();
-    }
-
+    // need to do layout first, as drawVirtualRows and setPinnedColHeight
+    // need to know the result of the resizing of the panels.
     this.eRootPanel.doLayout();
+    this.rowRenderer.drawVirtualRows();
+    this.setPinnedColHeight();
 };
 
 Grid.prototype.addScrollListener = function() {

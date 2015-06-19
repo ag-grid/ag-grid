@@ -18,12 +18,6 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
     };
 
     var columnDefs = [
-        {headerName : "Location", field: "city", width: 300,
-            cellRenderer: {
-                renderer: 'group',
-                checkbox: true
-            }
-        },
         {headerName : 'Jan', group: 'Monthly Data', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
@@ -66,6 +60,12 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
     ];
 
     $scope.gridOptions = {
+        groupColumnDef: {headerName : "Location", field: "city", width: 300,
+            cellRenderer: {
+                renderer: 'group',
+                checkbox: true
+            }
+        },
         columnDefs: columnDefs,
         colWidth: 100,
         rowSelection: 'multiple',

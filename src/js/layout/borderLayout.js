@@ -4,12 +4,10 @@ function BorderLayout(params) {
 
     this.isLayoutPanel = true;
 
-    var styleFull = params.dontFill ? '' : 'height: 100%;';
-
     var template;
-    if (styleFull) {
+    if (!params.dontFill) {
         template =
-            '<div id="borderLayout" style="height: 100%;">' +
+            '<div style="height: 100%;">' +
                 '<div id="north"></div>' +
                     '<div id="centerRow" style="height: 100%; overflow: auto;">' +
                     '<div id="west" style="height: 100%; float: left;"></div>' +
@@ -20,7 +18,7 @@ function BorderLayout(params) {
             '</div>';
     } else {
         template =
-            '<div id="borderLayout">' +
+            '<div>' +
                 '<div id="north"></div>' +
                 '<div id="centerRow">' +
                     '<div id="west"></div>' +
@@ -33,11 +31,18 @@ function BorderLayout(params) {
 
     this.eGui = utils.loadTemplate(template);
 
+    this.id = 'borderLayout';
+    if (params.name) {
+        this.id += '_' + params.name;
+    }
+    this.eGui.setAttribute('id', this.id);
     this.childPanels = [];
 
     if (params) {
         this.setupPanels(params);
     }
+
+    this.layoutActive = !params.dontFill;
 }
 
 BorderLayout.prototype.setupPanels = function(params) {
@@ -75,8 +80,10 @@ BorderLayout.prototype.getGui = function() {
 };
 
 BorderLayout.prototype.doLayout = function() {
-    this.layoutHeight();
-    this.layoutWidth();
+    if (this.layoutActive) {
+        this.layoutHeight();
+        this.layoutWidth();
+    }
     for (var i = 0; i<this.childPanels.length; i++) {
         this.childPanels[i].doLayout();
     }
@@ -92,11 +99,7 @@ BorderLayout.prototype.layoutHeight = function() {
         centerHeight = 0;
     }
 
-    if (centerHeight !== this.centerHeightLastTime && this.eCenterWrapper) {
-        this.eCenterRow.style.height = centerHeight;
-    }
-
-    this.centerHeightLastTime = centerHeight;
+    this.eCenterRow.style.height = centerHeight + 'px';
 };
 
 BorderLayout.prototype.layoutWidth = function() {
@@ -109,18 +112,22 @@ BorderLayout.prototype.layoutWidth = function() {
         centerWidth = 0;
     }
 
-    if (centerWidth !== this.centerWidthLastTime && this.eCenterWrapper) {
-        this.eCenterWrapper.style.width = centerWidth;
-    }
-
-    this.centerWidthLastTime = centerWidth;
+    this.eCenterWrapper.style.width = centerWidth + 'px';
 };
 
 BorderLayout.prototype.setEastVisible = function(visible) {
     if (this.eEastWrapper) {
         this.eEastWrapper.style.display = visible ? '' : 'none';
+    }
+    this.doLayout();
+};
+
+BorderLayout.prototype.setSouthVisible = function(visible) {
+    if (this.eSouthWrapper) {
+        this.eSouthWrapper.style.display = visible ? '' : 'none';
         this.doLayout();
     }
+    this.doLayout();
 };
 
 module.exports = BorderLayout;
