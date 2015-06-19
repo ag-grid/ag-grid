@@ -1,102 +1,16 @@
 var consolesModule = angular.module('consoles', ['angularGrid']);
 
 consolesModule.controller('consolesController', function($scope, $http) {  
-
-    var columnDefs = [
-        {
-            width: 250,
-            cellRenderer: {
-                renderer: 'group',
-                innerRenderer: groupInnerCellRenderer
-            }, 
-            displayName: "Name",
-            field: "name", 
-            group:" "
-        },      
-        {            
-            group: {
-                name: "Male", 
-                parent: {
-                    name: "15 or younger"               
-                }
-            },
-            displayName: "Like", field: "1", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer, groupShow:'open'
-        },
-        {
-            group: {
-                name: "Male", 
-                parent: {
-                    name:  "15 or younger"               
-                }
-            },
-            displayName: "Not Like", field: "2", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer, groupShow:'closed'
-        },
-         {
-            group: {
-                name: "Female", 
-                parent: {
-                    name:  "15 or younger"               
-                }
-            },
-            displayName: "Like", field: "3", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        },
-        {
-            group: {
-                name: "Female", 
-                parent: {
-                    name:  "15 or younger"               
-                }
-            },
-            displayName: "Not Like", field: "4", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        },
-        {            
-            group: {
-                name: "Male", 
-                parent: {
-                    name:  "over 15 years"               
-                }
-            },
-            displayName: "Like", field: "5", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        },
-        {
-            group: {
-                name: "Male", 
-                parent: {
-                    name:  "over 15 years"               
-                }
-            },
-            displayName: "Not Like", field: "6", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        },
-         {
-            group: { 
-                name:"Female",
-                parent: {
-                    name:  "over 15 years"               
-                }
-            },
-            displayName: "Like", field: "7", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        },
-        {
-            group: {
-                name: "Female", 
-                parent: {
-                    name:  "over 15 years"               
-                }
-            },
-            displayName: "Not Like", field: "8", editable: true, cellStyle: sizeCellStyle, newValueHandler: numberNewValueHandler,cellRenderer: editableCellRenderer
-        }
-    ];
-
+$http.defaults.cache=false;
     var rowData = null;
 
+	
     $scope.gridOptions = {
-        columnDefs: columnDefs,
-        colWidth: 100,
+        columnDefs: [],
         enableSorting: true,
         enableColResize: true,
         groupHeaders: true, 
         icons: {
-            filter: ' ',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'
         },
@@ -104,17 +18,28 @@ consolesModule.controller('consolesController', function($scope, $http) {
         rowClicked: rowClicked,
         rowData: rowData,
         rowHeight: 20,
-        rowSelection: 'multiple'
+        rowSelection: 'single',
+		groupAggFunction: groupAggFunction,
+		angularCompileRows: true,"groupKeys":["grupo1","grupo2"],
+		pinnedColumnCount: 1
+
+		
+
     };
 
     $scope.selectedFile = 'Select a game below...';
 
     function rowClicked(params) {
         var node = params.node;
-        var path = node.data.name;
+        
+		var out=(!node.key)?params.data.name:node.key;
+		var path=(!out)?node.field:out;
+		
+		
         while (node.parent) {
             node = node.parent;
-            path = node.data.name + '\\' + path;
+			out=(!node.key)?params.data.name:node.key;
+            path = ((!out)?node.field:out) + '\\' + path;
         }
         $scope.selectedFile = path;
     }
@@ -123,7 +48,7 @@ consolesModule.controller('consolesController', function($scope, $http) {
         return {'text-align': 'center'};
     }
 
-    function groupInnerCellRenderer(params) {
+    function groupInnerCellRenderer(params,index) {
         var image = params.node.level === 0 ? 'disk' : 'folder';
         if(params.data.icon)
             image=params.data.icon;
@@ -132,14 +57,18 @@ consolesModule.controller('consolesController', function($scope, $http) {
             image="cd";
 
         var imageFullUrl =  image + '.png';
-        return '<img src="' + imageFullUrl + '" style="padding-left: 4px;  height: 15px;" /> ' + params.data.name;
+		
+		var out=params.value;
+		if(!out)
+		out=params.node.key;
+		if(!out)
+		out=params.node.field;
+		
+		
+        return '<img src="' + imageFullUrl + '" style="padding-left: 4px;  height: 15px;" />  ' +out;
     }
 
-    function editableCellRenderer(params) {
-        if (params.node.group)
-            return '<span>*</span>';
-        if(params.value==undefined)
-           return "<span></span>";
+    function editableCellRenderer(params) {      
         return '<span >' + params.value + '</span>';
     }
 
@@ -151,29 +80,57 @@ consolesModule.controller('consolesController', function($scope, $http) {
             params.data[params.colDef.field] = valueAsNumber;
         }
     }
+	
+	function groupAggFunction(nodes) {
+		var colsToSum = $scope.colsToSum;		
+		var sums = {};
+		colsToSum.forEach(function(key) { sums[key] = 0; });
+
+		nodes.forEach(function(node) {
+			colsToSum.forEach(function(key) {
+				sums[key] += parseInt(node.data[key]);
+			});
+		});
+
+		return sums;
+	}
 
     $scope.createRowData = function() {
-
+	
         foreach=function(row) {
-            columnDefs.forEach(function(column) {
-             
-                if(row.children)
-                    row.children.forEach(foreach);
-                else  if (row.data[column.field] == undefined)
-                {
-                    row.data[column.field] = parseInt(Math.random()*100,10);
+            $scope.gridOptions.columnDefs.forEach(function(column) { 					
+                if(!row[column.field]){
+                    row[column.field] = parseInt(Math.random()*100,10);
                 }
-
             });
-        };
-        $http.get("consoles.json").
-                then(function(res) {
-                    res.data.forEach(foreach);
-                    $scope.gridOptions.rowData = res.data;
-                    $scope.gridOptions.rowsAlreadyGrouped = true;
-                    $scope.gridOptions.api.onNewRows();
-                    $scope.resize();
-                });
+        };        
+		$scope.colsToSum=[];
+		$http.get("columns.json").
+			then(function(res) {
+			console.log(res);
+				res.data.forEach(function(column){
+					if(column.cellRenderer&&column.cellRenderer.innerRenderer){
+						column.cellRenderer.innerRenderer=groupInnerCellRenderer;			
+					}else
+					if(column.editable){
+						$scope.colsToSum.push(column.field);
+						column.cellValueChanged = function() {
+							$scope.gridOptions.api.recomputeAggregates();
+						}						
+					}
+					
+				});
+				$scope.gridOptions.columnDefs = res.data;
+				
+				$scope.gridOptions.api.onNewCols();
+				$http.get("consoles.json").
+					then(function(resp) {
+						resp.data.forEach(foreach);
+						$scope.gridOptions.rowData = resp.data;						
+						$scope.gridOptions.api.onNewRows();
+						
+					});
+			});
     }
 
     $scope.exportar = function() {
@@ -182,13 +139,10 @@ consolesModule.controller('consolesController', function($scope, $http) {
     }
 
     $scope.resize = function() {
-//        $scope.gridOptions.api.sizeColumnsToFit();
+        $scope.gridOptions.api.sizeColumnsToFit();
     };
-
-
-    $(window).resize(function() {
-        $scope.resize();
-    });
+	
     $scope.createRowData();
 
 });
+

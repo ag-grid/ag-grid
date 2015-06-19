@@ -1,0 +1,84 @@
+[
+    {
+        "width": 250,
+        "displayName": "Derecho Protegido",
+        "field": "name",
+        "cellRenderer": {
+            "renderer": "group",
+            "innerRenderer": true
+        }
+    },
+    {
+        "group": {
+            "name": "Grupos etarios por genero"
+        },
+        "displayName": "(0 años) Niños y Niñas Concebidos y no nacidos",
+        "field": 2378,
+        "editable": true
+    },
+ {
+        "group": {
+            "name": "Grupos etarios por genero"
+        },
+        "displayName": "(0 años) Niños y Niñas Concebidos y no nacidos asd",
+        "field": 28,
+        "editable": true
+    },
+
+    {
+        "group": {
+            "parent": {
+                "parent": {
+                    "name": "Grupos etarios por genero"
+                },
+                "name": "(18 < 25 años)"
+            },
+            "name": "Jóvenes Adultos con Diversidad Funcional"
+        },
+        "displayName": "Femenino",
+        "field": 2282,
+        "editable": true
+    },
+    {
+        "group": {
+            "parent": {
+                "parent": {
+                    "name": "Grupos etarios por genero"
+                },
+                "name": "(18 < 25 años)"
+            },
+            "name": "Jóvenes Adultos con Diversidad Funcional"
+        },
+        "displayName": "Masculino",
+        "field": 2281,
+        "editable": true
+    },
+    {
+        "group": {
+            "parent": {
+                "parent": {
+                    "name": "Grupos etarios por genero"
+                },
+                "name": "(25 años o más)"
+            },
+            "name": "Adultos con Diversidad Funcional"
+        },
+        "displayName": "Femenino",
+        "field": 2267,
+        "editable": true
+    },
+    {
+        "group": {
+            "parent": {
+                "parent": {
+                    "name": "Grupos etarios por genero"
+                },
+                "name": "(25 años o más)"
+            },
+            "name": "Adultos con Diversidad Funcional"
+        },
+        "displayName": "Masculino",
+        "field": 2268,
+        "editable": true
+    }
+]
