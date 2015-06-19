@@ -130,7 +130,8 @@ fileBrowserModule.controller('basicController', function($scope) {
         groupHeaders: true,
         rowHeight: 22,
         pinnedColumnCount: 3,
-        modelUpdated: modelUpdated
+        modelUpdated: modelUpdated,
+        suppressRowClickSelection: true
     };
 
     function modelUpdated() {

@@ -287,7 +287,7 @@ ColumnController.prototype.updateVisibleColumns = function() {
     var suppressAutoGroupCol = this.gridOptionsWrapper.isSuppressAutoGroupColumn();
     if (!suppressAutoGroupCol && this.groupedColumns.length > 0) {
         // if one provided by user, use it, otherwise create one
-        var groupColDef = this.gridOptionsWrapper.getGroupColumn();
+        var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
         if (!groupColDef) {
             groupColDef = {
                 headerName: "*Group",

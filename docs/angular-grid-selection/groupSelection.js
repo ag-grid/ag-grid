@@ -4,11 +4,6 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 200,
-            cellRenderer: {
-                renderer: "group",
-                checkbox: true
-            }},
         {headerName: "Gold", field: "gold", width: 100},
         {headerName: "Silver", field: "silver", width: 100},
         {headerName: "Bronze", field: "bronze", width: 100},
@@ -26,7 +21,12 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowSelection: 'multiple',
         groupKeys: ['country','sport'],
         groupAggFunction: groupAggFunction,
-        groupSelectsChildren: true
+        groupSelectsChildren: true,
+        groupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
+            cellRenderer: {
+                renderer: "group",
+                checkbox: true
+            }}
     };
 
     function groupAggFunction(rows) {

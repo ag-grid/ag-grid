@@ -2,28 +2,47 @@ var utils = require('../utils');
 
 function BorderLayout(params) {
 
-    var template =
-        '<div id="borderLayout" style="height: 100%;">' +
-            '<div id="north"></div>' +
-            '<div id="centerRow" style="height: 100%; overflow: auto;">' +
-                '<div id="west" style="height: 100%; float: left;"></div>' +
-                '<div id="east" style="height: 100%; float: right;"></div>' +
+    this.isLayoutPanel = true;
+
+    var template;
+    if (!params.dontFill) {
+        template =
+            '<div style="height: 100%;">' +
+                '<div id="north"></div>' +
+                    '<div id="centerRow" style="height: 100%; overflow: auto;">' +
+                    '<div id="west" style="height: 100%; float: left;"></div>' +
+                    '<div id="east" style="height: 100%; float: right;"></div>' +
                 '<div id="center" style="height: 100%;"></div>' +
-            '</div>' +
-            '<div id="south"></div>' +
-        '</div>';
+                '</div>' +
+                '<div id="south"></div>' +
+            '</div>';
+    } else {
+        template =
+            '<div>' +
+                '<div id="north"></div>' +
+                '<div id="centerRow">' +
+                    '<div id="west"></div>' +
+                    '<div id="east"></div>' +
+                    '<div id="center"></div>' +
+                '</div>' +
+                '<div id="south"></div>' +
+            '</div>';
+    }
 
     this.eGui = utils.loadTemplate(template);
+
+    this.id = 'borderLayout';
+    if (params.name) {
+        this.id += '_' + params.name;
+    }
+    this.eGui.setAttribute('id', this.id);
+    this.childPanels = [];
 
     if (params) {
         this.setupPanels(params);
     }
 
-    var that = this;
-    setInterval(function () {
-        that.doLayout();
-    }, 200);
-    console.warn('ag-grid: need to shut down the border layout');
+    this.layoutActive = !params.dontFill;
 }
 
 BorderLayout.prototype.setupPanels = function(params) {
@@ -41,7 +60,14 @@ BorderLayout.prototype.setupPanels = function(params) {
 BorderLayout.prototype.setupPanel = function(content, cssSelector) {
     var ePanel = this.eGui.querySelector(cssSelector);
     if (content) {
-        ePanel.appendChild(content);
+        var component;
+        if (content.isLayoutPanel) {
+            this.childPanels.push(content);
+            component = content.getGui();
+        } else {
+            component = content;
+        }
+        ePanel.appendChild(component);
         return ePanel;
     } else {
         ePanel.parentNode.removeChild(ePanel);
@@ -54,8 +80,13 @@ BorderLayout.prototype.getGui = function() {
 };
 
 BorderLayout.prototype.doLayout = function() {
-    this.layoutHeight();
-    this.layoutWidth();
+    if (this.layoutActive) {
+        this.layoutHeight();
+        this.layoutWidth();
+    }
+    for (var i = 0; i<this.childPanels.length; i++) {
+        this.childPanels[i].doLayout();
+    }
 };
 
 BorderLayout.prototype.layoutHeight = function() {
@@ -68,11 +99,7 @@ BorderLayout.prototype.layoutHeight = function() {
         centerHeight = 0;
     }
 
-    if (centerHeight !== this.centerHeightLastTime && this.eCenterWrapper) {
-        this.eCenterRow.style.height = centerHeight;
-    }
-
-    this.centerHeightLastTime = centerHeight;
+    this.eCenterRow.style.height = centerHeight + 'px';
 };
 
 BorderLayout.prototype.layoutWidth = function() {
@@ -85,18 +112,22 @@ BorderLayout.prototype.layoutWidth = function() {
         centerWidth = 0;
     }
 
-    if (centerWidth !== this.centerWidthLastTime && this.eCenterWrapper) {
-        this.eCenterWrapper.style.width = centerWidth;
-    }
-
-    this.centerWidthLastTime = centerWidth;
+    this.eCenterWrapper.style.width = centerWidth + 'px';
 };
 
 BorderLayout.prototype.setEastVisible = function(visible) {
     if (this.eEastWrapper) {
         this.eEastWrapper.style.display = visible ? '' : 'none';
+    }
+    this.doLayout();
+};
+
+BorderLayout.prototype.setSouthVisible = function(visible) {
+    if (this.eSouthWrapper) {
+        this.eSouthWrapper.style.display = visible ? '' : 'none';
         this.doLayout();
     }
+    this.doLayout();
 };
 
 module.exports = BorderLayout;

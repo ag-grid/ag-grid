@@ -10,7 +10,6 @@ function isTrue(value) {
     return value === true || value === 'true';
 }
 
-GridOptionsWrapper.prototype.isSuppressVerticalScroll = function() { return isTrue(this.gridOptions.suppressVerticalScroll); };
 GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
 GridOptionsWrapper.prototype.isRowDeselection = function() { return isTrue(this.gridOptions.rowDeselection); };
 GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
@@ -31,7 +30,6 @@ GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.
 GridOptionsWrapper.prototype.isSuppressDescSort = function() { return isTrue(this.gridOptions.suppressDescSort); };
 GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
 GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
-GridOptionsWrapper.prototype.getGridOptions = function() { return this.gridOptions; };
 GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
 GridOptionsWrapper.prototype.getApi = function() { return this.gridOptions.api; };
 GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
@@ -41,7 +39,7 @@ GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.grid
 GridOptionsWrapper.prototype.getGroupAggFields = function() { return this.gridOptions.groupAggFields; };
 GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
 GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
-GridOptionsWrapper.prototype.getGroupColumn = function() { return this.gridOptions.groupColumn; };
+GridOptionsWrapper.prototype.getGroupColumnDef = function() { return this.gridOptions.groupColumnDef; };
 GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };
 GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return isTrue(this.gridOptions.angularCompileFilters); };
 GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return isTrue(this.gridOptions.angularCompileHeaders); };

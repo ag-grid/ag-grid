@@ -4,7 +4,6 @@ var utils = require('../utils');
 var BorderLayout = require('../layout/borderLayout');
 
 function GroupSelectionPanel(columnController, inMemoryRowController) {
-    this.eGui = document.createElement('div');
     this.setupComponents();
     this.columnController = columnController;
     this.inMemoryRowController = inMemoryRowController;
@@ -57,13 +56,11 @@ GroupSelectionPanel.prototype.setupComponents = function() {
     this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
     this.cColumnList.setEmptyMessage("Drag columns down from above to pivot by those columns");
 
-    this.eGui.appendChild(this.cColumnList.getGui());
-
     var eNorthPanel = document.createElement('div');
     eNorthPanel.style.paddingTop = '10px';
     eNorthPanel.innerHTML = '<div style="text-align: center;">Pivoted Columns</div>';
 
-    this.eRootPanel = new BorderLayout({
+    this.layout = new BorderLayout({
         center: this.cColumnList.getGui(),
         north: eNorthPanel
     });
