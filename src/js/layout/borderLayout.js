@@ -2,6 +2,8 @@ var utils = require('../utils');
 
 function BorderLayout(params) {
 
+    this.isLayoutPanel = true;
+
     var template =
         '<div id="borderLayout" style="height: 100%;">' +
             '<div id="north"></div>' +
@@ -15,15 +17,11 @@ function BorderLayout(params) {
 
     this.eGui = utils.loadTemplate(template);
 
+    this.childPanels = [];
+
     if (params) {
         this.setupPanels(params);
     }
-
-    var that = this;
-    setInterval(function () {
-        that.doLayout();
-    }, 200);
-    console.warn('ag-grid: need to shut down the border layout');
 }
 
 BorderLayout.prototype.setupPanels = function(params) {
@@ -41,7 +39,14 @@ BorderLayout.prototype.setupPanels = function(params) {
 BorderLayout.prototype.setupPanel = function(content, cssSelector) {
     var ePanel = this.eGui.querySelector(cssSelector);
     if (content) {
-        ePanel.appendChild(content);
+        var component;
+        if (content.isLayoutPanel) {
+            this.childPanels.push(content);
+            component = content.getGui();
+        } else {
+            component = content;
+        }
+        ePanel.appendChild(component);
         return ePanel;
     } else {
         ePanel.parentNode.removeChild(ePanel);
@@ -56,6 +61,9 @@ BorderLayout.prototype.getGui = function() {
 BorderLayout.prototype.doLayout = function() {
     this.layoutHeight();
     this.layoutWidth();
+    for (var i = 0; i<this.childPanels.length; i++) {
+        this.childPanels[i].doLayout();
+    }
 };
 
 BorderLayout.prototype.layoutHeight = function() {

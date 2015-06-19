@@ -56,14 +56,12 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     if (useScrolls) {
         this.addScrollListener();
-        this.setBodySize(); //setting sizes of body (containing viewports), doesn't change container sizes
+        this.doLayout(); //setting sizes of body (containing viewports), doesn't change container sizes
+        window.addEventListener('resize', this.doLayout.bind(this));
     }
 
     // done when rows change
     this.updateModelAndRefresh(constants.STEP_EVERYTHING);
-
-    // flag to mark when the directive is destroyed
-    this.finished = false;
 
     // if no data provided initially, and not doing infinite scrolling, show the loading panel
     var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isVirtualPaging();
@@ -85,25 +83,17 @@ Grid.prototype.setupBorderLayout = function(eGridDiv) {
     var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
     if (useScrolls) {
         templateToUse = template;
+        this.eToolPanelContainer = new ToolPanel();
     } else {
         templateToUse = templateNoScrolls;
     }
     var eInnerElement = utils.loadTemplate(templateToUse);
-    this.eToolPanelContainer = document.createElement('div');
-    utils.addCssClass(this.eToolPanelContainer, 'ag-tool-panel-container');
 
-    //var eEast = document.createElement('div');
-    //eEast.style.width = 200;
-    //eEast.style.height = '100%';
-    //eEast.style.border = '10px solid black';
-    //eEast.style.padding = 10;
-    //eEast.innerHTML = 'inside';
-    //eEast.style.backgroundColor = 'lightblue';
-
-    this.eRootPanel = new BorderLayout({
+    this.eRootPanel = new BorderLayout();
+    this.eRootPanel.setupPanels({
         center: eInnerElement
         //, east: eEast
-        , east: this.eToolPanelContainer
+        , east: this.eToolPanelContainer.layout
     });
     eGridDiv.appendChild(this.eRootPanel.getGui());
 };
@@ -125,7 +115,6 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     var virtualPageRowController = new VirtualPageRowController();
     var expressionService = new ExpressionService();
     var templateService = new TemplateService();
-    var toolPanel = new ToolPanel();
 
     var columnModel = columnController.getModel();
 
@@ -143,10 +132,9 @@ Grid.prototype.createAndWireBeans = function($scope, $compile, eGridDiv, useScro
     inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
     virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
 
-
     if (this.eToolPanelContainer) {
         // tool panel container is not visible on 'noScrolls'
-        toolPanel.init(this.eToolPanelContainer, columnController, inMemoryRowController);
+        this.eToolPanelContainer.init(columnController, inMemoryRowController);
     }
     this.showToolPanel(gridOptionsWrapper.isShowToolPanel());
 
@@ -249,7 +237,7 @@ Grid.prototype.setDatasource = function(datasource) {
     // we may of just shown or hidden the paging panel, so need
     // to get table to check the body size, which also hides and
     // shows the paging panel.
-    this.setBodySize();
+    this.doLayout();
 
     // because we just set the rowModel, need to update the gui
     this.rowRenderer.refreshView();
@@ -266,7 +254,7 @@ Grid.prototype.refreshHeaderAndBody = function() {
 };
 
 Grid.prototype.setFinished = function() {
-    this.finished = true;
+    window.removeEventListener('resize', this.doLayout);
 };
 
 Grid.prototype.getPopupParent = function() {
@@ -889,8 +877,7 @@ Grid.prototype.setPinnedColHeight = function() {
     this.eLoadingPanel.style.height = bodyHeight + 'px';
 };
 
-Grid.prototype.setBodySize = function() {
-    var _this = this;
+Grid.prototype.doLayout = function() {
 
     var bodyHeight = this.eBodyViewport.offsetHeight;
     var pagingVisible = this.isShowPagingPanel();
@@ -911,11 +898,7 @@ Grid.prototype.setBodySize = function() {
         this.showAndPositionPagingPanel();
     }
 
-    if (!this.finished) {
-        setTimeout(function() {
-            _this.setBodySize();
-        }, 200);
-    }
+    this.eRootPanel.doLayout();
 };
 
 Grid.prototype.addScrollListener = function() {
