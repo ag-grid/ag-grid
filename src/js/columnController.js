@@ -180,29 +180,29 @@ ColumnController.prototype.extructure = function(columnGroups,size) {
 for( var x= 0;x<columnGroups.length;x++){
 	var miGroup=columnGroups[x];
 	this.extructure(miGroup.subGroups,size-1);
-    // if(miGroup.level<size)
-	//{	var c=size-miGroup.level;		
-		if(miGroup.allColumns.length>0){
+	if(miGroup.allColumns.length>0&& size>1){
+		var groups=[];
+		var c=size-1;	                	
+		for(var j =0 ;j<miGroup.allColumns.length;j++){
 			var currentGroup=miGroup;
-			var c=size-1;		
-			while(currentGroup.subGroups.length>0&& currentGroup.subGroups[currentGroup.subGroups.length-1].name.trim())
-			{
-				currentGroup=currentGroup.subGroups[currentGroup.subGroups.length-1];
-				c--;
-			} 
-			
 			for(var i=0;i<c;i++){
-				var currGroup =new ColumnGroup(currentGroup.pinned," ");
-				currGroup.parentGroup=currentGroup;
-				currentGroup.subGroups.push(currGroup);				
-				currentGroup =currGroup;
-			}	
-			if(currentGroup!=miGroup){
-				currentGroup.allColumns=miGroup.allColumns;
-				miGroup.allColumns=[];
-			}
-		}		
-	//}
+	                        var currGroup =new ColumnGroup(currentGroup.pinned," ");
+                        	currGroup.parentGroup=currentGroup;
+                	        currentGroup.subGroups.push(currGroup);
+        	                currentGroup =currGroup;
+	                }
+			groups.push(currentGroup);
+		}
+
+		for(var i=0;i<groups.length;i++){
+		groups[i].allColumns.push(miGroup.allColumns[i]);
+		}
+		miGroup.allColumns=[];
+/*		if(currentGroup!=miGroup){
+			currentGroup.allColumns=miGroup.allColumns;
+		}
+*/
+	}		
 }
 };
 
