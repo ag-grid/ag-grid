@@ -209,7 +209,7 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         eHeaderCell.title = colDef.headerTooltip;
     }
 
-    if (this.gridOptionsWrapper.isEnableColResize()) {
+    if (this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize) {
         var headerCellResize = document.createElement("div");
         headerCellResize.className = "ag-header-cell-resize";
         eHeaderCell.appendChild(headerCellResize);
