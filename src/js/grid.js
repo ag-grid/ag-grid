@@ -28,10 +28,6 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.findAllElements(eGridDiv);
 
-    if (this.gridOptionsWrapper.isSuppressVerticalScroll() && !this.gridOptionsWrapper.isDontUseScrolls()) {
-        utils.addCssClass(eGridDiv, 'ag-no-vertical-scroll');
-    }
-
     var that = this;
     this.quickFilter = null;
 
@@ -80,20 +76,21 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
 Grid.prototype.setupBorderLayout = function(eGridDiv) {
     var templateToUse;
-    var useScrolls = !this.gridOptionsWrapper.isDontUseScrolls();
-    if (useScrolls) {
+    var dontUseScrolls = this.gridOptionsWrapper.isDontUseScrolls();
+    var toolPanelLayout = null;
+    if (!dontUseScrolls) {
         templateToUse = template;
         this.eToolPanelContainer = new ToolPanel();
+        toolPanelLayout = this.eToolPanelContainer.layout;
     } else {
         templateToUse = templateNoScrolls;
     }
     var eInnerElement = utils.loadTemplate(templateToUse);
 
-    this.eRootPanel = new BorderLayout();
-    this.eRootPanel.setupPanels({
-        center: eInnerElement
-        //, east: eEast
-        , east: this.eToolPanelContainer.layout
+    this.eRootPanel = new BorderLayout({
+        center: eInnerElement,
+        east: toolPanelLayout,
+        dontFill: dontUseScrolls
     });
     eGridDiv.appendChild(this.eRootPanel.getGui());
 };

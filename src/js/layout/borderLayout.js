@@ -4,16 +4,32 @@ function BorderLayout(params) {
 
     this.isLayoutPanel = true;
 
-    var template =
-        '<div id="borderLayout" style="height: 100%;">' +
-            '<div id="north"></div>' +
-            '<div id="centerRow" style="height: 100%; overflow: auto;">' +
-                '<div id="west" style="height: 100%; float: left;"></div>' +
-                '<div id="east" style="height: 100%; float: right;"></div>' +
+    var styleFull = params.dontFill ? '' : 'height: 100%;';
+
+    var template;
+    if (styleFull) {
+        template =
+            '<div id="borderLayout" style="height: 100%;">' +
+                '<div id="north"></div>' +
+                    '<div id="centerRow" style="height: 100%; overflow: auto;">' +
+                    '<div id="west" style="height: 100%; float: left;"></div>' +
+                    '<div id="east" style="height: 100%; float: right;"></div>' +
                 '<div id="center" style="height: 100%;"></div>' +
-            '</div>' +
-            '<div id="south"></div>' +
-        '</div>';
+                '</div>' +
+                '<div id="south"></div>' +
+            '</div>';
+    } else {
+        template =
+            '<div id="borderLayout">' +
+                '<div id="north"></div>' +
+                '<div id="centerRow">' +
+                    '<div id="west"></div>' +
+                    '<div id="east"></div>' +
+                    '<div id="center"></div>' +
+                '</div>' +
+                '<div id="south"></div>' +
+            '</div>';
+    }
 
     this.eGui = utils.loadTemplate(template);
 
