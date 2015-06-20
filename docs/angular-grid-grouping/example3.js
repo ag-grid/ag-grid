@@ -23,7 +23,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowData: null,
         groupUseEntireRow: false,
         groupKeys: ['country','year'],
-        groupAggFunction: groupAggFunction
+        groupAggFunction: groupAggFunction,
+        groupSuppressAutoColumn: true
     };
 
     function groupAggFunction(rows) {

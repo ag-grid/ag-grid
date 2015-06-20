@@ -10,8 +10,8 @@ var DO_NOT_CARE = 3;
 
 function SelectionController() {}
 
-SelectionController.prototype.init = function(angularGrid, eRowsParent, gridOptionsWrapper, $scope, rowRenderer) {
-    this.eRowsParent = eRowsParent;
+SelectionController.prototype.init = function(angularGrid, gridPanel, gridOptionsWrapper, $scope, rowRenderer) {
+    this.eRowsParent = gridPanel.getRowsParent();
     this.angularGrid = angularGrid;
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.$scope = $scope;

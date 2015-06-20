@@ -24,6 +24,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupUseEntireRow: false,
         groupKeys: ['country','year'],
         groupAggFunction: groupAggFunction,
+        groupSuppressAutoColumn: true,
         rowStyle: rowStyleFunc
     };
 

@@ -1,13 +1,12 @@
 var template = require('./paginationPanel.html');
-
 var utils = require('./../utils');
 
 function PaginationController() {}
 
-PaginationController.prototype.init = function(ePagingPanel, angularGrid, gridOptionsWrapper) {
+PaginationController.prototype.init = function(angularGrid, gridOptionsWrapper) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.angularGrid = angularGrid;
-    this.populatePanel(ePagingPanel);
+    this.setupComponents();
     this.callVersion = 0;
 };
 
@@ -217,21 +216,25 @@ PaginationController.prototype.createTemplate = function() {
         .replace('[LAST]', localeTextFunc('last', 'Last'));
 };
 
-PaginationController.prototype.populatePanel = function(ePagingPanel) {
+PaginationController.prototype.getGui= function() {
+    return this.eGui;
+};
 
-    ePagingPanel.innerHTML = this.createTemplate();
+PaginationController.prototype.setupComponents = function() {
 
-    this.btNext = ePagingPanel.querySelector('#btNext');
-    this.btPrevious = ePagingPanel.querySelector('#btPrevious');
-    this.btFirst = ePagingPanel.querySelector('#btFirst');
-    this.btLast = ePagingPanel.querySelector('#btLast');
-    this.lbCurrent = ePagingPanel.querySelector('#current');
-    this.lbTotal = ePagingPanel.querySelector('#total');
+    this.eGui = utils.loadTemplate(this.createTemplate());
 
-    this.lbRecordCount = ePagingPanel.querySelector('#recordCount');
-    this.lbFirstRowOnPage = ePagingPanel.querySelector('#firstRowOnPage');
-    this.lbLastRowOnPage = ePagingPanel.querySelector('#lastRowOnPage');
-    this.ePageRowSummaryPanel = ePagingPanel.querySelector('#pageRowSummaryPanel');
+    this.btNext = this.eGui.querySelector('#btNext');
+    this.btPrevious = this.eGui.querySelector('#btPrevious');
+    this.btFirst = this.eGui.querySelector('#btFirst');
+    this.btLast = this.eGui.querySelector('#btLast');
+    this.lbCurrent = this.eGui.querySelector('#current');
+    this.lbTotal = this.eGui.querySelector('#total');
+
+    this.lbRecordCount = this.eGui.querySelector('#recordCount');
+    this.lbFirstRowOnPage = this.eGui.querySelector('#firstRowOnPage');
+    this.lbLastRowOnPage = this.eGui.querySelector('#lastRowOnPage');
+    this.ePageRowSummaryPanel = this.eGui.querySelector('#pageRowSummaryPanel');
 
     var that = this;
 

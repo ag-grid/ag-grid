@@ -86,13 +86,13 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        //groupColumn: groupColumn,
+        //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressUnSort: true,
         //suppressDescSort: true,
         //suppressMultiSort: true,
         //showToolPanel: true,
-        //suppressAutoGroupColumn: true,
+        //groupSuppressAutoColumn: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
         angularCompileFilters: true,

@@ -1,5 +1,5 @@
 <?php
-$key = "Virtual Paging";
+$key = "Virtual Paging / Infinite Scrolling";
 $pageTitle = "Angular Grid Virtual Paging";
 $pageDescription = "Angular Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
 $pageKeyboards = "Angular Grid Virtual Paging";
@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Virtual Paging</h2>
+    <h2>Virtual Paging / Infinite Scrolling</h2>
 
     <p>
         Virtual paging allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.

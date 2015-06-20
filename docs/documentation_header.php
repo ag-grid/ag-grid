@@ -219,6 +219,10 @@
                     <a class="sidebarLink" href="/angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
                 <?php } ?>
 
+                <h4>
+                    Paging
+                </h4>
+
                 <?php if ($key == "Datasource") { ?>
                     <span class="sidebarLinkSelected">Datasource</span>
                 <?php } else { ?>
@@ -231,10 +235,10 @@
                     <a class="sidebarLink" href="/angular-grid-pagination/index.php">Pagination</a>
                 <?php } ?>
 
-                <?php if ($key == "Virtual Paging") { ?>
-                    <span class="sidebarLinkSelected">Virtual Paging</span>
+                <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
+                    <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging</a>
+                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging / Infinite Scrolling</a>
                 <?php } ?>
 
                 <h4>

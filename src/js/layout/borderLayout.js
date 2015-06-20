@@ -4,21 +4,35 @@ function BorderLayout(params) {
 
     this.isLayoutPanel = true;
 
+    this.fullHeight = !params.north && !params.south;
+
     var template;
     if (!params.dontFill) {
-        template =
-            '<div style="height: 100%;">' +
+        if (this.fullHeight) {
+            template =
+                '<div style="height: 100%; overflow: auto; position: relative;">' +
+                '<div id="west" style="height: 100%; float: left;"></div>' +
+                '<div id="east" style="height: 100%; float: right;"></div>' +
+                '<div id="center" style="height: 100%;"></div>' +
+                '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                '</div>';
+        } else {
+            template =
+                '<div style="height: 100%; position: relative;">' +
                 '<div id="north"></div>' +
-                    '<div id="centerRow" style="height: 100%; overflow: auto;">' +
-                    '<div id="west" style="height: 100%; float: left;"></div>' +
-                    '<div id="east" style="height: 100%; float: right;"></div>' +
+                '<div id="centerRow" style="height: 100%; overflow: auto;">' +
+                '<div id="west" style="height: 100%; float: left;"></div>' +
+                '<div id="east" style="height: 100%; float: right;"></div>' +
                 '<div id="center" style="height: 100%;"></div>' +
                 '</div>' +
                 '<div id="south"></div>' +
-            '</div>';
+                '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                '</div>';
+        }
+        this.layoutActive = true;
     } else {
         template =
-            '<div>' +
+            '<div style="position: relative;">' +
                 '<div id="north"></div>' +
                 '<div id="centerRow">' +
                     '<div id="west"></div>' +
@@ -26,7 +40,9 @@ function BorderLayout(params) {
                     '<div id="center"></div>' +
                 '</div>' +
                 '<div id="south"></div>' +
+                '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
             '</div>';
+        this.layoutActive = false;
     }
 
     this.eGui = utils.loadTemplate(template);
@@ -42,36 +58,43 @@ function BorderLayout(params) {
         this.setupPanels(params);
     }
 
-    this.layoutActive = !params.dontFill;
+    this.setOverlayVisible(false);
 }
 
 BorderLayout.prototype.setupPanels = function(params) {
-
-    this.eNorthWrapper = this.setupPanel(params.north, '#north');
-    this.eSouthWrapper = this.setupPanel(params.south, '#south');
-    this.eEastWrapper = this.setupPanel(params.east, '#east');
-    this.eWestWrapper = this.setupPanel(params.west, '#west');
-    this.eCenterWrapper = this.setupPanel(params.center, '#center');
-
-    // center row is not provided by user, so we always grab this
+    this.eNorthWrapper = this.eGui.querySelector('#north');
+    this.eSouthWrapper = this.eGui.querySelector('#south');
+    this.eEastWrapper = this.eGui.querySelector('#east');
+    this.eWestWrapper = this.eGui.querySelector('#west');
+    this.eCenterWrapper = this.eGui.querySelector('#center');
+    this.eOverlayWrapper = this.eGui.querySelector('#overlay');
     this.eCenterRow = this.eGui.querySelector('#centerRow');
+
+    this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
+    this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
+    this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
+    this.eWestChildLayout = this.setupPanel(params.west, this.eWestWrapper);
+    this.eCenterChildLayout = this.setupPanel(params.center, this.eCenterWrapper);
+
+    this.setupPanel(params.overlay, this.eOverlayWrapper);
 };
 
-BorderLayout.prototype.setupPanel = function(content, cssSelector) {
-    var ePanel = this.eGui.querySelector(cssSelector);
+BorderLayout.prototype.setupPanel = function(content, ePanel) {
+    if (!ePanel) {
+        return;
+    }
     if (content) {
-        var component;
         if (content.isLayoutPanel) {
             this.childPanels.push(content);
-            component = content.getGui();
+            ePanel.appendChild(content.getGui());
+            return content;
         } else {
-            component = content;
+            ePanel.appendChild(content);
+            return null;
         }
-        ePanel.appendChild(component);
-        return ePanel;
     } else {
         ePanel.parentNode.removeChild(ePanel);
-        return  null;
+        return null;
     }
 };
 
@@ -80,16 +103,31 @@ BorderLayout.prototype.getGui = function() {
 };
 
 BorderLayout.prototype.doLayout = function() {
+
+    this.layoutChild(this.eNorthChildLayout);
+    this.layoutChild(this.eSouthChildLayout);
+    this.layoutChild(this.eEastChildLayout);
+    this.layoutChild(this.eWestChildLayout);
+
     if (this.layoutActive) {
         this.layoutHeight();
         this.layoutWidth();
     }
-    for (var i = 0; i<this.childPanels.length; i++) {
-        this.childPanels[i].doLayout();
+
+    this.layoutChild(this.eCenterChildLayout);
+};
+
+BorderLayout.prototype.layoutChild = function(childPanel) {
+    if (childPanel) {
+        childPanel.doLayout();
     }
 };
 
 BorderLayout.prototype.layoutHeight = function() {
+    if (this.fullHeight) {
+        return;
+    }
+
     var totalHeight = utils.offsetHeight(this.eGui);
     var northHeight = utils.offsetHeight(this.eNorthWrapper);
     var southHeight = utils.offsetHeight(this.eSouthWrapper);
@@ -122,10 +160,16 @@ BorderLayout.prototype.setEastVisible = function(visible) {
     this.doLayout();
 };
 
+BorderLayout.prototype.setOverlayVisible = function(visible) {
+    if (this.eOverlayWrapper) {
+        this.eOverlayWrapper.style.display = visible ? '' : 'none';
+    }
+    this.doLayout();
+};
+
 BorderLayout.prototype.setSouthVisible = function(visible) {
     if (this.eSouthWrapper) {
         this.eSouthWrapper.style.display = visible ? '' : 'none';
-        this.doLayout();
     }
     this.doLayout();
 };

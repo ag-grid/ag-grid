@@ -1,7 +1,7 @@
 
 var module = angular.module("example", ["angularGrid"]);
 
-module.controller("exampleCtrl", function($scope, $http, $timeout) {
+module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
         {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter},

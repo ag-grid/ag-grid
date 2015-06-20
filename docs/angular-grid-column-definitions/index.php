@@ -25,16 +25,22 @@ include '../documentation_header.php';
             <td>The name to render in the column header</td>
         </tr>
         <tr>
+            <th>field</th>
+            <td>The field of the row to get the cells data from</td>
+        </tr>
+        <tr>
             <th>headerValueGetter(params)</th>
             <td>Expression or function to get the cells value.</td>
         </tr>
         <tr>
-            <th>headerTooltip</th>
-            <td>Tooltip for the column header</td>
+            <th>colId</th>
+            <td>The unique ID to give the column. This is optional. If missing, the ID will default to the field.
+            If both field and colId are missing, a unique ID will be generated. This ID is used to identify
+            the column in the API for sorting, filtering etc.</td>
         </tr>
         <tr>
-            <th>field</th>
-            <td>The field of the row to get the cells data from</td>
+            <th>headerTooltip</th>
+            <td>Tooltip for the column header</td>
         </tr>
         <tr>
             <th>valueGetter(params)</th>

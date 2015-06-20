@@ -21,6 +21,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
+        groupSuppressAutoColumn: true,
         groupUseEntireRow: false,
         groupKeys: ['country','year'],
         groupAggFunction: groupAggFunction,

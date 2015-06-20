@@ -218,11 +218,11 @@ Utils.prototype.addCssClass = function(element, className) {
 };
 
 Utils.prototype.offsetHeight = function(element) {
-    return element && element.offsetHeight ? element.offsetHeight : 0;
+    return element && element.clientHeight ? element.clientHeight : 0;
 };
 
 Utils.prototype.offsetWidth = function(element) {
-    return element && element.offsetWidth ? element.offsetWidth : 0;
+    return element && element.clientWidth ? element.clientWidth : 0;
 };
 
 Utils.prototype.removeCssClass = function(element, className) {

@@ -4,21 +4,21 @@ var groupCellRendererFactory = require('./cellRenderers/groupCellRendererFactory
 
 function RowRenderer() {}
 
-RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, eGrid,
+RowRenderer.prototype.init = function(gridOptions, columnModel, gridOptionsWrapper, gridPanel,
     angularGrid, selectionRendererFactory, $compile, $scope,
-    selectionController, expressionService, templateService, eParentOfRows) {
+    selectionController, expressionService, templateService) {
     this.gridOptions = gridOptions;
     this.columnModel = columnModel;
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.angularGrid = angularGrid;
     this.selectionRendererFactory = selectionRendererFactory;
-    this.findAllElements(eGrid);
+    this.gridPanel = gridPanel;
     this.$compile = $compile;
     this.$scope = $scope;
     this.selectionController = selectionController;
     this.expressionService = expressionService;
     this.templateService = templateService;
-    this.eParentOfRows = eParentOfRows;
+    this.findAllElements(gridPanel);
 
     this.cellRendererMap = {
         'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory)
@@ -47,14 +47,11 @@ RowRenderer.prototype.setMainRowWidths = function() {
     }
 };
 
-RowRenderer.prototype.findAllElements = function(eGrid) {
-    if (this.gridOptionsWrapper.isDontUseScrolls()) {
-        this.eBodyContainer = eGrid.querySelector(".ag-body-container");
-    } else {
-        this.eBodyContainer = eGrid.querySelector(".ag-body-container");
-        this.eBodyViewport = eGrid.querySelector(".ag-body-viewport");
-        this.ePinnedColsContainer = eGrid.querySelector(".ag-pinned-cols-container");
-    }
+RowRenderer.prototype.findAllElements = function(gridPanel) {
+    this.eBodyContainer = gridPanel.getBodyContainer();
+    this.eBodyViewport = gridPanel.getBodyViewport();
+    this.ePinnedColsContainer = gridPanel.getPinnedColsContainer();
+    this.eParentOfRows = gridPanel.getRowsParent();
 };
 
 RowRenderer.prototype.refreshView = function(refreshFromIndex) {
@@ -822,7 +819,7 @@ RowRenderer.prototype.navigateToNextCell = function(key, rowIndex, column) {
     }
 
     // this scrolls the row into view
-    this.angularGrid.ensureIndexVisible(renderedRow.rowIndex);
+    this.gridPanel.ensureIndexVisible(renderedRow.rowIndex);
 
     // this changes the css on the cell
     this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, true);

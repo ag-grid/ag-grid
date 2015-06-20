@@ -36,7 +36,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         enableColResize: true,
         enableSorting: false,
         dontUseScrolls: true,
-        suppressAutoGroupColumn: true,
+        groupSuppressAutoColumn: true,
         icons: {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'

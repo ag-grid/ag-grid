@@ -10,25 +10,25 @@ include '../documentation_header.php';
 
     <h2>Header Rendering</h2>
 
-    The default header rendering can be done by providing a header renderer in the grid options.
+    <p>
+        The default header rendering can be replaced by providing a header renderer in the grid options
+        (for all columns), or by specifying it for individual columns.
+    </p>
 
-    <p/>
+    <p>
+        As with the cell renderers, the header renderer is a function that takes params specific to the
+        column. The returned result can be a) a string of HTML or b) an HTML element object.
+    </p>
 
-    The same renderer is used for all columns and the column definition is provided to the renderer.
+    <p>
+        You have the option to use AngularJS for the custom renderer. If you require AngularJS for header
+        rendering, then set the grid option value 'angularCompileHeaders' to true.
+    </p>
 
-    <p/>
-
-    The returned result can be a) a string of HTML or b) an HTML element object.
-
-    <p/>
-    Like other grid renderers, you have the option to use AngularJS for the custom renderer. If you
-    require AngularJS for header rendering, then set the grid option value 'angularCompileHeaders'
-    to true.
-
-    <p/>
-
-    The example below shows using a header renderer to add angle brackets to the header
-    name and to also add click handling to the header, so that the header changes color with a click.
+    <p>
+        The example below shows using a header renderer to add angle brackets to the header
+        name and to also add click handling to the header, so that the header changes color with a click.
+    </p>
 
     <show-example example="example1"></show-example>
 </div>
