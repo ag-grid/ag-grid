@@ -1,8 +1,12 @@
 var CheckboxSelection = require("../widgets/checkboxSelection");
 var utils = require('./../utils');
 var BorderLayout = require('../layout/BorderLayout');
+var SvgFactory = require('../svgFactory');
 
-function ColumnSelectionPanel(columnController) {
+var svgFactory = new SvgFactory();
+
+function ColumnSelectionPanel(columnController, gridOptionsWrapper) {
+    this.gridOptionsWrapper = gridOptionsWrapper;
     this.setupComponents();
     this.columnController = columnController;
 
@@ -26,23 +30,15 @@ ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
 
     var eResult = document.createElement('span');
 
-    var eVisible = document.createElement('i');
-    utils.addCssClass(eVisible, 'fa');
-    eVisible.style.paddingLeft = '2px';
-    eVisible.style.paddingRight = '2px';
-    if (column.visible) {
-        utils.addCssClass(eVisible, 'fa-eye');
-    } else {
-        utils.addCssClass(eVisible, 'fa-eye-slash');
-    }
-    eResult.appendChild(eVisible);
-
-    var that = this;
-    eVisible.addEventListener('click', function () {
-        column.visible = !column.visible;
-        that.cColumnList.refreshView();
-        that.columnController.onColumnStateChanged();
-    });
+    var eVisibleIcons = document.createElement('span');
+    utils.addCssClass(eVisibleIcons, 'ag-visible-icons');
+    var eShowing = utils.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
+    var eHidden = utils.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
+    eVisibleIcons.appendChild(eShowing);
+    eVisibleIcons.appendChild(eHidden);
+    eShowing.style.display = column.visible ? '' : 'none';
+    eHidden.style.display = column.visible ? 'none' : '';
+    eResult.appendChild(eVisibleIcons);
 
     var eValue = document.createElement('span');
     eValue.innerHTML = colDisplayName;
@@ -50,6 +46,16 @@ ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
 
     if (!column.visible) {
         utils.addCssClass(eResult, 'ag-column-not-visible');
+    }
+
+    // change visible if use clicks the visible icon, or if row is double clicked
+    eVisibleIcons.addEventListener('click', showEventListener);
+
+    var that = this;
+    function showEventListener() {
+        column.visible = !column.visible;
+        that.cColumnList.refreshView();
+        that.columnController.onColumnStateChanged();
     }
 
     return eResult;
@@ -65,8 +71,11 @@ ColumnSelectionPanel.prototype.setupComponents = function() {
         that.columnController.onColumnStateChanged();
     });
 
+    var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+    var columnsLocalText = localeTextFunc('columns', 'Columns');
+
     var eNorthPanel = document.createElement('div');
-    eNorthPanel.innerHTML = '<div style="text-align: center;">Columns</div>';
+    eNorthPanel.innerHTML = '<div style="text-align: center;">'+columnsLocalText+'</div>';
 
     this.layout = new BorderLayout({
         center: this.cColumnList.getGui(),
@@ -74,6 +83,7 @@ ColumnSelectionPanel.prototype.setupComponents = function() {
     });
 };
 
+// not sure if this is called anywhere
 ColumnSelectionPanel.prototype.setSelected = function(column, selected) {
     column.visible = selected;
     this.columnController.onColumnStateChanged();

@@ -42,7 +42,13 @@ include '../documentation_header.php';
             // for text filter
             contains: 'daContains',
             startsWith: 'daStarts dawith',
-            endsWith: 'daEnds dawith'
+            endsWith: 'daEnds dawith',
+            // the header of the default group column
+            group: 'laGroup',
+            // tool panel
+            columns: 'laColumns',
+            pivotedColumns: 'laPivot Cols',
+            pivotedColumnsEmptyMessage: 'la please drag cols to here'
         }
     };</pre>
 

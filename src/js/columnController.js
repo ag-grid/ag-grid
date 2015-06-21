@@ -20,7 +20,7 @@ ColumnController.prototype.createModel = function() {
         // + inMemoryRowController -> sorting, building quick filter text
         // + headerRenderer -> sorting (clearing icon)
         getAllColumns: function() {
-            return that.columns;
+            return that.allColumns;
         },
         // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
         // need a newMethod - get next col index
@@ -79,11 +79,11 @@ ColumnController.prototype.createModel = function() {
 };
 
 ColumnController.prototype.getColumn = function(key) {
-    for (var i = 0; i<this.columns.length; i++) {
-        var colDefMatches = this.columns[i].colDef === key;
-        var fieldMatches = this.columns[i].colDef.field === key;
+    for (var i = 0; i<this.allColumns.length; i++) {
+        var colDefMatches = this.allColumns[i].colDef === key;
+        var fieldMatches = this.allColumns[i].colDef.field === key;
         if (colDefMatches || fieldMatches) {
-            return this.columns[i];
+            return this.allColumns[i];
         }
     }
 };
@@ -123,7 +123,7 @@ ColumnController.prototype.addListener = function(listener) {
 
 ColumnController.prototype.fireColumnsChanged = function() {
     for (var i = 0; i<this.listeners.length; i++) {
-        this.listeners[i].columnsChanged(this.columns, this.groupedColumns);
+        this.listeners[i].columnsChanged(this.allColumns, this.groupedColumns);
     }
 };
 
@@ -168,6 +168,19 @@ ColumnController.prototype.headerGroupOpened = function(group) {
 ColumnController.prototype.onColumnStateChanged = function() {
     this.updateModel();
     this.angularGrid.refreshHeaderAndBody();
+};
+
+// called from API
+ColumnController.prototype.hideColumns = function(colIds, hide) {
+    for (var i = 0; i<this.allColumns.length; i++) {
+        var idThisCol = this.allColumns[i].colId;
+        var hideThisCol = colIds.indexOf(idThisCol) >= 0;
+        if (hideThisCol) {
+            this.allColumns[i].visible = !hide;
+        }
+    }
+    this.onColumnStateChanged();
+    this.fireColumnsChanged(); // to tell toolbar
 };
 
 ColumnController.prototype.updateModel = function() {
@@ -303,27 +316,29 @@ ColumnController.prototype.updateVisibleColumns = function() {
         && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
         && !this.gridOptionsWrapper.isGroupUseEntireRow();
 
+    var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
     if (needAGroupColumn) {
         // if one provided by user, use it, otherwise create one
         var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
         if (!groupColDef) {
             groupColDef = {
-                headerName: "*Group",
+                headerName: localeTextFunc('group','Group'),
                 cellRenderer: {
                     renderer: "group"
                 }
             };
         }
         // no group column provided, need to create one here
-        var groupColumn = new Column(groupColDef, this.gridOptionsWrapper.getColWidth(), false);
+        var groupColumn = new Column(groupColDef, this.gridOptionsWrapper.getColWidth());
         this.visibleColumns.push(groupColumn);
     }
 
-    for (var i = 0; i < this.columns.length; i++) {
-        var column = this.columns[i];
+    for (var i = 0; i < this.allColumns.length; i++) {
+        var column = this.allColumns[i];
         if (column.visible) {
             column.index = this.visibleColumns.length;
-            this.visibleColumns.push(this.columns[i]);
+            this.visibleColumns.push(this.allColumns[i]);
         }
     }
 };
@@ -339,7 +354,7 @@ ColumnController.prototype.updatePinnedColumns = function() {
 
 // private
 ColumnController.prototype.createColumns = function(columnDefs) {
-    this.columns = [];
+    this.allColumns = [];
     var that = this;
     if (columnDefs) {
         for (var i = 0; i < columnDefs.length; i++) {
@@ -349,9 +364,8 @@ ColumnController.prototype.createColumns = function(columnDefs) {
                 colDef = that.selectionRendererFactory.createCheckboxColDef();
             }
             var width = that.calculateColInitialWidth(colDef);
-            var visible = true;
-            var column = new Column(colDef, width, visible);
-            that.columns.push(column);
+            var column = new Column(colDef, width);
+            that.allColumns.push(column);
         }
     }
 };
@@ -377,10 +391,11 @@ ColumnController.prototype.createAggColumns = function() {
 ColumnController.prototype.createDummyColumn = function(field) {
     var colDef = {
         field: field,
-        headerName: field
+        headerName: field,
+        hide: false
     };
     var width = this.gridOptionsWrapper.getColWidth();
-    var column = new Column(colDef, width, false);
+    var column = new Column(colDef, width);
     return column;
 };
 
@@ -495,10 +510,10 @@ headerGroup.prototype.addToVisibleColumns = function(colsToAdd) {
 
 var colIdSequence = 0;
 
-function Column(colDef, actualWidth, visible) {
+function Column(colDef, actualWidth, hide) {
     this.colDef = colDef;
     this.actualWidth = actualWidth;
-    this.visible = visible;
+    this.visible = !colDef.hide;
     // in the future, the colKey might be something other than the index
     if (colDef.colId) {
         this.colId = colDef.colId;

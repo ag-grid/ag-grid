@@ -15,13 +15,15 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        The icons that can be chnaged are:
+        The icons that can be changed are:
         <ul>
             <li>Sort icons on header</li>
             <li>Filter icon on header</li>
             <li>Menu icon on header</li>
             <li>Group open / close icon in headers</li>
             <li>Group expand / contact icon in rows</li>
+            <li>Tool panel show / hide column</li>
+            <li>Tool panel remove from group</li>
         </ul>
     </p>
 
@@ -47,6 +49,9 @@ gridOptions.icons = {
     groupContracted: myGroupContractedIcon,
     headerGroupOpened: myGroupExpandedIcon,
     headerGroupClosed: myGroupContractedIcon
+    columnVisible: myColumnVisibleIcon,
+    columnHidden: myColumnHiddenIcon,
+    columnRemoveFromGroup: myColumnRemoveFromGroupIcon
 }
 </pre>
 

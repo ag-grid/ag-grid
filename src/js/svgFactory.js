@@ -13,6 +13,14 @@ SvgFactory.prototype.createFilterSvg = function() {
     return eSvg;
 };
 
+SvgFactory.prototype.createColumnShowingSvg = function() {
+    return createCircle(true);
+};
+
+SvgFactory.prototype.createColumnHiddenSvg = function() {
+    return createCircle(false);
+};
+
 SvgFactory.prototype.createMenuSvg = function() {
     var eSvg = document.createElementNS(SVG_NS, "svg");
     var size = "12";
@@ -64,5 +72,24 @@ function createIconSvg() {
     eSvg.setAttribute("height", "10");
     return eSvg;
 }
+
+function createCircle(fill) {
+    var eSvg = createIconSvg();
+
+    var eCircle = document.createElementNS(SVG_NS, "circle");
+    eCircle.setAttribute("cx", "5");
+    eCircle.setAttribute("cy", "5");
+    eCircle.setAttribute("r", "5");
+    eCircle.setAttribute("stroke", "black");
+    eCircle.setAttribute("stroke-width", "2");
+    if (fill) {
+        eCircle.setAttribute("fill", "black");
+    } else {
+        eCircle.setAttribute("fill", "none");
+    }
+    eSvg.appendChild(eCircle);
+
+    return eSvg;
+};
 
 module.exports = SvgFactory;

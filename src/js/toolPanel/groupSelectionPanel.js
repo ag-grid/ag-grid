@@ -2,8 +2,12 @@ var CheckboxSelection = require("../widgets/checkboxSelection");
 var constants = require('../constants');
 var utils = require('../utils');
 var BorderLayout = require('../layout/borderLayout');
+var SvgFactory = require('../svgFactory');
 
-function GroupSelectionPanel(columnController, inMemoryRowController) {
+var svgFactory = new SvgFactory();
+
+function GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper) {
+    this.gridOptionsWrapper = gridOptionsWrapper;
     this.setupComponents();
     this.columnController = columnController;
     this.inMemoryRowController = inMemoryRowController;
@@ -28,11 +32,8 @@ GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
 
     var eResult = document.createElement('span');
 
-    var eRemove = document.createElement('i');
-    utils.addCssClass(eRemove, 'fa');
-    utils.addCssClass(eRemove, 'fa-remove');
-    eRemove.style.paddingLeft = '2px';
-    eRemove.style.paddingRight = '2px';
+    var eRemove = utils.createIcon('columnRemoveFromGroupIcon', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
+    utils.addCssClass(eRemove, 'ag-visible-icons');
     eResult.appendChild(eRemove);
 
     var that = this;
@@ -51,14 +52,18 @@ GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
 };
 
 GroupSelectionPanel.prototype.setupComponents = function() {
+    var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+    var columnsLocalText = localeTextFunc('pivotedColumns', 'Pivoted Columns');
+    var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns down from above to pivot by those columns');
+
     this.cColumnList = new CheckboxSelection();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
     this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
-    this.cColumnList.setEmptyMessage("Drag columns down from above to pivot by those columns");
+    this.cColumnList.setEmptyMessage(pivotedColumnsEmptyMessage);
 
     var eNorthPanel = document.createElement('div');
     eNorthPanel.style.paddingTop = '10px';
-    eNorthPanel.innerHTML = '<div style="text-align: center;">Pivoted Columns</div>';
+    eNorthPanel.innerHTML = '<div style="text-align: center;">'+columnsLocalText+'</div>';
 
     this.layout = new BorderLayout({
         center: this.cColumnList.getGui(),

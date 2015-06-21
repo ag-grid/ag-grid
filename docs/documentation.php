@@ -19,6 +19,7 @@ include 'documentation_header.php';
 
         colDef.group and colDef.groupShow are now colDef.headerGroup and colDef.headerGroupShow (so not to get mixed up with row grouping).
 
+        show /hide columns
     </p>
 
     <p>

@@ -91,7 +91,7 @@ gridsModule.controller('mainController', function($scope) {
         //suppressUnSort: true,
         //suppressDescSort: true,
         //suppressMultiSort: true,
-        //showToolPanel: true,
+        showToolPanel: true,
         //groupSuppressAutoColumn: true,
         groupAggFunction: groupAggFunction,
         angularCompileRows: false,
@@ -105,6 +105,9 @@ gridsModule.controller('mainController', function($scope) {
         selectionChanged: selectionChanged, //callback when selection changed,
         icons: {
             //menu: '<i class="fa fa-bars"/>',
+            //columnVisible: '<i class="fa fa-eye"/>',
+            //columnHidden: '<i class="fa fa-eye-slash"/>',
+            columnRemoveFromGroupIcon: '<i class="fa fa-remove"/>',
             filter: '<i class="fa fa-filter"/>',
             sortAscending: '<i class="fa fa-long-arrow-down"/>',
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
@@ -113,6 +116,7 @@ gridsModule.controller('mainController', function($scope) {
             headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
             headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
+
         // callback when row clicked
         rowClicked: function(params) {
             //console.log("Callback rowClicked: " + params.data + " - " + params.event);

@@ -39,6 +39,12 @@ include '../documentation_header.php';
             the column in the API for sorting, filtering etc.</td>
         </tr>
         <tr>
+            <th>hide</th>
+            <td>Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field
+            'visible' and mark it false to hide, however we want all default values to be false and we want columns to be
+            visible by default.</td>
+        </tr>
+        <tr>
             <th>headerTooltip</th>
             <td>Tooltip for the column header</td>
         </tr>

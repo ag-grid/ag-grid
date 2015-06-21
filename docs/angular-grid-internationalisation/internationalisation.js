@@ -26,6 +26,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableFilter: true,
         enableColResize: true,
         columnDefs: columnDefs,
+        showToolPanel: true,
         localeText: {
             // for filter panel
             page: 'daPage',
@@ -49,7 +50,11 @@ module.controller("exampleCtrl", function($scope, $http) {
             // for text filter
             contains: 'daContains',
             startsWith: 'daStarts dawith',
-            endsWith: 'daEnds dawith'
+            endsWith: 'daEnds dawith',
+            // tool panel
+            columns: 'laColumns',
+            pivotedColumns: 'laPivot Cols',
+            pivotedColumnsEmptyMessage: 'la please drag cols to here'
         }
     };
 

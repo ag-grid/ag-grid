@@ -131,6 +131,12 @@
                     <a class="sidebarLink" href="/angular-grid-resizing/index.php">Resizing</a>
                 <?php } ?>
 
+                <?php if ($key == "Tool Panel") { ?>
+                    <span class="sidebarLinkSelected">Tool Panel</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-tool-panel/index.php">Tool Panel</a>
+                <?php } ?>
+
                 <?php if ($key == "Pinning") { ?>
                     <span class="sidebarLinkSelected">Pinning</span>
                 <?php } else { ?>

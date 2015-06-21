@@ -109,7 +109,7 @@ Grid.prototype.setupComponents = function($scope, $compile, eUserProvidedDiv) {
     if (!forPrint) {
         eToolPanel = new ToolPanel();
         toolPanelLayout = eToolPanel.layout;
-        eToolPanel.init(columnController, inMemoryRowController);
+        eToolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper);
     }
 
     // this is a child bean, get a reference and pass it on
@@ -536,6 +536,12 @@ Grid.prototype.addApi = function() {
         },
         isToolPanelShowing: function() {
             return that.isToolPanelShowing();
+        },
+        hideColumn: function(colId, hide) {
+            that.columnController.hideColumns([colId], hide);
+        },
+        hideColumns: function(colIds, hide) {
+            that.columnController.hideColumns(colIds, hide);
         }
     };
     this.gridOptions.api = api;
@@ -670,9 +676,9 @@ Grid.prototype.updatePinnedColContainerWidthAfterColResize = function() {
 };
 
 Grid.prototype.doLayout = function() {
-    //setTimeout(this.doLayoutForReal.bind(this), 0);
-    //setTimeout(this.doLayoutForReal.bind(this), 10);
-    //setTimeout(this.doLayoutForReal.bind(this), 20);
+    setTimeout(this.doLayoutForReal.bind(this), 0);
+    setTimeout(this.doLayoutForReal.bind(this), 10);
+    setTimeout(this.doLayoutForReal.bind(this), 20);
     //setTimeout(this.doLayoutForReal.bind(this), 500);
     this.doLayoutForReal();
 };

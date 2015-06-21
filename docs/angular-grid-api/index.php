@@ -213,7 +213,14 @@ include '../documentation_header.php';
             <th>setFocusedCell(rowIndex, colIndex)</th>
             <td>Scrolls the grid to ensure the cell is visible and then puts focus on the cell.</td>
         </tr>
-
+        <tr>
+            <th>showToolPanel(show)</th>
+            <td>Shows (or hides) the tool panel.</td>
+        </tr>
+        <tr>
+            <th>isToolPanelShowing()</th>
+            <td>Returns true if the tool panel is showing, otherwise false.</td>
+        </tr>
 
     </table>
 
