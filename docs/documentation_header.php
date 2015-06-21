@@ -238,7 +238,7 @@
                 <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
                     <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging / Infinite Scrolling</a>
+                    <a class="sidebarLink" href="/angular-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
                 <?php } ?>
 
                 <h4>

@@ -44,8 +44,8 @@ ColumnController.prototype.createModel = function() {
         },
         // used by:
         // + headerRenderer -> setting pinned body width
-        getColumnGroups: function() {
-            return that.columnGroups;
+        getHeaderGroups: function() {
+            return that.headerGroups;
         },
         // used by:
         // + api.getFilterModel() -> to map colDef to column, key can be colDef or field
@@ -133,14 +133,31 @@ ColumnController.prototype.getModel = function() {
 
 // called by angularGrid
 ColumnController.prototype.setColumns = function(columnDefs) {
+    this.checkForDeprecatedItems(columnDefs);
     this.createColumns(columnDefs);
     this.createAggColumns();
     this.updateModel();
     this.fireColumnsChanged();
 };
 
+ColumnController.prototype.checkForDeprecatedItems = function(columnDefs) {
+    if (columnDefs) {
+        for (var i = 0; i<columnDefs.length; i++) {
+            var colDef = columnDefs[i];
+            if (colDef.group !== undefined) {
+                console.warn('ag-grid: ' + colDef.field + ' colDef.group is deprecated, please use colDef.headerGroup');
+                colDef.headerGroup = colDef.group;
+            }
+            if (colDef.groupShow !== undefined) {
+                console.warn('ag-grid: ' + colDef.field + ' colDef.groupShow is deprecated, please use colDef.headerGroupShow');
+                colDef.headerGroupShow = colDef.groupShow;
+            }
+        }
+    }
+};
+
 // called by headerRenderer - when a header is opened or closed
-ColumnController.prototype.columnGroupOpened = function(group) {
+ColumnController.prototype.headerGroupOpened = function(group) {
     group.expanded = !group.expanded;
     this.updateGroups();
     this.updateDisplayedColumns();
@@ -170,8 +187,8 @@ ColumnController.prototype.updateDisplayedColumns = function() {
     } else {
         // if grouping, then only show col as per group rules
         this.displayedColumns = [];
-        for (var i = 0; i < this.columnGroups.length; i++) {
-            var group = this.columnGroups[i];
+        for (var i = 0; i < this.headerGroups.length; i++) {
+            var group = this.headerGroups[i];
             group.addToVisibleColumns(this.displayedColumns);
         }
     }
@@ -230,13 +247,13 @@ ColumnController.prototype.sizeColumnsToFit = function(gridWidth) {
 ColumnController.prototype.buildGroups = function() {
     // if not grouping by headers, do nothing
     if (!this.gridOptionsWrapper.isGroupHeaders()) {
-        this.columnGroups = null;
+        this.headerGroups = null;
         return;
     }
 
     // split the columns into groups
     var currentGroup = null;
-    this.columnGroups = [];
+    this.headerGroups = [];
     var that = this;
 
     var lastColWasPinned = true;
@@ -248,7 +265,7 @@ ColumnController.prototype.buildGroups = function() {
             lastColWasPinned = false;
         }
         // do we need a new group, because the group names doesn't match from previous col?
-        var groupKeyMismatch = currentGroup && column.colDef.group !== currentGroup.name;
+        var groupKeyMismatch = currentGroup && column.colDef.headerGroup !== currentGroup.name;
         // we don't group columns where no group is specified
         var colNotInGroup = currentGroup && !currentGroup.name;
         // do we need a new group, because we are just starting
@@ -257,8 +274,8 @@ ColumnController.prototype.buildGroups = function() {
         // create new group, if it's needed
         if (newGroupNeeded) {
             var pinned = column.pinned;
-            currentGroup = new ColumnGroup(pinned, column.colDef.group);
-            that.columnGroups.push(currentGroup);
+            currentGroup = new headerGroup(pinned, column.colDef.headerGroup);
+            that.headerGroups.push(currentGroup);
         }
         currentGroup.addColumn(column);
     });
@@ -271,8 +288,8 @@ ColumnController.prototype.updateGroups = function() {
         return;
     }
 
-    for (var i = 0; i < this.columnGroups.length; i++) {
-        var group = this.columnGroups[i];
+    for (var i = 0; i < this.headerGroups.length; i++) {
+        var group = this.headerGroups[i];
         group.calculateExpandable();
         group.calculateDisplayedColumns();
     }
@@ -397,7 +414,7 @@ ColumnController.prototype.getTotalColWidth = function(includePinned) {
     return widthSoFar;
 };
 
-function ColumnGroup(pinned, name) {
+function headerGroup(pinned, name) {
     this.pinned = pinned;
     this.name = name;
     this.allColumns = [];
@@ -406,13 +423,13 @@ function ColumnGroup(pinned, name) {
     this.expanded = false;
 }
 
-ColumnGroup.prototype.addColumn = function(column) {
+headerGroup.prototype.addColumn = function(column) {
     this.allColumns.push(column);
 };
 
 // need to check that this group has at least one col showing when both expanded and contracted.
 // if not, then we don't allow expanding and contracting on this group
-ColumnGroup.prototype.calculateExpandable = function() {
+headerGroup.prototype.calculateExpandable = function() {
     // want to make sure the group doesn't disappear when it's open
     var atLeastOneShowingWhenOpen = false;
     // want to make sure the group doesn't disappear when it's closed
@@ -421,10 +438,10 @@ ColumnGroup.prototype.calculateExpandable = function() {
     var atLeastOneChangeable = false;
     for (var i = 0, j = this.allColumns.length; i < j; i++) {
         var column = this.allColumns[i];
-        if (column.colDef.groupShow === 'open') {
+        if (column.colDef.headerGroupShow === 'open') {
             atLeastOneShowingWhenOpen = true;
             atLeastOneChangeable = true;
-        } else if (column.colDef.groupShow === 'closed') {
+        } else if (column.colDef.headerGroupShow === 'closed') {
             atLeastOneShowingWhenClosed = true;
             atLeastOneChangeable = true;
         } else {
@@ -436,7 +453,7 @@ ColumnGroup.prototype.calculateExpandable = function() {
     this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
 };
 
-ColumnGroup.prototype.calculateDisplayedColumns = function() {
+headerGroup.prototype.calculateDisplayedColumns = function() {
     // clear out last time we calculated
     this.displayedColumns = [];
     // it not expandable, everything is visible
@@ -447,7 +464,7 @@ ColumnGroup.prototype.calculateDisplayedColumns = function() {
     // and calculate again
     for (var i = 0, j = this.allColumns.length; i < j; i++) {
         var column = this.allColumns[i];
-        switch (column.colDef.groupShow) {
+        switch (column.colDef.headerGroupShow) {
             case 'open':
                 // when set to open, only show col if group is open
                 if (this.expanded) {
@@ -469,7 +486,7 @@ ColumnGroup.prototype.calculateDisplayedColumns = function() {
 };
 
 // should replace with utils method 'add all'
-ColumnGroup.prototype.addToVisibleColumns = function(colsToAdd) {
+headerGroup.prototype.addToVisibleColumns = function(colsToAdd) {
     for (var i = 0; i < this.displayedColumns.length; i++) {
         var column = this.displayedColumns[i];
         colsToAdd.push(column);

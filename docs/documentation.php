@@ -14,6 +14,14 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        Breaking changes:
+        groupInnerRenderer is now called groupRowInnerRenderer. To avoid confusion, as it only works when grouping using rows.
+
+        colDef.group and colDef.groupShow are now colDef.headerGroup and colDef.headerGroupShow (so not to get mixed up with row grouping).
+
+    </p>
+
+    <p>
         This is what I did last week:
     <ul>
         <li>

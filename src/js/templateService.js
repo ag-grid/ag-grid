@@ -42,7 +42,7 @@ TemplateService.prototype.getTemplate = function (url, callback) {
 TemplateService.prototype.handleHttpResult = function (httpResult, url) {
 
     if (httpResult.status !== 200 || httpResult.response === null) {
-        console.log('Unable to get template error ' + httpResult.status + ' - ' + url);
+        console.warn('Unable to get template error ' + httpResult.status + ' - ' + url);
         return;
     }
 

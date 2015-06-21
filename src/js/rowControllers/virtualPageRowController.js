@@ -3,7 +3,7 @@
  * or standard pagination, the inMemoryRowController is used.
  */
 var utils = require('./../utils');
-var logging = true;
+var logging = false;
 
 function VirtualPageRowController() {}
 

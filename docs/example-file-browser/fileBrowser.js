@@ -161,7 +161,12 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
     }
 
     function innerCellRenderer(params) {
-        var image = params.node.level === 0 ? 'disk' : 'folder';
+        var image;
+        if (params.node.group) {
+            image = params.node.level === 0 ? 'disk' : 'folder';
+        } else {
+            image = 'file';
+        }
         var imageFullUrl = '/example-file-browser/' + image + '.png';
         return '<img src="'+imageFullUrl+'" style="padding-left: 4px;" /> ' + params.data.name;
     }

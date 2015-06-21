@@ -536,7 +536,7 @@ RowRenderer.prototype.createGroupElement = function(node, rowIndex, padding) {
             colDef: {
                 cellRenderer: {
                     renderer: 'group',
-                    innerRenderer: this.gridOptionsWrapper.getGroupInnerRenderer()
+                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
                 }
             }
         };

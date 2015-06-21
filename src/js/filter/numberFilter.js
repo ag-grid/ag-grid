@@ -57,7 +57,7 @@ NumberFilter.prototype.doesFilterPass = function(node) {
             return valueAsNumber >= this.filterNumber;
         default:
             // should never happen
-            console.log('invalid filter type ' + this.filterType);
+            console.warn('invalid filter type ' + this.filterType);
             return false;
     }
 };

@@ -50,7 +50,7 @@ include '../documentation_header.php';
                 a grouping column (normally the first on the left) to show the group.</td>
         </tr>
         <tr>
-            <th>groupInnerCellRenderer</th>
+            <th>groupRowInnerRenderer</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
                 presentation of the group. This is only used when groupUseEntireRow=true.</td>
         </tr>

@@ -37,10 +37,10 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupUseEntireRow: true,
         groupKeys: ['country'],
         groupAggFunction: groupAggFunction,
-        groupInnerRenderer: groupInnerRendererFunc
+        groupRowInnerRenderer: groupRowInnerRendererFunc
     };
 
-    function groupInnerRendererFunc(params) {
+    function groupRowInnerRendererFunc(params) {
         var flagCode = FLAG_CODES[params.node.key];
 
         var html = '';

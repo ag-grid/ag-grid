@@ -45,8 +45,8 @@ gridOptions.icons = {
     sortDescending: mySortDescIcon,
     groupExpanded: myGroupExpandedIcon,
     groupContracted: myGroupContractedIcon,
-    columnGroupOpened: myGroupExpandedIcon,
-    columnGroupClosed: myGroupContractedIcon
+    headerGroupOpened: myGroupExpandedIcon,
+    headerGroupClosed: myGroupContractedIcon
 }
 </pre>
 

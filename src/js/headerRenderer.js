@@ -45,7 +45,7 @@ HeaderRenderer.prototype.refreshHeader = function() {
 };
 
 HeaderRenderer.prototype.insertHeadersWithGrouping = function() {
-    var groups = this.columnModel.getColumnGroups();
+    var groups = this.columnModel.getHeaderGroups();
     var that = this;
     groups.forEach(function(group) {
         var eHeaderCell = that.createGroupedHeaderCell(group);
@@ -112,16 +112,16 @@ HeaderRenderer.prototype.createGroupedHeaderCell = function(group) {
 HeaderRenderer.prototype.addGroupExpandIcon = function(group, eHeaderGroup, expanded) {
     var eGroupIcon;
     if (expanded) {
-        eGroupIcon = utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+        eGroupIcon = utils.createIcon('headerGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
     } else {
-        eGroupIcon = utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+        eGroupIcon = utils.createIcon('headerGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
     }
     eGroupIcon.className = 'ag-header-expand-icon';
     eHeaderGroup.appendChild(eGroupIcon);
 
     var that = this;
     eGroupIcon.onclick = function() {
-        that.columnController.columnGroupOpened(group);
+        that.columnController.headerGroupOpened(group);
     };
 };
 

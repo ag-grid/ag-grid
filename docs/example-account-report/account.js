@@ -6,14 +6,14 @@ fileBrowserModule.controller('accountController', function($scope) {
         {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Units", field: "amount1", group: 'Week 1', width: 70},
-        {headerName: "GBP", field: "gbp1", group: 'Week 1', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount2", group: 'Week 2', width: 70},
-        {headerName: "GBP", field: "gbp2", group: 'Week 2', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount3", group: 'Week 3', width: 70},
-        {headerName: "GBP", field: "gbp3", group: 'Week 3', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amountTotal", group: 'Period Total', width: 70},
-        {headerName: "GBP", field: "gbpTotal", group: 'Period Total', width: 70, cellRenderer: currencyRenderer}
+        {headerName: "Units", field: "amount1", headerGroup: 'Week 1', width: 70},
+        {headerName: "GBP", field: "gbp1", headerGroup: 'Week 1', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount2", headerGroup: 'Week 2', width: 70},
+        {headerName: "GBP", field: "gbp2", headerGroup: 'Week 2', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amount3", headerGroup: 'Week 3', width: 70},
+        {headerName: "GBP", field: "gbp3", headerGroup: 'Week 3', width: 70, cellRenderer: currencyRenderer},
+        {headerName: "Units", field: "amountTotal", headerGroup: 'Period Total', width: 70},
+        {headerName: "GBP", field: "gbpTotal", headerGroup: 'Period Total', width: 70, cellRenderer: currencyRenderer}
     ];
 
     function currencyRenderer(params) {

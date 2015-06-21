@@ -2,7 +2,7 @@ var monthlySalesModule = angular.module('monthlySales', ['angularGrid']);
 
 monthlySalesModule.controller('monthlySalesController', function($scope, $http) {
 
-    var monthValueGetter = '(ctx.month < colDef.month) ? data[colDef.field + "_act"] : data[colDef.field + "_bud"]';
+    var monthValueGetter = '(ctx.month < colDef.month) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';
     var monthCellClassRules = {
         'cell-act': 'ctx.month < colDef.month',
         'cell-bud': 'ctx.month >= colDef.month',
@@ -18,43 +18,43 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
     };
 
     var columnDefs = [
-        {headerName : 'Jan', group: 'Monthly Data', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
+        {headerName : 'Jan', headerGroup: 'Monthly Data', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Feb', group: 'Monthly Data', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
+        {headerName : 'Feb', headerGroup: 'Monthly Data', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Mar', group: 'Monthly Data', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
+        {headerName : 'Mar', headerGroup: 'Monthly Data', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Apr', group: 'Monthly Data', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
+        {headerName : 'Apr', headerGroup: 'Monthly Data', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'May', group: 'Monthly Data', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
+        {headerName : 'May', headerGroup: 'Monthly Data', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Jun', group: 'Monthly Data', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
+        {headerName : 'Jun', headerGroup: 'Monthly Data', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Jul', group: 'Monthly Data', field: 'jul', month: 6, cellRenderer: accountingCellRenderer,
+        {headerName : 'Jul', headerGroup: 'Monthly Data', field: 'jul', month: 6, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Aug', group: 'Monthly Data', field: 'aug', month: 7, cellRenderer: accountingCellRenderer,
+        {headerName : 'Aug', headerGroup: 'Monthly Data', field: 'aug', month: 7, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Sep', group: 'Monthly Data', field: 'sep', month: 8, cellRenderer: accountingCellRenderer,
+        {headerName : 'Sep', headerGroup: 'Monthly Data', field: 'sep', month: 8, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Oct', group: 'Monthly Data', field: 'oct', month: 9, cellRenderer: accountingCellRenderer,
+        {headerName : 'Oct', headerGroup: 'Monthly Data', field: 'oct', month: 9, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Nov', group: 'Monthly Data', field: 'nov', month: 10, cellRenderer: accountingCellRenderer,
+        {headerName : 'Nov', headerGroup: 'Monthly Data', field: 'nov', month: 10, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure',  valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Dec', group: 'Monthly Data', field: 'dec', month: 11, cellRenderer: accountingCellRenderer,
+        {headerName : 'Dec', headerGroup: 'Monthly Data', field: 'dec', month: 11, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'YTD', group: 'Totals', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
+        {headerName : 'YTD', headerGroup: 'Totals', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
             valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}}
 
     ];
@@ -91,8 +91,8 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>',
-            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
         groupAggFunction: groupAggFunction
     };

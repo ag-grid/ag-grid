@@ -53,7 +53,7 @@ TextFilter.prototype.doesFilterPass = function(node) {
             return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
         default:
             // should never happen
-            console.log('invalid filter type ' + this.filterType);
+            console.warn('invalid filter type ' + this.filterType);
             return false;
     }
 };

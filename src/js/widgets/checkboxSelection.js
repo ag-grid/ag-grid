@@ -113,7 +113,6 @@ CheckboxSelection.prototype.setupAsDropTarget = function() {
 };
 
 CheckboxSelection.prototype.externalAcceptDrag = function(dragEvent) {
-    console.log('externalAcceptDrag');
     var allowedSource = this.dragSources.indexOf(dragEvent.containerId) >= 0;
     if (!allowedSource) {
         return false;
@@ -127,13 +126,11 @@ CheckboxSelection.prototype.externalAcceptDrag = function(dragEvent) {
 };
 
 CheckboxSelection.prototype.externalDrop = function(dragEvent) {
-    console.log('externalDrop');
     this.addItemToList(dragEvent.data);
     this.eGui.style.backgroundColor = '';
 };
 
 CheckboxSelection.prototype.externalNoDrop = function() {
-    console.log('externalNoDrop');
     this.eGui.style.backgroundColor = '';
 };
 

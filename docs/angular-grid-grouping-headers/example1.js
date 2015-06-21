@@ -4,16 +4,16 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", group: 'Participant', width: 150, filter: 'text'},
-        {headerName: "Age", field: "age", group: 'Participant', width: 90, filter: 'number'},
-        {headerName: "Country", field: "country", group: 'Participant', width: 120},
+        {headerName: "Athlete", field: "athlete", headerGroup: 'Participant', width: 150, filter: 'text'},
+        {headerName: "Age", field: "age", headerGroup: 'Participant', width: 90, filter: 'number'},
+        {headerName: "Country", field: "country", headerGroup: 'Participant', width: 120},
         {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Total", groupShow: 'closed', field: "total", group: 'Medals', width: 100, filter: 'number'},
-        {headerName: "Gold", groupShow: 'open', field: "gold", group: 'Medals', width: 100, filter: 'number'},
-        {headerName: "Silver", groupShow: 'open', field: "silver", group: 'Medals', width: 100, filter: 'number'},
-        {headerName: "Bronze", groupShow: 'open', field: "bronze", group: 'Medals', width: 100, filter: 'number'},
-        {headerName: "Year", field: "year", group: 'Competition', width: 90},
-        {headerName: "Date", field: "date", group: 'Competition', width: 110}
+        {headerName: "Total", headerGroupShow: 'closed', field: "total", headerGroup: 'Medals', width: 100, filter: 'number'},
+        {headerName: "Gold", headerGroupShow: 'open', field: "gold", headerGroup: 'Medals', width: 100, filter: 'number'},
+        {headerName: "Silver", headerGroupShow: 'open', field: "silver", headerGroup: 'Medals', width: 100, filter: 'number'},
+        {headerName: "Bronze", headerGroupShow: 'open', field: "bronze", headerGroup: 'Medals', width: 100, filter: 'number'},
+        {headerName: "Year", field: "year", headerGroup: 'Competition', width: 90},
+        {headerName: "Date", field: "date", headerGroup: 'Competition', width: 110}
     ];
 
     $scope.gridOptions = {

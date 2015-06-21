@@ -95,8 +95,12 @@ include '../documentation_header.php';
             <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
         </tr>
         <tr>
-            <th>group</th>
+            <th>headerGroup</th>
             <td>If grouping columns, the group this column belongs to.</td>
+        </tr>
+        <tr>
+            <th>headerGroupShow</th>
+            <td>Whether to show the column when the group is open / closed.</td>
         </tr>
         <tr>
             <th>editable</th>

@@ -31,8 +31,8 @@ include '../documentation_header.php';
 
     <p>
         A group can have columns initially hidden. If you want to show or hide columns,
-        set groupShow to either 'open' or 'closed' to one or more of the columns in the
-        group. When a column definition has groupShow set, it behaves in the following way:
+        set <i>headerGroupShow</i> to either 'open' or 'closed' to one or more of the columns in the
+        group. When a column definition has <i>headerGroupShow</i> set, it behaves in the following way:
         <ul>
             <li><b>open:</b> The column is only shown when the group is open.</li>
             <li><b>closed:</b> The column is only shown when the group is closed.</li>
@@ -61,7 +61,7 @@ include '../documentation_header.php';
 
     <p>
         Pinned columns break groups. So if you have a group with 10 columns, 4 of which are
-        inside the pinned area, two groups will be created, with with 4 (pinned) and one
+        inside the pinned area, two groups will be created, one with 4 (pinned) and one
         with 6 (not pinned).
     </p>
     <p>

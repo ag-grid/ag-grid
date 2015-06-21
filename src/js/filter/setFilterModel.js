@@ -39,12 +39,6 @@ SetFilterModel.prototype.createUniqueValues = function() {
         this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues());
     }
 
-    var bla = '';
-    this.uniqueValues.forEach( function(item) {
-        bla += '\'' + item + '\','
-    });
-    console.log(bla);
-
     if (this.colDef.comparator) {
         this.uniqueValues.sort(this.colDef.comparator);
     } else {
