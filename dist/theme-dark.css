@@ -93,6 +93,9 @@
 .ag-dark .ag-group-cell {
   font-style: italic;
 }
+.ag-dark .ag-group-expand {
+  padding-right: 2px;
+}
 .ag-dark .ag-footer-cell {
   font-style: italic;
 }
@@ -125,4 +128,48 @@
 .ag-dark .ag-paging-row-summary-panel {
   display: inline-block;
   width: 300px;
+}
+.ag-dark .ag-column-not-visible {
+  opacity: 0.75;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
+  filter: alpha(opacity=75);
+  font-style: italic;
+}
+.ag-dark .ag-not-dragging {
+  border: 1px solid transparent;
+}
+.ag-dark .ag-drop-target-above {
+  border-top: 5px solid #a9a9a9;
+}
+.ag-dark .ag-drop-target-below {
+  border-bottom: 5px solid #a9a9a9;
+}
+.ag-dark .ag-dragging {
+  border: 1px dotted #a9a9a9;
+}
+.ag-dark .ag-list-item-selected {
+  color: #f0f0f0;
+}
+.ag-dark .ag-list-item-not-selected {
+  font-style: italic;
+  color: #a0a0a0;
+}
+.ag-dark .ag-tool-panel-container {
+  background-color: #eee;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #a9a9a9;
+  padding: 4px;
+}
+.ag-dark .ag-list-selection {
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ag-dark .ag-visible-icons {
+  padding-left: 2px;
+  padding-right: 2px;
 }

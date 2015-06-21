@@ -121,9 +121,9 @@ include '../documentation_header.php';
             <td>Provide a function for custom header rendering.</td>
         </tr>
         <tr>
-            <th>groupKeys<br/> groupUseEntireRow<br/> groupInnerCellRenderer<br/>
+            <th>groupKeys<br/> groupUseEntireRow<br/> groupRowInnerRenderer<br/>
                 groupDefaultExpanded<br/> groupAggFunction<br/>
-                groupSelectsChildren<br/> groupSuppressGroupColumn</th>
+                groupSelectsChildren<br/> groupSuppressAutoColumn</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>

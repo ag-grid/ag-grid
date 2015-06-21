@@ -510,6 +510,14 @@ Grid.prototype.addApi = function() {
             var column = that.columnModel.getColumn(key);
             return that.filterManager.getFilterApi(column);
         },
+        getColumnDef: function(key) {
+            var column = that.columnModel.getColumn(key);
+            if (column) {
+                return column.colDef;
+            } else {
+                return null;
+            }
+        },
         onFilterChanged: function() {
             that.onFilterChanged();
         },

@@ -115,11 +115,9 @@
   float: right;
 }
 .ag-loading-panel {
-  z-index: 1;
-  position: absolute;
   display: table;
   width: 100%;
-/* Height is set by javascript, to cover the table */
+  height: 100%;
 }
 .ag-loading-wrapper {
   display: table-cell;
@@ -227,9 +225,6 @@
   width: 110px;
   margin: 4px 4px 0px 4px;
 }
-.ag-paging-panel {
-  position: absolute;
-}
 .ag-no-vertical-scroll .ag-scrolls {
   height: unset;
 }
@@ -241,4 +236,16 @@
 }
 .ag-no-vertical-scroll .ag-body-viewport {
   height: unset;
+}
+.ag-list-selection {
+  height: 100%;
+  overflow: auto;
+}
+.ag-tool-panel-container {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  width: 200px;
 }

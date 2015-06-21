@@ -104,6 +104,9 @@
 .ag-fresh .ag-group-cell {
   font-style: italic;
 }
+.ag-fresh .ag-group-expand {
+  padding-right: 2px;
+}
 .ag-fresh .ag-footer-cell {
   font-style: italic;
 }
@@ -133,19 +136,23 @@
   display: inline-block;
   width: 300px;
 }
-.ag-fresh .ag-drop-target-above {
+.ag-fresh .ag-column-not-visible {
+  opacity: 0.75;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
+  filter: alpha(opacity=75);
+  font-style: italic;
+}
+.ag-fresh .ag-not-dragging {
   border: 1px solid transparent;
-  border-top: 1px solid #a9a9a9;
+}
+.ag-fresh .ag-drop-target-above {
+  border-top: 5px solid #a9a9a9;
 }
 .ag-fresh .ag-drop-target-below {
-  border: 1px solid transparent;
-  border-bottom: 1px solid #a9a9a9;
-}
-.ag-fresh .ag-not-drop-target {
-  border: 1px solid transparent;
+  border-bottom: 5px solid #a9a9a9;
 }
 .ag-fresh .ag-dragging {
-  border: 1px dotted #d3d3d3;
+  border: 1px dotted #a9a9a9;
 }
 .ag-fresh .ag-list-item-selected {
   color: #f0f0f0;
@@ -153,4 +160,23 @@
 .ag-fresh .ag-list-item-not-selected {
   font-style: italic;
   color: #a0a0a0;
+}
+.ag-fresh .ag-tool-panel-container {
+  background-color: #eee;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #a9a9a9;
+  padding: 4px;
+}
+.ag-fresh .ag-list-selection {
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ag-fresh .ag-visible-icons {
+  padding-left: 2px;
+  padding-right: 2px;
 }

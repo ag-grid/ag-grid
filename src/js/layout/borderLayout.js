@@ -20,7 +20,7 @@ function BorderLayout(params) {
             template =
                 '<div style="height: 100%; position: relative;">' +
                 '<div id="north"></div>' +
-                '<div id="centerRow" style="height: 100%; overflow: auto;">' +
+                '<div id="centerRow" style="height: 100%; overflow: hidden;">' +
                 '<div id="west" style="height: 100%; float: left;"></div>' +
                 '<div id="east" style="height: 100%; float: right;"></div>' +
                 '<div id="center" style="height: 100%;"></div>' +

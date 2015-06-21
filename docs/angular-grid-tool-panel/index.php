@@ -50,7 +50,7 @@ include '../documentation_header.php';
 
     </p>
 
-    <show-example example="showHideColumnExample"></show-example>
+    <show-example example="toolPanelExample"></show-example>
 </div>
 
 <?php include '../documentation_footer.php';?>

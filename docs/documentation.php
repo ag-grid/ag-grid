@@ -10,47 +10,40 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>14th June 2015</b>
-    </p>
-
-    <p>
-        Breaking changes:
-        groupInnerRenderer is now called groupRowInnerRenderer. To avoid confusion, as it only works when grouping using rows.
-
-        colDef.group and colDef.groupShow are now colDef.headerGroup and colDef.headerGroupShow (so not to get mixed up with row grouping).
-
-        show /hide columns
+        <b>21th June 2015</b>
     </p>
 
     <p>
         This is what I did last week:
     <ul>
+
         <li>
-            <b>Server side sorting and filtering:</b> Using pagination or infinite scrolling? Now you can sort and
-            filter on the server side. Check it out in <a href="/angular-grid-pagination/index.php">pagination</a>
-            and <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
+            <b>Showing / hiding columns</b> and <b>data pivoting</b> is here!!! See it in action on the
+            <a href="/example.html">test drive</a>, or read about it in the new
+            <a href="/angular-grid-tool-panel/index.php">toolbar panel</a>.
         </li>
         <li>
-            <b>New Example:</b> Trying to get your head around value getters and expressions? Here is an
-            <a href="/example-expressions-and-context/index.php">end-to-end example.</a>
+            <b>Enhanced Grouping:</b> To get the automatic pivoting working, I had to do some redesign
+            on how group columns worked. If you are grouping, now the grid provides a group column by default.
+            To remove this (ie keep your old design), just add 'groupSuppressAutoColumn = true' to your grid options.
+            However check out <a href="/angular-grid-grouping/index.php">grouping page</a> to learn how it's done now.
         </li>
         <li>
-            <b>Column headerValueGetter:</b> Now headers can use the power of value getters, to have dynamic header names.
-            Check it out in <a href="angular-grid-value-getters/index.php">value getters documentation</a>
-        </li>
-        <li>
-            <b>Filter 'newRowsAction':</b> Now you can specify the default behaviour of filters when new rows are loaded,
-            either reset them, or keep the old state. Read about it in <a href="angular-grid-filtering/index.php">filters documentation</a>
-        </li>
-        <li>
-            <b>Sorting Options: </b> New sorting options of 'suppressUnSort' and 'suppressMultiSort'.
-        </li>
-        <li>
-            <b>Mail List Created: </b> Stay up to date, sign up below.
+            <b>Non Breaking Change: </b>
+            The following name changes have happened, so best you change. However if wrong, a warning gets printed to the
+            console (ie the old way still works). Changes are:
+            <ul>
+                <li>
+                    groupInnerRenderer is now called groupRowInnerRenderer. To avoid confusion, as it only works when grouping using rows.
+                </li>
+                <li>
+                    colDef.group and colDef.groupShow are now colDef.headerGroup and colDef.headerGroupShow (so not to get mixed up with row grouping).
+                </li>
+            </ul>
         </li>
 
         <li>
-            <b>Released 1.9.0</b> - contains all the above.
+            <b>Released 1.10.0</b> - contains all the above.
         </li>
 
     </ul>
@@ -61,8 +54,9 @@ include 'documentation_header.php';
 
     <ul>
         <li>
-            Finally, 'Server side Filtering and Sorting' is in!!! That took longer than I was expecting.
-            Next up - I'm going to go crazy on Column Reordering, Column Visibility and Slice and Dice capabilities.
+            The first pass of the tool panel took a LOT of work. I had to refactor and rewrite large chunks of the code.
+            However the foundations are laid for a great grid going forward. Next up - I'll be working more on the tool panel
+            (such as saving / restoring column order and grouping).
         </li>
     </ul>
 
@@ -74,7 +68,7 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="text-align: center; padding: 20px;;">
+<!--<div style="text-align: center; padding: 20px;;">
 <span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
     <p>
         <img src="images/panda.png"/>
@@ -86,7 +80,7 @@ include 'documentation_header.php';
         Both of these fixed in 1.9.2.
     </p>
 </span>
-</div>
+</div>-->
 
 <div style="text-align: center; margin-top: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
@@ -217,6 +211,11 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+
+    <p>
+        <b>14th June</b> Server side sorting and filtering, headerValueGetter, newRowsAction, suppressUnSort & suppressMultiSort'.
+    </p>
 
     <p>
         <b>7th June</b> New features: Ensure Col Index Visible, No Isolated Scope, API for Sorting,

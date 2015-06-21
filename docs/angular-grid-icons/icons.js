@@ -49,6 +49,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,
+        groupSuppressAutoColumn: true,
         // override all the defaults with font awsome
         icons: {
             // use font awesome for menu icons

@@ -92,11 +92,14 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
     }
 
     function createGroupExpandIcon(expanded) {
+        var eIcon;
         if (expanded) {
-            return utils.createIcon('groupContracted', gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+            eIcon = utils.createIcon('groupContracted', gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         } else {
-            return utils.createIcon('groupExpanded', gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
+            eIcon = utils.createIcon('groupExpanded', gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
         }
+        utils.addCssClass(eIcon, 'ag-group-expand');
+        return eIcon;
     }
 
     // creates cell with 'Total {{key}}' for a group
@@ -123,15 +126,22 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
 
     // creates cell with '{{key}} ({{childCount}})' for a group
     function createGroupCell(eGroupCell, params) {
-        var textToDisplay = " " + getGroupName(params);
+        var groupName = getGroupName(params);
+
+        var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
+        if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
+            params.value = groupName;
+            utils.useRenderer(eGroupCell, colDefOfGroupedCol.cellRenderer, params);
+        } else {
+            eGroupCell.appendChild(document.createTextNode(groupName));
+        }
+
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
         var suppressCount = params.colDef.cellRenderer && params.colDef.cellRenderer.suppressCount;
         if (!suppressCount && params.node.allChildrenCount >= 0) {
-            textToDisplay += " (" + params.node.allChildrenCount + ")";
+            eGroupCell.appendChild(document.createTextNode(" (" + params.node.allChildrenCount + ")"));
         }
-        var eText = document.createTextNode(textToDisplay);
-        eGroupCell.appendChild(eText);
     }
 
     // creates cell with '{{key}} ({{childCount}})' for a group

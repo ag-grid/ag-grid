@@ -108,14 +108,14 @@
 
     var columnDefs = [
         {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
-        {headerName: "Name", field: "name", group: 'Employee', width: 150},
-        {headerName: "Country", field: "country", group: 'Employee', width: 150, cellRenderer: countryCellRenderer,
+        {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150},
+        {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
-        {headerName: "Skills", width: 125, group: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-        {headerName: "Proficiency", field: "proficiency", group: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
-        {headerName: "Mobile", field: "mobile", group: 'Contact', width: 150, filter: 'text'},
-        {headerName: "Land-line", field: "landline", group: 'Contact', width: 150, filter: 'text'},
-        {headerName: "Address", field: "address", group: 'Contact', width: 500, filter: 'text'}
+        {headerName: "Skills", width: 125, headerGroup: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
+        {headerName: "Proficiency", field: "proficiency", headerGroup: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+        {headerName: "Mobile", field: "mobile", headerGroup: 'Contact', width: 150, filter: 'text'},
+        {headerName: "Land-line", field: "landline", headerGroup: 'Contact', width: 150, filter: 'text'},
+        {headerName: "Address", field: "address", headerGroup: 'Contact', width: 500, filter: 'text'}
     ];
 
     var gridOptions = {
