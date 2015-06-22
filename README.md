@@ -53,19 +53,3 @@ technical implementation and functional requirements).
 
 If you would like to help, then where I actually do need help is in answering questions
 on the forum and spreading the word to grow the user community.
-
-Automated Testing
-==============
-
-ag-Grid has no automated tests. This is the choice of the author, not because he
-can't write tests, but because he has chosen not to for this particular project.
-Reasons include a) only one developer and b) the one developer knows the design, he
-knows what changes are breaking changes. The grid is also in an evolving state,
-with the core design been refactored regularly - this reduces the overall benefit
-of tests.
-
-If you are worried about ag-Grid not having tests, then take assurance in the fact
-that there are pretty much no bugs in ag-Grid (all the issues reported are feature
-requests, not bugs). The quality of the product is far beyond that of other projects
-who do focus heavily on testing. The grid is being used by a very large community
-now and has a reputation for been solid (again unlike other grids / projects).
