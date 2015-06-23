@@ -99,7 +99,7 @@ gridsModule.controller('mainController', function($scope) {
             //menu: '<i class="fa fa-bars"/>',
             //columnVisible: '<i class="fa fa-eye"/>',
             //columnHidden: '<i class="fa fa-eye-slash"/>',
-            columnRemoveFromGroupIcon: '<i class="fa fa-remove"/>',
+            columnRemoveFromGroup: '<i class="fa fa-remove"/>',
             filter: '<i class="fa fa-filter"/>',
             sortAscending: '<i class="fa fa-long-arrow-down"/>',
             sortDescending: '<i class="fa fa-long-arrow-up"/>',

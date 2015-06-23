@@ -1,6 +1,7 @@
 var utils = require('../utils');
 var ColumnSelectionPanel = require('./columnSelectionPanel');
 var GroupSelectionPanel = require('./groupSelectionPanel');
+var ValuesSelectionPanel = require('./valuesSelectionPanel');
 var VerticalStack = require('../layout/verticalStack');
 
 function ToolPanel() {
@@ -12,9 +13,12 @@ ToolPanel.prototype.init = function(columnController, inMemoryRowController, gri
     var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper);
     this.layout.addPanel(columnSelectionPanel.layout, '50%');
     var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
-    this.layout.addPanel(groupSelectionPanel.layout, '50%');
+    this.layout.addPanel(groupSelectionPanel.layout, '25%');
+    var valuesSelectionPanel = new ValuesSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
+    this.layout.addPanel(valuesSelectionPanel.layout, '25%');
 
     groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
+    valuesSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
 
     var eGui = this.layout.getGui();
 

@@ -1,4 +1,4 @@
-var CheckboxSelection = require("../widgets/checkboxSelection");
+var AgList = require("../widgets/agList");
 var utils = require('./../utils');
 var BorderLayout = require('../layout/BorderLayout');
 var SvgFactory = require('../svgFactory');
@@ -63,8 +63,9 @@ ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
 
 ColumnSelectionPanel.prototype.setupComponents = function() {
 
-    this.cColumnList = new CheckboxSelection();
+    this.cColumnList = new AgList();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
+    this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
 
     var that = this;
     this.cColumnList.addModelChangedListener( function() {

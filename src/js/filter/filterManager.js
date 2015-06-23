@@ -278,7 +278,7 @@ FilterManager.prototype.showFilter = function(column, eventSource) {
     var ePopupParent = this.grid.getPopupParent();
     this.positionPopup(eventSource, filterWrapper.gui, ePopupParent);
 
-    utils.addAsModalPopup(ePopupParent, filterWrapper.gui);
+    utils.addAsModalPopupNew(ePopupParent, filterWrapper.gui);
 
     if (filterWrapper.filter.afterGuiAttached) {
         filterWrapper.filter.afterGuiAttached();

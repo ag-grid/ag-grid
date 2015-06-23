@@ -155,6 +155,54 @@ Utils.prototype.addAsModalPopup = function(eParent, eChild) {
     eParent.appendChild(eChild);
 };
 
+//adds an element to a div, but also adds a background checking for clicks,
+//so that when the background is clicked, the child is removed again, giving
+//a model look to popups.
+Utils.prototype.addAsModalPopupNew = function(eParent, eChild, removedCallback) {
+    var eBody = document.body;
+    if (!eBody) {
+        console.warn('ag-grid: could not find the body of the document, document.body is empty');
+    }
+
+    var popupAlreadyShown = this.isVisible(eChild);
+    if (popupAlreadyShown) {
+        return;
+    }
+
+    eParent.appendChild(eChild);
+
+    // if we add these listeners now, then the current mouse
+    // click will be included, which we don't want
+    setTimeout(function() {
+        eBody.addEventListener('click', hidePopup);
+        eChild.addEventListener('click', consumeClick);
+    }, 0);
+
+    var eventFromChild = null;
+
+    function hidePopup(event) {
+        if (event && event === eventFromChild) {
+            return;
+        }
+        eParent.removeChild(eChild);
+        eBody.removeEventListener('click', hidePopup);
+        eChild.removeEventListener('click', consumeClick);
+        if (typeof removedCallback === 'function') {
+            removedCallback();
+        }
+    }
+
+    function consumeClick(event) {
+        eventFromChild = event;
+    }
+
+    return hidePopup;
+};
+
+Utils.prototype.isVisible = function(element) {
+    return (element.offsetParent !== null)
+};
+
 //loads the template and returns it as an element. makes up for no simple way in
 //the dom api to load html directly, eg we cannot do this: document.createElement(template)
 Utils.prototype.loadTemplate = function(template) {
@@ -322,6 +370,11 @@ Utils.prototype.createIcon = function(iconName, gridOptionsWrapper, colDefWrappe
     return eResult;
 };
 
+Utils.prototype.addStylesToElement = function(eElement, styles) {
+    Object.keys(styles).forEach(function(key) {
+        eElement.style[key] = styles[key];
+    });
+};
 
 Utils.prototype.getScrollbarWidth = function () {
     var outer = document.createElement("div");

@@ -1,4 +1,4 @@
-var template = require('./checkboxSelection.html');
+var template = require('./agList.html');
 var utils = require('../utils');
 var dragAndDropService = require('../dragAndDrop/dragAndDropService');
 
@@ -6,38 +6,53 @@ var NOT_DROP_TARGET = 0;
 var DROP_TARGET_ABOVE = 1;
 var DROP_TARGET_BELOW = -11;
 
-function CheckboxSelection() {
+function AgList() {
     this.setupComponents();
     this.uniqueId = 'CheckboxSelection-' + Math.random();
     this.modelChangedListeners = [];
+    this.itemSelectedListeners = [];
     this.dragSources = [];
     this.setupAsDropTarget();
 }
 
-CheckboxSelection.prototype.setEmptyMessage = function(emptyMessage) {
+AgList.prototype.setEmptyMessage = function(emptyMessage) {
     return this.emptyMessage = emptyMessage;
     this.refreshView();
 };
 
-CheckboxSelection.prototype.getUniqueId = function() {
+AgList.prototype.getUniqueId = function() {
     return this.uniqueId;
 };
 
-CheckboxSelection.prototype.addDragSource = function(dragSource) {
+AgList.prototype.addStyles = function(styles) {
+    utils.addStylesToElement(this.eGui, styles);
+};
+
+AgList.prototype.addDragSource = function(dragSource) {
     this.dragSources.push(dragSource);
 };
 
-CheckboxSelection.prototype.addModelChangedListener = function(listener) {
+AgList.prototype.addModelChangedListener = function(listener) {
     this.modelChangedListeners.push(listener);
 };
 
-CheckboxSelection.prototype.fireModelChanged = function() {
+AgList.prototype.addItemSelectedListener = function(listener) {
+    this.itemSelectedListeners.push(listener);
+};
+
+AgList.prototype.fireModelChanged = function() {
     for (var i = 0; i<this.modelChangedListeners.length; i++) {
         this.modelChangedListeners[i]();
     }
 };
 
-CheckboxSelection.prototype.setupComponents = function() {
+AgList.prototype.fireItemSelected = function(item) {
+    for (var i = 0; i<this.itemSelectedListeners.length; i++) {
+        this.itemSelectedListeners[i](item);
+    }
+};
+
+AgList.prototype.setupComponents = function() {
 
     this.eGui = utils.loadTemplate(template);
     this.eFilterValueTemplate = this.eGui.querySelector("[ag-repeat]");
@@ -46,20 +61,20 @@ CheckboxSelection.prototype.setupComponents = function() {
     utils.removeAllChildren(this.eListParent);
 };
 
-CheckboxSelection.prototype.setModel = function(model) {
+AgList.prototype.setModel = function(model) {
     this.model = model;
     this.refreshView();
 };
 
-CheckboxSelection.prototype.getModel = function() {
+AgList.prototype.getModel = function() {
     return this.model;
 };
 
-CheckboxSelection.prototype.setCellRenderer = function(cellRenderer) {
+AgList.prototype.setCellRenderer = function(cellRenderer) {
     this.cellRenderer = cellRenderer;
 };
 
-CheckboxSelection.prototype.refreshView = function() {
+AgList.prototype.refreshView = function() {
     utils.removeAllChildren(this.eListParent);
 
     if (this.model && this.model.length > 0) {
@@ -69,7 +84,7 @@ CheckboxSelection.prototype.refreshView = function() {
     }
 };
 
-CheckboxSelection.prototype.insertRows = function() {
+AgList.prototype.insertRows = function() {
     for (var i = 0; i<this.model.length; i++) {
         var item = this.model[i];
         //var text = this.getText(item);
@@ -83,12 +98,14 @@ CheckboxSelection.prototype.insertRows = function() {
             eListItem.innerHTML = item;
         }
 
+        eListItem.addEventListener('click', this.fireItemSelected.bind(this, item));
+
         this.addDragAndDropToListItem(eListItem, item);
         this.eListParent.appendChild(eListItem);
     }
 };
 
-CheckboxSelection.prototype.insertBlankMessage = function() {
+AgList.prototype.insertBlankMessage = function() {
     if (this.emptyMessage) {
         var eMessage = document.createElement('div');
         eMessage.style.color = 'grey';
@@ -99,11 +116,7 @@ CheckboxSelection.prototype.insertBlankMessage = function() {
     }
 };
 
-CheckboxSelection.prototype.getDragItem = function() {
-    return this.dragItem;
-};
-
-CheckboxSelection.prototype.setupAsDropTarget = function() {
+AgList.prototype.setupAsDropTarget = function() {
 
     dragAndDropService.addDropTarget(this.eGui, {
         acceptDrag: this.externalAcceptDrag.bind(this),
@@ -112,7 +125,7 @@ CheckboxSelection.prototype.setupAsDropTarget = function() {
     });
 };
 
-CheckboxSelection.prototype.externalAcceptDrag = function(dragEvent) {
+AgList.prototype.externalAcceptDrag = function(dragEvent) {
     var allowedSource = this.dragSources.indexOf(dragEvent.containerId) >= 0;
     if (!allowedSource) {
         return false;
@@ -125,22 +138,22 @@ CheckboxSelection.prototype.externalAcceptDrag = function(dragEvent) {
     return true;
 };
 
-CheckboxSelection.prototype.externalDrop = function(dragEvent) {
+AgList.prototype.externalDrop = function(dragEvent) {
     this.addItemToList(dragEvent.data);
     this.eGui.style.backgroundColor = '';
 };
 
-CheckboxSelection.prototype.externalNoDrop = function() {
+AgList.prototype.externalNoDrop = function() {
     this.eGui.style.backgroundColor = '';
 };
 
-CheckboxSelection.prototype.addItemToList = function(newItem) {
+AgList.prototype.addItemToList = function(newItem) {
     this.model.push(newItem);
     this.refreshView();
     this.fireModelChanged();
 };
 
-CheckboxSelection.prototype.addDragAndDropToListItem = function(eListItem, item) {
+AgList.prototype.addDragAndDropToListItem = function(eListItem, item) {
     var that = this;
     dragAndDropService.addDragSource(eListItem, {
         getData: function() { return item; },
@@ -153,7 +166,7 @@ CheckboxSelection.prototype.addDragAndDropToListItem = function(eListItem, item)
     });
 };
 
-CheckboxSelection.prototype.internalAcceptDrag = function(targetColumn, dragItem, eListItem) {
+AgList.prototype.internalAcceptDrag = function(targetColumn, dragItem, eListItem) {
     var result = dragItem.data !== targetColumn && dragItem.containerId === this.uniqueId;
     if (result) {
         if (this.dragAfterThisItem(targetColumn, dragItem.data)) {
@@ -165,7 +178,7 @@ CheckboxSelection.prototype.internalAcceptDrag = function(targetColumn, dragItem
     return result;
 };
 
-CheckboxSelection.prototype.internalDrop = function(targetColumn, draggedColumn) {
+AgList.prototype.internalDrop = function(targetColumn, draggedColumn) {
     var oldIndex = this.model.indexOf(draggedColumn);
     var newIndex = this.model.indexOf(targetColumn);
 
@@ -176,22 +189,22 @@ CheckboxSelection.prototype.internalDrop = function(targetColumn, draggedColumn)
     this.fireModelChanged();
 };
 
-CheckboxSelection.prototype.internalNoDrop = function(eListItem) {
+AgList.prototype.internalNoDrop = function(eListItem) {
     this.setDropCssClasses(eListItem, NOT_DROP_TARGET);
 };
 
-CheckboxSelection.prototype.dragAfterThisItem = function(targetColumn, draggedColumn) {
+AgList.prototype.dragAfterThisItem = function(targetColumn, draggedColumn) {
     return this.model.indexOf(targetColumn) < this.model.indexOf(draggedColumn);
 };
 
-CheckboxSelection.prototype.setDropCssClasses = function(eListItem, state) {
+AgList.prototype.setDropCssClasses = function(eListItem, state) {
     utils.addOrRemoveCssClass(eListItem, 'ag-not-drop-target', state === NOT_DROP_TARGET);
     utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-above', state === DROP_TARGET_ABOVE);
     utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-below', state === DROP_TARGET_BELOW);
 };
 
-CheckboxSelection.prototype.getGui = function() {
+AgList.prototype.getGui = function() {
     return this.eGui;
 };
 
-module.exports = CheckboxSelection;
+module.exports = AgList;

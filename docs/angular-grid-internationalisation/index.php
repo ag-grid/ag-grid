@@ -48,7 +48,9 @@ include '../documentation_header.php';
             // tool panel
             columns: 'laColumns',
             pivotedColumns: 'laPivot Cols',
-            pivotedColumnsEmptyMessage: 'la please drag cols to here'
+            pivotedColumnsEmptyMessage: 'la please drag cols to here',
+            valueColumns: 'laValue Cols',
+            valueColumnsEmptyMessage: 'la please drag cols to here'
         }
     };</pre>
 

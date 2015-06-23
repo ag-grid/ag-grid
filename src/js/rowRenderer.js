@@ -630,9 +630,7 @@ RowRenderer.prototype.addStylesFromCollDef = function(column, value, node, $chil
         }
 
         if (cssToUse) {
-            Object.keys(cssToUse).forEach(function(key) {
-                eGridCell.style[key] = cssToUse[key];
-            });
+            utils.addStylesToElement(eGridCell, cssToUse);
         }
     }
 };

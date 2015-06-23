@@ -1,12 +1,13 @@
-var AgList = require("../widgets/agList");
+var AgList = require('../widgets/agList');
 var constants = require('../constants');
 var utils = require('../utils');
 var BorderLayout = require('../layout/borderLayout');
 var SvgFactory = require('../svgFactory');
+var AgDropdownList = require('../widgets/agDropdownList');
 
 var svgFactory = new SvgFactory();
 
-function GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper) {
+function ValuesSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.setupComponents();
     this.columnController = columnController;
@@ -18,15 +19,15 @@ function GroupSelectionPanel(columnController, inMemoryRowController, gridOption
     });
 }
 
-GroupSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedColumns) {
+ValuesSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedColumns) {
     this.cColumnList.setModel(newGroupedColumns);
 };
 
-GroupSelectionPanel.prototype.getColumnList = function() {
+ValuesSelectionPanel.prototype.getColumnList = function() {
     return this.cColumnList;
 };
 
-GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
+ValuesSelectionPanel.prototype.columnCellRenderer = function(params) {
     var column = params.value;
     var colDisplayName = this.columnController.getDisplayNameForCol(column);
 
@@ -41,24 +42,29 @@ GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
         var model = that.cColumnList.getModel();
         model.splice(model.indexOf(column), 1);
         that.cColumnList.setModel(model);
-        that.onGroupingChanged();
+        that.onValuesChanged();
     });
 
     var eValue = document.createElement('span');
     eValue.innerHTML = colDisplayName;
     eResult.appendChild(eValue);
 
+    var agValueType = new AgDropdownList();
+    agValueType.setModel(['Sum','Avg','Min','Max']);
+    agValueType.setSelected('Sum');
+    eResult.appendChild(agValueType.getGui());
+
     return eResult;
 };
 
-GroupSelectionPanel.prototype.setupComponents = function() {
+ValuesSelectionPanel.prototype.setupComponents = function() {
     var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-    var columnsLocalText = localeTextFunc('pivotedColumns', 'Pivoted Columns');
-    var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns down from above to pivot by those columns');
+    var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
+    var pivotedColumnsEmptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns down from above to create values');
 
     this.cColumnList = new AgList();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
-    this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
+    this.cColumnList.addModelChangedListener(this.onValuesChanged.bind(this));
     this.cColumnList.setEmptyMessage(pivotedColumnsEmptyMessage);
     this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
 
@@ -72,14 +78,14 @@ GroupSelectionPanel.prototype.setupComponents = function() {
     });
 };
 
-GroupSelectionPanel.prototype.onGroupingChanged = function() {
-    this.inMemoryRowController.doGrouping();
-    this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
-    this.columnController.onColumnStateChanged();
+ValuesSelectionPanel.prototype.onValuesChanged = function() {
+    //this.inMemoryRowController.doGrouping();
+    //this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
+    //this.columnController.onColumnStateChanged();
 };
 
-GroupSelectionPanel.prototype.getGui = function() {
+ValuesSelectionPanel.prototype.getGui = function() {
     return this.eRootPanel.getGui();
 };
 
-module.exports = GroupSelectionPanel;
+module.exports = ValuesSelectionPanel;
