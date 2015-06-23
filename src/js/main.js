@@ -2,7 +2,7 @@
 // Written by Niall Crosby
 // www.angulargrid.com
 //
-// Version 1.10.0
+// Version 1.10.1
 
 (function() {
 
