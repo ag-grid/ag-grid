@@ -62,11 +62,24 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.doLayout();
 
+    this.finished = false;
+    this.periodicallyDoLayout();
+
     // if ready function provided, use it
     if (typeof this.gridOptionsWrapper.getReady() == 'function') {
         this.gridOptionsWrapper.getReady()(gridOptions.api);
     }
 }
+
+Grid.prototype.periodicallyDoLayout = function() {
+    if (!this.finished) {
+        var that = this;
+        setTimeout(function() {
+            that.doLayout();
+            that.periodicallyDoLayout();
+        }, 500);
+    }
+};
 
 Grid.prototype.setupComponents = function($scope, $compile, eUserProvidedDiv) {
 
@@ -226,6 +239,7 @@ Grid.prototype.refreshHeaderAndBody = function() {
 
 Grid.prototype.setFinished = function() {
     window.removeEventListener('resize', this.doLayout);
+    this.finished = true;
 };
 
 Grid.prototype.getPopupParent = function() {
@@ -684,14 +698,6 @@ Grid.prototype.updatePinnedColContainerWidthAfterColResize = function() {
 };
 
 Grid.prototype.doLayout = function() {
-    setTimeout(this.doLayoutForReal.bind(this), 0);
-    setTimeout(this.doLayoutForReal.bind(this), 10);
-    setTimeout(this.doLayoutForReal.bind(this), 20);
-    //setTimeout(this.doLayoutForReal.bind(this), 500);
-    this.doLayoutForReal();
-};
-
-Grid.prototype.doLayoutForReal = function() {
     // need to do layout first, as drawVirtualRows and setPinnedColHeight
     // need to know the result of the resizing of the panels.
     this.eRootPanel.doLayout();
