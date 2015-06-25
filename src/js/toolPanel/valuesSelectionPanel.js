@@ -20,7 +20,7 @@ function ValuesSelectionPanel(columnController, inMemoryRowController, gridOptio
 }
 
 ValuesSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedColumns) {
-    this.cColumnList.setModel(newGroupedColumns);
+    this.cColumnList.setModel([]);
 };
 
 ValuesSelectionPanel.prototype.getColumnList = function() {

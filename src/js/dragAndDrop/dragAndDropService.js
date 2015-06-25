@@ -1,10 +1,13 @@
 var utils = require('../utils');
 
 function DragAndDropService() {
+    var that = this;
+    // need to clean this up, add to 'finished' logic in grid
     document.addEventListener('mouseup', this.stopDragging.bind(this));
 }
 
 DragAndDropService.prototype.stopDragging = function() {
+    console.log('stopDragging');
     if (this.dragItem) {
         this.setDragCssClasses(this.dragItem.eDragSource, false);
         this.dragItem = null;
@@ -16,39 +19,15 @@ DragAndDropService.prototype.setDragCssClasses = function(eListItem, dragging) {
     utils.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
 };
 
-DragAndDropService.prototype.addDragSource = function(eDragSource, dragSourceCallback, containerId) {
+DragAndDropService.prototype.addDragSource = function(eDragSource, dragSourceCallback) {
 
     this.setDragCssClasses(eDragSource, false);
 
-    var mouseDown = false;
-    var that = this;
-
-    eDragSource.addEventListener('mousedown', function() {
-        mouseDown = true;
-    });
-
-    eDragSource.addEventListener('mouseup', function() {
-        mouseDown = false;
-    });
-
-    eDragSource.addEventListener('mouseout', function() {
-        mouseDown = false;
-    });
-
-    eDragSource.addEventListener('mousemove', function() {
-        if (mouseDown) {
-            var alreadyDraggingThisItem = this.dragItem && this.dragItem.eDropSource === eDragSource;
-            if (!alreadyDraggingThisItem) {
-                that.startDragging(eDragSource, dragSourceCallback, containerId);
-            }
-        }
-    });
+    eDragSource.addEventListener('mousedown',
+        this.onMouseDownDragSource.bind(this, eDragSource, dragSourceCallback));
 };
 
-DragAndDropService.prototype.startDragging = function(eDragSource, dragSourceCallback) {
-    if (this.dragItem && this.dragItem.eDragSource === eDragSource) {
-        return;
-    }
+DragAndDropService.prototype.onMouseDownDragSource = function(eDragSource, dragSourceCallback) {
     if (this.dragItem) {
         this.stopDragging();
     }
