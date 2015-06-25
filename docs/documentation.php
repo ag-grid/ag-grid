@@ -14,6 +14,10 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        ### - To hide filter, extra click isn't needed.
+    </p>
+
+    <p>
         This is what I did last week:
     <ul>
 

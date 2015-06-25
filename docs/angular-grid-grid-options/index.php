@@ -198,6 +198,11 @@ include '../documentation_header.php';
             <th>rowsBuffer</th>
             <td>Defaults to 20.  Set higher to increase the number of rows that automatically load before and after the viewport.</td>
         </tr>
+        <tr>
+            <th>showToolPanel</th>
+            <td>Set to true to show the tool panel by default.</td>
+        </tr>
+
     </table>
 
 </div>

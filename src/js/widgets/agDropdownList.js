@@ -1,9 +1,21 @@
 var AgList = require('./agList');
 var utils = require('../utils');
+var SvgFactory = require('../svgFactory');
+
+var svgFactory = new SvgFactory();
 
 function AgDropdownList() {
     this.setupComponents();
 }
+
+AgDropdownList.prototype.setPopupParent = function(ePopupParent) {
+    this.ePopupParent = ePopupParent;
+};
+
+AgDropdownList.prototype.setWidth = function(width) {
+    this.eValue.style.width = width;
+    this.agList.addStyles({width: width});
+};
 
 AgDropdownList.prototype.setupComponents = function() {
     this.eGui = document.createElement('span');
@@ -14,7 +26,14 @@ AgDropdownList.prototype.setupComponents = function() {
     this.eValue.addEventListener('click', this.onClick.bind(this));
     this.agList.addItemSelectedListener(this.itemSelected.bind(this));
 
-    this.agList.addStyles({display: 'inline-block', position: 'absolute'});
+    utils.addStylesToElement(this.eValue, {
+        border: '1px solid darkgrey',
+        display: 'inline-block',
+        paddingLeft: 2
+    });
+    utils.addStylesToElement(this.eGui, {position: 'relative'});
+
+    this.agList.addStyles({display: 'inline-block', position: 'absolute', top: 0, left: 0, backgroudColor: 'white'});
 };
 
 AgDropdownList.prototype.itemSelected = function(item) {
@@ -25,7 +44,9 @@ AgDropdownList.prototype.itemSelected = function(item) {
 };
 
 AgDropdownList.prototype.onClick = function() {
-    this.hidePopupCallback = utils.addAsModalPopupNew(this.eGui, this.agList.getGui());
+    var agListGui = this.agList.getGui();
+    utils.positionPopup(this.eGui, agListGui, this.ePopupParent, -1);
+    this.hidePopupCallback = utils.addAsModalPopupNew(this.ePopupParent, agListGui);
 };
 
 AgDropdownList.prototype.getGui = function() {
@@ -45,16 +66,21 @@ AgDropdownList.prototype.setCellRenderer = function(cellRenderer) {
 AgDropdownList.prototype.refreshView = function() {
     utils.removeAllChildren(this.eValue);
 
-    if (this.selectedItem === null || this.selectedItem === undefined) {
-        return;
+    if (this.selectedItem) {
+        if (this.cellRenderer) {
+            var params = {value: this.selectedItem};
+            utils.useRenderer(this.eValue, this.cellRenderer, params);
+        } else {
+            this.eValue.appendChild(document.createTextNode(this.selectedItem));
+        }
     }
 
-    if (this.cellRenderer) {
-        var params = {value: this.selectedItem};
-        utils.useRenderer(this.eValue, this.cellRenderer, params);
-    } else {
-        this.eValue.innerHTML = this.selectedItem;
-    }
+    var eDownIcon = svgFactory.createSmallArrowDownSvg();
+    eDownIcon.style.float = 'right';
+    eDownIcon.style.marginTop = '6';
+    eDownIcon.style.marginRight = '2';
+
+    this.eValue.appendChild(eDownIcon);
 };
 
 AgDropdownList.prototype.setModel = function(model) {

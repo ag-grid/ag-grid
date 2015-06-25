@@ -55,8 +55,12 @@ SvgFactory.prototype.createArrowRightSvg = function() {
     return createPolygonSvg("0,0 10,5 0,10");
 };
 
-function createPolygonSvg(points) {
-    var eSvg = createIconSvg();
+SvgFactory.prototype.createSmallArrowDownSvg = function() {
+    return createPolygonSvg("0,0 3,6 6,0", 6);
+};
+
+function createPolygonSvg(points, width) {
+    var eSvg = createIconSvg(width);
 
     var eDescIcon = document.createElementNS(SVG_NS, "polygon");
     eDescIcon.setAttribute("points", points);
@@ -66,10 +70,15 @@ function createPolygonSvg(points) {
 }
 
 // util function for the above
-function createIconSvg() {
+function createIconSvg(width) {
     var eSvg = document.createElementNS(SVG_NS, "svg");
-    eSvg.setAttribute("width", "10");
-    eSvg.setAttribute("height", "10");
+    if (width > 0) {
+        eSvg.setAttribute("width", width);
+        eSvg.setAttribute("height", width);
+    } else {
+        eSvg.setAttribute("width", "10");
+        eSvg.setAttribute("height", "10");
+    }
     return eSvg;
 }
 

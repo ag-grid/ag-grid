@@ -160,28 +160,6 @@ FilterManager.prototype.onNewRowsLoaded = function() {
     });
 };
 
-FilterManager.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot) {
-    var sourceRect = eventSource.getBoundingClientRect();
-    var parentRect = ePopupRoot.getBoundingClientRect();
-
-    var x = sourceRect.left - parentRect.left;
-    var y = sourceRect.top - parentRect.top + sourceRect.height;
-
-    // if popup is overflowing to the right, move it left
-    var widthOfPopup = 200; // this is set in the css
-    var widthOfParent = parentRect.right - parentRect.left;
-    var maxX = widthOfParent - widthOfPopup - 20; // 20 pixels grace
-    if (x > maxX) { // move position left, back into view
-        x = maxX;
-    }
-    if (x < 0) { // in case the popup has a negative value
-        x = 0;
-    }
-
-    ePopup.style.left = x + "px";
-    ePopup.style.top = y + "px";
-};
-
 FilterManager.prototype.createValueGetter = function(colDef) {
     var that = this;
     return function valueGetter(node) {
@@ -276,7 +254,7 @@ FilterManager.prototype.showFilter = function(column, eventSource) {
     var filterWrapper = this.getOrCreateFilterWrapper(column);
 
     var ePopupParent = this.grid.getPopupParent();
-    this.positionPopup(eventSource, filterWrapper.gui, ePopupParent);
+    utils.positionPopup(eventSource, filterWrapper.gui, ePopupParent, 200);
 
     utils.addAsModalPopupNew(ePopupParent, filterWrapper.gui);
 

@@ -142,7 +142,7 @@ Utils.prototype.removeAllChildren = function(node) {
 //adds an element to a div, but also adds a background checking for clicks,
 //so that when the background is clicked, the child is removed again, giving
 //a model look to popups.
-Utils.prototype.addAsModalPopup = function(eParent, eChild) {
+/*Utils.prototype.addAsModalPopup = function(eParent, eChild) {
     var eBackdrop = document.createElement("div");
     eBackdrop.className = "ag-popup-backdrop";
 
@@ -153,7 +153,7 @@ Utils.prototype.addAsModalPopup = function(eParent, eChild) {
 
     eParent.appendChild(eBackdrop);
     eParent.appendChild(eChild);
-};
+};*/
 
 //adds an element to a div, but also adds a background checking for clicks,
 //so that when the background is clicked, the child is removed again, giving
@@ -412,6 +412,29 @@ Utils.prototype.setVisible = function(element, visible) {
     } else {
         element.style.display = 'none';
     }
+};
+
+Utils.prototype.positionPopup = function(eventSource, ePopup, ePopupRoot, minWidth) {
+    var sourceRect = eventSource.getBoundingClientRect();
+    var parentRect = ePopupRoot.getBoundingClientRect();
+
+    var x = sourceRect.left - parentRect.left;
+    var y = sourceRect.top - parentRect.top + sourceRect.height;
+
+    // if popup is overflowing to the right, move it left
+    if (minWidth > 0) {
+        var widthOfParent = parentRect.right - parentRect.left;
+        var maxX = widthOfParent - minWidth;
+        if (x > maxX) { // move position left, back into view
+            x = maxX;
+        }
+        if (x < 0) { // in case the popup has a negative value
+            x = 0;
+        }
+    }
+
+    ePopup.style.left = x + "px";
+    ePopup.style.top = y + "px";
 };
 
 module.exports = new Utils();

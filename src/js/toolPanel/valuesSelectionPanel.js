@@ -27,7 +27,7 @@ ValuesSelectionPanel.prototype.getColumnList = function() {
     return this.cColumnList;
 };
 
-ValuesSelectionPanel.prototype.columnCellRenderer = function(params) {
+ValuesSelectionPanel.prototype.cellRenderer = function(params) {
     var column = params.value;
     var colDisplayName = this.columnController.getDisplayNameForCol(column);
 
@@ -45,14 +45,18 @@ ValuesSelectionPanel.prototype.columnCellRenderer = function(params) {
         that.onValuesChanged();
     });
 
-    var eValue = document.createElement('span');
-    eValue.innerHTML = colDisplayName;
-    eResult.appendChild(eValue);
-
     var agValueType = new AgDropdownList();
     agValueType.setModel(['Sum','Avg','Min','Max']);
     agValueType.setSelected('Sum');
+    agValueType.setPopupParent(this.layout.getGui());
+    agValueType.setWidth(45);
+
     eResult.appendChild(agValueType.getGui());
+
+    var eValue = document.createElement('span');
+    eValue.style.paddingLeft = '2px';
+    eValue.innerHTML = colDisplayName;
+    eResult.appendChild(eValue);
 
     return eResult;
 };
@@ -60,12 +64,12 @@ ValuesSelectionPanel.prototype.columnCellRenderer = function(params) {
 ValuesSelectionPanel.prototype.setupComponents = function() {
     var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
     var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
-    var pivotedColumnsEmptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns down from above to create values');
+    var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns down from above to create values');
 
     this.cColumnList = new AgList();
-    this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
+    this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));
     this.cColumnList.addModelChangedListener(this.onValuesChanged.bind(this));
-    this.cColumnList.setEmptyMessage(pivotedColumnsEmptyMessage);
+    this.cColumnList.setEmptyMessage(emptyMessage);
     this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
 
     var eNorthPanel = document.createElement('div');
@@ -82,10 +86,6 @@ ValuesSelectionPanel.prototype.onValuesChanged = function() {
     //this.inMemoryRowController.doGrouping();
     //this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
     //this.columnController.onColumnStateChanged();
-};
-
-ValuesSelectionPanel.prototype.getGui = function() {
-    return this.eRootPanel.getGui();
 };
 
 module.exports = ValuesSelectionPanel;
