@@ -85,7 +85,8 @@ gridsModule.controller('mainController', function($scope) {
         //suppressMultiSort: true,
         showToolPanel: true,
         //groupSuppressAutoColumn: true,
-        groupAggFunction: groupAggFunction,
+        //groupAggFunction: groupAggFunction,
+        groupAggFields: ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
@@ -557,6 +558,7 @@ function headerCellRenderer_angular(params) {
         '</span>';
 }
 
+/*
 function groupAggFunction(nodes) {
     var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
     var sums = {};
@@ -570,6 +572,7 @@ function groupAggFunction(nodes) {
 
     return sums;
 }
+*/
 
 function currencyCssFunc(params) {
     if (params.value!==null && params.value!==undefined && params.value<0) {

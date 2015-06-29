@@ -28,6 +28,10 @@ AgList.prototype.addStyles = function(styles) {
     utils.addStylesToElement(this.eGui, styles);
 };
 
+AgList.prototype.addCssClass = function(cssClass) {
+    utils.addCssClass(this.eGui, cssClass);
+};
+
 AgList.prototype.addDragSource = function(dragSource) {
     this.dragSources.push(dragSource);
 };

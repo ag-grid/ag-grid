@@ -15,12 +15,14 @@ var TemplateService = require('./templateService');
 var ToolPanel = require('./toolPanel/toolPanel');
 var BorderLayout = require('./layout/borderLayout');
 var GridPanel = require('./gridPanel/gridPanel');
+var agPopupService = require('./widgets/agPopupService');
 
 function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.gridOptions = gridOptions;
     this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
 
+    this.addApi();
     this.setupComponents($scope, $compile, eGridDiv);
 
     var that = this;
@@ -35,8 +37,6 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.virtualRowCallbacks = {};
 
-    var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
-    this.addApi();
 
     this.scrollWidth = utils.getScrollbarWidth();
 
@@ -45,6 +45,7 @@ function Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope) {
 
     this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
 
+    var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
     if (!forPrint) {
         window.addEventListener('resize', this.doLayout.bind(this));
     }
@@ -122,7 +123,7 @@ Grid.prototype.setupComponents = function($scope, $compile, eUserProvidedDiv) {
     if (!forPrint) {
         eToolPanel = new ToolPanel();
         toolPanelLayout = eToolPanel.layout;
-        eToolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper);
+        eToolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, this.gridOptions.api);
     }
 
     // this is a child bean, get a reference and pass it on
@@ -162,6 +163,7 @@ Grid.prototype.setupComponents = function($scope, $compile, eUserProvidedDiv) {
         dontFill: forPrint,
         name: 'eRootPanel'
     });
+    agPopupService.init(this.eRootPanel.getGui());
 
     // default is we don't show paging panel, this is set to true when datasource is set
     this.eRootPanel.setSouthVisible(false);

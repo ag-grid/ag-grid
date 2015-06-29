@@ -7,11 +7,11 @@ var AgDropdownList = require('../widgets/agDropdownList');
 
 var svgFactory = new SvgFactory();
 
-function ValuesSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper) {
+function ValuesSelectionPanel(columnController, gridOptionsWrapper, api) {
     this.gridOptionsWrapper = gridOptionsWrapper;
     this.setupComponents();
     this.columnController = columnController;
-    this.inMemoryRowController = inMemoryRowController;
+    this.api = api;
 
     var that = this;
     this.columnController.addListener({
@@ -19,8 +19,8 @@ function ValuesSelectionPanel(columnController, inMemoryRowController, gridOptio
     });
 }
 
-ValuesSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedColumns) {
-    this.cColumnList.setModel([]);
+ValuesSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedColumns, newValuesColumns) {
+    this.cColumnList.setModel(newValuesColumns);
 };
 
 ValuesSelectionPanel.prototype.getColumnList = function() {
@@ -46,10 +46,14 @@ ValuesSelectionPanel.prototype.cellRenderer = function(params) {
     });
 
     var agValueType = new AgDropdownList();
-    agValueType.setModel(['Sum','Avg','Min','Max']);
-    agValueType.setSelected('Sum');
-    agValueType.setPopupParent(this.layout.getGui());
+    agValueType.setModel([constants.SUM, constants.MIN, constants.MAX]);
+    agValueType.setSelected(column.aggFunc);
     agValueType.setWidth(45);
+
+    agValueType.addItemSelectedListener( function(item) {
+        column.aggFunc = item;
+        that.onValuesChanged();
+    });
 
     eResult.appendChild(agValueType.getGui());
 
@@ -83,9 +87,7 @@ ValuesSelectionPanel.prototype.setupComponents = function() {
 };
 
 ValuesSelectionPanel.prototype.onValuesChanged = function() {
-    //this.inMemoryRowController.doGrouping();
-    //this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
-    //this.columnController.onColumnStateChanged();
+    this.api.recomputeAggregates();
 };
 
 module.exports = ValuesSelectionPanel;

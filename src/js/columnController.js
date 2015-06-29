@@ -29,7 +29,11 @@ ColumnController.prototype.createModel = function() {
         },
         // + toolPanel
         getGroupedColumns: function() {
-            return that.groupedColumns;
+            return that.pivotColumns;
+        },
+        // + rowController
+        getValueColumns: function() {
+            return that.valueColumns;
         },
         // used by:
         // + angularGrid -> for setting body width
@@ -123,7 +127,7 @@ ColumnController.prototype.addListener = function(listener) {
 
 ColumnController.prototype.fireColumnsChanged = function() {
     for (var i = 0; i<this.listeners.length; i++) {
-        this.listeners[i].columnsChanged(this.allColumns, this.groupedColumns);
+        this.listeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
     }
 };
 
@@ -135,7 +139,8 @@ ColumnController.prototype.getModel = function() {
 ColumnController.prototype.setColumns = function(columnDefs) {
     this.checkForDeprecatedItems(columnDefs);
     this.createColumns(columnDefs);
-    this.createAggColumns();
+    this.createPivotColumns();
+    this.createValueColumns();
     this.updateModel();
     this.fireColumnsChanged();
 };
@@ -312,7 +317,7 @@ ColumnController.prototype.updateGroups = function() {
 ColumnController.prototype.updateVisibleColumns = function() {
     this.visibleColumns = [];
 
-    var needAGroupColumn = this.groupedColumns.length > 0
+    var needAGroupColumn = this.pivotColumns.length > 0
         && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
         && !this.gridOptionsWrapper.isGroupUseEntireRow();
 
@@ -371,8 +376,8 @@ ColumnController.prototype.createColumns = function(columnDefs) {
 };
 
 // private
-ColumnController.prototype.createAggColumns = function() {
-    this.groupedColumns = [];
+ColumnController.prototype.createPivotColumns = function() {
+    this.pivotColumns = [];
     var groupKeys = this.gridOptionsWrapper.getGroupKeys();
     if (!groupKeys || groupKeys.length <= 0) {
         return;
@@ -383,7 +388,24 @@ ColumnController.prototype.createAggColumns = function() {
         if (!column) {
             column = this.createDummyColumn(groupKey);
         }
-        this.groupedColumns.push(column);
+        this.pivotColumns.push(column);
+    }
+};
+
+// private
+ColumnController.prototype.createValueColumns = function() {
+    this.valueColumns = [];
+    var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
+    if (!valueKeys || valueKeys.length <= 0) {
+        return;
+    }
+    for (var i = 0; i < valueKeys.length; i++) {
+        var valueKey = valueKeys[i];
+        var column = this.getColumn(valueKey);
+        if (column) {
+            this.valueColumns.push(column);
+            column.aggFunc = 'sum';
+        }
     }
 };
 
