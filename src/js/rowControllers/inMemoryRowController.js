@@ -168,7 +168,7 @@ InMemoryRowController.prototype.doAggregate = function() {
         return;
     }
 
-    // fixme: need to remove the groups here if not doing aggregate, in case the user is using the gui, and was aggregating, but isn't now
+    // todo: need to remove the groups here if not doing aggregate, in case the user is using the gui, and was aggregating, but isn't now
 };
 
 // public
@@ -381,8 +381,8 @@ InMemoryRowController.prototype.recursivelyResetFilter = function(nodes) {
         var node = nodes[i];
         if (node.group && node.children) {
             node.childrenAfterFilter = node.children;
-            node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
             this.recursivelyResetFilter(node.children);
+            node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
         }
     }
 };
