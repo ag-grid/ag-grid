@@ -17,8 +17,9 @@ ToolPanel.prototype.init = function(columnController, inMemoryRowController, gri
     var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
     this.layout.addPanel(groupSelectionPanel.layout, '25%');
 
-    groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
-    valuesSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
+    var dragSource = columnSelectionPanel.getDragSource();
+    valuesSelectionPanel.addDragSource(dragSource);
+    groupSelectionPanel.addDragSource(dragSource);
 
     var eGui = this.layout.getGui();
 

@@ -23,8 +23,8 @@ ValuesSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedC
     this.cColumnList.setModel(newValuesColumns);
 };
 
-ValuesSelectionPanel.prototype.getColumnList = function() {
-    return this.cColumnList;
+ValuesSelectionPanel.prototype.addDragSource = function(dragSource) {
+    this.cColumnList.addDragSource(dragSource);
 };
 
 ValuesSelectionPanel.prototype.cellRenderer = function(params) {
@@ -75,6 +75,7 @@ ValuesSelectionPanel.prototype.setupComponents = function() {
     this.cColumnList.addModelChangedListener(this.onValuesChanged.bind(this));
     this.cColumnList.setEmptyMessage(emptyMessage);
     this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
+    this.cColumnList.addBeforeDropListener(this.beforeDropListener.bind(this));
 
     var eNorthPanel = document.createElement('div');
     eNorthPanel.style.paddingTop = '10px';
@@ -84,6 +85,12 @@ ValuesSelectionPanel.prototype.setupComponents = function() {
         center: this.cColumnList.getGui(),
         north: eNorthPanel
     });
+};
+
+ValuesSelectionPanel.prototype.beforeDropListener = function(newItem) {
+    if (!newItem.aggFunc) {
+        newItem.aggFunc = constants.SUM;
+    }
 };
 
 ValuesSelectionPanel.prototype.onValuesChanged = function() {

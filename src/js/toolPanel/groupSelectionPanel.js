@@ -22,8 +22,8 @@ GroupSelectionPanel.prototype.columnsChanged = function(newColumns, newGroupedCo
     this.cColumnList.setModel(newGroupedColumns);
 };
 
-GroupSelectionPanel.prototype.getColumnList = function() {
-    return this.cColumnList;
+GroupSelectionPanel.prototype.addDragSource = function(dragSource) {
+    this.cColumnList.addDragSource(dragSource);
 };
 
 GroupSelectionPanel.prototype.columnCellRenderer = function(params) {

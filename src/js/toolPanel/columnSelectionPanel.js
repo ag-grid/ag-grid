@@ -20,8 +20,8 @@ ColumnSelectionPanel.prototype.columnsChanged = function(newColumns) {
     this.cColumnList.setModel(newColumns);
 };
 
-ColumnSelectionPanel.prototype.getColumnList = function() {
-    return this.cColumnList;
+ColumnSelectionPanel.prototype.getDragSource = function() {
+    return this.cColumnList.getUniqueId();
 };
 
 ColumnSelectionPanel.prototype.columnCellRenderer = function(params) {
