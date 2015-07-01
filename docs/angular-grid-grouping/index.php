@@ -146,7 +146,8 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         renderer: 'group',
         keyMap: {from: 'to'},
         suppressCount: false,
-        checkbox: true
+        checkbox: true,
+        padding: 10
 }</pre>
 
     <p>
@@ -158,6 +159,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
             if the group was 'LDN', you could display it as 'London'.</li>
         <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
         <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
+        <li><b>padding:</b> A positive number. The amount of padding, in pixels, to indent each group.</li>
     </ul>
     </p>
 

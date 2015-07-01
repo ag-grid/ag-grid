@@ -25,7 +25,8 @@ module.controller("exampleCtrl", function($scope, $http) {
             field: "athlete",
             width: 200,
             cellRenderer: {
-                renderer: 'group'
+                renderer: 'group',
+                padding: 5
             }}
         };
 

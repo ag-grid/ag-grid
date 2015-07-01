@@ -35,7 +35,13 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) 
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
         if (node.footer || node.level > 0) {
-            var paddingPx = node.level * 10;
+            var paddingFactor;
+            if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.padding >= 0) {
+                paddingFactor = params.colDef.cellRenderer.padding;
+            } else {
+                paddingFactor = 10;
+            }
+            var paddingPx = node.level * paddingFactor;
             if (node.footer) {
                 paddingPx += 10;
             } else if (!node.group) {
