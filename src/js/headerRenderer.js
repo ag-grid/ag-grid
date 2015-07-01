@@ -246,8 +246,8 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
 
     // add in sort icons
     if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
-        column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
-        column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
+        column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
+        column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
         utils.addCssClass(column.eSortAsc, 'ag-header-icon');
         utils.addCssClass(column.eSortDesc, 'ag-header-icon');
         headerCellLabel.appendChild(column.eSortAsc);
