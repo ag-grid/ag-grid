@@ -8,17 +8,32 @@ function ToolPanel() {
     this.layout = new VerticalStack();
 }
 
-ToolPanel.prototype.init = function(columnController, inMemoryRowController, gridOptionsWrapper) {
+ToolPanel.prototype.init = function(columnController, inMemoryRowController, gridOptionsWrapper, api) {
 
+    var suppressPivotAndValues = gridOptionsWrapper.isToolPanelSuppressPivot();
+    var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();
+
+    var showPivot = !suppressPivotAndValues;
+    var showValues = !suppressPivotAndValues && !suppressValues;
+
+    // top list, column reorder and visibility
     var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper);
-    this.layout.addPanel(columnSelectionPanel.layout, '50%');
-    var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
-    this.layout.addPanel(groupSelectionPanel.layout, '25%');
-    var valuesSelectionPanel = new ValuesSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
-    this.layout.addPanel(valuesSelectionPanel.layout, '25%');
+    var heightColumnSelection = suppressPivotAndValues ? '100%' : '50%';
+    this.layout.addPanel(columnSelectionPanel.layout, heightColumnSelection);
+    var dragSource = columnSelectionPanel.getDragSource();
 
-    groupSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
-    valuesSelectionPanel.getColumnList().addDragSource(columnSelectionPanel.getColumnList().getUniqueId());
+    if (showValues) {
+        var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper, api);
+        this.layout.addPanel(valuesSelectionPanel.layout, '25%');
+        valuesSelectionPanel.addDragSource(dragSource);
+    }
+
+    if (showPivot) {
+        var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
+        var heightPivotSelection = showValues ? '25%' : '50%';
+        this.layout.addPanel(groupSelectionPanel.layout, heightPivotSelection);
+        groupSelectionPanel.addDragSource(dragSource);
+    }
 
     var eGui = this.layout.getGui();
 

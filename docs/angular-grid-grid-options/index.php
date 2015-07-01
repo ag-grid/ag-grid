@@ -202,7 +202,16 @@ include '../documentation_header.php';
             <th>showToolPanel</th>
             <td>Set to true to show the tool panel by default.</td>
         </tr>
-
+        <tr>
+            <th>toolPanelSuppressPivot</th>
+            <td>Set to true to not show the values or the pivots in the tool panel. It does not make sense
+                to show the values if no pivot functionality is allowed.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressValues</th>
+            <td>Set to true to not show the values in the tool panel. The pivot may optionally still
+                be shown. This is useful when you are providing your own aggregate function.</td>
+        </tr>
     </table>
 
 </div>

@@ -1,13 +1,11 @@
 var utils = require('../utils');
 
 function DragAndDropService() {
-    var that = this;
     // need to clean this up, add to 'finished' logic in grid
     document.addEventListener('mouseup', this.stopDragging.bind(this));
 }
 
 DragAndDropService.prototype.stopDragging = function() {
-    console.log('stopDragging');
     if (this.dragItem) {
         this.setDragCssClasses(this.dragItem.eDragSource, false);
         this.dragItem = null;

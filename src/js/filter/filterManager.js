@@ -2,6 +2,7 @@ var utils = require('./../utils');
 var SetFilter = require('./setFilter');
 var NumberFilter = require('./numberFilter');
 var StringFilter = require('./textFilter');
+var agPopupService = require('../widgets/agPopupService');
 
 function FilterManager() {}
 
@@ -253,10 +254,8 @@ FilterManager.prototype.showFilter = function(column, eventSource) {
 
     var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-    var ePopupParent = this.grid.getPopupParent();
-    utils.positionPopup(eventSource, filterWrapper.gui, ePopupParent, 200);
-
-    utils.addAsModalPopupNew(ePopupParent, filterWrapper.gui);
+    agPopupService.positionPopup(eventSource, filterWrapper.gui, 200);
+    agPopupService.addAsModalPopup(filterWrapper.gui);
 
     if (filterWrapper.filter.afterGuiAttached) {
         filterWrapper.filter.afterGuiAttached();

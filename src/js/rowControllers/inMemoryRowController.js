@@ -99,27 +99,48 @@ InMemoryRowController.prototype.updateModel = function(step) {
 };
 
 // private
-InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(groupAggFields) {
+InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(valueColumns) {
     return function groupAggFunction(rows) {
 
-        var sums = {};
+        var result = {};
 
-        for (var j = 0; j<groupAggFields.length; j++) {
-            var colKey = groupAggFields[j];
-            var totalForColumn = null;
+        for (var j = 0; j<valueColumns.length; j++) {
+            var valueColumn = valueColumns[j];
+            var resultForColumn = null;
+            var colKey = valueColumn.colDef.field;
             for (var i = 0; i<rows.length; i++) {
                 var row = rows[i];
                 var thisColumnValue = row.data[colKey];
                 // only include if the value is a number
                 if (typeof thisColumnValue === 'number') {
-                    totalForColumn += thisColumnValue;
+
+                    switch (valueColumn.aggFunc) {
+                        case constants.SUM :
+                            resultForColumn += thisColumnValue;
+                            break;
+                        case constants.MIN :
+                            if (resultForColumn === null) {
+                                resultForColumn = thisColumnValue;
+                            } else if (resultForColumn > thisColumnValue) {
+                                resultForColumn = thisColumnValue;
+                            }
+                            break;
+                        case constants.MAX :
+                            if (resultForColumn === null) {
+                                resultForColumn = thisColumnValue;
+                            } else if (resultForColumn < thisColumnValue) {
+                                resultForColumn = thisColumnValue;
+                            }
+                            break;
+                    }
+
                 }
             }
             // at this point, if no values were numbers, the result is null (not zero)
-            sums[colKey] = totalForColumn;
+            result[colKey] = resultForColumn;
         }
 
-        return sums;
+        return result;
 
     };
 };
@@ -140,13 +161,14 @@ InMemoryRowController.prototype.doAggregate = function() {
         return;
     }
 
-    var groupAggFields = this.gridOptionsWrapper.getGroupAggFields();
-    if (groupAggFields) {
-        var defaultAggFunction = this.defaultGroupAggFunctionFactory(groupAggFields);
+    var valueColumns = this.columnModel.getValueColumns();
+    if (valueColumns && valueColumns.length > 0) {
+        var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns);
         this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction);
         return;
     }
 
+    // todo: need to remove the groups here if not doing aggregate, in case the user is using the gui, and was aggregating, but isn't now
 };
 
 // public
@@ -359,8 +381,8 @@ InMemoryRowController.prototype.recursivelyResetFilter = function(nodes) {
         var node = nodes[i];
         if (node.group && node.children) {
             node.childrenAfterFilter = node.children;
-            node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
             this.recursivelyResetFilter(node.children);
+            node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
         }
     }
 };
@@ -458,7 +480,7 @@ InMemoryRowController.prototype.copyGroupNode = function(groupNode, children, al
 
 // private
 InMemoryRowController.prototype.doGroupMapping = function() {
-    // even if not going grouping, we do the mapping, as the client might
+    // even if not doing grouping, we do the mapping, as the client might
     // of passed in data that already has a grouping in it somewhere
     var rowsAfterMap = [];
     this.addToMap(rowsAfterMap, this.rowsAfterSort);

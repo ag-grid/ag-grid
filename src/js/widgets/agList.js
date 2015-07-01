@@ -11,6 +11,7 @@ function AgList() {
     this.uniqueId = 'CheckboxSelection-' + Math.random();
     this.modelChangedListeners = [];
     this.itemSelectedListeners = [];
+    this.beforeDropListeners = [];
     this.dragSources = [];
     this.setupAsDropTarget();
 }
@@ -28,6 +29,10 @@ AgList.prototype.addStyles = function(styles) {
     utils.addStylesToElement(this.eGui, styles);
 };
 
+AgList.prototype.addCssClass = function(cssClass) {
+    utils.addCssClass(this.eGui, cssClass);
+};
+
 AgList.prototype.addDragSource = function(dragSource) {
     this.dragSources.push(dragSource);
 };
@@ -40,6 +45,10 @@ AgList.prototype.addItemSelectedListener = function(listener) {
     this.itemSelectedListeners.push(listener);
 };
 
+AgList.prototype.addBeforeDropListener = function(listener) {
+    this.beforeDropListeners.push(listener);
+};
+
 AgList.prototype.fireModelChanged = function() {
     for (var i = 0; i<this.modelChangedListeners.length; i++) {
         this.modelChangedListeners[i]();
@@ -49,6 +58,21 @@ AgList.prototype.fireModelChanged = function() {
 AgList.prototype.fireItemSelected = function(item) {
     for (var i = 0; i<this.itemSelectedListeners.length; i++) {
         this.itemSelectedListeners[i](item);
+    }
+};
+
+//col: {
+//   id: '',
+//   aggFunc: '',
+//   visible: '',
+//   width: ''
+//};
+//
+//groupedCols: ['a','b','c'];
+
+AgList.prototype.fireBeforeDrop = function(item) {
+    for (var i = 0; i<this.beforeDropListeners.length; i++) {
+        this.beforeDropListeners[i](item);
     }
 };
 
@@ -109,7 +133,7 @@ AgList.prototype.insertBlankMessage = function() {
     if (this.emptyMessage) {
         var eMessage = document.createElement('div');
         eMessage.style.color = 'grey';
-        eMessage.style.padding = '20px';
+        eMessage.style.padding = '4px';
         eMessage.style.textAlign = 'center';
         eMessage.innerHTML = this.emptyMessage;
         this.eListParent.appendChild(eMessage);
@@ -117,7 +141,6 @@ AgList.prototype.insertBlankMessage = function() {
 };
 
 AgList.prototype.setupAsDropTarget = function() {
-
     dragAndDropService.addDropTarget(this.eGui, {
         acceptDrag: this.externalAcceptDrag.bind(this),
         drop: this.externalDrop.bind(this),
@@ -139,7 +162,9 @@ AgList.prototype.externalAcceptDrag = function(dragEvent) {
 };
 
 AgList.prototype.externalDrop = function(dragEvent) {
-    this.addItemToList(dragEvent.data);
+    var newListItem = dragEvent.data;
+    this.fireBeforeDrop(newListItem);
+    this.addItemToList(newListItem);
     this.eGui.style.backgroundColor = '';
 };
 

@@ -1,5 +1,5 @@
 var constants = require('./constants');
-var utils = require('./utils');
+var _ = require('./utils');
 
 function ColumnController() {
     this.listeners = [];
@@ -29,7 +29,11 @@ ColumnController.prototype.createModel = function() {
         },
         // + toolPanel
         getGroupedColumns: function() {
-            return that.groupedColumns;
+            return that.pivotColumns;
+        },
+        // + rowController
+        getValueColumns: function() {
+            return that.valueColumns;
         },
         // used by:
         // + angularGrid -> for setting body width
@@ -78,6 +82,74 @@ ColumnController.prototype.createModel = function() {
     };
 };
 
+ColumnController.prototype.getState = function() {
+    if (!this.allColumns || this.allColumns.length < 0) {
+        return [];
+    }
+    var result = [];
+    for (var i = 0; i<this.allColumns.length; i++) {
+        var column = this.allColumns[i];
+        var pivotIndex = this.pivotColumns.indexOf(column);
+        var resultItem = {
+            colId: column.colId,
+            hide: !column.visible,
+            aggFunc: column.aggFunc ? column.aggFunc : null,
+            width: column.actualWidth,
+            pivotIndex: pivotIndex >=0 ? pivotIndex : null
+        };
+        result.push(resultItem);
+    }
+    return result;
+};
+
+ColumnController.prototype.setState = function(columnState) {
+    var oldColumnList = this.allColumns;
+    this.allColumns = [];
+    this.pivotColumns = [];
+    this.valueColumns = [];
+    var that = this;
+
+    _.forEach(columnState, function(stateItem) {
+        var oldColumn = _.find(oldColumnList, 'colId', stateItem.colId);
+        if (!oldColumn) {
+            console.warn('ag-grid: column ' + stateItem.colId + ' not found');
+            return;
+        }
+        // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
+        oldColumn.visible = stateItem.hide ? false : true;
+        // if width provided and valid, use it, otherwise stick with the old width
+        oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
+        // accept agg func only if valid
+        var aggFuncValid = [constants.MIN, constants.MAX, constants.SUM].indexOf(stateItem.aggFunc) >= 0;
+        if (aggFuncValid) {
+            oldColumn.aggFunc = stateItem.aggFunc;
+            that.valueColumns.push(oldColumn);
+        } else {
+            oldColumn.aggFunc = null;
+        }
+        // if pivot
+        if (typeof stateItem.pivotIndex === 'number' && stateItem.pivotIndex >= 0) {
+            that.pivotColumns.push(oldColumn);
+        }
+        that.allColumns.push(oldColumn);
+        oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
+    });
+
+    // anything left over, we got no data for, so add in the column as non-value, non-pivot and hidden
+    _.forEach(oldColumnList, function(oldColumn) {
+        oldColumn.visible = false;
+        oldColumn.aggFunc = null;
+        that.allColumns.push(oldColumn);
+    });
+
+    this.pivotColumns.sort(function(colA, colB) {
+        return colA.pivotIndex < colB.pivotIndex;
+    });
+
+    this.updateModel();
+    this.fireColumnsChanged();
+};
+
 ColumnController.prototype.getColumn = function(key) {
     for (var i = 0; i<this.allColumns.length; i++) {
         var colDefMatches = this.allColumns[i].colDef === key;
@@ -108,7 +180,7 @@ ColumnController.prototype.getDisplayNameForCol = function(column) {
             return this.expressionService.evaluate(headerValueGetter, params);
         }
 
-        return utils.getValue(this.expressionService, undefined, colDef, undefined, api, context);
+        return _.getValue(this.expressionService, undefined, colDef, undefined, api, context);
     } else if (colDef.displayName) {
         console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
         return colDef.displayName;
@@ -123,7 +195,7 @@ ColumnController.prototype.addListener = function(listener) {
 
 ColumnController.prototype.fireColumnsChanged = function() {
     for (var i = 0; i<this.listeners.length; i++) {
-        this.listeners[i].columnsChanged(this.allColumns, this.groupedColumns);
+        this.listeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
     }
 };
 
@@ -135,7 +207,8 @@ ColumnController.prototype.getModel = function() {
 ColumnController.prototype.setColumns = function(columnDefs) {
     this.checkForDeprecatedItems(columnDefs);
     this.createColumns(columnDefs);
-    this.createAggColumns();
+    this.createPivotColumns();
+    this.createValueColumns();
     this.updateModel();
     this.fireColumnsChanged();
 };
@@ -312,7 +385,7 @@ ColumnController.prototype.updateGroups = function() {
 ColumnController.prototype.updateVisibleColumns = function() {
     this.visibleColumns = [];
 
-    var needAGroupColumn = this.groupedColumns.length > 0
+    var needAGroupColumn = this.pivotColumns.length > 0
         && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
         && !this.gridOptionsWrapper.isGroupUseEntireRow();
 
@@ -371,8 +444,8 @@ ColumnController.prototype.createColumns = function(columnDefs) {
 };
 
 // private
-ColumnController.prototype.createAggColumns = function() {
-    this.groupedColumns = [];
+ColumnController.prototype.createPivotColumns = function() {
+    this.pivotColumns = [];
     var groupKeys = this.gridOptionsWrapper.getGroupKeys();
     if (!groupKeys || groupKeys.length <= 0) {
         return;
@@ -383,7 +456,36 @@ ColumnController.prototype.createAggColumns = function() {
         if (!column) {
             column = this.createDummyColumn(groupKey);
         }
-        this.groupedColumns.push(column);
+        this.pivotColumns.push(column);
+    }
+};
+
+// private
+ColumnController.prototype.createValueColumns = function() {
+    this.valueColumns = [];
+
+    // get value columns from the grid options groupAggFields
+    var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
+    if (valueKeys && valueKeys.length > 0) {
+        for (var i = 0; i < valueKeys.length; i++) {
+            var valueKey = valueKeys[i];
+            var column = this.getColumn(valueKey);
+            if (column) {
+                this.valueColumns.push(column);
+                column.aggFunc = 'sum';
+            }
+        }
+    }
+
+    // override with columns that have the aggFunc specified explicitly
+    for (var i = 0; i<this.allColumns.length; i++) {
+        var column = this.allColumns[i];
+        if (column.colDef.aggFunc) {
+            column.aggFunc = column.colDef.aggFunc;
+            if (this.valueColumns.indexOf(column) < 0) {
+                this.valueColumns.push(column);
+            }
+        }
     }
 };
 

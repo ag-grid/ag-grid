@@ -84,13 +84,16 @@ gridsModule.controller('mainController', function($scope) {
         //suppressDescSort: true,
         //suppressMultiSort: true,
         showToolPanel: true,
+        //toolPanelSuppressPivot: true,
+        //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
-        groupAggFunction: groupAggFunction,
+        //groupAggFunction: groupAggFunction,
+        groupAggFields: ['bankBalance','totalWinnings'],
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
         //dontUseScrolls: true,
-        //rowClass: function(row, pinnedRow) { return (row.country === 'Ireland') ? "theClass" : null; },
+        //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         rowSelected: rowSelected, //callback when row selected
@@ -207,7 +210,7 @@ gridsModule.controller('mainController', function($scope) {
         }
     ];
     //put in the month cols
-    months.forEach(function(month) {
+    months.forEach(function(month, index) {
         defaultCols.push({headerName: month, headerGroup: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
             newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})
@@ -557,6 +560,7 @@ function headerCellRenderer_angular(params) {
         '</span>';
 }
 
+/*
 function groupAggFunction(nodes) {
     var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
     var sums = {};
@@ -570,6 +574,7 @@ function groupAggFunction(nodes) {
 
     return sums;
 }
+*/
 
 function currencyCssFunc(params) {
     if (params.value!==null && params.value!==undefined && params.value<0) {

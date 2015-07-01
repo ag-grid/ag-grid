@@ -1,20 +1,28 @@
 var AgList = require('./agList');
 var utils = require('../utils');
 var SvgFactory = require('../svgFactory');
+var agPopupService = require('../widgets/agPopupService');
 
 var svgFactory = new SvgFactory();
 
 function AgDropdownList() {
     this.setupComponents();
+    this.itemSelectedListeners = [];
 }
-
-AgDropdownList.prototype.setPopupParent = function(ePopupParent) {
-    this.ePopupParent = ePopupParent;
-};
 
 AgDropdownList.prototype.setWidth = function(width) {
     this.eValue.style.width = width;
     this.agList.addStyles({width: width});
+};
+
+AgDropdownList.prototype.addItemSelectedListener = function(listener) {
+    this.itemSelectedListeners.push(listener);
+};
+
+AgDropdownList.prototype.fireItemSelected = function(item) {
+    for (var i = 0; i<this.itemSelectedListeners.length; i++) {
+        this.itemSelectedListeners[i](item);
+    }
 };
 
 AgDropdownList.prototype.setupComponents = function() {
@@ -25,6 +33,7 @@ AgDropdownList.prototype.setupComponents = function() {
 
     this.eValue.addEventListener('click', this.onClick.bind(this));
     this.agList.addItemSelectedListener(this.itemSelected.bind(this));
+    this.agList.addCssClass('ag-popup-list');
 
     utils.addStylesToElement(this.eValue, {
         border: '1px solid darkgrey',
@@ -41,12 +50,13 @@ AgDropdownList.prototype.itemSelected = function(item) {
     if (this.hidePopupCallback) {
         this.hidePopupCallback();
     }
+    this.fireItemSelected(item);
 };
 
 AgDropdownList.prototype.onClick = function() {
     var agListGui = this.agList.getGui();
-    utils.positionPopup(this.eGui, agListGui, this.ePopupParent, -1);
-    this.hidePopupCallback = utils.addAsModalPopupNew(this.ePopupParent, agListGui);
+    agPopupService.positionPopup(this.eGui, agListGui, -1);
+    this.hidePopupCallback = agPopupService.addAsModalPopup(agListGui);
 };
 
 AgDropdownList.prototype.getGui = function() {

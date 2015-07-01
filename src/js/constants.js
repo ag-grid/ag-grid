@@ -10,6 +10,10 @@ var constants = {
     SORT_STYLE_HIDE: "display:none;",
     MIN_COL_WIDTH: 10,
 
+    SUM: 'sum',
+    MIN: 'min',
+    MAX: 'max',
+
     KEY_TAB: 9,
     KEY_ENTER: 13,
     KEY_SPACE: 32,
