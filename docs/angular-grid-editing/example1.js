@@ -79,6 +79,7 @@ module.controller("exampleCtrl", function($scope, $timeout) {
             eOption.innerHTML = item;
             eSelect.appendChild(eOption);
         });
+        eSelect.value = params.value;
 
         eCell.addEventListener('click', function () {
             if (!editing) {
@@ -102,7 +103,7 @@ module.controller("exampleCtrl", function($scope, $timeout) {
                 editing = false;
                 var newValue = eSelect.value;
                 params.data[params.colDef.field] = newValue;
-                eLabel.innerHTML = newValue;
+                eLabel.nodeValue = newValue;
                 eCell.removeChild(eSelect);
                 eCell.appendChild(eLabel);
             }

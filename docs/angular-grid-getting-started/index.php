@@ -25,18 +25,19 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        AngularGrid has no other dependencies except AngularJS.
+        AngularGrid has no dependencies. If you are using AngularJS, then it will register as a directive
+        with AngularJS, however that is optional, it is an optional dependency.
     </p>
 
-    <h4>Creating the Angular Module</h4>
-    While creating your Angular module, include AngularGrid as a dependency of your module. Eg:
+    <h4>Creating the AngularJS Module</h4>
+    If using AngularJS, while creating your AngularJS module, include Angular Grid as a dependency of your module. Eg:
     <p/>
     <pre><code>var module = angular.module("example", <b>["angularGrid"]</b>);</code></pre>
 
     <h4>Angular Grid Div</h4>
 
     <p>
-        To include a grid in your html, add the AngularGrid attribute to a div. The value
+        To include a grid in your html, add the Angular Grid attribute to a div. The value
         of the div should be the provided grid options on the scope.
     </p>
 
@@ -47,13 +48,22 @@ include '../documentation_header.php';
         example, ag-fresh is used.
     </p>
 
+    <p>
+        You must provide <b>width and height</b> to your grid. The grid is programmed to fill
+        the width and height you give it.
+    </p>
+
+    <pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh" style="height 100%"</b>>&lt;/div></pre>
+
+    <p>
+        (note: a div by default has 100% width, so the width is not specified explicitly above).
+    </p>
+
     <h4>Grid Options</h4>
     <p>
         The grid options provide AngularGrid with the details needed to render. At a
         minimum you provide the columns (columnDefs) and the rows (rowData).
     </p>
-
-    <pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh"</b>>&lt;/div></pre>
 
     <h4>Very Simple Example</h4>
     <show-example example="example1" example-height="200px"></show-example>

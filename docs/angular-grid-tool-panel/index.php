@@ -11,13 +11,14 @@ include '../documentation_header.php';
     <h2>Tool Panel</h2>
 
     <p>
-        The tool panel is where you can change the state of the columns. This includes show / hide, move and group.
+        The tool panel is where you can change the state of the columns. This includes show / hide, move
+        and group / pivot.
     </p>
 
     <p>
-        The tool panel panel can be shown be default by setting 'showToolPanel=showToolPanel' in the gridOptions,
-        or after the grid is initialised by calling the api function showToolPanel(show). You can query if
-        the tool panel is showing with the api isToolPanelShowing().
+        The tool panel panel can be shown by default by setting 'showToolPanel=true' in the gridOptions,
+        or after the grid is initialised by calling the api function <i>showToolPanel(show)</i>. You can query if
+        the tool panel is showing with the api <i>isToolPanelShowing()</i>.
     </p>
 
     <h3>Show & Hide Columns</h3>
@@ -28,11 +29,11 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        To hide a column using the tool panel, click the icon beside teh columns name.
+        To hide a column using the tool panel, click the icon beside the columns name.
     </p>
 
     <p>
-        To group by a column, drag the column down to the pivit GUI.
+        To group by a column, drag the column down to the pivot GUI.
     </p>
 
     <p>

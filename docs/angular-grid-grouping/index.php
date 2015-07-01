@@ -98,21 +98,28 @@ include '../documentation_header.php';
         is explained in the next section (but used here).
     </p>
 
+    <h4>Option 1 - Simplest but not customisable:</h4>
     <p>
-        <h4>Option 1 - Simplest:</h4> Let the grid provide the default grouping column. If one of your columns is a group
-        column, you will see two group columns. This is the quickest way to get started.
+        Let the grid provide the default grouping column. This is the
+        quickest way to get started.
         <pre>gridOptions.isgroupSuppressAutoColumn = false; // or undefined
 gridOptions.groupColumnDef = null; // or undefined</pre>
+        All you have to do is provide your columns as normal and let the grid worry about introducing
+        the column to show the group when you are grouping.
     </p>
 
+    <h4>Option 2 - Most Common:</h4>
     <p>
-        <h4>Option 2 - Most Common:</h4> Tell the grid how you want the optional group column to look. Do this
-        by providing a groupColumnDef. A group column definition is exactly the same as any other column definition.
-        You could, if you choose, have a column that has nothing to do with grouping be included when you group,
-        however doing so would not be much use. You can also include group columns within your main list of
-        columns, useful when you want to split the grouping across multiple columns (eg one column is responsible
-        for the country grouping, another for the language grouping). A group column is just like any other
-        column, except it's cell renderer renders specific to a group.
+        Tell the grid how you want the optional group column to look. Do this
+        by providing a groupColumnDef.
+    <p>
+    </p>
+    <p>
+        A group column definition is exactly the same as any other column definition, the only difference is
+        the cell renderer will render the cell using the group info. So when defining a group column, be sure
+        to either choose the build in group cell renderer, or provide your own cell renderer that takes care
+        of the grouping.
+    </p>
         <pre>gridOptions.isgroupSuppressAutoColumn = false; // or undefined
 gridOptions.groupColumnDef = {
     cellRenderer: {
@@ -120,15 +127,21 @@ gridOptions.groupColumnDef = {
         headerName: 'Group Column'
     }
 };</pre>
+    <p>
         Because a group column is just a normal column, you can provide all the column attributes, such as header name,
-        css style and class, field, valueGetter etc. All of these parameters are used when the group column is
-        rendering a normal row (ie a leaf level row).
+        css style and class, field, valueGetter etc. All of these parameters are used as appropriate.
     </p>
 
+    <h4>Option 3 - No Grid Swapping of Columns:</h4>
     <p>
-        <h4>Option 3 - No Grid Swapping of Columns:</h4> Tell the grid you don't want it's help, that you will provide
-        the group column yourself. Using this, the grid will only make sense if at least one of your columns display
-        the group and allows you to expand / contract the group.
+        Tell the grid you don't want it's help, that you will provide the group column yourself, included
+        in he main list of columns. If you use this, make sure you do have at least one column showing the
+        group, otherwise the grid will not make sense as you will have to way to expand / contract the groups.
+    </p>
+    <p>
+        This method can also be used to have multiple columns to display the groups, useful when you want to split
+        the grouping across columns (eg one column is responsible
+        for the country grouping, another for the language grouping).
         <pre>gridOptions.isgroupSuppressAutoColumn = true;
 gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre>
     </p>

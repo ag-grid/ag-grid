@@ -73,7 +73,7 @@ var colDef = {
 var colDef = {
     name: 'Col Name',
     cellRenderer: function(params) {
-        return '&lt;span title="the tooltip">{{value}}&lt;/span>';
+        return '&lt;span title="the tooltip"><code ng-non-bindable>{{value}}</code>&lt;/span>';
     }
 }</code></pre>
 
