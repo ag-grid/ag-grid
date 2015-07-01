@@ -707,10 +707,12 @@ Grid.prototype.updatePinnedColContainerWidthAfterColResize = function() {
 Grid.prototype.doLayout = function() {
     // need to do layout first, as drawVirtualRows and setPinnedColHeight
     // need to know the result of the resizing of the panels.
-    this.eRootPanel.doLayout();
+    var sizeChanged = this.eRootPanel.doLayout();
     // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
-    this.rowRenderer.drawVirtualRows();
-    this.gridPanel.setPinnedColHeight();
+    if (sizeChanged) {
+        this.rowRenderer.drawVirtualRows();
+        this.gridPanel.setPinnedColHeight();
+    }
 };
 
 module.exports = Grid;
