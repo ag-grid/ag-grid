@@ -225,6 +225,12 @@
                     <a class="sidebarLink" href="/angular-grid-tool-panel/index.php">Tool Panel</a>
                 <?php } ?>
 
+                <?php if ($key == "Column API") { ?>
+                    <span class="sidebarLinkSelected">Column API</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-column-api/index.php">Column API</a>
+                <?php } ?>
+
                 <h4>
                     Paging
                 </h4>

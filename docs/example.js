@@ -84,9 +84,11 @@ gridsModule.controller('mainController', function($scope) {
         //suppressDescSort: true,
         //suppressMultiSort: true,
         showToolPanel: true,
+        //toolPanelSuppressPivot: true,
+        //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
-        groupAggFields: ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
+        groupAggFields: ['bankBalance','totalWinnings'],
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
@@ -208,7 +210,7 @@ gridsModule.controller('mainController', function($scope) {
         }
     ];
     //put in the month cols
-    months.forEach(function(month) {
+    months.forEach(function(month, index) {
         defaultCols.push({headerName: month, headerGroup: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: editableFunc,
             newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})

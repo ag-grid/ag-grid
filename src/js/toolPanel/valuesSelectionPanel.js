@@ -68,7 +68,7 @@ ValuesSelectionPanel.prototype.cellRenderer = function(params) {
 ValuesSelectionPanel.prototype.setupComponents = function() {
     var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
     var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
-    var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns down from above to create values');
+    var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to create values');
 
     this.cColumnList = new AgList();
     this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));

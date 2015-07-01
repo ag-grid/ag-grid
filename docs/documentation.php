@@ -15,6 +15,14 @@ include 'documentation_header.php';
 
     <p>
         ### - To hide filter, extra click isn't needed.
+        <br/>
+        ### - Values on tool panel
+        <br/>
+        ### - New aggregation functions (min and max)
+        <br/>
+        ### - API for saving and restoring columns state (width, visibility, piviting, values)
+        <br/>
+        ### - Can choose to not show values and pivoting in tool panel
     </p>
 
     <p>

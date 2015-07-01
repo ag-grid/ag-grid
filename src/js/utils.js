@@ -22,6 +22,17 @@ Utils.prototype.map = function(array, callback) {
     return result;
 };
 
+Utils.prototype.forEach = function(array, callback) {
+    if (!array) {
+        return;
+    }
+
+    for (var i = 0; i<array.length; i++) {
+        var value = array[i];
+        callback(value, i);
+    }
+};
+
 Utils.prototype.getFunctionParameters = function(func) {
     var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
     var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
@@ -30,6 +41,18 @@ Utils.prototype.getFunctionParameters = function(func) {
     } else {
         return result;
     }
+};
+
+Utils.prototype.find = function(collection, predicate, value) {
+    if (collection === null || collection === undefined) {
+        return null;
+    }
+    for (var i = 0; i<collection.length; i++) {
+        if (collection[i][predicate] === value) {
+            return collection[i];
+        }
+    }
+    return null;
 };
 
 Utils.prototype.toStrings = function(array) {

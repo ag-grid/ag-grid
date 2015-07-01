@@ -244,10 +244,6 @@ Grid.prototype.setFinished = function() {
     this.finished = true;
 };
 
-Grid.prototype.getPopupParent = function() {
-    return this.eRootPanel.getGui();
-};
-
 Grid.prototype.getQuickFilter = function() {
     return this.quickFilter;
 };
@@ -566,6 +562,15 @@ Grid.prototype.addApi = function() {
         },
         hideColumns: function(colIds, hide) {
             that.columnController.hideColumns(colIds, hide);
+        },
+        getColumnState: function() {
+            return that.columnController.getState();
+        },
+        setColumnState: function(state) {
+            that.columnController.setState(state);
+            that.inMemoryRowController.doGrouping();
+            that.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
+            that.refreshHeaderAndBody();
         }
     };
     this.gridOptions.api = api;

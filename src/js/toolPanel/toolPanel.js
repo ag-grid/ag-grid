@@ -10,16 +10,30 @@ function ToolPanel() {
 
 ToolPanel.prototype.init = function(columnController, inMemoryRowController, gridOptionsWrapper, api) {
 
-    var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper);
-    this.layout.addPanel(columnSelectionPanel.layout, '50%');
-    var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper, api);
-    this.layout.addPanel(valuesSelectionPanel.layout, '25%');
-    var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
-    this.layout.addPanel(groupSelectionPanel.layout, '25%');
+    var suppressPivotAndValues = gridOptionsWrapper.isToolPanelSuppressPivot();
+    var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();
 
+    var showPivot = !suppressPivotAndValues;
+    var showValues = !suppressPivotAndValues && !suppressValues;
+
+    // top list, column reorder and visibility
+    var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper);
+    var heightColumnSelection = suppressPivotAndValues ? '100%' : '50%';
+    this.layout.addPanel(columnSelectionPanel.layout, heightColumnSelection);
     var dragSource = columnSelectionPanel.getDragSource();
-    valuesSelectionPanel.addDragSource(dragSource);
-    groupSelectionPanel.addDragSource(dragSource);
+
+    if (showValues) {
+        var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper, api);
+        this.layout.addPanel(valuesSelectionPanel.layout, '25%');
+        valuesSelectionPanel.addDragSource(dragSource);
+    }
+
+    if (showPivot) {
+        var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
+        var heightPivotSelection = showValues ? '25%' : '50%';
+        this.layout.addPanel(groupSelectionPanel.layout, heightPivotSelection);
+        groupSelectionPanel.addDragSource(dragSource);
+    }
 
     var eGui = this.layout.getGui();
 

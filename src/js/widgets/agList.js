@@ -61,6 +61,15 @@ AgList.prototype.fireItemSelected = function(item) {
     }
 };
 
+//col: {
+//   id: '',
+//   aggFunc: '',
+//   visible: '',
+//   width: ''
+//};
+//
+//groupedCols: ['a','b','c'];
+
 AgList.prototype.fireBeforeDrop = function(item) {
     for (var i = 0; i<this.beforeDropListeners.length; i++) {
         this.beforeDropListeners[i](item);
@@ -124,7 +133,7 @@ AgList.prototype.insertBlankMessage = function() {
     if (this.emptyMessage) {
         var eMessage = document.createElement('div');
         eMessage.style.color = 'grey';
-        eMessage.style.padding = '20px';
+        eMessage.style.padding = '4px';
         eMessage.style.textAlign = 'center';
         eMessage.innerHTML = this.emptyMessage;
         this.eListParent.appendChild(eMessage);

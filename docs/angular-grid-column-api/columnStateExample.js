@@ -20,6 +20,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         enableSorting: true,
+        enableColResize: true,
         showToolPanel: true
     };
 
@@ -29,4 +30,28 @@ module.controller("exampleCtrl", function($scope, $http) {
             $scope.gridOptions.api.onNewRows();
         });
 
+    $scope.printState = function() {
+        var state = $scope.gridOptions.api.getColumnState();
+        console.log(state);
+    };
+
+    var savedState;
+
+    $scope.saveState = function() {
+        savedState = $scope.gridOptions.api.getColumnState();
+        console.log('column state saved');
+    };
+
+    $scope.restoreState = function() {
+        $scope.gridOptions.api.setColumnState(savedState);
+        console.log('column state restored');
+    };
+
+    $scope.showAthlete = function(show) {
+        $scope.gridOptions.api.hideColumn('athlete', !show);
+    };
+
+    $scope.showMedals = function(show) {
+        $scope.gridOptions.api.hideColumns(['gold','silver','bronze'], !show);
+    };
 });

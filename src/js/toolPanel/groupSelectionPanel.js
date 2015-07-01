@@ -54,7 +54,7 @@ GroupSelectionPanel.prototype.columnCellRenderer = function(params) {
 GroupSelectionPanel.prototype.setupComponents = function() {
     var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
     var columnsLocalText = localeTextFunc('pivotedColumns', 'Pivoted Columns');
-    var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns down from above to pivot by those columns');
+    var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns from above to pivot');
 
     this.cColumnList = new AgList();
     this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
