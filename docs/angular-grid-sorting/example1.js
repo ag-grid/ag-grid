@@ -7,7 +7,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90},
         {headerName: "Country", field: "country", width: 120},
-        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Year", field: "year", width: 90, unSortIcon: true},
         {headerName: "Date", field: "date", width: 110, comparator: dateComparator},
         {headerName: "Sport", field: "sport", width: 110},
         {headerName: "Gold", field: "gold", width: 100},

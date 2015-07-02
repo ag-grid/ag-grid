@@ -93,6 +93,10 @@ include '../documentation_header.php';
             <td>Set to true if no sorting should be done for this column.</td>
         </tr>
         <tr>
+            <th>unSortIcon</th>
+            <td>Set to true if you want the unsorted icon to be shown when no sort is applied to this column.</td>
+        </tr>
+        <tr>
             <th>suppressSizeToFit</th>
             <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
         </tr>

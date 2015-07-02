@@ -1,4 +1,4 @@
-var utils = require('../utils');
+var _ = require('../utils');
 
 function BorderLayout(params) {
 
@@ -45,7 +45,7 @@ function BorderLayout(params) {
         this.layoutActive = false;
     }
 
-    this.eGui = utils.loadTemplate(template);
+    this.eGui = _.loadTemplate(template);
 
     this.id = 'borderLayout';
     if (params.name) {
@@ -102,48 +102,75 @@ BorderLayout.prototype.getGui = function() {
     return this.eGui;
 };
 
+// returns true if any item changed size, otherwise returns false
 BorderLayout.prototype.doLayout = function() {
 
-    this.layoutChild(this.eNorthChildLayout);
-    this.layoutChild(this.eSouthChildLayout);
-    this.layoutChild(this.eEastChildLayout);
-    this.layoutChild(this.eWestChildLayout);
-
-    if (this.layoutActive) {
-        this.layoutHeight();
-        this.layoutWidth();
+    if (!_.isVisible(this.eGui)) {
+        return false;
     }
 
-    this.layoutChild(this.eCenterChildLayout);
+    var atLeastOneChanged = false;
+
+    var childLayouts = [this.eNorthChildLayout,this.eSouthChildLayout,this.eEastChildLayout,this.eWestChildLayout];
+    var that = this;
+    _.forEach(childLayouts, function(childLayout) {
+        var childChangedSize = that.layoutChild(childLayout);
+        if (childChangedSize) {
+            atLeastOneChanged = true;
+        }
+    });
+
+    if (this.layoutActive) {
+        var ourHeightChanged = this.layoutHeight();
+        var ourWidthChanged = this.layoutWidth();
+        if (ourHeightChanged || ourWidthChanged) {
+            atLeastOneChanged = true;
+        }
+    }
+
+    var centerChanged = this.layoutChild(this.eCenterChildLayout);
+    if (centerChanged) {
+        atLeastOneChanged = true;
+    }
+    return atLeastOneChanged;
 };
 
 BorderLayout.prototype.layoutChild = function(childPanel) {
     if (childPanel) {
-        childPanel.doLayout();
+        return childPanel.doLayout();
+    } else {
+        return false;
     }
 };
 
 BorderLayout.prototype.layoutHeight = function() {
     if (this.fullHeight) {
-        return;
+        return false;
     }
 
-    var totalHeight = utils.offsetHeight(this.eGui);
-    var northHeight = utils.offsetHeight(this.eNorthWrapper);
-    var southHeight = utils.offsetHeight(this.eSouthWrapper);
+    var totalHeight = _.offsetHeight(this.eGui);
+    var northHeight = _.offsetHeight(this.eNorthWrapper);
+    var southHeight = _.offsetHeight(this.eSouthWrapper);
 
     var centerHeight = totalHeight - northHeight - southHeight;
     if (centerHeight < 0) {
         centerHeight = 0;
     }
 
-    this.eCenterRow.style.height = centerHeight + 'px';
+    if (this.centerHeightLastTime !== centerHeight) {
+        this.eCenterRow.style.height = centerHeight + 'px';
+        this.centerHeightLastTime = centerHeight;
+        return true; // return true because there was a change
+    } else {
+        return false;
+    }
+
 };
 
 BorderLayout.prototype.layoutWidth = function() {
-    var totalWidth = utils.offsetWidth(this.eGui);
-    var eastWidth = utils.offsetWidth(this.eEastWrapper);
-    var westWidth = utils.offsetWidth(this.eWestWrapper);
+    var totalWidth = _.offsetWidth(this.eGui);
+    var eastWidth = _.offsetWidth(this.eEastWrapper);
+    var westWidth = _.offsetWidth(this.eWestWrapper);
 
     var centerWidth = totalWidth - eastWidth - westWidth;
     if (centerWidth < 0) {

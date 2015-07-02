@@ -47,7 +47,7 @@ var colDef = {
     cellStyle: function(params) {
         if (params.value=='Police') {
             //mark police cells as red
-            return {color: red, background-color: green};
+            return {color: 'red', backgroundColor: 'green'};
         } else {
             return null;
         }

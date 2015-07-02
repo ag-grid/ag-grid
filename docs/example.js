@@ -69,6 +69,7 @@ gridsModule.controller('mainController', function($scope) {
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
         groupSuppressAutoColumn: true,
         groupIncludeFooter: false,
+        //unSortIcon: true,
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
         enableColResize: true, //one of [true, false]

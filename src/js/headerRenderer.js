@@ -248,10 +248,18 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
         column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
         column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
-        utils.addCssClass(column.eSortAsc, 'ag-header-icon');
-        utils.addCssClass(column.eSortDesc, 'ag-header-icon');
+        utils.addCssClass(column.eSortAsc, 'ag-header-icon ag-sort-ascending-icon');
+        utils.addCssClass(column.eSortDesc, 'ag-header-icon ag-sort-descending-icon');
         headerCellLabel.appendChild(column.eSortAsc);
         headerCellLabel.appendChild(column.eSortDesc);
+
+        // 'no sort' icon
+        if (colDef.unSortIcon || this.gridOptionsWrapper.isUnSortIcon()) {
+          column.eSortNone = utils.createIcon('sortUnSort', this.gridOptionsWrapper, column, svgFactory.createArrowUpDownSvg);
+          utils.addCssClass(column.eSortNone, 'ag-header-icon ag-sort-none-icon');
+          headerCellLabel.appendChild(column.eSortNone);
+        }
+
         column.eSortAsc.style.display = 'none';
         column.eSortDesc.style.display = 'none';
         this.addSortHandling(headerCellLabel, column);
@@ -396,12 +404,17 @@ HeaderRenderer.prototype.updateSortIcons = function() {
         // update visibility of icons
         var sortAscending = column.sort === constants.ASC;
         var sortDescending = column.sort === constants.DESC;
+        var unSort = column.sort !== constants.DESC && column.sort !== constants.ASC;
 
         if (column.eSortAsc) {
             utils.setVisible(column.eSortAsc, sortAscending);
         }
         if (column.eSortDesc) {
             utils.setVisible(column.eSortDesc, sortDescending);
+        }
+        // UnSort Icon
+        if (column.eSortNone) {
+          utils.setVisible(column.eSortNone, unSort);
         }
     });
 };
