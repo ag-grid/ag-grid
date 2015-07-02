@@ -55,6 +55,7 @@ GridOptionsWrapper.prototype.getCellValueChanged = function() { return this.grid
 GridOptionsWrapper.prototype.getCellFocused = function() { return this.gridOptions.cellFocused; };
 GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
 GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
+GridOptionsWrapper.prototype.getSelectionChanging = function() { return this.gridOptions.selectionChanging; };
 GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
 GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
 GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };

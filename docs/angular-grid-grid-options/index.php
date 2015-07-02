@@ -182,6 +182,10 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
         <tr>
+            <th>selectionChanging</th>
+            <td>Function callback, gets called when a selection is changing.</td>
+        </tr>
+        <tr>
             <th>cellValueChanged</th>
             <td>Function callback, gets called when a value has changed after editing.</td>
         </tr>

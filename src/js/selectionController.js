@@ -84,12 +84,17 @@ SelectionController.prototype.setRowModel = function(rowModel) {
 // public - this clears the selection, but doesn't clear down the css - when it is called, the
 // caller then gets the grid to refresh.
 SelectionController.prototype.deselectAll = function() {
-    this.initSelectedNodesById();
-    //var keys = Object.keys(this.selectedNodesById);
-    //for (var i = 0; i < keys.length; i++) {
-    //    delete this.selectedNodesById[keys[i]];
-    //}
-    this.syncSelectedRowsAndCallListener();
+    var that = this;
+    this.raiseSelectionChanging(
+        [], 
+        function ok() {
+            that.initSelectedNodesById();
+            that.syncSelectedRowsAndCallListener();
+        },
+        function cancel() { 
+            // do nothing 
+        }, 
+        false);//suppressEvents
 };
 
 // public - this selects everything, but doesn't clear down the css - when it is called, the
@@ -104,6 +109,7 @@ SelectionController.prototype.selectAll = function() {
     // if the selection is "don't include groups", then we don't include them!
     var includeGroups = !this.gridOptionsWrapper.isGroupSelectsChildren();
 
+    var nodesToSelectById = []; 
     function recursivelySelect(nodes) {
         if (nodes) {
             for (var i = 0; i<nodes.length; i++) {
@@ -111,10 +117,10 @@ SelectionController.prototype.selectAll = function() {
                 if (node.group) {
                     recursivelySelect(node.children);
                     if (includeGroups) {
-                        selectedNodesById[node.id] = node;
+                        nodesToSelectById[node.id] = node;
                     }
                 } else {
-                    selectedNodesById[node.id] = node;
+                    nodesToSelectById[node.id] = node;
                 }
             }
         }
@@ -123,7 +129,34 @@ SelectionController.prototype.selectAll = function() {
     var topLevelNodes = this.rowModel.getTopLevelNodes();
     recursivelySelect(topLevelNodes);
 
-    this.syncSelectedRowsAndCallListener();
+    var that = this;
+    this.raiseSelectionChanging(
+        nodesToSelectById, 
+        function ok() {
+            for (var i = 0; i < nodesToSelectById.length; i++) {
+                var node = nodesToSelectById[i];
+                that.selectedNodesById[node.id] = node;
+            }
+            that.syncSelectedRowsAndCallListener();
+        },
+        function cancel() { 
+            // do nothing 
+        }, 
+        false);//suppressEvents
+};
+
+// private
+// helper to raise selectionChanging if registered
+SelectionController.prototype.raiseSelectionChanging = function(selectedNodesAfterChange, ok, cancel, suppressEvents) {
+    if (!suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanging() === "function") {
+        this.gridOptionsWrapper.getSelectionChanging()({            
+            selectedRowsAfterChange: selectedNodesAfterChange.map(function(node) { return node.data; }),
+            ok: ok,
+            cancel: cancel
+        });
+    } else {
+        ok();
+    }    
 };
 
 // public
@@ -143,25 +176,40 @@ SelectionController.prototype.selectNode = function(node, tryMulti, suppressEven
     // at the end, if this is true, we inform the callback
     var atLeastOneItemUnselected = false;
     var atLeastOneItemSelected = false;
+    var nodesToDeselect = [];
+    var selectedNodesAfterChange = multiSelect ? this.getSelectedNodes() : [];
+    selectedNodesAfterChange.push(nodeToSelect);
+
 
     // see if rows to be deselected
     if (!multiSelect) {
-        atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
+        nodesToDeselect = this.getNodesToDeselect();
     }
 
     if (this.gridOptionsWrapper.isGroupSelectsChildren() && nodeToSelect.group) {
         // don't select the group, select the children instead
+        // OP: handle this later
         atLeastOneItemSelected = this.recursivelySelectAllChildren(nodeToSelect);
-    } else {
-        // see if row needs to be selected
-        atLeastOneItemSelected = this.doWorkOfSelectNode(nodeToSelect, suppressEvents);
     }
 
-    if (atLeastOneItemUnselected || atLeastOneItemSelected) {
-        this.syncSelectedRowsAndCallListener(suppressEvents);
-    }
+    var that = this;
+    this.raiseSelectionChanging(
+        selectedNodesAfterChange, 
+        function ok() {
+            if (!multiSelect) {
+                atLeastOneItemUnselected = that.doWorkOfDeselectAllNodes();
+            }
+            atLeastOneItemSelected = that.doWorkOfSelectNode(nodeToSelect, suppressEvents);
 
-    this.updateGroupParentsIfNeeded();
+            if (atLeastOneItemUnselected || atLeastOneItemSelected) {
+                that.syncSelectedRowsAndCallListener(suppressEvents);
+            }
+            that.updateGroupParentsIfNeeded();
+        },
+        function cancel() { 
+            that.updateGroupParentsIfNeeded(); 
+        }, 
+        suppressEvents);
 };
 
 SelectionController.prototype.recursivelySelectAllChildren = function(node, suppressEvents) {
@@ -257,6 +305,24 @@ SelectionController.prototype.doWorkOfDeselectAllNodes = function(nodeToKeepSele
         }
     }
     return atLeastOneSelectionChange;
+};
+
+// private
+SelectionController.prototype.getNodesToDeselect = function(nodeToKeepSelected) {
+    // not doing multi-select, so deselect everything other than the 'just selected' row
+    var nodesToDeselect = [];
+    var selectedNodeKeys = Object.keys(this.selectedNodesById);
+    for (var i = 0; i < selectedNodeKeys.length; i++) {
+        // skip the 'just selected' row
+        var key = selectedNodeKeys[i];
+        var nodeToDeselect = this.selectedNodesById[key];
+        if (nodeToDeselect === nodeToKeepSelected) {
+            continue;
+        } else {
+            nodesToDeselect.push(nodeToDeselect);
+        }
+    }
+    return nodesToDeselect;
 };
 
 // private
