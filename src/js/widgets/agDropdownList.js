@@ -11,8 +11,8 @@ function AgDropdownList() {
 }
 
 AgDropdownList.prototype.setWidth = function(width) {
-    this.eValue.style.width = width;
-    this.agList.addStyles({width: width});
+    this.eValue.style.width = width + 'px';
+    this.agList.addStyles({width: width + 'px'});
 };
 
 AgDropdownList.prototype.addItemSelectedListener = function(listener) {

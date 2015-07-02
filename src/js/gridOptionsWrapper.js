@@ -20,6 +20,7 @@ GridOptionsWrapper.prototype.isToolPanelSuppressPivot = function() { return isTr
 GridOptionsWrapper.prototype.isToolPanelSuppressValues = function() { return isTrue(this.gridOptions.toolPanelSuppressValues); };
 GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
 GridOptionsWrapper.prototype.isGroupSelectsChildren = function() { return isTrue(this.gridOptions.groupSelectsChildren); };
+GridOptionsWrapper.prototype.isGroupHidePivotColumns = function() { return isTrue(this.gridOptions.groupHidePivotColumns); };
 GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
 GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
 GridOptionsWrapper.prototype.isSuppressCellSelection = function() { return isTrue(this.gridOptions.suppressCellSelection); };

@@ -83,6 +83,12 @@ include '../documentation_header.php';
                 want complete control on the column displayed and don't want the grids help.
             </td>
         </tr>
+        <tr>
+            <th>groupHidePivotColumns</th>
+            <td>If true, when a column is pivoted, it is not displayed as a normal column. Useful when you
+                don't want the data appearing twice, once is group column, once in normal column.
+            </td>
+        </tr>
     </table>
 
     <h3>Grouping columns</h3>
@@ -189,16 +195,29 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     <h3>Grouping with Aggregation</h3>
 
     <p>
-        You have two options for creating aggregates.
+        You have three options for creating aggregates.
         <ul>
-            <li>
-                Option 1 - provide an array of field names that should be summed to create the aggregate.
-            </li>
-            <li>
-                Option 2 - provide an function to do the aggregation.
-            </li>
+        <li>
+            <b>Option 1 - colDef.aggFunc:</b> Specify in the column definition what aggregation function
+            you want to apply to that column. Available aggregation functions are [sum,min,max].
+        </li>
+        <li>
+            <b>Option 2 - gridOptions.groupAggFields:</b> Provide an array of field names that should be used
+            to create the aggregates. This is equivalent to specifying aggFunc='sum' on the relevant columns.
+            This method has the advantage of aggregating on fields that do not map to columns directly - an
+            example may be that the column uses a value getter for which the field is just one parameter.
+        </li>
+        <li>
+            <b>Option 3 - gridOptions.groupAggFunction:</b> provide a function to do the aggregation. This
+            gives you full control.
+        </li>
         </ul>
     </p>
+
+    <note>
+        It is possible to mix option 1 and option 2 (ie both lists of aggregated fields will be combined).
+        If you choose option 3, then any configuration towards option 1 and 2 will be ignored.
+    </note>
 
     <h4>Example Option 1 - Summing Fields</h4>
 

@@ -126,8 +126,8 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupKeys<br/> groupUseEntireRow<br/> groupRowInnerRenderer<br/>
-                groupDefaultExpanded<br/> groupAggFunction<br/>
-                groupSelectsChildren<br/> groupSuppressAutoColumn</th>
+                groupDefaultExpanded<br/> groupAggFields <br/> groupAggFunction<br/>
+                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHidePivotColumns</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>

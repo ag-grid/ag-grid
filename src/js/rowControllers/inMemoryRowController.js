@@ -99,50 +99,64 @@ InMemoryRowController.prototype.updateModel = function(step) {
 };
 
 // private
-InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(valueColumns) {
+InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function(valueColumns, valueKeys) {
+
     return function groupAggFunction(rows) {
 
         var result = {};
 
-        for (var j = 0; j<valueColumns.length; j++) {
-            var valueColumn = valueColumns[j];
-            var resultForColumn = null;
-            var colKey = valueColumn.colDef.field;
-            for (var i = 0; i<rows.length; i++) {
-                var row = rows[i];
-                var thisColumnValue = row.data[colKey];
-                // only include if the value is a number
-                if (typeof thisColumnValue === 'number') {
-
-                    switch (valueColumn.aggFunc) {
-                        case constants.SUM :
-                            resultForColumn += thisColumnValue;
-                            break;
-                        case constants.MIN :
-                            if (resultForColumn === null) {
-                                resultForColumn = thisColumnValue;
-                            } else if (resultForColumn > thisColumnValue) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                        case constants.MAX :
-                            if (resultForColumn === null) {
-                                resultForColumn = thisColumnValue;
-                            } else if (resultForColumn < thisColumnValue) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                    }
-
-                }
+        if (valueKeys) {
+            for (var i = 0; i<valueKeys.length; i++) {
+                var valueKey = valueKeys[i];
+                // at this point, if no values were numbers, the result is null (not zero)
+                result[valueKey] = aggregateColumn(rows, constants.SUM, valueKey);
             }
-            // at this point, if no values were numbers, the result is null (not zero)
-            result[colKey] = resultForColumn;
+        }
+
+        if (valueColumns) {
+            for (var j = 0; j<valueColumns.length; j++) {
+                var valueColumn = valueColumns[j];
+                var colKey = valueColumn.colDef.field;
+                // at this point, if no values were numbers, the result is null (not zero)
+                result[colKey] = aggregateColumn(rows, valueColumn.aggFunc, colKey);
+            }
         }
 
         return result;
-
     };
+
+    function aggregateColumn(rows, aggFunc, colKey) {
+        var resultForColumn = null;
+        for (var i = 0; i<rows.length; i++) {
+            var row = rows[i];
+            var thisColumnValue = row.data[colKey];
+            // only include if the value is a number
+            if (typeof thisColumnValue === 'number') {
+
+                switch (aggFunc) {
+                    case constants.SUM :
+                        resultForColumn += thisColumnValue;
+                        break;
+                    case constants.MIN :
+                        if (resultForColumn === null) {
+                            resultForColumn = thisColumnValue;
+                        } else if (resultForColumn > thisColumnValue) {
+                            resultForColumn = thisColumnValue;
+                        }
+                        break;
+                    case constants.MAX :
+                        if (resultForColumn === null) {
+                            resultForColumn = thisColumnValue;
+                        } else if (resultForColumn < thisColumnValue) {
+                            resultForColumn = thisColumnValue;
+                        }
+                        break;
+                }
+
+            }
+        }
+        return resultForColumn;
+    }
 };
 
 // private
@@ -162,13 +176,15 @@ InMemoryRowController.prototype.doAggregate = function() {
     }
 
     var valueColumns = this.columnModel.getValueColumns();
-    if (valueColumns && valueColumns.length > 0) {
-        var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns);
+    var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
+    if ( (valueColumns && valueColumns.length > 0) || (valueKeys && valueKeys.length > 0) ) {
+        var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns, valueKeys);
         this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction);
-        return;
+    } else {
+        // if no agg data, need to clear out any previous items, when can be left behind
+        // if use is creating / removing columns using the tool panel.
+        this.recursivelyClearAggData(this.rowsAfterFilter);
     }
-
-    // todo: need to remove the groups here if not doing aggregate, in case the user is using the gui, and was aggregating, but isn't now
 };
 
 // public
@@ -189,6 +205,18 @@ InMemoryRowController.prototype.expandOrCollapseAll = function(expand, rowNodes)
             _this.expandOrCollapseAll(expand, node.children);
         }
     });
+};
+
+// private
+InMemoryRowController.prototype.recursivelyClearAggData = function(nodes) {
+    for (var i = 0, l = nodes.length; i < l; i++) {
+        var node = nodes[i];
+        if (node.group) {
+            // agg function needs to start at the bottom, so traverse first
+            this.recursivelyClearAggData(node.childrenAfterFilter);
+            node.data = null;
+        }
+    }
 };
 
 // private

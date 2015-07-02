@@ -58,8 +58,8 @@ ValuesSelectionPanel.prototype.cellRenderer = function(params) {
     eResult.appendChild(agValueType.getGui());
 
     var eValue = document.createElement('span');
-    eValue.style.paddingLeft = '2px';
     eValue.innerHTML = colDisplayName;
+    eValue.style.paddingLeft = '2px';
     eResult.appendChild(eValue);
 
     return eResult;

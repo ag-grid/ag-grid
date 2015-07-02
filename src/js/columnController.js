@@ -385,6 +385,7 @@ ColumnController.prototype.updateGroups = function() {
 ColumnController.prototype.updateVisibleColumns = function() {
     this.visibleColumns = [];
 
+    // see if we need to insert the default grouping column
     var needAGroupColumn = this.pivotColumns.length > 0
         && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
         && !this.gridOptionsWrapper.isGroupUseEntireRow();
@@ -409,7 +410,9 @@ ColumnController.prototype.updateVisibleColumns = function() {
 
     for (var i = 0; i < this.allColumns.length; i++) {
         var column = this.allColumns[i];
-        if (column.visible) {
+        var hideBecauseOfPivot = this.pivotColumns.indexOf(column) >= 0
+            && this.gridOptionsWrapper.isGroupHidePivotColumns();
+        if (column.visible && !hideBecauseOfPivot) {
             column.index = this.visibleColumns.length;
             this.visibleColumns.push(this.allColumns[i]);
         }
@@ -464,27 +467,12 @@ ColumnController.prototype.createPivotColumns = function() {
 ColumnController.prototype.createValueColumns = function() {
     this.valueColumns = [];
 
-    // get value columns from the grid options groupAggFields
-    var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
-    if (valueKeys && valueKeys.length > 0) {
-        for (var i = 0; i < valueKeys.length; i++) {
-            var valueKey = valueKeys[i];
-            var column = this.getColumn(valueKey);
-            if (column) {
-                this.valueColumns.push(column);
-                column.aggFunc = 'sum';
-            }
-        }
-    }
-
     // override with columns that have the aggFunc specified explicitly
     for (var i = 0; i<this.allColumns.length; i++) {
         var column = this.allColumns[i];
         if (column.colDef.aggFunc) {
             column.aggFunc = column.colDef.aggFunc;
-            if (this.valueColumns.indexOf(column) < 0) {
-                this.valueColumns.push(column);
-            }
+            this.valueColumns.push(column);
         }
     }
 };

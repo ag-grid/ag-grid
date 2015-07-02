@@ -69,6 +69,7 @@ gridsModule.controller('mainController', function($scope) {
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
         groupSuppressAutoColumn: true,
         groupIncludeFooter: false,
+        groupHidePivotColumns: true,
         //unSortIcon: true,
         pinnedColumnCount: 0, //and integer, zero or more, default is 0
         rowHeight: 25, // defaults to 25, can be any integer
@@ -89,7 +90,7 @@ gridsModule.controller('mainController', function($scope) {
         //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
-        groupAggFields: ['bankBalance','totalWinnings'],
+        //groupAggFields: ['bankBalance','totalWinnings'],
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
@@ -188,6 +189,7 @@ gridsModule.controller('mainController', function($scope) {
             filterParams: {cellRenderer: booleanFilterCellRenderer}},
         {headerName: "Bank Balance", field: "bankBalance", headerGroup: 'Performance', width: 150, editable: editableFunc, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
+            aggFunc: 'sum',
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -204,6 +206,7 @@ gridsModule.controller('mainController', function($scope) {
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
         {headerName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: editableFunc, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+            aggFunc: 'sum',
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
