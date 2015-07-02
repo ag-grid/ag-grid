@@ -14,6 +14,22 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
+        ### - To hide filter, extra click isn't needed.
+        <br/>
+        ### - Improved drag and drop on tool panel
+        <br/>
+        ### - Values on tool panel
+        <br/>
+        ### - New aggregation functions (min and max)
+        <br/>
+        ### - API for saving and restoring columns state (width, visibility, piviting, values)
+        <br/>
+        ### - Can choose to not show values and pivoting in tool panel
+        <br/>
+        ### - Aggregation now has option to exclude pivot columns
+    </p>
+
+    <p>
         <b>28th June 2015</b>
     </p>
 
