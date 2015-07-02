@@ -1,8 +1,3 @@
-function ExpressionService() {}
-
-ExpressionService.prototype.evaluate = function(rule, params) {
-};
-
 function ExpressionService() {
     this.expressionToFunctionCache = {};
 }

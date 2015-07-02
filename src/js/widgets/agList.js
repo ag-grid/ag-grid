@@ -17,7 +17,7 @@ function AgList() {
 }
 
 AgList.prototype.setEmptyMessage = function(emptyMessage) {
-    return this.emptyMessage = emptyMessage;
+    this.emptyMessage = emptyMessage;
     this.refreshView();
 };
 
