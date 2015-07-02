@@ -45,6 +45,7 @@ gridOptions.icons = {
     filter: myFilterIcon,
     sortAscending: mySortAscIcon,
     sortDescending: mySortDescIcon,
+    sortUnSort: myUnSortIcon,
     groupExpanded: myGroupExpandedIcon,
     groupContracted: myGroupContractedIcon,
     headerGroupOpened: myGroupExpandedIcon,
