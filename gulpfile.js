@@ -9,6 +9,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var nib = require('nib');
 var stringify = require('stringify');
+var ts = require('gulp-typescript');
 
 gulp.task('default', ['build', 'watch']);
 
