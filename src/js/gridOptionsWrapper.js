@@ -29,6 +29,7 @@ GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function() { return isT
 GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
 GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
 GridOptionsWrapper.prototype.isSuppressDescSort = function() { return isTrue(this.gridOptions.suppressDescSort); };
+GridOptionsWrapper.prototype.isUnSortIcon = function() { return isTrue(this.gridOptions.unSortIcon); };
 GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
 GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
 GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };

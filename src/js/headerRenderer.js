@@ -248,16 +248,16 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     if (this.gridOptionsWrapper.isEnableSorting() && !colDef.suppressSorting) {
         column.eSortAsc = utils.createIcon('sortAscending', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
         column.eSortDesc = utils.createIcon('sortDescending', this.gridOptionsWrapper, column, svgFactory.createArrowDownSvg);
-        utils.addCssClass(column.eSortAsc, 'ag-header-icon sortAscending');
-        utils.addCssClass(column.eSortDesc, 'ag-header-icon sortDescending');
+        utils.addCssClass(column.eSortAsc, 'ag-header-icon ag-sort-ascending-icon');
+        utils.addCssClass(column.eSortDesc, 'ag-header-icon ag-sort-descending-icon');
         headerCellLabel.appendChild(column.eSortAsc);
         headerCellLabel.appendChild(column.eSortDesc);
 
-        // Unsort icon
-        if (colDef.unSortIcon) {
-          column.eSortUnsort = utils.createIcon('sortUnSort', this.gridOptionsWrapper, column, svgFactory.createArrowUpDownSvg);
-          utils.addCssClass(column.eSortUnsort, 'ag-header-icon sortUnSort');
-          headerCellLabel.appendChild(column.eSortUnsort);
+        // 'no sort' icon
+        if (colDef.unSortIcon || this.gridOptionsWrapper.isUnSortIcon()) {
+          column.eSortNone = utils.createIcon('sortUnSort', this.gridOptionsWrapper, column, svgFactory.createArrowUpDownSvg);
+          utils.addCssClass(column.eSortNone, 'ag-header-icon ag-sort-none-icon');
+          headerCellLabel.appendChild(column.eSortNone);
         }
 
         column.eSortAsc.style.display = 'none';
@@ -413,8 +413,8 @@ HeaderRenderer.prototype.updateSortIcons = function() {
             utils.setVisible(column.eSortDesc, sortDescending);
         }
         // UnSort Icon
-        if (column.eSortUnsort) {
-          utils.setVisible(column.eSortUnsort, unSort);
+        if (column.eSortNone) {
+          utils.setVisible(column.eSortNone, unSort);
         }
     });
 };
