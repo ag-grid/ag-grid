@@ -20,7 +20,14 @@ gulp.task('js', jsTask);
 // Watch
 gulp.task('watch', watchTask);
 
-
+gulp.task('ts', function () {
+    var tsResult = gulp.src('src/ts/**/*.ts')
+        .pipe(ts({
+            noImplicitAny: true,
+            out: 'output.js'
+        }));
+    return tsResult.js.pipe(gulp.dest('docs/aaaaa'));
+});
 
 function jsTask() {
     return browserify('./src/js/main.js', {debug: true})
