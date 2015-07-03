@@ -59,6 +59,7 @@ GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gri
 GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
 GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };
 GridOptionsWrapper.prototype.getRowBuffer = function() { return this.gridOptions.rowBuffer; };
+GridOptionsWrapper.prototype.isMenuFilter = function() { return isTrue(this.gridOptions.menuFilter); };
 
 GridOptionsWrapper.prototype.getGroupRowInnerRenderer = function() {
     if (this.gridOptions.groupInnerRenderer) {

@@ -221,23 +221,28 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
     // filter button
     var showMenu = this.gridOptionsWrapper.isEnableFilter() && !colDef.suppressMenu;
     if (showMenu) {
-        var eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, column, svgFactory.createMenuSvg);
-        utils.addCssClass(eMenuButton, 'ag-header-icon');
+        if (colDef.menuFilter||this.gridOptionsWrapper.isMenuFilter()) {
+            column.eMenuButton = utils.createIcon('filter', this.gridOptionsWrapper, column, svgFactory.createFilterSvg);
+        }
+        else {
+            column.eMenuButton = utils.createIcon('menu', this.gridOptionsWrapper, column, svgFactory.createMenuSvg);
+        }
+        utils.addCssClass(column.eMenuButton, 'ag-header-icon');
 
-        eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
-        eMenuButton.onclick = function() {
+        column.eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
+        column.eMenuButton.onclick = function() {
             that.filterManager.showFilter(column, this);
         };
-        eHeaderCell.appendChild(eMenuButton);
+        eHeaderCell.appendChild(column.eMenuButton);
         eHeaderCell.onmouseenter = function() {
-            eMenuButton.style.opacity = 1;
+            column.eMenuButton.style.opacity = 1;
         };
         eHeaderCell.onmouseleave = function() {
-            eMenuButton.style.opacity = 0;
+            column.eMenuButton.style.opacity = 0;
         };
-        eMenuButton.style.opacity = 0;
-        eMenuButton.style["-webkit-transition"] = "opacity 0.5s, border 0.2s";
-        eMenuButton.style["transition"] = "opacity 0.5s, border 0.2s";
+        column.eMenuButton.style.opacity = 0;
+        column.eMenuButton.style["-webkit-transition"] = "opacity 0.5s, border 0.2s";
+        column.eMenuButton.style["transition"] = "opacity 0.5s, border 0.2s";
     }
 
     // label div
@@ -265,10 +270,13 @@ HeaderRenderer.prototype.createHeaderCell = function(column, grouped, headerGrou
         this.addSortHandling(headerCellLabel, column);
     }
 
-    // add in filter icon
-    column.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, column, svgFactory.createFilterSvg);
-    utils.addCssClass(column.eFilterIcon, 'ag-header-icon');
-    headerCellLabel.appendChild(column.eFilterIcon);
+    // if not using Menu as filter
+    if (!(colDef.menuFilter||this.gridOptionsWrapper.isMenuFilter())) {
+        // add in filter icon
+        column.eFilterIcon = utils.createIcon('filter', this.gridOptionsWrapper, column, svgFactory.createFilterSvg);
+        utils.addCssClass(column.eFilterIcon, 'ag-header-icon');
+        headerCellLabel.appendChild(column.eFilterIcon);
+    }
 
     // render the cell, use a renderer if one is provided
     var headerCellRenderer;
@@ -530,10 +538,18 @@ HeaderRenderer.prototype.stopDragging = function(listenersToRemove) {
 
 HeaderRenderer.prototype.updateFilterIcons = function() {
     var that = this;
+
     this.columnModel.getDisplayedColumns().forEach(function(column) {
         // todo: need to change this, so only updates if column is visible
-        if (column.eFilterIcon) {
-            var filterPresent = that.filterManager.isFilterPresentForCol(column.colId);
+        var filterPresent = that.filterManager.isFilterPresentForCol(column.colId);
+        if ( (column.colDef.menuFilter || that.gridOptionsWrapper.isMenuFilter())&& column.eMenuButton) {
+            // var newClass = filterPresent ? 'ag-header-cell-menu-button active-sort-filter' : 'ag-header-cell-menu-button';
+            // column.eMenuButton.className = newClass;
+            var fontColor = filterPresent ? 'blue': 'gray';
+            column.eMenuButton.style.color = fontColor;
+            column.eMenuButton.style.fill = fontColor;
+        }
+        else if (column.eFilterIcon) {
             var displayStyle = filterPresent ? 'inline' : 'none';
             column.eFilterIcon.style.display = displayStyle;
         }

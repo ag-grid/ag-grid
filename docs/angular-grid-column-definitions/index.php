@@ -134,6 +134,10 @@ include '../documentation_header.php';
             <td>Cell template (or specify URL to load template from) to use for cell.
                 Useful for AngularJS cells.</td>
         </tr>
+        <tr>
+            <th>menuFilter</th>
+            <td>Set to true if you want to use the menu button as a filter indicator.</td>
+        </tr>
     </table>
 
 <?php include '../documentation_footer.php';?>
