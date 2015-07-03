@@ -8,7 +8,7 @@ module awk {
     var constants = awk.Constants;
     var groupCellRendererFactory = awk.groupCellRendererFactory;
 
-    class RowRenderer {
+    export class RowRenderer {
 
         gridOptions: any;
         columnModel: any;

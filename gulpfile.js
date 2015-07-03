@@ -30,6 +30,10 @@ gulp.task('ts', function () {
     return tsResult.js.pipe(gulp.dest('docs/aaaaa'));
 });
 
+gulp.task('watchts', function () {
+    gulp.watch('./src/**/*', ['ts']);
+});
+
 function jsTask() {
     return browserify('./src/js/main.js', {debug: true})
         .transform(
