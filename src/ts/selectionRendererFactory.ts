@@ -1,68 +1,73 @@
 
 module awk {
 
-    function SelectionRendererFactory() {}
+    export class SelectionRendererFactory {
 
-    SelectionRendererFactory.prototype.init = function(angularGrid, selectionController) {
-        this.angularGrid = angularGrid;
-        this.selectionController = selectionController;
-    };
+        angularGrid: any;
+        selectionController: any;
 
-    SelectionRendererFactory.prototype.createCheckboxColDef = function() {
-        return {
-            width: 30,
-            suppressMenu: true,
-            suppressSorting: true,
-            headerCellRenderer: function() {
-                var eCheckbox = document.createElement('input');
-                eCheckbox.type = 'checkbox';
-                eCheckbox.name = 'name';
-                return eCheckbox;
-            },
-            cellRenderer: this.createCheckboxRenderer()
-        };
-    };
+        init(angularGrid: any, selectionController: any) {
+            this.angularGrid = angularGrid;
+            this.selectionController = selectionController;
+        }
 
-    SelectionRendererFactory.prototype.createCheckboxRenderer = function() {
-        var that = this;
-        return function(params) {
-            return that.createSelectionCheckbox(params.node, params.rowIndex);
-        };
-    };
+        createCheckboxColDef() {
+            return {
+                width: 30,
+                suppressMenu: true,
+                suppressSorting: true,
+                headerCellRenderer: function () {
+                    var eCheckbox = document.createElement('input');
+                    eCheckbox.type = 'checkbox';
+                    eCheckbox.name = 'name';
+                    return eCheckbox;
+                },
+                cellRenderer: this.createCheckboxRenderer()
+            };
+        }
 
-    SelectionRendererFactory.prototype.createSelectionCheckbox = function(node, rowIndex) {
+        createCheckboxRenderer() {
+            var that = this;
+            return function (params: any) {
+                return that.createSelectionCheckbox(params.node, params.rowIndex);
+            };
+        }
 
-        var eCheckbox = document.createElement('input');
-        eCheckbox.type = "checkbox";
-        eCheckbox.name = "name";
-        eCheckbox.className = 'ag-selection-checkbox';
-        setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
+        createSelectionCheckbox(node: any, rowIndex: any) {
 
-        var that = this;
-        eCheckbox.onclick = function(event) {
-            event.stopPropagation();
-        };
+            var eCheckbox = document.createElement('input');
+            eCheckbox.type = "checkbox";
+            eCheckbox.name = "name";
+            eCheckbox.className = 'ag-selection-checkbox';
+            setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
 
-        eCheckbox.onchange = function() {
-            var newValue = eCheckbox.checked;
-            if (newValue) {
-                that.selectionController.selectIndex(rowIndex, true);
-            } else {
-                that.selectionController.deselectIndex(rowIndex);
-            }
-        };
+            var that = this;
+            eCheckbox.onclick = function (event) {
+                event.stopPropagation();
+            };
 
-        this.angularGrid.addVirtualRowListener(rowIndex, {
-            rowSelected: function(selected) {
-                setCheckboxState(eCheckbox, selected);
-            },
-            rowRemoved: function() {}
-        });
+            eCheckbox.onchange = function () {
+                var newValue = eCheckbox.checked;
+                if (newValue) {
+                    that.selectionController.selectIndex(rowIndex, true);
+                } else {
+                    that.selectionController.deselectIndex(rowIndex);
+                }
+            };
 
-        return eCheckbox;
-    };
+            this.angularGrid.addVirtualRowListener(rowIndex, {
+                rowSelected: function (selected: any) {
+                    setCheckboxState(eCheckbox, selected);
+                },
+                rowRemoved: function () {
+                }
+            });
 
-    function setCheckboxState(eCheckbox, state) {
+            return eCheckbox;
+        }
+    }
+
+    function setCheckboxState(eCheckbox: any, state: any) {
         if (typeof state === 'boolean') {
             eCheckbox.checked = state;
             eCheckbox.indeterminate = false;

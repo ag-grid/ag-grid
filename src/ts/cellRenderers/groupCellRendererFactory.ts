@@ -5,7 +5,7 @@ var svgFactory = new SvgFactory();
 
 module awk {
 
-    function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) {
+    export function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) {
 
         return function groupCellRenderer(params) {
 
