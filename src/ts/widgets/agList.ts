@@ -9,7 +9,13 @@ module awk {
     //var template = require('./agList.html');
     var utils = awk.Utils;
     var dragAndDropService = awk.DragAndDropService.getInstance();
-    var template = require('text!agList.html');
+    var template =
+        '<div class="ag-list-selection">'+
+            '<div>'+
+                '<div ag-repeat class="ag-list-item">'+
+                '</div>'+
+            '</div>'+
+        '</div>';
 
     var NOT_DROP_TARGET = 0;
     var DROP_TARGET_ABOVE = 1;
