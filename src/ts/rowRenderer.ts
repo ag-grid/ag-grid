@@ -2,11 +2,10 @@
 /// <reference path="constants.ts" />
 /// <reference path="cellRenderers/groupCellRendererFactory.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
-    var constants = awk.Constants;
-    var groupCellRendererFactory = awk.groupCellRendererFactory;
+    var utils = Utils;
+    var constants = Constants;
 
     export class RowRenderer {
 

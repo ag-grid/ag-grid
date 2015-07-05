@@ -15,17 +15,18 @@
 /// <reference path="gridPanel/gridPanel.ts" />
 /// <reference path="toolPanel/toolPanel.ts" />
 /// <reference path="widgets/agPopupService.ts" />
+/// <reference path="gridOptions.ts" />
 
-module awk {
+module awk.grid {
 
-    var constants = awk.Constants;
-    var utils = awk.Utils;
-    var agPopupService = awk.PopupService.getInstance();
+    var constants = Constants;
+    var utils = Utils;
+    var agPopupService = PopupService.getInstance();
 
     export class Grid {
 
         virtualRowCallbacks: any;
-        gridOptions: any;
+        gridOptions: GridOptions;
         gridOptionsWrapper: any;
         quickFilter: any;
         scrollWidth: any;
@@ -51,7 +52,7 @@ module awk {
         constructor(eGridDiv: any, gridOptions: any, $scope: any, $compile: any, quickFilterOnScope: any) {
 
             this.gridOptions = gridOptions;
-            this.gridOptionsWrapper = new awk.GridOptionsWrapper(this.gridOptions);
+            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
 
             this.addApi();
             this.setupComponents($scope, $compile, eGridDiv);

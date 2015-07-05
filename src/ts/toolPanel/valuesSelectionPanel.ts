@@ -5,14 +5,11 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../widgets/agDropdownList.ts" />
 
-module awk {
+module awk.grid {
 
-    var svgFactory = awk.SvgFactory.getInstance();
-    var AgList = awk.AgList;
-    var constants = awk.Constants;
-    var utils = awk.Utils;
-    var BorderLayout = awk.BorderLayout;
-    var AgDropdownList = awk.AgDropdownList;
+    var svgFactory = SvgFactory.getInstance();
+    var constants = Constants;
+    var utils = Utils;
 
     export class ValuesSelectionPanel {
 

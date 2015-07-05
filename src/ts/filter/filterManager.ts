@@ -4,10 +4,10 @@
 /// <reference path="setFilter.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
 
-module awk {
+module awk.grid {
 
-    var agPopupService = awk.PopupService.getInstance();
-    var utils = awk.Utils;
+    var agPopupService = PopupService.getInstance();
+    var utils = Utils;
 
     export class FilterManager {
 

@@ -1,9 +1,9 @@
 /// <reference path="../utils.ts" />
 /// <reference path="setFilterModel.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
+    var utils = Utils;
 
     var template =
         '<div>'+
@@ -53,7 +53,7 @@ module awk {
         constructor(params: any) {
             this.filterParams = params.filterParams;
             this.rowHeight = (this.filterParams && this.filterParams.cellHeight) ? this.filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
-            this.model = new awk.SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
+            this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
             this.filterChangedCallback = params.filterChangedCallback;
             this.valueGetter = params.valueGetter;
             this.rowsInBodyContainer = {};

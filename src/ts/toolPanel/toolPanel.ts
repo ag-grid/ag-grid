@@ -4,13 +4,9 @@
 /// <reference path="./valuesSelectionPanel.ts" />
 /// <reference path="../layout/verticalStack.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
-    var ColumnSelectionPanel = awk.ColumnSelectionPanel;
-    var GroupSelectionPanel = awk.GroupSelectionPanel;
-    var ValuesSelectionPanel = awk.ValuesSelectionPanel;
-    var VerticalStack = awk.VerticalStack;
+    var utils = Utils;
 
     export class ToolPanel {
 

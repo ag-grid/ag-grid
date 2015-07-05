@@ -2,7 +2,7 @@
 /// <reference path="constants.ts" />
 /// <reference path="svgFactory.ts" />
 
-module awk {
+module awk.grid {
 
     var utils = Utils;
     var constants = Constants;

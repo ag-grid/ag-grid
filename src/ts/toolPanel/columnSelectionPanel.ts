@@ -3,12 +3,10 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../layout/BorderLayout.ts" />
 
-module awk {
+module awk.grid {
 
-    var AgList = awk.AgList;
-    var utils = awk.Utils;
-    var BorderLayout = awk.BorderLayout;
-    var svgFactory = awk.SvgFactory.getInstance();
+    var utils = Utils;
+    var svgFactory = SvgFactory.getInstance();
 
     export class ColumnSelectionPanel {
 

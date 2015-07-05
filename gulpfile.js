@@ -9,6 +9,7 @@ var buffer = require('vinyl-buffer');
 var nib = require('nib');
 var typescript = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
+var merge = require('merge2');
 
 gulp.task('default', ['debug-build', 'watch']);
 gulp.task('release', ['stylus', 'ts-release']);
@@ -46,18 +47,22 @@ function tsReleaseTask() {
         .src('src/ts/**/*.ts')
         .pipe(typescript({
             noImplicitAny: true,
+            declarationFiles: true,
             out: 'output.js'
         }));
 
-    return tsResult.js
-        .pipe(rename('angular-grid.js'))
-        .pipe(gulp.dest('./dist'))
-        .pipe(gulp.dest('./docs/dist'))
-        .pipe(buffer())
-        .pipe(uglify())
-        .pipe(rename('angular-grid.min.js'))
-        .pipe(gulp.dest('./dist'))
-        .pipe(gulp.dest('./docs/dist'));
+    return merge([
+        tsResult.dts.pipe(gulp.dest('dist')),
+        tsResult.js
+            .pipe(rename('angular-grid.js'))
+            .pipe(gulp.dest('./dist'))
+            .pipe(gulp.dest('./docs/dist'))
+            .pipe(buffer())
+            .pipe(uglify())
+            .pipe(rename('angular-grid.min.js'))
+            .pipe(gulp.dest('./dist'))
+            .pipe(gulp.dest('./docs/dist'))
+    ]);
 }
 
 function stylusTask() {

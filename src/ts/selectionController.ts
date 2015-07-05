@@ -1,8 +1,8 @@
 /// <reference path="utils.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
+    var utils = Utils;
 
     // these constants are used for determining if groups should
     // be selected or deselected when selecting groups, and the group

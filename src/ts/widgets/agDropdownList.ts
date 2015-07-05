@@ -3,12 +3,11 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
-    var svgFactory = awk.SvgFactory.getInstance();
-    var AgList = awk.AgList;
-    var agPopupService = awk.PopupService.getInstance();
+    var utils = Utils;
+    var svgFactory = SvgFactory.getInstance();
+    var agPopupService = PopupService.getInstance();
 
     export class AgDropdownList {
 

@@ -69,7 +69,7 @@ declare var module: any;
         }
 
         var eGridDiv = $element[0];
-        var grid = new awk.Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
+        var grid = new awk.grid.Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.setFinished();
@@ -89,7 +89,7 @@ declare var module: any;
         } else {
             eGridDiv = element;
         }
-        new awk.Grid(eGridDiv, gridOptions, null, null, null);
+        new awk.grid.Grid(eGridDiv, gridOptions, null, null, null);
     }
 
 }).call(window);

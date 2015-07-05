@@ -1,5 +1,5 @@
 
-module awk {
+module awk.grid {
 
     export class Constants {
         static STEP_EVERYTHING = 0;

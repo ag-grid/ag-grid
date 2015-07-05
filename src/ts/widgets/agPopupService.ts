@@ -1,8 +1,8 @@
 /// <reference path="../utils.ts" />
 
-module awk {
+module awk.grid {
 
-    var _ = awk.Utils;
+    var _ = Utils;
 
     export class PopupService {
 

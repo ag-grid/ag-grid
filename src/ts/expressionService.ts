@@ -1,4 +1,4 @@
-module awk {
+module awk.grid {
 
     export class ExpressionService {
 

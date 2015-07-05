@@ -1,5 +1,5 @@
 
-module awk {
+module awk.grid {
 
     export class GroupCreator {
 
@@ -12,7 +12,7 @@ module awk {
             return this.theInstance;
         }
 
-        group(rowNodes: any, groupedCols: any, groupAggFunction: any, expandByDefault: any) {
+        group(rowNodes: any, groupedCols: any, expandByDefault: any) {
 
             var topMostGroup = {
                 level: -1,

@@ -4,13 +4,11 @@
 /// <reference path="../layout/BorderLayout.ts" />
 /// <reference path="../constants.ts" />
 
-module awk {
+module awk.grid {
 
-    var AgList = awk.AgList;
-    var utils = awk.Utils;
-    var BorderLayout = awk.BorderLayout;
-    var svgFactory = awk.SvgFactory.getInstance();
-    var constants = awk.Constants;
+    var utils = Utils;
+    var svgFactory = SvgFactory.getInstance();
+    var constants = Constants;
 
     export class GroupSelectionPanel {
 

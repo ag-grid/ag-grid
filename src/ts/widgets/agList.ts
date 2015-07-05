@@ -4,11 +4,11 @@
 
 declare function require(name: string): any;
 
-module awk {
+module awk.grid {
 
     //var template = require('./agList.html');
-    var utils = awk.Utils;
-    var dragAndDropService = awk.DragAndDropService.getInstance();
+    var utils = Utils;
+    var dragAndDropService = DragAndDropService.getInstance();
     var template =
         '<div class="ag-list-selection">'+
             '<div>'+

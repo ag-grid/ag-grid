@@ -2,11 +2,11 @@
 /// <reference path="../constants.ts" />
 /// <reference path="../groupCreator.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
-    var constants = awk.Constants;
-    var groupCreator = awk.GroupCreator.getInstance();
+    var utils = Utils;
+    var constants = Constants;
+    var groupCreator = GroupCreator.getInstance();
 
     export class InMemoryRowController {
 
@@ -369,8 +369,7 @@ module awk {
 
             if (doingGrouping) {
                 var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-                rowsAfterGroup = groupCreator.group(this.allRows, groupedCols,
-                    this.gridOptionsWrapper.getGroupAggFunction(), expandByDefault);
+                rowsAfterGroup = groupCreator.group(this.allRows, groupedCols, expandByDefault);
             } else {
                 rowsAfterGroup = this.allRows;
             }

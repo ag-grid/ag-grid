@@ -1,8 +1,8 @@
 /// <reference path="../utils.ts" />
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
+    var utils = Utils;
 
     var template =
             '<div>'+

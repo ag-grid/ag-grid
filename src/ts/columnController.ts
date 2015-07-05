@@ -1,7 +1,7 @@
 /// <reference path="utils.ts" />
 /// <reference path="constants.ts" />
 
-module awk {
+module awk.grid {
 
     var _ = Utils;
     var constants = Constants;

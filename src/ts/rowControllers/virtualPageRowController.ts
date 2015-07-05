@@ -5,9 +5,9 @@
  * or standard pagination, the inMemoryRowController is used.
  */
 
-module awk {
+module awk.grid {
 
-    var utils = awk.Utils;
+    var utils = Utils;
     var logging = false;
 
     export class VirtualPageRowController {
