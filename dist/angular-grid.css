@@ -238,8 +238,11 @@
   height: unset;
 }
 .ag-list-selection {
-  height: 100%;
-  overflow: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
 }
 .ag-tool-panel-container {
   -webkit-user-select: none;

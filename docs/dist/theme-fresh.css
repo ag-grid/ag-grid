@@ -122,6 +122,9 @@
   border: 1px solid #000;
   background-color: #f0f0f0;
 }
+.ag-fresh .ag-filter-value {
+  margin-left: 4px;
+}
 .ag-fresh .ag-selection-checkbox {
   margin-left: 4px;
 }
@@ -140,7 +143,6 @@
   opacity: 0.75;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
   filter: alpha(opacity=75);
-  font-style: italic;
 }
 .ag-fresh .ag-not-dragging {
   border: 1px solid transparent;
@@ -175,6 +177,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.ag-fresh .ag-popup-list .ag-list-item:hover {
+  background-color: #add8e6;
 }
 .ag-fresh .ag-visible-icons {
   padding-left: 2px;
