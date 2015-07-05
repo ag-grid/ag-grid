@@ -35,6 +35,7 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "gulp-typescript": "^2.5.0",
-    "typescript": "^1.0.0"
+    "typescript": "^1.0.0",
+    "gulp-sourcemaps": "1.5.2"
   }
 }

@@ -22,7 +22,11 @@ To build:
 - `npm install`
 - `npm install gulp -g`
 - `bower install`
-- `gulp` or `gulp guild` or `gulp watch`
+- `gulp` or `gulp release`
+
+Normal 'gulp' does not include minifiation or source maps, and starts a watch. This is for development.
+
+'gulp release' does minification and no source maps. This is for releasing.
 
 If you are doing a Pull Request:
 - Make your code changes in `src/` files only, don't update dist files
@@ -51,5 +55,6 @@ and I'm bringing the grid into a particular direction. To take on contributors
 would require overhead of organisation, as well as agreeing direction (both
 technical implementation and functional requirements).
 
-If you would like to help, then where I actually do need help is in answering questions
-on the forum and spreading the word to grow the user community.
+If you would like to help, then please provide me with guidance and advice.
+I don't claim to know everything, so welcome others opinions on the direction
+of the project.
