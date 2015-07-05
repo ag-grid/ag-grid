@@ -22,12 +22,26 @@ gulp.task('js', jsTask);
 gulp.task('watch', watchTask);
 
 gulp.task('ts', function () {
-    var tsResult = gulp.src('src/ts/**/*.ts')
-        .pipe(ts({
-            noImplicitAny: true,
-            out: 'output.js'
-        }));
-    return tsResult.js.pipe(gulp.dest('docs/aaaaa'));
+    //var tsResult = gulp.src('src/ts/**/*.ts')
+    //    .pipe(ts({
+    //        noImplicitAny: true,
+    //        out: 'output.js'
+    //    }));
+    //return tsResult.js.pipe(gulp.dest('docs/aaaaa'));
+
+    return gulp.src('src/ts/**/*.ts')
+            .pipe(ts({
+                noImplicitAny: true
+            }))
+        .js
+        .pipe(rename('angular-grid.js'))
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulp.dest('./docs/dist'))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(rename('angular-grid.min.js'))
+        .pipe(gulp.dest('./dist'))
+        .pipe(gulp.dest('./docs/dist'));
 });
 
 gulp.task('watchts', function () {

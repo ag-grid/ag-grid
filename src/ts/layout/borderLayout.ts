@@ -35,7 +35,7 @@ module awk {
 
             this.fullHeight = !params.north && !params.south;
 
-            var template;
+            var template: any;
             if (!params.dontFill) {
                 if (this.fullHeight) {
                     template =
@@ -90,7 +90,7 @@ module awk {
             this.setOverlayVisible(false);
         }
 
-        setupPanels(params) {
+        setupPanels(params: any) {
             this.eNorthWrapper = this.eGui.querySelector('#north');
             this.eSouthWrapper = this.eGui.querySelector('#south');
             this.eEastWrapper = this.eGui.querySelector('#east');
@@ -108,7 +108,7 @@ module awk {
             this.setupPanel(params.overlay, this.eOverlayWrapper);
         }
 
-        setupPanel(content, ePanel) {
+        setupPanel(content: any, ePanel: any) {
             if (!ePanel) {
                 return;
             }
@@ -142,7 +142,7 @@ module awk {
 
             var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
             var that = this;
-            _.forEach(childLayouts, function (childLayout) {
+            _.forEach(childLayouts, function (childLayout: any) {
                 var childChangedSize = that.layoutChild(childLayout);
                 if (childChangedSize) {
                     atLeastOneChanged = true;
@@ -164,7 +164,7 @@ module awk {
             return atLeastOneChanged;
         }
 
-        layoutChild(childPanel) {
+        layoutChild(childPanel: any) {
             if (childPanel) {
                 return childPanel.doLayout();
             } else {
@@ -208,21 +208,21 @@ module awk {
             this.eCenterWrapper.style.width = centerWidth + 'px';
         }
 
-        setEastVisible(visible) {
+        setEastVisible(visible: any) {
             if (this.eEastWrapper) {
                 this.eEastWrapper.style.display = visible ? '' : 'none';
             }
             this.doLayout();
         }
 
-        setOverlayVisible(visible) {
+        setOverlayVisible(visible: any) {
             if (this.eOverlayWrapper) {
                 this.eOverlayWrapper.style.display = visible ? '' : 'none';
             }
             this.doLayout();
         }
 
-        setSouthVisible(visible) {
+        setSouthVisible(visible: any) {
             if (this.eSouthWrapper) {
                 this.eSouthWrapper.style.display = visible ? '' : 'none';
             }

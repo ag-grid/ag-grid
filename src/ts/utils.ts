@@ -75,7 +75,7 @@ module awk {
             }
         }
 
-        static getValue(expressionService: any, data: any, colDef: any, node: any, api: any, context: any) {
+        static getValue(expressionService: any, data: any, colDef: any, node?: any, api?: any, context?: any) {
 
             var valueGetter = colDef.valueGetter;
             var field = colDef.field;

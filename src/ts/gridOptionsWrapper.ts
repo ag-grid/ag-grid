@@ -1,146 +1,309 @@
-var DEFAULT_ROW_HEIGHT = 30;
-
-var constants = require('./constants');
+/// <reference path="constants.ts" />
 
 module awk {
 
-    function GridOptionsWrapper(gridOptions) {
-        this.gridOptions = gridOptions;
-        this.setupDefaults();
-    }
+    var DEFAULT_ROW_HEIGHT = 30;
+    var constants = awk.Constants;
 
-    function isTrue(value) {
+    function isTrue(value: any) {
         return value === true || value === 'true';
     }
 
-    GridOptionsWrapper.prototype.isRowSelection = function() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
-    GridOptionsWrapper.prototype.isRowDeselection = function() { return isTrue(this.gridOptions.rowDeselection); };
-    GridOptionsWrapper.prototype.isRowSelectionMulti = function() { return this.gridOptions.rowSelection === 'multiple'; };
-    GridOptionsWrapper.prototype.getContext = function() { return this.gridOptions.context; };
-    GridOptionsWrapper.prototype.isVirtualPaging = function() { return isTrue(this.gridOptions.virtualPaging); };
-    GridOptionsWrapper.prototype.isShowToolPanel = function() { return isTrue(this.gridOptions.showToolPanel); };
-    GridOptionsWrapper.prototype.isToolPanelSuppressPivot = function() { return isTrue(this.gridOptions.toolPanelSuppressPivot); };
-    GridOptionsWrapper.prototype.isToolPanelSuppressValues = function() { return isTrue(this.gridOptions.toolPanelSuppressValues); };
-    GridOptionsWrapper.prototype.isRowsAlreadyGrouped = function() { return isTrue(this.gridOptions.rowsAlreadyGrouped); };
-    GridOptionsWrapper.prototype.isGroupSelectsChildren = function() { return isTrue(this.gridOptions.groupSelectsChildren); };
-    GridOptionsWrapper.prototype.isGroupHidePivotColumns = function() { return isTrue(this.gridOptions.groupHidePivotColumns); };
-    GridOptionsWrapper.prototype.isGroupIncludeFooter = function() { return isTrue(this.gridOptions.groupIncludeFooter); };
-    GridOptionsWrapper.prototype.isSuppressRowClickSelection = function() { return isTrue(this.gridOptions.suppressRowClickSelection); };
-    GridOptionsWrapper.prototype.isSuppressCellSelection = function() { return isTrue(this.gridOptions.suppressCellSelection); };
-    GridOptionsWrapper.prototype.isSuppressUnSort = function() { return isTrue(this.gridOptions.suppressUnSort); };
-    GridOptionsWrapper.prototype.isSuppressMultiSort = function() { return isTrue(this.gridOptions.suppressMultiSort); };
-    GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function() { return isTrue(this.gridOptions.groupSuppressAutoColumn); };
-    GridOptionsWrapper.prototype.isGroupHeaders = function() { return isTrue(this.gridOptions.groupHeaders); };
-    GridOptionsWrapper.prototype.isDontUseScrolls = function() { return isTrue(this.gridOptions.dontUseScrolls); };
-    GridOptionsWrapper.prototype.isSuppressDescSort = function() { return isTrue(this.gridOptions.suppressDescSort); };
-    GridOptionsWrapper.prototype.isUnSortIcon = function() { return isTrue(this.gridOptions.unSortIcon); };
-    GridOptionsWrapper.prototype.getRowStyle = function() { return this.gridOptions.rowStyle; };
-    GridOptionsWrapper.prototype.getRowClass = function() { return this.gridOptions.rowClass; };
-    GridOptionsWrapper.prototype.getHeaderCellRenderer = function() { return this.gridOptions.headerCellRenderer; };
-    GridOptionsWrapper.prototype.getApi = function() { return this.gridOptions.api; };
-    GridOptionsWrapper.prototype.isEnableColResize = function() { return this.gridOptions.enableColResize; };
-    GridOptionsWrapper.prototype.getGroupDefaultExpanded = function() { return this.gridOptions.groupDefaultExpanded; };
-    GridOptionsWrapper.prototype.getGroupKeys = function() { return this.gridOptions.groupKeys; };
-    GridOptionsWrapper.prototype.getGroupAggFunction = function() { return this.gridOptions.groupAggFunction; };
-    GridOptionsWrapper.prototype.getGroupAggFields = function() { return this.gridOptions.groupAggFields; };
-    GridOptionsWrapper.prototype.getAllRows = function() { return this.gridOptions.rowData; };
-    GridOptionsWrapper.prototype.isGroupUseEntireRow = function() { return isTrue(this.gridOptions.groupUseEntireRow); };
-    GridOptionsWrapper.prototype.getGroupColumnDef = function() { return this.gridOptions.groupColumnDef; };
-    GridOptionsWrapper.prototype.isAngularCompileRows = function() { return isTrue(this.gridOptions.angularCompileRows); };
-    GridOptionsWrapper.prototype.isAngularCompileFilters = function() { return isTrue(this.gridOptions.angularCompileFilters); };
-    GridOptionsWrapper.prototype.isAngularCompileHeaders = function() { return isTrue(this.gridOptions.angularCompileHeaders); };
-    GridOptionsWrapper.prototype.getColumnDefs = function() { return this.gridOptions.columnDefs; };
-    GridOptionsWrapper.prototype.getRowHeight = function() { return this.gridOptions.rowHeight; };
-    GridOptionsWrapper.prototype.getModelUpdated = function() { return this.gridOptions.modelUpdated; };
-    GridOptionsWrapper.prototype.getCellClicked = function() { return this.gridOptions.cellClicked; };
-    GridOptionsWrapper.prototype.getCellDoubleClicked = function() { return this.gridOptions.cellDoubleClicked; };
-    GridOptionsWrapper.prototype.getCellValueChanged = function() { return this.gridOptions.cellValueChanged; };
-    GridOptionsWrapper.prototype.getCellFocused = function() { return this.gridOptions.cellFocused; };
-    GridOptionsWrapper.prototype.getRowSelected = function() { return this.gridOptions.rowSelected; };
-    GridOptionsWrapper.prototype.getSelectionChanged = function() { return this.gridOptions.selectionChanged; };
-    GridOptionsWrapper.prototype.getVirtualRowRemoved = function() { return this.gridOptions.virtualRowRemoved; };
-    GridOptionsWrapper.prototype.getDatasource = function() { return this.gridOptions.datasource; };
-    GridOptionsWrapper.prototype.getReady = function() { return this.gridOptions.ready; };
-    GridOptionsWrapper.prototype.getRowBuffer = function() { return this.gridOptions.rowBuffer; };
+    export class GridOptionsWrapper {
 
-    GridOptionsWrapper.prototype.getGroupRowInnerRenderer = function() {
-        if (this.gridOptions.groupInnerRenderer) {
-            console.warn('ag-grid: as of v1.10.0 (21st Jun 2015) groupInnerRenderer is nwo called groupRowInnerRenderer. Please change you code as groupInnerRenderer is deprecated.');
-            return this.gridOptions.groupInnerRenderer;
-        } else {
-            return this.gridOptions.groupRowInnerRenderer;
+        gridOptions: any;
+
+        constructor(gridOptions: any) {
+            this.gridOptions = gridOptions;
+            this.setupDefaults();
         }
-    };
 
-    GridOptionsWrapper.prototype.getColWidth = function() {
-        if (typeof this.gridOptions.colWidth !== 'number' ||  this.gridOptions.colWidth < constants.MIN_COL_WIDTH) {
-            return 200;
-        } else  {
-            return this.gridOptions.colWidth;
+
+        isRowSelection() {
+            return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple";
         }
-    };
 
-    GridOptionsWrapper.prototype.isEnableSorting = function() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
-    GridOptionsWrapper.prototype.isEnableServerSideSorting = function() { return isTrue(this.gridOptions.enableServerSideSorting); };
+        isRowDeselection() {
+            return isTrue(this.gridOptions.rowDeselection);
+        }
 
-    GridOptionsWrapper.prototype.isEnableFilter = function() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); };
-    GridOptionsWrapper.prototype.isEnableServerSideFilter = function() { return this.gridOptions.enableServerSideFilter; };
+        isRowSelectionMulti() {
+            return this.gridOptions.rowSelection === 'multiple';
+        }
 
-    GridOptionsWrapper.prototype.setSelectedRows = function(newSelectedRows) {
-        return this.gridOptions.selectedRows = newSelectedRows;
-    };
-    GridOptionsWrapper.prototype.setSelectedNodesById = function(newSelectedNodes) {
-        return this.gridOptions.selectedNodesById = newSelectedNodes;
-    };
+        getContext() {
+            return this.gridOptions.context;
+        }
 
-    GridOptionsWrapper.prototype.getIcons = function() {
-        return this.gridOptions.icons;
-    };
+        isVirtualPaging() {
+            return isTrue(this.gridOptions.virtualPaging);
+        }
 
-    GridOptionsWrapper.prototype.getHeaderHeight = function() {
-        if (typeof this.gridOptions.headerHeight === 'number') {
-            // if header height provided, used it
-            return this.gridOptions.headerHeight;
-        } else {
-            // otherwise return 25 if no grouping, 50 if grouping
-            if (this.isGroupHeaders()) {
-                return 50;
+        isShowToolPanel() {
+            return isTrue(this.gridOptions.showToolPanel);
+        }
+
+        isToolPanelSuppressPivot() {
+            return isTrue(this.gridOptions.toolPanelSuppressPivot);
+        }
+
+        isToolPanelSuppressValues() {
+            return isTrue(this.gridOptions.toolPanelSuppressValues);
+        }
+
+        isRowsAlreadyGrouped() {
+            return isTrue(this.gridOptions.rowsAlreadyGrouped);
+        }
+
+        isGroupSelectsChildren() {
+            return isTrue(this.gridOptions.groupSelectsChildren);
+        }
+
+        isGroupHidePivotColumns() {
+            return isTrue(this.gridOptions.groupHidePivotColumns);
+        }
+
+        isGroupIncludeFooter() {
+            return isTrue(this.gridOptions.groupIncludeFooter);
+        }
+
+        isSuppressRowClickSelection() {
+            return isTrue(this.gridOptions.suppressRowClickSelection);
+        }
+
+        isSuppressCellSelection() {
+            return isTrue(this.gridOptions.suppressCellSelection);
+        }
+
+        isSuppressUnSort() {
+            return isTrue(this.gridOptions.suppressUnSort);
+        }
+
+        isSuppressMultiSort() {
+            return isTrue(this.gridOptions.suppressMultiSort);
+        }
+
+        isGroupSuppressAutoColumn() {
+            return isTrue(this.gridOptions.groupSuppressAutoColumn);
+        }
+
+        isGroupHeaders() {
+            return isTrue(this.gridOptions.groupHeaders);
+        }
+
+        isDontUseScrolls() {
+            return isTrue(this.gridOptions.dontUseScrolls);
+        }
+
+        isSuppressDescSort() {
+            return isTrue(this.gridOptions.suppressDescSort);
+        }
+
+        isUnSortIcon() {
+            return isTrue(this.gridOptions.unSortIcon);
+        }
+
+        getRowStyle() {
+            return this.gridOptions.rowStyle;
+        }
+
+        getRowClass() {
+            return this.gridOptions.rowClass;
+        }
+
+        getHeaderCellRenderer() {
+            return this.gridOptions.headerCellRenderer;
+        }
+
+        getApi() {
+            return this.gridOptions.api;
+        }
+
+        isEnableColResize() {
+            return this.gridOptions.enableColResize;
+        }
+
+        getGroupDefaultExpanded() {
+            return this.gridOptions.groupDefaultExpanded;
+        }
+
+        getGroupKeys() {
+            return this.gridOptions.groupKeys;
+        }
+
+        getGroupAggFunction() {
+            return this.gridOptions.groupAggFunction;
+        }
+
+        getGroupAggFields() {
+            return this.gridOptions.groupAggFields;
+        }
+
+        getAllRows() {
+            return this.gridOptions.rowData;
+        }
+
+        isGroupUseEntireRow() {
+            return isTrue(this.gridOptions.groupUseEntireRow);
+        }
+
+        getGroupColumnDef() {
+            return this.gridOptions.groupColumnDef;
+        }
+
+        isAngularCompileRows() {
+            return isTrue(this.gridOptions.angularCompileRows);
+        }
+
+        isAngularCompileFilters() {
+            return isTrue(this.gridOptions.angularCompileFilters);
+        }
+
+        isAngularCompileHeaders() {
+            return isTrue(this.gridOptions.angularCompileHeaders);
+        }
+
+        getColumnDefs() {
+            return this.gridOptions.columnDefs;
+        }
+
+        getRowHeight() {
+            return this.gridOptions.rowHeight;
+        }
+
+        getModelUpdated() {
+            return this.gridOptions.modelUpdated;
+        }
+
+        getCellClicked() {
+            return this.gridOptions.cellClicked;
+        }
+
+        getCellDoubleClicked() {
+            return this.gridOptions.cellDoubleClicked;
+        }
+
+        getCellValueChanged() {
+            return this.gridOptions.cellValueChanged;
+        }
+
+        getCellFocused() {
+            return this.gridOptions.cellFocused;
+        }
+
+        getRowSelected() {
+            return this.gridOptions.rowSelected;
+        }
+
+        getSelectionChanged() {
+            return this.gridOptions.selectionChanged;
+        }
+
+        getVirtualRowRemoved() {
+            return this.gridOptions.virtualRowRemoved;
+        }
+
+        getDatasource() {
+            return this.gridOptions.datasource;
+        }
+
+        getReady() {
+            return this.gridOptions.ready;
+        }
+
+        getRowBuffer() {
+            return this.gridOptions.rowBuffer;
+        }
+
+        getGroupRowInnerRenderer() {
+            if (this.gridOptions.groupInnerRenderer) {
+                console.warn('ag-grid: as of v1.10.0 (21st Jun 2015) groupInnerRenderer is nwo called groupRowInnerRenderer. Please change you code as groupInnerRenderer is deprecated.');
+                return this.gridOptions.groupInnerRenderer;
             } else {
-                return 25;
+                return this.gridOptions.groupRowInnerRenderer;
             }
         }
-    };
 
-    GridOptionsWrapper.prototype.setupDefaults = function() {
-        if (!this.gridOptions.rowHeight) {
-            this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
-        }
-    };
-
-    GridOptionsWrapper.prototype.getPinnedColCount = function() {
-        // if not using scrolls, then pinned columns doesn't make
-        // sense, so always return 0
-        if (this.isDontUseScrolls()) {
-            return 0;
-        }
-        if (this.gridOptions.pinnedColumnCount) {
-            //in case user puts in a string, cast to number
-            return Number(this.gridOptions.pinnedColumnCount);
-        } else {
-            return 0;
-        }
-    };
-
-    GridOptionsWrapper.prototype.getLocaleTextFunc = function() {
-        var that = this;
-        return function (key, defaultValue) {
-            var localeText = that.gridOptions.localeText;
-            if (localeText && localeText[key]) {
-                return localeText[key];
+        getColWidth() {
+            if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < constants.MIN_COL_WIDTH) {
+                return 200;
             } else {
-                return defaultValue;
+                return this.gridOptions.colWidth;
             }
-        };
-    };
+        }
 
+        isEnableSorting() {
+            return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting);
+        }
+
+        isEnableServerSideSorting() {
+            return isTrue(this.gridOptions.enableServerSideSorting);
+        }
+
+        isEnableFilter() {
+            return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter);
+        }
+
+        isEnableServerSideFilter() {
+            return this.gridOptions.enableServerSideFilter;
+        }
+
+        setSelectedRows(newSelectedRows: any) {
+            return this.gridOptions.selectedRows = newSelectedRows;
+        }
+
+        setSelectedNodesById(newSelectedNodes: any) {
+            return this.gridOptions.selectedNodesById = newSelectedNodes;
+        }
+
+        getIcons() {
+            return this.gridOptions.icons;
+        }
+
+        getHeaderHeight() {
+            if (typeof this.gridOptions.headerHeight === 'number') {
+                // if header height provided, used it
+                return this.gridOptions.headerHeight;
+            } else {
+                // otherwise return 25 if no grouping, 50 if grouping
+                if (this.isGroupHeaders()) {
+                    return 50;
+                } else {
+                    return 25;
+                }
+            }
+        }
+
+        setupDefaults() {
+            if (!this.gridOptions.rowHeight) {
+                this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
+            }
+        }
+
+        getPinnedColCount() {
+            // if not using scrolls, then pinned columns doesn't make
+            // sense, so always return 0
+            if (this.isDontUseScrolls()) {
+                return 0;
+            }
+            if (this.gridOptions.pinnedColumnCount) {
+                //in case user puts in a string, cast to number
+                return Number(this.gridOptions.pinnedColumnCount);
+            } else {
+                return 0;
+            }
+        }
+
+        getLocaleTextFunc() {
+            var that = this;
+            return function (key: any, defaultValue: any) {
+                var localeText = that.gridOptions.localeText;
+                if (localeText && localeText[key]) {
+                    return localeText[key];
+                } else {
+                    return defaultValue;
+                }
+            };
+        }
+    }
 }

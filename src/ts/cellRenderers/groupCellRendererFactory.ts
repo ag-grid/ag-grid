@@ -1,13 +1,16 @@
-var SvgFactory = require('../svgFactory');
-var utils = require('../utils');
-var constants = require('../constants');
-var svgFactory = new SvgFactory();
+/// <reference path="../svgFactory.ts" />
+/// <reference path="../utils.ts" />
+/// <reference path="../constants.ts" />
 
 module awk {
 
-    export function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) {
+    var svgFactory = SvgFactory.getInstance();
+    var utils = Utils;
+    var constants = Constants;
 
-        return function groupCellRenderer(params) {
+    export function groupCellRendererFactory(gridOptionsWrapper: any, selectionRendererFactory: any) {
+
+        return function groupCellRenderer(params: any) {
 
             var eGroupCell = document.createElement('span');
             var node = params.node;
@@ -37,7 +40,7 @@ module awk {
             // the theme set, which will make things look 'not aligned' for the
             // first group level.
             if (node.footer || node.level > 0) {
-                var paddingFactor;
+                var paddingFactor: any;
                 if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.padding >= 0) {
                     paddingFactor = params.colDef.cellRenderer.padding;
                 } else {
@@ -55,7 +58,7 @@ module awk {
             return eGroupCell;
         };
 
-        function addExpandAndContract(eGroupCell, params) {
+        function addExpandAndContract(eGroupCell: any, params: any) {
 
             var eExpandIcon = createGroupExpandIcon(true);
             var eContractIcon = createGroupExpandIcon(false);
@@ -71,7 +74,7 @@ module awk {
             // if parent cell was passed, then we can listen for when focus is on the cell,
             // and then expand / contract as the user hits enter or space-bar
             if (params.eGridCell) {
-                params.eGridCell.addEventListener('keydown', function(event) {
+                params.eGridCell.addEventListener('keydown', function(event: any) {
                     if (utils.isKeyPressed(event, constants.KEY_ENTER)) {
                         expandOrContract();
                         event.preventDefault();
@@ -84,23 +87,23 @@ module awk {
             }
         }
 
-        function showAndHideExpandAndContract(eExpandIcon, eContractIcon, expanded) {
+        function showAndHideExpandAndContract(eExpandIcon: any, eContractIcon: any, expanded: any) {
             utils.setVisible(eExpandIcon, !expanded);
             utils.setVisible(eContractIcon, expanded);
         }
 
-        function createFromInnerRenderer(eGroupCell, params, renderer) {
+        function createFromInnerRenderer(eGroupCell: any, params: any, renderer: any) {
             utils.useRenderer(eGroupCell, renderer, params);
         }
 
-        function expandGroup(eExpandIcon, eContractIcon, params) {
+        function expandGroup(eExpandIcon: any, eContractIcon: any, params: any) {
             params.node.expanded = !params.node.expanded;
             params.api.onGroupExpandedOrCollapsed(params.rowIndex + 1);
             showAndHideExpandAndContract(eExpandIcon, eContractIcon, params.node.expanded);
         }
 
-        function createGroupExpandIcon(expanded) {
-            var eIcon;
+        function createGroupExpandIcon(expanded: any) {
+            var eIcon: any;
             if (expanded) {
                 eIcon = utils.createIcon('groupContracted', gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
             } else {
@@ -111,13 +114,13 @@ module awk {
         }
 
         // creates cell with 'Total {{key}}' for a group
-        function createFooterCell(eGroupCell, params) {
+        function createFooterCell(eGroupCell: any, params: any) {
             var textToDisplay = "Total " + getGroupName(params);
             var eText = document.createTextNode(textToDisplay);
             eGroupCell.appendChild(eText);
         }
 
-        function getGroupName(params) {
+        function getGroupName(params: any) {
             var cellRenderer = params.colDef.cellRenderer;
             if (cellRenderer && cellRenderer.keyMap
                 && typeof cellRenderer.keyMap === 'object' && params.colDef.cellRenderer !== null) {
@@ -133,7 +136,7 @@ module awk {
         }
 
         // creates cell with '{{key}} ({{childCount}})' for a group
-        function createGroupCell(eGroupCell, params) {
+        function createGroupCell(eGroupCell: any, params: any) {
             var groupName = getGroupName(params);
 
             var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
@@ -153,7 +156,7 @@ module awk {
         }
 
         // creates cell with '{{key}} ({{childCount}})' for a group
-        function createLeafCell(eParent, params) {
+        function createLeafCell(eParent: any, params: any) {
             if (params.value) {
                 var eText = document.createTextNode(' ' + params.value);
                 eParent.appendChild(eText);

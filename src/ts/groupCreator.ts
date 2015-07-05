@@ -1,89 +1,105 @@
 
 module awk {
 
-    function GroupCreator() {}
+    export class GroupCreator {
 
-    GroupCreator.prototype.group = function(rowNodes, groupedCols, groupAggFunction, expandByDefault) {
+        static theInstance: GroupCreator;
 
-        var topMostGroup = {
-            level: -1,
-            children: [],
-            childrenMap: {}
-        };
+        static getInstance() {
+            if (!this.theInstance) {
+                this.theInstance = new GroupCreator();
+            }
+            return this.theInstance;
+        }
 
-        var allGroups = [];
-        allGroups.push(topMostGroup);
+        group(rowNodes: any, groupedCols: any, groupAggFunction: any, expandByDefault: any) {
 
-        var levelToInsertChild = groupedCols.length - 1;
-        var i, currentLevel, node, data, currentGroup, groupByField, groupKey, nextGroup;
+            var topMostGroup = {
+                level: -1,
+                children: <any>[],
+                childrenMap: <any>{}
+            };
 
-        // start at -1 and go backwards, as all the positive indexes
-        // are already used by the nodes.
-        var index = -1;
+            var allGroups = <any>[];
+            allGroups.push(topMostGroup);
 
-        for (i = 0; i < rowNodes.length; i++) {
-            node = rowNodes[i];
-            data = node.data;
+            var levelToInsertChild = groupedCols.length - 1;
+            var i: any;
+            var currentLevel: any;
+            var node: any;
+            var data: any;
+            var currentGroup: any;
+            var groupByField: any;
+            var groupKey: any;
+            var nextGroup: any;
 
-            // all leaf nodes have the same level in this grouping, which is one level after the last group
-            node.level = levelToInsertChild + 1;
+            // start at -1 and go backwards, as all the positive indexes
+            // are already used by the nodes.
+            var index = -1;
 
-            for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
-                groupByField = groupedCols[currentLevel].colDef.field;
-                groupKey = data[groupByField];
+            for (i = 0; i < rowNodes.length; i++) {
+                node = rowNodes[i];
+                data = node.data;
 
-                if (currentLevel == 0) {
-                    currentGroup = topMostGroup;
+                // all leaf nodes have the same level in this grouping, which is one level after the last group
+                node.level = levelToInsertChild + 1;
+
+                for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
+                    groupByField = groupedCols[currentLevel].colDef.field;
+                    groupKey = data[groupByField];
+
+                    if (currentLevel == 0) {
+                        currentGroup = topMostGroup;
+                    }
+
+                    // if group doesn't exist yet, create it
+                    nextGroup = currentGroup.childrenMap[groupKey];
+                    if (!nextGroup) {
+                        nextGroup = {
+                            group: true,
+                            field: groupByField,
+                            id: index--,
+                            key: groupKey,
+                            expanded: this.isExpanded(expandByDefault, currentLevel),
+                            children: [],
+                            // for top most level, parent is null
+                            parent: currentGroup === topMostGroup ? null : currentGroup,
+                            allChildrenCount: 0,
+                            level: currentGroup.level + 1,
+                            childrenMap: {} //this is a temporary map, we remove at the end of this method
+                        };
+                        currentGroup.childrenMap[groupKey] = nextGroup;
+                        currentGroup.children.push(nextGroup);
+                        allGroups.push(nextGroup);
+                    }
+
+                    nextGroup.allChildrenCount++;
+
+                    if (currentLevel == levelToInsertChild) {
+                        node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                        nextGroup.children.push(node);
+                    } else {
+                        currentGroup = nextGroup;
+                    }
                 }
 
-                // if group doesn't exist yet, create it
-                nextGroup = currentGroup.childrenMap[groupKey];
-                if (!nextGroup) {
-                    nextGroup = {
-                        group: true,
-                        field: groupByField,
-                        id: index--,
-                        key: groupKey,
-                        expanded: this.isExpanded(expandByDefault, currentLevel),
-                        children: [],
-                        // for top most level, parent is null
-                        parent: currentGroup === topMostGroup ? null : currentGroup,
-                        allChildrenCount: 0,
-                        level: currentGroup.level + 1,
-                        childrenMap: {} //this is a temporary map, we remove at the end of this method
-                    };
-                    currentGroup.childrenMap[groupKey] = nextGroup;
-                    currentGroup.children.push(nextGroup);
-                    allGroups.push(nextGroup);
-                }
-
-                nextGroup.allChildrenCount++;
-
-                if (currentLevel == levelToInsertChild) {
-                    node.parent = nextGroup === topMostGroup ? null : nextGroup;
-                    nextGroup.children.push(node);
-                } else {
-                    currentGroup = nextGroup;
-                }
             }
 
+            //remove the temporary map
+            for (i = 0; i < allGroups.length; i++) {
+                delete allGroups[i].childrenMap;
+            }
+
+            return topMostGroup.children;
         }
 
-        //remove the temporary map
-        for (i = 0; i < allGroups.length; i++) {
-            delete allGroups[i].childrenMap;
+        isExpanded(expandByDefault: any, level: any) {
+            if (typeof expandByDefault === 'number') {
+                return level < expandByDefault;
+            } else {
+                return expandByDefault === true || expandByDefault === 'true';
+            }
         }
-
-        return topMostGroup.children;
-    };
-
-    GroupCreator.prototype.isExpanded = function(expandByDefault, level) {
-        if (typeof expandByDefault === 'number') {
-            return level < expandByDefault;
-        } else {
-            return expandByDefault === true || expandByDefault === 'true';
-        }
-    };
-
+    }
 }
 

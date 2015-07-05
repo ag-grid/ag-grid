@@ -14,7 +14,7 @@ module awk {
         }
 
         addPanel(panel: any, height: any) {
-            var component;
+            var component: any;
             if (panel.isLayoutPanel) {
                 this.childPanels.push(panel);
                 component = panel.getGui();

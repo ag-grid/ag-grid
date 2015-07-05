@@ -46,11 +46,11 @@ module awk {
             if (this.dragItem) {
                 this.stopDragging();
             }
-            var data;
+            var data: any;
             if (dragSourceCallback.getData) {
                 data = dragSourceCallback.getData();
             }
-            var containerId;
+            var containerId: any;
             if (dragSourceCallback.getContainerId) {
                 containerId = dragSourceCallback.getContainerId();
             }

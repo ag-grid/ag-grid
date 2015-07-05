@@ -4,11 +4,16 @@
 //
 // Version 1.10.1
 
+/// <reference path="grid.ts" />
+
+declare var angular: any;
+declare var exports: any;
+declare var module: any;
+
 (function() {
 
     // Establish the root object, `window` or `exports`
     var root = this;
-    var Grid = require('./grid');
 
     // if angular is present, register the directive
     if (typeof angular !== 'undefined') {
@@ -40,9 +45,9 @@
 
     root.angularGrid = angularGridGlobalFunction;
 
-    function AngularDirectiveController($element, $scope, $compile, $attrs) {
-        var gridOptions;
-        var quickFilterOnScope;
+    function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
+        var gridOptions: any;
+        var quickFilterOnScope: any;
         if ($attrs) {
             // new directive of ag-grid
             var keyOfGridInScope = $attrs.agGrid;
@@ -64,7 +69,7 @@
         }
 
         var eGridDiv = $element[0];
-        var grid = new Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
+        var grid = new awk.Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.setFinished();
@@ -72,9 +77,9 @@
     }
 
     // Global Function - this function is used for creating a grid, outside of any AngularJS
-    function angularGridGlobalFunction(element, gridOptions) {
+    function angularGridGlobalFunction(element: any, gridOptions: any) {
         // see if element is a query selector, or a real element
-        var eGridDiv;
+        var eGridDiv: any;
         if (typeof element === 'string') {
             eGridDiv = document.querySelector(element);
             if (!eGridDiv) {
@@ -84,7 +89,7 @@
         } else {
             eGridDiv = element;
         }
-        new Grid(eGridDiv, gridOptions, null, null);
+        new awk.Grid(eGridDiv, gridOptions, null, null, null);
     }
 
 }).call(window);
