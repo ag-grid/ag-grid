@@ -4,43 +4,77 @@ var uglify = require('gulp-uglify');
 var foreach = require('gulp-foreach');
 var rename = require("gulp-rename");
 var stylus = require('gulp-stylus');
-var browserify = require('browserify');
-var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var nib = require('nib');
-var stringify = require('stringify');
+var typescript = require('gulp-typescript');
+var sourcemaps = require('gulp-sourcemaps');
+var header = require('gulp-header');
+var merge = require('merge2');
+var pkg = require('./package.json');
 
-gulp.task('default', ['build', 'watch']);
+//var headerTemplate = '// Angular Grid\n// Written by Niall Crosby\n// www.angulargrid.com\n\n// Version 1.10.1\n\n';
+var headerTemplate = ['/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n');
+
+gulp.task('default', ['debug-build', 'watch']);
+gulp.task('release', ['stylus', 'ts-release']);
 
 // Build
-gulp.task('build', ['stylus', 'js']);
+gulp.task('debug-build', ['stylus', 'ts-debug']);
 gulp.task('stylus', stylusTask);
-gulp.task('js', jsTask);
+gulp.task('ts-debug', tsDebugTask);
+gulp.task('ts-release', tsReleaseTask);
 
 // Watch
 gulp.task('watch', watchTask);
 
+// does TS compiling, sourcemaps = yes, minification = no, distFolder = no
+function tsDebugTask() {
 
+    var tsResult = gulp
+        .src('src/ts/**/*.ts')
+        .pipe(sourcemaps.init()) // for sourcemaps only
+        .pipe(typescript({
+            noImplicitAny: true,
+            out: 'output.js'
+        }));
 
-function jsTask() {
-    return browserify('./src/js/main.js', {debug: true})
-        .transform(
-            stringify({
-                extensions: ['.html', '.json'],
-                minify: true
-            })
-        )
-        .bundle()
-        .pipe(source('angular-grid.js'))
-        .pipe(gulp.dest('./dist'))
-        .pipe(gulp.dest('./docs/dist'))
-        .pipe(buffer())
-        .pipe(uglify())
-        .pipe(rename('angular-grid.min.js'))
-        .pipe(gulp.dest('./dist'))
+    return tsResult.js
+        .pipe(sourcemaps.write()) // for sourcemaps only
+        .pipe(rename('angular-grid.js'))
         .pipe(gulp.dest('./docs/dist'));
+
 }
 
+// does TS compiling, sourcemaps = no, minification = yes, distFolder = yes
+function tsReleaseTask() {
+    var tsResult = gulp
+        .src('src/ts/**/*.ts')
+        .pipe(typescript({
+            noImplicitAny: true,
+            declarationFiles: true,
+            out: 'output.js'
+        }));
+
+    return merge([
+        tsResult.dts.pipe(gulp.dest('dist')),
+        tsResult.js
+            .pipe(rename('angular-grid.js'))
+            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(gulp.dest('./dist'))
+            .pipe(gulp.dest('./docs/dist'))
+            .pipe(buffer())
+            .pipe(uglify())
+            .pipe(rename('angular-grid.min.js'))
+            .pipe(gulp.dest('./dist'))
+            .pipe(gulp.dest('./docs/dist'))
+    ]);
+}
 
 function stylusTask() {
 
@@ -73,11 +107,8 @@ function stylusTask() {
                 .pipe(gulp.dest('./dist/'))
                 .pipe(gulp.dest('./docs/dist/'));
         }));
-
-
 }
 
-
 function watchTask() {
-    gulp.watch('./src/**/*', ['build']);
+    gulp.watch('./src/**/*', ['debug-build']);
 }
