@@ -1,9 +1,3 @@
-// Angular Grid
-// Written by Niall Crosby
-// www.angulargrid.com
-//
-// Version 1.10.1
-
 /// <reference path="grid.ts" />
 
 declare var angular: any;

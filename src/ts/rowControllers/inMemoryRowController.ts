@@ -206,7 +206,11 @@ module awk.grid {
             } else {
                 // if no agg data, need to clear out any previous items, when can be left behind
                 // if use is creating / removing columns using the tool panel.
-                this.recursivelyClearAggData(this.rowsAfterFilter);
+                // one exception - don't do this if already grouped, as this breaks the File Explorer example!!
+                // to fix another day - how to we reset when the user provided the data??
+                if (!this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
+                    this.recursivelyClearAggData(this.rowsAfterFilter);
+                }
             }
         }
 

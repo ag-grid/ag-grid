@@ -227,11 +227,9 @@ module awk.grid {
             var eCheckbox = eFilterValue.querySelector("input");
             eCheckbox.checked = this.model.isValueSelected(value);
 
-            eCheckbox.onclick()
-            {
+            eCheckbox.onclick = function () {
                 _this.onCheckboxClicked(eCheckbox, value);
-            }
-            ;
+            };
 
             eFilterValue.style.top = (this.rowHeight * rowIndex) + "px";
 

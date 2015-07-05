@@ -30,10 +30,9 @@ module awk.grid {
                 '<div class="ag-body-container"></div>'+
             '</div>';
 
+    // wrapping in outer div, and wrapper, is needed to center the loading icon
+    // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     var loadingHtml =
-            '<!-- The loading panel -->'+
-            '<!-- wrapping in outer div, and wrapper, is needed to center the loading icon -->'+
-            '<!-- The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/ -->'+
             '<div class="ag-loading-panel">'+
                 '<div class="ag-loading-wrapper">'+
                     '<span class="ag-loading-center">Loading...</span>'+

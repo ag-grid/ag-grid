@@ -4,12 +4,22 @@ var uglify = require('gulp-uglify');
 var foreach = require('gulp-foreach');
 var rename = require("gulp-rename");
 var stylus = require('gulp-stylus');
-var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var nib = require('nib');
 var typescript = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
+var header = require('gulp-header');
 var merge = require('merge2');
+var pkg = require('./package.json');
+
+//var headerTemplate = '// Angular Grid\n// Written by Niall Crosby\n// www.angulargrid.com\n\n// Version 1.10.1\n\n';
+var headerTemplate = ['/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n');
 
 gulp.task('default', ['debug-build', 'watch']);
 gulp.task('release', ['stylus', 'ts-release']);
@@ -55,6 +65,7 @@ function tsReleaseTask() {
         tsResult.dts.pipe(gulp.dest('dist')),
         tsResult.js
             .pipe(rename('angular-grid.js'))
+            .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('./dist'))
             .pipe(gulp.dest('./docs/dist'))
             .pipe(buffer())

@@ -8,17 +8,17 @@ module awk.grid {
             '<div class="ag-paging-panel">'+
                 '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">'+
                     '<span id="firstRowOnPage"></span>'+
-                    '[TO]'+
+                    ' [TO] '+
                     '<span id="lastRowOnPage"></span>'+
-                    '[OF]'+
+                    ' [OF] '+
                     '<span id="recordCount"></span>'+
                 '</span>'+
                 '<span class="ag-paging-page-summary-panel">'+
                     '<button class="ag-paging-button" id="btFirst">[FIRST]</button>'+
                     '<button class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>'+
-                    '[PAGE]'+
+                    '[PAGE] '+
                     '<span id="current"></span>'+
-                    '[OF]'+
+                    ' [OF] '+
                     '<span id="total"></span>'+
                     '<button class="ag-paging-button" id="btNext">[NEXT]</button>'+
                     '<button class="ag-paging-button" id="btLast">[LAST]</button>'+
@@ -26,7 +26,6 @@ module awk.grid {
             '</div>';
 
     export class PaginationController {
-
 
         eGui: any;
         btNext: any;

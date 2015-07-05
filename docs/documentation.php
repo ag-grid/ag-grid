@@ -14,94 +14,49 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        ### - To hide filter, extra click isn't needed.
-        <br/>
-        ### - Improved drag and drop on tool panel
-        <br/>
-        ### - Values on tool panel
-        <br/>
-        ### - New aggregation functions (min and max)
-        <br/>
-        ### - API for saving and restoring columns state (width, visibility, piviting, values)
-        <br/>
-        ### - Can choose to not show values and pivoting in tool panel
-        <br/>
-        ### - Aggregation now has option to exclude pivot columns
+        <b>5th July 2015</b>
     </p>
 
-    <p>
-        <b>28th June 2015</b>
-    </p>
-
-<!--        ### - To hide filter, extra click isn't needed. -->
-    <div style="overflow: hidden;">
-
-    <img src="images/toolPanelValues.png" style="float: right;"/>
-
-    <p>
-        The past week was very busy for me and I didn't get everything done for this weekends major release.
-        I am sorry :(
-    </p>
-
-    <p>
-        What I am working on is what you see on the right hand side, an extension to the Tool Panel
-        that allows you to select values to aggregate, and what function to apply (sum, max, avg etc).
-    </p>
-
-    <p>
-        It is still on my plan to move onto TypeScript and Angular 2.0 in the very near future.
-        After that, that will be all the large items done, I will then go back and start putting
-        in all those smaller items you have all been asking for.
-    </p>
-
-    <p><br/></p>
-
-    <img src="images/angularConnect.png"/>
-
-    <b style="font-size: 20px; position: relative; top: 12px;">Angular Connect London</b>
-
-    <p>
-        In other news, I will be presenting at <a href="http://angularconnect.com/speakers#niall-crosby">
-        Angular Connect London
-        </a> on 21st October 2015. I will be explaining the design philosophy of Angular Grid in my
-        paper <i>"Building performant components for AngularJS"</i>.
-    </p>
-
-    <p>
-        The core Google AngularJS team will also be presenting. It's a privilege to be sharing the stage
-        with these guys and given the chance to present the grid. What can I say, wow!!!
-    </p>
-
-    </div>
-
-    <!--
     <p>
         This is what I did last week:
     </p>
 
     <ul>
+        <li>
+            <b>TypeScript</b> - Now Angular Grid is written in TypeScript. See below for more info!!
+        </li>
+        <li>
+            <b>Values on Tool Panel</b> - now the tool panel allows you to choose which values to aggregate by and what function (eg sum / max / min).
+        </li>
+        <li>
+            <b>Column State API</b> - API for saving and restoring columns state (width, visibility, piviting, values).
+        </li>
+        <li>
+            <b>Tool Panel Options</b> - Can choose to not show pivot and values section, if you want to disallow piviting and / or aggregation (values).
+        </li>
+        <li>
+            <b>Improved DnD on Tool Panel</b> - before, the drag and drop was a bit quirky if you were to quick with the mouse, now it's solid.
+        </li>
 
-            <li>
-                <b>Released 1.10.0</b> - contains all the above.
-            </li>
+        <li>
+            <b>Released 1.11.0</b> - contains all the above.
+        </li>
 
-        </ul>
+    </ul>
     <p>
         This is what I'm doing this week:
     </p>
 
     <ul>
         <li>
-            The first pass of the tool panel took a LOT of work. I had to refactor and rewrite large chunks of the code.
-            However the foundations are laid for a great grid going forward. Next up - I'll be working more on the tool panel
-            (such as saving / restoring column order and grouping).
+            Tool Panel and TypeScript took a LOT of work. But it's all in now. Next up on my plate, Angular 2.0 and hoover
+            up a bunch of GitHub issues.
         </li>
     </ul>
 
     <p>
         I have no blockers.
     </p>
-    -->
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -120,6 +75,29 @@ include 'documentation_header.php';
     </p>
 </span>
 </div>-->
+
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="font-weight: bold; font-family: Arial; font-size: 30px; color: dodgerblue;">
+        TypeScript
+    </div>
+    <p>
+        TypeScript brings future ECMA 6 features to JavaScript now.
+    </p>
+    <p>
+        Angular Grid moved to TypeScript for a) it's object oriented and strong typing features and
+        b) to make Angular Grid more modern and ready for Angular 2.0.
+    </p>
+    <p>
+        If you don't use and don't are about TypeScript, that's fine, you will find Angular
+        Grid works exactly as it did before.
+    </p>
+    <p>
+        If you use TypeScript, then you should find types in the dist folder now. So far, I've
+        just put in GridOptions, as all this takes time!!! In the future, I'll be adding in
+        everything that's part of the Angular Grid public facing API. The interface name for
+        grid options is awk.grid.GridOptions.
+    </p>
+</div>
 
 <div style="text-align: center; margin-top: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
@@ -260,6 +238,8 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
 
     <p>
         <b>21st June</b> First version of Tool Panel, showing / hiding / reordering / grouping columns.
