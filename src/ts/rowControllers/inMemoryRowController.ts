@@ -445,7 +445,7 @@ module awk.grid {
         // private
         // rows: the rows to put into the model
         // firstId: the first id to use, used for paging, where we are not on the first page
-        setAllRows(rows: any, firstId: any) {
+        setAllRows(rows: any, firstId?: any) {
             var nodes: any;
             if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
                 nodes = rows;

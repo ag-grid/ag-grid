@@ -4,25 +4,35 @@
 
 module awk.grid {
 
-    var utils = Utils;
-    var constants = Constants;
+    var _ = Utils;
+
+    interface RenderedRow {
+        eCells: any;
+        eVolatileCells: any;
+        scope: any;
+        node: any;
+        pinnedElement: any;
+        bodyElement: any;
+        data: any;
+        rowIndex: number;
+    }
 
     export class RowRenderer {
 
-        gridOptions: any;
+        gridOptions: GridOptions;
         columnModel: any;
-        gridOptionsWrapper: any;
-        angularGrid: any;
-        selectionRendererFactory: any;
-        gridPanel: any;
+        gridOptionsWrapper: GridOptionsWrapper;
+        angularGrid: Grid;
+        selectionRendererFactory: SelectionRendererFactory;
+        gridPanel: GridPanel;
         $compile: any;
         $scope: any;
-        selectionController: any;
-        expressionService: any;
-        templateService: any;
-        cellRendererMap: any;
-        renderedRows: any;
-        renderedRowStartEditingListeners: any;
+        selectionController: SelectionController;
+        expressionService: ExpressionService;
+        templateService: TemplateService;
+        cellRendererMap: {[key: string]: any};
+        renderedRows: {[key: string]: RenderedRow};
+        renderedRowStartEditingListeners: {[key: string]: {[key: string]: any}};
         editingCell: any;
         rowModel: any;
         eBodyContainer: any;
@@ -33,9 +43,9 @@ module awk.grid {
         lastVirtualRenderedRow: any;
         focusedCell: any;
 
-        init(gridOptions: any, columnModel: any, gridOptionsWrapper: any, gridPanel: any,
-             angularGrid: any, selectionRendererFactory: any, $compile: any, $scope: any,
-             selectionController: any, expressionService: any, templateService: any) {
+        init(gridOptions: GridOptions, columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
+             angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
+             selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService) {
             this.gridOptions = gridOptions;
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -70,7 +80,7 @@ module awk.grid {
         setMainRowWidths() {
             var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 
-            var unpinnedRows = this.eBodyContainer.querySelectorAll(".ag-row");
+            var unpinnedRows: [any] = this.eBodyContainer.querySelectorAll(".ag-row");
             for (var i = 0; i < unpinnedRows.length; i++) {
                 unpinnedRows[i].style.width = mainRowWidth;
             }
@@ -83,7 +93,7 @@ module awk.grid {
             this.eParentOfRows = gridPanel.getRowsParent();
         }
 
-        refreshView(refreshFromIndex: any) {
+        refreshView(refreshFromIndex?: any) {
             if (!this.gridOptionsWrapper.isDontUseScrolls()) {
                 var rowCount = this.rowModel.getVirtualRowCount();
                 var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
@@ -129,7 +139,7 @@ module awk.grid {
 
         softRefreshCell(eGridCell: any, isFirstColumn: any, node: any, column: any, scope: any, rowIndex: any) {
 
-            utils.removeAllChildren(eGridCell);
+            _.removeAllChildren(eGridCell);
 
             var data = this.getDataForNode(node);
             var valueGetter = this.createValueGetter(data, column.colDef, node);
@@ -152,7 +162,7 @@ module awk.grid {
             // called to whats rendered. if the row isn't rendered, we don't care
             var indexesToRemove: any = [];
             var renderedRows = this.renderedRows;
-            Object.keys(renderedRows).forEach(function (key) {
+            Object.keys(renderedRows).forEach(function (key: any) {
                 var renderedRow = renderedRows[key];
                 // see if the rendered row is in the list of rows we have to update
                 var rowNeedsUpdating = rows.indexOf(renderedRow.node.data) >= 0;
@@ -180,7 +190,7 @@ module awk.grid {
             // find all the group rows
             var rowsToRemove: any = [];
             var that = this;
-            Object.keys(this.renderedRows).forEach(function (key) {
+            Object.keys(this.renderedRows).forEach(function (key: any) {
                 var renderedRow = that.renderedRows[key];
                 var node = renderedRow.node;
                 if (node.group) {
@@ -250,7 +260,7 @@ module awk.grid {
                 last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
 
                 //add in buffer
-                var buffer = this.gridOptionsWrapper.getRowBuffer() || constants.ROW_BUFFER_SIZE;
+                var buffer = this.gridOptionsWrapper.getRowBuffer() || Constants.ROW_BUFFER_SIZE;
                 first = first - buffer;
                 last = last + buffer;
 
@@ -330,15 +340,17 @@ module awk.grid {
 
             eMainRow.style.width = mainRowWidth + "px";
 
-            var renderedRow = {
+            var renderedRow: RenderedRow = {
                 scope: newChildScope,
                 node: node,
                 rowIndex: rowIndex,
                 eCells: {},
                 eVolatileCells: {},
                 pinnedElement: <any> null,
-                bodyElement: <any> null
+                bodyElement: <any> null,
+                data: null
             };
+
             this.renderedRows[rowIndex] = renderedRow;
             this.renderedRowStartEditingListeners[rowIndex] = {};
 
@@ -370,12 +382,12 @@ module awk.grid {
             }
 
             //try compiling as we insert rows
-            renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, rowIndex, ePinnedRow, newChildScope);
-            renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, rowIndex, eMainRow, newChildScope);
+            renderedRow.pinnedElement = this.compileAndAdd(this.ePinnedColsContainer, ePinnedRow, newChildScope);
+            renderedRow.bodyElement = this.compileAndAdd(this.eBodyContainer, eMainRow, newChildScope);
         }
 
-// if group is a footer, always show the data.
-// if group is a header, only show data if not expanded
+        // if group is a footer, always show the data.
+        // if group is a header, only show data if not expanded
         getDataForNode(node: any) {
             if (node.footer) {
                 // if footer, we always show the data
@@ -395,7 +407,7 @@ module awk.grid {
             return function () {
                 var api = that.gridOptionsWrapper.getApi();
                 var context = that.gridOptionsWrapper.getContext();
-                return utils.getValue(that.expressionService, data, colDef, node, api, context);
+                return _.getValue(that.expressionService, data, colDef, node, api, context);
             };
         }
 
@@ -409,7 +421,7 @@ module awk.grid {
             }
         }
 
-        compileAndAdd(container: any, rowIndex: any, element: any, scope: any) {
+        compileAndAdd(container: any, element: any, scope: any) {
             if (scope) {
                 var eElementCompiled = this.$compile(element)(scope);
                 if (container) { // checking container, as if noScroll, pinned container is missing
@@ -550,12 +562,13 @@ module awk.grid {
             return eRow;
         }
 
-        getIndexOfRenderedNode(node: any) {
+        getIndexOfRenderedNode(node: any): number {
             var renderedRows = this.renderedRows;
-            var keys = Object.keys(renderedRows);
+            var keys: string[] = Object.keys(renderedRows);
             for (var i = 0; i < keys.length; i++) {
-                if (renderedRows[keys[i]].node === node) {
-                    return renderedRows[keys[i]].rowIndex;
+                var key: string = keys[i];
+                if (renderedRows[key].node === node) {
+                    return renderedRows[key].rowIndex;
                 }
             }
             return -1;
@@ -584,9 +597,9 @@ module awk.grid {
             }
 
             if (node.footer) {
-                utils.addCssClass(eRow, 'ag-footer-cell-entire-row');
+                _.addCssClass(eRow, 'ag-footer-cell-entire-row');
             } else {
-                utils.addCssClass(eRow, 'ag-group-cell-entire-row');
+                _.addCssClass(eRow, 'ag-group-cell-entire-row');
             }
 
             return eRow;
@@ -642,7 +655,7 @@ module awk.grid {
                 throw 'Cell Renderer must be String or Function';
             }
             var resultFromRenderer = cellRenderer(rendererParams);
-            if (utils.isNodeOrElement(resultFromRenderer)) {
+            if (_.isNodeOrElement(resultFromRenderer)) {
                 // a dom node or element was returned, so add child
                 eSpanWithValue.appendChild(resultFromRenderer);
             } else {
@@ -672,7 +685,7 @@ module awk.grid {
                 }
 
                 if (cssToUse) {
-                    utils.addStylesToElement(eGridCell, cssToUse);
+                    _.addStylesToElement(eGridCell, cssToUse);
                 }
             }
         }
@@ -696,10 +709,10 @@ module awk.grid {
                 }
 
                 if (typeof classToUse === 'string') {
-                    utils.addCssClass(eGridCell, classToUse);
+                    _.addCssClass(eGridCell, classToUse);
                 } else if (Array.isArray(classToUse)) {
                     classToUse.forEach(function (cssClassItem: any) {
-                        utils.addCssClass(eGridCell, cssClassItem);
+                        _.addCssClass(eGridCell, cssClassItem);
                     });
                 }
             }
@@ -742,9 +755,9 @@ module awk.grid {
                         resultOfRule = rule(params);
                     }
                     if (resultOfRule) {
-                        utils.addCssClass(eGridCell, className);
+                        _.addCssClass(eGridCell, className);
                     } else {
-                        utils.removeCssClass(eGridCell, className);
+                        _.removeCssClass(eGridCell, className);
                     }
                 }
             }
@@ -775,7 +788,7 @@ module awk.grid {
 
             this.addCellNavigationHandler(eGridCell, rowIndex, column, node);
 
-            eGridCell.style.width = utils.formatWidth(column.actualWidth);
+            eGridCell.style.width = _.formatWidth(column.actualWidth);
 
             // add the 'start editing' call to the chain of editors
             this.renderedRowStartEditingListeners[rowIndex][column.colId] = function () {
@@ -805,14 +818,14 @@ module awk.grid {
 
                 var key = event.which || event.keyCode;
 
-                var startNavigation = key === constants.KEY_DOWN || key === constants.KEY_UP
-                    || key === constants.KEY_LEFT || key === constants.KEY_RIGHT;
+                var startNavigation = key === Constants.KEY_DOWN || key === Constants.KEY_UP
+                    || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
                 if (startNavigation) {
                     event.preventDefault();
                     that.navigateToNextCell(key, rowIndex, column);
                 }
 
-                var startEdit = key === constants.KEY_ENTER;
+                var startEdit = key === Constants.KEY_ENTER;
                 if (startEdit) {
                     var startEditingFunc = that.renderedRowStartEditingListeners[rowIndex][column.colId];
                     if (startEditingFunc) {
@@ -825,7 +838,7 @@ module awk.grid {
                     }
                 }
 
-                var selectRow = key === constants.KEY_SPACE;
+                var selectRow = key === Constants.KEY_SPACE;
                 if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
                     var selected = that.selectionController.isNodeSelected(node);
                     if (selected) {
@@ -872,7 +885,7 @@ module awk.grid {
             var nextRowToFocus: any;
             var nextColumnToFocus: any;
             switch (key) {
-                case constants.KEY_UP :
+                case Constants.KEY_UP :
                     // if already on top row, do nothing
                     if (lastRowIndex === this.firstVirtualRenderedRow) {
                         return null;
@@ -880,7 +893,7 @@ module awk.grid {
                     nextRowToFocus = lastRowIndex - 1;
                     nextColumnToFocus = lastColumn;
                     break;
-                case constants.KEY_DOWN :
+                case Constants.KEY_DOWN :
                     // if already on bottom, do nothing
                     if (lastRowIndex === this.lastVirtualRenderedRow) {
                         return null;
@@ -888,7 +901,7 @@ module awk.grid {
                     nextRowToFocus = lastRowIndex + 1;
                     nextColumnToFocus = lastColumn;
                     break;
-                case constants.KEY_RIGHT :
+                case Constants.KEY_RIGHT :
                     var colToRight = this.columnModel.getVisibleColAfter(lastColumn);
                     // if already on right, do nothing
                     if (!colToRight) {
@@ -897,7 +910,7 @@ module awk.grid {
                     nextRowToFocus = lastRowIndex;
                     nextColumnToFocus = colToRight;
                     break;
-                case constants.KEY_LEFT :
+                case Constants.KEY_LEFT :
                     var colToLeft = this.columnModel.getVisibleColBefore(lastColumn);
                     // if already on left, do nothing
                     if (!colToLeft) {
@@ -922,10 +935,10 @@ module awk.grid {
             }
 
             // remove any previous focus
-            utils.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+            _.querySelectorAll_replaceCssClass(this.eParentOfRows, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
 
             var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
-            utils.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+            _.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
 
             this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex)};
 
@@ -969,7 +982,7 @@ module awk.grid {
         populateGridCell(eGridCell: any, isFirstColumn: any, node: any, column: any, rowIndex: any,
                          value: any, valueGetter: any, $childScope: any) {
             var eCellWrapper = document.createElement('span');
-            utils.addCssClass(eCellWrapper, "ag-cell-wrapper");
+            _.addCssClass(eCellWrapper, "ag-cell-wrapper");
             eGridCell.appendChild(eCellWrapper);
 
             var colDef = column.colDef;
@@ -980,7 +993,7 @@ module awk.grid {
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             var eSpanWithValue = document.createElement("span");
-            utils.addCssClass(eSpanWithValue, "ag-cell-value");
+            _.addCssClass(eSpanWithValue, "ag-cell-value");
 
             eCellWrapper.appendChild(eSpanWithValue);
 
@@ -1103,7 +1116,7 @@ module awk.grid {
             //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
             eInput.removeEventListener('blur', blurListener);
 
-            utils.removeAllChildren(eGridCell);
+            _.removeAllChildren(eGridCell);
 
             var paramsForCallbacks = {
                 node: node,
@@ -1142,10 +1155,10 @@ module awk.grid {
                      isFirstColumn: any, valueGetter: any) {
             var that = this;
             this.editingCell = true;
-            utils.removeAllChildren(eGridCell);
+            _.removeAllChildren(eGridCell);
             var eInput = document.createElement('input');
             eInput.type = 'text';
-            utils.addCssClass(eInput, 'ag-cell-edit-input');
+            _.addCssClass(eInput, 'ag-cell-edit-input');
 
             if (valueGetter) {
                 var value = valueGetter();
@@ -1167,19 +1180,19 @@ module awk.grid {
             eInput.addEventListener("blur", blurListener);
 
             //stop editing if enter pressed
-            eInput.addEventListener('keypress', function (event) {
+            eInput.addEventListener('keypress', function (event: any) {
                 var key = event.which || event.keyCode;
                 // 13 is enter
-                if (key == constants.KEY_ENTER) {
+                if (key == Constants.KEY_ENTER) {
                     that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
                     that.focusCell(eGridCell, rowIndex, column.index, true);
                 }
             });
 
             // tab key doesn't generate keypress, so need keydown to listen for that
-            eInput.addEventListener('keydown', function (event) {
+            eInput.addEventListener('keydown', function (event: any) {
                 var key = event.which || event.keyCode;
-                if (key == constants.KEY_TAB) {
+                if (key == Constants.KEY_TAB) {
                     that.stopEditing(eGridCell, column, node, $childScope, eInput, blurListener, rowIndex, isFirstColumn, valueGetter);
                     that.startEditingNextCell(rowIndex, column, event.shiftKey);
                     // we don't want the default tab action, so return false, this stops the event from bubbling

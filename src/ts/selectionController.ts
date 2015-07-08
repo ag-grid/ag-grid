@@ -138,8 +138,7 @@ module awk.grid {
             this.syncSelectedRowsAndCallListener();
         }
 
-// public
-        selectNode(node: any, tryMulti: any, suppressEvents: any) {
+        public selectNode(node: any, tryMulti: any, suppressEvents?: any) {
             var multiSelect = this.gridOptionsWrapper.isRowSelectionMulti() && tryMulti;
 
             // if the node is a group, then selecting this is the same as selecting the parent,

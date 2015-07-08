@@ -221,6 +221,14 @@ include '../documentation_header.php';
             <th>isToolPanelShowing()</th>
             <td>Returns true if the tool panel is showing, otherwise false.</td>
         </tr>
+        <tr>
+            <th>doLayout()</th>
+            <td>Force the grid to lay out it's components. The grid, by default, resizes to fit
+                the div the grid lives in. This is done a) on initialisation b) window resize
+                and c) every 500ms. You should call this if something happens in your application
+                where the grid size has changed and you want to lay the grid out without waiting
+                for the next 500ms refresh.</td>
+        </tr>
 
     </table>
 

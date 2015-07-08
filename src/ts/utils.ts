@@ -164,18 +164,6 @@ module awk.grid {
             return tempDiv.firstChild;
         }
 
-//if passed '42px' then returns the number 42
-//        pixelStringToNumber(val: any) {
-//            if (typeof val === "string") {
-//                if (val.indexOf("px") >= 0) {
-//                    val.replace("px", "");
-//                }
-//                return parseInt(val);
-//            } else {
-//                return val;
-//            }
-//        }
-
         static querySelectorAll_addCssClass(eParent: any, selector: any, cssClass: any) {
             var eRows = eParent.querySelectorAll(selector);
             for (var k = 0; k < eRows.length; k++) {

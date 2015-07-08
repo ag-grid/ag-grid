@@ -21,7 +21,7 @@ var headerTemplate = ['/**',
     ' */',
     ''].join('\n');
 
-gulp.task('default', ['debug-build', 'watch']);
+gulp.task('default', ['stylus', 'debug-build', 'watch']);
 gulp.task('release', ['stylus', 'ts-release']);
 
 // Build
@@ -110,5 +110,6 @@ function stylusTask() {
 }
 
 function watchTask() {
-    gulp.watch('./src/**/*', ['debug-build']);
+    gulp.watch('./src/ts/**/*', ['ts-debug']);
+    gulp.watch('./src/styles/**/*', ['stylus']);
 }
