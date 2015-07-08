@@ -3,7 +3,7 @@
 
 module awk.grid {
 
-    var utils = Utils;
+    var _ = Utils;
 
     var template =
         '<div>'+
@@ -26,33 +26,39 @@ module awk.grid {
                     '</div>'+
                 '</div>'+
             '</div>'+
+            '<div class="ag-filter-apply-panel" id="applyPanel">'+
+                '<button type="button" id="applyButton">Apply Filter</button>' +
+            '</div>'+
         '</div>';
 
     var DEFAULT_ROW_HEIGHT = 20;
 
-    export class SetFilter {
+    export class SetFilter implements Filter {
 
-        eGui: any;
-        filterParams: any;
-        rowHeight: any;
-        model: any;
-        filterChangedCallback: any;
-        valueGetter: any;
-        rowsInBodyContainer: any;
-        colDef: any;
-        localeTextFunc: any;
-        cellRenderer: any;
+        private eGui: any;
+        private filterParams: any;
+        private rowHeight: any;
+        private model: any;
+        private filterChangedCallback: any;
+        private valueGetter: any;
+        private rowsInBodyContainer: any;
+        private colDef: any;
+        private localeTextFunc: any;
+        private cellRenderer: any;
 
-        eListContainer: any;
-        eFilterValueTemplate: any;
-        eSelectAll: any;
-        eListViewport: any;
-        eMiniFilter: any;
-        api: any;
+        private eListContainer: any;
+        private eFilterValueTemplate: any;
+        private eSelectAll: any;
+        private eListViewport: any;
+        private eMiniFilter: any;
+        private api: any;
+        private applyActive: any;
+        private eApplyButton: any;
 
         constructor(params: any) {
             this.filterParams = params.filterParams;
             this.rowHeight = (this.filterParams && this.filterParams.cellHeight) ? this.filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
+            this.applyActive = this.filterParams && this.filterParams.apply == true;
             this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
             this.filterChangedCallback = params.filterChangedCallback;
             this.valueGetter = params.valueGetter;
@@ -67,44 +73,39 @@ module awk.grid {
             this.createApi();
         }
 
-// we need to have the gui attached before we can draw the virtual rows, as the
-// virtual row logic needs info about the gui state
-        /* public */
-        afterGuiAttached()  {
+        // we need to have the gui attached before we can draw the virtual rows, as the
+        // virtual row logic needs info about the gui state
+        public afterGuiAttached(): void  {
             this.drawVirtualRows();
         }
 
-        /* public */
-        isFilterActive() {
+        public isFilterActive(): boolean {
             return this.model.isFilterActive();
         }
 
-        /* public */
-        doesFilterPass(node: any) {
+        public doesFilterPass(node: any): boolean {
 
-            //if no filter, always pass
+            // if no filter, always pass
             if (this.model.isEverythingSelected()) {
                 return true;
             }
-            //if nothing selected in filter, always fail
+            // if nothing selected in filter, always fail
             if (this.model.isNothingSelected()) {
                 return false;
             }
 
             var value = this.valueGetter(node);
-            value = utils.makeNull(value);
+            value = _.makeNull(value);
 
             var filterPassed = this.model.isValueSelected(value);
             return filterPassed;
         }
 
-        /* public */
-        getGui() {
+        public getGui(): any {
             return this.eGui;
         }
 
-        /* public */
-        onNewRowsLoaded() {
+        public onNewRowsLoaded(): void {
             var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
             // default is reset
             this.model.refreshUniqueValues(keepSelection);
@@ -112,16 +113,16 @@ module awk.grid {
             this.refreshVirtualRows();
         }
 
-        createTemplate() {
+        private createTemplate() {
             return template
                 .replace('[SELECT ALL]', this.localeTextFunc('selectAll', 'Select All'))
                 .replace('[SEARCH...]', this.localeTextFunc('searchOoo', 'Search...'));
         }
 
-        createGui() {
+        private createGui() {
             var _this = this;
 
-            this.eGui = utils.loadTemplate(this.createTemplate());
+            this.eGui = _.loadTemplate(this.createTemplate());
 
             this.eListContainer = this.eGui.querySelector(".ag-filter-list-container");
             this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
@@ -132,10 +133,10 @@ module awk.grid {
 
             this.setContainerHeight();
             this.eMiniFilter.value = this.model.getMiniFilter();
-            utils.addChangeListener(this.eMiniFilter, function () {
+            _.addChangeListener(this.eMiniFilter, function () {
                 _this.onMiniFilterChanged();
             });
-            utils.removeAllChildren(this.eListContainer);
+            _.removeAllChildren(this.eListContainer);
 
             this.eSelectAll.onclick = this.onSelectAll.bind(this);
 
@@ -148,13 +149,26 @@ module awk.grid {
             } else {
                 this.eSelectAll.indeterminate = true;
             }
+
+            this.setupApply();
         }
 
-        setContainerHeight() {
+        private setupApply() {
+            if (this.applyActive) {
+                this.eApplyButton = this.eGui.querySelector('#applyButton');
+                this.eApplyButton.addEventListener('click', () => {
+                    this.filterChangedCallback();
+                });
+            } else {
+                _.removeElement(this.eGui, '#applyPanel');
+            }
+        }
+
+        private setContainerHeight() {
             this.eListContainer.style.height = (this.model.getDisplayedValueCount() * this.rowHeight) + "px";
         }
 
-        drawVirtualRows() {
+        private drawVirtualRows() {
             var topPixel = this.eListViewport.scrollTop;
             var bottomPixel = topPixel + this.eListViewport.offsetHeight;
 
@@ -164,7 +178,7 @@ module awk.grid {
             this.ensureRowsRendered(firstRow, lastRow);
         }
 
-        ensureRowsRendered(start: any, finish: any) {
+        private ensureRowsRendered(start: any, finish: any) {
             var _this = this;
 
             //at the end, this array will contain the items we need to remove
@@ -188,8 +202,8 @@ module awk.grid {
             this.removeVirtualRows(rowsToRemove);
         }
 
-//takes array of row id's
-        removeVirtualRows(rowsToRemove: any) {
+        //takes array of row id's
+        private removeVirtualRows(rowsToRemove: any) {
             var _this = this;
             rowsToRemove.forEach(function (indexToRemove: any) {
                 var eRowToRemove = _this.rowsInBodyContainer[indexToRemove];
@@ -198,7 +212,7 @@ module awk.grid {
             });
         }
 
-        insertRow(value: any, rowIndex: any) {
+        private insertRow(value: any, rowIndex: any) {
             var _this = this;
 
             var eFilterValue = this.eFilterValueTemplate.cloneNode(true);
@@ -210,7 +224,7 @@ module awk.grid {
                     value: value
                 });
 
-                if (utils.isNode(resultFromRenderer)) {
+                if (_.isNode(resultFromRenderer)) {
                     //a dom node or element was returned, so add child
                     valueElement.appendChild(resultFromRenderer);
                 } else {
@@ -258,10 +272,16 @@ module awk.grid {
                 }
             }
 
-            this.filterChangedCallback();
+            this.filterChanged();
         }
 
-        onMiniFilterChanged() {
+        private filterChanged() {
+            if (!this.applyActive) {
+                this.filterChangedCallback();
+            }
+        }
+
+        private onMiniFilterChanged() {
             var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
             if (miniFilterChanged) {
                 this.setContainerHeight();
@@ -269,17 +289,17 @@ module awk.grid {
             }
         }
 
-        refreshVirtualRows() {
+        private refreshVirtualRows() {
             this.clearVirtualRows();
             this.drawVirtualRows();
         }
 
-        clearVirtualRows() {
+        private clearVirtualRows() {
             var rowsToRemove = Object.keys(this.rowsInBodyContainer);
             this.removeVirtualRows(rowsToRemove);
         }
 
-        onSelectAll() {
+        private onSelectAll() {
             var checked = this.eSelectAll.checked;
             if (checked) {
                 this.model.selectEverything();
@@ -287,17 +307,17 @@ module awk.grid {
                 this.model.selectNothing();
             }
             this.updateAllCheckboxes(checked);
-            this.filterChangedCallback();
+            this.filterChanged();
         }
 
-        updateAllCheckboxes(checked: any) {
-            var currentlyDisplayedCheckboxes = this.eListContainer.querySelectorAll("[filter-checkbox=true]");
+        private updateAllCheckboxes(checked: any) {
+            var currentlyDisplayedCheckboxes: any = this.eListContainer.querySelectorAll("[filter-checkbox=true]");
             for (var i = 0, l = currentlyDisplayedCheckboxes.length; i < l; i++) {
                 currentlyDisplayedCheckboxes[i].checked = checked;
             }
         }
 
-        addScrollListener() {
+        private addScrollListener() {
             var _this = this;
 
             this.eListViewport.addEventListener("scroll", function () {
@@ -305,12 +325,11 @@ module awk.grid {
             });
         }
 
-        getApi() {
+        public getApi() {
             return this.api;
         }
 
-        createApi()
-        {
+        private createApi() {
             var model = this.model;
             var that = this;
             this.api = {

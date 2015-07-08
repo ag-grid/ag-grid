@@ -11,16 +11,16 @@ module awk.grid {
 
     export class FilterManager {
 
-        $compile: any;
-        $scope: any;
-        gridOptionsWrapper: any;
-        grid: any;
-        allFilters: any;
-        expressionService: any;
-        columnModel: any;
-        rowModel: any;
+        private $compile: any;
+        private $scope: any;
+        private gridOptionsWrapper: any;
+        private grid: any;
+        private allFilters: any;
+        private expressionService: any;
+        private columnModel: any;
+        private rowModel: any;
 
-        init(grid: any, gridOptionsWrapper: any, $compile: any, $scope: any, expressionService: any, columnModel: any) {
+        public init(grid: any, gridOptionsWrapper: any, $compile: any, $scope: any, expressionService: any, columnModel: any) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -30,7 +30,7 @@ module awk.grid {
             this.columnModel = columnModel;
         }
 
-        setFilterModel(model: any) {
+        public setFilterModel(model: any) {
             var that = this;
             if (model) {
                 // mark the filters as we set them, so any active filters left over we stop
@@ -62,7 +62,7 @@ module awk.grid {
             }
         }
 
-        setModelOnFilterWrapper(filter: any, newModel: any) {
+        private setModelOnFilterWrapper(filter: any, newModel: any) {
             // because user can provide filters, we provide useful error checking and messages
             if (typeof filter.getApi !== 'function') {
                 console.warn('Warning ag-grid - filter missing getApi method, which is needed for getFilterModel');
@@ -76,7 +76,7 @@ module awk.grid {
             filterApi.setModel(newModel);
         }
 
-        getFilterModel() {
+        public getFilterModel() {
             var result = <any>{};
             utils.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
                 // because user can provide filters, we provide useful error checking and messages
@@ -102,12 +102,12 @@ module awk.grid {
             return result;
         }
 
-        setRowModel(rowModel: any) {
+        public setRowModel(rowModel: any) {
             this.rowModel = rowModel;
         }
 
         // returns true if at least one filter is active
-        isFilterPresent() {
+        private isFilterPresent() {
             var atLeastOneActive = false;
             var that = this;
 
@@ -125,7 +125,7 @@ module awk.grid {
         }
 
         // returns true if given col has a filter active
-        isFilterPresentForCol(colId: any) {
+        private isFilterPresentForCol(colId: any) {
             var filterWrapper = this.allFilters[colId];
             if (!filterWrapper) {
                 return false;
@@ -137,7 +137,7 @@ module awk.grid {
             return filterPresent;
         }
 
-        doesFilterPass(node: any) {
+        private doesFilterPass(node: any) {
             var data = node.data;
             var colKeys = Object.keys(this.allFilters);
             for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
@@ -165,7 +165,7 @@ module awk.grid {
             return true;
         }
 
-        onNewRowsLoaded() {
+        public onNewRowsLoaded() {
             var that = this;
             Object.keys(this.allFilters).forEach(function (field) {
                 var filter = that.allFilters[field].filter;
@@ -175,7 +175,7 @@ module awk.grid {
             });
         }
 
-        createValueGetter(colDef: any) {
+        private createValueGetter(colDef: any) {
             var that = this;
             return function valueGetter(node: any) {
                 var api = that.gridOptionsWrapper.getApi();
@@ -184,7 +184,7 @@ module awk.grid {
             };
         }
 
-        getFilterApi(column: any) {
+        public getFilterApi(column: any) {
             var filterWrapper = this.getOrCreateFilterWrapper(column);
             if (filterWrapper) {
                 if (typeof filterWrapper.filter.getApi === 'function') {
@@ -193,7 +193,7 @@ module awk.grid {
             }
         }
 
-        getOrCreateFilterWrapper(column: any) {
+        private getOrCreateFilterWrapper(column: any) {
             var filterWrapper = this.allFilters[column.colId];
 
             if (!filterWrapper) {
@@ -204,7 +204,7 @@ module awk.grid {
             return filterWrapper;
         }
 
-        createFilterWrapper(column: any) {
+        private createFilterWrapper(column: any) {
             var colDef = column.colDef;
 
             var filterWrapper = {
@@ -268,7 +268,7 @@ module awk.grid {
             return filterWrapper;
         }
 
-        showFilter(column: any, eventSource: any) {
+        private showFilter(column: any, eventSource: any) {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 

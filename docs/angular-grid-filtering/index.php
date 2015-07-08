@@ -103,6 +103,8 @@ columnDefinition = {
                 set this value to 'keep'. This can be useful if you are using values (above) or otherwise know that the
                 list to select from will not change. If the list does change, then it can be confusing what
                 to do with new values into the set (should they be selected or not??).</li>
+            <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
+                automatically as the selection changes.</li>
         </ul>
 
     </p>
@@ -114,6 +116,8 @@ columnDefinition = {
             <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
                 to keep it in line with 'set' filters. If you want to keep the selection, then set this value
                 to 'keep'.</li>
+            <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
+                automatically as the selection changes.</li>
         </ul>
     </p>
 
@@ -138,6 +142,20 @@ columnDefinition = {
 
     <show-example example="example1"></show-example>
 
+    <h2>Apply Function</h2>
+
+    <p>
+        If you want the user to hit an 'Apply' button before the filter is actioned, add <i>apply=true</i>
+        to the filter parameters. The example below shows this in action for the first three columns.
+    </p>
+
+    <p>
+        This is handy if the filtering operation is taking a long time (usually it doesn't), or if doing
+        server side filtering (thus preventing unnecessary calls to the server).
+    </p>
+
+    <show-example example="exampleFilterApply"></show-example>
+
     <h2>Custom Filtering</h2>
 
     <p>
@@ -153,7 +171,7 @@ columnDefinition = {
     <pre>
 
     // Class function.
-    function MyCustomFilter(colDef, rowModel, filterChangedCallback, filterParams, $scope) {}
+    function MyCustomFilter(params) {}
 
     // mandatory methods
     MyCustomFilter.prototype.getGui = function () {}

@@ -17,6 +17,9 @@ module awk.grid {
                 '<div>'+
                     '<input class="ag-filter-filter" id="filterText" type="text" placeholder="[FILTER...]"/>'+
                 '</div>'+
+                '<div class="ag-filter-apply-panel" id="applyPanel">'+
+                    '<button type="button" id="applyButton">Apply Filter</button>' +
+                '</div>'+
             '</div>';
 
     var CONTAINS = 1;
@@ -24,22 +27,25 @@ module awk.grid {
     var STARTS_WITH = 3;
     var ENDS_WITH = 4;
 
-    export class TextFilter {
+    export class TextFilter implements Filter {
 
-        filterParams: any;
-        filterChangedCallback: any;
-        localeTextFunc: any;
-        valueGetter: any;
-        filterText: any;
-        filterType: any;
-        api: any;
+        private filterParams: any;
+        private filterChangedCallback: any;
+        private localeTextFunc: any;
+        private valueGetter: any;
+        private filterText: any;
+        private filterType: any;
+        private api: any;
 
-        eGui: any;
-        eFilterTextField: any;
-        eTypeSelect: any;
+        private eGui: any;
+        private eFilterTextField: any;
+        private eTypeSelect: any;
+        private applyActive: any;
+        private eApplyButton: any;
 
         constructor(params: any) {
             this.filterParams = params.filterParams;
+            this.applyActive = this.filterParams && this.filterParams.apply == true;
             this.filterChangedCallback = params.filterChangedCallback;
             this.localeTextFunc = params.localeTextFunc;
             this.valueGetter = params.valueGetter;
@@ -49,8 +55,7 @@ module awk.grid {
             this.createApi();
         }
 
-        /* public */
-        onNewRowsLoaded() {
+        public onNewRowsLoaded() {
             var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
             if (!keepSelection) {
                 this.api.setType(CONTAINS);
@@ -58,13 +63,11 @@ module awk.grid {
             }
         }
 
-        /* public */
-        afterGuiAttached() {
+        public afterGuiAttached() {
             this.eFilterTextField.focus();
         }
 
-        /* public */
-        doesFilterPass(node: any) {
+        public doesFilterPass(node: any) {
             if (!this.filterText) {
                 return true;
             }
@@ -90,17 +93,15 @@ module awk.grid {
             }
         }
 
-        /* public */
-        getGui() {
+        public getGui() {
             return this.eGui;
         }
 
-        /* public */
-        isFilterActive() {
+        public isFilterActive() {
             return this.filterText !== null;
         }
 
-        createTemplate() {
+        private createTemplate() {
             return template
                 .replace('[FILTER...]', this.localeTextFunc('filterOoo', 'Filter...'))
                 .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
@@ -110,22 +111,33 @@ module awk.grid {
                 ;
         }
 
-
-        createGui() {
+        private createGui() {
             this.eGui = utils.loadTemplate(this.createTemplate());
             this.eFilterTextField = this.eGui.querySelector("#filterText");
             this.eTypeSelect = this.eGui.querySelector("#filterType");
 
             utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
             this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
+            this.setupApply();
         }
 
-        onTypeChanged() {
+        private setupApply() {
+            if (this.applyActive) {
+                this.eApplyButton = this.eGui.querySelector('#applyButton');
+                this.eApplyButton.addEventListener('click', () => {
+                    this.filterChangedCallback();
+                });
+            } else {
+                utils.removeElement(this.eGui, '#applyPanel');
+            }
+        }
+
+        private onTypeChanged() {
             this.filterType = parseInt(this.eTypeSelect.value);
-            this.filterChangedCallback();
+            this.filterChanged();
         }
 
-        onFilterChanged() {
+        private onFilterChanged() {
             var filterText = utils.makeNull(this.eFilterTextField.value);
             if (filterText && filterText.trim() === '') {
                 filterText = null;
@@ -135,10 +147,16 @@ module awk.grid {
             } else {
                 this.filterText = null;
             }
-            this.filterChangedCallback();
+            this.filterChanged();
         }
 
-        createApi() {
+        private filterChanged() {
+            if (!this.applyActive) {
+                this.filterChangedCallback();
+            }
+        }
+
+        private createApi() {
             var that = this;
             this.api = {
                 EQUALS: EQUALS,
@@ -187,7 +205,7 @@ module awk.grid {
             };
         }
 
-        getApi() {
+        private getApi() {
             return this.api;
         }
     }

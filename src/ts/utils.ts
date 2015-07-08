@@ -152,6 +152,16 @@ module awk.grid {
             }
         }
 
+        static removeElement(parent: any, cssSelector: string) {
+            this.removeFromParent(parent.querySelector(cssSelector));
+        }
+
+        static removeFromParent(node: any) {
+            if (node && node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+        }
+
         static isVisible(element: any) {
             return (element.offsetParent !== null)
         }
