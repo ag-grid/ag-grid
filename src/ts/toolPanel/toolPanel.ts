@@ -16,7 +16,7 @@ module awk.grid {
             this.layout = new VerticalStack();
         }
 
-        init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: any, api: any) {
+        init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: any) {
 
             var suppressPivotAndValues = gridOptionsWrapper.isToolPanelSuppressPivot();
             var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();
@@ -31,7 +31,7 @@ module awk.grid {
             var dragSource = columnSelectionPanel.getDragSource();
 
             if (showValues) {
-                var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper, api);
+                var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper);
                 this.layout.addPanel(valuesSelectionPanel.layout, '25%');
                 valuesSelectionPanel.addDragSource(dragSource);
             }

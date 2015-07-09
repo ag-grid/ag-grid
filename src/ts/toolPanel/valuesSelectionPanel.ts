@@ -15,15 +15,13 @@ module awk.grid {
 
         gridOptionsWrapper: any;
         columnController: any;
-        api: any;
         cColumnList: any;
         layout: any;
 
-        constructor(columnController: any, gridOptionsWrapper: any, api: any) {
+        constructor(columnController: any, gridOptionsWrapper: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
-            this.api = api;
 
             var that = this;
             this.columnController.addListener({
@@ -106,7 +104,8 @@ module awk.grid {
         }
 
         onValuesChanged() {
-            this.api.recomputeAggregates();
+            var api = this.gridOptionsWrapper.getApi();
+            api.recomputeAggregates();
         }
     }
 }
