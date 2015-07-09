@@ -50,7 +50,6 @@ module awk.grid {
 
                     if (valueGetter) {
                         groupKey = valueGetter(node);
-                        console.log(groupKey, node);
                     } else{
                         groupKey = data[groupByField];
                     }
