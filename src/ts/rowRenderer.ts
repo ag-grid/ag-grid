@@ -31,7 +31,7 @@ module awk.grid {
         expressionService: ExpressionService;
         templateService: TemplateService;
         cellRendererMap: {[key: string]: any};
-        renderedRows: {[key: string]: RenderedRow};
+        private renderedRows: {[key: string]: RenderedRow};
         renderedRowStartEditingListeners: {[key: string]: {[key: string]: any}};
         editingCell: any;
         rowModel: any;
