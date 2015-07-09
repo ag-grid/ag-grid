@@ -46,7 +46,14 @@ module awk.grid {
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                     groupByField = groupedCols[currentLevel].colDef.field;
-                    groupKey = data[groupByField];
+                    valueGetter = groupedCols[currentLevel].colDef.valueGetter;
+
+                    if (valueGetter) {
+                        groupKey = valueGetter(node);
+                        console.log(groupKey, node);
+                    } else{
+                        groupKey = data[groupByField];
+                    }
 
                     if (currentLevel == 0) {
                         currentGroup = topMostGroup;
