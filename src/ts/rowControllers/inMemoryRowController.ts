@@ -373,7 +373,10 @@ module awk.grid {
 
             if (doingGrouping) {
                 var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-                rowsAfterGroup = groupCreator.group(this.allRows, groupedCols, expandByDefault);
+                var api = this.gridOptionsWrapper.getApi();
+                var context = this.gridOptionsWrapper.getContext();
+                rowsAfterGroup = groupCreator.group(this.allRows, groupedCols, expandByDefault,
+                    this.expressionService, api, context);
             } else {
                 rowsAfterGroup = this.allRows;
             }

@@ -1,5 +1,8 @@
+/// <reference path="utils.ts"/>
 
 module awk.grid {
+
+    var _ = Utils;
 
     export class GroupCreator {
 
@@ -12,7 +15,8 @@ module awk.grid {
             return this.theInstance;
         }
 
-        group(rowNodes: any, groupedCols: any, expandByDefault: any) {
+        group(rowNodes: any, groupedCols: any, expandByDefault: any, expressionService: ExpressionService,
+                api: GridApi, context: any) {
 
             var topMostGroup = {
                 level: -1,
@@ -29,7 +33,6 @@ module awk.grid {
             var node: any;
             var data: any;
             var currentGroup: any;
-            var groupByField: any;
             var groupKey: any;
             var nextGroup: any;
 
@@ -45,8 +48,8 @@ module awk.grid {
                 node.level = levelToInsertChild + 1;
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
-                    groupByField = groupedCols[currentLevel].colDef.field;
-                    groupKey = data[groupByField];
+                    var groupColumn = groupedCols[currentLevel];
+                    groupKey = _.getValue(expressionService, data, groupColumn.colDef, node, api, context);
 
                     if (currentLevel == 0) {
                         currentGroup = topMostGroup;
@@ -57,7 +60,7 @@ module awk.grid {
                     if (!nextGroup) {
                         nextGroup = {
                             group: true,
-                            field: groupByField,
+                            field: groupColumn.colId,
                             id: index--,
                             key: groupKey,
                             expanded: this.isExpanded(expandByDefault, currentLevel),
