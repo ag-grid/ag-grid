@@ -616,14 +616,15 @@ module awk.grid {
         }
     }
 
-    class Column {
+    export class Column {
 
         static colIdSequence = 0;
 
         colDef: any;
         actualWidth: any;
         visible: any;
-        colId : any;
+        colId: any;
+        pinned: boolean;
 
         constructor(colDef: any, actualWidth: any) {
             this.colDef = colDef;
