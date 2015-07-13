@@ -23,7 +23,10 @@ include 'documentation_header.php';
         implemented my own virtual DOM, I could put Angular Grid on steroids????
     </p>
     <p>
-        Well, it made it go faster, but not Ben Johnson faster. Here are some results of tests ran:
+        Well, it made it go faster, but not Ben Johnson faster. Here are some results of tests ran. The test
+        composed of creating a grid with 100,000 rows using the test drive, then timing how long it took the
+        grid to refresh after jumping to a random line number on the grid (in other words, how long it took to
+        redraw a full 'viewable page' of rows after a scroll).
         <style>
             .mytable table {
                 border: 1px solid gray;
@@ -54,26 +57,26 @@ include 'documentation_header.php';
                 <td>Internet Explorer</td>
                 <td>673ms</td>
                 <td>382ms</td>
-                <td>101%</td>
+                <td>43%</td>
             </tr>
             <tr>
                 <td>Firefox</td>
-                <td>382ms</td>
+                <td>101ms</td>
                 <td>69ms</td>
-                <td>69%</td>
+                <td>31%</td>
             </tr>
         </table>
     </p>
 
     <p>
-        So it made Internet Explorer go twice as fast, but Chrome only 27% faster. I was hoping it would make
+        So it made Internet Explorer almost half in time, but Chrome only 27% decrease. I was hoping it would make
         it go 10x faster in every browser (given all the hype about REACT being a faster than fast option??).
     </p>
 
     <p>
         Maybe I'm being a bit hard on myself. Twice as fast on IE is pretty good. But the virtual DOM
         brought a whole new level of complexity into the design, and Internet Explorer is phasing out as
-        a browser anyway right? If I am to turn the engine inside out and make grid more difficult to use,
+        a browser anyway right? If I am to turn the grid engine inside out and make the grid more difficult to use,
         it's gotta be for a reason greater than 27%.
     </p>
 

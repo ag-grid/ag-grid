@@ -22,7 +22,6 @@ module awk.grid {
         templateService: TemplateService;
         cellRendererMap: {[key: string]: any};
         private renderedRows: {[key: string]: RenderedRow};
-        renderedRowStartEditingListeners: {[key: string]: {[key: string]: any}};
         editingCell: any;
         rowModel: any;
         eBodyContainer: any;
@@ -56,9 +55,6 @@ module awk.grid {
             // map of row ids to row objects. keeps track of which elements
             // are rendered for which rows in the dom.
             this.renderedRows = {};
-
-            this.renderedRowStartEditingListeners = {};
-
             this.editingCell = false; //gets set to true when editing a cell
         }
 
@@ -94,38 +90,9 @@ module awk.grid {
         }
 
         softRefreshView() {
-
-            throw 'broke dagnammit, i was supposed to fix this - softRefreshView';
-/*            var first = this.firstVirtualRenderedRow;
-            var last = this.lastVirtualRenderedRow;
-
-            var columns = this.columnModel.getDisplayedColumns();
-            // if no cols, don't draw row
-            if (!columns || columns.length === 0) {
-                return;
-            }
-
-            for (var rowIndex = first; rowIndex <= last; rowIndex++) {
-                var node = this.rowModel.getVirtualRow(rowIndex);
-                var renderedRow = this.renderedRows[rowIndex];
-
-                if (node) {
-
-                    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-                        var column = columns[colIndex];
-                        var eGridCell = renderedRow.eVolatileCells[column.colId];
-
-                        if (!eGridCell) {
-                            continue;
-                        }
-
-                        var isFirstColumn = colIndex === 0;
-                        var scope = renderedRow.scope;
-
-                        this.softRefreshCell(eGridCell, isFirstColumn, node, column, scope, rowIndex);
-                    }
-                }
-            }*/
+            _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
+                renderedRow.softRefresh();
+            });
         }
 
         rowDataChanged(rows: any) {
@@ -172,7 +139,7 @@ module awk.grid {
             this.ensureRowsRendered();
         }
 
-// takes array of row indexes
+        // takes array of row indexes
         removeVirtualRows(rowsToRemove: any, fromIndex?: any) {
             var that = this;
             // if no fromIndex then set to -1, which will refresh everything
@@ -207,7 +174,6 @@ module awk.grid {
             this.angularGrid.onVirtualRowRemoved(indexToRemove);
 
             delete this.renderedRows[indexToRemove];
-            delete this.renderedRowStartEditingListeners[indexToRemove];
         }
 
         drawVirtualRows() {
@@ -302,11 +268,13 @@ module awk.grid {
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;
-            this.renderedRowStartEditingListeners[rowIndex] = {};
 
             //try compiling as we insert rows
-            this.ePinnedColsContainer.appendChild(renderedRow.pinnedElement);
             this.eBodyContainer.appendChild(renderedRow.bodyElement);
+            var pinning = columns[0].pinned;
+            if (pinning) {
+                this.ePinnedColsContainer.appendChild(renderedRow.pinnedElement);
+            }
         }
 
         getIndexOfRenderedNode(node: any): number {
@@ -326,7 +294,7 @@ module awk.grid {
         navigateToNextCell(key: any, rowIndex: any, column: any) {
 
             var cellToFocus = {rowIndex: rowIndex, column: column};
-            var renderedRow: any;
+            var renderedRow: RenderedRow;
             var eCell: any;
 
             // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -338,11 +306,11 @@ module awk.grid {
                 }
                 // see if the next cell is selectable, if yes, use it, if not, skip it
                 renderedRow = this.renderedRows[cellToFocus.rowIndex];
-                eCell = renderedRow.eCells[cellToFocus.column.colId];
+                eCell = renderedRow.getCellForCol(cellToFocus.column);
             }
 
             // this scrolls the row into view
-            this.gridPanel.ensureIndexVisible(renderedRow.rowIndex);
+            this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
             // this changes the css on the cell
             this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, true);
@@ -437,7 +405,8 @@ module awk.grid {
             }
         }
 
-        startEditingNextCell(rowIndex: any, column: any, shiftKey: any) {
+        // called by the cell, when tab is pressed while editing
+        public startEditingNextCell(rowIndex: any, column: any, shiftKey: any) {
 
             var firstRowToCheck = this.firstVirtualRenderedRow;
             var lastRowToCheck = this.lastVirtualRenderedRow;
@@ -480,18 +449,13 @@ module awk.grid {
                     }
                 }
 
-                var nextFunc = this.renderedRowStartEditingListeners[currentRowIndex][currentCol.colId];
-                if (nextFunc) {
-                    // see if the next cell is editable, and if so, we have come to
-                    // the end of our search, so stop looking for the next cell
-                    var nextCellAcceptedEdit = nextFunc();
-                    if (nextCellAcceptedEdit) {
-                        return;
-                    }
+                var nextRenderedRow = this.renderedRows[currentRowIndex];
+                var nextRenderedCell = nextRenderedRow.getRenderedCellForColumn(currentCol);
+                if (nextRenderedCell.isCellEditable()) {
+                    nextRenderedCell.startEditing();
+                    return;
                 }
             }
-
         }
     }
 }
-

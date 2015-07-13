@@ -260,6 +260,10 @@ module awk.grid {
         }
 
         setPinnedColContainerWidth() {
+            if (this.forPrint) {
+                // pinned col doesn't exist when doing forPrint
+                return;
+            }
             var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + "px";
             this.ePinnedColsContainer.style.width = pinnedColWidth;
             this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
