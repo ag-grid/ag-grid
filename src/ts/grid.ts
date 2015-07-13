@@ -141,7 +141,7 @@ module awk.grid {
             filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel);
             selectionRendererFactory.init(this, selectionController);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService);
-            rowRenderer.init(gridOptions, columnModel, gridOptionsWrapper, gridPanel, this,
+            rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this,
                 selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService);
             headerRenderer.init(gridOptionsWrapper, columnController, columnModel, gridPanel, this, filterManager,
                 $scope, $compile, expressionService);

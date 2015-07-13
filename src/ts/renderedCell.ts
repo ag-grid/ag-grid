@@ -89,7 +89,6 @@ module awk.grid {
         }
 
         private createCell() {
-            var that = this;
             this.eGridCell = document.createElement("div");
             this.eGridCell.setAttribute("col", this.column.index);
 

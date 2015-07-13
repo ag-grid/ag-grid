@@ -9,33 +9,30 @@ module awk.grid {
 
     export class RowRenderer {
 
-        gridOptions: GridOptions;
-        columnModel: any;
-        gridOptionsWrapper: GridOptionsWrapper;
-        angularGrid: Grid;
-        selectionRendererFactory: SelectionRendererFactory;
-        gridPanel: GridPanel;
-        $compile: any;
-        $scope: any;
-        selectionController: SelectionController;
-        expressionService: ExpressionService;
-        templateService: TemplateService;
-        cellRendererMap: {[key: string]: any};
+        private columnModel: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private angularGrid: Grid;
+        private selectionRendererFactory: SelectionRendererFactory;
+        private gridPanel: GridPanel;
+        private $compile: any;
+        private $scope: any;
+        private selectionController: SelectionController;
+        private expressionService: ExpressionService;
+        private templateService: TemplateService;
+        private cellRendererMap: {[key: string]: any};
         private renderedRows: {[key: string]: RenderedRow};
-        editingCell: any;
-        rowModel: any;
-        eBodyContainer: any;
-        eBodyViewport: any;
-        ePinnedColsContainer: any;
-        eParentOfRows: any;
-        firstVirtualRenderedRow: any;
-        lastVirtualRenderedRow: any;
-        focusedCell: any;
+        private rowModel: any;
+        private eBodyContainer: any;
+        private eBodyViewport: any;
+        private ePinnedColsContainer: any;
+        private eParentOfRows: any;
+        private firstVirtualRenderedRow: any;
+        private lastVirtualRenderedRow: any;
+        private focusedCell: any;
 
-        init(gridOptions: GridOptions, columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
+        init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
              angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
              selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService) {
-            this.gridOptions = gridOptions;
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
@@ -55,7 +52,6 @@ module awk.grid {
             // map of row ids to row objects. keeps track of which elements
             // are rendered for which rows in the dom.
             this.renderedRows = {};
-            this.editingCell = false; //gets set to true when editing a cell
         }
 
         setRowModel(rowModel: any) {
@@ -222,6 +218,8 @@ module awk.grid {
 
         ensureRowsRendered() {
 
+            var start = new Date().getTime();
+
             var mainRowWidth = this.columnModel.getBodyContainerWidth();
             var that = this;
 
@@ -252,6 +250,9 @@ module awk.grid {
                     that.$scope.$apply();
                 }, 0);
             }
+
+            var end = new Date().getTime();
+            console.log(end-start);
         }
 
         insertRow(node: any, rowIndex: any, mainRowWidth: any) {
