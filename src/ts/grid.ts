@@ -302,6 +302,9 @@ module awk.grid {
         }
 
         onFilterChanged() {
+            if (typeof this.gridOptionsWrapper.getBeforeFilterChanged() === 'function') {
+                this.gridOptionsWrapper.getBeforeFilterChanged()();
+            }
             this.headerRenderer.updateFilterIcons();
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
                 // if doing server side filtering, changing the sort has the impact
@@ -310,6 +313,9 @@ module awk.grid {
             } else {
                 // if doing in memory filtering, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_FILTER);
+            }
+            if (typeof this.gridOptionsWrapper.getAfterFilterChanged() === 'function') {
+                this.gridOptionsWrapper.getAfterFilterChanged()();
             }
         }
 
@@ -502,6 +508,9 @@ module awk.grid {
         }
 
         onSortingChanged() {
+            if (typeof this.gridOptionsWrapper.getBeforeSortChanged() === 'function') {
+                this.gridOptionsWrapper.getBeforeSortChanged()();
+            }
             this.headerRenderer.updateSortIcons();
             if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
                 // if doing server side sorting, changing the sort has the impact
@@ -510,6 +519,9 @@ module awk.grid {
             } else {
                 // if doing in memory sorting, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_SORT);
+            }
+            if (typeof this.gridOptionsWrapper.getAfterSortChanged() === 'function') {
+                this.gridOptionsWrapper.getAfterSortChanged()();
             }
         }
 

@@ -163,6 +163,16 @@ include '../documentation_header.php';
             <td>Function callback, gets called when displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
+            <th>beforeSortChanged()<br/>afterSortChanged()</th>
+            <td>Callbacks that get called when the sorting changes. 'before' method gets called before the grid executes the sort. 'after' method
+                gets called after the grid executes the sort.</td>
+        </tr>
+        <tr>
+            <th>beforeFilterChanged()<br/>afterFilterChanged()</th>
+            <td>Callbacks that get called when the filtering changes. 'before' method gets called before the grid executes the filter. 'after' method
+                gets called after the grid executes the filter.</td>
+        </tr>
+        <tr>
             <th>ready</th>
             <td>Function callback, gets called after Angular Grid has initialised. The name 'ready'
                 was influenced by the authors time programming the Commodore 64. Use this function if,
@@ -178,15 +188,15 @@ include '../documentation_header.php';
                 click on them.</td>
         </tr>
         <tr>
-            <th>selectionChanged</th>
+            <th>selectionChanged()</th>
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
         <tr>
-            <th>cellValueChanged</th>
+            <th>cellValueChanged()</th>
             <td>Function callback, gets called when a value has changed after editing.</td>
         </tr>
         <tr>
-            <th>getRowClass</th>
+            <th>getRowClass()</th>
             <td>Function callback, to allow adding a css class to a row.</td>
         </tr>
         <tr>
