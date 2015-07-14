@@ -251,6 +251,7 @@ module awk.grid {
             this.selectionController.setRowModel(this.rowModel);
             this.filterManager.setRowModel(this.rowModel);
             this.rowRenderer.setRowModel(this.rowModel);
+            this.gridPanel.setRowModel(this.rowModel);
 
             this.eRootPanel.setSouthVisible(showPagingPanel);
 
