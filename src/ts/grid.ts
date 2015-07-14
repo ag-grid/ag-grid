@@ -234,7 +234,12 @@ module awk.grid {
             if (this.doingVirtualPaging) {
                 this.paginationController.setDatasource(null);
                 this.virtualPageRowController.setDatasource(datasourceToUse);
-                this.rowModel = this.virtualPageRowController.getModel();
+                var rowModel = this.virtualPageRowController.getModel();
+                this.rowModel = rowModel;
+                this.selectionController.setRowModel(rowModel);
+                this.filterManager.setRowModel(rowModel);
+                this.rowRenderer.setRowModel(rowModel);
+                this.gridPanel.setRowModel(rowModel);
                 showPagingPanel = false;
             } else if (this.doingPagination) {
                 this.paginationController.setDatasource(datasourceToUse);
@@ -570,4 +575,3 @@ module awk.grid {
         }
     }
 }
-
