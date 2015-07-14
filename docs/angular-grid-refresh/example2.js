@@ -13,11 +13,11 @@ module.controller("exampleCtrl", function($scope) {
         cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Monday", group: 'Weekly Editable Values',  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Tuesday", group: 'Weekly Editable Values', field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Wednesday", group: 'Weekly Editable Values', field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Thursday", group: 'Weekly Editable Values', field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Friday", group: 'Weekly Editable Values', field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules}
+        {headerName: "Monday", headerGroup: 'Weekly Editable Values',  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+        {headerName: "Tuesday", headerGroup: 'Weekly Editable Values', field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+        {headerName: "Wednesday", headerGroup: 'Weekly Editable Values', field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+        {headerName: "Thursday", headerGroup: 'Weekly Editable Values', field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+        {headerName: "Friday", headerGroup: 'Weekly Editable Values', field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules}
     ];
 
     var data = [

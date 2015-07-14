@@ -14,11 +14,11 @@ module awk.grid {
         expressionService: any;
         listeners: any;
         model: any;
-        allColumns: any;
-        displayedColumns: any;
-        pivotColumns: any;
-        valueColumns: any;
-        visibleColumns: any;
+        allColumns: Column[];
+        displayedColumns: Column[];
+        pivotColumns: Column[];
+        valueColumns: Column[];
+        visibleColumns: Column[];
         headerGroups: any;
 
         constructor() {
@@ -162,8 +162,8 @@ module awk.grid {
                 that.allColumns.push(oldColumn);
             });
 
-            this.pivotColumns.sort(function (colA: any, colB: any) {
-                return colA.pivotIndex < colB.pivotIndex;
+            this.pivotColumns.sort(function (colA: any, colB: any): number {
+                return colA.pivotIndex - colB.pivotIndex;
             });
 
             this.updateModel();
@@ -616,14 +616,18 @@ module awk.grid {
         }
     }
 
-    class Column {
+    export class Column {
 
         static colIdSequence = 0;
 
         colDef: any;
         actualWidth: any;
         visible: any;
-        colId : any;
+        colId: any;
+        pinned: boolean;
+        index: number;
+        aggFunc: string;
+        pivotIndex: number;
 
         constructor(colDef: any, actualWidth: any) {
             this.colDef = colDef;

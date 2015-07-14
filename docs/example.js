@@ -224,8 +224,8 @@ gridsModule.controller('mainController', function($scope) {
     createData();
 
     //setInterval(function() {
-    //    $scope.angularGrid.api.ensureIndexVisible(Math.random*() * 100000);
-    //});
+    //    $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
+    //}, 1000);
 
     $scope.jumpToCol = function() {
         var index = Number($scope.jumpToColText);
@@ -617,15 +617,15 @@ function currencyRenderer(params)  {
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-        var decimalSeparator = Number("1.2").toLocaleString().substr(1,1);
 
-        var amountWithCommas = params.value.toLocaleString();
-        var arParts = String(amountWithCommas).split(decimalSeparator);
-        var intPart = arParts[0];
-        var decPart = (arParts.length > 1 ? arParts[1] : '');
-        decPart = (decPart + '00').substr(0,2);
+        var valueInPence = Math.floor(params.value * 100);
 
-        return '&pound; ' + intPart + decimalSeparator + decPart;
+        var pence = valueInPence % 100;
+        var pounds = Math.floor(valueInPence / 100);
+
+        var penceStr = (pence <= 9) ? ('0' + pence) : '' + pence;
+
+        return '&pound; ' + pounds + "." + penceStr;
     }
 }
 

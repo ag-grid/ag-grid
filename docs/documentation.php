@@ -14,48 +14,107 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>5th July 2015</b>
+        <b>12th July 2015</b>
     </p>
 
     <p>
-        This is what I did last week:
+        So I spent the entire weekend (that's a lie, I also played a lot of Bloodborne, and watched the
+        Colin Mcgregor fight) implementing a Virtual DOM. What REACT said made sense to me, maybe if I
+        implemented my own virtual DOM, I could put Angular Grid on steroids????
+    </p>
+    <p>
+        Well, it made it go faster, but not Ben Johnson faster. Here are some results of tests ran. The test
+        composed of creating a grid with 100,000 rows using the test drive, then timing how long it took the
+        grid to refresh after jumping to a random line number on the grid (in other words, how long it took to
+        redraw a full 'viewable page' of rows after a scroll).
+        <style>
+            .mytable table {
+                border: 1px solid gray;
+            }
+            .mytable td {
+                border: 1px solid gray;
+                padding: 2px;
+            }
+            .mytable th {
+                border: 1px solid gray;
+                padding: 2px;
+            }
+        </style>
+        <table class="mytable">
+            <tr>
+                <th>Browser</th>
+                <th>Current Design</th>
+                <th>Virtual Dom</th>
+                <th>Decrease</th>
+            </tr>
+            <tr>
+                <td>Chrome</td>
+                <td>88ms</td>
+                <td>64ms</td>
+                <td>27%</td>
+            </tr>
+            <tr>
+                <td>Internet Explorer</td>
+                <td>673ms</td>
+                <td>382ms</td>
+                <td>43%</td>
+            </tr>
+            <tr>
+                <td>Firefox</td>
+                <td>101ms</td>
+                <td>69ms</td>
+                <td>31%</td>
+            </tr>
+        </table>
     </p>
 
-    <ul>
-        <li>
-            <b>TypeScript</b> - Now Angular Grid is written in TypeScript. See below for more info!!
-        </li>
-        <li>
-            <b>Values on Tool Panel</b> - now the tool panel allows you to choose which values to aggregate by and what function (eg sum / max / min).
-        </li>
-        <li>
-            <b>Column State API</b> - API for saving and restoring columns state (width, visibility, piviting, values).
-        </li>
-        <li>
-            <b>Tool Panel Options</b> - Can choose to not show pivot and values section, if you want to disallow piviting and / or aggregation (values).
-        </li>
-        <li>
-            <b>Improved DnD on Tool Panel</b> - before, the drag and drop was a bit quirky if you were to quick with the mouse, now it's solid.
-        </li>
-
-        <li>
-            <b>Released 1.11.0</b> - contains all the above.
-        </li>
-
-    </ul>
     <p>
-        This is what I'm doing this week:
+        So it made Internet Explorer almost half in time, but Chrome only 27% decrease. I was hoping it would make
+        it go 10x faster in every browser (given all the hype about REACT being a faster than fast option??).
     </p>
 
-    <ul>
-        <li>
-            Tool Panel and TypeScript took a LOT of work. But it's all in now. Next up on my plate, Angular 2.0 and hoover
-            up a bunch of GitHub issues.
-        </li>
-    </ul>
+    <p>
+        Maybe I'm being a bit hard on myself. Twice as fast on IE is pretty good. But the virtual DOM
+        brought a whole new level of complexity into the design, and Internet Explorer is phasing out as
+        a browser anyway right? If I am to turn the grid engine inside out and make the grid more difficult to use,
+        it's gotta be for a reason greater than 27%.
+    </p>
 
     <p>
-        I have no blockers.
+        <b>The plan??</b> Well I looked at the other grids (not ui-grid, I mean the other grids that I would take
+        inspiration from) and they all reuse DOM elements, ie when a row goes out of view, they don't rip
+        the row out of the DOM and create a new row for the new entry, they simply recycle the row, by
+        changing it's vertical position and updating it's details with the new data.
+    </p>
+
+    <p>
+        So that's what I'm in the middle of doing. I'm refactoring the design to allow for recycling of rows.
+        I'll then do my tests again and see if I can get the x10 speed increase I was looking for.
+    </p>
+
+    <!--
+        <p>
+            This is what I did last week:
+        </p>
+
+        <ul>
+            <li>
+                <b>TypeScript</b> - Now Angular Grid is written in TypeScript. See below for more info!!
+            </li>
+        </ul>
+        <p>
+            This is what I'm doing this week:
+        </p>
+
+        <ul>
+            <li>
+                Tool Panel and TypeScript took a LOT of work. But it's all in now. Next up on my plate, Angular 2.0 and hoover
+                up a bunch of GitHub issues.
+            </li>
+        </ul>
+    -->
+    <p>
+        I have no blockers. I also have no life.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
@@ -77,26 +136,19 @@ include 'documentation_header.php';
 </div>-->
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-    <div style="font-weight: bold; font-family: Arial; font-size: 30px; color: dodgerblue;">
-        TypeScript
-    </div>
+
     <p>
-        TypeScript brings future ECMA 6 features to JavaScript now.
+        These made me smile!!! Thanks Oliver and Hichem! :)
+    </p>
+
+    <p>
+        <img src="images/twitter1.png"/>
     </p>
     <p>
-        Angular Grid moved to TypeScript for a) it's object oriented and strong typing features and
-        b) to make Angular Grid more modern and ready for Angular 2.0.
+        <img src="images/twitter2.png"/>
     </p>
-    <p>
-        If you don't use and don't are about TypeScript, that's fine, you will find Angular
-        Grid works exactly as it did before.
-    </p>
-    <p>
-        If you use TypeScript, then you should find types in the dist folder now. So far, I've
-        just put in GridOptions, as all this takes time!!! In the future, I'll be adding in
-        everything that's part of the Angular Grid public facing API. The interface name for
-        grid options is awk.grid.GridOptions.
-    </p>
+
+
 </div>
 
 <div style="text-align: center; margin-top: 50px;">
@@ -238,6 +290,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>5th July</b> Typescript, Values on Tool Panel, Column API
+    </p>
 
     <hr/>
 
