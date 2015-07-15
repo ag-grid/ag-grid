@@ -56,6 +56,10 @@ module awk.grid {
         isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
         getColumnDefs() { return this.gridOptions.columnDefs; }
         getRowHeight() { return this.gridOptions.rowHeight; }
+        getBeforeFilterChanged() { return this.gridOptions.beforeFilterChanged; }
+        getAfterFilterChanged() { return this.gridOptions.afterFilterChanged; }
+        getBeforeSortChanged() { return this.gridOptions.beforeSortChanged; }
+        getAfterSortChanged() { return this.gridOptions.afterSortChanged; }
         getModelUpdated() { return this.gridOptions.modelUpdated; }
         getCellClicked() { return this.gridOptions.cellClicked; }
         getCellDoubleClicked() { return this.gridOptions.cellDoubleClicked; }
