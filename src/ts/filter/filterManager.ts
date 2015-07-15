@@ -3,10 +3,10 @@
 /// <reference path="numberFilter.ts" />
 /// <reference path="setFilter.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
+/// <reference path="../widgets/agPopupService.ts" />
 
 module awk.grid {
 
-    var agPopupService = PopupService.getInstance();
     var utils = Utils;
 
     export class FilterManager {
@@ -19,8 +19,10 @@ module awk.grid {
         private expressionService: any;
         private columnModel: any;
         private rowModel: any;
+        private popupService: PopupService;
 
-        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, expressionService: any, columnModel: any) {
+        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
+                    expressionService: any, columnModel: any, popupService: PopupService) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -28,6 +30,7 @@ module awk.grid {
             this.allFilters = {};
             this.expressionService = expressionService;
             this.columnModel = columnModel;
+            this.popupService = popupService;
         }
 
         public setFilterModel(model: any) {
@@ -273,8 +276,8 @@ module awk.grid {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-            agPopupService.positionPopup(eventSource, filterWrapper.gui, 200);
-            agPopupService.addAsModalPopup(filterWrapper.gui);
+            this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
+            this.popupService.addAsModalPopup(filterWrapper.gui);
 
             if (filterWrapper.filter.afterGuiAttached) {
                 filterWrapper.filter.afterGuiAttached();

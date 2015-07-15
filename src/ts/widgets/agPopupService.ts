@@ -6,22 +6,13 @@ module awk.grid {
 
     export class PopupService {
 
-        static theInstance: PopupService;
+        private ePopupParent: any;
 
-        static getInstance() {
-            if (!this.theInstance) {
-                this.theInstance = new PopupService();
-            }
-            return this.theInstance;
-        }
-
-        ePopupParent: any;
-
-        init(ePopupParent: any) {
+        public init(ePopupParent: any) {
             this.ePopupParent = ePopupParent;
         }
 
-        positionPopup(eventSource: any, ePopup: any, minWidth: any) {
+        public positionPopup(eventSource: any, ePopup: any, minWidth: any) {
             var sourceRect = eventSource.getBoundingClientRect();
             var parentRect = this.ePopupParent.getBoundingClientRect();
 
@@ -47,7 +38,7 @@ module awk.grid {
         //adds an element to a div, but also listens to background checking for clicks,
         //so that when the background is clicked, the child is removed again, giving
         //a model look to popups.
-        addAsModalPopup(eChild: any) {
+        public addAsModalPopup(eChild: any) {
             var eBody = document.body;
             if (!eBody) {
                 console.warn('ag-grid: could not find the body of the document, document.body is empty');

@@ -7,19 +7,20 @@ module awk.grid {
 
     var utils = Utils;
     var svgFactory = SvgFactory.getInstance();
-    var agPopupService = PopupService.getInstance();
 
     export class AgDropdownList {
 
-        itemSelectedListeners: any;
-        eValue: any;
-        agList: any;
-        eGui: any;
-        hidePopupCallback: any;
-        selectedItem: any;
-        cellRenderer: any;
+        private itemSelectedListeners: any;
+        private eValue: any;
+        private agList: any;
+        private eGui: any;
+        private hidePopupCallback: any;
+        private selectedItem: any;
+        private cellRenderer: any;
+        private popupService: PopupService;
 
-        constructor() {
+        constructor(popupService: PopupService) {
+            this.popupService = popupService;
             this.setupComponents();
             this.itemSelectedListeners = [];
         }
@@ -75,8 +76,8 @@ module awk.grid {
 
         onClick() {
             var agListGui = this.agList.getGui();
-            agPopupService.positionPopup(this.eGui, agListGui, -1);
-            this.hidePopupCallback = agPopupService.addAsModalPopup(agListGui);
+            this.popupService.positionPopup(this.eGui, agListGui, -1);
+            this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui);
         }
 
         getGui() {

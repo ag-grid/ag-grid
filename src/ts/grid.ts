@@ -20,8 +20,6 @@
 
 module awk.grid {
 
-    var agPopupService = PopupService.getInstance();
-
     export class Grid {
 
         private virtualRowCallbacks: any;
@@ -117,7 +115,6 @@ module awk.grid {
 
             // make local references, to make the below more human readable
             var gridOptionsWrapper = this.gridOptionsWrapper;
-            var gridOptions = this.gridOptions;
             var forPrint = gridOptionsWrapper.isDontUseScrolls();
 
             // create all the beans
@@ -132,13 +129,14 @@ module awk.grid {
             var expressionService = new ExpressionService();
             var templateService = new TemplateService();
             var gridPanel = new GridPanel(gridOptionsWrapper);
+            var popupService = new PopupService();
 
             var columnModel = columnController.getModel();
 
             // initialise all the beans
             templateService.init($scope);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer);
-            filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel);
+            filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel, popupService);
             selectionRendererFactory.init(this, selectionController);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService);
             rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this,
@@ -154,7 +152,7 @@ module awk.grid {
             if (!forPrint) {
                 toolPanel = new ToolPanel();
                 toolPanelLayout = toolPanel.layout;
-                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper);
+                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, popupService);
             }
 
             // this is a child bean, get a reference and pass it on
@@ -194,7 +192,7 @@ module awk.grid {
                 dontFill: forPrint,
                 name: 'eRootPanel'
             });
-            agPopupService.init(this.eRootPanel.getGui());
+            popupService.init(this.eRootPanel.getGui());
 
             // default is we don't show paging panel, this is set to true when datasource is set
             this.eRootPanel.setSouthVisible(false);
