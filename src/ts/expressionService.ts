@@ -14,9 +14,9 @@ module awk.grid {
             } catch (e) {
                 // the expression failed, which can happen, as it's the client that
                 // provides the expression. so print a nice message
-                console.error('Processing of the expression failed');
-                console.error('Expression = ' + expression);
-                console.error('Exception = ' + e);
+                console.log('Processing of the expression failed');
+                console.log('Expression = ' + expression);
+                console.log('Exception = ' + e);
                 return null;
             }
         }

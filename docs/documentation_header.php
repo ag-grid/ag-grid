@@ -149,6 +149,12 @@
                     <a class="sidebarLink" href="/angular-grid-value-getters/index.php">Value Getters</a>
                 <?php } ?>
 
+                <?php if ($key == "Cell Expressions") { ?>
+                    <span class="sidebarLinkSelected">Cell Expressions</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-cell-expressions/index.php">Cell Expressions</a>
+                <?php } ?>
+
                 <?php if ($key == "Cell Styling") { ?>
                     <span class="sidebarLinkSelected">Cell Styling</span>
                 <?php } else { ?>

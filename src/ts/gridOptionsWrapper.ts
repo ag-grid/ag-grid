@@ -72,6 +72,7 @@ module awk.grid {
         getReady() { return this.gridOptions.ready; }
         getRowBuffer() { return this.gridOptions.rowBuffer; }
         isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
+        isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
         isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
         isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
         isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }

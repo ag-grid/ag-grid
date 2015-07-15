@@ -26,7 +26,6 @@ module awk.grid {
         rowClass?: any;
         headerCellRenderer?: any;
         api?: any; // change to typed
-        enableColResize?: boolean;
         groupDefaultExpanded?: any;
         groupKeys?: string[];
         groupAggFunction?(nodes: any[]): any;
@@ -55,6 +54,8 @@ module awk.grid {
         datasource?: any; // should be typed
         ready?(api: any): void; // should be typed
         rowBuffer?: number;
+        enableColResize?: boolean;
+        enableCellExpressions?: boolean;
         enableSorting?: boolean;
         enableServerSideSorting?: boolean;
         enableFilter?: boolean;

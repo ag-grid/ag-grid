@@ -252,7 +252,7 @@ module awk.grid {
             }
 
             var end = new Date().getTime();
-            console.log(end-start);
+            //console.log(end-start);
         }
 
         insertRow(node: any, rowIndex: any, mainRowWidth: any) {

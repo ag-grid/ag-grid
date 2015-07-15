@@ -15,8 +15,8 @@ module awk.grid {
             return this.theInstance;
         }
 
-        group(rowNodes: any, groupedCols: any, expandByDefault: any, expressionService: ExpressionService,
-                api: GridApi, context: any) {
+        public group(rowNodes: any, groupedCols: any, expandByDefault: any, expressionService: ExpressionService,
+                api: GridApi, context: any, cellExpressions: boolean) {
 
             var topMostGroup = {
                 level: -1,
@@ -49,7 +49,7 @@ module awk.grid {
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                     var groupColumn = groupedCols[currentLevel];
-                    groupKey = _.getValue(expressionService, data, groupColumn.colDef, node, api, context);
+                    groupKey = _.getValue(expressionService, data, groupColumn.colDef, cellExpressions, node, api, context);
 
                     if (currentLevel == 0) {
                         currentGroup = topMostGroup;

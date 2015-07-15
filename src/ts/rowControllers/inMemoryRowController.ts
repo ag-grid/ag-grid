@@ -186,7 +186,8 @@ module awk.grid {
         getValue(data: any, colDef: any, node: any) {
             var api = this.gridOptionsWrapper.getApi();
             var context = this.gridOptionsWrapper.getContext();
-            return utils.getValue(this.expressionService, data, colDef, node, api, context);
+            var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+            return utils.getValue(this.expressionService, data, colDef, cellExpressions, node, api, context);
         }
 
         // public - it's possible to recompute the aggregate without doing the other parts
@@ -375,8 +376,9 @@ module awk.grid {
                 var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
                 var api = this.gridOptionsWrapper.getApi();
                 var context = this.gridOptionsWrapper.getContext();
+                var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
                 rowsAfterGroup = groupCreator.group(this.allRows, groupedCols, expandByDefault,
-                    this.expressionService, api, context);
+                    this.expressionService, api, context, cellExpressions);
             } else {
                 rowsAfterGroup = this.allRows;
             }

@@ -41,7 +41,7 @@ function tsDebugTask() {
         .pipe(sourcemaps.init()) // for sourcemaps only
         .pipe(typescript({
             noImplicitAny: true,
-            out: 'output.js'
+            out: 'angular-grid.js'
         }));
 
     return tsResult.js
@@ -58,7 +58,7 @@ function tsReleaseTask() {
         .pipe(typescript({
             noImplicitAny: true,
             declarationFiles: true,
-            out: 'output.js'
+            out: 'angular-grid.js'
         }));
 
     return merge([

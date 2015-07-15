@@ -75,34 +75,47 @@ module awk.grid {
             }
         }
 
-        static getValue(expressionService: any, data: any, colDef: any, node?: any, api?: any, context?: any) {
+        static getValue(expressionService: ExpressionService, data: any, colDef: any,
+                        cellExpressions?: boolean, node?: any, api?: any, context?: any): any {
 
-            var valueGetter = colDef.valueGetter;
             var field = colDef.field;
+            var result: any;
 
             // if there is a value getter, this gets precedence over a field
-            if (valueGetter) {
-
-                var params = {
-                    data: data,
-                    node: node,
-                    colDef: colDef,
-                    api: api,
-                    context: context
-                };
-
-                if (typeof valueGetter === 'function') {
-                    // valueGetter is a function, so just call it
-                    return valueGetter(params);
-                } else if (typeof valueGetter === 'string') {
-                    // valueGetter is an expression, so execute the expression
-                    return expressionService.evaluate(valueGetter, params);
-                }
-
+            if (colDef.valueGetter) {
+                result = this.executeValueGetter(colDef.valueGetter, expressionService, data, colDef, node, api, context);
             } else if (field && data) {
-                return data[field];
+                result = data[field];
             } else {
-                return undefined;
+                result = undefined;
+            }
+
+            // the result could be an expression itself, if we are allowing cell values to be expressions
+            if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
+                var cellValueGetter = result.substring(1);
+                result = this.executeValueGetter(cellValueGetter, expressionService, data, colDef, node, api, context);
+            }
+
+            return result;
+        }
+
+        static executeValueGetter(valueGetter: any, expressionService: ExpressionService, data: any, colDef: any,
+                                  node: any, api: any, context: any): any {
+
+            var params = {
+                data: data,
+                node: node,
+                colDef: colDef,
+                api: api,
+                context: context
+            };
+
+            if (typeof valueGetter === 'function') {
+                // valueGetter is a function, so just call it
+                return valueGetter(params);
+            } else if (typeof valueGetter === 'string') {
+                // valueGetter is an expression, so execute the expression
+                return expressionService.evaluate(valueGetter, params);
             }
         }
 

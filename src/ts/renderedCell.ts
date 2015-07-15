@@ -84,7 +84,8 @@ module awk.grid {
             return function () {
                 var api = that.gridOptionsWrapper.getApi();
                 var context = that.gridOptionsWrapper.getContext();
-                return _.getValue(that.expressionService, that.data, that.column.colDef, that.node, api, context);
+                var cellExpressions = that.gridOptionsWrapper.isEnableCellExpressions();
+                return _.getValue(that.expressionService, that.data, that.column.colDef, cellExpressions, that.node, api, context);
             };
         }
 

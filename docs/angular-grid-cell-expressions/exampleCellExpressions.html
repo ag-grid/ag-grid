@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <script src="../dist/angular-grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+    <script src="exampleCellExpressions.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+<div style="float: left; width: 50%;">
+    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+        Enter a number to analyse:
+        <input type="text" ng-model="gridOptionsTop.context.theNumber" ng-change="onNewNumber()"/>
+    </div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsTop" class="ag-fresh"></div>
+</div>
+<div style="float: left; width: 50%;">
+    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+        Edit data on RHS, table updates on LHS
+    </div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsBottom" class="ag-fresh"></div>
+</div>
+
+</body>
+</html>

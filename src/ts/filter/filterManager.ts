@@ -13,14 +13,14 @@ module awk.grid {
 
         private $compile: any;
         private $scope: any;
-        private gridOptionsWrapper: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
         private grid: any;
         private allFilters: any;
         private expressionService: any;
         private columnModel: any;
         private rowModel: any;
 
-        public init(grid: any, gridOptionsWrapper: any, $compile: any, $scope: any, expressionService: any, columnModel: any) {
+        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, expressionService: any, columnModel: any) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -180,7 +180,8 @@ module awk.grid {
             return function valueGetter(node: any) {
                 var api = that.gridOptionsWrapper.getApi();
                 var context = that.gridOptionsWrapper.getContext();
-                return utils.getValue(that.expressionService, node.data, colDef, node, api, context);
+                var cellExpressions = that.gridOptionsWrapper.isEnableCellExpressions();
+                return utils.getValue(that.expressionService, node.data, colDef, cellExpressions, node, api, context);
             };
         }
 
