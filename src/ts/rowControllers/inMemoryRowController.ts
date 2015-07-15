@@ -338,12 +338,12 @@ module awk.grid {
 
             var that = this;
 
-            function compare(objA: any, objB: any, colDef: any) {
+            function compare(objA: any, objB: any, colDef: any, isInverted:any) {
                 var valueA = that.getValue(objA.data, colDef, objA);
                 var valueB = that.getValue(objB.data, colDef, objB);
                 if (colDef.comparator) {
                     //if comparator provided, use it
-                    return colDef.comparator(valueA, valueB, objA, objB);
+                    return colDef.comparator(valueA, valueB, objA, objB, isInverted);
                 } else {
                     //otherwise do our own comparison
                     return utils.defaultComparator(valueA, valueB);
@@ -354,7 +354,7 @@ module awk.grid {
                 // Iterate columns, return the first that doesn't match
                 for (var i = 0, len = sortOptions.length; i < len; i++) {
                     var sortOption = sortOptions[i];
-                    var compared = compare(objA, objB, sortOption.colDef);
+                    var compared = compare(objA, objB, sortOption.colDef, sortOption.inverter === -1);
                     if (compared !== 0) {
                         return compared * sortOption.inverter;
                     }
