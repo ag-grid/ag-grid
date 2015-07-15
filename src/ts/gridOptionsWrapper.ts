@@ -66,6 +66,9 @@ module awk.grid {
         getCellValueChanged() { return this.gridOptions.cellValueChanged; }
         getCellFocused() { return this.gridOptions.cellFocused; }
         getRowSelected() { return this.gridOptions.rowSelected; }
+        getColumnResized() { return this.gridOptions.columnResized; }
+        getColumnVisibilityChanged() { return this.gridOptions.columnVisibilityChanged; }
+        getColumnOrderChanged() { return this.gridOptions.columnOrderChanged; }
         getSelectionChanged() { return this.gridOptions.selectionChanged; }
         getVirtualRowRemoved() { return this.gridOptions.virtualRowRemoved; }
         getDatasource() { return this.gridOptions.datasource; }

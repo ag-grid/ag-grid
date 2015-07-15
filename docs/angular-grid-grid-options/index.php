@@ -177,6 +177,18 @@ include '../documentation_header.php';
                 gets called after the grid executes the filter.</td>
         </tr>
         <tr>
+            <th>columnResized</th>
+            <td>Function callback, gets called when a column has finished being resized by dragging its handle.</td>
+        </tr>
+        <tr>
+            <th>columnVisibilityChanged</th>
+            <td>Function callback, gets called when a column has its visibility toggled from the tools panel.</td>
+        </tr>
+        <tr>
+            <th>columnOrderChanged</th>
+            <td>Function callback, gets called when a column is re-ordered by changing its position from the tools panel.</td>
+        </tr>
+        <tr>
             <th>ready</th>
             <td>Function callback, gets called after Angular Grid has initialised. The name 'ready'
                 was influenced by the authors time programming the Commodore 64. Use this function if,

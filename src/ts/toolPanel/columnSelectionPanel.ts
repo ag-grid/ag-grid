@@ -68,6 +68,10 @@ module awk.grid {
                 column.visible = !column.visible;
                 that.cColumnList.refreshView();
                 that.columnController.onColumnStateChanged();
+
+                if (typeof that.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
+                    that.gridOptionsWrapper.getColumnVisibilityChanged()(column);
+                }
             }
 
             return eResult;
@@ -80,8 +84,12 @@ module awk.grid {
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
 
             var that = this;
-            this.cColumnList.addModelChangedListener(function () {
+            this.cColumnList.addModelChangedListener(function (columns: any) {
                 that.columnController.onColumnStateChanged();
+
+                if (typeof that.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
+                    that.gridOptionsWrapper.getColumnOrderChanged()(columns);
+                }
             });
 
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

@@ -96,7 +96,7 @@ module awk.grid {
                 eHeaderGroupCell.appendChild(eHeaderCellResize);
                 group.eHeaderCellResize = eHeaderCellResize;
                 var dragCallback = this.groupDragCallbackFactory(group);
-                this.addDragHandler(eHeaderCellResize, dragCallback);
+                this.addDragHandler(eHeaderCellResize, dragCallback, group);
             }
 
             // no renderer, default text render
@@ -128,6 +128,12 @@ module awk.grid {
             return eHeaderGroup;
         }
 
+        fireColumnResized(column: any) {
+            if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
+                this.gridOptionsWrapper.getColumnResized()(column);
+            }
+        }
+
         addGroupExpandIcon(group: any, eHeaderGroup: any, expanded: any) {
             var eGroupIcon: any;
             if (expanded) {
@@ -144,7 +150,7 @@ module awk.grid {
             };
         }
 
-        addDragHandler(eDraggableElement: any, dragCallback: any) {
+        addDragHandler(eDraggableElement: any, dragCallback: any, column: any) {
             var that = this;
             eDraggableElement.addEventListener('mousedown', function (downEvent: any) {
                 dragCallback.onDragStart();
@@ -160,11 +166,11 @@ module awk.grid {
                 };
 
                 listenersToRemove.mouseup = function () {
-                    that.stopDragging(listenersToRemove);
+                    that.stopDragging(listenersToRemove, column);
                 };
 
                 listenersToRemove.mouseleave = function () {
-                    that.stopDragging(listenersToRemove);
+                    that.stopDragging(listenersToRemove, column);
                 };
 
                 that.eRoot.addEventListener('mousemove', listenersToRemove.mousemove);
@@ -234,7 +240,7 @@ module awk.grid {
                 headerCellResize.className = "ag-header-cell-resize";
                 eHeaderCell.appendChild(headerCellResize);
                 var dragCallback = this.headerDragCallbackFactory(eHeaderCell, column, headerGroup);
-                this.addDragHandler(headerCellResize, dragCallback);
+                this.addDragHandler(headerCellResize, dragCallback, column);
             }
 
             // filter button
@@ -540,12 +546,14 @@ module awk.grid {
             };
         }
 
-        stopDragging(listenersToRemove: any) {
+        stopDragging(listenersToRemove: any, column: any) {
             this.eRoot.style.cursor = "";
             var that = this;
             utils.iterateObject(listenersToRemove, function (key: any, listener: any) {
                 that.eRoot.removeEventListener(key, listener);
             });
+
+            this.fireColumnResized(column);
         }
 
         updateFilterIcons() {
