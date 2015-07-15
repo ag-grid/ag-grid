@@ -46,6 +46,10 @@ module awk.grid {
         cellFocused?(params: any): void;
         rowSelected?(rowIndex: number, selected: boolean): void;
         selectionChanged?(): void;
+        beforeFilterChanged?(): void;
+        afterFilterChanged?(): void;
+        beforeSortChanged?(): void;
+        afterSortChanged?(): void;
         virtualRowRemoved?(row: any, rowIndex: number): void;
         rowClicked?(params: any): void;
         datasource?: any; // should be typed
