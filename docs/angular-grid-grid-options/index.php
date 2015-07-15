@@ -72,6 +72,10 @@ include '../documentation_header.php';
                 and show sort icons, but the sorting will be deferred to your datasource.</td>
         </tr>
         <tr>
+            <th>enableCellExpressions</th>
+            <td>Set to true to allow cells to contain expressions.</td>
+        </tr>
+        <tr>
             <th>suppressUnSort</th>
             <td>Set to true or false. If true, clicking column header cannot remove the sort.</td>
         </tr>
