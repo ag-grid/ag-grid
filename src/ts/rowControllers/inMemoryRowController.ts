@@ -195,7 +195,7 @@ module awk.grid {
 
             var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
             if (typeof groupAggFunction === 'function') {
-                this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction);
+                this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction, 0);
                 return;
             }
 
@@ -203,7 +203,7 @@ module awk.grid {
             var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
             if ((valueColumns && valueColumns.length > 0) || (valueKeys && valueKeys.length > 0)) {
                 var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns, valueKeys);
-                this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction);
+                this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction, 0);
             } else {
                 // if no agg data, need to clear out any previous items, when can be left behind
                 // if use is creating / removing columns using the tool panel.
@@ -248,14 +248,14 @@ module awk.grid {
         }
 
         // private
-        recursivelyCreateAggData(nodes: any, groupAggFunction: any) {
+        recursivelyCreateAggData(nodes: any, groupAggFunction: any, level: number) {
             for (var i = 0, l = nodes.length; i < l; i++) {
                 var node = nodes[i];
                 if (node.group) {
                     // agg function needs to start at the bottom, so traverse first
-                    this.recursivelyCreateAggData(node.childrenAfterFilter, groupAggFunction);
+                    this.recursivelyCreateAggData(node.childrenAfterFilter, groupAggFunction, level++);
                     // after traversal, we can now do the agg at this level
-                    var data = groupAggFunction(node.childrenAfterFilter);
+                    var data = groupAggFunction(node.childrenAfterFilter, level);
                     node.data = data;
                     // if we are grouping, then it's possible there is a sibling footer
                     // to the group, so update the data here also if there is one
