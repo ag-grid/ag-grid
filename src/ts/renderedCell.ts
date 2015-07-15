@@ -33,7 +33,7 @@ module awk.grid {
         private selectionController: SelectionController;
         private $compile: any;
         private templateService: TemplateService;
-        private cellRendererMap: {[key: string]: any};
+        private cellRendererMap: {[key: string]: Function};
 
         constructor(isFirstColumn: any, column: any, node: any, rowIndex: number,
                     scope: any, $compile: any, rowRenderer: RowRenderer,
@@ -266,7 +266,8 @@ module awk.grid {
             // if function, then call the function to find out
             if (typeof colDef.editable === 'function') {
                 // should change this, so it gets passed params with nice useful values
-                return colDef.editable(this.node.data);
+                var editableFunc = <Function>colDef.editable;
+                return editableFunc(this.node.data);
             }
 
             return false;
@@ -335,8 +336,9 @@ module awk.grid {
                         $scope: this.scope,
                         context: this.gridOptionsWrapper.getContext(),
                         api: this.gridOptionsWrapper.getApi()
-                    };
-                    cssToUse = colDef.cellStyle(cellStyleParams);
+                  };             
+                    var cellStyleFunc = <Function>colDef.cellStyle;     
+                    cssToUse = cellStyleFunc(cellStyleParams);
                 } else {
                     cssToUse = colDef.cellStyle;
                 }
@@ -350,7 +352,8 @@ module awk.grid {
         private addClassesFromCollDef(value: any) {
             var colDef = this.column.colDef;
             if (colDef.cellClass) {
-                var classToUse: any;
+              var classToUse: any;
+
                 if (typeof colDef.cellClass === 'function') {
                     var cellClassParams = {
                         value: value,
@@ -361,7 +364,8 @@ module awk.grid {
                         context: this.gridOptionsWrapper.getContext(),
                         api: this.gridOptionsWrapper.getApi()
                     };
-                    classToUse = colDef.cellClass(cellClassParams);
+                    var cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
+                    classToUse = cellClassFunc(cellClassParams);
                 } else {
                     classToUse = colDef.cellClass;
                 }
@@ -538,14 +542,15 @@ module awk.grid {
                 refreshCell: refreshCellFunction,
                 eGridCell: this.eGridCell
             };
-            var cellRenderer: any;
+            var cellRenderer: Function;
             if (typeof colDef.cellRenderer === 'object' && colDef.cellRenderer !== null) {
-                cellRenderer = this.cellRendererMap[colDef.cellRenderer.renderer];
+                var cellRendererObj = <{ renderer: string }> colDef.cellRenderer;
+                cellRenderer = this.cellRendererMap[cellRendererObj.renderer];
                 if (!cellRenderer) {
                     throw 'Cell renderer ' + colDef.cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
                 }
             } else if (typeof colDef.cellRenderer === 'function') {
-                cellRenderer = colDef.cellRenderer;
+                cellRenderer = <Function>colDef.cellRenderer;
             } else {
                 throw 'Cell Renderer must be String or Function';
             }
