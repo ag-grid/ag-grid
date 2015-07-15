@@ -66,7 +66,7 @@ module awk.grid {
             this.dragSources.push(dragSource);
         }
 
-        addModelChangedListener(listener: any) {
+        addModelChangedListener(listener: Function) {
             this.modelChangedListeners.push(listener);
         }
 
@@ -80,7 +80,7 @@ module awk.grid {
 
         fireModelChanged() {
             for (var i = 0; i < this.modelChangedListeners.length; i++) {
-                this.modelChangedListeners[i]();
+                this.modelChangedListeners[i](this.model);
             }
         }
 

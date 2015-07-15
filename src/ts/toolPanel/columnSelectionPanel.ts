@@ -80,8 +80,18 @@ module awk.grid {
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
 
             var that = this;
-            this.cColumnList.addModelChangedListener(function () {
+            this.cColumnList.addModelChangedListener(function (columns: any) {
                 that.columnController.onColumnStateChanged();
+
+                if (typeof that.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
+                    that.gridOptionsWrapper.getColumnOrderChanged()(columns);
+                }
+            });
+
+            this.cColumnList.addItemSelectedListener(function (column:any) {
+                if (typeof that.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
+                    that.gridOptionsWrapper.getColumnVisibilityChanged()(column);
+                }
             });
 
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
