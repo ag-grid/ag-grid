@@ -41,7 +41,7 @@ include '../documentation_header.php';
     </p>
 
     <pre>
-colDef.comparator = function (value1, value2, data1, data2) {
+colDef.comparator = function (value1, value2, data1, data2, isInverted) {
     return value1 - value2;
 }</pre>
 
