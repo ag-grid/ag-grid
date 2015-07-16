@@ -270,6 +270,10 @@ module awk.grid {
             var classesList = ["ag-row"];
             classesList.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
+            if (this.selectionController.isNodeSelected(this.node)) {
+                classesList.push("ag-row-selected");
+            }
+
             if (this.node.group) {
                 // if a group, put the level of the group in
                 classesList.push("ag-row-level-" + this.node.level);
