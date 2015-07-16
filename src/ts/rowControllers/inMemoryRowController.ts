@@ -84,8 +84,8 @@ module awk.grid {
                     for (var i = 0; i < list.length; i++) {
                         var item = list[i];
                         callback(item);
-                        if (item.group && item.group.children) {
-                            doCallback(item.group.children);
+                        if (item.group && item.children) {
+                            doCallback(item.children);
                         }
                     }
                 }
