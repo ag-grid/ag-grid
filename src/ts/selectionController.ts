@@ -314,14 +314,14 @@ module awk.grid {
             this.updateGroupParentsIfNeeded();
         }
 
-// public (selectionRendererFactory & api)
-        selectIndex(index: any, tryMulti: any, suppressEvents: any) {
+        // public (selectionRendererFactory & api)
+        selectIndex(index: any, tryMulti: any, suppressEvents?: any) {
             var node = this.rowModel.getVirtualRow(index);
             this.selectNode(node, tryMulti, suppressEvents);
         }
 
-// private
-// updates the selectedRows with the selectedNodes and calls selectionChanged listener
+        // private
+        // updates the selectedRows with the selectedNodes and calls selectionChanged listener
         syncSelectedRowsAndCallListener(suppressEvents?: any) {
             // update selected rows
             var selectedRows = this.selectedRows;

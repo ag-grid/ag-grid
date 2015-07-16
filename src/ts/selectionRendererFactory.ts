@@ -3,37 +3,15 @@ module awk.grid {
 
     export class SelectionRendererFactory {
 
-        angularGrid: any;
-        selectionController: any;
+        private angularGrid: any;
+        private selectionController: any;
 
-        init(angularGrid: any, selectionController: any) {
+        public init(angularGrid: any, selectionController: any) {
             this.angularGrid = angularGrid;
             this.selectionController = selectionController;
         }
 
-        createCheckboxColDef() {
-            return {
-                width: 30,
-                suppressMenu: true,
-                suppressSorting: true,
-                headerCellRenderer: function () {
-                    var eCheckbox = document.createElement('input');
-                    eCheckbox.type = 'checkbox';
-                    eCheckbox.name = 'name';
-                    return eCheckbox;
-                },
-                cellRenderer: this.createCheckboxRenderer()
-            };
-        }
-
-        createCheckboxRenderer() {
-            var that = this;
-            return function (params: any) {
-                return that.createSelectionCheckbox(params.node, params.rowIndex);
-            };
-        }
-
-        createSelectionCheckbox(node: any, rowIndex: any) {
+        public createSelectionCheckbox(node: any, rowIndex: any) {
 
             var eCheckbox = document.createElement('input');
             eCheckbox.type = "checkbox";

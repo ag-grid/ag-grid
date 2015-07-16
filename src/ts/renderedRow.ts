@@ -94,10 +94,16 @@ module awk.grid {
             }
         }
 
+        public onRowSelected(selected: boolean): void {
+            _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+                renderedCell.setSelected(selected);
+            });
+        }
+
         public softRefresh(): void {
             _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
                 if (renderedCell.isVolatile()) {
-                    renderedCell.refreshCell();
+                    renderedCell.refreshCell(true);
                 }
             });
         }
@@ -134,10 +140,11 @@ module awk.grid {
                 var column = this.columns[i];
                 var firstCol = i === 0;
 
-                var renderedCell = new RenderedCell(firstCol, column, this.node, this.rowIndex, this.scope,
+                var renderedCell = new RenderedCell(firstCol, column, this.scope,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
                     this.cellRendererMap);
+                renderedCell.attach(this.node, this.rowIndex);
 
                 var eGridCell = renderedCell.getGridCell();
                 if (column.pinned) {

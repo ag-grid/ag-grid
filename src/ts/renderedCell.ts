@@ -15,6 +15,7 @@ module awk.grid {
 
         private eGridCell: any; // the outer cell
         private eSpanWithValue: any; // inner cell
+        private eCellWrapper: HTMLElement;
 
         private column: Column;
         private data: any;
@@ -34,17 +35,21 @@ module awk.grid {
         private $compile: any;
         private templateService: TemplateService;
         private cellRendererMap: {[key: string]: Function};
+        private eCheckbox: HTMLInputElement;
 
-        constructor(isFirstColumn: any, column: any, node: any, rowIndex: number,
+        private fixedClasses: string[] = [];
+        private dynamicClasses: string[] = [];
+
+        private value: any;
+
+        constructor(isFirstColumn: any, column: any,
                     scope: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any}) {
 
             this.isFirstColumn = isFirstColumn;
-            this.node = node;
             this.column = column;
-            this.rowIndex = rowIndex;
             this.scope = scope;
             this.rowRenderer = rowRenderer;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -55,10 +60,16 @@ module awk.grid {
             this.$compile = $compile;
             this.templateService = templateService;
 
-            this.data = this.getDataForRow();
             this.valueGetter = this.createValueGetter();
+            this.setupComponents();
+        }
 
-            this.createCell();
+        public attach(node: any, rowIndex: number): void {
+            this.node = node;
+            this.rowIndex = rowIndex;
+            this.data = this.getDataForRow();
+
+            this.refreshCell(false);
         }
 
         public getGridCell(): any {
@@ -80,16 +91,19 @@ module awk.grid {
         }
 
         private createValueGetter() {
-            var that = this;
-            return function () {
-                var api = that.gridOptionsWrapper.getApi();
-                var context = that.gridOptionsWrapper.getContext();
-                var cellExpressions = that.gridOptionsWrapper.isEnableCellExpressions();
-                return _.getValue(that.expressionService, that.data, that.column.colDef, cellExpressions, that.node, api, context);
+            return () => {
+                var api = this.gridOptionsWrapper.getApi();
+                var context = this.gridOptionsWrapper.getContext();
+                var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+                return _.getValue(this.expressionService, this.data, this.column.colDef, cellExpressions, this.node, api, context);
             };
         }
 
-        private createCell() {
+        private applyClasses(): void {
+            this.eGridCell.className = this.fixedClasses.join(' ') + ' ' + this.dynamicClasses.join(' ');
+        }
+
+        private setupComponents() {
             this.eGridCell = document.createElement("div");
             this.eGridCell.setAttribute("col", this.column.index);
 
@@ -98,38 +112,31 @@ module awk.grid {
                 this.eGridCell.setAttribute("tabindex", "-1");
             }
 
-            var value: any;
-            if (this.valueGetter) {
-                value = this.valueGetter();
-            }
-
             // these are the grid styles, don't change between soft refreshes
-            this.addClassesToCell();
+            this.addFixedClasses();
 
-            this.populateAndStyleGridCell(value);
-
-            this.addCellClickedHandler(value);
-            this.addCellDoubleClickedHandler(value);
+            this.addCellClickedHandler();
+            this.addCellDoubleClickedHandler();
 
             this.addCellNavigationHandler();
 
             this.eGridCell.style.width = _.formatWidth(this.column.actualWidth);
+
+            this.createCellWrapper();
         }
 
         // called by rowRenderer when user navigates via tab key
         public startEditing() {
             var that = this;
             this.editingCell = true;
-            _.removeAllChildren(this.eGridCell);
+            this.eGridCell.removeChild(this.eCellWrapper);
             var eInput = document.createElement('input');
             eInput.type = 'text';
             _.addCssClass(eInput, 'ag-cell-edit-input');
 
-            if (this.valueGetter) {
-                var value = this.valueGetter();
-                if (value !== null && value !== undefined) {
-                    eInput.value = value;
-                }
+            var value = this.valueGetter();
+            if (value !== null && value !== undefined) {
+                eInput.value = value;
             }
 
             eInput.style.width = (this.column.actualWidth - 14) + 'px';
@@ -176,8 +183,6 @@ module awk.grid {
             //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
             eInput.removeEventListener('blur', blurListener);
 
-            _.removeAllChildren(this.eGridCell);
-
             var paramsForCallbacks = {
                 node: this.node,
                 data: this.node.data,
@@ -196,11 +201,9 @@ module awk.grid {
             }
 
             // at this point, the value has been updated
-            var newValue: any;
-            if (this.valueGetter) {
-                newValue = this.valueGetter();
-            }
-            paramsForCallbacks.newValue = newValue;
+            this.value = this.valueGetter();
+
+            paramsForCallbacks.newValue = this.value;
             if (typeof colDef.cellValueChanged === 'function') {
                 colDef.cellValueChanged(paramsForCallbacks);
             }
@@ -208,10 +211,12 @@ module awk.grid {
                 this.gridOptionsWrapper.getCellValueChanged()(paramsForCallbacks);
             }
 
-            this.populateAndStyleGridCell(newValue);
+            _.removeAllChildren(this.eGridCell);
+            this.eGridCell.appendChild(this.eCellWrapper);
+            this.refreshCell(true);
         }
 
-        private addCellDoubleClickedHandler(value: any) {
+        private addCellDoubleClickedHandler() {
             var that = this;
             var colDef = this.column.colDef;
             this.eGridCell.addEventListener('dblclick', function (event: any) {
@@ -219,7 +224,7 @@ module awk.grid {
                     var paramsForGrid = {
                         node: that.node,
                         data: that.node.data,
-                        value: value,
+                        value: that.value,
                         rowIndex: that.rowIndex,
                         colDef: colDef,
                         event: event,
@@ -232,7 +237,7 @@ module awk.grid {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
-                        value: value,
+                        value: that.value,
                         rowIndex: that.rowIndex,
                         colDef: colDef,
                         event: event,
@@ -273,7 +278,7 @@ module awk.grid {
             return false;
         }
 
-        private addCellClickedHandler(value: any) {
+        private addCellClickedHandler() {
             var colDef = this.column.colDef;
             var that = this;
             this.eGridCell.addEventListener("click", function (event: any) {
@@ -288,7 +293,7 @@ module awk.grid {
                     var paramsForGrid = {
                         node: that.node,
                         data: that.node.data,
-                        value: value,
+                        value: that.value,
                         rowIndex: that.rowIndex,
                         colDef: colDef,
                         event: event,
@@ -301,7 +306,7 @@ module awk.grid {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
-                        value: value,
+                        value: that.value,
                         rowIndex: that.rowIndex,
                         colDef: colDef,
                         event: event,
@@ -313,22 +318,22 @@ module awk.grid {
             });
         }
 
-        private populateAndStyleGridCell(value: any) {
+        private populateAndStyleGridCell() {
             // populate
-            this.populateGridCell(value);
+            this.putDataIntoCell();
             // style
-            this.addStylesFromCollDef(value);
-            this.addClassesFromCollDef(value);
-            this.addClassesFromRules(value);
+            this.addStylesFromCollDef();
+            this.addClassesFromCollDef();
+            this.addClassesFromRules();
         }
 
-        private addStylesFromCollDef(value: any) {
+        private addStylesFromCollDef() {
             var colDef = this.column.colDef;
             if (colDef.cellStyle) {
                 var cssToUse: any;
                 if (typeof colDef.cellStyle === 'function') {
                     var cellStyleParams = {
-                        value: value,
+                        value: this.value,
                         data: this.node.data,
                         node: this.node,
                         colDef: colDef,
@@ -349,14 +354,14 @@ module awk.grid {
             }
         }
 
-        private addClassesFromCollDef(value: any) {
+        private addClassesFromCollDef() {
             var colDef = this.column.colDef;
             if (colDef.cellClass) {
               var classToUse: any;
 
                 if (typeof colDef.cellClass === 'function') {
                     var cellClassParams = {
-                        value: value,
+                        value: this.value,
                         data: this.node.data,
                         node: this.node,
                         colDef: colDef,
@@ -371,22 +376,22 @@ module awk.grid {
                 }
 
                 if (typeof classToUse === 'string') {
-                    _.addCssClass(this.eGridCell, classToUse);
+                    this.dynamicClasses.push(classToUse);
                 } else if (Array.isArray(classToUse)) {
-                    classToUse.forEach(function (cssClassItem: any) {
-                        _.addCssClass(this.eGridCell, cssClassItem);
+                    classToUse.forEach( (cssClassItem: string)=> {
+                        this.dynamicClasses.push(cssClassItem);
                     });
                 }
             }
         }
 
-        private addClassesFromRules(value: any) {
+        private addClassesFromRules() {
             var colDef = this.column.colDef;
             var classRules = colDef.cellClassRules;
             if (typeof classRules === 'object' && classRules !== null) {
 
                 var params = {
-                    value: value,
+                    value: this.value,
                     data: this.node.data,
                     node: this.node,
                     colDef: colDef,
@@ -406,9 +411,7 @@ module awk.grid {
                         resultOfRule = rule(params);
                     }
                     if (resultOfRule) {
-                        _.addCssClass(this.eGridCell, className);
-                    } else {
-                        _.removeCssClass(this.eGridCell, className);
+                        this.dynamicClasses.push(className);
                     }
                 }
             }
@@ -458,78 +461,110 @@ module awk.grid {
             });
         }
 
-        private populateGridCell(value: any) {
-            var eCellWrapper = document.createElement('span');
-            _.addCssClass(eCellWrapper, "ag-cell-wrapper");
-            this.eGridCell.appendChild(eCellWrapper);
+        private checkboxOnChangeListener: EventListener;
+
+        public createSelectionCheckbox() {
+
+            this.eCheckbox = document.createElement('input');
+            this.eCheckbox.type = "checkbox";
+            this.eCheckbox.name = "name";
+            this.eCheckbox.className = 'ag-selection-checkbox';
+
+            this.eCheckbox.onclick = function (event) {
+                event.stopPropagation();
+            };
+
+            this.checkboxOnChangeListener = ()=> {
+                var newValue = this.eCheckbox.checked;
+                if (newValue) {
+                    this.selectionController.selectIndex(this.rowIndex, true);
+                } else {
+                    this.selectionController.deselectIndex(this.rowIndex);
+                }
+            };
+            this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+        }
+
+        public setSelected(state: boolean) {
+            this.eCheckbox.removeEventListener('onchange', this.checkboxOnChangeListener);
+            if (typeof state === 'boolean') {
+                this.eCheckbox.checked = state;
+                this.eCheckbox.indeterminate = false;
+            } else {
+                // isNodeSelected returns back undefined if it's a group and the children
+                // are a mix of selected and unselected
+                this.eCheckbox.indeterminate = true;
+            }
+            this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+        }
+
+        private createCellWrapper() {
+            this.eCellWrapper = document.createElement('span');
+            this.eCellWrapper.className = 'ag-cell-wrapper';
+            this.eGridCell.appendChild(this.eCellWrapper);
 
             var colDef = this.column.colDef;
             if (colDef.checkboxSelection) {
-                var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex);
-                eCellWrapper.appendChild(eCheckbox);
+                this.createSelectionCheckbox();
+                this.eCellWrapper.appendChild(this.eCheckbox);
             }
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.eSpanWithValue = document.createElement("span");
-            _.addCssClass(this.eSpanWithValue, "ag-cell-value");
+            this.eSpanWithValue = document.createElement('span');
+            this.eSpanWithValue.className = 'ag-cell-value';
 
-            eCellWrapper.appendChild(this.eSpanWithValue);
-
-            var that = this;
-            var refreshCellFunction = function () {
-                that.refreshCell();
-            };
-
-            this.putDataIntoCell(value, refreshCellFunction);
+            this.eCellWrapper.appendChild(this.eSpanWithValue);
         }
 
         public isVolatile() {
             return this.column.colDef.volatile;
         }
 
-        public refreshCell() {
+        public refreshCell(compile: boolean) {
 
-            _.removeAllChildren(this.eGridCell);
+            _.removeAllChildren(this.eSpanWithValue);
+            this.dynamicClasses = [];
+            this.value = this.valueGetter();
 
-            var valueGetter = this.createValueGetter();
+            this.addDynamicClasses();
+            this.populateAndStyleGridCell();
 
-            var value: any;
-            if (valueGetter) {
-                value = valueGetter();
+            this.applyClasses();
+
+            if (this.eCheckbox) {
+                this.setSelected(this.selectionController.isNodeSelected(this.node));
             }
 
-            this.populateAndStyleGridCell(value);
-
             // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            if (compile && this.gridOptionsWrapper.isAngularCompileRows()) {
                 this.$compile(this.eGridCell)(this.scope);
             }
         }
 
-        private putDataIntoCell(value: any, refreshCellFunction: any) {
+        private putDataIntoCell() {
             // template gets preference, then cellRenderer, then do it ourselves
             var colDef = this.column.colDef;
             if (colDef.template) {
                 this.eSpanWithValue.innerHTML = colDef.template;
             } else if (colDef.templateUrl) {
-                var template = this.templateService.getTemplate(colDef.templateUrl, refreshCellFunction);
+                var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
                 if (template) {
                     this.eSpanWithValue.innerHTML = template;
                 }
             } else if (colDef.cellRenderer) {
-                this.useCellRenderer(value, refreshCellFunction);
+                this.useCellRenderer();
             } else {
                 // if we insert undefined, then it displays as the string 'undefined', ugly!
-                if (value !== undefined && value !== null && value !== '') {
-                    this.eSpanWithValue.innerHTML = value;
+                if (this.value !== undefined && this.value !== null && this.value !== '') {
+                    this.eSpanWithValue.innerHTML = this.value;
                 }
             }
         }
 
-        private useCellRenderer(value: any, refreshCellFunction: any) {
+        private useCellRenderer() {
             var colDef = this.column.colDef;
             var rendererParams = {
-                value: value,
+                value: this.value,
                 valueGetter: this.valueGetter,
                 data: this.node.data,
                 node: this.node,
@@ -539,7 +574,7 @@ module awk.grid {
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext(),
-                refreshCell: refreshCellFunction,
+                refreshCell: this.refreshCell.bind(this, true),
                 eGridCell: this.eGridCell
             };
             var cellRenderer: Function;
@@ -564,16 +599,20 @@ module awk.grid {
             }
         }
 
-        private addClassesToCell() {
-            var classes = ['ag-cell', 'ag-cell-no-focus', 'cell-col-' + this.column.index];
+        private addFixedClasses() {
+            this.fixedClasses.push('ag-cell');
+            this.fixedClasses.push('ag-cell-no-focus');
+            this.fixedClasses.push('cell-col-' + this.column.index);
+        }
+
+        private addDynamicClasses() {
             if (this.node.group) {
                 if (this.node.footer) {
-                    classes.push('ag-footer-cell');
+                    this.dynamicClasses.push('ag-footer-cell');
                 } else {
-                    classes.push('ag-group-cell');
+                    this.dynamicClasses.push('ag-group-cell');
                 }
             }
-            this.eGridCell.className = classes.join(' ');
         }
 
     }
