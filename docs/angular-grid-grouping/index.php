@@ -38,9 +38,9 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>groupAggFunction</th>
+            <th>groupAggFunction(nodes, level)</th>
             <td>If grouping, used to create complex aggregates. Provide a function to do the aggregation. Use this
-                if the simple 'sum' aggregates provided is not enough.
+                if the default 'sum/min/max' aggregates provided is not enough.
             </td>
         </tr>
         <tr>

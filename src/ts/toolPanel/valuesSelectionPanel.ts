@@ -13,12 +13,14 @@ module awk.grid {
 
     export class ValuesSelectionPanel {
 
-        gridOptionsWrapper: any;
-        columnController: any;
-        cColumnList: any;
-        layout: any;
+        private gridOptionsWrapper: any;
+        private columnController: any;
+        private cColumnList: any;
+        private layout: any;
+        private popupService: PopupService;
 
-        constructor(columnController: any, gridOptionsWrapper: any) {
+        constructor(columnController: any, gridOptionsWrapper: any, popupService: PopupService) {
+            this.popupService = popupService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
@@ -29,15 +31,19 @@ module awk.grid {
             });
         }
 
-        columnsChanged(newColumns: any, newGroupedColumns: any, newValuesColumns: any) {
+        public getLayout() {
+            return this.layout;
+        }
+
+        private columnsChanged(newColumns: any, newGroupedColumns: any, newValuesColumns: any) {
             this.cColumnList.setModel(newValuesColumns);
         }
 
-        addDragSource(dragSource: any) {
+        public addDragSource(dragSource: any) {
             this.cColumnList.addDragSource(dragSource);
         }
 
-        cellRenderer(params: any) {
+        private cellRenderer(params: any) {
             var column = params.value;
             var colDisplayName = this.columnController.getDisplayNameForCol(column);
 
@@ -55,7 +61,7 @@ module awk.grid {
                 that.onValuesChanged();
             });
 
-            var agValueType = new AgDropdownList();
+            var agValueType = new AgDropdownList(this.popupService);
             agValueType.setModel([constants.SUM, constants.MIN, constants.MAX]);
             agValueType.setSelected(column.aggFunc);
             agValueType.setWidth(45);
@@ -75,7 +81,7 @@ module awk.grid {
             return eResult;
         }
 
-        setupComponents() {
+        private setupComponents() {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
             var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to create values');
@@ -97,13 +103,13 @@ module awk.grid {
             });
         }
 
-        beforeDropListener(newItem: any) {
+        private beforeDropListener(newItem: any) {
             if (!newItem.aggFunc) {
                 newItem.aggFunc = constants.SUM;
             }
         }
 
-        onValuesChanged() {
+        private onValuesChanged() {
             var api = this.gridOptionsWrapper.getApi();
             api.recomputeAggregates();
         }

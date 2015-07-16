@@ -6,7 +6,7 @@ module awk.grid {
 
     export class Utils {
 
-        static iterateObject(object: any, callback: any) {
+        static iterateObject(object: any, callback: (key:string, value: any) => void) {
             var keys = Object.keys(object);
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
@@ -15,8 +15,8 @@ module awk.grid {
             }
         }
 
-        static map(array: any, callback: any) {
-            var result: any = [];
+        static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult) {
+            var result: TResult[] = [];
             for (var i = 0; i < array.length; i++) {
                 var item = array[i];
                 var mappedItem = callback(item);
@@ -25,7 +25,7 @@ module awk.grid {
             return result;
         }
 
-        static forEach(array: any, callback: any) {
+        static forEach<T>(array: T[], callback: (item: T, index: number) => void) {
             if (!array) {
                 return;
             }
@@ -58,8 +58,8 @@ module awk.grid {
             return null;
         }
 
-        static toStrings(array: any) {
-            return this.map(array, function (item: any) {
+        static toStrings<T>(array: T[]): string[] {
+            return this.map(array, function (item) {
                 if (item === undefined || item === null || !item.toString) {
                     return null;
                 } else {
@@ -68,7 +68,7 @@ module awk.grid {
             });
         }
 
-        static iterateArray(array: any, callback: any) {
+        static iterateArray<T>(array: T[], callback: (item: T, index: number) => void) {
             for (var index = 0; index < array.length; index++) {
                 var value = array[index];
                 callback(value, index);
@@ -142,7 +142,7 @@ module awk.grid {
         }
 
         //adds all type of change listeners to an element, intended to be a text field
-        static addChangeListener(element: any, listener: any) {
+        static addChangeListener(element: HTMLElement, listener: EventListener) {
             element.addEventListener("changed", listener);
             element.addEventListener("paste", listener);
             element.addEventListener("input", listener);
@@ -157,7 +157,7 @@ module awk.grid {
             }
         }
 
-        static removeAllChildren(node: any) {
+        static removeAllChildren(node: HTMLElement) {
             if (node) {
                 while (node.hasChildNodes()) {
                     node.removeChild(node.lastChild);
@@ -165,43 +165,45 @@ module awk.grid {
             }
         }
 
-        static removeElement(parent: any, cssSelector: string) {
+        static removeElement(parent: HTMLElement, cssSelector: string) {
             this.removeFromParent(parent.querySelector(cssSelector));
         }
 
-        static removeFromParent(node: any) {
+        static removeFromParent(node: Element) {
             if (node && node.parentNode) {
                 node.parentNode.removeChild(node);
             }
         }
 
-        static isVisible(element: any) {
+        static isVisible(element: HTMLElement) {
             return (element.offsetParent !== null)
         }
 
-        //loads the template and returns it as an element. makes up for no simple way in
-        //the dom api to load html directly, eg we cannot do this: document.createElement(template)
-        static loadTemplate(template: any) {
+        /** 
+         * loads the template and returns it as an element. makes up for no simple way in
+         * the dom api to load html directly, eg we cannot do this: document.createElement(template) 
+         */
+        static loadTemplate(template: string) {
             var tempDiv = document.createElement("div");
             tempDiv.innerHTML = template;
             return tempDiv.firstChild;
         }
 
-        static querySelectorAll_addCssClass(eParent: any, selector: any, cssClass: any) {
+        static querySelectorAll_addCssClass(eParent: any, selector: string, cssClass: string) {
             var eRows = eParent.querySelectorAll(selector);
             for (var k = 0; k < eRows.length; k++) {
                 this.addCssClass(eRows[k], cssClass);
             }
         }
 
-        static querySelectorAll_removeCssClass(eParent: any, selector: any, cssClass: any) {
+        static querySelectorAll_removeCssClass(eParent: any, selector: string, cssClass: string) {
             var eRows = eParent.querySelectorAll(selector);
             for (var k = 0; k < eRows.length; k++) {
                 this.removeCssClass(eRows[k], cssClass);
             }
         }
 
-        static querySelectorAll_replaceCssClass(eParent: any, selector: any, cssClassToRemove: any, cssClassToAdd: any) {
+        static querySelectorAll_replaceCssClass(eParent: any, selector: string, cssClassToRemove: string, cssClassToAdd: string) {
             var eRows = eParent.querySelectorAll(selector);
             for (var k = 0; k < eRows.length; k++) {
                 this.removeCssClass(eRows[k], cssClassToRemove);
@@ -209,7 +211,7 @@ module awk.grid {
             }
         }
 
-        static addOrRemoveCssClass(element: any, className: any, addOrRemove: any) {
+        static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
             if (addOrRemove) {
                 this.addCssClass(element, className);
             } else {
@@ -217,7 +219,7 @@ module awk.grid {
             }
         }
 
-        static addCssClass(element: any, className: any) {
+        static addCssClass(element: HTMLElement, className: string) {
             if (element.className && element.className.length > 0) {
                 var cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) < 0) {
@@ -229,15 +231,15 @@ module awk.grid {
             }
         }
 
-        static offsetHeight(element: any) {
+        static offsetHeight(element: HTMLElement) {
             return element && element.clientHeight ? element.clientHeight : 0;
         }
 
-        static offsetWidth(element: any) {
+        static offsetWidth(element: HTMLElement) {
             return element && element.clientWidth ? element.clientWidth : 0;
         }
 
-        static removeCssClass(element: any, className: any) {
+        static removeCssClass(element: HTMLElement, className: string) {
             if (element.className && element.className.length > 0) {
                 var cssClasses = element.className.split(' ');
                 var index = cssClasses.indexOf(className);
@@ -248,7 +250,7 @@ module awk.grid {
             }
         }
 
-        static removeFromArray(array: any, object: any) {
+        static removeFromArray<T>(array: T[], object: T) {
             array.splice(array.indexOf(object), 1);
         }
 
@@ -274,7 +276,7 @@ module awk.grid {
             }
         }
 
-        static formatWidth(width: any) {
+        static formatWidth(width: number | string) {
             if (typeof width === "number") {
                 return width + "px";
             } else {
@@ -282,26 +284,30 @@ module awk.grid {
             }
         }
 
-        // tries to use the provided renderer. if a renderer found, returns true.
-        // if no renderer, returns false.
-        static useRenderer(eParent: any, eRenderer: any, params: any) {
+        /** 
+         * tries to use the provided renderer. if a renderer found, returns true.
+         * if no renderer, returns false.
+         */
+        static useRenderer<TParams>(eParent: Element, eRenderer: (params:TParams) => Node | string, params: TParams) {
             var resultFromRenderer = eRenderer(params);
-            if (this.isNode(resultFromRenderer) || this.isElement(resultFromRenderer)) {
-                //a dom node or element was returned, so add child
-                eParent.appendChild(resultFromRenderer);
-            } else {
-                //otherwise assume it was html, so just insert
+            //TypeScript type inference magic
+            if (typeof resultFromRenderer === 'string') {
                 var eTextSpan = document.createElement('span');
                 eTextSpan.innerHTML = resultFromRenderer;
                 eParent.appendChild(eTextSpan);
+            } else {
+                //a dom node or element was returned, so add child
+                eParent.appendChild(resultFromRenderer);
             }
         }
 
-        // if icon provided, use this (either a string, or a function callback).
-        // if not, then use the second parameter, which is the svgFactory function
-        static createIcon(iconName: any, gridOptionsWrapper: any, colDefWrapper: any, svgFactoryFunc: any) {
+        /** 
+         * if icon provided, use this (either a string, or a function callback).
+         * if not, then use the second parameter, which is the svgFactory function
+         */
+        static createIcon(iconName: any, gridOptionsWrapper: any, colDefWrapper: any, svgFactoryFunc: () => Node) {
             var eResult = document.createElement('span');
-            var userProvidedIcon: any;
+            var userProvidedIcon: Function | string;
             // check col for icon first
             if (colDefWrapper && colDefWrapper.colDef.icons) {
                 userProvidedIcon = colDefWrapper.colDef.icons[iconName];
@@ -365,12 +371,12 @@ module awk.grid {
             return widthNoScroll - widthWithScroll;
         }
 
-        static isKeyPressed(event: any, keyToCheck: any) {
+        static isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
             var pressedKey = event.which || event.keyCode;
             return pressedKey === keyToCheck;
         }
 
-        static setVisible(element: any, visible: any) {
+        static setVisible(element: HTMLElement, visible: boolean) {
             if (visible) {
                 element.style.display = 'inline';
             } else {

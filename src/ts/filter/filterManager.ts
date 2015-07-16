@@ -3,10 +3,10 @@
 /// <reference path="numberFilter.ts" />
 /// <reference path="setFilter.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
+/// <reference path="../widgets/agPopupService.ts" />
 
 module awk.grid {
 
-    var agPopupService = PopupService.getInstance();
     var utils = Utils;
 
     export class FilterManager {
@@ -19,8 +19,10 @@ module awk.grid {
         private expressionService: any;
         private columnModel: any;
         private rowModel: any;
+        private popupService: PopupService;
 
-        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, expressionService: any, columnModel: any) {
+        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
+                    expressionService: any, columnModel: any, popupService: PopupService) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -28,6 +30,7 @@ module awk.grid {
             this.allFilters = {};
             this.expressionService = expressionService;
             this.columnModel = columnModel;
+            this.popupService = popupService;
         }
 
         public setFilterModel(model: any) {
@@ -35,7 +38,7 @@ module awk.grid {
             if (model) {
                 // mark the filters as we set them, so any active filters left over we stop
                 var processedFields = Object.keys(model);
-                utils.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
+                utils.iterateObject(this.allFilters, function (key, filterWrapper) {
                     var field = filterWrapper.column.colDef.field;
                     utils.removeFromArray(processedFields, field);
                     if (field) {
@@ -46,7 +49,7 @@ module awk.grid {
                     }
                 });
                 // at this point, processedFields contains data for which we don't have a filter working yet
-                utils.iterateArray(processedFields, function (field: any) {
+                utils.iterateArray(processedFields, function (field) {
                     var column = that.columnModel.getColumn(field);
                     if (!column) {
                         console.warn('Warning ag-grid - no column found for field ' + field);
@@ -56,13 +59,13 @@ module awk.grid {
                     that.setModelOnFilterWrapper(filterWrapper.filter, model[field]);
                 });
             } else {
-                utils.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
+                utils.iterateObject(this.allFilters, function (key, filterWrapper) {
                     that.setModelOnFilterWrapper(filterWrapper.filter, null);
                 });
             }
         }
 
-        private setModelOnFilterWrapper(filter: any, newModel: any) {
+        private setModelOnFilterWrapper(filter: { getApi: () => { setModel: Function }}, newModel: any) {
             // because user can provide filters, we provide useful error checking and messages
             if (typeof filter.getApi !== 'function') {
                 console.warn('Warning ag-grid - filter missing getApi method, which is needed for getFilterModel');
@@ -185,7 +188,7 @@ module awk.grid {
             };
         }
 
-        public getFilterApi(column: any) {
+        public getFilterApi(column: Column) {
             var filterWrapper = this.getOrCreateFilterWrapper(column);
             if (filterWrapper) {
                 if (typeof filterWrapper.filter.getApi === 'function') {
@@ -194,7 +197,7 @@ module awk.grid {
             }
         }
 
-        private getOrCreateFilterWrapper(column: any) {
+        private getOrCreateFilterWrapper(column: Column) {
             var filterWrapper = this.allFilters[column.colId];
 
             if (!filterWrapper) {
@@ -205,7 +208,7 @@ module awk.grid {
             return filterWrapper;
         }
 
-        private createFilterWrapper(column: any) {
+        private createFilterWrapper(column: Column) {
             var colDef = column.colDef;
 
             var filterWrapper = {
@@ -233,8 +236,8 @@ module awk.grid {
                     filterWrapper.scope = scope;
                     params.$scope = scope;
                 }
-                // now create filter
-                filterWrapper.filter = new colDef.filter(params);
+                // now create filter (had to cast to any to get 'new' working)
+                filterWrapper.filter = new (<any>colDef.filter)(params);
             } else if (colDef.filter === 'text') {
                 filterWrapper.filter = new TextFilter(params);
             } else if (colDef.filter === 'number') {
@@ -269,12 +272,12 @@ module awk.grid {
             return filterWrapper;
         }
 
-        private showFilter(column: any, eventSource: any) {
+        private showFilter(column: Column, eventSource: any) {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-            agPopupService.positionPopup(eventSource, filterWrapper.gui, 200);
-            agPopupService.addAsModalPopup(filterWrapper.gui);
+            this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
+            this.popupService.addAsModalPopup(filterWrapper.gui);
 
             if (filterWrapper.filter.afterGuiAttached) {
                 filterWrapper.filter.afterGuiAttached();
