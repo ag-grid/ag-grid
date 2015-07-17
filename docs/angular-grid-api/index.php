@@ -51,6 +51,10 @@ include '../documentation_header.php';
                 open, will stay.</td>
         </tr>
         <tr>
+            <th>sizeColumnsToFit()</th>
+            <td>Automatically resize the columns to fill the screen</td>
+        </tr>
+        <tr>
             <th>selectAll()</th>
             <td>Select all rows (even rows that are not visible due to grouping being and their groups not expanded).</td>
         </tr>

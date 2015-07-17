@@ -334,7 +334,7 @@ module awk.grid {
             // size all cols except the last by the scale
             for (var i = 0; i < (colsToSpread.length - 1); i++) {
                 var column = colsToSpread[i];
-                var newWidth = Math.round(column.actualWidth * scale);
+                var newWidth = (column.colDef.minWidth && column.actualWidth * scale < column.colDef.minWidth)? column.actualWidth : Math.round(column.actualWidth * scale);
                 column.actualWidth = newWidth;
                 pixelsForLastCol -= newWidth;
             }
@@ -342,7 +342,7 @@ module awk.grid {
             // size the last by whats remaining (this avoids rounding errors that could
             // occur with scaling everything, where it result in some pixels off)
             var lastColumn = colsToSpread[colsToSpread.length - 1];
-            lastColumn.actualWidth = pixelsForLastCol;
+            lastColumn.actualWidth = (lastColumn.colDef.minWidth && pixelsForLastCol < lastColumn.colDef.minWidth)? lastColumn.colDef.minWidth : pixelsForLastCol;
 
             // widths set, refresh the gui
             this.angularGrid.refreshHeaderAndBody();
