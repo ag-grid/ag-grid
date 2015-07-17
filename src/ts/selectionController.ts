@@ -1,4 +1,5 @@
 /// <reference path="utils.ts" />
+/// <reference path="rendering/rowRenderer.ts" />
 
 module awk.grid {
 
@@ -18,7 +19,7 @@ module awk.grid {
         angularGrid: any;
         gridOptionsWrapper: any;
         $scope: any;
-        rowRenderer: any;
+        rowRenderer: RowRenderer;
         selectedRows: any;
         selectedNodesById: any;
         rowModel: any;

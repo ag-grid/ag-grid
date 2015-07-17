@@ -1,5 +1,5 @@
 /// <reference path="grid.ts" />
-/// <reference path="rowRenderer.ts" />
+/// <reference path="rendering/rowRenderer.ts" />
 /// <reference path="headerRenderer.ts" />
 
 module awk.grid {

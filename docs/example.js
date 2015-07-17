@@ -59,6 +59,7 @@ gridsModule.controller('mainController', function($scope) {
     $scope.rowSelection = 'checkbox';
 
     var angularGrid = {
+        rowsBuffer: 1,
         columnDefs: [],
         rowData: null,
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups

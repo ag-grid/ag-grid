@@ -1,7 +1,7 @@
-/// <reference path="utils.ts" />
-/// <reference path="constants.ts" />
+/// <reference path="../utils.ts" />
+/// <reference path="../constants.ts" />
 /// <reference path="renderedRow.ts" />
-/// <reference path="cellRenderers/groupCellRendererFactory.ts" />
+/// <reference path="../cellRenderers/groupCellRendererFactory.ts" />
 
 module awk.grid {
 
@@ -21,6 +21,8 @@ module awk.grid {
         private templateService: TemplateService;
         private cellRendererMap: {[key: string]: any};
         private renderedRows: {[key: string]: RenderedRow};
+        private unboundNormalRows: RenderedRow[] = [];
+        private unboundGroupSpanningRows: RenderedRow[] = [];
         private rowModel: any;
         private eBodyContainer: any;
         private eBodyViewport: any;
@@ -104,7 +106,7 @@ module awk.grid {
                 }
             });
             // remove the rows
-            this.removeVirtualRows(indexesToRemove);
+            this.unbindVirtualRows(indexesToRemove);
             // add draw them again
             this.drawVirtualRows();
         }
@@ -112,7 +114,7 @@ module awk.grid {
         private refreshAllVirtualRows(fromIndex: any) {
             // remove all current virtual rows, as they have old data
             var rowsToRemove = Object.keys(this.renderedRows);
-            this.removeVirtualRows(rowsToRemove, fromIndex);
+            this.unbindVirtualRows(rowsToRemove, fromIndex);
 
             // add in new rows
             this.drawVirtualRows();
@@ -130,19 +132,19 @@ module awk.grid {
                 }
             });
             // remove the rows
-            this.removeVirtualRows(rowsToRemove);
+            this.unbindVirtualRows(rowsToRemove);
             // and draw them back again
             this.ensureRowsRendered();
         }
 
         // takes array of row indexes
-        private removeVirtualRows(rowsToRemove: any, fromIndex?: any) {
+        private unbindVirtualRows(rowsToRemove: any, fromIndex?: any) {
             var that = this;
             // if no fromIndex then set to -1, which will refresh everything
             var realFromIndex = (typeof fromIndex === 'number') ? fromIndex : -1;
             rowsToRemove.forEach(function (indexToRemove: any) {
                 if (indexToRemove >= realFromIndex) {
-                    that.removeVirtualRow(indexToRemove);
+                    that.unbindVirtualRow(indexToRemove);
 
                     // if the row was last to have focus, we remove the fact that it has focus
                     if (that.focusedCell && that.focusedCell.rowIndex == indexToRemove) {
@@ -152,17 +154,28 @@ module awk.grid {
             });
         }
 
-        private removeVirtualRow(indexToRemove: any) {
+        public destroyAllRows() {
+            var rowsToRemove = Object.keys(this.renderedRows);
+            this.unbindVirtualRows(rowsToRemove);
+            this.unboundGroupSpanningRows.forEach( (row: RenderedRow)=> {
+                row.destroy();
+            });
+            this.unboundNormalRows.forEach( (row: RenderedRow)=> {
+                row.destroy();
+            });
+            this.unboundGroupSpanningRows.length = 0;
+            this.unboundNormalRows.length = 0;
+        }
+
+        private unbindVirtualRow(indexToRemove: any) {
             var renderedRow = this.renderedRows[indexToRemove];
-            if (renderedRow.pinnedElement && this.ePinnedColsContainer) {
-                this.ePinnedColsContainer.removeChild(renderedRow.pinnedElement);
-            }
 
-            if (renderedRow.bodyElement) {
-                this.eBodyContainer.removeChild(renderedRow.bodyElement);
+            renderedRow.unbind();
+            if (renderedRow.getType()===RowType.GroupSpanningRow) {
+                this.unboundGroupSpanningRows.push(renderedRow);
+            } else {
+                this.unboundNormalRows.push(renderedRow);
             }
-
-            renderedRow.destroy();
 
             if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
                 this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.getRowNode().data, indexToRemove);
@@ -208,11 +221,11 @@ module awk.grid {
             this.ensureRowsRendered();
         }
 
-        private getFirstVirtualRenderedRow() {
+        public getFirstVirtualRenderedRow() {
             return this.firstVirtualRenderedRow;
         }
 
-        private getLastVirtualRenderedRow() {
+        public getLastVirtualRenderedRow() {
             return this.lastVirtualRenderedRow;
         }
 
@@ -241,7 +254,7 @@ module awk.grid {
             }
 
             // at this point, everything in our 'rowsToRemove' . . .
-            this.removeVirtualRows(rowsToRemove);
+            this.unbindVirtualRows(rowsToRemove);
 
             // if we are doing angular compiling, then do digest the scope here
             if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -252,7 +265,7 @@ module awk.grid {
             }
 
             var end = new Date().getTime();
-            //console.log(end-start);
+            console.log(end-start);
         }
 
         private insertRow(node: any, rowIndex: any, mainRowWidth: any) {
@@ -262,23 +275,36 @@ module awk.grid {
                 return;
             }
 
-            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.$scope, this.angularGrid,
-                this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
-                this.$compile, this.templateService, this.selectionController, this);
+            var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
+            var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
+            var rowType = rowIsHeaderThatSpans ? RowType.GroupSpanningRow : RowType.Normal;
+            var renderedRow = this.getUnboundRenderedRow(rowType);
+
             renderedRow.bind(node, rowIndex);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;
-
-            //try compiling as we insert rows
-            this.eBodyContainer.appendChild(renderedRow.bodyElement);
-            var pinning = columns[0].pinned;
-            if (pinning) {
-                this.ePinnedColsContainer.appendChild(renderedRow.pinnedElement);
-            }
         }
 
-        private getIndexOfRenderedNode(node: any): number {
+        private getUnboundRenderedRow(rowType: RowType): RenderedRow {
+
+            if (rowType === RowType.GroupSpanningRow && this.unboundGroupSpanningRows.length > 0) {
+                return this.unboundGroupSpanningRows.pop();
+            }
+
+            if (rowType === RowType.Normal && this.unboundNormalRows.length > 0) {
+                return this.unboundNormalRows.pop();
+            }
+
+            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.$scope, this.angularGrid,
+                this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
+                this.$compile, this.templateService, this.selectionController, this, rowType,
+                this.eBodyContainer, this.ePinnedColsContainer);
+
+            return renderedRow;
+        }
+
+        public getIndexOfRenderedNode(node: any): number {
             var renderedRows = this.renderedRows;
             var keys: string[] = Object.keys(renderedRows);
             for (var i = 0; i < keys.length; i++) {

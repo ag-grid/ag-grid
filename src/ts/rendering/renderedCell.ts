@@ -1,11 +1,11 @@
-/// <reference path='columnController.ts' />
-/// <reference path='utils.ts' />
-/// <reference path="gridOptionsWrapper.ts" />
-/// <reference path="expressionService.ts" />
-/// <reference path="selectionRendererFactory.ts" />
+/// <reference path='../columnController.ts' />
+/// <reference path='../utils.ts' />
+/// <reference path="../gridOptionsWrapper.ts" />
+/// <reference path="../expressionService.ts" />
+/// <reference path="../selectionRendererFactory.ts" />
 /// <reference path="rowRenderer.ts" />
-/// <reference path="selectionController.ts" />
-/// <reference path="templateService.ts" />
+/// <reference path="../selectionController.ts" />
+/// <reference path="../templateService.ts" />
 
 module awk.grid {
 
