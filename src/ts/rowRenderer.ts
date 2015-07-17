@@ -99,7 +99,7 @@ module awk.grid {
             Object.keys(renderedRows).forEach(function (key: any) {
                 var renderedRow = renderedRows[key];
                 // see if the rendered row is in the list of rows we have to update
-                if (renderedRow.isRowDataChanged(rows)) {
+                if (renderedRow.isDataInList(rows)) {
                     indexesToRemove.push(key);
                 }
             });
@@ -265,7 +265,7 @@ module awk.grid {
             var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.$scope, this.angularGrid,
                 this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                 this.$compile, this.templateService, this.selectionController, this);
-            renderedRow.init(node, rowIndex);
+            renderedRow.bind(node, rowIndex);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;

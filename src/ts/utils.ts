@@ -36,6 +36,12 @@ module awk.grid {
             }
         }
 
+        static assign(object: any, source: any): void {
+            Utils.iterateObject(source, function(key: string, value: any) {
+                object[key] = value;
+            });
+        }
+
         static getFunctionParameters(func: any) {
             var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
             var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);

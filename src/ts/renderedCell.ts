@@ -37,20 +37,21 @@ module awk.grid {
         private cellRendererMap: {[key: string]: Function};
         private eCheckbox: HTMLInputElement;
 
-        private fixedClasses: string[] = [];
-        private dynamicClasses: string[] = [];
+        private fixedClasses: string[] = []; // set once, don't change between bind
+        private dynamicClasses: string[] = []; // set at each bind
+
+        private currentStyles: any;
+        private dynamicStyles: any;
 
         private value: any;
 
-        constructor(isFirstColumn: any, column: any,
-                    scope: any, $compile: any, rowRenderer: RowRenderer,
+        constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any}) {
 
             this.isFirstColumn = isFirstColumn;
             this.column = column;
-            this.scope = scope;
             this.rowRenderer = rowRenderer;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.expressionService = expressionService;
@@ -64,9 +65,10 @@ module awk.grid {
             this.setupComponents();
         }
 
-        public attach(node: any, rowIndex: number): void {
+        public bind(node: any, rowIndex: number, scope: any): void {
             this.node = node;
             this.rowIndex = rowIndex;
+            this.scope = scope;
             this.data = this.getDataForRow();
 
             this.refreshCell(false);
@@ -99,6 +101,28 @@ module awk.grid {
             };
         }
 
+        private applyStyles(): void {
+
+            // set the styles
+            if (this.dynamicStyles) {
+                _.iterateObject(this.dynamicStyles, (key: string, value: any) => {
+                    this.eGridCell.style[key] = value;
+                });
+            }
+
+            // remove old styles. go through the old list, and if not in the new
+            // list, the style was applied before, but not now, so should be removed
+            if (this.currentStyles) {
+                _.iterateObject(this.currentStyles, (key: string, value: any) => {
+                    if (!this.dynamicStyles || !this.dynamicStyles[key]) {
+                        this.eGridCell.style[key] = null;
+                    }
+                });
+            }
+
+            this.currentStyles = this.dynamicStyles;
+        }
+
         private applyClasses(): void {
             this.eGridCell.className = this.fixedClasses.join(' ') + ' ' + this.dynamicClasses.join(' ');
         }
@@ -117,7 +141,6 @@ module awk.grid {
 
             this.addCellClickedHandler();
             this.addCellDoubleClickedHandler();
-
             this.addCellNavigationHandler();
 
             this.eGridCell.style.width = _.formatWidth(this.column.actualWidth);
@@ -318,7 +341,7 @@ module awk.grid {
             });
         }
 
-        private populateAndStyleGridCell() {
+        private populateCell() {
             // populate
             this.putDataIntoCell();
             // style
@@ -349,7 +372,7 @@ module awk.grid {
                 }
 
                 if (cssToUse) {
-                    _.addStylesToElement(this.eGridCell, cssToUse);
+                    _.assign(this.dynamicStyles, cssToUse);
                 }
             }
         }
@@ -524,12 +547,14 @@ module awk.grid {
 
             _.removeAllChildren(this.eSpanWithValue);
             this.dynamicClasses = [];
+            this.dynamicStyles = {};
             this.value = this.valueGetter();
 
             this.addDynamicClasses();
-            this.populateAndStyleGridCell();
+            this.populateCell();
 
             this.applyClasses();
+            this.applyStyles();
 
             if (this.eCheckbox) {
                 this.setSelected(this.selectionController.isNodeSelected(this.node));

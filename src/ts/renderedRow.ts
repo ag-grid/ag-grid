@@ -65,7 +65,7 @@ module awk.grid {
             this.pinning = this.columns[0].pinned;
         }
 
-        public init(node: any, rowIndex: number) {
+        public bind(node: any, rowIndex: number) {
             this.rowIndex = rowIndex;
             this.node = node;
             this.scope = this.createChildScopeOrNull(node.data);
@@ -122,12 +122,16 @@ module awk.grid {
         }
 
         public destroy(): void {
+            this.destroyScope();
+        }
+
+        private destroyScope(): void {
             if (this.scope) {
                 this.scope.$destroy();
             }
         }
 
-        public isRowDataChanged(rows: any[]): boolean {
+        public isDataInList(rows: any[]): boolean {
             return rows.indexOf(this.node.data) >= 0;
         }
 
@@ -140,11 +144,11 @@ module awk.grid {
                 var column = this.columns[i];
                 var firstCol = i === 0;
 
-                var renderedCell = new RenderedCell(firstCol, column, this.scope,
+                var renderedCell = new RenderedCell(firstCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
                     this.cellRendererMap);
-                renderedCell.attach(this.node, this.rowIndex);
+                renderedCell.bind(this.node, this.rowIndex, this.scope);
 
                 var eGridCell = renderedCell.getGridCell();
                 if (column.pinned) {
