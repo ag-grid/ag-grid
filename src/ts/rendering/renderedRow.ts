@@ -98,9 +98,9 @@ module awk.grid {
             this.destroyScope();
             this.scope = this.createChildScopeOrNull(node.data);
 
-            this.eBodyRow.style.display = null;
+            this.eBodyRow.style.display = 'block';
             if (this.pinning) {
-                this.ePinnedRow.style.display = null;
+                this.ePinnedRow.style.display = 'block';
             }
 
             this.dynamicStyles = {};
