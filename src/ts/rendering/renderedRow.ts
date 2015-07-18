@@ -178,7 +178,7 @@ module awk.grid {
         public softRefresh(): void {
             _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
                 if (renderedCell.isVolatile()) {
-                    renderedCell.refreshCell(true);
+                    renderedCell.refreshCell();
                 }
             });
         }
@@ -190,7 +190,7 @@ module awk.grid {
         public getCellForCol(column: Column): any {
             var renderedCell = this.renderedCells[column.index];
             if (renderedCell) {
-                return renderedCell.getGridCell();
+                return renderedCell.getVGridCell().getElement();
             } else {
                 return null;
             }
@@ -230,7 +230,9 @@ module awk.grid {
                     this.selectionRendererFactory, this.selectionController, this.templateService,
                     this.cellRendererMap, this.node, this.rowIndex, this.scope);
 
-                var eGridCell = renderedCell.getGridCell();
+                var vGridCell = renderedCell.getVGridCell();
+                var eGridCell = this.createRealElementFromVirtual(vGridCell);
+
                 if (column.pinned) {
                     this.ePinnedRow.appendChild(eGridCell);
                 } else {
@@ -239,6 +241,13 @@ module awk.grid {
 
                 this.renderedCells[column.index] = renderedCell;
             }
+        }
+
+        private createRealElementFromVirtual(vElement: awk.vdom.VHtmlElement): Element {
+            var html = vElement.toHtmlString();
+            var element: Element = <Element> _.loadTemplate(html);
+            vElement.elementAttached(element);
+            return element;
         }
 
         private bindGroupRow() {

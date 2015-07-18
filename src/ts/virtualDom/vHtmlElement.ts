@@ -29,9 +29,9 @@ module awk.vdom {
 
         public setInnerHtml(innerHtml: string): void {
             if (this.bound) {
-                this.innerHtml = innerHtml;
+                this.element.innerHTML = innerHtml;
             } else {
-                this.element.innerHTML = '';
+                this.innerHtml = innerHtml;
             }
         }
 
@@ -41,9 +41,10 @@ module awk.vdom {
             }
             _.iterateObject(styles, (key: string, value: string)=> {
                 if (this.bound) {
-                    this.style[key] = value;
+                    var style = <any> this.element.style;
+                    style[key] = value;
                 } else {
-                    this.element.style[key] = value;
+                    this.style[key] = value;
                 }
             });
         }
@@ -211,6 +212,7 @@ module awk.vdom {
             this.element = <HTMLElement> element;
             this.attachEventListeners(element);
             this.fireElementAttachedToChildren(element);
+            this.bound = true;
         }
 
         public fireElementAttachedToChildren(element: Element) {

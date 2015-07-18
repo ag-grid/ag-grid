@@ -9,7 +9,6 @@ module awk.vdom {
         constructor(wrappedElement: Element) {
             super();
             this.wrappedElement = wrappedElement;
-            console.log('wrapped element');
         }
 
         public toHtmlString(): string {

@@ -64,11 +64,12 @@ module awk.grid {
             this.data = this.getDataForRow();
 
             this.valueGetter = this.createValueGetter();
+            this.value = this.valueGetter();
             this.setupComponents();
         }
 
-        public getGridCell(): any {
-            return this.vGridCell.getElement();
+        public getVGridCell(): awk.vdom.VHtmlElement {
+            return this.vGridCell;
         }
 
         private getDataForRow() {
@@ -110,7 +111,7 @@ module awk.grid {
             this.addCellDoubleClickedHandler();
             this.addCellNavigationHandler();
 
-            this.vGridCell.addStyles({width: this.column.actualWidth});
+            this.vGridCell.addStyles({width: this.column.actualWidth + "px"});
 
             this.createCellWrapper();
 
