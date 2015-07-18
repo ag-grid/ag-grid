@@ -36,6 +36,9 @@ module awk.vdom {
         }
 
         public addStyles(styles: any): void {
+            if (!styles) {
+                return;
+            }
             if (!this.bound && !this.style) {
                 this.style = {};
             }

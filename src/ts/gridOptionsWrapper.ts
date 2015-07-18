@@ -79,9 +79,11 @@ module awk.grid {
         isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
         isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
         isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
+        isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
         setSelectedRows(newSelectedRows: any) { return this.gridOptions.selectedRows = newSelectedRows; }
         setSelectedNodesById(newSelectedNodes: any) { return this.gridOptions.selectedNodesById = newSelectedNodes; }
         getIcons() { return this.gridOptions.icons; }
+        getIsScrollLag() { return this.gridOptions.isScrollLag; }
 
         getGroupRowInnerRenderer() {
             if (this.gridOptions.groupInnerRenderer) {

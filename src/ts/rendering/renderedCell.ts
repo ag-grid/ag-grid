@@ -101,7 +101,7 @@ module awk.grid {
 
         private setupComponents() {
             this.vGridCell = new awk.vdom.VHtmlElement("div");
-            this.vGridCell.setAttribute("col", this.column.index.toString());
+            this.vGridCell.setAttribute("col", this.column.index ? this.column.index.toString() : '');
 
             // only set tab index if cell selection is enabled
             if (!this.gridOptionsWrapper.isSuppressCellSelection()) {

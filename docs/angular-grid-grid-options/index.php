@@ -139,10 +139,6 @@ include '../documentation_header.php';
             <td>Set to true or false. When true, scrollbars are not used.</td>
         </tr>
         <tr>
-            <th>suppressVerticalScroll</th>
-            <td>Set to true or false. If true, then the grid will size it's height to it's content.</td>
-        </tr>
-        <tr>
             <th>rowSelected</th>
             <td>Function callback, gets called when a row is selected.</td>
         </tr>
@@ -241,6 +237,14 @@ include '../documentation_header.php';
             <th>toolPanelSuppressValues</th>
             <td>Set to true to not show the values in the tool panel. The pivot may optionally still
                 be shown. This is useful when you are providing your own aggregate function.</td>
+        </tr>
+        <tr>
+            <th>suppressScrollLag</br>isScrollLag</th>
+            <td>By default, scrolling lag is enabled for Safari and Internet Explorer (to solve scrolling performance
+                issues in these browsers). To override when to use scroll lag either a) set suppressScrollLag to
+                true to turn off scroll lag feature alltogether, or b) return true of false from the function
+                isScrollLag. This is a function, as it's expected your code will check the environment to decide
+                whether to use scroll lag or not.</td>
         </tr>
     </table>
 

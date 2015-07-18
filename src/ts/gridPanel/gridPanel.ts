@@ -307,7 +307,7 @@ module awk.grid {
             }
         }
 
-        private lazyScrollCounter = 0;
+        private scrollLagCounter = 0;
 
         private addScrollListener() {
             // if printing, then no scrolling, so no point in listening for scroll events
@@ -346,13 +346,32 @@ module awk.grid {
         }
 
         private requestDrawVirtualRows() {
-            this.lazyScrollCounter++;
-            var copyOfLazyScrollCounter = this.lazyScrollCounter;
-            setTimeout( ()=> {
-                if (this.lazyScrollCounter === copyOfLazyScrollCounter) {
-                    this.rowRenderer.drawVirtualRows();
-                }
-            }, 50);
+            // if we are in IE or Safari, then we only redraw if there was no scroll event
+            // in the 50ms following this scroll event. without this, these browsers have
+            // a bad scrolling feel, where the redraws clog the scroll experience
+            // (makes the scroll clunky and sticky). this method is like throttling
+            // the scroll events.
+            var useScrollLag: boolean;
+            // let the user override scroll lag option
+            if (this.gridOptionsWrapper.isSuppressScrollLag()) {
+                useScrollLag = false;
+            } else if (this.gridOptionsWrapper.getIsScrollLag()) {
+                useScrollLag = this.gridOptionsWrapper.getIsScrollLag()();
+            } else {
+                useScrollLag = utils.isBrowserIE() || utils.isBrowserSafari();
+            }
+            if (useScrollLag) {
+                this.scrollLagCounter++;
+                var scrollLagCounterCopy = this.scrollLagCounter;
+                setTimeout( ()=> {
+                    if (this.scrollLagCounter === scrollLagCounterCopy) {
+                        this.rowRenderer.drawVirtualRows();
+                    }
+                }, 50);
+            // all other browsers, afaik, are fine, so just do the redraw
+            } else {
+                this.rowRenderer.drawVirtualRows();
+            }
         }
 
         private scrollHeader(bodyLeftPosition: any) {

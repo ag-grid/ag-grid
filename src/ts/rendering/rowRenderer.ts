@@ -210,7 +210,7 @@ module awk.grid {
 
         private ensureRowsRendered() {
 
-            var start = new Date().getTime();
+            //var start = new Date().getTime();
 
             var mainRowWidth = this.columnModel.getBodyContainerWidth();
             var that = this;
@@ -243,8 +243,8 @@ module awk.grid {
                 }, 0);
             }
 
-            var end = new Date().getTime();
-            console.log(end-start);
+            //var end = new Date().getTime();
+            //console.log(end-start);
         }
 
         private insertRow(node: any, rowIndex: any, mainRowWidth: any) {

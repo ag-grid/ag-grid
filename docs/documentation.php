@@ -14,19 +14,25 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>12th July 2015</b>
+        <b>18th July 2015</b>
     </p>
 
     <p>
-        So I spent the entire weekend (that's a lie, I also played a lot of Bloodborne, and watched the
-        Colin Mcgregor fight) implementing a Virtual DOM. What REACT said made sense to me, maybe if I
-        implemented my own virtual DOM, I could put Angular Grid on steroids????
+        <b>The Saga of Performance</b>
+    </p>
+
+    <p>
+        The past week I've been refactoring and introducing different designs to attach performance.
+        In particular, performance on IE was crap. I implemented a) my own virtual DOM and
+        b) my own recycling of rows (ie rather than throw virtual rows away after been ripped out of the
+        DOM, reuse them by replacing their values and updating their 'top' position in the grid).
     </p>
     <p>
-        Well, it made it go faster, but not Ben Johnson faster. Here are some results of tests ran. The test
-        composed of creating a grid with 100,000 rows using the test drive, then timing how long it took the
-        grid to refresh after jumping to a random line number on the grid (in other words, how long it took to
-        redraw a full 'viewable page' of rows after a scroll).
+        Here are the latest results of the test I was running. The test composed of creating a grid with 100,000
+        rows using the test drive, then timing how long it took
+        the grid to refresh after jumping to a random line number on the grid (in other words, how long it took
+        to redraw a full 'viewable page' of rows after a scroll).
+
         <style>
             .mytable table {
                 border: 1px solid gray;
@@ -44,52 +50,67 @@ include 'documentation_header.php';
             <tr>
                 <th>Browser</th>
                 <th>Current Design</th>
-                <th>Virtual Dom</th>
-                <th>Decrease</th>
+                <th>Virtual DOM</th>
+                <th>Recycling Rows</th>
             </tr>
             <tr>
                 <td>Chrome</td>
                 <td>88ms</td>
-                <td>64ms</td>
-                <td>27%</td>
+                <td>88ms</td>
+                <td>78ms</td>
             </tr>
             <tr>
                 <td>Internet Explorer</td>
                 <td>673ms</td>
-                <td>382ms</td>
-                <td>43%</td>
+                <td>380ms</td>
+                <td>726ms</td>
             </tr>
             <tr>
                 <td>Firefox</td>
                 <td>101ms</td>
-                <td>69ms</td>
-                <td>31%</td>
+                <td>88ms</td>
+                <td>53ms</td>
             </tr>
         </table>
     </p>
-
     <p>
-        So it made Internet Explorer almost half in time, but Chrome only 27% decrease. I was hoping it would make
-        it go 10x faster in every browser (given all the hype about REACT being a faster than fast option??).
+        Long story short:
+    <li><b>Chrome:</b> Virtual DOM and Recycling made no difference to get excited about.</li>
+    <li><b>Firefox:</b> Virtual DOM made no real difference. Recycling made 50% reduction.</li>
+    <li><b>IE:</b> Recycling made no real difference. Virtual DOM made 50% reduction.</li>
     </p>
 
     <p>
-        Maybe I'm being a bit hard on myself. Twice as fast on IE is pretty good. But the virtual DOM
-        brought a whole new level of complexity into the design, and Internet Explorer is phasing out as
-        a browser anyway right? If I am to turn the grid engine inside out and make the grid more difficult to use,
-        it's gotta be for a reason greater than 27%.
+        To be honest, I am a bit annoyed!! I thought, you know, REACT, Virtual DOM, etc etc,
+        I was hoping for x10 faster. But only Internet Explorer benefit, while Chrome
+        and Firefox had little change.
+    </p>
+    <p>
+        So I had the choice, make Firefox faster with recycling rows, or IE faster with
+        virtual DOM. I decided on IE and virtual DOM as Firefox didn't have a performance
+        problem to start with, IE did.
+    </p>
+    <p>
+        So as of release 1.12 of ag-grid, a home grown virtual DOM is used.
     </p>
 
     <p>
-        <b>The plan??</b> Well I looked at the other grids (not ui-grid, I mean the other grids that I would take
-        inspiration from) and they all reuse DOM elements, ie when a row goes out of view, they don't rip
-        the row out of the DOM and create a new row for the new entry, they simply recycle the row, by
-        changing it's vertical position and updating it's details with the new data.
+        <b>New Feature: Scroll Lag</b><br/>
+        Internet Explorer, even with my performance improvements, still was clunky. So I've implemented 'scroll lag' so
+        that when you are vertically, it waits until the scroll has come to a steady point before redrawing the screen.
+        This gives a great usablility boost to Internet Explorer.
     </p>
 
     <p>
-        So that's what I'm in the middle of doing. I'm refactoring the design to allow for recycling of rows.
-        I'll then do my tests again and see if I can get the x10 speed increase I was looking for.
+        <b>New Callbacks</b><br/>
+        For column sorting / filtering: beforeSortChanged(), afterSortChanged(), beforeFilterChanged(), afterFilterChanged()<br/>
+        For column managing: columnResized(), columnVisibilityChanged(), columnOrderChanged()<br/>
+    </p>
+
+    <p>
+        <b>New Feature: Cell Expressions</b><br/>
+        Now you can have expressions in your cells, just like a spreadsheet. Read about it
+        <a href="angular-grid-cell-expressions/index.php">here</a>.
     </p>
 
     <!--
@@ -114,7 +135,7 @@ include 'documentation_header.php';
         </ul>
     -->
     <p>
-        I have no blockers. I also have no life.
+        I have no blockers.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>

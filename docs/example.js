@@ -115,6 +115,9 @@ gridsModule.controller('mainController', function($scope) {
             headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
 
+        // isScrollLag: function() { return false; },
+        suppressScrollLag: true,
+
         // callback when row clicked
         rowClicked: function(params) {
             //console.log("Callback rowClicked: " + params.data + " - " + params.event);

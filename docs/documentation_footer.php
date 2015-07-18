@@ -1,4 +1,4 @@
-<hr>
+<!--<hr>
 <hr>
 <hr>
 <hr>
@@ -29,7 +29,7 @@
             </script>
             <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
-            </div>
+            </div>-->
 
         </div>
 

@@ -558,6 +558,8 @@ module awk.grid {
         onNewCols() {
             this.setupColumns();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
+            // found that adding pinned column can upset the layout
+            this.doLayout();
         }
 
         updateBodyContainerWidthAfterColResize() {

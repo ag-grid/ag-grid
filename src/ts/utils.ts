@@ -6,6 +6,11 @@ module awk.grid {
 
     export class Utils {
 
+        // taken from:
+        // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+        private static isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
+        private static isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+
         static iterateObject(object: any, callback: (key:string, value: any) => void) {
             var keys = Object.keys(object);
             for (var i = 0; i < keys.length; i++) {
@@ -389,6 +394,15 @@ module awk.grid {
                 element.style.display = 'none';
             }
         }
+
+        static isBrowserIE(): boolean {
+            return this.isIE;
+        }
+
+        static isBrowserSafari(): boolean {
+            return this.isSafari;
+        }
+
     }
 }
 

@@ -208,19 +208,15 @@ module awk.grid {
         }
 
         private createGroupRow() {
-            //var eGroupRow = this.createGroupSpanningEntireRowCell(false);
-            //_.removeAllChildren(this.eBodyRow);
-            //if (this.pinning) {
-            //    _.removeAllChildren(this.ePinnedRow);
-            //}
-            //
-            //if (this.pinning) {
-            //    this.ePinnedRow.appendChild(eGroupRow);
-            //    var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-            //    this.eBodyRow.appendChild(eGroupRowPadding);
-            //} else {
-            //    this.eBodyRow.appendChild(eGroupRow);
-            //}
+            var eGroupRow = this.createGroupSpanningEntireRowCell(false);
+
+            if (this.pinning) {
+                this.vPinnedRow.appendChild(eGroupRow);
+                var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
+                this.vBodyRow.appendChild(eGroupRowPadding);
+            } else {
+                this.vBodyRow.appendChild(eGroupRow);
+            }
         }
 
         private createGroupSpanningEntireRowCell(padding: any) {

@@ -72,6 +72,8 @@ module awk.grid {
         headerHeight?: number;
         pinnedColumnCount?: number;
         localeText?: any;
+        isScrollLag?(): boolean;
+        suppressScrollLag?(): boolean;
     }
 
 }
