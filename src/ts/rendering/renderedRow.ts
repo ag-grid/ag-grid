@@ -7,6 +7,7 @@
 /// <reference path="../templateService.ts" />
 /// <reference path="../selectionController.ts" />
 /// <reference path="renderedCell.ts" />
+/// <reference path="../virtualDom/vHtmlElement.ts" />
 
 module awk.grid {
 
@@ -14,14 +15,8 @@ module awk.grid {
 
     export class RenderedRow {
 
-        public ePinnedRow: any;
-        public eBodyRow: any;
-
-        private dynamicClasses: string[];
-        private fixedClasses: string[];
-
-        private currentStyles: any;
-        private dynamicStyles: any;
+        public vPinnedRow: any;
+        public vBodyRow: any;
 
         private renderedCells: {[key: number]: RenderedCell} = {};
         private scope: any;
@@ -77,96 +72,60 @@ module awk.grid {
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
             var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
 
-            this.eBodyRow = this.createRowContainer();
-            this.eBodyContainer.appendChild(this.eBodyRow);
+            this.vBodyRow = this.createRowContainer();
             if (this.pinning) {
-                this.ePinnedRow = this.createRowContainer();
-                this.ePinnedContainer.appendChild(this.ePinnedRow);
+                this.vPinnedRow = this.createRowContainer();
             }
-            this.fixedClasses = [];
-            this.addFixedClassesToRow();
 
             this.rowIndex = rowIndex;
             this.node = node;
-            this.destroyScope();
             this.scope = this.createChildScopeOrNull(node.data);
 
             if (!rowIsHeaderThatSpans) {
                 this.drawNormalRow();
             }
 
-            this.dynamicStyles = {};
-            this.dynamicClasses = [];
-
             this.addDynamicStyles();
             this.addDynamicClasses();
 
-            this.eBodyRow.setAttribute('row', this.rowIndex.toString());
+            this.vBodyRow.setAttribute('row', this.rowIndex.toString());
             if (this.pinning) {
-                this.ePinnedRow.setAttribute('row', this.rowIndex.toString());
+                this.vPinnedRow.setAttribute('row', this.rowIndex.toString());
             }
 
             // if showing scrolls, position on the container
             if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-                this.eBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                this.vBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
                 if (this.pinning) {
-                    this.ePinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                    this.vPinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
                 }
             }
-            this.eBodyRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+            this.vBodyRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
             if (this.pinning) {
-                this.ePinnedRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+                this.vPinnedRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
             }
 
             // if group item, insert the first row
             if (rowIsHeaderThatSpans) {
-                this.bindGroupRow();
+                this.createGroupRow();
             }
 
-            this.applyStyles();
-            this.applyClasses();
+            this.bindVirtualElement(this.vBodyRow);
+            if (this.pinning) {
+                this.bindVirtualElement(this.vPinnedRow);
+            }
 
             if (this.scope) {
-                this.$compile(this.eBodyRow)(this.scope);
+                this.$compile(this.vBodyRow.getElement())(this.scope);
                 if (this.pinning) {
-                    this.$compile(this.ePinnedRow)(this.scope);
+                    this.$compile(this.vPinnedRow.getElement())(this.scope);
                 }
             }
-        }
 
-        private applyClasses(): void {
-            this.eBodyRow.className = this.fixedClasses.join(' ') + ' ' + this.dynamicClasses.join(' ');
+            this.eBodyContainer.appendChild(this.vBodyRow.getElement());
             if (this.pinning) {
-                this.ePinnedRow.className = this.fixedClasses.join(' ') + ' ' + this.dynamicClasses.join(' ');
+                this.ePinnedContainer.appendChild(this.vPinnedRow.getElement());
             }
-        }
-
-        private applyStyles(): void {
-
-            // set the styles
-            if (this.dynamicStyles) {
-                _.iterateObject(this.dynamicStyles, (key: string, value: any) => {
-                    this.eBodyRow.style[key] = value;
-                    if (this.pinning) {
-                        this.ePinnedRow.style[key] = value;
-                    }
-                });
-            }
-
-            // remove old styles. go through the old list, and if not in the new
-            // list, the style was applied before, but not now, so should be removed
-            if (this.currentStyles) {
-                _.iterateObject(this.currentStyles, (key: string, value: any) => {
-                    if (!this.dynamicStyles || !this.dynamicStyles[key]) {
-                        this.eBodyRow.style[key] = null;
-                        if (this.pinning) {
-                            this.ePinnedRow.style[key] = null;
-                        }
-                    }
-                });
-            }
-
-            this.currentStyles = this.dynamicStyles;
         }
 
         public onRowSelected(selected: boolean): void {
@@ -200,9 +159,9 @@ module awk.grid {
             this.destroyScope();
 
             if (this.pinning) {
-                this.ePinnedContainer.removeChild(this.ePinnedRow);
+                this.ePinnedContainer.removeChild(this.vPinnedRow.getElement());
             }
-            this.eBodyContainer.removeChild(this.eBodyRow);
+            this.eBodyContainer.removeChild(this.vBodyRow.getElement());
         }
 
         private destroyScope(): void {
@@ -231,39 +190,37 @@ module awk.grid {
                     this.cellRendererMap, this.node, this.rowIndex, this.scope);
 
                 var vGridCell = renderedCell.getVGridCell();
-                var eGridCell = this.createRealElementFromVirtual(vGridCell);
 
                 if (column.pinned) {
-                    this.ePinnedRow.appendChild(eGridCell);
+                    this.vPinnedRow.appendChild(vGridCell);
                 } else {
-                    this.eBodyRow.appendChild(eGridCell);
+                    this.vBodyRow.appendChild(vGridCell);
                 }
 
                 this.renderedCells[column.index] = renderedCell;
             }
         }
 
-        private createRealElementFromVirtual(vElement: awk.vdom.VHtmlElement): Element {
+        private bindVirtualElement(vElement: awk.vdom.VHtmlElement): void {
             var html = vElement.toHtmlString();
             var element: Element = <Element> _.loadTemplate(html);
             vElement.elementAttached(element);
-            return element;
         }
 
-        private bindGroupRow() {
-            var eGroupRow = this.createGroupSpanningEntireRowCell(false);
-            _.removeAllChildren(this.eBodyRow);
-            if (this.pinning) {
-                _.removeAllChildren(this.ePinnedRow);
-            }
-
-            if (this.pinning) {
-                this.ePinnedRow.appendChild(eGroupRow);
-                var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-                this.eBodyRow.appendChild(eGroupRowPadding);
-            } else {
-                this.eBodyRow.appendChild(eGroupRow);
-            }
+        private createGroupRow() {
+            //var eGroupRow = this.createGroupSpanningEntireRowCell(false);
+            //_.removeAllChildren(this.eBodyRow);
+            //if (this.pinning) {
+            //    _.removeAllChildren(this.ePinnedRow);
+            //}
+            //
+            //if (this.pinning) {
+            //    this.ePinnedRow.appendChild(eGroupRow);
+            //    var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
+            //    this.eBodyRow.appendChild(eGroupRowPadding);
+            //} else {
+            //    this.eBodyRow.appendChild(eGroupRow);
+            //}
         }
 
         private createGroupSpanningEntireRowCell(padding: any) {
@@ -298,7 +255,7 @@ module awk.grid {
         }
 
         public setMainRowWidth(width: number) {
-            this.eBodyRow.style.width = width + "px";
+            this.vBodyRow.addStyles({width: width + "px"});
         }
 
         private createChildScopeOrNull(data: any) {
@@ -328,22 +285,21 @@ module awk.grid {
                     cssToUse = rowStyle;
                 }
 
-                if (cssToUse) {
-                    Object.keys(cssToUse).forEach(function (key: any) {
-                        _.assign(this.dynamicStyles, cssToUse);
-                    });
+                this.vBodyRow.addStyles(cssToUse);
+                if (this.pinning) {
+                    this.vPinnedRow.addStyles(cssToUse);
                 }
             }
         }
 
         private createRowContainer() {
-            var eRow = document.createElement("div");
+            var vRow = new awk.vdom.VHtmlElement('div');
             var that = this;
-            eRow.addEventListener("click", function (event) {
+            vRow.addEventListener("click", function (event) {
                 that.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), that.node)
             });
 
-            return eRow;
+            return vRow;
         }
 
         public getRowNode(): any {
@@ -355,33 +311,37 @@ module awk.grid {
         }
 
         private addDynamicClasses() {
-            this.dynamicClasses.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
+            var classes: string[] = [];
+
+            classes.push('ag-row');
+
+            classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
             if (this.selectionController.isNodeSelected(this.node)) {
-                this.dynamicClasses.push("ag-row-selected");
+                classes.push("ag-row-selected");
             }
 
             if (this.node.group) {
-                this.dynamicClasses.push("ag-row-group");
+                classes.push("ag-row-group");
                 // if a group, put the level of the group in
-                this.dynamicClasses.push("ag-row-level-" + this.node.level);
+                classes.push("ag-row-level-" + this.node.level);
 
                 if (!this.node.footer && this.node.expanded) {
-                    this.dynamicClasses.push("ag-row-group-expanded");
+                    classes.push("ag-row-group-expanded");
                 }
                 if (!this.node.footer && !this.node.expanded) {
                     // opposite of expanded is contracted according to the internet.
-                    this.dynamicClasses.push("ag-row-group-contracted");
+                    classes.push("ag-row-group-contracted");
                 }
                 if (this.node.footer) {
-                    this.dynamicClasses.push("ag-row-footer");
+                    classes.push("ag-row-footer");
                 }
             } else {
                 // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
                 if (this.node.parent) {
-                    this.dynamicClasses.push("ag-row-level-" + (this.node.parent.level + 1));
+                    classes.push("ag-row-level-" + (this.node.parent.level + 1));
                 } else {
-                    this.dynamicClasses.push("ag-row-level-0");
+                    classes.push("ag-row-level-0");
                 }
             }
 
@@ -405,18 +365,19 @@ module awk.grid {
 
                 if (classToUse) {
                     if (typeof classToUse === 'string') {
-                        this.dynamicClasses.push(classToUse);
+                        classes.push(classToUse);
                     } else if (Array.isArray(classToUse)) {
                         classToUse.forEach(function (classItem: any) {
-                            this.dynamicClasses.push(classItem);
+                            classes.push(classItem);
                         });
                     }
                 }
             }
-        }
 
-        private addFixedClassesToRow() {
-            this.fixedClasses.push("ag-row");
+            this.vBodyRow.addClasses(classes);
+            if (this.pinning) {
+                this.vPinnedRow.addClasses(classes);
+            }
         }
     }
 
