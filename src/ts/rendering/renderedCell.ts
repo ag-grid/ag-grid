@@ -6,6 +6,8 @@
 /// <reference path="rowRenderer.ts" />
 /// <reference path="../selectionController.ts" />
 /// <reference path="../templateService.ts" />
+/// <reference path="../virtualDom/vHtmlElement.ts" />
+/// <reference path="../virtualDom/vWrapperElement.ts" />
 
 module awk.grid {
 
@@ -13,6 +15,7 @@ module awk.grid {
 
     export class RenderedCell {
 
+        private vGridCell: awk.vdom.VHtmlElement; // the outer cell
         private eGridCell: any; // the outer cell
         private eSpanWithValue: any; // inner cell
         private eCellWrapper: HTMLElement;
@@ -37,12 +40,6 @@ module awk.grid {
         private cellRendererMap: {[key: string]: Function};
         private eCheckbox: HTMLInputElement;
 
-        private fixedClasses: string[] = []; // set once, don't change between bind
-        private dynamicClasses: string[] = []; // set at each bind
-
-        private currentStyles: any;
-        private dynamicStyles: any;
-
         private value: any;
 
         constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
@@ -62,15 +59,13 @@ module awk.grid {
             this.$compile = $compile;
             this.templateService = templateService;
 
-            this.valueGetter = this.createValueGetter();
-            this.setupComponents();
-
             this.node = node;
             this.rowIndex = rowIndex;
             this.scope = scope;
             this.data = this.getDataForRow();
 
-            this.refreshCell(false);
+            this.valueGetter = this.createValueGetter();
+            this.setupComponents();
         }
 
         public getGridCell(): any {
@@ -100,39 +95,13 @@ module awk.grid {
             };
         }
 
-        private applyStyles(): void {
-
-            // set the styles
-            if (this.dynamicStyles) {
-                _.iterateObject(this.dynamicStyles, (key: string, value: any) => {
-                    this.eGridCell.style[key] = value;
-                });
-            }
-
-            // remove old styles. go through the old list, and if not in the new
-            // list, the style was applied before, but not now, so should be removed
-            if (this.currentStyles) {
-                _.iterateObject(this.currentStyles, (key: string, value: any) => {
-                    if (!this.dynamicStyles || !this.dynamicStyles[key]) {
-                        this.eGridCell.style[key] = null;
-                    }
-                });
-            }
-
-            this.currentStyles = this.dynamicStyles;
-        }
-
-        private applyClasses(): void {
-            this.eGridCell.className = this.fixedClasses.join(' ') + ' ' + this.dynamicClasses.join(' ');
-        }
-
         private setupComponents() {
-            this.eGridCell = document.createElement("div");
-            this.eGridCell.setAttribute("col", this.column.index);
+            this.vGridCell = new awk.vdom.VHtmlElement("div");
+            this.vGridCell.setAttribute("col", this.column.index.toString());
 
             // only set tab index if cell selection is enabled
             if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
-                this.eGridCell.setAttribute("tabindex", "-1");
+                this.vGridCell.setAttribute("tabindex", "-1");
             }
 
             // these are the grid styles, don't change between soft refreshes
@@ -142,9 +111,16 @@ module awk.grid {
             this.addCellDoubleClickedHandler();
             this.addCellNavigationHandler();
 
-            this.eGridCell.style.width = _.formatWidth(this.column.actualWidth);
+            this.vGridCell.addStyles({width: this.column.actualWidth});
 
             this.createCellWrapper();
+
+            this.populateCell();
+
+            if (this.eCheckbox) {
+                this.setSelected(this.selectionController.isNodeSelected(this.node));
+            }
+
         }
 
         // called by rowRenderer when user navigates via tab key
@@ -241,7 +217,7 @@ module awk.grid {
         private addCellDoubleClickedHandler() {
             var that = this;
             var colDef = this.column.colDef;
-            this.eGridCell.addEventListener('dblclick', function (event: any) {
+            this.vGridCell.addEventListener('dblclick', function (event: any) {
                 if (that.gridOptionsWrapper.getCellDoubleClicked()) {
                     var paramsForGrid = {
                         node: that.node,
@@ -303,7 +279,7 @@ module awk.grid {
         private addCellClickedHandler() {
             var colDef = this.column.colDef;
             var that = this;
-            this.eGridCell.addEventListener("click", function (event: any) {
+            this.vGridCell.addEventListener("click", function (event: any) {
                 // we pass false to focusCell, as we don't want the cell to focus
                 // also get the browser focus. if we did, then the cellRenderer could
                 // have a text field in it, for example, and as the user clicks on the
@@ -371,6 +347,7 @@ module awk.grid {
                 }
 
                 if (cssToUse) {
+
                     _.assign(this.dynamicStyles, cssToUse);
                 }
             }
@@ -442,7 +419,7 @@ module awk.grid {
         // rename this to 'add key event listener
         private addCellNavigationHandler() {
             var that = this;
-            this.eGridCell.addEventListener('keydown', function (event: any) {
+            this.vGridCell.addEventListener('keydown', function (event: any) {
                 if (that.editingCell) {
                     return;
                 }
@@ -521,21 +498,21 @@ module awk.grid {
         }
 
         private createCellWrapper() {
-            this.eCellWrapper = document.createElement('span');
-            this.eCellWrapper.className = 'ag-cell-wrapper';
-            this.eGridCell.appendChild(this.eCellWrapper);
+            var vCellWrapper = new awk.vdom.VHtmlElement('span');
+            vCellWrapper.className = 'ag-cell-wrapper';
+            this.vGridCell.appendChild(vCellWrapper);
 
             var colDef = this.column.colDef;
             if (colDef.checkboxSelection) {
                 this.createSelectionCheckbox();
-                this.eCellWrapper.appendChild(this.eCheckbox);
+                vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
             }
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.eSpanWithValue = document.createElement('span');
-            this.eSpanWithValue.className = 'ag-cell-value';
+            var vSpanWithValue = new awk.vdom.VHtmlElement('span');
+            vSpanWithValue.addClass('ag-cell-value');
 
-            this.eCellWrapper.appendChild(this.eSpanWithValue);
+            vCellWrapper.appendChild(this.eSpanWithValue);
         }
 
         public isVolatile() {
@@ -545,11 +522,8 @@ module awk.grid {
         public refreshCell(compile: boolean) {
 
             _.removeAllChildren(this.eSpanWithValue);
-            this.dynamicClasses = [];
-            this.dynamicStyles = {};
             this.value = this.valueGetter();
 
-            this.addDynamicClasses();
             this.populateCell();
 
             this.applyClasses();
@@ -624,17 +598,15 @@ module awk.grid {
         }
 
         private addFixedClasses() {
-            this.fixedClasses.push('ag-cell');
-            this.fixedClasses.push('ag-cell-no-focus');
-            this.fixedClasses.push('cell-col-' + this.column.index);
-        }
+            this.vGridCell.addClass('ag-cell');
+            this.vGridCell.addClass('ag-cell-no-focus');
+            this.vGridCell.addClass('cell-col-' + this.column.index);
 
-        private addDynamicClasses() {
             if (this.node.group) {
                 if (this.node.footer) {
-                    this.dynamicClasses.push('ag-footer-cell');
+                    this.vGridCell.addClass('ag-footer-cell');
                 } else {
-                    this.dynamicClasses.push('ag-group-cell');
+                    this.vGridCell.addClass('ag-group-cell');
                 }
             }
         }
