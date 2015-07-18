@@ -11,11 +11,19 @@ include '../documentation_header.php';
     <h2>Selection</h2>
 
     <p>
-        Selection can be either single row selection or multiple row selection.
+        All the currently selected rows are stored on the grid options. Firstly in an array <b>selectedRows</b>
+        that stores the data. Secondly is <b>selectedNodesById</b> that is a map of node id's (node id's are
+        created by the grid) to selected nodes.
     </p>
 
     <p>
-        All the currently selected rows are stored in an array on the grid options named selectedRows.
+        Use <b>selectedRows</b> to get list of the data items you provided, with the node information.
+        This was implemented to give a familiar feel to people using ui-grid.</p>
+
+    <p>
+        Use <b>selectedNodesById</b> if you want to work with the ag-grid nodes. This is preferred over
+        selectedRows, as it provide you with more information and maps better to the internal representation
+        of ag-grid.
     </p>
 
     <h3>Single Row Selection</h3>

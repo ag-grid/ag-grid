@@ -78,7 +78,9 @@ gridOptions.api.onNewDatasource();</pre>
             <th>rowCount</th>
             <td>The total number of rows, if known, in the data set on the server. If it's unknown, do not set, or set to -1. This
                 will put the grid into <i>infinite scrolling</i> mode until the last row is reached. The definition of infinite scrolling
-            depends on whether you are doing pagination or virtual paging and is explained in each of those sections.</td>
+                depends on whether you are doing pagination or virtual paging and is explained in each of those sections.
+                <b>rowCount is only used when you set the datasource</b> - if you discover what the last row is after
+                data comes back from the server, provide this info as the second parameter of the <i>successCallback</i></td>
         </tr>
         <tr>
             <th>overflowSize</th>

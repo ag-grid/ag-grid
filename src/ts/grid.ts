@@ -266,7 +266,6 @@ module awk.grid {
             this.headerRenderer.updateSortIcons();
             this.gridPanel.setBodyContainerWidth();
             this.gridPanel.setPinnedColContainerWidth();
-            this.rowRenderer.destroyAllRows();
             this.rowRenderer.refreshView();
         }
 
@@ -558,7 +557,6 @@ module awk.grid {
 
         onNewCols() {
             this.setupColumns();
-            this.rowRenderer.destroyAllRows();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
         }
 

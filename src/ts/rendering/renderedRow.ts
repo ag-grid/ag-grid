@@ -12,14 +12,10 @@ module awk.grid {
 
     var _ = Utils;
 
-    export enum RowType {Normal, GroupSpanningRow};
-
     export class RenderedRow {
 
         public ePinnedRow: any;
         public eBodyRow: any;
-
-        private type: RowType;
 
         private dynamicClasses: string[];
         private fixedClasses: string[];
@@ -59,9 +55,10 @@ module awk.grid {
                     templateService: TemplateService,
                     selectionController: SelectionController,
                     rowRenderer: RowRenderer,
-                    type: RowType,
                     eBodyContainer: HTMLElement,
-                    ePinnedContainer: HTMLElement) {
+                    ePinnedContainer: HTMLElement,
+                    node: any,
+                    rowIndex: number) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.parentScope = parentScope;
             this.angularGrid = angularGrid;
@@ -74,9 +71,11 @@ module awk.grid {
             this.selectionController = selectionController;
             this.rowRenderer = rowRenderer;
             this.pinning = this.columns[0].pinned;
-            this.type = type;
             this.eBodyContainer = eBodyContainer;
             this.ePinnedContainer = ePinnedContainer;
+
+            var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
+            var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
 
             this.eBodyRow = this.createRowContainer();
             this.eBodyContainer.appendChild(this.eBodyRow);
@@ -87,20 +86,13 @@ module awk.grid {
             this.fixedClasses = [];
             this.addFixedClassesToRow();
 
-            if (this.type === RowType.Normal) {
-                this.drawNormalRow();
-            }
-        }
-
-        public bind(node: any, rowIndex: number) {
             this.rowIndex = rowIndex;
             this.node = node;
             this.destroyScope();
             this.scope = this.createChildScopeOrNull(node.data);
 
-            this.eBodyRow.style.display = 'block';
-            if (this.pinning) {
-                this.ePinnedRow.style.display = 'block';
+            if (!rowIsHeaderThatSpans) {
+                this.drawNormalRow();
             }
 
             this.dynamicStyles = {};
@@ -127,12 +119,8 @@ module awk.grid {
             }
 
             // if group item, insert the first row
-            if (this.type === RowType.GroupSpanningRow) {
+            if (rowIsHeaderThatSpans) {
                 this.bindGroupRow();
-            } else {
-                _.iterateObject(this.renderedCells, (key: string, renderedCell: RenderedCell)=> {
-                    renderedCell.bind(this.node, this.rowIndex, this.scope);
-                });
             }
 
             this.applyStyles();
@@ -208,17 +196,6 @@ module awk.grid {
             }
         }
 
-        public unbind(): void {
-            //this.eBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "-100px";
-            //if (this.pinning) {
-            //    this.ePinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "-100px";
-            //}
-            this.eBodyRow.style.display = 'none';
-            if (this.pinning) {
-                this.ePinnedRow.style.display = 'none';
-            }
-        }
-
         public destroy(): void {
             this.destroyScope();
 
@@ -251,7 +228,7 @@ module awk.grid {
                 var renderedCell = new RenderedCell(firstCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
-                    this.cellRendererMap);
+                    this.cellRendererMap, this.node, this.rowIndex, this.scope);
 
                 var eGridCell = renderedCell.getGridCell();
                 if (column.pinned) {
@@ -262,10 +239,6 @@ module awk.grid {
 
                 this.renderedCells[column.index] = renderedCell;
             }
-        }
-
-        public getType(): RowType {
-            return this.type;
         }
 
         private bindGroupRow() {

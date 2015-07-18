@@ -76,8 +76,11 @@ module.controller("exampleCtrl", function($scope, $http) {
                     // take a chunk of the array, matching the start and finish times
                     var dataAfterSortingAndFiltering = sortAndFilter(params.sortModel, params.filterModel);
                     var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
+                    // see if we have come to the last page. if we have, set lastRow to
+                    // the very last row of the last page. if you are getting data from
+                    // a server, lastRow could be returned separately if the lastRow
+                    // is not in the current page.
                     var lastRow = -1;
-                    // see if we have come to the last page, and if so, return it
                     if (dataAfterSortingAndFiltering.length <= params.endRow) {
                         lastRow = dataAfterSortingAndFiltering.length;
                     }

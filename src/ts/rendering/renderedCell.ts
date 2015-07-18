@@ -48,7 +48,8 @@ module awk.grid {
         constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
-                    templateService: TemplateService, cellRendererMap: {[key: string]: any}) {
+                    templateService: TemplateService, cellRendererMap: {[key: string]: any},
+                    node: any, rowIndex: number, scope: any) {
 
             this.isFirstColumn = isFirstColumn;
             this.column = column;
@@ -63,9 +64,7 @@ module awk.grid {
 
             this.valueGetter = this.createValueGetter();
             this.setupComponents();
-        }
 
-        public bind(node: any, rowIndex: number, scope: any): void {
             this.node = node;
             this.rowIndex = rowIndex;
             this.scope = scope;
