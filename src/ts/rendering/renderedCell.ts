@@ -20,6 +20,8 @@ module awk.grid {
         private vCellWrapper: awk.vdom.VHtmlElement;
         private vParentOfValue: awk.vdom.VHtmlElement;
 
+        private checkboxOnChangeListener: EventListener;
+
         private column: Column;
         private data: any;
         private node: any;
@@ -467,8 +469,6 @@ module awk.grid {
             });
         }
 
-        private checkboxOnChangeListener: EventListener;
-
         public createSelectionCheckbox() {
 
             this.eCheckbox = document.createElement('input');
@@ -476,23 +476,27 @@ module awk.grid {
             this.eCheckbox.name = "name";
             this.eCheckbox.className = 'ag-selection-checkbox';
 
-            this.eCheckbox.onclick = function (event) {
+            this.eCheckbox.addEventListener('click', function (event) {
                 event.stopPropagation();
-            };
+            });
 
-            this.checkboxOnChangeListener = ()=> {
-                var newValue = this.eCheckbox.checked;
+            var that = this;
+            this.checkboxOnChangeListener = function() {
+                var newValue = that.eCheckbox.checked;
                 if (newValue) {
-                    this.selectionController.selectIndex(this.rowIndex, true);
+                    that.selectionController.selectIndex(that.rowIndex, true);
                 } else {
-                    this.selectionController.deselectIndex(this.rowIndex);
+                    that.selectionController.deselectIndex(that.rowIndex);
                 }
             };
-            this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+            this.eCheckbox.onchange = this.checkboxOnChangeListener;
         }
 
         public setSelected(state: boolean) {
-            this.eCheckbox.removeEventListener('onchange', this.checkboxOnChangeListener);
+            if (!this.eCheckbox) {
+                return;
+            }
+            this.eCheckbox.onchange = null;
             if (typeof state === 'boolean') {
                 this.eCheckbox.checked = state;
                 this.eCheckbox.indeterminate = false;
@@ -501,7 +505,7 @@ module awk.grid {
                 // are a mix of selected and unselected
                 this.eCheckbox.indeterminate = true;
             }
-            this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+            this.eCheckbox.onchange = this.checkboxOnChangeListener;
         }
 
         private createParentOfValue() {

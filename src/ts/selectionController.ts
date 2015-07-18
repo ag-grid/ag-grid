@@ -337,7 +337,7 @@ module awk.grid {
                 }
             }
 
-            // this stope the event firing the very first the time grid is initialised. without this, the documentation
+            // this stop the event firing the very first the time grid is initialised. without this, the documentation
             // page had a popup in the 'selection' page as soon as the page was loaded!!
             var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
 

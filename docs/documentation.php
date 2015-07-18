@@ -6,8 +6,21 @@ $pageKeyboards = "AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="text-align: center">
-    <a href="http://angularconnect.com/"><img src="images/angularConnectBanner.png"/></a>
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px;">
+    <div style="float: left;">
+        <img src="images/star.png"/>
+    </div>
+    <div style="float: right;">
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=star&count=true&size=large"
+                frameborder="0" scrolling="0" width="160px" height="30px">
+        </iframe>
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=watch&count=true&size=large&v=2"
+                frameborder="0" scrolling="0" width="160px" height="30px">
+        </iframe>
+    </div>
+    <div style="text-align: center; font-weight: bold; font-size: 22px;">
+        Show your support, star Angular Grid on Github
+    </div>
 </div>
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
@@ -305,6 +318,11 @@ include 'documentation_header.php';
     </div>
 
 </div>
+
+<div style="text-align: center">
+    <a href="http://angularconnect.com/"><img src="images/angularConnectBanner.png"/></a>
+</div>
+
 
 <div style="padding: 20px;">
 

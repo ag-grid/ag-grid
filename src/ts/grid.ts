@@ -540,6 +540,7 @@ module awk.grid {
                     }
                 });
             }
+            this.rowRenderer.onRowSelected(rowIndex, selected);
         }
 
         onVirtualRowRemoved(rowIndex: any) {

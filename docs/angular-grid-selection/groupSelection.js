@@ -22,6 +22,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupKeys: ['country','sport'],
         groupAggFunction: groupAggFunction,
         groupSelectsChildren: true,
+        suppressRowClickSelection: true,
         groupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
             cellRenderer: {
                 renderer: "group",
