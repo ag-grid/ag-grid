@@ -18,6 +18,7 @@ module awk.grid {
         private vGridCell: awk.vdom.VHtmlElement; // the outer cell
         private vSpanWithValue: awk.vdom.VHtmlElement; // inner cell
         private vCellWrapper: awk.vdom.VHtmlElement;
+        private vParentOfValue: awk.vdom.VHtmlElement;
 
         private column: Column;
         private data: any;
@@ -40,6 +41,7 @@ module awk.grid {
         private eCheckbox: HTMLInputElement;
 
         private value: any;
+        private checkboxSelection: boolean;
 
         constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
@@ -57,6 +59,8 @@ module awk.grid {
             this.cellRendererMap = cellRendererMap;
             this.$compile = $compile;
             this.templateService = templateService;
+
+            this.checkboxSelection = this.column.colDef.checkboxSelection;
 
             this.node = node;
             this.rowIndex = rowIndex;
@@ -113,7 +117,7 @@ module awk.grid {
 
             this.vGridCell.addStyles({width: this.column.actualWidth + "px"});
 
-            this.createCellWrapper();
+            this.createParentOfValue();
 
             this.populateCell();
 
@@ -127,7 +131,7 @@ module awk.grid {
         public startEditing() {
             var that = this;
             this.editingCell = true;
-            this.vGridCell.getElement().removeChild(this.vCellWrapper.getElement());
+            _.removeAllChildren(this.vGridCell.getElement());
             var eInput = document.createElement('input');
             eInput.type = 'text';
             _.addCssClass(eInput, 'ag-cell-edit-input');
@@ -210,7 +214,9 @@ module awk.grid {
             }
 
             _.removeAllChildren(this.vGridCell.getElement());
-            this.vGridCell.appendChild(this.vCellWrapper.getElement());
+            if (this.checkboxSelection) {
+                this.vGridCell.appendChild(this.vCellWrapper.getElement());
+            }
             this.refreshCell();
         }
 
@@ -498,22 +504,29 @@ module awk.grid {
             this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
         }
 
-        private createCellWrapper() {
-            this.vCellWrapper = new awk.vdom.VHtmlElement('span');
-            this.vCellWrapper.addClass('ag-cell-wrapper');
-            this.vGridCell.appendChild(this.vCellWrapper);
+        private createParentOfValue() {
+            if (this.checkboxSelection) {
+                this.vCellWrapper = new awk.vdom.VHtmlElement('span');
+                this.vCellWrapper.addClass('ag-cell-wrapper');
+                this.vGridCell.appendChild(this.vCellWrapper);
 
-            var colDef = this.column.colDef;
-            if (colDef.checkboxSelection) {
-                this.createSelectionCheckbox();
-                this.vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
+                var colDef = this.column.colDef;
+                if (colDef.checkboxSelection) {
+                    this.createSelectionCheckbox();
+                    this.vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
+                }
+
+                // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
+                this.vSpanWithValue = new awk.vdom.VHtmlElement('span');
+                this.vSpanWithValue.addClass('ag-cell-value');
+
+                this.vCellWrapper.appendChild(this.vSpanWithValue);
+
+                this.vParentOfValue = this.vSpanWithValue;
+            } else {
+                this.vGridCell.addClass('ag-cell-value');
+                this.vParentOfValue = this.vGridCell;
             }
-
-            // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.vSpanWithValue = new awk.vdom.VHtmlElement('span');
-            this.vSpanWithValue.addClass('ag-cell-value');
-
-            this.vCellWrapper.appendChild(this.vSpanWithValue);
         }
 
         public isVolatile() {
@@ -522,12 +535,12 @@ module awk.grid {
 
         public refreshCell() {
 
-            _.removeAllChildren(this.vSpanWithValue.getElement());
+            _.removeAllChildren(this.vParentOfValue.getElement());
             this.value = this.valueGetter();
 
             this.populateCell();
 
-            if (this.eCheckbox) {
+            if (this.checkboxSelection) {
                 this.setSelected(this.selectionController.isNodeSelected(this.node));
             }
 
@@ -541,18 +554,18 @@ module awk.grid {
             // template gets preference, then cellRenderer, then do it ourselves
             var colDef = this.column.colDef;
             if (colDef.template) {
-                this.vSpanWithValue.setInnerHtml(colDef.template);
+                this.vParentOfValue.setInnerHtml(colDef.template);
             } else if (colDef.templateUrl) {
                 var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
                 if (template) {
-                    this.vSpanWithValue.setInnerHtml(template);
+                    this.vParentOfValue.setInnerHtml(template);
                 }
             } else if (colDef.cellRenderer) {
                 this.useCellRenderer();
             } else {
                 // if we insert undefined, then it displays as the string 'undefined', ugly!
                 if (this.value !== undefined && this.value !== null && this.value !== '') {
-                    this.vSpanWithValue.setInnerHtml(this.value);
+                    this.vParentOfValue.setInnerHtml(this.value);
                 }
             }
         }
@@ -588,10 +601,10 @@ module awk.grid {
             var resultFromRenderer = cellRenderer(rendererParams);
             if (_.isNodeOrElement(resultFromRenderer)) {
                 // a dom node or element was returned, so add child
-                this.vSpanWithValue.appendChild(resultFromRenderer);
+                this.vParentOfValue.appendChild(resultFromRenderer);
             } else {
                 // otherwise assume it was html, so just insert
-                this.vSpanWithValue.setInnerHtml(resultFromRenderer);
+                this.vParentOfValue.setInnerHtml(resultFromRenderer);
             }
         }
 

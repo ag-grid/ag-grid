@@ -163,7 +163,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var defaultCols = [
         //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-        //firstColumn,
+        firstColumn,
         {headerName: "Country", field: "country", headerGroup: 'Participant', width: 150, editable: editableFunc, cellRenderer: countryCellRenderer, filter: 'set',
             floatCell: true,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
@@ -224,9 +224,9 @@ gridsModule.controller('mainController', function($scope) {
     createCols();
     createData();
 
-    setInterval(function() {
-        $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
-    }, 1000);
+    //setInterval(function() {
+    //    $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
+    //}, 1000);
 
     $scope.jumpToCol = function() {
         var index = Number($scope.jumpToColText);
