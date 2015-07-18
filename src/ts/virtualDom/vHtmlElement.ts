@@ -13,22 +13,38 @@ module awk.vdom {
         private attributes: {[key: string]: string};
         private children: VElement[];
         private innerHtml: string;
+        private style = <any>{};
+
+        private bound: boolean;
+        private element: HTMLElement;
 
         constructor(type: string) {
             super();
             this.type = type;
         }
 
+        public getElement(): HTMLElement {
+            return this.element;
+        }
+
         public setInnerHtml(innerHtml: string): void {
-            this.innerHtml = innerHtml;
+            if (this.bound) {
+                this.innerHtml = innerHtml;
+            } else {
+                this.element.innerHTML = '';
+            }
         }
 
         public addStyles(styles: any): void {
-            if (!this.style) {
+            if (!this.bound && !this.style) {
                 this.style = {};
             }
             _.iterateObject(styles, (key: string, value: string)=> {
-                this.style[key] = value;
+                if (this.bound) {
+                    this.style[key] = value;
+                } else {
+                    this.element.style[key] = value;
+                }
             });
         }
 
@@ -43,18 +59,26 @@ module awk.vdom {
         }
 
         public addClass(newClass: string): void {
-            if (!this.classes) {
-                this.classes = [];
+            if (this.bound) {
+                _.addCssClass(this.element, newClass);
+            } else {
+                if (!this.classes) {
+                    this.classes = [];
+                }
+                this.classes.push(newClass);
             }
-            this.classes.push(newClass);
         }
 
         public removeClass(oldClass: string): void {
-            if (!this.classes) {
-                return;
-            }
-            while (this.classes.indexOf(oldClass)>=0) {
-                _.removeFromArray(this.classes, oldClass);
+            if (this.bound) {
+                _.removeCssClass(this.element, oldClass);
+            } else {
+                if (!this.classes) {
+                    return;
+                }
+                while (this.classes.indexOf(oldClass)>=0) {
+                    _.removeFromArray(this.classes, oldClass);
+                }
             }
         }
 
@@ -62,11 +86,17 @@ module awk.vdom {
             if (!classes || classes.length <= 0) {
                 return;
             }
-            if (!this.classes) {
-                this.classes = [];
-            }
-            for (var i = 0; i<classes.length; i++) {
-                this.classes.push(classes[i]);
+            if (this.bound) {
+                for (var i = 0; i<classes.length; i++) {
+                    _.addCssClass(this.element, classes[i])
+                }
+            } else {
+                if (!this.classes) {
+                    this.classes = [];
+                }
+                for (var j = 0; j<classes.length; j++) {
+                    this.classes.push(classes[j]);
+                }
             }
         }
 
@@ -137,17 +167,28 @@ module awk.vdom {
         }
 
         public appendChild(child: any) {
-            if (!this.children) {
-                this.children = [];
-            }
-            if (_.isNodeOrElement(child)) {
-                this.children.push(new VWrapperElement(child));
+            if (this.bound) {
+                if (_.isNodeOrElement(child)){
+                    this.element.appendChild(child);
+                } else {
+                    console.error('cannot appendChild with virtual child to already bound VHTMLElement');
+                }
             } else {
-                this.children.push(child);
+                if (!this.children) {
+                    this.children = [];
+                }
+                if (_.isNodeOrElement(child)) {
+                    this.children.push(new VWrapperElement(child));
+                } else {
+                    this.children.push(child);
+                }
             }
         }
 
         public setAttribute(key: string, value: string) {
+            if (this.bound) {
+                console.error('cannot setAttribute to already bound VHTMLElement');
+            }
             if (!this.attributes) {
                 this.attributes = {};
             }
@@ -155,6 +196,9 @@ module awk.vdom {
         }
 
         public addEventListener(event: string, listener: EventListener) {
+            if (this.bound) {
+                console.error('cannot addEventListener to already bound VHTMLElement');
+            }
             if (!this.eventListeners) {
                 this.eventListeners = [];
             }
@@ -164,6 +208,7 @@ module awk.vdom {
 
         public elementAttached(element: Element): void {
             super.elementAttached(element);
+            this.element = <HTMLElement> element;
             this.attachEventListeners(element);
             this.fireElementAttachedToChildren(element);
         }

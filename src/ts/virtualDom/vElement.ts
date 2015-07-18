@@ -11,7 +11,6 @@ module awk.vdom {
         private id: number;
 
         private elementAttachedListeners: {(element: Element): void} [];
-        //public style = <any>{};
 
         constructor() {
             this.id = VElement.idSequence++;
