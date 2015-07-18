@@ -110,6 +110,13 @@
 .ag-dark .ag-filter-header-container {
   border-bottom: 1px solid #d3d3d3;
 }
+.ag-dark .ag-filter-header-container {
+  border-bottom: 1px solid #d3d3d3;
+}
+.ag-dark .ag-filter-apply-panel {
+  border-top: 1px solid #d3d3d3;
+  padding: 2px;
+}
 .ag-dark .ag-filter {
   border: 1px solid #000;
   background-color: #f0f0f0;

@@ -88,7 +88,7 @@
   padding: 10px;
 }
 .ag-fresh .ag-body {
-  background-color: #ddd;
+  background-color: #fafafa;
 }
 .ag-fresh .ag-row-selected {
   background-color: #b0e0e6;
@@ -117,6 +117,10 @@
 }
 .ag-fresh .ag-filter-header-container {
   border-bottom: 1px solid #d3d3d3;
+}
+.ag-fresh .ag-filter-apply-panel {
+  border-top: 1px solid #d3d3d3;
+  padding: 2px;
 }
 .ag-fresh .ag-filter {
   border: 1px solid #000;
