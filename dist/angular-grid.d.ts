@@ -556,6 +556,7 @@ declare module awk.grid {
         private vSpanWithValue;
         private vCellWrapper;
         private vParentOfValue;
+        private checkboxOnChangeListener;
         private column;
         private data;
         private node;
@@ -592,7 +593,6 @@ declare module awk.grid {
         private addClassesFromCollDef();
         private addClassesFromRules();
         private addCellNavigationHandler();
-        private checkboxOnChangeListener;
         createSelectionCheckbox(): void;
         setSelected(state: boolean): void;
         private createParentOfValue();

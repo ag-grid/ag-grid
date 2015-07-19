@@ -169,22 +169,6 @@ include 'documentation_header.php';
 </span>
 </div>-->
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <p>
-        These made me smile!!! Thanks Oliver and Hichem! :)
-    </p>
-
-    <p>
-        <img src="images/twitter1.png"/>
-    </p>
-    <p>
-        <img src="images/twitter2.png"/>
-    </p>
-
-
-</div>
-
 <div style="text-align: center; margin-top: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
 

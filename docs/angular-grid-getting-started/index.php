@@ -13,8 +13,12 @@ include '../documentation_header.php';
     <h3>Dependencies</h3>
 
     <p>
-        In your html, include AngularJS (1.2 or later) and AngularGrid.
+        In your html include Angular Grid's resources as follows:
     </p>
+
+        <pre>&lt;script src="../dist/angular-grid.js">&lt;/script>
+&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+&lt;link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css"></pre>
 
     <p>
         If you want non-minified versions, you need to include: angular-grid.js, angular-grid.css, theme-fresh.css
@@ -28,6 +32,17 @@ include '../documentation_header.php';
         AngularGrid has no dependencies. If you are using AngularJS, then it will register as a directive
         with AngularJS, however that is optional, it is an optional dependency.
     </p>
+
+    <note>
+        In all he examples in this online documentation, the resources are loaded with an additional parameter <i>"ignore=notused"</i>.
+        <b>You do not need to include this extra parameter</b>. It's purpose is as a dummy parameter, which the documentation
+        changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.
+        <br/>
+        So eg, the example has this:<br/>
+        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused1"><br/></i>
+        But all you need is this:<br/>
+        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css"></i>
+    </note>
 
     <h4>Creating the AngularJS Module</h4>
     If using AngularJS, while creating your AngularJS module, include Angular Grid as a dependency of your module. Eg:

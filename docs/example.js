@@ -116,7 +116,7 @@ gridsModule.controller('mainController', function($scope) {
         },
 
         // isScrollLag: function() { return false; },
-        suppressScrollLag: true,
+        //suppressScrollLag: true,
 
         // callback when row clicked
         rowClicked: function(params) {
@@ -367,7 +367,10 @@ gridsModule.controller('mainController', function($scope) {
         var rowCount = parseInt($scope.rowCount);
         var colCount = parseInt($scope.colCount);
         var data = [];
-        for (var row = 0; row<rowCount; row++) {
+        for (var row = 1; row<=rowCount; row++) {
+            if (row%10000===0) {
+                console.log('created ' + row + ' rows');
+            }
             var rowItem = {};
 
             //create data for the known columns

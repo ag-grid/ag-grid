@@ -1,6 +1,6 @@
 /**
  * angular-grid - High performance and feature rich data grid for AngularJS
- * @version v1.12.0
+ * @version v1.12.1
  * @link http://www.angulargrid.com/
  * @license MIT
  */
@@ -3259,27 +3259,30 @@ var awk;
                 });
             };
             RenderedCell.prototype.createSelectionCheckbox = function () {
-                var _this = this;
                 this.eCheckbox = document.createElement('input');
                 this.eCheckbox.type = "checkbox";
                 this.eCheckbox.name = "name";
                 this.eCheckbox.className = 'ag-selection-checkbox';
-                this.eCheckbox.onclick = function (event) {
+                this.eCheckbox.addEventListener('click', function (event) {
                     event.stopPropagation();
-                };
+                });
+                var that = this;
                 this.checkboxOnChangeListener = function () {
-                    var newValue = _this.eCheckbox.checked;
+                    var newValue = that.eCheckbox.checked;
                     if (newValue) {
-                        _this.selectionController.selectIndex(_this.rowIndex, true);
+                        that.selectionController.selectIndex(that.rowIndex, true);
                     }
                     else {
-                        _this.selectionController.deselectIndex(_this.rowIndex);
+                        that.selectionController.deselectIndex(that.rowIndex);
                     }
                 };
-                this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+                this.eCheckbox.onchange = this.checkboxOnChangeListener;
             };
             RenderedCell.prototype.setSelected = function (state) {
-                this.eCheckbox.removeEventListener('onchange', this.checkboxOnChangeListener);
+                if (!this.eCheckbox) {
+                    return;
+                }
+                this.eCheckbox.onchange = null;
                 if (typeof state === 'boolean') {
                     this.eCheckbox.checked = state;
                     this.eCheckbox.indeterminate = false;
@@ -3289,7 +3292,7 @@ var awk;
                     // are a mix of selected and unselected
                     this.eCheckbox.indeterminate = true;
                 }
-                this.eCheckbox.addEventListener('onchange', this.checkboxOnChangeListener);
+                this.eCheckbox.onchange = this.checkboxOnChangeListener;
             };
             RenderedCell.prototype.createParentOfValue = function () {
                 if (this.checkboxSelection) {
@@ -4628,7 +4631,7 @@ var awk;
                         selectedRows.push(selectedNode.data);
                     }
                 }
-                // this stope the event firing the very first the time grid is initialised. without this, the documentation
+                // this stop the event firing the very first the time grid is initialised. without this, the documentation
                 // page had a popup in the 'selection' page as soon as the page was loaded!!
                 var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
                 if (!nothingChangedMustBeInitialising && !suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
@@ -8220,6 +8223,7 @@ var awk;
                         }
                     });
                 }
+                this.rowRenderer.onRowSelected(rowIndex, selected);
             };
             Grid.prototype.onVirtualRowRemoved = function (rowIndex) {
                 // inform the callbacks of the event
