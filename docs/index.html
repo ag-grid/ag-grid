@@ -6,6 +6,7 @@
         <meta name="description" content="A high performance and feature rich data grid for AngularJS. This grid is faster than ui-grid and ng-grid.">
         <meta name="keywords" content="angularjs angular grid table ui-grid ng-grid"/>
         <meta property="og:image" content="http://www.angulargrid.com/images/angular-grid.png"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!--
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -28,8 +29,10 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
-        <link rel="stylesheet" type="text/css" href="style.css">
 
+-->
+<!--
+        <link rel="stylesheet" type="text/css" href="style.css">
 -->
 
         <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />
@@ -54,9 +57,9 @@
 
         <!--style.css-->
         <style>
-            .highlight{font-weight:700}.paragraph{width:800px;padding-top:20px}.big-text{font-size:20px}.dot{font-size:13px;position:relative;top:-3px}.checkitem{color:#006400}.feature{display:inline-block;padding:5px;border:1px solid #d3d3d3;border-radius:10px;margin:5px}h1{font-size:50px}h2{margin-top:90px;margin-bottom:25px}.horizontal-rule{margin-top:50px;margin-bottom:50px}.top-header{padding-top:12px}.top-button{margin-right:15px;color:#888}.top-button:link,.top-button:visited{text-decoration:none}.top-button:hover{text-decoration:none;color:#eee}.top-button:active{text-decoration:none}.top-button-selected{margin-right:15px;color:#eee}.top-button-selected:link,.top-button-selected:visited{text-decoration:none}.top-button-selected:hover{text-decoration:none;color:#eee}.top-button-selected:active{text-decoration:none}.share-link:hover{opacity:.8;text-decoration:none}.share-link{text-decoration:none}.header-icon{font-size:14px}.header-button{margin-left:10px;margin-right:10px}.license{font-size:12px}.quote-block{margin-top:50px}.quote{font-style:italic;font-size:15px;text-align:center}.under-quote{font-size:12px;text-align:center}.quote-side-panel{border-left:1px solid grey;padding-left:50px}</style>
+            .share-link,.share-link:hover,.top-button-selected:active,.top-button-selected:link,.top-button-selected:visited,.top-button:active,.top-button:hover,.top-button:link,.top-button:visited{text-decoration:none}.quote,.under-quote{text-align:center}.highlight{font-weight:700}.paragraph{width:800px;padding-top:20px}.big-text{font-size:150%}.dot{font-size:13px;position:relative;top:-3px}.checkitem{color:#006400}.feature{display:inline-block;padding:5px;border:1px solid #d3d3d3;border-radius:10px;margin:5px}.horizontal-rule{margin-top:50px;margin-bottom:50px}.top-header{padding-top:12px}@media (min-width:200px) and (max-width:800px){body{font-size:20px!important}.ag-grid-example{display:none}}@media (min-width:800px){body{font-size:16px!important}}.my-navbar{background-color:#3c3c3c}.top-button-wrapper{white-space:nowrap;padding:30px}.top-button{color:#888}.top-button:hover{color:#eee}.top-button-selected{margin-right:30px;color:#eee}.top-button-selected:hover{text-decoration:none;color:#eee}.share-link:hover{opacity:.8}.header-icon{font-size:150%}.license,.under-quote{font-size:80%}.header-button{margin-left:10px;margin-right:10px}.quote-block{margin-top:50px}.quote{font-style:italic}.quote-side-panel{border-left:1px solid grey;padding-left:50px}</style>
 
-        <!-- For example datagrid, should reuse whats in the examle -->
+        <!-- For example datagrid, should reuse whats in the example -->
         <style>
             .div-percent-bar { display: inline-block;  height: 100%; position: relative; }
             .div-percent-value { position: absolute; z-index: 1; padding-left: 4px; font-weight: bold; font-size: 13px; }
@@ -78,17 +81,29 @@
 
     <body ng-app="index" class="big-text">
 
-        <nav class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="my-navbar">
             <div class="container">
-                <div class="navbar-header top-header big-text">
-                    <a class="top-button-selected" href="/index.html"> <i class="fa fa-home"></i> Home</a>
-                    <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
-                    <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
-                    <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
-                    <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+                <div class="row">
+                    <div class="col-md-12 top-header big-text">
+                        <span class="top-button-wrapper">
+                            <a class="top-button-selected" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                        </span>
+                        <span class="top-button-wrapper">
+                            <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                        </span>
+                        <span class="top-button-wrapper">
+                            <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
+                        </span>
+                        <span class="top-button-wrapper">
+                            <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                        </span>
+                        <span class="top-button-wrapper">
+                            <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+                        </span>
+                    </div>
                 </div>
 
-                <div style="float:right;" class="navbar-header top-header">
+<!--                <div style="float:right;" class="navbar-header top-header">
                     <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.angulargrid.com">
                         <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
                     </a>
@@ -104,24 +119,23 @@
                     <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.angulargrid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
                         <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
                     </a>
-                </div>
+                </div>-->
 
             </div>
 
 
         </nav>
 
-        <div style="margin-top: 50px; background-color: #eeeeee; padding-top: 20px; padding-bottom: 40px;">
+        <div style="background-color: #eeeeee; padding-top: 20px; padding-bottom: 40px;">
 
             <div class="container">
 
                 <div class="row">
                     <div class="col-md-6" style="text-align: center;">
 
-                        <div style="line-height: 90px;">
+                        <div style="padding-top: 20px; padding-bottom: 20px;">
                             <span style="font-size: 90px; font-weight: bold; font-family: Impact, Charcoal, sans-serif; display: block;">
-                                <span style="color: darkred; ">A</span><span style="color: #404040">ngular</span>
-                                <span style="color: darkred; ">G</span><span style="color: #404040">rid</span>
+                                <span style="color: darkred; ">ag</span><span style="color: #404040">-grid</span>
                             </span>
                         </div>
 
@@ -145,7 +159,7 @@
 
                         <div style="font-size: 30px; font-style: italic; font-weight: bold; color: #404040; line-height: 50px;">
                             <div style="margin-top: 40px;">
-                                Advanced Data Grid for Javascript
+                                Advanced Data Grid<br/>for Javascript
                             </div>
                         </div>
 
@@ -358,7 +372,7 @@
                 </div>
 
 
-                <div class="col-md-9" ng-controller="basicController">
+                <div class="col-md-9 ag-grid-example" ng-controller="basicController">
                     <div style="padding: 4px">
                         <div style="float: right;">
                             <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Quick filter..."/>
@@ -380,7 +394,7 @@
                 <hr/>
             </div>
 
-            <div class="row" style="padding: 30px">
+            <div class="row ag-grid-example" style="padding: 30px">
 
                 <div class="col-md-9" ng-controller="accountController">
                     <div style="text-align: center; padding-bottom: 10px;">
@@ -419,7 +433,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-9" ng-controller="fileBrowserController">
+                    <div class="col-md-9 ag-grid-example" ng-controller="fileBrowserController">
                         <div style="padding: 4px;">
                             <img src="example.png" width="25px"/>
                             <b>Example Customisation</b>
@@ -429,7 +443,7 @@
                                 background-color: lightgrey;
                                 border-radius: 5px;
                                 padding: 3px;">
-                            <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 14px;"> &nbsp; {{selectedFile}}</div>
+                            <div style="border: 1px solid darkgrey; margin-bottom: 2px; background-color: white; font-size: 80%;"> &nbsp; {{selectedFile}}</div>
                             <div style="width: 100%; height: 400px;"
                                  ag-grid="gridOptions"
                                  class="ag-file-browser">

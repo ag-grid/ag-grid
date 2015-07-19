@@ -5,6 +5,7 @@
     <title><?php echo $pageTitle; ?></title>
     <meta name="description" content="<?php echo $pageDescription; ?>">
     <meta name="keywords" content="<?php echo $pageKeyboards; ?>"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -36,7 +37,7 @@
 
 <body ng-app="documentation">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar-inverse">
         <div class="container">
             <div class="navbar-header top-header big-text">
                 <a class="top-button" href="/index.html"> <i class="fa fa-home"></i> Home</a>
@@ -45,7 +46,7 @@
                 <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
                 <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
             </div>
-            <div style="float:right;" class="navbar-header top-header">
+<!--            <div style="float:right;" class="navbar-header top-header">
 
                 <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.angulargrid.com">
                     <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
@@ -62,7 +63,7 @@
                 <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.angulargrid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
                     <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
                 </a>
-            </div>
+            </div>-->
         </div>
     </nav>
 

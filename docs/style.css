@@ -7,7 +7,7 @@
 }
 
 .big-text {
-    font-size: 20px;
+    font-size: 150%;
 }
 
 .dot {
@@ -28,13 +28,10 @@
     margin: 5px;
 }
 
-h1 {
-    font-size: 50px;
+h3 {
 }
 
-h2 {
-    margin-top: 40px;
-    margin-bottom: 25px;
+h4 {
 }
 
 .horizontal-rule {
@@ -46,8 +43,31 @@ h2 {
     padding-top: 12px;
 }
 
+@media (min-width: 200px) and (max-width: 800px) {
+    body {
+        font-size: 20px !important;
+    }
+    .ag-grid-example {
+        display: none;
+    }
+}
+
+@media (min-width: 800px) {
+    body {
+        font-size: 16px !important;
+    }
+}
+
+.my-navbar {
+    background-color: #3c3c3c;
+}
+
+.top-button-wrapper {
+    white-space: nowrap;
+    padding: 30px;
+}
+
 .top-button {
-    margin-right: 15px;
     color: #888888;
 }
 
@@ -69,7 +89,7 @@ h2 {
 }
 
 .top-button-selected {
-    margin-right: 15px;
+    margin-right: 30px;
     color: #eeeeee;
 }
 
@@ -100,7 +120,7 @@ h2 {
 }
 
 .header-icon {
-    font-size: 14px;
+    font-size: 150%;
 }
 
 .header-button {
@@ -109,7 +129,7 @@ h2 {
 }
 
 .license {
-    font-size: 12px;
+    font-size: 80%;
 }
 
 .quote-block {
@@ -118,12 +138,11 @@ h2 {
 
 .quote {
     font-style: italic;
-    font-size: 15px;
     text-align: center;
 }
 
 .under-quote {
-    font-size: 12px;
+    font-size: 80%;
     text-align: center;
 }
 
