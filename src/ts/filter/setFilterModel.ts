@@ -79,7 +79,7 @@ module awk.grid {
                             value = null;
                         }
 
-		        if (value.constructor == Array) {
+		        if (value != null && value.constructor == Array) {
 		    	    for (var j = 0; j < value.length; j++) {
 		    	    	addUniqueValueIfMissing(value[j])
 		    	    }
