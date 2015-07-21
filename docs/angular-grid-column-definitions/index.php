@@ -57,6 +57,10 @@ include '../documentation_header.php';
             <td>Initial width, in pixels, of the cell</td>
         </tr>
         <tr>
+            <th>minWidth</th>
+            <td>Minimum width for a column. Stop the decrease in width as the threshold value is reached when sizeColumnsToFit api is used.</td>
+        </tr>
+        <tr>
             <th>cellClass</th>
             <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>
