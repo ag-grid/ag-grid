@@ -33,6 +33,7 @@ include '../documentation_header.php';
             <li><b>data</b>: maps data</li>
             <li><b>colDef</b>: maps colDef</li>
             <li><b>api</b>: maps api</li>
+            <li><b>getValue</b>: maps getValue</li>
         </ul>
     </p>
 

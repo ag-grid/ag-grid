@@ -23,18 +23,30 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        The parameters provided to valueGetters are similar to that of cellRenderers except
-        a) no value (as it's the valueGetters responsibiliy to create the value) and b)
-        no rowIndex (as the value should exist outside the concept of rendering to a particular
-        row - for example, the valueGetter could be called for a row that is not being rendered).
+        The parameters provided to valueGetters are as follows:<br/>
+        <ul>
+        <li><b>data</b>: The row (from the rowData array, where value was taken) been rendered.</li>
+        <li><b>node</b>: The node to be rendered.</li>
+        <li><b>colDef</b>: The colDef in question, as provided through the gridOptions.</li>
+        <li><b>api</b>: The API for the grid.</li>
+        <li><b>context</b>: The grid context.</li>
+        <li><b>getValue()</b>: A function, give it a column field name, and it returns the value for that column. Useful for chaining value getters.</li>
+        </ul>
+    </p>
+
+    <p>
+        The parameters to the value getter are similar to that of cellRenderers except with the following
+        interesting differences:<br/>
+        a) No value - as it's the valueGetters responsibiliy to create the value). <br/>
+        b) No rowIndex - as the value should exist outside the concept of rendering to a particular
+        row - for example, the valueGetter could be called for a row that is not being rendered.
     </p>
 
     <h3>Value Getter Functions</h3>
 
     <p>
-        Value getter functions are similar to value renderers in their operation. You provide a function that takes
-        a params object and return a result. The result is then rendered in the same way as normal, either by placing
-        the value into the cell (the default), or by using the provided cell renderer.
+        Value getter functions are similar to value renderers in their operation, in that you
+        provide the value getter function as a function attached to the column definition.
     </p>
 
     <p>
@@ -53,6 +65,7 @@ include '../documentation_header.php';
             <li><b>data</b>: maps data</li>
             <li><b>colDef</b>: maps colDef</li>
             <li><b>api</b>: maps api</li>
+            <li><b>getValue</b>: maps getValue</li>
         </ul>
 
         The example below uses a valueGetter expression to calculate the Total Medals column.

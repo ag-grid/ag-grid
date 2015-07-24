@@ -29,10 +29,12 @@ module awk.grid {
         private firstVirtualRenderedRow: any;
         private lastVirtualRenderedRow: any;
         private focusedCell: any;
+        private valueService: ValueService;
 
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
-             angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
-             selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService) {
+                    angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
+                    selectionController: SelectionController, expressionService: ExpressionService,
+                    templateService: TemplateService, valueService: ValueService) {
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
@@ -43,6 +45,7 @@ module awk.grid {
             this.selectionController = selectionController;
             this.expressionService = expressionService;
             this.templateService = templateService;
+            this.valueService = valueService;
             this.findAllElements(gridPanel);
 
             this.cellRendererMap = {
@@ -254,7 +257,7 @@ module awk.grid {
                 return;
             }
 
-            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.$scope, this.angularGrid,
+            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
                 this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                 this.$compile, this.templateService, this.selectionController, this,
                 this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex);

@@ -16,21 +16,21 @@ module awk.grid {
         private gridOptionsWrapper: GridOptionsWrapper;
         private grid: any;
         private allFilters: any;
-        private expressionService: any;
         private columnModel: any;
         private rowModel: any;
         private popupService: PopupService;
+        private valueService: ValueService;
 
         public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
-                    expressionService: any, columnModel: any, popupService: PopupService) {
+                    columnModel: any, popupService: PopupService, valueService: ValueService) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.grid = grid;
             this.allFilters = {};
-            this.expressionService = expressionService;
             this.columnModel = columnModel;
             this.popupService = popupService;
+            this.valueService = valueService;
         }
 
         public setFilterModel(model: any) {
@@ -178,13 +178,10 @@ module awk.grid {
             });
         }
 
-        private createValueGetter(colDef: any) {
+        private createValueGetter(column: Column) {
             var that = this;
             return function valueGetter(node: any) {
-                var api = that.gridOptionsWrapper.getApi();
-                var context = that.gridOptionsWrapper.getContext();
-                var cellExpressions = that.gridOptionsWrapper.isEnableCellExpressions();
-                return utils.getValue(that.expressionService, node.data, colDef, cellExpressions, node, api, context);
+                return that.valueService.getValue(column, node.data, node);
             };
         }
 
@@ -225,7 +222,7 @@ module awk.grid {
                 filterChangedCallback: filterChangedCallback,
                 filterParams: filterParams,
                 localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
-                valueGetter: this.createValueGetter(colDef),
+                valueGetter: this.createValueGetter(column),
                 $scope: <any> null
             };
             if (typeof colDef.filter === 'function') {

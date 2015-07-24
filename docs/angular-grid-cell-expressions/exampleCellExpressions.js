@@ -6,7 +6,8 @@ module.controller("exampleCtrl", function($scope) {
     ///// top table
     var columnDefsTop = [
         {headerName: "Function", field: 'function', width: 150},
-        {headerName: "Value", field: 'value', width: 200}
+        {headerName: "Value", field: 'value', width: 100},
+        {headerName: "Times 10", valueGetter: 'getValue("value") * 10', width: 100},
     ];
 
     var rowDataTop = [

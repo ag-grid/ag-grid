@@ -28,7 +28,7 @@ module awk.grid {
         private gridOptionsWrapper: GridOptionsWrapper;
         private parentScope: any;
         private angularGrid: Grid;
-        private columns: Column[];
+        private columnModel: ColumnModel;
         private expressionService: ExpressionService;
         private rowRenderer: RowRenderer;
         private selectionRendererFactory: SelectionRendererFactory;
@@ -38,11 +38,13 @@ module awk.grid {
         private pinning: boolean;
         private eBodyContainer: HTMLElement;
         private ePinnedContainer: HTMLElement;
+        private valueService: ValueService;
 
         constructor(gridOptionsWrapper: GridOptionsWrapper,
+                    valueService: ValueService,
                     parentScope: any,
                     angularGrid: Grid,
-                    columnModel: any,
+                    columnModel: ColumnModel,
                     expressionService: ExpressionService,
                     cellRendererMap: {[key: string]: any},
                     selectionRendererFactory: SelectionRendererFactory,
@@ -55,19 +57,20 @@ module awk.grid {
                     node: any,
                     rowIndex: number) {
             this.gridOptionsWrapper = gridOptionsWrapper;
+            this.valueService = valueService;
             this.parentScope = parentScope;
             this.angularGrid = angularGrid;
             this.expressionService = expressionService;
-            this.columns = columnModel.getDisplayedColumns();
+            this.columnModel = columnModel;
             this.cellRendererMap = cellRendererMap;
             this.selectionRendererFactory = selectionRendererFactory;
             this.$compile = $compile;
             this.templateService = templateService;
             this.selectionController = selectionController;
             this.rowRenderer = rowRenderer;
-            this.pinning = this.columns[0].pinned;
             this.eBodyContainer = eBodyContainer;
             this.ePinnedContainer = ePinnedContainer;
+            this.pinning = columnModel.isPinning();
 
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
             var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
@@ -180,14 +183,16 @@ module awk.grid {
         }
 
         private drawNormalRow() {
-            for (var i = 0; i<this.columns.length; i++) {
-                var column = this.columns[i];
+            var columns = this.columnModel.getDisplayedColumns();
+            for (var i = 0; i<columns.length; i++) {
+                var column = columns[i];
                 var firstCol = i === 0;
 
                 var renderedCell = new RenderedCell(firstCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
-                    this.cellRendererMap, this.node, this.rowIndex, this.scope);
+                    this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnModel,
+                    this.valueService);
 
                 var vGridCell = renderedCell.getVGridCell();
 

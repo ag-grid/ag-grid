@@ -28,7 +28,6 @@ module awk.grid {
         private rowIndex: number;
         private editingCell: boolean;
 
-        private valueGetter: any;
         private scope: any;
         private isFirstColumn: boolean = false;
 
@@ -41,6 +40,8 @@ module awk.grid {
         private templateService: TemplateService;
         private cellRendererMap: {[key: string]: Function};
         private eCheckbox: HTMLInputElement;
+        private columnModel: ColumnModel;
+        private valueService: ValueService;
 
         private value: any;
         private checkboxSelection: boolean;
@@ -49,7 +50,8 @@ module awk.grid {
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                    node: any, rowIndex: number, scope: any) {
+                    node: any, rowIndex: number, scope: any, columnModel: ColumnModel,
+                    valueService: ValueService) {
 
             this.isFirstColumn = isFirstColumn;
             this.column = column;
@@ -61,6 +63,8 @@ module awk.grid {
             this.cellRendererMap = cellRendererMap;
             this.$compile = $compile;
             this.templateService = templateService;
+            this.columnModel = columnModel;
+            this.valueService = valueService;
 
             this.checkboxSelection = this.column.colDef.checkboxSelection;
 
@@ -68,10 +72,13 @@ module awk.grid {
             this.rowIndex = rowIndex;
             this.scope = scope;
             this.data = this.getDataForRow();
+            this.value = this.getValue();
 
-            this.valueGetter = this.createValueGetter();
-            this.value = this.valueGetter();
             this.setupComponents();
+        }
+
+        private getValue(): any {
+            return this.valueService.getValue(this.column, this.data, this.node);
         }
 
         public getVGridCell(): awk.vdom.VHtmlElement {
@@ -90,15 +97,6 @@ module awk.grid {
                 // otherwise it's a normal node, just return data as normal
                 return this.node.data;
             }
-        }
-
-        private createValueGetter() {
-            return () => {
-                var api = this.gridOptionsWrapper.getApi();
-                var context = this.gridOptionsWrapper.getContext();
-                var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-                return _.getValue(this.expressionService, this.data, this.column.colDef, cellExpressions, this.node, api, context);
-            };
         }
 
         private setupComponents() {
@@ -138,7 +136,7 @@ module awk.grid {
             eInput.type = 'text';
             _.addCssClass(eInput, 'ag-cell-edit-input');
 
-            var value = this.valueGetter();
+            var value = this.getValue();
             if (value !== null && value !== undefined) {
                 eInput.value = value;
             }
@@ -205,7 +203,7 @@ module awk.grid {
             }
 
             // at this point, the value has been updated
-            this.value = this.valueGetter();
+            this.value = this.getValue();
 
             paramsForCallbacks.newValue = this.value;
             if (typeof colDef.cellValueChanged === 'function') {
@@ -540,7 +538,7 @@ module awk.grid {
         public refreshCell() {
 
             _.removeAllChildren(this.vParentOfValue.getElement());
-            this.value = this.valueGetter();
+            this.value = this.getValue();
 
             this.populateCell();
 
@@ -576,9 +574,10 @@ module awk.grid {
 
         private useCellRenderer() {
             var colDef = this.column.colDef;
+
             var rendererParams = {
                 value: this.value,
-                valueGetter: this.valueGetter,
+                valueGetter: this.getValue,
                 data: this.node.data,
                 node: this.node,
                 colDef: colDef,
