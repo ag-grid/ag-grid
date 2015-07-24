@@ -331,6 +331,7 @@ module awk.grid {
             }
 
             var columnStartWidth = 0; // will contain the starting total width of the cols been spread
+            var minWidthCols = <any>[];
             var colsToSpread = <any>[]; // all visible cols, except those with avoidSizeToFit
             var widthForSpreading = gridWidth; // grid width minus the columns we are not resizing
 
@@ -341,7 +342,14 @@ module awk.grid {
                     widthForSpreading -= this.displayedColumns[j].actualWidth;
                 } else {
                     // include the col
-                    colsToSpread.push(this.displayedColumns[j]);
+                    if(this.displayedColumns[j].colDef.minWidth){
+                      //place column into column array with min width
+                      minWidthCols.push(this.displayedColumns[j]);
+                    } else{
+                      //place column into column array without min width
+                      colsToSpread.push(this.displayedColumns[j]);
+                    }
+                    /*colsToSpread.push(this.displayedColumns[j]);*/
                     columnStartWidth += this.displayedColumns[j].actualWidth;
                 }
             }
@@ -350,22 +358,53 @@ module awk.grid {
             if (widthForSpreading <= 0) {
                 return;
             }
-
             var scale = widthForSpreading / columnStartWidth;
             var pixelsForLastCol = widthForSpreading;
+            // size all cols with min width
+            for (var i = 0; i < minWidthCols.length; i++) {
+                var column = minWidthCols[i];
+                var newWidth : number;
+                if(column.colDef.minWidth){
+                  // if smaller than min width, use min width
+                  if(column.actualWidth * scale < column.colDef.minWidth){
+                    newWidth = column.colDef.minWidth;
+                  } else{
+                    // use scaled width
+                    newWidth = Math.round(column.actualWidth * scale);
+                  }
+                  // subtract new column width from scale width and
+                  columnStartWidth -= column.actualWidth;
+                  column.actualWidth = newWidth;
+                  pixelsForLastCol -= newWidth;
+                  widthForSpreading -= newWidth;
 
-            // size all cols except the last by the scale
+                }
+            }
+            // if no width left for columns without min width to spread with, do nothing
+            if (widthForSpreading <= 0 || columnStartWidth <= 0) {
+              // widths set, refresh the gui
+              this.angularGrid.refreshHeaderAndBody();
+              return;
+            }
+            // re-calculate scale ratio for columns without min width
+            scale = widthForSpreading / columnStartWidth;
+            // size all cols without min width except the last by the scale
             for (var i = 0; i < (colsToSpread.length - 1); i++) {
                 var column = colsToSpread[i];
-                var newWidth = Math.round(column.actualWidth * scale);
-                column.actualWidth = newWidth;
-                pixelsForLastCol -= newWidth;
+                var newWidth : number;
+                if(!column.colDef.minWidth){
+                 var newWidth = Math.round(column.actualWidth * scale);
+                 column.actualWidth = newWidth;
+                 pixelsForLastCol -= newWidth;
+                }
             }
 
             // size the last by whats remaining (this avoids rounding errors that could
             // occur with scaling everything, where it result in some pixels off)
-            var lastColumn = colsToSpread[colsToSpread.length - 1];
-            lastColumn.actualWidth = pixelsForLastCol;
+            if(colsToSpread.length>0){
+              var lastColumn = colsToSpread[colsToSpread.length - 1];
+              lastColumn.actualWidth = pixelsForLastCol;
+            }
 
             // widths set, refresh the gui
             this.angularGrid.refreshHeaderAndBody();
@@ -689,6 +728,9 @@ module awk.grid {
 
       /** Initial width, in pixels, of the cell */
       width?: number;
+
+      /** Minimum width, in pixels, of the cell */
+      minWidth?: number;
 
       /** Class to use for the cell. Can be string, array of strings, or function. */
       cellClass?: string | string[]| ((cellClassParams: any) => string | string[]);
