@@ -97,6 +97,15 @@ module awk.grid {
             var value = this.valueGetter(node);
             value = _.makeNull(value);
 
+	    if (value.constructor == Array) {
+		    for (var i = 0; i < value.length; i++) {
+		    	if (this.model.isValueSelected(value[i])) {
+		    		return true
+		    	}
+		    }
+		    return false
+	    }
+
             var filterPassed = this.model.isValueSelected(value);
             return filterPassed;
         }
