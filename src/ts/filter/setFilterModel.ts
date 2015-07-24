@@ -79,23 +79,23 @@ module awk.grid {
                             value = null;
                         }
 
-		        if (value != null && value.constructor == Array) {
-		    	    for (var j = 0; j < value.length; j++) {
-		    	    	addUniqueValueIfMissing(value[j])
-		    	    }
-		        } else {
-		        	addUniqueValueIfMissing(value)
-		        }
+                        if (value != null && Array.isArray(value)) {
+                            for (var j = 0; j < value.length; j++) {
+                                addUniqueValueIfMissing(value[j])
+                            }
+                        } else {
+                            addUniqueValueIfMissing(value)
+                        }
                     }
                 }
             }
 
-	    function addUniqueValueIfMissing(value: any) {
-	    	if (!uniqueCheck.hasOwnProperty(value)) {
-		    result.push(value);
-		    uniqueCheck[value] = 1;
-		}
-	    }
+            function addUniqueValueIfMissing(value: any) {
+                if (!uniqueCheck.hasOwnProperty(value)) {
+                    result.push(value);
+                    uniqueCheck[value] = 1;
+                }
+            }
 
             var topLevelNodes = this.rowModel.getTopLevelNodes();
             recursivelyProcess(topLevelNodes);
