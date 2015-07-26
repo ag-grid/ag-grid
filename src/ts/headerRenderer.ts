@@ -10,7 +10,6 @@ module awk.grid {
 
     export class HeaderRenderer {
 
-        expressionService: any;
         gridOptionsWrapper: any;
         columnModel: any;
         columnController: any;
@@ -26,8 +25,7 @@ module awk.grid {
         dragStartX: any;
 
         init(gridOptionsWrapper: any, columnController: any, columnModel: any, gridPanel: any, angularGrid: any,
-             filterManager: any, $scope: any, $compile: any, expressionService: any) {
-            this.expressionService = expressionService;
+             filterManager: any, $scope: any, $compile: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnModel = columnModel;
             this.columnController = columnController;

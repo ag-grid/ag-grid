@@ -6,17 +6,13 @@ module awk.grid {
 
     export class GroupCreator {
 
-        static theInstance: GroupCreator;
+        private valueService: ValueService;
 
-        static getInstance() {
-            if (!this.theInstance) {
-                this.theInstance = new GroupCreator();
-            }
-            return this.theInstance;
+        public init(valueService: ValueService) {
+            this.valueService = valueService;
         }
 
-        public group(rowNodes: any, groupedCols: any, expandByDefault: any, expressionService: ExpressionService,
-                api: GridApi, context: any, cellExpressions: boolean) {
+        public group(rowNodes: any, groupedCols: any, expandByDefault: any) {
 
             var topMostGroup = {
                 level: -1,
@@ -49,7 +45,7 @@ module awk.grid {
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                     var groupColumn = groupedCols[currentLevel];
-                    groupKey = _.getValue(expressionService, data, groupColumn.colDef, cellExpressions, node, api, context);
+                    groupKey = this.valueService.getValue(groupColumn, data, node);
 
                     if (currentLevel == 0) {
                         currentGroup = topMostGroup;

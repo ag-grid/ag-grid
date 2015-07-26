@@ -78,11 +78,22 @@ module awk.grid {
                         if (value === "" || value === undefined) {
                             value = null;
                         }
-                        if (!uniqueCheck.hasOwnProperty(value)) {
-                            result.push(value);
-                            uniqueCheck[value] = 1;
+
+                        if (value != null && Array.isArray(value)) {
+                            for (var j = 0; j < value.length; j++) {
+                                addUniqueValueIfMissing(value[j])
+                            }
+                        } else {
+                            addUniqueValueIfMissing(value)
                         }
                     }
+                }
+            }
+
+            function addUniqueValueIfMissing(value: any) {
+                if (!uniqueCheck.hasOwnProperty(value)) {
+                    result.push(value);
+                    uniqueCheck[value] = 1;
                 }
             }
 

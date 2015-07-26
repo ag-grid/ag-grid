@@ -9,7 +9,7 @@ module awk.grid {
             try {
                 var javaScriptFunction = this.createExpressionFunction(expression);
                 var result = javaScriptFunction(params.value, params.context, params.node,
-                    params.data, params.colDef, params.rowIndex, params.api);
+                    params.data, params.colDef, params.rowIndex, params.api, params.getValue);
                 return result;
             } catch (e) {
                 // the expression failed, which can happen, as it's the client that
@@ -28,7 +28,7 @@ module awk.grid {
             }
             // if not found in cache, return the function
             var functionBody = this.createFunctionBody(expression);
-            var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api', functionBody);
+            var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue', functionBody);
 
             // store in cache
             this.expressionToFunctionCache[expression] = theFunction;

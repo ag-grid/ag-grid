@@ -6,36 +6,38 @@ module awk.grid {
 
     var utils = Utils;
     var constants = Constants;
-    var groupCreator = GroupCreator.getInstance();
 
     export class InMemoryRowController {
 
-        gridOptionsWrapper: any;
-        columnModel: any;
-        angularGrid: any;
-        filterManager: any;
-        $scope: any;
-        expressionService: any;
+        private gridOptionsWrapper: any;
+        private columnModel: any;
+        private angularGrid: any;
+        private filterManager: any;
+        private $scope: any;
 
-        allRows: any;
-        rowsAfterGroup: any;
-        rowsAfterFilter: any;
-        rowsAfterSort: any;
-        rowsAfterMap: any;
-        model: any;
+        private allRows: any;
+        private rowsAfterGroup: any;
+        private rowsAfterFilter: any;
+        private rowsAfterSort: any;
+        private rowsAfterMap: any;
+        private model: any;
+
+        private groupCreator: GroupCreator;
+        private valueService: ValueService;
 
         constructor() {
             this.createModel();
         }
 
         init(gridOptionsWrapper: any, columnModel: any, angularGrid: any, filterManager: any,
-             $scope: any, expressionService: any) {
+             $scope: any, groupCreator: GroupCreator, valueService: ValueService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnModel = columnModel;
             this.angularGrid = angularGrid;
             this.filterManager = filterManager;
             this.$scope = $scope;
-            this.expressionService = expressionService;
+            this.groupCreator = groupCreator;
+            this.valueService = valueService;
 
             this.allRows = null;
             this.rowsAfterGroup = null;
@@ -182,14 +184,6 @@ module awk.grid {
             }
         }
 
-        // private
-        getValue(data: any, colDef: any, node: any) {
-            var api = this.gridOptionsWrapper.getApi();
-            var context = this.gridOptionsWrapper.getContext();
-            var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-            return utils.getValue(this.expressionService, data, colDef, cellExpressions, node, api, context);
-        }
-
         // public - it's possible to recompute the aggregate without doing the other parts
         doAggregate() {
 
@@ -282,7 +276,7 @@ module awk.grid {
                         sortingOptions.push({
                             inverter: ascending ? 1 : -1,
                             sortedAt: column.sortedAt,
-                            colDef: column.colDef
+                            column: column
                         });
                     }
                 });
@@ -324,8 +318,7 @@ module awk.grid {
             }
         }
 
-        // private
-        sortList(nodes: any, sortOptions: any) {
+        private sortList(nodes: any, sortOptions: any) {
 
             // sort any groups recursively
             for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
@@ -338,12 +331,12 @@ module awk.grid {
 
             var that = this;
 
-            function compare(objA: any, objB: any, colDef: any, isInverted:any) {
-                var valueA = that.getValue(objA.data, colDef, objA);
-                var valueB = that.getValue(objB.data, colDef, objB);
-                if (colDef.comparator) {
+            function compare(objA: any, objB: any, column: Column, isInverted:any) {
+                var valueA = that.valueService.getValue(column, objA.data, objA);
+                var valueB = that.valueService.getValue(column, objB.data, objB);
+                if (column.colDef.comparator) {
                     //if comparator provided, use it
-                    return colDef.comparator(valueA, valueB, objA, objB, isInverted);
+                    return column.colDef.comparator(valueA, valueB, objA, objB, isInverted);
                 } else {
                     //otherwise do our own comparison
                     return utils.defaultComparator(valueA, valueB);
@@ -354,7 +347,7 @@ module awk.grid {
                 // Iterate columns, return the first that doesn't match
                 for (var i = 0, len = sortOptions.length; i < len; i++) {
                     var sortOption = sortOptions[i];
-                    var compared = compare(objA, objB, sortOption.colDef, sortOption.inverter === -1);
+                    var compared = compare(objA, objB, sortOption.column, sortOption.inverter === -1);
                     if (compared !== 0) {
                         return compared * sortOption.inverter;
                     }
@@ -374,11 +367,7 @@ module awk.grid {
 
             if (doingGrouping) {
                 var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-                var api = this.gridOptionsWrapper.getApi();
-                var context = this.gridOptionsWrapper.getContext();
-                var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-                rowsAfterGroup = groupCreator.group(this.allRows, groupedCols, expandByDefault,
-                    this.expressionService, api, context, cellExpressions);
+                rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
             } else {
                 rowsAfterGroup = this.allRows;
             }
@@ -596,9 +585,9 @@ module awk.grid {
         aggregateRowForQuickFilter(node: any) {
             var aggregatedText = '';
             var that = this;
-            this.columnModel.getAllColumns().forEach(function (colDefWrapper: any) {
+            this.columnModel.getAllColumns().forEach(function (column: Column) {
                 var data = node.data;
-                var value = that.getValue(data,  colDefWrapper.colDef, node);
+                var value = that.valueService.getValue(column, data, node);
                 if (value && value !== '') {
                     aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
                 }

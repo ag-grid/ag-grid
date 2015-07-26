@@ -17,6 +17,7 @@
 /// <reference path="widgets/agPopupService.ts" />
 /// <reference path="gridOptions.ts" />
 /// <reference path="gridApi.ts" />
+/// <reference path="valueService.ts" />
 
 module awk.grid {
 
@@ -130,22 +131,28 @@ module awk.grid {
             var templateService = new TemplateService();
             var gridPanel = new GridPanel(gridOptionsWrapper);
             var popupService = new PopupService();
+            var valueService = new ValueService();
+            var groupCreator = new GroupCreator();
 
             var columnModel = columnController.getModel();
 
             // initialise all the beans
             templateService.init($scope);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer);
-            filterManager.init(this, gridOptionsWrapper, $compile, $scope, expressionService, columnModel, popupService);
+            filterManager.init(this, gridOptionsWrapper, $compile, $scope,
+                columnModel, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
-            columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService);
-            rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this,
-                selectionRendererFactory, $compile, $scope, selectionController, expressionService, templateService);
+            columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService, valueService);
+            rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
+                $scope, selectionController, expressionService, templateService, valueService);
             headerRenderer.init(gridOptionsWrapper, columnController, columnModel, gridPanel, this, filterManager,
-                $scope, $compile, expressionService);
-            inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope, expressionService);
+                $scope, $compile);
+            inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope,
+                groupCreator, valueService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
             gridPanel.init(columnModel, rowRenderer);
+            valueService.init(gridOptionsWrapper, expressionService, columnModel);
+            groupCreator.init(valueService);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;

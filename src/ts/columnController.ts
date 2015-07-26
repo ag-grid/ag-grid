@@ -6,6 +6,21 @@ module awk.grid {
     var _ = Utils;
     var constants = Constants;
 
+    export interface ColumnModel {
+        getAllColumns(): Column[];
+        getDisplayedColumns(): Column[];
+        getGroupedColumns(): Column[];
+        getValueColumns(): Column[];
+        getBodyContainerWidth(): number;
+        getPinnedContainerWidth(): number;
+        getHeaderGroups(): HeaderGroup[];
+        getColumn(key: any): Column;
+        getVisibleColBefore(column: Column): Column;
+        getVisibleColAfter(column: Column): Column;
+        getDisplayNameForCol(column: Column): string;
+        isPinning(): boolean;
+    }
+
     export class ColumnController {
 
         gridOptionsWrapper: any;
@@ -13,7 +28,7 @@ module awk.grid {
         selectionRendererFactory: any;
         expressionService: any;
         listeners: any;
-        model: any;
+        model: ColumnModel;
         allColumns: Column[];
         displayedColumns: Column[];
         pivotColumns: Column[];
@@ -21,19 +36,23 @@ module awk.grid {
         visibleColumns: Column[];
         headerGroups: HeaderGroup[];
 
+        private valueService: ValueService;
+
         constructor() {
             this.listeners = [];
             this.createModel();
         }
 
-        init(angularGrid: any, selectionRendererFactory: any, gridOptionsWrapper: any, expressionService: any) {
+        public init(angularGrid: any, selectionRendererFactory: any, gridOptionsWrapper: any,
+             expressionService: any, valueService: ValueService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.selectionRendererFactory = selectionRendererFactory;
             this.expressionService = expressionService;
+            this.valueService = valueService;
         }
 
-        createModel() {
+        private createModel() {
             var that = this;
             this.model = {
                 // used by:
@@ -98,11 +117,14 @@ module awk.grid {
                 },
                 getDisplayNameForCol: function (column: any) {
                     return that.getDisplayNameForCol(column);
+                },
+                isPinning(): boolean {
+                    return that.visibleColumns && that.visibleColumns.length > 0 && that.visibleColumns[0].pinned;
                 }
             };
         }
 
-        getState() {
+        public getState() {
             if (!this.allColumns || this.allColumns.length < 0) {
                 return [];
             }
@@ -122,7 +144,7 @@ module awk.grid {
             return result;
         }
 
-        setState(columnState: any) {
+        public setState(columnState: any) {
             var oldColumnList = this.allColumns;
             this.allColumns = [];
             this.pivotColumns = [];
@@ -170,7 +192,7 @@ module awk.grid {
             this.fireColumnsChanged();
         }
 
-        getColumn(key: any) {
+        public getColumn(key: any) {
             for (var i = 0; i < this.allColumns.length; i++) {
                 var colDefMatches = this.allColumns[i].colDef === key;
                 var fieldMatches = this.allColumns[i].colDef.field === key;
@@ -180,7 +202,7 @@ module awk.grid {
             }
         }
 
-        getDisplayNameForCol(column: any) {
+        public getDisplayNameForCol(column: any) {
 
             var colDef = column.colDef;
             var headerValueGetter = colDef.headerValueGetter;
@@ -198,9 +220,10 @@ module awk.grid {
                 } else if (typeof headerValueGetter === 'string') {
                     // valueGetter is an expression, so execute the expression
                     return this.expressionService.evaluate(headerValueGetter, params);
+                } else {
+                    console.warn('ag-grid: headerValueGetter must be a function or a string');
                 }
 
-                return _.getValue(this.expressionService, undefined, colDef);
             } else if (colDef.displayName) {
                 console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
                 return colDef.displayName;
@@ -209,22 +232,22 @@ module awk.grid {
             }
         }
 
-        addListener(listener: any) {
+        public addListener(listener: any) {
             this.listeners.push(listener);
         }
 
-        fireColumnsChanged() {
+        public fireColumnsChanged() {
             for (var i = 0; i < this.listeners.length; i++) {
                 this.listeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
             }
         }
 
-        getModel() {
+        public getModel(): ColumnModel {
             return this.model;
         }
 
         // called by angularGrid
-        setColumns(columnDefs: any) {
+        public setColumns(columnDefs: any) {
             this.checkForDeprecatedItems(columnDefs);
             this.createColumns(columnDefs);
             this.createPivotColumns();
@@ -233,7 +256,7 @@ module awk.grid {
             this.fireColumnsChanged();
         }
 
-        checkForDeprecatedItems(columnDefs: any) {
+        private checkForDeprecatedItems(columnDefs: any) {
             if (columnDefs) {
                 for (var i = 0; i < columnDefs.length; i++) {
                     var colDef = columnDefs[i];
@@ -250,7 +273,7 @@ module awk.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        headerGroupOpened(group: any) {
+        public headerGroupOpened(group: any) {
             group.expanded = !group.expanded;
             this.updateGroups();
             this.updateDisplayedColumns();
@@ -258,13 +281,13 @@ module awk.grid {
         }
 
         // called by toolPanel - when change in columns happens
-        onColumnStateChanged() {
+        public onColumnStateChanged() {
             this.updateModel();
             this.angularGrid.refreshHeaderAndBody();
         }
 
         // called from API
-        hideColumns(colIds: any, hide: any) {
+        public hideColumns(colIds: any, hide: any) {
             for (var i = 0; i < this.allColumns.length; i++) {
                 var idThisCol = this.allColumns[i].colId;
                 var hideThisCol = colIds.indexOf(idThisCol) >= 0;
@@ -276,7 +299,7 @@ module awk.grid {
             this.fireColumnsChanged(); // to tell toolbar
         }
 
-        updateModel() {
+        private updateModel() {
             this.updateVisibleColumns();
             this.updatePinnedColumns();
             this.buildGroups();
@@ -300,6 +323,8 @@ module awk.grid {
 
         }
 
+        // public - called from api
+        public sizeColumnsToFit(gridWidth: any) {
         // called from api
         public sizeColumnsToFit(gridWidth: any) {
             // avoid divide by zero
@@ -526,9 +551,8 @@ module awk.grid {
             }
         }
 
-        // private
         // call with true (pinned), false (not-pinned) or undefined (all columns)
-        getTotalColWidth(includePinned: any) {
+        private getTotalColWidth(includePinned: any) {
             var widthSoFar = 0;
             var pinedNotImportant = typeof includePinned !== 'boolean';
 
