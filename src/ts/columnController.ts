@@ -323,8 +323,6 @@ module awk.grid {
 
         }
 
-        // public - called from api
-        public sizeColumnsToFit(gridWidth: any) {
         // called from api
         public sizeColumnsToFit(gridWidth: any) {
             // avoid divide by zero
