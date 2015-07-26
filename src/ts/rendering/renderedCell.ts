@@ -567,7 +567,7 @@ module awk.grid {
             } else {
                 // if we insert undefined, then it displays as the string 'undefined', ugly!
                 if (this.value !== undefined && this.value !== null && this.value !== '') {
-                    this.vParentOfValue.setInnerHtml(this.value);
+                    this.vParentOfValue.setInnerHtml(this.value.toString());
                 }
             }
         }
