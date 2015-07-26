@@ -5,13 +5,12 @@ declare module awk.grid {
         static iterateObject(object: any, callback: (key: string, value: any) => void): void;
         static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];
         static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
+        static filter<T>(array: T[], callback: (item: T) => boolean): T[];
         static assign(object: any, source: any): void;
         static getFunctionParameters(func: any): any;
         static find(collection: any, predicate: any, value: any): any;
         static toStrings<T>(array: T[]): string[];
         static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
-        static getValue(expressionService: ExpressionService, data: any, colDef: any, cellExpressions?: boolean, node?: any, api?: any, context?: any): any;
-        static executeValueGetter(valueGetter: any, expressionService: ExpressionService, data: any, colDef: any, node: any, api: any, context: any): any;
         static isNode(o: any): boolean;
         static isElement(o: any): boolean;
         static isNodeOrElement(o: any): boolean;
@@ -78,35 +77,50 @@ declare module awk.grid {
     }
 }
 declare module awk.grid {
+    interface ColumnModel {
+        getAllColumns(): Column[];
+        getDisplayedColumns(): Column[];
+        getGroupedColumns(): Column[];
+        getValueColumns(): Column[];
+        getBodyContainerWidth(): number;
+        getPinnedContainerWidth(): number;
+        getHeaderGroups(): HeaderGroup[];
+        getColumn(key: any): Column;
+        getVisibleColBefore(column: Column): Column;
+        getVisibleColAfter(column: Column): Column;
+        getDisplayNameForCol(column: Column): string;
+        isPinning(): boolean;
+    }
     class ColumnController {
         gridOptionsWrapper: any;
         angularGrid: any;
         selectionRendererFactory: any;
         expressionService: any;
         listeners: any;
-        model: any;
+        model: ColumnModel;
         allColumns: Column[];
         displayedColumns: Column[];
         pivotColumns: Column[];
         valueColumns: Column[];
         visibleColumns: Column[];
-        headerGroups: any;
+        headerGroups: HeaderGroup[];
+        private valueService;
         constructor();
-        init(angularGrid: any, selectionRendererFactory: any, gridOptionsWrapper: any, expressionService: any): void;
-        createModel(): void;
+        init(angularGrid: any, selectionRendererFactory: any, gridOptionsWrapper: any, expressionService: any, valueService: ValueService): void;
+        private createModel();
         getState(): any;
         setState(columnState: any): void;
         getColumn(key: any): Column;
         getDisplayNameForCol(column: any): any;
         addListener(listener: any): void;
         fireColumnsChanged(): void;
-        getModel(): any;
+        getModel(): ColumnModel;
         setColumns(columnDefs: any): void;
-        checkForDeprecatedItems(columnDefs: any): void;
+        private checkForDeprecatedItems(columnDefs);
         headerGroupOpened(group: any): void;
         onColumnStateChanged(): void;
         hideColumns(colIds: any, hide: any): void;
-        updateModel(): void;
+        private updateModel();
         private updateDisplayedColumns();
         sizeColumnsToFit(gridWidth: any): void;
         private buildGroups();
@@ -118,7 +132,24 @@ declare module awk.grid {
         private createValueColumns();
         private createDummyColumn(field);
         private calculateColInitialWidth(colDef);
-        getTotalColWidth(includePinned: any): number;
+        private getTotalColWidth(includePinned);
+    }
+    class HeaderGroup {
+        pinned: any;
+        name: any;
+        allColumns: Column[];
+        displayedColumns: Column[];
+        expandable: boolean;
+        expanded: boolean;
+        actualWidth: number;
+        eHeaderGroupCell: HTMLElement;
+        eHeaderCellResize: HTMLElement;
+        constructor(pinned: any, name: any);
+        getMinimumWidth(): number;
+        addColumn(column: any): void;
+        calculateExpandable(): void;
+        calculateDisplayedColumns(): void;
+        addToVisibleColumns(colsToAdd: any): void;
     }
     interface CellRendererObj {
         renderer: string;
@@ -157,6 +188,10 @@ declare module awk.grid {
         valueGetter?: string | Function;
         /** Initial width, in pixels, of the cell */
         width?: number;
+        /** Min width, in pixels, of the cell */
+        minWidth?: number;
+        /** Max width, in pixels, of the cell */
+        maxWidth?: number;
         /** Class to use for the cell. Can be string, array of strings, or function. */
         cellClass?: string | string[] | ((cellClassParams: any) => string | string[]);
         /** An object of css values. Or a function returning an object of css values. */
@@ -186,7 +221,7 @@ declare module awk.grid {
         /** If grouping columns, the group this column belongs to. */
         headerGroup?: string;
         /** Whether to show the column when the group is open / closed. */
-        headerGroupShow?: boolean;
+        headerGroupShow?: string;
         /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
         editable?: boolean | (Function);
         /** Callbacks for editing.See editing section for further details. */
@@ -217,7 +252,11 @@ declare module awk.grid {
         index: number;
         aggFunc: string;
         pivotIndex: number;
+        eHeaderCell: HTMLElement;
         constructor(colDef: ColDef, actualWidth: any);
+        isGreaterThanMax(width: number): boolean;
+        getMinimumWidth(): number;
+        setMinimum(): void;
     }
 }
 declare module awk.grid {
@@ -460,11 +499,11 @@ declare module awk.grid {
         private gridOptionsWrapper;
         private grid;
         private allFilters;
-        private expressionService;
         private columnModel;
         private rowModel;
         private popupService;
-        init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, expressionService: any, columnModel: any, popupService: PopupService): void;
+        private valueService;
+        init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, columnModel: any, popupService: PopupService, valueService: ValueService): void;
         setFilterModel(model: any): void;
         private setModelOnFilterWrapper(filter, newModel);
         getFilterModel(): any;
@@ -473,7 +512,7 @@ declare module awk.grid {
         private isFilterPresentForCol(colId);
         private doesFilterPass(node);
         onNewRowsLoaded(): void;
-        private createValueGetter(colDef);
+        private createValueGetter(column);
         getFilterApi(column: Column): any;
         private getOrCreateFilterWrapper(column);
         private createFilterWrapper(column);
@@ -562,7 +601,6 @@ declare module awk.grid {
         private node;
         private rowIndex;
         private editingCell;
-        private valueGetter;
         private scope;
         private isFirstColumn;
         private gridOptionsWrapper;
@@ -574,14 +612,16 @@ declare module awk.grid {
         private templateService;
         private cellRendererMap;
         private eCheckbox;
+        private columnModel;
+        private valueService;
         private value;
         private checkboxSelection;
         constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer, gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService, selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController, templateService: TemplateService, cellRendererMap: {
             [key: string]: any;
-        }, node: any, rowIndex: number, scope: any);
+        }, node: any, rowIndex: number, scope: any, columnModel: ColumnModel, valueService: ValueService);
+        private getValue();
         getVGridCell(): awk.vdom.VHtmlElement;
         private getDataForRow();
-        private createValueGetter();
         private setupComponents();
         startEditing(): void;
         private stopEditing(eInput, blurListener);
@@ -615,7 +655,7 @@ declare module awk.grid {
         private gridOptionsWrapper;
         private parentScope;
         private angularGrid;
-        private columns;
+        private columnModel;
         private expressionService;
         private rowRenderer;
         private selectionRendererFactory;
@@ -625,7 +665,8 @@ declare module awk.grid {
         private pinning;
         private eBodyContainer;
         private ePinnedContainer;
-        constructor(gridOptionsWrapper: GridOptionsWrapper, parentScope: any, angularGrid: Grid, columnModel: any, expressionService: ExpressionService, cellRendererMap: {
+        private valueService;
+        constructor(gridOptionsWrapper: GridOptionsWrapper, valueService: ValueService, parentScope: any, angularGrid: Grid, columnModel: ColumnModel, expressionService: ExpressionService, cellRendererMap: {
             [key: string]: any;
         }, selectionRendererFactory: SelectionRendererFactory, $compile: any, templateService: TemplateService, selectionController: SelectionController, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, ePinnedContainer: HTMLElement, node: any, rowIndex: number);
         onRowSelected(selected: boolean): void;
@@ -690,7 +731,8 @@ declare module awk.grid {
         private firstVirtualRenderedRow;
         private lastVirtualRenderedRow;
         private focusedCell;
-        init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any, selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService): void;
+        private valueService;
+        init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any, selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService, valueService: ValueService): void;
         setRowModel(rowModel: any): void;
         setMainRowWidths(): void;
         private findAllElements(gridPanel);
@@ -707,10 +749,10 @@ declare module awk.grid {
         private ensureRowsRendered();
         private insertRow(node, rowIndex, mainRowWidth);
         getIndexOfRenderedNode(node: any): number;
-        navigateToNextCell(key: any, rowIndex: any, column: any): void;
+        navigateToNextCell(key: any, rowIndex: number, column: Column): void;
         private getNextCellToFocus(key, lastCellToFocus);
         onRowSelected(rowIndex: number, selected: boolean): void;
-        focusCell(eCell: any, rowIndex: any, colIndex: any, forceBrowserFocus: any): void;
+        focusCell(eCell: any, rowIndex: number, colIndex: number, colDef: ColDef, forceBrowserFocus: any): void;
         getFocusedCell(): any;
         setFocusedCell(rowIndex: any, colIndex: any): void;
         startEditingNextCell(rowIndex: any, column: any, shiftKey: any): void;
@@ -752,7 +794,6 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class HeaderRenderer {
-        expressionService: any;
         gridOptionsWrapper: any;
         columnModel: any;
         columnController: any;
@@ -766,11 +807,11 @@ declare module awk.grid {
         eRoot: any;
         childScopes: any;
         dragStartX: any;
-        init(gridOptionsWrapper: any, columnController: any, columnModel: any, gridPanel: any, angularGrid: any, filterManager: any, $scope: any, $compile: any, expressionService: any): void;
+        init(gridOptionsWrapper: any, columnController: any, columnModel: any, gridPanel: any, angularGrid: any, filterManager: any, $scope: any, $compile: any): void;
         findAllElements(gridPanel: any): void;
         refreshHeader(): void;
         insertHeadersWithGrouping(): void;
-        createGroupedHeaderCell(group: any): HTMLDivElement;
+        createGroupedHeaderCell(group: HeaderGroup): HTMLDivElement;
         fireColumnResized(column: any): void;
         addGroupExpandIcon(group: any, eHeaderGroup: any, expanded: any): void;
         addDragHandler(eDraggableElement: any, dragCallback: any, column: any): void;
@@ -781,12 +822,12 @@ declare module awk.grid {
         getNextSortDirection(direction: any): string;
         addSortHandling(headerCellLabel: any, column: any): void;
         updateSortIcons(): void;
-        groupDragCallbackFactory(currentGroup: any): {
+        groupDragCallbackFactory(currentGroup: HeaderGroup): {
             onDragStart: () => void;
             onDragging: (dragChange: any) => void;
         };
         adjustColumnWidth(newWidth: any, column: any, eHeaderCell: any): void;
-        headerDragCallbackFactory(headerCell: any, column: any, headerGroup: any): {
+        headerDragCallbackFactory(headerCell: any, column: Column, headerGroup: any): {
             onDragStart: () => void;
             onDragging: (dragChange: any) => void;
         };
@@ -796,41 +837,41 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class GroupCreator {
-        static theInstance: GroupCreator;
-        static getInstance(): GroupCreator;
-        group(rowNodes: any, groupedCols: any, expandByDefault: any, expressionService: ExpressionService, api: GridApi, context: any, cellExpressions: boolean): any;
+        private valueService;
+        init(valueService: ValueService): void;
+        group(rowNodes: any, groupedCols: any, expandByDefault: any): any;
         isExpanded(expandByDefault: any, level: any): boolean;
     }
 }
 declare module awk.grid {
     class InMemoryRowController {
-        gridOptionsWrapper: any;
-        columnModel: any;
-        angularGrid: any;
-        filterManager: any;
-        $scope: any;
-        expressionService: any;
-        allRows: any;
-        rowsAfterGroup: any;
-        rowsAfterFilter: any;
-        rowsAfterSort: any;
-        rowsAfterMap: any;
-        model: any;
+        private gridOptionsWrapper;
+        private columnModel;
+        private angularGrid;
+        private filterManager;
+        private $scope;
+        private allRows;
+        private rowsAfterGroup;
+        private rowsAfterFilter;
+        private rowsAfterSort;
+        private rowsAfterMap;
+        private model;
+        private groupCreator;
+        private valueService;
         constructor();
-        init(gridOptionsWrapper: any, columnModel: any, angularGrid: any, filterManager: any, $scope: any, expressionService: any): void;
+        init(gridOptionsWrapper: any, columnModel: any, angularGrid: any, filterManager: any, $scope: any, groupCreator: GroupCreator, valueService: ValueService): void;
         createModel(): void;
         getModel(): any;
         forEachInMemory(callback: any): void;
         updateModel(step: any): void;
         defaultGroupAggFunctionFactory(valueColumns: any, valueKeys: any): (rows: any) => any;
-        getValue(data: any, colDef: any, node: any): any;
         doAggregate(): void;
         expandOrCollapseAll(expand: any, rowNodes: any): void;
         recursivelyClearAggData(nodes: any): void;
         recursivelyCreateAggData(nodes: any, groupAggFunction: any, level: number): void;
         doSort(): void;
         recursivelyResetSort(rowNodes: any): void;
-        sortList(nodes: any, sortOptions: any): void;
+        private sortList(nodes, sortOptions);
         doGrouping(): void;
         doFilter(): void;
         filterItems(rowNodes: any, quickFilterPresent: any, advancedFilterPresent: any): any;
@@ -1305,6 +1346,17 @@ declare module awk.grid {
         getColumnState(): any;
         setColumnState(state: any): void;
         doLayout(): void;
+    }
+}
+declare module awk.grid {
+    class ValueService {
+        private gridOptionsWrapper;
+        private expressionService;
+        private columnModel;
+        init(gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService, columnModel: ColumnModel): void;
+        getValue(column: Column, data: any, node: any): any;
+        private executeValueGetter(valueGetter, data, colDef, node);
+        private getValueCallback(data, node, field);
     }
 }
 declare module awk.grid {

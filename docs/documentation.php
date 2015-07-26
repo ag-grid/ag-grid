@@ -27,128 +27,33 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>18th July 2015</b>
+        <b>26th July 2015</b>
     </p>
 
     <p>
-        <b>The Saga of Performance</b>
+        <b>Last Week</b>
     </p>
 
     <p>
-        The past week I've been refactoring and introducing different designs to attach performance.
-        In particular, performance on IE was crap. I implemented a) my own virtual DOM and
-        b) my own recycling of rows (ie rather than throw virtual rows away after been ripped out of the
-        DOM, reuse them by replacing their values and updating their 'top' position in the grid).
-    </p>
-    <p>
-        Here are the latest results of the test I was running. The test composed of creating a grid with 100,000
-        rows using the test drive, then timing how long it took
-        the grid to refresh after jumping to a random line number on the grid (in other words, how long it took
-        to redraw a full 'viewable page' of rows after a scroll).
-
-        <style>
-            .mytable table {
-                border: 1px solid gray;
-            }
-            .mytable td {
-                border: 1px solid gray;
-                padding: 2px;
-            }
-            .mytable th {
-                border: 1px solid gray;
-                padding: 2px;
-            }
-        </style>
-        <table class="mytable">
-            <tr>
-                <th>Browser</th>
-                <th>Current Design</th>
-                <th>Virtual DOM</th>
-                <th>Recycling Rows</th>
-            </tr>
-            <tr>
-                <td>Chrome</td>
-                <td>88ms</td>
-                <td>88ms</td>
-                <td>78ms</td>
-            </tr>
-            <tr>
-                <td>Internet Explorer</td>
-                <td>673ms</td>
-                <td>380ms</td>
-                <td>726ms</td>
-            </tr>
-            <tr>
-                <td>Firefox</td>
-                <td>101ms</td>
-                <td>88ms</td>
-                <td>53ms</td>
-            </tr>
-        </table>
-    </p>
-    <p>
-        Long story short:
-    <li><b>Chrome:</b> Virtual DOM and Recycling made no difference to get excited about.</li>
-    <li><b>Firefox:</b> Virtual DOM made no real difference. Recycling made 50% reduction.</li>
-    <li><b>IE:</b> Recycling made no real difference. Virtual DOM made 50% reduction.</li>
-    </p>
-
-    <p>
-        To be honest, I am a bit annoyed!! I thought, you know, REACT, Virtual DOM, etc etc,
-        I was hoping for x10 faster. But only Internet Explorer benefit, while Chrome
-        and Firefox had little change.
-    </p>
-    <p>
-        So I had the choice, make Firefox faster with recycling rows, or IE faster with
-        virtual DOM. I decided on IE and virtual DOM as Firefox didn't have a performance
-        problem to start with, IE did.
-    </p>
-    <p>
-        So as of release 1.12 of ag-grid, a home grown virtual DOM is used.
-    </p>
-
-    <p>
-        <b>New Feature: Scroll Lag</b><br/>
-        Internet Explorer, even with my performance improvements, still was clunky. So I've implemented 'scroll lag' so
-        that when you are vertically, it waits until the scroll has come to a steady point before redrawing the screen.
-        This gives a great usablility boost to Internet Explorer.
-    </p>
-
-    <p>
-        <b>New Callbacks</b><br/>
-        For column sorting / filtering: beforeSortChanged(), afterSortChanged(), beforeFilterChanged(), afterFilterChanged()<br/>
-        For column managing: columnResized(), columnVisibilityChanged(), columnOrderChanged()<br/>
-    </p>
-
-    <p>
-        <b>New Feature: Cell Expressions</b><br/>
-        Now you can have expressions in your cells, just like a spreadsheet. Read about it
-        <a href="angular-grid-cell-expressions/index.php">here</a>.
-    </p>
-
-    <!--
-        <p>
-            This is what I did last week:
-        </p>
-
         <ul>
             <li>
-                <b>TypeScript</b> - Now Angular Grid is written in TypeScript. See below for more info!!
+                Introduced minWidth and maxWidth for columns.
             </li>
-        </ul>
-        <p>
-            This is what I'm doing this week:
-        </p>
-
-        <ul>
             <li>
-                Tool Panel and TypeScript took a LOT of work. But it's all in now. Next up on my plate, Angular 2.0 and hoover
-                up a bunch of GitHub issues.
+                Chaining of cell expressions via getValue() method. Explained <a href="angular-grid-value-getters/index.php">here</a>.
+            </li>
+            <li>
+                Other minor bug fixes.
             </li>
         </ul>
-    -->
+    Release 1.12.4 contains all the above.
+    </p>
+
     <p>
-        I have no blockers.
+        <b>Next Week</b>
+    </p>
+    <p>
+        Next week I'll be continuing to work through the issues in Gibhub.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
@@ -313,6 +218,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>18th July</b> Expressions implemented. Grid now works like Excel!!
+    </p>
 
     <hr/>
 
