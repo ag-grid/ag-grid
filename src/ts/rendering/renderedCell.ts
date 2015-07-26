@@ -159,7 +159,7 @@ module awk.grid {
                 // 13 is enter
                 if (key == Constants.KEY_ENTER) {
                     that.stopEditing(eInput, blurListener);
-                    that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, true);
+                    that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, that.column.colDef, true);
                 }
             });
 
@@ -292,7 +292,7 @@ module awk.grid {
                 // text field, the text field, the focus doesn't get to the text
                 // field, instead to goes to the div behind, making it impossible to
                 // select the text field.
-                that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, false);
+                that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, colDef, false);
                 if (that.gridOptionsWrapper.getCellClicked()) {
                     var paramsForGrid = {
                         node: that.node,

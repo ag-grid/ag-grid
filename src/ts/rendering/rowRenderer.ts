@@ -280,7 +280,7 @@ module awk.grid {
 
         // we use index for rows, but column object for columns, as the next column (by index) might not
         // be visible (header grouping) so it's not reliable, so using the column object instead.
-        public navigateToNextCell(key: any, rowIndex: any, column: any) {
+        public navigateToNextCell(key: any, rowIndex: number, column: Column) {
 
             var cellToFocus = {rowIndex: rowIndex, column: column};
             var renderedRow: RenderedRow;
@@ -302,7 +302,7 @@ module awk.grid {
             this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
             // this changes the css on the cell
-            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, true);
+            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, cellToFocus.column.colDef, true);
         }
 
         private getNextCellToFocus(key: any, lastCellToFocus: any) {
@@ -361,7 +361,7 @@ module awk.grid {
         }
 
         // called by the renderedRow
-        public focusCell(eCell: any, rowIndex: any, colIndex: any, forceBrowserFocus: any) {
+        public focusCell(eCell: any, rowIndex: number, colIndex: number, colDef: ColDef, forceBrowserFocus: any) {
             // do nothing if cell selection is off
             if (this.gridOptionsWrapper.isSuppressCellSelection()) {
                 return;
@@ -373,7 +373,7 @@ module awk.grid {
             var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
             _.querySelectorAll_replaceCssClass(this.eParentOfRows, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
 
-            this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex)};
+            this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};
 
             // this puts the browser focus on the cell (so it gets key presses)
             if (forceBrowserFocus) {
@@ -396,7 +396,7 @@ module awk.grid {
             var column = this.columnModel.getDisplayedColumns()[colIndex];
             if (renderedRow && column) {
                 var eCell = renderedRow.getCellForCol(column.colId);
-                this.focusCell(eCell, rowIndex, colIndex, true);
+                this.focusCell(eCell, rowIndex, colIndex, column.colDef, true);
             }
         }
 
