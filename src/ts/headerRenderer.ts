@@ -64,16 +64,16 @@ module awk.grid {
         }
 
         insertHeadersWithGrouping() {
-            var groups = this.columnModel.getHeaderGroups();
+            var groups: HeaderGroup[] = this.columnModel.getHeaderGroups();
             var that = this;
-            groups.forEach(function (group: any) {
+            groups.forEach(function (group: HeaderGroup) {
                 var eHeaderCell = that.createGroupedHeaderCell(group);
                 var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
                 eContainerToAddTo.appendChild(eHeaderCell);
             });
         }
 
-        createGroupedHeaderCell(group: any) {
+        createGroupedHeaderCell(group: HeaderGroup) {
 
             var eHeaderGroup = document.createElement('div');
             eHeaderGroup.className = 'ag-header-group';
@@ -445,7 +445,7 @@ module awk.grid {
             });
         }
 
-        groupDragCallbackFactory(currentGroup: any) {
+        groupDragCallbackFactory(currentGroup: HeaderGroup) {
             var parent = this;
             var displayedColumns = currentGroup.displayedColumns;
             return {
@@ -453,10 +453,10 @@ module awk.grid {
                     this.groupWidthStart = currentGroup.actualWidth;
                     this.childrenWidthStarts = [];
                     var that = this;
-                    displayedColumns.forEach(function (colDefWrapper: any) {
-                        that.childrenWidthStarts.push(colDefWrapper.actualWidth);
+                    displayedColumns.forEach(function (column: Column) {
+                        that.childrenWidthStarts.push(column.actualWidth);
                     });
-                    this.minWidth = displayedColumns.length * constants.MIN_COL_WIDTH;
+                    this.minWidth = currentGroup.getMinimumWidth();
                 },
                 onDragging: function (dragChange: any) {
 
@@ -476,7 +476,7 @@ module awk.grid {
                     // to cater for rounding errors, and min width adjustments
                     var pixelsToDistribute = newWidth;
                     var that = this;
-                    currentGroup.displayedColumns.forEach(function (colDefWrapper: any, index: any) {
+                    currentGroup.displayedColumns.forEach(function (column: Column, index: any) {
                         var notLastCol = index !== (displayedColumns.length - 1);
                         var newChildSize: any;
                         if (notLastCol) {
@@ -492,7 +492,7 @@ module awk.grid {
                             newChildSize = pixelsToDistribute;
                         }
                         var eHeaderCell = displayedColumns[index].eHeaderCell;
-                        parent.adjustColumnWidth(newChildSize, colDefWrapper, eHeaderCell);
+                        parent.adjustColumnWidth(newChildSize, column, eHeaderCell);
                     });
 
                     // should not be calling these here, should do something else
@@ -518,29 +518,33 @@ module awk.grid {
         }
 
         // gets called when a header (not a header group) gets resized
-        headerDragCallbackFactory(headerCell: any, column: any, headerGroup: any) {
-            var parent = this;
+        headerDragCallbackFactory(headerCell: any, column: Column, headerGroup: any) {
+            var that = this;
             return {
                 onDragStart: function () {
                     this.startWidth = column.actualWidth;
                 },
                 onDragging: function (dragChange: any) {
                     var newWidth = this.startWidth + dragChange;
-                    if (newWidth < constants.MIN_COL_WIDTH) {
-                        newWidth = constants.MIN_COL_WIDTH;
+                    if (newWidth < column.getMinimumWidth()) {
+                        newWidth = column.getMinimumWidth();
                     }
 
-                    parent.adjustColumnWidth(newWidth, column, headerCell);
+                    if (column.isGreaterThanMax(newWidth)) {
+                        newWidth = column.colDef.maxWidth;
+                    }
+
+                    that.adjustColumnWidth(newWidth, column, headerCell);
 
                     if (headerGroup) {
-                        parent.setWidthOfGroupHeaderCell(headerGroup);
+                        that.setWidthOfGroupHeaderCell(headerGroup);
                     }
 
                     // should not be calling these here, should do something else
                     if (column.pinned) {
-                        parent.angularGrid.updatePinnedColContainerWidthAfterColResize();
+                        that.angularGrid.updatePinnedColContainerWidthAfterColResize();
                     } else {
-                        parent.angularGrid.updateBodyContainerWidthAfterColResize();
+                        that.angularGrid.updateBodyContainerWidthAfterColResize();
                     }
                 }
             };

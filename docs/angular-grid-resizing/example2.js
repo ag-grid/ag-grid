@@ -5,7 +5,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
         {headerName: "Athlete", field: "athlete", width: 150, suppressSizeToFit: true},
-        {headerName: "Age", field: "age", width: 90, suppressSizeToFit: true},
+        {headerName: "Age", field: "age", width: 90, minWidth: 50, maxWidth: 100},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},

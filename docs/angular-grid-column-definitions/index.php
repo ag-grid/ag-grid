@@ -57,6 +57,14 @@ include '../documentation_header.php';
             <td>Initial width, in pixels, of the cell</td>
         </tr>
         <tr>
+            <th>minWidth</th>
+            <td>The minimum width of the column while resizing.</td>
+        </tr>
+        <tr>
+            <th>maxWidth</th>
+            <td>The maximum width of the column while resizing.</td>
+        </tr>
+        <tr>
             <th>cellClass</th>
             <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>

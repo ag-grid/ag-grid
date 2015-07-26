@@ -35,8 +35,11 @@ include '../documentation_header.php';
         columns to fill the width of the table.
     </p>
     <p>
-        In the example below, the first two columns are fixed with (ie suppressSizeToFit = true),
-        while the remainder will spread to fill the remaining space after you press the button.
+        In the example below, the first column is fixed with (ie suppressSizeToFit = true),
+        which means it's size does not change when sizeColumnsToFit is called. Also of note
+        is the second column, which has both a min and max size set, which is also respected
+        with sizeColumnsToFit. The remaining columns will spread to fill the remaining space
+        after you press the button.
     </p>
 
     <show-example example="example2"></show-example>

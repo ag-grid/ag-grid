@@ -19,7 +19,7 @@ module awk.grid {
         pivotColumns: Column[];
         valueColumns: Column[];
         visibleColumns: Column[];
-        headerGroups: any;
+        headerGroups: HeaderGroup[];
 
         constructor() {
             this.listeners = [];
@@ -68,7 +68,7 @@ module awk.grid {
                 },
                 // used by:
                 // + headerRenderer -> setting pinned body width
-                getHeaderGroups: function () {
+                getHeaderGroups: function (): HeaderGroup[] {
                     return that.headerGroups;
                 },
                 // used by:
@@ -300,52 +300,65 @@ module awk.grid {
 
         }
 
-        // public - called from api
-        sizeColumnsToFit(gridWidth: any) {
+        // called from api
+        public sizeColumnsToFit(gridWidth: any) {
             // avoid divide by zero
             if (gridWidth <= 0 || this.displayedColumns.length === 0) {
                 return;
             }
 
-            var columnStartWidth = 0; // will contain the starting total width of the cols been spread
-            var colsToSpread = <any>[]; // all visible cols, except those with avoidSizeToFit
-            var widthForSpreading = gridWidth; // grid width minus the columns we are not resizing
+            var colsToNotSpread = _.filter(this.displayedColumns, (column: Column): boolean => {
+                return column.colDef.suppressSizeToFit === true;
+            });
+            var colsToSpread = _.filter(this.displayedColumns, (column: Column): boolean => {
+                return column.colDef.suppressSizeToFit !== true;
+            });
 
-            // get the list of cols to work with
-            for (var j = 0; j < this.displayedColumns.length; j++) {
-                if (this.displayedColumns[j].colDef.suppressSizeToFit === true) {
-                    // don't include col, and remove the width from teh available width
-                    widthForSpreading -= this.displayedColumns[j].actualWidth;
+            var finishedResizing = false;
+            while (!finishedResizing) {
+                finishedResizing = true;
+                var availablePixels = gridWidth - getTotalWidth(colsToNotSpread);
+                if (availablePixels <= 0) {
+                    // no width, set everything to minimum
+                    colsToSpread.forEach( function(column: Column) {
+                        column.setMinimum();
+                    });
                 } else {
-                    // include the col
-                    colsToSpread.push(this.displayedColumns[j]);
-                    columnStartWidth += this.displayedColumns[j].actualWidth;
+                    var scale = availablePixels / getTotalWidth(colsToSpread);
+                    // backwards through loop, as we are removing items as we go
+                    for (var i = colsToSpread.length - 1; i >= 0; i--) {
+                        var column = colsToSpread[i];
+                        var newWidth = Math.round(column.actualWidth * scale);
+                        if (newWidth < column.getMinimumWidth()) {
+                            column.setMinimum();
+                            moveToNotSpread(column);
+                            finishedResizing = false;
+                        } else if (column.isGreaterThanMax(newWidth)) {
+                            column.actualWidth = column.colDef.maxWidth;
+                            moveToNotSpread(column);
+                            finishedResizing = false;
+                        } else {
+                            column.actualWidth = newWidth;
+                        }
+                    }
                 }
             }
 
-            // if no width left over to spread with, do nothing
-            if (widthForSpreading <= 0) {
-                return;
-            }
-
-            var scale = widthForSpreading / columnStartWidth;
-            var pixelsForLastCol = widthForSpreading;
-
-            // size all cols except the last by the scale
-            for (var i = 0; i < (colsToSpread.length - 1); i++) {
-                var column = colsToSpread[i];
-                var newWidth = Math.round(column.actualWidth * scale);
-                column.actualWidth = newWidth;
-                pixelsForLastCol -= newWidth;
-            }
-
-            // size the last by whats remaining (this avoids rounding errors that could
-            // occur with scaling everything, where it result in some pixels off)
-            var lastColumn = colsToSpread[colsToSpread.length - 1];
-            lastColumn.actualWidth = pixelsForLastCol;
-
             // widths set, refresh the gui
             this.angularGrid.refreshHeaderAndBody();
+
+            function moveToNotSpread(column: Column) {
+                _.removeFromArray(colsToSpread, column);
+                colsToNotSpread.push(column);
+            }
+
+            function getTotalWidth(columns: Column[]): number {
+                var result = 0;
+                for (var i = 0; i<columns.length; i++) {
+                    result += columns[i].actualWidth;
+                }
+                return result;
+            }
         }
 
         private buildGroups() {
@@ -528,30 +541,41 @@ module awk.grid {
 
             return widthSoFar;
         }
-
     }
 
-    class HeaderGroup {
+    export class HeaderGroup {
 
-        pinned:any;
-        name:any;
-        allColumns = <any>[];
-        displayedColumns = <any>[];
+        pinned: any;
+        name: any;
+        allColumns: Column[] = [];
+        displayedColumns: Column[] = [];
         expandable = false;
         expanded = false;
+
+        actualWidth: number;
+        eHeaderGroupCell: HTMLElement;
+        eHeaderCellResize: HTMLElement;
 
         constructor(pinned: any, name: any) {
             this.pinned = pinned;
             this.name = name;
         }
 
-        addColumn(column: any) {
+        public getMinimumWidth(): number {
+            var result = 0;
+            this.displayedColumns.forEach( (column: Column) => {
+                result += column.getMinimumWidth();
+            })
+            return result;
+        }
+
+        public addColumn(column: any) {
             this.allColumns.push(column);
         }
 
         // need to check that this group has at least one col showing when both expanded and contracted.
         // if not, then we don't allow expanding and contracting on this group
-        calculateExpandable() {
+        public calculateExpandable() {
             // want to make sure the group doesn't disappear when it's open
             var atLeastOneShowingWhenOpen = false;
             // want to make sure the group doesn't disappear when it's closed
@@ -575,7 +599,7 @@ module awk.grid {
             this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
         }
 
-        calculateDisplayedColumns() {
+        public calculateDisplayedColumns() {
             // clear out last time we calculated
             this.displayedColumns = [];
             // it not expandable, everything is visible
@@ -608,7 +632,7 @@ module awk.grid {
         }
 
         // should replace with utils method 'add all'
-        addToVisibleColumns(colsToAdd: any) {
+        public addToVisibleColumns(colsToAdd: any) {
             for (var i = 0; i < this.displayedColumns.length; i++) {
                 var column = this.displayedColumns[i];
                 colsToAdd.push(column);
@@ -665,8 +689,14 @@ module awk.grid {
       /** Expression or function to get the cells value. */
       valueGetter?: string | Function;
 
-      /** Initial width, in pixels, of the cell */
-      width?: number;
+    /** Initial width, in pixels, of the cell */
+    width?: number;
+
+    /** Min width, in pixels, of the cell */
+    minWidth?: number;
+
+    /** Max width, in pixels, of the cell */
+    maxWidth?: number;
 
       /** Class to use for the cell. Can be string, array of strings, or function. */
       cellClass?: string | string[]| ((cellClassParams: any) => string | string[]);
@@ -711,7 +741,7 @@ module awk.grid {
       headerGroup?: string;
 
       /** Whether to show the column when the group is open / closed. */
-      headerGroupShow?: boolean;
+      headerGroupShow?: string;
       
       /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
       editable?: boolean | (Function);
@@ -753,6 +783,8 @@ module awk.grid {
         aggFunc: string;
         pivotIndex: number;
 
+        eHeaderCell: HTMLElement;
+
         constructor(colDef: ColDef, actualWidth: any) {
             this.colDef = colDef;
             this.actualWidth = actualWidth;
@@ -765,6 +797,26 @@ module awk.grid {
             } else {
                 this.colId = '' + Column.colIdSequence++;
             }
+        }
+
+        public isGreaterThanMax(width: number): boolean {
+            if (this.colDef.maxWidth >= constants.MIN_COL_WIDTH) {
+                return width > this.colDef.maxWidth;
+            } else {
+                return false;
+            }
+        }
+
+        public getMinimumWidth(): number {
+            if (this.colDef.minWidth > constants.MIN_COL_WIDTH) {
+                return this.colDef.minWidth;
+            } else {
+                return constants.MIN_COL_WIDTH;
+            }
+        }
+
+        public setMinimum(): void {
+            this.actualWidth = this.getMinimumWidth();
         }
     }
 }
