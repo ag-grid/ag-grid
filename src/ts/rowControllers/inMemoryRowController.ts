@@ -305,7 +305,7 @@ module awk.grid {
         }
 
         // private
-        recursivelyResetSort(rowNodes: any) {
+        recursivelyResetSort(rowNodes: any[]) {
             if (!rowNodes) {
                 return;
             }
@@ -316,6 +316,8 @@ module awk.grid {
                     this.recursivelyResetSort(item.children);
                 }
             }
+
+            this.updateChildIndexes(rowNodes);
         }
 
         private sortList(nodes: any, sortOptions: any) {
@@ -331,7 +333,7 @@ module awk.grid {
 
             var that = this;
 
-            function compare(objA: any, objB: any, column: Column, isInverted:any) {
+            function compare(objA:any, objB:any, column:Column, isInverted:any) {
                 var valueA = that.valueService.getValue(column, objA.data, objA);
                 var valueB = that.valueService.getValue(column, objB.data, objB);
                 if (column.colDef.comparator) {
@@ -343,7 +345,7 @@ module awk.grid {
                 }
             }
 
-            nodes.sort(function (objA: any, objB: any) {
+            nodes.sort(function (objA:any, objB:any) {
                 // Iterate columns, return the first that doesn't match
                 for (var i = 0, len = sortOptions.length; i < len; i++) {
                     var sortOption = sortOptions[i];
@@ -355,6 +357,17 @@ module awk.grid {
                 // All matched, these are identical as far as the sort is concerned:
                 return 0;
             });
+
+            this.updateChildIndexes(nodes);
+        }
+
+        private updateChildIndexes(nodes: any[]) {
+            for (var j = 0; j<nodes.length; j++) {
+                var node = nodes[j];
+                node.firstChild = j === 0;
+                node.lastChild = j === nodes.length - 1;
+                node.childIndex = j;
+            }
         }
 
         // private

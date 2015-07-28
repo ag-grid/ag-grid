@@ -24,8 +24,8 @@ module awk.grid {
             allGroups.push(topMostGroup);
 
             var levelToInsertChild = groupedCols.length - 1;
-            var i: any;
-            var currentLevel: any;
+            var i: number;
+            var currentLevel: number;
             var node: any;
             var data: any;
             var currentGroup: any;
@@ -47,7 +47,7 @@ module awk.grid {
                     var groupColumn = groupedCols[currentLevel];
                     groupKey = this.valueService.getValue(groupColumn, data, node);
 
-                    if (currentLevel == 0) {
+                    if (currentLevel === 0) {
                         currentGroup = topMostGroup;
                     }
 
