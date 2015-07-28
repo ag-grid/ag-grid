@@ -28,7 +28,7 @@ module awk.grid {
         private gridOptionsWrapper: GridOptionsWrapper;
         private parentScope: any;
         private angularGrid: Grid;
-        private columnModel: ColumnModel;
+        private columnController: ColumnController;
         private expressionService: ExpressionService;
         private rowRenderer: RowRenderer;
         private selectionRendererFactory: SelectionRendererFactory;
@@ -44,7 +44,7 @@ module awk.grid {
                     valueService: ValueService,
                     parentScope: any,
                     angularGrid: Grid,
-                    columnModel: ColumnModel,
+                    columnController: ColumnController,
                     expressionService: ExpressionService,
                     cellRendererMap: {[key: string]: any},
                     selectionRendererFactory: SelectionRendererFactory,
@@ -61,7 +61,7 @@ module awk.grid {
             this.parentScope = parentScope;
             this.angularGrid = angularGrid;
             this.expressionService = expressionService;
-            this.columnModel = columnModel;
+            this.columnController = columnController;
             this.cellRendererMap = cellRendererMap;
             this.selectionRendererFactory = selectionRendererFactory;
             this.$compile = $compile;
@@ -70,7 +70,7 @@ module awk.grid {
             this.rowRenderer = rowRenderer;
             this.eBodyContainer = eBodyContainer;
             this.ePinnedContainer = ePinnedContainer;
-            this.pinning = columnModel.isPinning();
+            this.pinning = columnController.isPinning();
 
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
             var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
@@ -183,7 +183,7 @@ module awk.grid {
         }
 
         private drawNormalRow() {
-            var columns = this.columnModel.getDisplayedColumns();
+            var columns = this.columnController.getDisplayedColumns();
             for (var i = 0; i<columns.length; i++) {
                 var column = columns[i];
                 var firstCol = i === 0;
@@ -191,7 +191,7 @@ module awk.grid {
                 var renderedCell = new RenderedCell(firstCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
-                    this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnModel,
+                    this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnController,
                     this.valueService);
 
                 var vGridCell = renderedCell.getVGridCell();

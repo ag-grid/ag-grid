@@ -40,7 +40,7 @@ module awk.grid {
         private templateService: TemplateService;
         private cellRendererMap: {[key: string]: Function};
         private eCheckbox: HTMLInputElement;
-        private columnModel: ColumnModel;
+        private columnController: ColumnController;
         private valueService: ValueService;
 
         private value: any;
@@ -50,7 +50,7 @@ module awk.grid {
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                    node: any, rowIndex: number, scope: any, columnModel: ColumnModel,
+                    node: any, rowIndex: number, scope: any, columnController: ColumnController,
                     valueService: ValueService) {
 
             this.isFirstColumn = isFirstColumn;
@@ -63,7 +63,7 @@ module awk.grid {
             this.cellRendererMap = cellRendererMap;
             this.$compile = $compile;
             this.templateService = templateService;
-            this.columnModel = columnModel;
+            this.columnController = columnController;
             this.valueService = valueService;
 
             this.checkboxSelection = this.column.colDef.checkboxSelection;

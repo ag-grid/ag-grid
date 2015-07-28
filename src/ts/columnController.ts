@@ -7,30 +7,13 @@ module awk.grid {
     var _ = Utils;
     var constants = Constants;
 
-    export interface ColumnModel {
-        headerGroupOpened(group: any): void;
-        getAllColumns(): Column[];
-        getDisplayedColumns(): Column[];
-        getGroupedColumns(): Column[];
-        getValueColumns(): Column[];
-        getBodyContainerWidth(): number;
-        getPinnedContainerWidth(): number;
-        getHeaderGroups(): HeaderGroup[];
-        getColumn(key: any): Column;
-        getVisibleColBefore(column: Column): Column;
-        getVisibleColAfter(column: Column): Column;
-        getDisplayNameForCol(column: Column): string;
-        isPinning(): boolean;
-    }
-
     export class ColumnController {
 
         private gridOptionsWrapper: GridOptionsWrapper;
         private angularGrid: Grid;
         private selectionRendererFactory: SelectionRendererFactory;
         private expressionService: ExpressionService;
-        private listeners: any[];
-        private model: ColumnModel;
+        private changedListeners: any[];
         private allColumns: Column[];
         private displayedColumns: Column[];
         private pivotColumns: Column[];
@@ -41,8 +24,7 @@ module awk.grid {
         private valueService: ValueService;
 
         constructor() {
-            this.listeners = [];
-            this.createModel();
+            this.changedListeners = [];
         }
 
         public init(angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory,
@@ -55,79 +37,70 @@ module awk.grid {
             this.valueService = valueService;
         }
 
-        private createModel() {
-            var that = this;
-            this.model = {
-                headerGroupOpened: function(group: any) {
-                    that.headerGroupOpened(group);
-                },
-                // used by:
-                // + inMemoryRowController -> sorting, building quick filter text
-                // + headerRenderer -> sorting (clearing icon)
-                getAllColumns: function () {
-                    return that.allColumns;
-                },
-                // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
-                // need a newMethod - get next col index
-                getDisplayedColumns: function () {
-                    return that.displayedColumns;
-                },
-                // + toolPanel
-                getGroupedColumns: function () {
-                    return that.pivotColumns;
-                },
-                // + rowController
-                getValueColumns: function () {
-                    return that.valueColumns;
-                },
-                // used by:
-                // + angularGrid -> for setting body width
-                // + rowController -> setting main row widths (when inserting and resizing)
-                getBodyContainerWidth: function () {
-                    return that.getTotalColWidth(false);
-                },
-                // used by:
-                // + angularGrid -> setting pinned body width
-                getPinnedContainerWidth: function () {
-                    return that.getTotalColWidth(true);
-                },
-                // used by:
-                // + headerRenderer -> setting pinned body width
-                getHeaderGroups: function (): HeaderGroup[] {
-                    return that.headerGroups;
-                },
-                // used by:
-                // + api.getFilterModel() -> to map colDef to column, key can be colDef or field
-                getColumn: function (key: any) {
-                    return that.getColumn(key);
-                },
-                // used by:
-                // + rowRenderer -> for navigation
-                getVisibleColBefore: function (col: any) {
-                    var oldIndex = that.visibleColumns.indexOf(col);
-                    if (oldIndex > 0) {
-                        return that.visibleColumns[oldIndex - 1];
-                    } else {
-                        return null;
-                    }
-                },
-                // used by:
-                // + rowRenderer -> for navigation
-                getVisibleColAfter: function (col: any) {
-                    var oldIndex = that.visibleColumns.indexOf(col);
-                    if (oldIndex < (that.visibleColumns.length - 1)) {
-                        return that.visibleColumns[oldIndex + 1];
-                    } else {
-                        return null;
-                    }
-                },
-                getDisplayNameForCol: function (column: any) {
-                    return that.getDisplayNameForCol(column);
-                },
-                isPinning(): boolean {
-                    return that.visibleColumns && that.visibleColumns.length > 0 && that.visibleColumns[0].pinned;
-                }
-            };
+        // used by:
+        // + headerRenderer -> setting pinned body width
+        public getHeaderGroups(): HeaderGroup[] {
+            return this.headerGroups;
+        }
+
+        // used by:
+        // + angularGrid -> setting pinned body width
+        public getPinnedContainerWidth() {
+            return this.getTotalColWidth(true);
+        }
+
+        // used by:
+        // + angularGrid -> for setting body width
+        // + rowController -> setting main row widths (when inserting and resizing)
+        public getBodyContainerWidth(): number {
+            return this.getTotalColWidth(false);
+        }
+
+        // + rowController
+        public getValueColumns(): Column[] {
+            return this.valueColumns;
+        }
+
+        // + toolPanel
+        public getGroupedColumns(): Column[] {
+            return this.pivotColumns;
+        }
+
+        // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
+        // need a newMethod - get next col index
+        public getDisplayedColumns(): Column[] {
+            return this.displayedColumns;
+        }
+
+        // used by:
+        // + inMemoryRowController -> sorting, building quick filter text
+        // + headerRenderer -> sorting (clearing icon)
+        public getAllColumns(): Column[] {
+            return this.allColumns;
+        }
+
+        public getVisibleColBefore(col: any): Column {
+            var oldIndex = this.visibleColumns.indexOf(col);
+            if (oldIndex > 0) {
+                return this.visibleColumns[oldIndex - 1];
+            } else {
+                return null;
+            }
+        }
+
+        // used by:
+        // + rowRenderer -> for navigation
+        public getVisibleColAfter(col: any): Column {
+            var oldIndex = this.visibleColumns.indexOf(col);
+            if (oldIndex < (this.visibleColumns.length - 1)) {
+                return this.visibleColumns[oldIndex + 1];
+            } else {
+                return null;
+            }
+        }
+
+        public isPinning(): boolean {
+            return this.visibleColumns && this.visibleColumns.length > 0 && this.visibleColumns[0].pinned;
         }
 
         public getState() {
@@ -239,17 +212,13 @@ module awk.grid {
         }
 
         public addListener(listener: any) {
-            this.listeners.push(listener);
+            this.changedListeners.push(listener);
         }
 
         public fireColumnsChanged() {
-            for (var i = 0; i < this.listeners.length; i++) {
-                this.listeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
+            for (var i = 0; i < this.changedListeners.length; i++) {
+                this.changedListeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
             }
-        }
-
-        public getModel(): ColumnModel {
-            return this.model;
         }
 
         // called by angularGrid
@@ -354,6 +323,7 @@ module awk.grid {
                     });
                 } else {
                     var scale = availablePixels / getTotalWidth(colsToSpread);
+                    var pixelsForLastCol = availablePixels;
                     // backwards through loop, as we are removing items as we go
                     for (var i = colsToSpread.length - 1; i >= 0; i--) {
                         var column = colsToSpread[i];
@@ -367,7 +337,13 @@ module awk.grid {
                             moveToNotSpread(column);
                             finishedResizing = false;
                         } else {
-                            column.actualWidth = newWidth;
+                            var onLastCol = i === 0;
+                            if (onLastCol) {
+                                column.actualWidth = pixelsForLastCol;
+                            } else {
+                                pixelsForLastCol -= newWidth;
+                                column.actualWidth = newWidth;
+                            }
                         }
                     }
                 }
@@ -487,17 +463,12 @@ module awk.grid {
 
         private createColumns(columnDefs: any) {
             this.allColumns = [];
-            var that = this;
             if (columnDefs) {
                 for (var i = 0; i < columnDefs.length; i++) {
                     var colDef = columnDefs[i];
-                    // this is messy - we swap in another col def if it's checkbox selection - not happy :(
-                    if (colDef === 'checkboxSelection') {
-                        colDef = that.selectionRendererFactory.createCheckboxColDef();
-                    }
-                    var width = that.calculateColInitialWidth(colDef);
+                    var width = this.calculateColInitialWidth(colDef);
                     var column = new Column(colDef, width);
-                    that.allColumns.push(column);
+                    this.allColumns.push(column);
                 }
             }
         }

@@ -16,6 +16,8 @@ module awk.grid {
         index: number;
         aggFunc: string;
         pivotIndex: number;
+        sort: string;
+        sortedAt: number;
 
         eHeaderCell: HTMLElement;
         eSortAsc: HTMLElement;

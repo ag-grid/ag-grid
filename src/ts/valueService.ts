@@ -8,12 +8,12 @@ module awk.grid {
 
         private gridOptionsWrapper: GridOptionsWrapper;
         private expressionService: ExpressionService;
-        private columnModel: ColumnModel;
+        private columnController: ColumnController;
 
-        public init(gridOptionsWrapper:GridOptionsWrapper, expressionService:ExpressionService, columnModel:ColumnModel):void {
+        public init(gridOptionsWrapper:GridOptionsWrapper, expressionService:ExpressionService, columnController:ColumnController):void {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.expressionService = expressionService;
-            this.columnModel = columnModel;
+            this.columnController = columnController;
         }
 
         public getValue(column: Column, data: any, node: any):any {
@@ -65,7 +65,7 @@ module awk.grid {
         }
 
         private getValueCallback(data: any, node: any, field: string): any {
-            var otherColumn = this.columnModel.getColumn(field);
+            var otherColumn = this.columnController.getColumn(field);
             if (otherColumn) {
                 return this.getValue(otherColumn, data, node);
             } else {

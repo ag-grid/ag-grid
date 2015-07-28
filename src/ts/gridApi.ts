@@ -167,12 +167,12 @@ module awk.grid {
         }
 
         getFilterApi(key:any) {
-            var column = this.grid.columnModel.getColumn(key);
+            var column = this.columnController.getColumn(key);
             return this.filterManager.getFilterApi(column);
         }
 
         getColumnDef(key:any) {
-            var column = this.grid.columnModel.getColumn(key);
+            var column = this.columnController.getColumn(key);
             if (column) {
                 return column.colDef;
             } else {

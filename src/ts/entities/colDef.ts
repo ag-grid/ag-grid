@@ -43,7 +43,7 @@ module awk.grid {
         cellStyle?: {} | ((params:any) => {});
 
         /** A function for rendering a cell. */
-        cellRenderer?: Function | CellRendererObj;
+        cellRenderer?: Function | {};
 
         /** Function callback, gets called when a cell is clicked. */
         cellClicked?: Function;

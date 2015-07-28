@@ -45,7 +45,6 @@ module awk.grid {
         private doingPagination: boolean;
 
         // these are public, as they are used by the api
-        columnModel: any;
         rowModel: any;
 
         constructor(eGridDiv: any, gridOptions: any, $scope: any, $compile: any, quickFilterOnScope: any) {
@@ -134,24 +133,22 @@ module awk.grid {
             var valueService = new ValueService();
             var groupCreator = new GroupCreator();
 
-            var columnModel = columnController.getModel();
-
             // initialise all the beans
             templateService.init($scope);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer);
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
-                columnModel, popupService, valueService);
+                columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService, valueService);
-            rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
+            rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService);
-            headerRenderer.init(gridOptionsWrapper, columnModel, gridPanel, this, filterManager,
+            headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
                 $scope, $compile);
-            inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope,
+            inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
                 groupCreator, valueService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
-            gridPanel.init(columnModel, rowRenderer);
-            valueService.init(gridOptionsWrapper, expressionService, columnModel);
+            gridPanel.init(columnController, rowRenderer);
+            valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
 
             var toolPanelLayout: any = null;
@@ -182,7 +179,6 @@ module awk.grid {
             this.rowModel = rowModel;
             this.selectionController = selectionController;
             this.columnController = columnController;
-            this.columnModel = columnModel;
             this.inMemoryRowController = inMemoryRowController;
             this.virtualPageRowController = virtualPageRowController;
             this.rowRenderer = rowRenderer;
@@ -452,7 +448,7 @@ module awk.grid {
         }
 
         getSortModel() {
-            var allColumns = this.columnModel.getAllColumns();
+            var allColumns = this.columnController.getAllColumns();
             var columnsWithSorting = <any>[];
             var i: any;
             for (i = 0; i < allColumns.length; i++) {
@@ -483,7 +479,7 @@ module awk.grid {
             }
             // first up, clear any previous sort
             var sortModelProvided = sortModel !== null && sortModel !== undefined && sortModel.length > 0;
-            var allColumns = this.columnModel.getAllColumns();
+            var allColumns = this.columnController.getAllColumns();
             for (var i = 0; i < allColumns.length; i++) {
                 var column = allColumns[i];
 

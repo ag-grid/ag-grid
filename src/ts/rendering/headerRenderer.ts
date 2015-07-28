@@ -11,7 +11,7 @@ module awk.grid {
     export class HeaderRenderer {
 
         private gridOptionsWrapper: GridOptionsWrapper;
-        private columnModel: ColumnModel;
+        private columnController: ColumnController;
         private angularGrid: Grid;
         private filterManager: FilterManager;
         private $scope: any;
@@ -22,10 +22,10 @@ module awk.grid {
         private childScopes: any[];
         private dragStartX: number;
 
-        public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnModel, gridPanel: GridPanel,
+        public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel,
                     angularGrid: Grid, filterManager: FilterManager, $scope: any, $compile: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
-            this.columnModel = columnModel;
+            this.columnController = columnController;
             this.angularGrid = angularGrid;
             this.filterManager = filterManager;
             this.$scope = $scope;
@@ -58,7 +58,7 @@ module awk.grid {
         }
 
         private insertHeadersWithGrouping() {
-            var groups: HeaderGroup[] = this.columnModel.getHeaderGroups();
+            var groups: HeaderGroup[] = this.columnController.getHeaderGroups();
             var that = this;
             groups.forEach(function (group: HeaderGroup) {
                 var eHeaderCell = that.createGroupedHeaderCell(group);
@@ -140,7 +140,7 @@ module awk.grid {
 
             var that = this;
             eGroupIcon.onclick = function() {
-                that.columnModel.headerGroupOpened(group);
+                that.columnController.headerGroupOpened(group);
             };
         }
 
@@ -187,7 +187,7 @@ module awk.grid {
             var eHeaderContainer = this.eHeaderContainer;
             var that = this;
 
-            this.columnModel.getDisplayedColumns().forEach(function (column: Column) {
+            this.columnController.getDisplayedColumns().forEach(function (column: Column) {
                 // only include the first x cols
                 var headerCell = that.createHeaderCell(column, false);
                 if (column.pinned) {
@@ -298,7 +298,7 @@ module awk.grid {
                 headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
             }
 
-            var headerNameValue = this.columnModel.getDisplayNameForCol(column);
+            var headerNameValue = this.columnController.getDisplayNameForCol(column);
 
             if (headerCellRenderer) {
                 // renderer provided, use it
@@ -408,7 +408,7 @@ module awk.grid {
                 var doingMultiSort = !that.gridOptionsWrapper.isSuppressMultiSort() && e.shiftKey;
 
                 // clear sort on all columns except this one, and update the icons
-                that.columnModel.getAllColumns().forEach(function (columnToClear: any) {
+                that.columnController.getAllColumns().forEach(function (columnToClear: any) {
                     // Do not clear if either holding shift, or if column in question was clicked
                     if (!(doingMultiSort || columnToClear === column)) {
                         columnToClear.sort = null;
@@ -420,7 +420,7 @@ module awk.grid {
         }
 
         public updateSortIcons() {
-            this.columnModel.getAllColumns().forEach(function (column: any) {
+            this.columnController.getAllColumns().forEach(function (column: any) {
                 // update visibility of icons
                 var sortAscending = column.sort === constants.ASC;
                 var sortDescending = column.sort === constants.DESC;
@@ -563,7 +563,7 @@ module awk.grid {
 
         public updateFilterIcons() {
             var that = this;
-            this.columnModel.getDisplayedColumns().forEach(function (column: any) {
+            this.columnController.getDisplayedColumns().forEach(function (column: any) {
                 // todo: need to change this, so only updates if column is visible
                 if (column.eFilterIcon) {
                     var filterPresent = that.filterManager.isFilterPresentForCol(column.colId);
