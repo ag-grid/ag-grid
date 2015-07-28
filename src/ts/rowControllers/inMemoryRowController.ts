@@ -366,7 +366,7 @@ module awk.grid {
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
 
             if (doingGrouping) {
-                var expandByDefault = this.gridOptionsWrapper.isSuppressGroupRow() || this.gridOptionsWrapper.getGroupDefaultExpanded();
+                var expandByDefault = this.gridOptionsWrapper.isGroupSuppressRow() || this.gridOptionsWrapper.getGroupDefaultExpanded();
                 rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
             } else {
                 rowsAfterGroup = this.allRows;
@@ -527,10 +527,10 @@ module awk.grid {
             if (!originalNodes) {
                 return;
             }
-            var suppressGroupRow = this.gridOptionsWrapper.isSuppressGroupRow();
+            var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
             for (var i = 0; i < originalNodes.length; i++) {
                 var node = originalNodes[i];
-                if(!suppressGroupRow || (suppressGroupRow && !node.group)) {
+                if(!groupSuppressRow || (groupSuppressRow && !node.group)) {
                     mappedData.push(node);
                 }
                 if (node.group && node.expanded) {

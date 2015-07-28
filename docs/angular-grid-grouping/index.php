@@ -90,10 +90,10 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>suppressGroupRow</th>
+            <th>groupSuppressRow</th>
             <td>If true, the group row won't be displayed and the groups will be expanded by default
-                (whether groupDefaultExpanded is set to true or false) unless specified otherwise.
-                The group column will also not be hidden (whether groupUseEntireRow is set to true or false).
+                with no ability to expand / contract the groups. Useful when you want to just 'group'
+                the rows, but not add parent group row to each group.
             </td>
         </tr>
     </table>

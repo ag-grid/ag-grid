@@ -423,7 +423,7 @@ module awk.grid {
             var needAGroupColumn = this.pivotColumns.length > 0
                 && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
                 && !this.gridOptionsWrapper.isGroupUseEntireRow()
-                && !this.gridOptionsWrapper.isSuppressGroupRow();
+                && !this.gridOptionsWrapper.isGroupSuppressRow();
 
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
