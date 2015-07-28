@@ -390,7 +390,7 @@ module awk.grid {
                         return constants.DESC;
                     }
                 default :
-					return colDef.defaultSort && colDef.defaultSort === 'descending' ? constants.DESC : constants.ASC;
+					return colDef.defaultSort === 'descending' ? constants.DESC : constants.ASC;
             }
         }
 
