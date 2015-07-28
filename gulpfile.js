@@ -84,7 +84,7 @@ function stylusTask() {
             return stream
                 .pipe(stylus({
                     use: nib(),
-                    compress: false,
+                    compress: false
                 }))
                 .pipe(gulp.dest('./docs/dist/'))
                 .pipe(gulp.dest('./dist/'));
