@@ -373,10 +373,11 @@ module awk.grid {
         getNextSortDirection(direction: any, colDef: any) {
             var suppressUnSort = this.gridOptionsWrapper.isSuppressUnSort();
             var suppressDescSort = this.gridOptionsWrapper.isSuppressDescSort();
-
+			var isDescendingByDefault = colDef.defaultSort === 'descending';
+			
             switch (direction) {
-                case constants.DESC:
-                    if (suppressUnSort) {
+                case constants.DESC:				
+                    if (suppressUnSort || isDescendingByDefault) {
                         return constants.ASC;
                     } else {
                         return null;
@@ -384,13 +385,13 @@ module awk.grid {
                 case constants.ASC:
                     if (suppressUnSort && suppressDescSort) {
                         return constants.ASC;
-                    } else if (suppressDescSort) {
+                    } else if (suppressDescSort || isDescendingByDefault) {
                         return null;
                     } else {
                         return constants.DESC;
                     }
-                default :
-					return colDef.defaultSort === 'descending' ? constants.DESC : constants.ASC;
+                default:
+					return isDescendingByDefault ? constants.DESC : constants.ASC;
             }
         }
 
