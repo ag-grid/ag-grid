@@ -34,6 +34,7 @@ module awk.grid {
         rowData?: any[];
         groupUseEntireRow?: boolean;
         groupColumnDef?: any; // change to typed
+        groupSuppressRow?: boolean;
         angularCompileRows?: boolean;
         angularCompileFilters?: boolean;
         angularCompileHeaders?: boolean;

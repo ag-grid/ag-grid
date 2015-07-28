@@ -46,7 +46,7 @@ include '../documentation_header.php';
         <tr>
             <th>groupUseEntireRow</th>
             <td>If grouping, set to true or false (default is false). If true, a group row will span all columns across the entire
-                width of the table. If false, the cells will be rendered as normal and you will have the oppertuinity to include
+                width of the table. If false, the cells will be rendered as normal and you will have the opportunity to include
                 a grouping column (normally the first on the left) to show the group.</td>
         </tr>
         <tr>
@@ -87,6 +87,13 @@ include '../documentation_header.php';
             <th>groupHidePivotColumns</th>
             <td>If true, when a column is pivoted, it is not displayed as a normal column. Useful when you
                 don't want the data appearing twice, once is group column, once in normal column.
+            </td>
+        </tr>
+        <tr>
+            <th>groupSuppressRow</th>
+            <td>If true, the group row won't be displayed and the groups will be expanded by default
+                with no ability to expand / contract the groups. Useful when you want to just 'group'
+                the rows, but not add parent group row to each group.
             </td>
         </tr>
     </table>
@@ -301,6 +308,16 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     </p>
 
     <show-example example="example5"></show-example>
+
+    <h3>Suppress Group Row</h3>
+
+    <p>
+        By suppressing the group row you don't give users the ability to close the groups by themselves,
+        but the rows are grouped and the other functionalities take the grouping into account.
+        Sorting, for example, will sort by group.
+    </p>
+
+    <show-example example="example6"></show-example>
 
     <h3>Custom Expand / Contract Icons</h3>
 

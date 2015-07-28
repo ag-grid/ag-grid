@@ -51,6 +51,7 @@ module awk.grid {
         getAllRows() { return this.gridOptions.rowData; }
         isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
+        isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
         isAngularCompileRows() { return isTrue(this.gridOptions.angularCompileRows); }
         isAngularCompileFilters() { return isTrue(this.gridOptions.angularCompileFilters); }
         isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }

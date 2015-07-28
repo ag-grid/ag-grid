@@ -422,7 +422,8 @@ module awk.grid {
             // see if we need to insert the default grouping column
             var needAGroupColumn = this.pivotColumns.length > 0
                 && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
-                && !this.gridOptionsWrapper.isGroupUseEntireRow();
+                && !this.gridOptionsWrapper.isGroupUseEntireRow()
+                && !this.gridOptionsWrapper.isGroupSuppressRow();
 
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
