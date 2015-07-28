@@ -101,6 +101,10 @@ include '../documentation_header.php';
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>
         <tr>
+            <th>defaultSort</th>
+            <td>Set to "descending" to sort this column descending by default, else 'ascending'. If this isn't specified, it will default to 'ascending'.</td>
+        </tr>
+        <tr>
             <th>suppressSorting</th>
             <td>Set to true if no sorting should be done for this column.</td>
         </tr>

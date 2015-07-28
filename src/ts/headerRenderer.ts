@@ -286,7 +286,7 @@ module awk.grid {
 
                 column.eSortAsc.style.display = 'none';
                 column.eSortDesc.style.display = 'none';
-                this.addSortHandling(headerCellLabel, column);
+                this.addSortHandling(headerCellLabel, column, colDef);
             }
 
             // add in filter icon
@@ -370,7 +370,7 @@ module awk.grid {
             }
         }
 
-        getNextSortDirection(direction: any) {
+        getNextSortDirection(direction: any, colDef: any) {
             var suppressUnSort = this.gridOptionsWrapper.isSuppressUnSort();
             var suppressDescSort = this.gridOptionsWrapper.isSuppressDescSort();
 
@@ -390,17 +390,17 @@ module awk.grid {
                         return constants.DESC;
                     }
                 default :
-                    return constants.ASC;
+					return colDef.defaultSort === 'descending' ? constants.DESC : constants.ASC;
             }
         }
 
-        addSortHandling(headerCellLabel: any, column: any) {
+        addSortHandling(headerCellLabel: any, column: any, colDef: any) {
             var that = this;
 
             headerCellLabel.addEventListener("click", function (e: any) {
 
                 // update sort on current col
-                column.sort = that.getNextSortDirection(column.sort);
+                column.sort = that.getNextSortDirection(column.sort, colDef);
 
                 // sortedAt used for knowing order of cols when multi-col sort
                 if (column.sort) {
