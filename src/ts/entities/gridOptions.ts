@@ -1,3 +1,4 @@
+/// <reference path="colDef.ts" />
 
 module awk.grid {
 
@@ -51,7 +52,7 @@ module awk.grid {
         afterSortChanged?(): void;
         virtualRowRemoved?(row: any, rowIndex: number): void;
         rowClicked?(params: any): void;
-        columnResized?():void;
+        columnResized?(column: Column):void;
         columnVisibilityChanged?():void;
         columnOrderChanged?():void;
         datasource?: any; // should be typed

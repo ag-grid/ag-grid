@@ -6,7 +6,7 @@
 /// <reference path="selectionController.ts" />
 /// <reference path="selectionRendererFactory.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
-/// <reference path="headerRenderer.ts" />
+/// <reference path="rendering/headerRenderer.ts" />
 /// <reference path="rowControllers/inMemoryRowController.ts" />
 /// <reference path="rowControllers/virtualPageRowController.ts" />
 /// <reference path="rowControllers/paginationController.ts" />
@@ -15,7 +15,7 @@
 /// <reference path="gridPanel/gridPanel.ts" />
 /// <reference path="toolPanel/toolPanel.ts" />
 /// <reference path="widgets/agPopupService.ts" />
-/// <reference path="gridOptions.ts" />
+/// <reference path="entities/gridOptions.ts" />
 /// <reference path="gridApi.ts" />
 /// <reference path="valueService.ts" />
 
@@ -145,7 +145,7 @@ module awk.grid {
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService, valueService);
             rowRenderer.init(columnModel, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService);
-            headerRenderer.init(gridOptionsWrapper, columnController, columnModel, gridPanel, this, filterManager,
+            headerRenderer.init(gridOptionsWrapper, columnModel, gridPanel, this, filterManager,
                 $scope, $compile);
             inMemoryRowController.init(gridOptionsWrapper, columnModel, this, filterManager, $scope,
                 groupCreator, valueService);

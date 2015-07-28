@@ -128,7 +128,7 @@ module awk.grid {
         }
 
         // returns true if given col has a filter active
-        private isFilterPresentForCol(colId: any) {
+        public isFilterPresentForCol(colId: any) {
             var filterWrapper = this.allFilters[colId];
             if (!filterWrapper) {
                 return false;
@@ -269,7 +269,7 @@ module awk.grid {
             return filterWrapper;
         }
 
-        private showFilter(column: Column, eventSource: any) {
+        public showFilter(column: Column, eventSource: any) {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 

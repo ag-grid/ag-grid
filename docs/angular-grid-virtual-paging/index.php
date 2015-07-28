@@ -32,8 +32,6 @@ include '../documentation_header.php';
 
     <p>
         <img src="high-level.png"/>
-        <br/>
-        (PS I'm not an artist!!! If you can do better, please do and send it to me!!):
     </p>
 
     <p>

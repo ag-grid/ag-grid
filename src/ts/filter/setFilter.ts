@@ -1,5 +1,6 @@
 /// <reference path="../utils.ts" />
 /// <reference path="setFilterModel.ts" />
+/// <reference path="setFilterParameters.ts" />
 
 module awk.grid {
 

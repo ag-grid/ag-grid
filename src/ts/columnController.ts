@@ -1,5 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="constants.ts" />
+/// <reference path="entities/column.ts" />
 
 module awk.grid {
 
@@ -7,6 +8,7 @@ module awk.grid {
     var constants = Constants;
 
     export interface ColumnModel {
+        headerGroupOpened(group: any): void;
         getAllColumns(): Column[];
         getDisplayedColumns(): Column[];
         getGroupedColumns(): Column[];
@@ -23,18 +25,18 @@ module awk.grid {
 
     export class ColumnController {
 
-        gridOptionsWrapper: any;
-        angularGrid: any;
-        selectionRendererFactory: any;
-        expressionService: any;
-        listeners: any;
-        model: ColumnModel;
-        allColumns: Column[];
-        displayedColumns: Column[];
-        pivotColumns: Column[];
-        valueColumns: Column[];
-        visibleColumns: Column[];
-        headerGroups: HeaderGroup[];
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private angularGrid: Grid;
+        private selectionRendererFactory: SelectionRendererFactory;
+        private expressionService: ExpressionService;
+        private listeners: any[];
+        private model: ColumnModel;
+        private allColumns: Column[];
+        private displayedColumns: Column[];
+        private pivotColumns: Column[];
+        private valueColumns: Column[];
+        private visibleColumns: Column[];
+        private headerGroups: HeaderGroup[];
 
         private valueService: ValueService;
 
@@ -43,8 +45,9 @@ module awk.grid {
             this.createModel();
         }
 
-        public init(angularGrid: any, selectionRendererFactory: any, gridOptionsWrapper: any,
-             expressionService: any, valueService: ValueService) {
+        public init(angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory,
+                    gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
+                    valueService: ValueService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.selectionRendererFactory = selectionRendererFactory;
@@ -55,6 +58,9 @@ module awk.grid {
         private createModel() {
             var that = this;
             this.model = {
+                headerGroupOpened: function(group: any) {
+                    that.headerGroupOpened(group);
+                },
                 // used by:
                 // + inMemoryRowController -> sorting, building quick filter text
                 // + headerRenderer -> sorting (clearing icon)
@@ -273,7 +279,7 @@ module awk.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        public headerGroupOpened(group: any) {
+        public headerGroupOpened(group: any): void {
             group.expanded = !group.expanded;
             this.updateGroups();
             this.updateDisplayedColumns();
@@ -662,183 +668,4 @@ module awk.grid {
         }
     }
     
-    export interface CellRendererObj {
-      renderer: string;
-    }
-
-    /** The filter parameters for set filter */
-    export interface SetFilterParameters{
-      /** Same as cell renderer for grid (you can use the same one in both locations). Setting it separatly here allows for the value to be rendered differently in the filter. */
-      cellRenderer ?: Function;
-        
-      /** The height of the cell. */
-      cellHeight ?: number;
-
-      /** The values to display in the filter. */
-      values ?: any;
-
-      /**  What to do when new rows are loaded. The default is to reset the filter, as the set of values to select from can have changed. If you want to keep the selection, then set this value to 'keep'. */
-      newRowsAction ?: string;
-    }
-
-    
-    export interface TextAndNumberFilterParameters {
-      /** What to do when new rows are loaded. The default is to reset the filter, to keep it in line with 'set' filters. If you want to keep the selection, then set this value to 'keep'. */
-      newRowsAction?: string;
-    }
-
-    export interface ColDef {
-      /** The name to render in the column header */
-      headerName: string;
-      
-      /** The field of the row to get the cells data from */
-      field: string;
-      
-      /** Expression or function to get the cells value. */
-      headerValueGetter?: string | Function;
-      
-      /** The unique ID to give the column. This is optional. If missing, the ID will default to the field. If both field and colId are missing, a unique ID will be generated. 
-       *  This ID is used to identify the column in the API for sorting, filtering etc. */
-      colId?: string;
-      
-      /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide, 
-       *  however we want all default values to be false and we want columns to be visible by default. */
-      hide?: boolean;
-
-      /** Tooltip for the column header */
-      headerTooltip?: string;
-
-      /** Expression or function to get the cells value. */
-      valueGetter?: string | Function;
-
-    /** Initial width, in pixels, of the cell */
-    width?: number;
-
-    /** Min width, in pixels, of the cell */
-    minWidth?: number;
-
-    /** Max width, in pixels, of the cell */
-    maxWidth?: number;
-
-      /** Class to use for the cell. Can be string, array of strings, or function. */
-      cellClass?: string | string[]| ((cellClassParams: any) => string | string[]);
-      
-      /** An object of css values. Or a function returning an object of css values. */
-      cellStyle?: {} | ((params: any) => {});
-
-      /** A function for rendering a cell. */
-      cellRenderer?: Function | CellRendererObj;
-
-      /** Function callback, gets called when a cell is clicked. */
-      cellClicked?: Function;
-
-      /** Function callback, gets called when a cell is double clicked. */
-      cellDoubleClicked?: Function;
-
-      /** Name of function to use for aggregation. One of [sum,min,max]. */
-      aggFunc?: string;
-
-      /** Comparator function for custom sorting. */
-      comparator?: Function;
-
-      /** Set to true to render a selection checkbox in the column. */
-      checkboxSelection?: boolean;
-
-      /** Set to true if no menu should be shown for this column header. */
-      suppressMenu?: boolean;
-
-      /** Set to true if no sorting should be done for this column. */
-      suppressSorting?: boolean;
-
-      /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
-      unSortIcon?: boolean;
-
-      /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
-      suppressSizeToFit?: boolean;
-
-      /** Set to true if you do not want this column to be resizable by dragging it's edge. */
-      suppressResize?: boolean;
-
-      /** If grouping columns, the group this column belongs to. */
-      headerGroup?: string;
-
-      /** Whether to show the column when the group is open / closed. */
-      headerGroupShow?: string;
-      
-      /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-      editable?: boolean | (Function);
-
-      /** Callbacks for editing.See editing section for further details. */
-      newValueHandler?: Function;
-
-      /** Callbacks for editing.See editing section for further details. */
-      cellValueChanged?: Function;
-
-      /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
-      volatile?: boolean;
-      
-      /** Cell template to use for cell. Useful for AngularJS cells. */
-      template?: string;
-
-      /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
-      templateUrl?: string;
-
-      /** one of the built in filter names: [set, number, text], or a filter function*/
-      filter?: string | Function;
-
-      /** The filter params are specific to each filter! */
-      filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
-
-      cellClassRules?: { [cssClassName: string]: (Function | string) };
-    }
-
-    export class Column {
-
-        static colIdSequence = 0;
-
-        colDef: ColDef;
-        actualWidth: any;
-        visible: any;
-        colId: any;
-        pinned: boolean;
-        index: number;
-        aggFunc: string;
-        pivotIndex: number;
-
-        eHeaderCell: HTMLElement;
-
-        constructor(colDef: ColDef, actualWidth: any) {
-            this.colDef = colDef;
-            this.actualWidth = actualWidth;
-            this.visible = !colDef.hide;
-            // in the future, the colKey might be something other than the index
-            if (colDef.colId) {
-                this.colId = colDef.colId;
-            } else if (colDef.field) {
-                this.colId = colDef.field;
-            } else {
-                this.colId = '' + Column.colIdSequence++;
-            }
-        }
-
-        public isGreaterThanMax(width: number): boolean {
-            if (this.colDef.maxWidth >= constants.MIN_COL_WIDTH) {
-                return width > this.colDef.maxWidth;
-            } else {
-                return false;
-            }
-        }
-
-        public getMinimumWidth(): number {
-            if (this.colDef.minWidth > constants.MIN_COL_WIDTH) {
-                return this.colDef.minWidth;
-            } else {
-                return constants.MIN_COL_WIDTH;
-            }
-        }
-
-        public setMinimum(): void {
-            this.actualWidth = this.getMinimumWidth();
-        }
-    }
 }
