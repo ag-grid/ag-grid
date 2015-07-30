@@ -21,6 +21,8 @@
 
 module awk.grid {
 
+    var constants = Constants;
+
     export class Grid {
 
         private virtualRowCallbacks: any;
@@ -209,6 +211,11 @@ module awk.grid {
             columnController.addListener({
                 valuesChanged: function() {
                     that.gridOptions.api.recomputeAggregates();
+                },
+                pivotChanged: function() {
+                    that.inMemoryRowController.doGrouping();
+                    that.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
+                    that.refreshHeaderAndBody();
                 }
             });
         }

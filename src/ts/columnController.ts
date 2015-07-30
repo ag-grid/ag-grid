@@ -11,6 +11,7 @@ module awk.grid {
     export interface ColumnControllerListener {
         columnsChanged?(allColumns: Column[], pivotColumns: Column[], valueColumns: Column[]): void;
         valuesChanged?(): void;
+        pivotChanged?(): void;
     }
 
     export class ColumnController {
@@ -56,6 +57,34 @@ module awk.grid {
             return this.getTotalColWidth(true);
         }
 
+        public addPivotColumn(column: Column): void {
+            if (this.allColumns.indexOf(column) < 0) {
+                console.warn('not a valid column: ' + column);
+                return;
+            }
+            if (this.pivotColumns.indexOf(column) >= 0) {
+                console.warn('column is already a value column');
+                return;
+            }
+            this.pivotColumns.push(column);
+            // because we could be taking out 'pivot' columns, the displayed
+            // columns may differ, so need to work out all the columns again
+            this.updateModel();
+            this.firePivotChanged();
+            this.fireColumnsChanged();
+        }
+
+        public removePivotColumn(column: Column): void {
+            if (this.pivotColumns.indexOf(column) < 0) {
+                console.warn('column not a pivot');
+                return;
+            }
+            _.removeFromArray(this.pivotColumns, column);
+            this.updateModel();
+            this.firePivotChanged();
+            this.fireColumnsChanged();
+        }
+
         public addValueColumn(column: Column): void {
             if (this.allColumns.indexOf(column) < 0) {
                 console.warn('not a valid column: ' + column);
@@ -87,6 +116,14 @@ module awk.grid {
             column.aggFunc = aggFunc;
             this.fireColumnsChanged();
             this.fireValuesChanged();
+        }
+
+        public movePivotColumn(fromIndex: number, toIndex: number): void {
+            var column = this.pivotColumns[fromIndex];
+            this.pivotColumns.splice(fromIndex, 1);
+            this.pivotColumns.splice(toIndex, 0, column);
+            this.firePivotChanged();
+            this.fireColumnsChanged();
         }
 
         // used by:
@@ -253,6 +290,14 @@ module awk.grid {
 
         public addListener(listener: ColumnControllerListener) {
             this.changedListeners.push(listener);
+        }
+
+        private firePivotChanged() {
+            for (var i = 0; i < this.changedListeners.length; i++) {
+                if (this.changedListeners[i].pivotChanged) {
+                    this.changedListeners[i].pivotChanged();
+                }
+            }
         }
 
         private fireColumnsChanged() {

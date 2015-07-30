@@ -6,7 +6,7 @@
 
 module awk.grid {
 
-    var utils = Utils;
+    var _ = Utils;
     var svgFactory = SvgFactory.getInstance();
     var constants = Constants;
 
@@ -30,31 +30,28 @@ module awk.grid {
             });
         }
 
-        columnsChanged(newColumns: any, newGroupedColumns: any) {
+        private columnsChanged(newColumns: any, newGroupedColumns: any) {
             this.cColumnList.setModel(newGroupedColumns);
         }
 
-        addDragSource(dragSource: any) {
+        public addDragSource(dragSource: any) {
             this.cColumnList.addDragSource(dragSource);
         }
 
-        columnCellRenderer(params: any) {
+        private columnCellRenderer(params: any) {
             var column = params.value;
             var colDisplayName = this.columnController.getDisplayNameForCol(column);
 
             var eResult = document.createElement('span');
 
-            var eRemove = utils.createIcon('columnRemoveFromGroup',
+            var eRemove = _.createIcon('columnRemoveFromGroup',
                 this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
-            utils.addCssClass(eRemove, 'ag-visible-icons');
+            _.addCssClass(eRemove, 'ag-visible-icons');
             eResult.appendChild(eRemove);
 
             var that = this;
             eRemove.addEventListener('click', function () {
-                var model = that.cColumnList.getModel();
-                model.splice(model.indexOf(column), 1);
-                that.cColumnList.setModel(model);
-                that.onGroupingChanged();
+                that.columnController.removePivotColumn(column);
             });
 
             var eValue = document.createElement('span');
@@ -64,16 +61,19 @@ module awk.grid {
             return eResult;
         }
 
-        setupComponents() {
+        private setupComponents() {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var columnsLocalText = localeTextFunc('pivotedColumns', 'Pivoted Columns');
             var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns from above to pivot');
 
             this.cColumnList = new AgList();
             this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
-            this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
+            //this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
+            this.cColumnList.addBeforeDropListener(this.onBeforeDrop.bind(this));
+            this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));
             this.cColumnList.setEmptyMessage(pivotedColumnsEmptyMessage);
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
+            this.cColumnList.setReadOnly(true);
 
             var eNorthPanel = document.createElement('div');
             eNorthPanel.style.paddingTop = '10px';
@@ -85,15 +85,18 @@ module awk.grid {
             });
         }
 
-        onGroupingChanged() {
-            this.inMemoryRowController.doGrouping();
-            this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
-            this.columnController.onColumnStateChanged();
+        private onBeforeDrop(newItem: any) {
+            this.columnController.addPivotColumn(newItem);
         }
 
-        //getGui() {
-        //    return this.eRootPanel.getGui();
+        private onItemMoved(fromIndex: number, toIndex: number) {
+            this.columnController.movePivotColumn(fromIndex, toIndex);
+        }
+
+        //private onGroupingChanged() {
+        //    this.inMemoryRowController.doGrouping();
+        //    this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
+        //    this.columnController.onColumnStateChanged();
         //}
     }
 }
-

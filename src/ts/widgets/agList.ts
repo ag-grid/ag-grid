@@ -26,6 +26,7 @@ module awk.grid {
         private modelChangedListeners: any;
         private itemSelectedListeners: any;
         private beforeDropListeners: any;
+        private itemMovedListeners: any;
         private dragSources: any;
         private emptyMessage: any;
         private eFilterValueTemplate: any;
@@ -39,6 +40,7 @@ module awk.grid {
             this.uniqueId = 'CheckboxSelection-' + Math.random();
             this.modelChangedListeners = [];
             this.itemSelectedListeners = [];
+            this.itemMovedListeners = [];
             this.beforeDropListeners = [];
             this.dragSources = [];
             this.setupAsDropTarget();
@@ -77,8 +79,18 @@ module awk.grid {
             this.itemSelectedListeners.push(listener);
         }
 
+        public addItemMovedListener(listener: any) {
+            this.itemMovedListeners.push(listener);
+        }
+
         public addBeforeDropListener(listener: any) {
             this.beforeDropListeners.push(listener);
+        }
+
+        private fireItemMoved(fromIndex: number, toIndex: number) {
+            for (var i = 0; i < this.itemMovedListeners.length; i++) {
+                this.itemMovedListeners[i](fromIndex, toIndex);
+            }
         }
 
         private fireModelChanged() {
@@ -242,11 +254,15 @@ module awk.grid {
             var oldIndex = this.model.indexOf(draggedColumn);
             var newIndex = this.model.indexOf(targetColumn);
 
-            this.model.splice(oldIndex, 1);
-            this.model.splice(newIndex, 0, draggedColumn);
+            if (this.readOnly) {
+                this.fireItemMoved(oldIndex, newIndex);
+            } else {
+                this.model.splice(oldIndex, 1);
+                this.model.splice(newIndex, 0, draggedColumn);
 
-            this.refreshView();
-            this.fireModelChanged();
+                this.refreshView();
+                this.fireModelChanged();
+            }
         }
 
         private internalNoDrop(eListItem: any) {
