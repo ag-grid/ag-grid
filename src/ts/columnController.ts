@@ -1,11 +1,17 @@
 /// <reference path="utils.ts" />
 /// <reference path="constants.ts" />
 /// <reference path="entities/column.ts" />
+/// <reference path="entities/columnGroup.ts" />
 
 module awk.grid {
 
     var _ = Utils;
     var constants = Constants;
+
+    export interface ColumnControllerListener {
+        columnsChanged?(allColumns: Column[], pivotColumns: Column[], valueColumns: Column[]): void;
+        valuesChanged?(): void;
+    }
 
     export class ColumnController {
 
@@ -13,13 +19,14 @@ module awk.grid {
         private angularGrid: Grid;
         private selectionRendererFactory: SelectionRendererFactory;
         private expressionService: ExpressionService;
-        private changedListeners: any[];
-        private allColumns: Column[];
-        private displayedColumns: Column[];
+        private changedListeners: ColumnControllerListener[];
+
+        private allColumns: Column[]; // every column available
+        private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
+        private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
         private pivotColumns: Column[];
         private valueColumns: Column[];
-        private visibleColumns: Column[];
-        private headerGroups: HeaderGroup[];
+        private columnGroups: ColumnGroup[];
 
         private valueService: ValueService;
 
@@ -39,14 +46,47 @@ module awk.grid {
 
         // used by:
         // + headerRenderer -> setting pinned body width
-        public getHeaderGroups(): HeaderGroup[] {
-            return this.headerGroups;
+        public getHeaderGroups(): ColumnGroup[] {
+            return this.columnGroups;
         }
 
         // used by:
         // + angularGrid -> setting pinned body width
         public getPinnedContainerWidth() {
             return this.getTotalColWidth(true);
+        }
+
+        public addValueColumn(column: Column): void {
+            if (this.allColumns.indexOf(column) < 0) {
+                console.warn('not a valid column: ' + column);
+                return;
+            }
+            if (this.valueColumns.indexOf(column) >= 0) {
+                console.warn('column is already a value column');
+                return;
+            }
+            if (!column.aggFunc) { // defualt to SUM if aggFunc is missing
+                column.aggFunc = constants.SUM;
+            }
+            this.valueColumns.push(column);
+            this.fireColumnsChanged();
+            this.fireValuesChanged();
+        }
+
+        public removeValueColumn(column: Column): void {
+            if (this.valueColumns.indexOf(column) < 0) {
+                console.warn('column not a value');
+                return;
+            }
+            _.removeFromArray(this.valueColumns, column);
+            this.fireColumnsChanged();
+            this.fireValuesChanged();
+        }
+
+        public setColumnAggFunction(column: Column, aggFunc: string) {
+            column.aggFunc = aggFunc;
+            this.fireColumnsChanged();
+            this.fireValuesChanged();
         }
 
         // used by:
@@ -211,13 +251,23 @@ module awk.grid {
             }
         }
 
-        public addListener(listener: any) {
+        public addListener(listener: ColumnControllerListener) {
             this.changedListeners.push(listener);
         }
 
-        public fireColumnsChanged() {
+        private fireColumnsChanged() {
             for (var i = 0; i < this.changedListeners.length; i++) {
-                this.changedListeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
+                if (this.changedListeners[i].columnsChanged) {
+                    this.changedListeners[i].columnsChanged(this.allColumns, this.pivotColumns, this.valueColumns);
+                }
+            }
+        }
+
+        private fireValuesChanged() {
+            for (var i = 0; i < this.changedListeners.length; i++) {
+                if (this.changedListeners[i].valuesChanged) {
+                    this.changedListeners[i].valuesChanged();
+                }
             }
         }
 
@@ -290,8 +340,8 @@ module awk.grid {
             } else {
                 // if grouping, then only show col as per group rules
                 this.displayedColumns = [];
-                for (var i = 0; i < this.headerGroups.length; i++) {
-                    var group = this.headerGroups[i];
+                for (var i = 0; i < this.columnGroups.length; i++) {
+                    var group = this.columnGroups[i];
                     group.addToVisibleColumns(this.displayedColumns);
                 }
             }
@@ -323,6 +373,8 @@ module awk.grid {
                     });
                 } else {
                     var scale = availablePixels / getTotalWidth(colsToSpread);
+                    // we set the pixels for the last col based on what's left, as otherwise
+                    // we could be a pixel or two short or extra because of rounding errors.
                     var pixelsForLastCol = availablePixels;
                     // backwards through loop, as we are removing items as we go
                     for (var i = colsToSpread.length - 1; i >= 0; i--) {
@@ -369,13 +421,13 @@ module awk.grid {
         private buildGroups() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
-                this.headerGroups = null;
+                this.columnGroups = null;
                 return;
             }
 
             // split the columns into groups
             var currentGroup = <any> null;
-            this.headerGroups = [];
+            this.columnGroups = [];
             var that = this;
 
             var lastColWasPinned = true;
@@ -396,8 +448,8 @@ module awk.grid {
                 // create new group, if it's needed
                 if (newGroupNeeded) {
                     var pinned = column.pinned;
-                    currentGroup = new HeaderGroup(pinned, column.colDef.headerGroup);
-                    that.headerGroups.push(currentGroup);
+                    currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
+                    that.columnGroups.push(currentGroup);
                 }
                 currentGroup.addColumn(column);
             });
@@ -409,8 +461,8 @@ module awk.grid {
                 return;
             }
 
-            for (var i = 0; i < this.headerGroups.length; i++) {
-                var group = this.headerGroups[i];
+            for (var i = 0; i < this.columnGroups.length; i++) {
+                var group = this.columnGroups[i];
                 group.calculateExpandable();
                 group.calculateDisplayedColumns();
             }
@@ -462,11 +514,11 @@ module awk.grid {
             }
         }
 
-        private createColumns(columnDefs: any) {
+        private createColumns(colDefs: any) {
             this.allColumns = [];
-            if (columnDefs) {
-                for (var i = 0; i < columnDefs.length; i++) {
-                    var colDef = columnDefs[i];
+            if (colDefs) {
+                for (var i = 0; i < colDefs.length; i++) {
+                    var colDef = colDefs[i];
                     var width = this.calculateColInitialWidth(colDef);
                     var column = new Column(colDef, width);
                     this.allColumns.push(column);
@@ -543,101 +595,4 @@ module awk.grid {
         }
     }
 
-    export class HeaderGroup {
-
-        pinned: any;
-        name: any;
-        allColumns: Column[] = [];
-        displayedColumns: Column[] = [];
-        expandable = false;
-        expanded = false;
-
-        actualWidth: number;
-        eHeaderGroupCell: HTMLElement;
-        eHeaderCellResize: HTMLElement;
-
-        constructor(pinned: any, name: any) {
-            this.pinned = pinned;
-            this.name = name;
-        }
-
-        public getMinimumWidth(): number {
-            var result = 0;
-            this.displayedColumns.forEach( (column: Column) => {
-                result += column.getMinimumWidth();
-            })
-            return result;
-        }
-
-        public addColumn(column: any) {
-            this.allColumns.push(column);
-        }
-
-        // need to check that this group has at least one col showing when both expanded and contracted.
-        // if not, then we don't allow expanding and contracting on this group
-        public calculateExpandable() {
-            // want to make sure the group doesn't disappear when it's open
-            var atLeastOneShowingWhenOpen = false;
-            // want to make sure the group doesn't disappear when it's closed
-            var atLeastOneShowingWhenClosed = false;
-            // want to make sure the group has something to show / hide
-            var atLeastOneChangeable = false;
-            for (var i = 0, j = this.allColumns.length; i < j; i++) {
-                var column = this.allColumns[i];
-                if (column.colDef.headerGroupShow === 'open') {
-                    atLeastOneShowingWhenOpen = true;
-                    atLeastOneChangeable = true;
-                } else if (column.colDef.headerGroupShow === 'closed') {
-                    atLeastOneShowingWhenClosed = true;
-                    atLeastOneChangeable = true;
-                } else {
-                    atLeastOneShowingWhenOpen = true;
-                    atLeastOneShowingWhenClosed = true;
-                }
-            }
-
-            this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
-        }
-
-        public calculateDisplayedColumns() {
-            // clear out last time we calculated
-            this.displayedColumns = [];
-            // it not expandable, everything is visible
-            if (!this.expandable) {
-                this.displayedColumns = this.allColumns;
-                return;
-            }
-            // and calculate again
-            for (var i = 0, j = this.allColumns.length; i < j; i++) {
-                var column = this.allColumns[i];
-                switch (column.colDef.headerGroupShow) {
-                    case 'open':
-                        // when set to open, only show col if group is open
-                        if (this.expanded) {
-                            this.displayedColumns.push(column);
-                        }
-                        break;
-                    case 'closed':
-                        // when set to open, only show col if group is open
-                        if (!this.expanded) {
-                            this.displayedColumns.push(column);
-                        }
-                        break;
-                    default:
-                        // default is always show the column
-                        this.displayedColumns.push(column);
-                        break;
-                }
-            }
-        }
-
-        // should replace with utils method 'add all'
-        public addToVisibleColumns(colsToAdd: any) {
-            for (var i = 0; i < this.displayedColumns.length; i++) {
-                var column = this.displayedColumns[i];
-                colsToAdd.push(column);
-            }
-        }
-    }
-    
 }

@@ -58,16 +58,16 @@ module awk.grid {
         }
 
         private insertHeadersWithGrouping() {
-            var groups: HeaderGroup[] = this.columnController.getHeaderGroups();
+            var groups: ColumnGroup[] = this.columnController.getHeaderGroups();
             var that = this;
-            groups.forEach(function (group: HeaderGroup) {
+            groups.forEach(function (group: ColumnGroup) {
                 var eHeaderCell = that.createGroupedHeaderCell(group);
                 var eContainerToAddTo = group.pinned ? that.ePinnedHeader : that.eHeaderContainer;
                 eContainerToAddTo.appendChild(eHeaderCell);
             });
         }
 
-        private createGroupedHeaderCell(group: HeaderGroup) {
+        private createGroupedHeaderCell(group: ColumnGroup) {
 
             var eHeaderGroup = document.createElement('div');
             eHeaderGroup.className = 'ag-header-group';
@@ -144,7 +144,7 @@ module awk.grid {
             };
         }
 
-        private addDragHandler(eDraggableElement: any, dragCallback: any, column: Column, headerGroup: HeaderGroup) {
+        private addDragHandler(eDraggableElement: any, dragCallback: any, column: Column, headerGroup: ColumnGroup) {
             var that = this;
             eDraggableElement.addEventListener('mousedown', function (downEvent: any) {
                 dragCallback.onDragStart();
@@ -439,7 +439,7 @@ module awk.grid {
             });
         }
 
-        private groupDragCallbackFactory(currentGroup: HeaderGroup) {
+        private groupDragCallbackFactory(currentGroup: ColumnGroup) {
             var parent = this;
             var displayedColumns = currentGroup.displayedColumns;
             return {
@@ -545,7 +545,7 @@ module awk.grid {
             };
         }
 
-        private stopDragging(listenersToRemove: any, column: Column, headerGroup: HeaderGroup) {
+        private stopDragging(listenersToRemove: any, column: Column, headerGroup: ColumnGroup) {
             this.eRoot.style.cursor = "";
             var that = this;
             utils.iterateObject(listenersToRemove, function (key: any, listener: any) {

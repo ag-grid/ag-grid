@@ -35,8 +35,8 @@ module awk.grid {
             return this.layout;
         }
 
-        private columnsChanged(newColumns: any, newGroupedColumns: any, newValuesColumns: any) {
-            this.cColumnList.setModel(newValuesColumns);
+        private columnsChanged(allColumns: Column[], pivotColumns: Column[], valueColumns: Column[]) {
+            this.cColumnList.setModel(valueColumns);
         }
 
         public addDragSource(dragSource: any) {
@@ -55,10 +55,7 @@ module awk.grid {
 
             var that = this;
             eRemove.addEventListener('click', function () {
-                var model = that.cColumnList.getModel();
-                model.splice(model.indexOf(column), 1);
-                that.cColumnList.setModel(model);
-                that.onValuesChanged();
+                that.columnController.removeValueColumn(column);
             });
 
             var agValueType = new AgDropdownList(this.popupService);
@@ -67,8 +64,7 @@ module awk.grid {
             agValueType.setWidth(45);
 
             agValueType.addItemSelectedListener(function (item: any) {
-                column.aggFunc = item;
-                that.onValuesChanged();
+                that.columnController.setColumnAggFunction(column, item);
             });
 
             eResult.appendChild(agValueType.getGui());
@@ -88,10 +84,10 @@ module awk.grid {
 
             this.cColumnList = new AgList();
             this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));
-            this.cColumnList.addModelChangedListener(this.onValuesChanged.bind(this));
             this.cColumnList.setEmptyMessage(emptyMessage);
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
             this.cColumnList.addBeforeDropListener(this.beforeDropListener.bind(this));
+            this.cColumnList.setReadOnly(true);
 
             var eNorthPanel = document.createElement('div');
             eNorthPanel.style.paddingTop = '10px';
@@ -104,14 +100,7 @@ module awk.grid {
         }
 
         private beforeDropListener(newItem: any) {
-            if (!newItem.aggFunc) {
-                newItem.aggFunc = constants.SUM;
-            }
-        }
-
-        private onValuesChanged() {
-            var api = this.gridOptionsWrapper.getApi();
-            api.recomputeAggregates();
+            this.columnController.addValueColumn(newItem);
         }
     }
 }

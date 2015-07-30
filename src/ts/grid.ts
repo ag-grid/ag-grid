@@ -204,6 +204,13 @@ module awk.grid {
             this.showToolPanel(gridOptionsWrapper.isShowToolPanel());
 
             eUserProvidedDiv.appendChild(this.eRootPanel.getGui());
+
+            var that = this;
+            columnController.addListener({
+                valuesChanged: function() {
+                    that.gridOptions.api.recomputeAggregates();
+                }
+            });
         }
 
         showToolPanel(show: any) {

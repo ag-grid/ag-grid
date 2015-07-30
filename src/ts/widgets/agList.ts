@@ -17,23 +17,22 @@ module awk.grid {
             '</div>'+
         '</div>';
 
-    var NOT_DROP_TARGET = 0;
-    var DROP_TARGET_ABOVE = 1;
-    var DROP_TARGET_BELOW = -11;
+    enum DropTargetLocation {NOT_DROP_TARGET, DROP_TARGET_ABOVE, DROP_TARGET_BELOW};
 
     export class AgList {
 
-        eGui: any;
-        uniqueId: any;
-        modelChangedListeners: any;
-        itemSelectedListeners: any;
-        beforeDropListeners: any;
-        dragSources: any;
-        emptyMessage: any;
-        eFilterValueTemplate: any;
-        eListParent: any;
-        model: any;
-        cellRenderer: any;
+        private eGui: any;
+        private uniqueId: any;
+        private modelChangedListeners: any;
+        private itemSelectedListeners: any;
+        private beforeDropListeners: any;
+        private dragSources: any;
+        private emptyMessage: any;
+        private eFilterValueTemplate: any;
+        private eListParent: any;
+        private model: any;
+        private cellRenderer: any;
+        private readOnly = false;
 
         constructor() {
             this.setupComponents();
@@ -45,58 +44,62 @@ module awk.grid {
             this.setupAsDropTarget();
         }
 
-        setEmptyMessage(emptyMessage: any) {
+        public setReadOnly(readOnly: boolean): void {
+            this.readOnly = readOnly;
+        }
+
+        public setEmptyMessage(emptyMessage: any) {
             this.emptyMessage = emptyMessage;
             this.refreshView();
         }
 
-        getUniqueId() {
+        public getUniqueId() {
             return this.uniqueId;
         }
 
-        addStyles(styles: any) {
+        public addStyles(styles: any) {
             utils.addStylesToElement(this.eGui, styles);
         }
 
-        addCssClass(cssClass: any) {
+        public addCssClass(cssClass: any) {
             utils.addCssClass(this.eGui, cssClass);
         }
 
-        addDragSource(dragSource: any) {
+        public addDragSource(dragSource: any) {
             this.dragSources.push(dragSource);
         }
 
-        addModelChangedListener(listener: Function) {
+        public addModelChangedListener(listener: Function) {
             this.modelChangedListeners.push(listener);
         }
 
-        addItemSelectedListener(listener: any) {
+        public addItemSelectedListener(listener: any) {
             this.itemSelectedListeners.push(listener);
         }
 
-        addBeforeDropListener(listener: any) {
+        public addBeforeDropListener(listener: any) {
             this.beforeDropListeners.push(listener);
         }
 
-        fireModelChanged() {
+        private fireModelChanged() {
             for (var i = 0; i < this.modelChangedListeners.length; i++) {
                 this.modelChangedListeners[i](this.model);
             }
         }
 
-        fireItemSelected(item: any) {
+        private fireItemSelected(item: any) {
             for (var i = 0; i < this.itemSelectedListeners.length; i++) {
                 this.itemSelectedListeners[i](item);
             }
         }
 
-        fireBeforeDrop(item: any) {
+        private fireBeforeDrop(item: any) {
             for (var i = 0; i < this.beforeDropListeners.length; i++) {
                 this.beforeDropListeners[i](item);
             }
         }
 
-        setupComponents() {
+        private setupComponents() {
 
             this.eGui = utils.loadTemplate(template);
             this.eFilterValueTemplate = this.eGui.querySelector("[ag-repeat]");
@@ -105,20 +108,20 @@ module awk.grid {
             utils.removeAllChildren(this.eListParent);
         }
 
-        setModel(model: any) {
+        public setModel(model: any) {
             this.model = model;
             this.refreshView();
         }
 
-        getModel() {
+        public getModel() {
             return this.model;
         }
 
-        setCellRenderer(cellRenderer: any) {
+        public setCellRenderer(cellRenderer: any) {
             this.cellRenderer = cellRenderer;
         }
 
-        refreshView() {
+        public refreshView() {
             utils.removeAllChildren(this.eListParent);
 
             if (this.model && this.model.length > 0) {
@@ -128,7 +131,7 @@ module awk.grid {
             }
         }
 
-        insertRows() {
+        private insertRows() {
             for (var i = 0; i < this.model.length; i++) {
                 var item = this.model[i];
                 //var text = this.getText(item);
@@ -149,7 +152,7 @@ module awk.grid {
             }
         }
 
-        insertBlankMessage() {
+        private insertBlankMessage() {
             if (this.emptyMessage) {
                 var eMessage = document.createElement('div');
                 eMessage.style.color = 'grey';
@@ -160,7 +163,7 @@ module awk.grid {
             }
         }
 
-        setupAsDropTarget() {
+        private setupAsDropTarget() {
             dragAndDropService.addDropTarget(this.eGui, {
                 acceptDrag: this.externalAcceptDrag.bind(this),
                 drop: this.externalDrop.bind(this),
@@ -168,7 +171,7 @@ module awk.grid {
             });
         }
 
-        externalAcceptDrag(dragEvent: any) {
+        private externalAcceptDrag(dragEvent: any) {
             var allowedSource = this.dragSources.indexOf(dragEvent.containerId) >= 0;
             if (!allowedSource) {
                 return false;
@@ -181,24 +184,26 @@ module awk.grid {
             return true;
         }
 
-        externalDrop(dragEvent: any) {
+        private externalDrop(dragEvent: any) {
             var newListItem = dragEvent.data;
             this.fireBeforeDrop(newListItem);
-            this.addItemToList(newListItem);
+            if (!this.readOnly) {
+                this.addItemToList(newListItem);
+            }
             this.eGui.style.backgroundColor = '';
         }
 
-        externalNoDrop() {
+        private externalNoDrop() {
             this.eGui.style.backgroundColor = '';
         }
 
-        addItemToList(newItem: any) {
+        private addItemToList(newItem: any) {
             this.model.push(newItem);
             this.refreshView();
             this.fireModelChanged();
         }
 
-        addDragAndDropToListItem(eListItem: any, item: any) {
+        private addDragAndDropToListItem(eListItem: any, item: any) {
             var that = this;
             dragAndDropService.addDragSource(eListItem, {
                 getData: function () {
@@ -221,19 +226,19 @@ module awk.grid {
             });
         }
 
-        internalAcceptDrag(targetColumn: any, dragItem: any, eListItem: any) {
+        private internalAcceptDrag(targetColumn: any, dragItem: any, eListItem: any) {
             var result = dragItem.data !== targetColumn && dragItem.containerId === this.uniqueId;
             if (result) {
                 if (this.dragAfterThisItem(targetColumn, dragItem.data)) {
-                    this.setDropCssClasses(eListItem, DROP_TARGET_ABOVE);
+                    this.setDropCssClasses(eListItem, DropTargetLocation.DROP_TARGET_ABOVE);
                 } else {
-                    this.setDropCssClasses(eListItem, DROP_TARGET_BELOW);
+                    this.setDropCssClasses(eListItem, DropTargetLocation.DROP_TARGET_BELOW);
                 }
             }
             return result;
         }
 
-        internalDrop(targetColumn: any, draggedColumn: any) {
+        private internalDrop(targetColumn: any, draggedColumn: any) {
             var oldIndex = this.model.indexOf(draggedColumn);
             var newIndex = this.model.indexOf(targetColumn);
 
@@ -244,21 +249,21 @@ module awk.grid {
             this.fireModelChanged();
         }
 
-        internalNoDrop(eListItem: any) {
-            this.setDropCssClasses(eListItem, NOT_DROP_TARGET);
+        private internalNoDrop(eListItem: any) {
+            this.setDropCssClasses(eListItem, DropTargetLocation.NOT_DROP_TARGET);
         }
 
-        dragAfterThisItem(targetColumn: any, draggedColumn: any) {
+        private dragAfterThisItem(targetColumn: any, draggedColumn: any) {
             return this.model.indexOf(targetColumn) < this.model.indexOf(draggedColumn);
         }
 
-        setDropCssClasses(eListItem: any, state: any) {
-            utils.addOrRemoveCssClass(eListItem, 'ag-not-drop-target', state === NOT_DROP_TARGET);
-            utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-above', state === DROP_TARGET_ABOVE);
-            utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-below', state === DROP_TARGET_BELOW);
+        private setDropCssClasses(eListItem: any, state: any) {
+            utils.addOrRemoveCssClass(eListItem, 'ag-not-drop-target', state === DropTargetLocation.NOT_DROP_TARGET);
+            utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-above', state === DropTargetLocation.DROP_TARGET_ABOVE);
+            utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-below', state === DropTargetLocation.DROP_TARGET_BELOW);
         }
 
-        getGui() {
+        public getGui() {
             return this.eGui;
         }
     }
