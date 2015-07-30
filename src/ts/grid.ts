@@ -21,11 +21,9 @@
 
 module awk.grid {
 
-    var constants = Constants;
-
     export class Grid {
 
-        private virtualRowCallbacks: any;
+        private virtualRowCallbacks = <any>{};
         private gridOptions: GridOptions;
         private gridOptionsWrapper: GridOptionsWrapper;
         private quickFilter: string;
@@ -69,18 +67,13 @@ module awk.grid {
                 });
             }
 
-            this.virtualRowCallbacks = {};
-
-            // done when cols change
-            this.setupColumns();
-
-            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
-
             var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
             if (!forPrint) {
                 window.addEventListener('resize', this.doLayout.bind(this));
             }
 
+            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+            this.setupColumns();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
 
             // if no data provided initially, and not doing infinite scrolling, show the loading panel
@@ -210,11 +203,12 @@ module awk.grid {
             var that = this;
             columnController.addListener({
                 valuesChanged: function() {
-                    that.gridOptions.api.recomputeAggregates();
+                    that.inMemoryRowController.doAggregate();
                 },
                 pivotChanged: function() {
-                    that.inMemoryRowController.doGrouping();
-                    that.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
+                    that.inMemoryRowController.onPivotChanged();
+                },
+                columnsChanged: function() {
                     that.refreshHeaderAndBody();
                 }
             });
@@ -390,12 +384,6 @@ module awk.grid {
             this.gridPanel.setHeaderHeight();
             this.columnController.setColumns(this.gridOptionsWrapper.getColumnDefs());
             this.gridPanel.showPinnedColContainersIfNeeded();
-            this.headerRenderer.refreshHeader();
-            if (!this.gridOptionsWrapper.isDontUseScrolls()) {
-                this.gridPanel.setPinnedColContainerWidth();
-                this.gridPanel.setBodyContainerWidth();
-            }
-            this.headerRenderer.updateFilterIcons();
         }
 
         // rowsToRefresh is at what index to start refreshing the rows. the assumption is

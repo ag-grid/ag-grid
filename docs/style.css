@@ -64,7 +64,8 @@ h4 {
 
 .top-button-wrapper {
     white-space: nowrap;
-    padding: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 .top-button {

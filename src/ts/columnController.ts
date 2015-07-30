@@ -9,6 +9,7 @@ module awk.grid {
     var constants = Constants;
 
     export interface ColumnControllerListener {
+        // toolpanel update, refresh view
         columnsChanged?(allColumns: Column[], pivotColumns: Column[], valueColumns: Column[]): void;
         valuesChanged?(): void;
         pivotChanged?(): void;
@@ -29,6 +30,7 @@ module awk.grid {
         private valueColumns: Column[];
         private columnGroups: ColumnGroup[];
 
+        private setupComplete = false;
         private valueService: ValueService;
 
         constructor() {
@@ -43,6 +45,10 @@ module awk.grid {
             this.selectionRendererFactory = selectionRendererFactory;
             this.expressionService = expressionService;
             this.valueService = valueService;
+        }
+
+        public isSetupComplete(): boolean {
+            return this.setupComplete;
         }
 
         // used by:
@@ -98,8 +104,8 @@ module awk.grid {
                 column.aggFunc = constants.SUM;
             }
             this.valueColumns.push(column);
-            this.fireColumnsChanged();
             this.fireValuesChanged();
+            this.fireColumnsChanged();
         }
 
         public removeValueColumn(column: Column): void {
@@ -108,14 +114,14 @@ module awk.grid {
                 return;
             }
             _.removeFromArray(this.valueColumns, column);
-            this.fireColumnsChanged();
             this.fireValuesChanged();
+            this.fireColumnsChanged();
         }
 
         public setColumnAggFunction(column: Column, aggFunc: string) {
             column.aggFunc = aggFunc;
-            this.fireColumnsChanged();
             this.fireValuesChanged();
+            this.fireColumnsChanged();
         }
 
         public movePivotColumn(fromIndex: number, toIndex: number): void {
@@ -124,6 +130,17 @@ module awk.grid {
             this.pivotColumns.splice(toIndex, 0, column);
             this.firePivotChanged();
             this.fireColumnsChanged();
+        }
+
+        public moveColumn(fromIndex: number, toIndex: number): void {
+            var column = this.allColumns[fromIndex];
+            this.allColumns.splice(fromIndex, 1);
+            this.allColumns.splice(toIndex, 0, column);
+            this.updateModel();
+            this.fireColumnsChanged();
+            if (typeof this.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
+                this.gridOptionsWrapper.getColumnOrderChanged()(this.allColumns);
+            }
         }
 
         // used by:
@@ -154,6 +171,17 @@ module awk.grid {
         // + headerRenderer -> sorting (clearing icon)
         public getAllColumns(): Column[] {
             return this.allColumns;
+        }
+
+        public setColumnVisible(column: Column, visible: boolean): void {
+            column.visible = visible;
+
+            this.updateModel();
+            this.fireColumnsChanged();
+
+            if (typeof this.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
+                this.gridOptionsWrapper.getColumnVisibilityChanged()(this.allColumns);
+            }
         }
 
         public getVisibleColBefore(col: any): Column {
@@ -245,6 +273,8 @@ module awk.grid {
             });
 
             this.updateModel();
+            this.firePivotChanged();
+            this.fireValuesChanged();
             this.fireColumnsChanged();
         }
 
@@ -323,7 +353,10 @@ module awk.grid {
             this.createPivotColumns();
             this.createValueColumns();
             this.updateModel();
+            this.firePivotChanged();
+            this.fireValuesChanged();
             this.fireColumnsChanged();
+            this.setupComplete = true;
         }
 
         private checkForDeprecatedItems(columnDefs: any) {
@@ -347,13 +380,7 @@ module awk.grid {
             group.expanded = !group.expanded;
             this.updateGroups();
             this.updateDisplayedColumns();
-            this.angularGrid.refreshHeaderAndBody();
-        }
-
-        // called by toolPanel - when change in columns happens
-        public onColumnStateChanged() {
-            this.updateModel();
-            this.angularGrid.refreshHeaderAndBody();
+            this.fireColumnsChanged();
         }
 
         // called from API
@@ -365,8 +392,8 @@ module awk.grid {
                     this.allColumns[i].visible = !hide;
                 }
             }
-            this.onColumnStateChanged();
-            this.fireColumnsChanged(); // to tell toolbar
+            this.updateModel();
+            this.fireColumnsChanged();
         }
 
         private updateModel() {
@@ -447,7 +474,7 @@ module awk.grid {
             }
 
             // widths set, refresh the gui
-            this.angularGrid.refreshHeaderAndBody();
+            this.fireColumnsChanged();
 
             function moveToNotSpread(column: Column) {
                 _.removeFromArray(colsToSpread, column);

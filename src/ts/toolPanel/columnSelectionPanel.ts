@@ -10,13 +10,13 @@ module awk.grid {
 
     export class ColumnSelectionPanel {
 
-        gridOptionsWrapper: any;
-        columnController: any;
-        cColumnList: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private columnController: any;
+        private cColumnList: any;
         layout: any;
-        eRootPanel: any;
+        private eRootPanel: any;
 
-        constructor(columnController: any, gridOptionsWrapper: any) {
+        constructor(columnController: any, gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
@@ -27,15 +27,15 @@ module awk.grid {
             });
         }
 
-        columnsChanged(newColumns: any) {
+        private columnsChanged(newColumns: any) {
             this.cColumnList.setModel(newColumns);
         }
 
-        getDragSource() {
+        public getDragSource() {
             return this.cColumnList.getUniqueId();
         }
 
-        columnCellRenderer(params: any) {
+        private columnCellRenderer(params: any) {
             var column = params.value;
             var colDisplayName = this.columnController.getDisplayNameForCol(column);
 
@@ -65,32 +65,19 @@ module awk.grid {
             var that = this;
 
             function showEventListener() {
-                column.visible = !column.visible;
-                that.cColumnList.refreshView();
-                that.columnController.onColumnStateChanged();
-
-                if (typeof that.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
-                    that.gridOptionsWrapper.getColumnVisibilityChanged()(column);
-                }
+                that.columnController.setColumnVisible(column, !column.visible);
             }
 
             return eResult;
         }
 
-        setupComponents() {
+        private setupComponents() {
 
             this.cColumnList = new AgList();
             this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
-
-            var that = this;
-            this.cColumnList.addModelChangedListener(function (columns: any) {
-                that.columnController.onColumnStateChanged();
-
-                if (typeof that.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
-                    that.gridOptionsWrapper.getColumnOrderChanged()(columns);
-                }
-            });
+            this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));
+            this.cColumnList.setReadOnly(true);
 
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var columnsLocalText = localeTextFunc('columns', 'Columns');
@@ -104,13 +91,11 @@ module awk.grid {
             });
         }
 
-        // not sure if this is called anywhere
-        setSelected(column: any, selected: any) {
-            column.visible = selected;
-            this.columnController.onColumnStateChanged();
+        private onItemMoved(fromIndex: number, toIndex: number) {
+            this.columnController.moveColumn(fromIndex, toIndex);
         }
 
-        getGui() {
+        public getGui() {
             return this.eRootPanel.getGui();
         }
     }

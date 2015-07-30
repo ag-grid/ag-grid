@@ -230,9 +230,6 @@ module awk.grid {
 
         setColumnState(state:any) {
             this.columnController.setState(state);
-            this.inMemoryRowController.doGrouping();
-            this.inMemoryRowController.updateModel(Constants.STEP_EVERYTHING);
-            this.grid.refreshHeaderAndBody();
         }
 
         doLayout() {

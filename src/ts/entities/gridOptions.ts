@@ -54,8 +54,8 @@ module awk.grid {
         virtualRowRemoved?(row: any, rowIndex: number): void;
         rowClicked?(params: any): void;
         columnResized?(column: Column):void;
-        columnVisibilityChanged?():void;
-        columnOrderChanged?():void;
+        columnVisibilityChanged?(columns: Column[]):void;
+        columnOrderChanged?(columns: Column[]):void;
         datasource?: any; // should be typed
         ready?(api: any): void; // should be typed
         rowBuffer?: number;

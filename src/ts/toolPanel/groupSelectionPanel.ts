@@ -8,7 +8,6 @@ module awk.grid {
 
     var _ = Utils;
     var svgFactory = SvgFactory.getInstance();
-    var constants = Constants;
 
     export class GroupSelectionPanel {
 
@@ -68,7 +67,6 @@ module awk.grid {
 
             this.cColumnList = new AgList();
             this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
-            //this.cColumnList.addModelChangedListener(this.onGroupingChanged.bind(this));
             this.cColumnList.addBeforeDropListener(this.onBeforeDrop.bind(this));
             this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));
             this.cColumnList.setEmptyMessage(pivotedColumnsEmptyMessage);
@@ -92,11 +90,5 @@ module awk.grid {
         private onItemMoved(fromIndex: number, toIndex: number) {
             this.columnController.movePivotColumn(fromIndex, toIndex);
         }
-
-        //private onGroupingChanged() {
-        //    this.inMemoryRowController.doGrouping();
-        //    this.inMemoryRowController.updateModel(constants.STEP_EVERYTHING);
-        //    this.columnController.onColumnStateChanged();
-        //}
     }
 }

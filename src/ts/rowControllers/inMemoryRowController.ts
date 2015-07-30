@@ -10,7 +10,7 @@ module awk.grid {
     export class InMemoryRowController {
 
         private gridOptionsWrapper: any;
-        private columnModel: any;
+        private columnController: ColumnController;
         private angularGrid: any;
         private filterManager: any;
         private $scope: any;
@@ -29,10 +29,10 @@ module awk.grid {
             this.createModel();
         }
 
-        init(gridOptionsWrapper: any, columnModel: any, angularGrid: any, filterManager: any,
+        init(gridOptionsWrapper: any, columnController: ColumnController, angularGrid: any, filterManager: any,
              $scope: any, groupCreator: GroupCreator, valueService: ValueService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
-            this.columnModel = columnModel;
+            this.columnController = columnController;
             this.angularGrid = angularGrid;
             this.filterManager = filterManager;
             this.$scope = $scope;
@@ -185,7 +185,7 @@ module awk.grid {
         }
 
         // public - it's possible to recompute the aggregate without doing the other parts
-        doAggregate() {
+        public doAggregate() {
 
             var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
             if (typeof groupAggFunction === 'function') {
@@ -193,7 +193,7 @@ module awk.grid {
                 return;
             }
 
-            var valueColumns = this.columnModel.getValueColumns();
+            var valueColumns = this.columnController.getValueColumns();
             var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
             if ((valueColumns && valueColumns.length > 0) || (valueKeys && valueKeys.length > 0)) {
                 var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns, valueKeys);
@@ -270,7 +270,7 @@ module awk.grid {
             } else {
                 //see if there is a col we are sorting by
                 var sortingOptions = <any>[];
-                this.columnModel.getAllColumns().forEach(function (column: any) {
+                this.columnController.getAllColumns().forEach(function (column: any) {
                     if (column.sort) {
                         var ascending = column.sort === constants.ASC;
                         sortingOptions.push({
@@ -370,10 +370,15 @@ module awk.grid {
             }
         }
 
-        // private
-        doGrouping() {
+        // called by grid when pivot cols change
+        public onPivotChanged(): void {
+            this.doPivoting();
+            this.updateModel(constants.STEP_EVERYTHING);
+        }
+
+        private doPivoting() {
             var rowsAfterGroup: any;
-            var groupedCols = this.columnModel.getGroupedColumns();
+            var groupedCols = this.columnController.getGroupedColumns();
             var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
 
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
@@ -452,7 +457,7 @@ module awk.grid {
         // private
         // rows: the rows to put into the model
         // firstId: the first id to use, used for paging, where we are not on the first page
-        setAllRows(rows: any, firstId?: any) {
+        public setAllRows(rows: any, firstId?: any) {
             var nodes: any;
             if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
                 nodes = rows;
@@ -474,8 +479,10 @@ module awk.grid {
             this.recursivelyAddIdToNodes(nodes, firstIdToUse);
             this.allRows = nodes;
 
-            // aggregate here, so filters have the agg data ready
-            this.doGrouping();
+            // pivot here, so filters have the agg data ready
+            if (this.columnController.isSetupComplete()) {
+                this.doPivoting();
+            }
         }
 
         // add in index - this is used by the selectionController - so quick
@@ -601,7 +608,7 @@ module awk.grid {
         aggregateRowForQuickFilter(node: any) {
             var aggregatedText = '';
             var that = this;
-            this.columnModel.getAllColumns().forEach(function (column: Column) {
+            this.columnController.getAllColumns().forEach(function (column: Column) {
                 var data = node.data;
                 var value = that.valueService.getValue(column, data, node);
                 if (value && value !== '') {
