@@ -4,7 +4,7 @@
 
 module awk.grid {
 
-    var utils = Utils;
+    var _ = Utils;
     var constants = Constants;
 
     export class InMemoryRowController {
@@ -341,7 +341,7 @@ module awk.grid {
                     return column.colDef.comparator(valueA, valueB, objA, objB, isInverted);
                 } else {
                     //otherwise do our own comparison
-                    return utils.defaultComparator(valueA, valueB);
+                    return _.defaultComparator(valueA, valueB);
                 }
             }
 
