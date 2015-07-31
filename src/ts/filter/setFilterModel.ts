@@ -11,6 +11,7 @@ module awk.grid {
         rowModel: any;
         valueGetter: any;
         displayedValues: any;
+	filteredDisplayValues: any;
         uniqueValues: any;
         miniFilter: any;
         selectedValuesCount: any;
@@ -24,6 +25,7 @@ module awk.grid {
 
             // by default, no filter, so we display everything
             this.displayedValues = this.uniqueValues;
+            this.filteredDisplayValues = this.uniqueValues;
             this.miniFilter = null;
             //we use a map rather than an array for the selected values as the lookup
             //for a map is much faster than the lookup for an array, especially when
@@ -34,6 +36,7 @@ module awk.grid {
 
         refreshUniqueValues(keepSelection: any) {
             this.createUniqueValues();
+            this.filteredDisplayValues = this.uniqueValues;
 
             var oldModel = Object.keys(this.selectedValuesMap);
 
@@ -51,7 +54,7 @@ module awk.grid {
             if (this.colDef.filterParams && this.colDef.filterParams.values) {
                 this.uniqueValues = utils.toStrings(this.colDef.filterParams.values);
             } else {
-                this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues());
+                this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues(this.rowModel.getTopLevelNodes()));
             }
 
             if (this.colDef.comparator) {
@@ -61,7 +64,12 @@ module awk.grid {
             }
         }
 
-        iterateThroughNodesForValues() {
+	setFilteredDisplayValues(rows: any) {
+    	    this.filteredDisplayValues = utils.toStrings(this.iterateThroughNodesForValues(rows));
+	    this.filterDisplayedValues()
+    	};
+
+        iterateThroughNodesForValues(topLevelNodes: any) {
             var uniqueCheck = <any>{};
             var result = <any>[];
 
@@ -97,7 +105,6 @@ module awk.grid {
                 }
             }
 
-            var topLevelNodes = this.rowModel.getTopLevelNodes();
             recursivelyProcess(topLevelNodes);
 
             return result;
@@ -122,17 +129,17 @@ module awk.grid {
         filterDisplayedValues() {
             // if no filter, just use the unique values
             if (this.miniFilter === null) {
-                this.displayedValues = this.uniqueValues;
+                this.displayedValues = this.filteredDisplayValues;
                 return;
             }
 
             // if filter present, we filter down the list
             this.displayedValues = [];
             var miniFilterUpperCase = this.miniFilter.toUpperCase();
-            for (var i = 0, l = this.uniqueValues.length; i < l; i++) {
-                var uniqueValue = this.uniqueValues[i];
-                if (uniqueValue !== null && uniqueValue.toString().toUpperCase().indexOf(miniFilterUpperCase) >= 0) {
-                    this.displayedValues.push(uniqueValue);
+            for (var i = 0, l = this.filteredDisplayValues.length; i < l; i++) {
+                var filteredValue = this.filteredDisplayValues[i];
+                if (filteredValue !== null && filteredValue.toString().toUpperCase().indexOf(miniFilterUpperCase) >= 0) {
+                    this.displayedValues.push(filteredValue);
                 }
             }
         }

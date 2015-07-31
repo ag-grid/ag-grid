@@ -407,6 +407,7 @@ module awk.grid {
                 rowsAfterFilter = this.rowsAfterGroup;
                 this.recursivelyResetFilter(this.rowsAfterGroup);
             }
+	    this.filterManager.refreshDisplayedValues();
             this.rowsAfterFilter = rowsAfterFilter;
         }
 

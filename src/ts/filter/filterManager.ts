@@ -140,11 +140,13 @@ module awk.grid {
             return filterPresent;
         }
 
-        private doesFilterPass(node: any) {
+        private doesFilterPass(node: any, skipColumnFilter: any) {
             var data = node.data;
             var colKeys = Object.keys(this.allFilters);
             for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
-
+               	if (skipColumnFilter === i) {
+               		continue
+                }
                 var colId = colKeys[i];
                 var filterWrapper = this.allFilters[colId];
 
@@ -167,6 +169,30 @@ module awk.grid {
             // all filters passed
             return true;
         }
+
+	public refreshDisplayedValues() {
+	    	if (!this.grid.gridOptions.enableFilterExcel) {
+	    		return
+	    	}
+	    	var rows = this.rowModel.getTopLevelNodes()
+		var colKeys = Object.keys(this.allFilters);
+
+		for (var i = 0, l = colKeys.length; i < l; i++) {
+		    var colId = colKeys[i];
+		    var filterWrapper = this.allFilters[colId];
+		    // if no filter, always pass
+		    if (filterWrapper === undefined || (typeof filterWrapper.filter.setFilteredDisplayValues !== 'function')) {
+			continue;
+		    }
+		    var displayedFilterValues = new Array();
+			for (var j = 0; j < rows.length; j++) {
+				if (this.doesFilterPass(rows[j], i)) {
+					displayedFilterValues.push(rows[j])
+				}
+			}
+		    filterWrapper.filter.setFilteredDisplayValues(displayedFilterValues)
+		}
+	}
 
         public onNewRowsLoaded() {
             var that = this;
@@ -200,6 +226,7 @@ module awk.grid {
             if (!filterWrapper) {
                 filterWrapper = this.createFilterWrapper(column);
                 this.allFilters[column.colId] = filterWrapper;
+                this.refreshDisplayedValues();
             }
 
             return filterWrapper;
