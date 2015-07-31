@@ -8,10 +8,7 @@ module awk.grid {
         displayedColumns: Column[] = [];
         expandable = false;
         expanded = false;
-
         actualWidth: number;
-        eHeaderGroupCell: HTMLElement;
-        eHeaderCellResize: HTMLElement;
 
         constructor(pinned: any, name: any) {
             this.pinned = pinned;

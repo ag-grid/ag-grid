@@ -27,6 +27,9 @@ module awk.grid {
         /** To provide custom rendering to the header. */
         headerCellRenderer?: Function;
 
+        /** CSS class for the header */
+        headerClass?: (params: any) => any | string[];
+
         /** Initial width, in pixels, of the cell */
         width?: number;
 

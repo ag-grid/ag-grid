@@ -19,11 +19,11 @@ module awk.grid {
         sort: string;
         sortedAt: number;
 
-        eHeaderCell: HTMLElement;
-        eSortAsc: HTMLElement;
-        eSortDesc: HTMLElement;
-        eSortNone: HTMLElement;
-        eFilterIcon: HTMLElement;
+        //eHeaderCell: HTMLElement;
+        //eSortAsc: HTMLElement;
+        //eSortDesc: HTMLElement;
+        //eSortNone: HTMLElement;
+        //eFilterIcon: HTMLElement;
 
         constructor(colDef: ColDef, actualWidth: any) {
             this.colDef = colDef;

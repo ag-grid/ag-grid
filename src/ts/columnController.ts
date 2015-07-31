@@ -288,7 +288,7 @@ module awk.grid {
             }
         }
 
-        public getDisplayNameForCol(column: any) {
+        public getDisplayNameForCol(column: any): string {
 
             var colDef = column.colDef;
             var headerValueGetter = colDef.headerValueGetter;

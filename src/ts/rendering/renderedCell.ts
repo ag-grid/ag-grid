@@ -274,9 +274,21 @@ module awk.grid {
 
             // if function, then call the function to find out
             if (typeof colDef.editable === 'function') {
-                // should change this, so it gets passed params with nice useful values
+
+                var params = {
+                    value: this.value,
+                    data: this.node.data,
+                    node: this.node,
+                    colDef: colDef,
+                    column: this.column,
+                    $scope: this.scope,
+                    context: this.gridOptionsWrapper.getContext(),
+                    api: this.gridOptionsWrapper.getApi()
+                };
+
                 var editableFunc = <Function>colDef.editable;
-                return editableFunc(this.node.data);
+
+                return editableFunc(params);
             }
 
             return false;
