@@ -22,6 +22,7 @@ module awk.grid {
         groupHeaders?: boolean;
         dontUseScrolls?: boolean;
         suppressDescSort?: boolean;
+        suppressAscSort?: boolean;
         unSortIcon?: boolean;
         rowStyle?: any;
         rowClass?: any;
@@ -77,5 +78,4 @@ module awk.grid {
         isScrollLag?(): boolean;
         suppressScrollLag?(): boolean;
     }
-
 }
