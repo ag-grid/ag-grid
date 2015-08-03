@@ -252,25 +252,23 @@ module awk.grid {
         private getNextSortDirection() {
             var suppressUnSort = this.gridOptionsWrapper.isSuppressUnSort();
             var suppressDescSort = this.gridOptionsWrapper.isSuppressDescSort();
-
-            switch (this.column.sort) {
-                case constants.DESC:
-                    if (suppressUnSort) {
-                        return constants.ASC;
-                    } else {
-                        return null;
-                    }
-                case constants.ASC:
-                    if (suppressUnSort && suppressDescSort) {
-                        return constants.ASC;
-                    } else if (suppressDescSort) {
-                        return null;
-                    } else {
-                        return constants.DESC;
-                    }
-                default :
-                    return constants.ASC;
-            }
+            var suppressAscSort = this.gridOptionsWrapper.isSuppressAscSort();
+			var isDescendingByDefault = this.column.colDef.defaultSort === 'DESC';
+			
+			switch (this.column.sort) {
+				case constants.ASC: 
+					if (suppressUnSort) {
+						return suppressDescSort ? constants.ASC : constants.DESC;
+					}
+					return isDescendingByDefault ? null : constants.DESC;
+				case constants.DESC:
+					if (suppressUnSort) {
+						return suppressAscSort ? constants.DESC : constants.ASC;
+					}
+					return isDescendingByDefault ? constants.ASC : null;
+                default:
+					return isDescendingByDefault ? constants.DESC : constants.ASC;
+			}
         }
 
         private addSortHandling(headerCellLabel: HTMLElement) {

@@ -38,6 +38,7 @@ module awk.grid {
         isGroupHeaders() { return isTrue(this.gridOptions.groupHeaders); }
         isDontUseScrolls() { return isTrue(this.gridOptions.dontUseScrolls); }
         isSuppressDescSort() { return isTrue(this.gridOptions.suppressDescSort); }
+        isSuppressAscSort() { return isTrue(this.gridOptions.suppressAscSort); }
         isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         getRowStyle() { return this.gridOptions.rowStyle; }
         getRowClass() { return this.gridOptions.rowClass; }

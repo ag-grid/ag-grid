@@ -84,6 +84,10 @@ include '../documentation_header.php';
             <td>Set to true or false. If true, sorting descending is disabled.</td>
         </tr>
         <tr>
+            <th>suppressAscSort</th>
+            <td>Set to true or false. If true, sorting ascending is disabled.</td>
+        </tr>
+        <tr>
             <th>unSortIcon</th>
             <td>Set to true to show the 'no sort' icon.</td>
         </tr>
