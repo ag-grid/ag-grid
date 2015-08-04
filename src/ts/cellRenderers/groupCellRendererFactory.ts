@@ -96,9 +96,18 @@ module awk.grid {
             utils.useRenderer(eGroupCell, renderer, params);
         }
 
+        function getRefreshFromIndex(params: any) {
+            if (gridOptionsWrapper.isGroupIncludeFooter()) {
+                return params.rowIndex;
+            } else {
+                return params.rowIndex + 1;
+            }
+        }
+
         function expandGroup(eExpandIcon: any, eContractIcon: any, params: any) {
             params.node.expanded = !params.node.expanded;
-            params.api.onGroupExpandedOrCollapsed(params.rowIndex + 1);
+            var refreshIndex = getRefreshFromIndex(params);
+            params.api.onGroupExpandedOrCollapsed(refreshIndex);
             showAndHideExpandAndContract(eExpandIcon, eContractIcon, params.node.expanded);
         }
 
