@@ -109,6 +109,15 @@ include '../documentation_header.php';
             <td>Set to true if you want the unsorted icon to be shown when no sort is applied to this column.</td>
         </tr>
         <tr>
+            <th>sort</th>
+            <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
+        </tr>
+        <tr>
+            <th>sortedAt</th>
+            <td>If doing multi sort by default, this column should say when the sort for each column was done
+                in milliseconds, so the grid knows which order to execute the sort.</td>
+        </tr>
+        <tr>
             <th>suppressSizeToFit</th>
             <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
         </tr>

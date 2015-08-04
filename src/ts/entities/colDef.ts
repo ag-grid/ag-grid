@@ -1,6 +1,12 @@
 module awk.grid {
 
     export interface ColDef {
+        /** If sorting by default, set it here. Set to 'asc' or 'desc' */
+        sort?: string;
+
+        /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
+        sortedAt?: number;
+
         /** The name to render in the column header */
         headerName: string;
 

@@ -46,7 +46,12 @@ colDef.comparator = function (value1, value2, data1, data2, isInverted) {
 }</pre>
 
     <p>
-        Example below shows custom sorting on the Date column.
+        Example below shows the following:
+        <ul>
+            <li>Default sorting on the Athlete column.</li>
+            <li>No sort icon on the Yea column.</li>
+            <li>Custom sorting on the Date column.</li>
+        </ul>
     </p>
 
     <show-example example="example1"></show-example>

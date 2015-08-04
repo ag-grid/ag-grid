@@ -19,16 +19,12 @@ module awk.grid {
         sort: string;
         sortedAt: number;
 
-        //eHeaderCell: HTMLElement;
-        //eSortAsc: HTMLElement;
-        //eSortDesc: HTMLElement;
-        //eSortNone: HTMLElement;
-        //eFilterIcon: HTMLElement;
-
         constructor(colDef: ColDef, actualWidth: any) {
             this.colDef = colDef;
             this.actualWidth = actualWidth;
             this.visible = !colDef.hide;
+            this.sort = colDef.sort;
+            this.sortedAt = colDef.sortedAt;
             // in the future, the colKey might be something other than the index
             if (colDef.colId) {
                 this.colId = colDef.colId;
