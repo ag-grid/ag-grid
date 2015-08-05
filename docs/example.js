@@ -120,7 +120,7 @@ gridsModule.controller('mainController', function($scope) {
 
         // callback when row clicked
         rowClicked: function(params) {
-            //console.log("Callback rowClicked: " + params.data + " - " + params.event);
+            console.log("Callback rowClicked: " + params.data + " - " + params.event);
         },
         // callback when cell clicked
         cellClicked: function(params) {

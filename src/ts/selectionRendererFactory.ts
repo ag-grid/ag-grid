@@ -20,9 +20,9 @@ module awk.grid {
             setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
 
             var that = this;
-            eCheckbox.onclick = function (event) {
-                event.stopPropagation();
-            };
+            //eCheckbox.onclick = function (event) {
+            //    event.stopPropagation();
+            //};
 
             eCheckbox.onchange = function () {
                 var newValue = eCheckbox.checked;
