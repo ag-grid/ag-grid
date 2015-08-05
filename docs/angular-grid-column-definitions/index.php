@@ -105,6 +105,10 @@ include '../documentation_header.php';
             <td>Set to true if no sorting should be done for this column.</td>
         </tr>
         <tr>
+            <th>defaultSort</th>
+            <td>Set to ASC, if the column should sort ascending by default, or DESC, if the default should be descending. Columns sort ASC by default.</td>
+        </tr>		
+        <tr>
             <th>unSortIcon</th>
             <td>Set to true if you want the unsorted icon to be shown when no sort is applied to this column.</td>
         </tr>
