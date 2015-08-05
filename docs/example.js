@@ -83,8 +83,6 @@ gridsModule.controller('mainController', function($scope) {
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
-        //suppressUnSort: true,
-        //suppressDescSort: true,
         //suppressMultiSort: true,
         showToolPanel: true,
         //toolPanelSuppressPivot: true,

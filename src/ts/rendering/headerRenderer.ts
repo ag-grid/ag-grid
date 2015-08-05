@@ -62,6 +62,7 @@ module awk.grid {
                 var renderedHeaderGroup = new RenderedHeaderGroupCell(columnGroup, this.gridOptionsWrapper,
                     this.columnController, this.eRoot, this.angularGrid, this.$scope,
                     this.filterManager, this.$compile);
+                this.headerElements.push(renderedHeaderGroup);
                 var eContainerToAddTo = columnGroup.pinned ? this.ePinnedHeader : this.eHeaderContainer;
                 eContainerToAddTo.appendChild(renderedHeaderGroup.getGui());
             });

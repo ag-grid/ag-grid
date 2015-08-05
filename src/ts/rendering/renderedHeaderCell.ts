@@ -12,6 +12,8 @@ module awk.grid {
 
     export class RenderedHeaderCell extends RenderedHeaderElement {
 
+        private static DEFAULT_SORTING_ORDER = [constants.ASC, constants.DESC, null];
+
         private eHeaderCell: HTMLElement;
         private eSortAsc: HTMLElement;
         private eSortDesc: HTMLElement;
@@ -249,28 +251,39 @@ module awk.grid {
             }
         }
 
-        private getNextSortDirection() {
-            var suppressUnSort = this.gridOptionsWrapper.isSuppressUnSort();
-            var suppressDescSort = this.gridOptionsWrapper.isSuppressDescSort();
+        private getNextSortDirection(): string {
 
-            switch (this.column.sort) {
-                case constants.DESC:
-                    if (suppressUnSort) {
-                        return constants.ASC;
-                    } else {
-                        return null;
-                    }
-                case constants.ASC:
-                    if (suppressUnSort && suppressDescSort) {
-                        return constants.ASC;
-                    } else if (suppressDescSort) {
-                        return null;
-                    } else {
-                        return constants.DESC;
-                    }
-                default :
-                    return constants.ASC;
+            var sortingOrder: string[];
+            if (this.column.colDef.sortingOrder) {
+                sortingOrder = this.column.colDef.sortingOrder;
+            } else if (this.gridOptionsWrapper.getSortingOrder()) {
+                sortingOrder = this.gridOptionsWrapper.getSortingOrder();
+            } else {
+                sortingOrder = RenderedHeaderCell.DEFAULT_SORTING_ORDER;
             }
+
+            if ( !Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                console.warn('ag-grid: sortingOrder must be an array with at least one element, currently it\'s ' + sortingOrder);
+                return;
+            }
+
+            var currentIndex = sortingOrder.indexOf(this.column.sort);
+            var notInArray = currentIndex < 0;
+            var lastItemInArray = currentIndex == sortingOrder.length - 1;
+            var result: string;
+            if (notInArray || lastItemInArray) {
+                result = sortingOrder[0];
+            } else {
+                result = sortingOrder[currentIndex + 1];
+            }
+
+            // verify the sort type exists, as the user could provide the sortOrder, need to make sure it's valid
+            if (RenderedHeaderCell.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
+                console.warn('ag-grid: invalid sort type ' + result);
+                return null;
+            }
+
+            return result;
         }
 
         private addSortHandling(headerCellLabel: HTMLElement) {

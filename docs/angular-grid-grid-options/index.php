@@ -76,14 +76,6 @@ include '../documentation_header.php';
             <td>Set to true to allow cells to contain expressions.</td>
         </tr>
         <tr>
-            <th>suppressUnSort</th>
-            <td>Set to true or false. If true, clicking column header cannot remove the sort.</td>
-        </tr>
-        <tr>
-            <th>suppressDescSort</th>
-            <td>Set to true or false. If true, sorting descending is disabled.</td>
-        </tr>
-        <tr>
             <th>unSortIcon</th>
             <td>Set to true to show the 'no sort' icon.</td>
         </tr>
@@ -222,7 +214,8 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>rowsBuffer</th>
-            <td>Defaults to 20.  Set higher to increase the number of rows that automatically load before and after the viewport.</td>
+            <td>The number of rows rendered outside the scrollable viewable area the grid renders. Defaults to 20.
+                Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.</td>
         </tr>
         <tr>
             <th>showToolPanel</th>
