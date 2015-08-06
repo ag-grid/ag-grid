@@ -48,6 +48,10 @@ module awk.grid {
             return this.type === ColumnChangeEvent.TYPE_VALUE_CHANGE || this.type === ColumnChangeEvent.TYPE_EVERYTHING;
         }
 
+        public isIndividualColumnResized(): boolean {
+            return this.type === ColumnChangeEvent.TYPE_COLUMN_RESIZED && this.column !== undefined && this.column !== null;
+        }
+
     }
 
 }

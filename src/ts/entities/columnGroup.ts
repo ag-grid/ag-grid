@@ -53,6 +53,14 @@ module awk.grid {
             this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
         }
 
+        public calculateActualWidth(): void {
+            var actualWidth = 0;
+            this.displayedColumns.forEach( (column: Column)=> {
+                actualWidth += column.actualWidth;
+            });
+            this.actualWidth = actualWidth;
+        }
+
         public calculateDisplayedColumns() {
             // clear out last time we calculated
             this.displayedColumns = [];

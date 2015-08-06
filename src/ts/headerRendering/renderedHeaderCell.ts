@@ -59,12 +59,6 @@ module awk.grid {
             }
         }
 
-        public fireColumnResized(): void {
-            if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
-                this.gridOptionsWrapper.getColumnResized()(this.column);
-            }
-        }
-
         private createScope(): void {
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 this.childScope = this.parentScope.$new();
@@ -323,39 +317,15 @@ module awk.grid {
 
         public onDragging(dragChange: number): void {
             var newWidth = this.startWidth + dragChange;
-            if (newWidth < this.column.getMinimumWidth()) {
-                newWidth = this.column.getMinimumWidth();
-            }
-
-            if (this.column.isGreaterThanMax(newWidth)) {
-                newWidth = this.column.colDef.maxWidth;
-            }
-
-            this.adjustColumnWidth(newWidth);
-
-            if (this.parentGroup) {
-                this.parentGroup.setWidthOfGroupHeaderCell();
-            }
-
-            // should not be calling these here, should do something else
-            if (this.column.pinned) {
-                this.angularGrid.updatePinnedColContainerWidthAfterColResize();
-            } else {
-                this.angularGrid.updateBodyContainerWidthAfterColResize();
-            }
+            this.columnController.setColumnWidth(this.column, newWidth);
         }
 
-        public adjustColumnWidth(newWidth: any) {
-            var newWidthPx = newWidth + "px";
-            var selectorForAllColsInCell = ".cell-col-" + this.column.index;
-            var cellsForThisCol: NodeList = this.getERoot().querySelectorAll(selectorForAllColsInCell);
-            for (var i = 0; i < cellsForThisCol.length; i++) {
-                var element = <HTMLElement> cellsForThisCol[i];
-                element.style.width = newWidthPx;
+        public onIndividualColumnResized(column: Column) {
+            if (this.column !== column) {
+                return;
             }
-
+            var newWidthPx = column.actualWidth + "px";
             this.eHeaderCell.style.width = newWidthPx;
-            this.column.actualWidth = newWidth;
         }
 
         private addHeaderClassesFromCollDef() {

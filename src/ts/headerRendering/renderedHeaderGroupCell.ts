@@ -8,7 +8,7 @@ module awk.grid {
     var constants = Constants;
     var svgFactory = SvgFactory.getInstance();
 
-    export class RenderedHeaderGroupCell extends RenderedHeaderElement{
+    export class RenderedHeaderGroupCell extends RenderedHeaderElement {
 
         private eHeaderGroup: HTMLElement;
         private eHeaderGroupCell: HTMLElement;
@@ -17,7 +17,7 @@ module awk.grid {
         private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
 
-        private children: RenderedHeaderCell[] = []
+        private children: RenderedHeaderCell[] = [];
 
         private groupWidthStart: number;
         private childrenWidthStarts: number[];
@@ -51,12 +51,6 @@ module awk.grid {
             });
         }
 
-        public fireColumnResized(): void {
-            this.children.forEach( (childElement: RenderedHeaderElement)=> {
-                childElement.fireColumnResized();
-            });
-        }
-
         public refreshFilterIcon(): void {
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
                 childElement.refreshFilterIcon();
@@ -67,6 +61,16 @@ module awk.grid {
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
                 childElement.refreshSortIcon();
             });
+        }
+
+        public onIndividualColumnResized(column: Column) {
+            if (!this.isColumnInOurDisplayedGroup(column)) {
+                return;
+            }
+            this.children.forEach( (childElement: RenderedHeaderElement)=> {
+                childElement.onIndividualColumnResized(column);
+            });
+            this.setWidthOfGroupHeaderCell();
         }
 
         private setupComponents() {
@@ -120,13 +124,12 @@ module awk.grid {
             this.setWidthOfGroupHeaderCell();
         }
 
-        public setWidthOfGroupHeaderCell() {
-            var totalWidth = 0;
-            this.columnGroup.displayedColumns.forEach(function (column: any) {
-                totalWidth += column.actualWidth;
-            });
-            this.eHeaderGroupCell.style.width = _.formatWidth(totalWidth);
-            this.columnGroup.actualWidth = totalWidth;
+        private isColumnInOurDisplayedGroup(column: Column): boolean {
+            return this.columnGroup.displayedColumns.indexOf(column) >= 0;
+        }
+
+        private setWidthOfGroupHeaderCell() {
+            this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.actualWidth);
         }
 
         private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
@@ -162,9 +165,9 @@ module awk.grid {
             }
 
             // set the new width to the group header
-            var newWidthPx = newWidth + "px";
-            this.eHeaderGroupCell.style.width = newWidthPx;
-            this.columnGroup.actualWidth = newWidth;
+            //var newWidthPx = newWidth + "px";
+            //this.eHeaderGroupCell.style.width = newWidthPx;
+            //this.columnGroup.actualWidth = newWidth;
 
             // distribute the new width to the child headers
             var changeRatio = newWidth / this.groupWidthStart;
@@ -187,15 +190,16 @@ module awk.grid {
                     // if last col, give it the remaining pixels
                     newChildSize = pixelsToDistribute;
                 }
-                this.children[index].adjustColumnWidth(newChildSize);
+                this.columnController.setColumnWidth(column, newChildSize);
+                //this.children[index].adjustColumnWidth(newChildSize);
             });
 
             // should not be calling these here, should do something else
-            if (this.columnGroup.pinned) {
-                this.angularGrid.updatePinnedColContainerWidthAfterColResize();
-            } else {
-                this.angularGrid.updateBodyContainerWidthAfterColResize();
-            }
+            //if (this.columnGroup.pinned) {
+            //    this.angularGrid.updatePinnedColContainerWidthAfterColResize();
+            //} else {
+            //    this.angularGrid.updateBodyContainerWidthAfterColResize();
+            //}
         }
 
     }

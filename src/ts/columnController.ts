@@ -112,6 +112,42 @@ module awk.grid {
             this.fireColumnChanged(ColumnChangeEvent.TYPE_VALUE_CHANGE);
         }
 
+        public setColumnWidth(column: Column, newWidth: number): void {
+            if (this.allColumns.indexOf(column) < 0) {
+                console.warn('column not a value');
+                return;
+            }
+
+            if (newWidth < column.getMinimumWidth()) {
+                newWidth = column.getMinimumWidth();
+            }
+
+            if (column.isGreaterThanMax(newWidth)) {
+                newWidth = column.colDef.maxWidth;
+            }
+
+            // check for change first, to avoid unnecessary firing of events
+            if (column.actualWidth !== newWidth) {
+                column.actualWidth = newWidth;
+
+                // if part of a group, update the groups width
+                if (this.columnGroups) {
+                    this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
+                        if (columnGroup.displayedColumns.indexOf(column) >= 0) {
+                            columnGroup.calculateActualWidth();
+                        }
+                    });
+                }
+
+                this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_RESIZED, column);
+            }
+
+            if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
+                this.gridOptionsWrapper.getColumnResized()(column);
+            }
+
+        }
+
         public setColumnAggFunction(column: Column, aggFunc: string) {
             column.aggFunc = aggFunc;
             this.fireColumnChanged(ColumnChangeEvent.TYPE_VALUE_CHANGE);
@@ -525,7 +561,7 @@ module awk.grid {
             });
         }
 
-        private updateGroups() {
+        private updateGroups(): void {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 return;
@@ -535,10 +571,11 @@ module awk.grid {
                 var group = this.columnGroups[i];
                 group.calculateExpandable();
                 group.calculateDisplayedColumns();
+                group.calculateActualWidth();
             }
         }
 
-        private updateVisibleColumns() {
+        private updateVisibleColumns(): void {
             this.visibleColumns = [];
 
             // see if we need to insert the default grouping column
@@ -576,7 +613,7 @@ module awk.grid {
             }
         }
 
-        private updatePinnedColumns() {
+        private updatePinnedColumns(): void {
             var pinnedColumnCount = this.gridOptionsWrapper.getPinnedColCount();
             for (var i = 0; i < this.visibleColumns.length; i++) {
                 var pinned = i < pinnedColumnCount;
@@ -584,7 +621,7 @@ module awk.grid {
             }
         }
 
-        private createColumns(colDefs: any) {
+        private createColumns(colDefs: any): void {
             this.allColumns = [];
             if (colDefs) {
                 for (var i = 0; i < colDefs.length; i++) {
@@ -596,7 +633,7 @@ module awk.grid {
             }
         }
 
-        private createPivotColumns() {
+        private createPivotColumns(): void {
             this.pivotColumns = [];
             var groupKeys = this.gridOptionsWrapper.getGroupKeys();
             if (!groupKeys || groupKeys.length <= 0) {
@@ -612,7 +649,7 @@ module awk.grid {
             }
         }
 
-        private createValueColumns() {
+        private createValueColumns(): void {
             this.valueColumns = [];
 
             // override with columns that have the aggFunc specified explicitly
@@ -625,7 +662,7 @@ module awk.grid {
             }
         }
 
-        private createDummyColumn(field: any) {
+        private createDummyColumn(field: any): Column {
             var colDef = {
                 field: field,
                 headerName: field,

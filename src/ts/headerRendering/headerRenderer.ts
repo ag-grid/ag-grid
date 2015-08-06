@@ -91,5 +91,11 @@ module awk.grid {
                 headerElement.refreshFilterIcon();
             });
         }
+
+        public onIndividualColumnResized(column: Column): void {
+            this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
+                headerElement.onIndividualColumnResized(column);
+            });
+        }
     }
 }

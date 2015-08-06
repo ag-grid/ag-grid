@@ -61,6 +61,16 @@ module awk.grid {
             this.rowModel = rowModel;
         }
 
+        public onIndividualColumnResized(column: Column) {
+            var newWidthPx = column.actualWidth + "px";
+            var selectorForAllColsInCell = ".cell-col-" + column.index;
+            var cellsForThisCol: NodeList = this.eParentOfRows.querySelectorAll(selectorForAllColsInCell);
+            for (var i = 0; i < cellsForThisCol.length; i++) {
+                var element = <HTMLElement> cellsForThisCol[i];
+                element.style.width = newWidthPx;
+            }
+        }
+
         public setMainRowWidths() {
             var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 

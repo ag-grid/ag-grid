@@ -207,8 +207,23 @@ module awk.grid {
                 if (event.isValueChanged()) {
                     this.inMemoryRowController.doAggregate();
                 }
-                this.refreshHeaderAndBody();
+
+                if (event.isIndividualColumnResized()) {
+                    this.onIndividualColumnResized(event.getColumn());
+                } else {
+                    this.refreshHeaderAndBody();
+                }
             });
+        }
+
+        private onIndividualColumnResized(column: Column): void {
+            this.headerRenderer.onIndividualColumnResized(column);
+            this.rowRenderer.onIndividualColumnResized(column);
+            if (column.pinned) {
+                this.updatePinnedColContainerWidthAfterColResize();
+            } else {
+                this.updateBodyContainerWidthAfterColResize();
+            }
         }
 
         public showToolPanel(show: any) {

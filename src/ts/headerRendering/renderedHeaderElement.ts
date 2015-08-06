@@ -15,23 +15,13 @@ module awk.grid {
             return this.eRoot;
         }
 
-        public destroy(): void {
-        }
-
-        public refreshFilterIcon(): void {
-        }
-
-        public refreshSortIcon(): void {
-        }
-
-        public onDragStart(): void {
-        }
-
-        public onDragging(dragChange: number): void {
-        }
-
-        public fireColumnResized(): void {
-        }
+        // methods implemented by the base classes
+        public destroy(): void {}
+        public refreshFilterIcon(): void {}
+        public refreshSortIcon(): void {}
+        public onDragStart(): void {}
+        public onDragging(dragChange: number): void {}
+        public onIndividualColumnResized(column: Column): void {}
 
         public addDragHandler(eDraggableElement: any) {
             var that = this;
@@ -68,7 +58,6 @@ module awk.grid {
             _.iterateObject(listenersToRemove, function (key: any, listener: any) {
                 that.eRoot.removeEventListener(key, listener);
             });
-            this.fireColumnResized();
         }
 
     }
