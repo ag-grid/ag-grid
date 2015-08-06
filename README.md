@@ -24,7 +24,7 @@ To build:
 - `bower install`
 - `gulp` or `gulp release`
 
-Normal 'gulp' does not include minifiation or source maps, and starts a watch. This is for development.
+Normal 'gulp' does not include minification or source maps, and starts a watch. This is for development.
 
 'gulp release' does minification and no source maps. This is for releasing.
 
