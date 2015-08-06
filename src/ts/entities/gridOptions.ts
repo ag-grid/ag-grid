@@ -16,12 +16,11 @@ module awk.grid {
         groupIncludeFooter?: boolean;
         suppressRowClickSelection?: boolean;
         suppressCellSelection?: boolean;
-        suppressUnSort?: boolean;
+        sortingOrder?: string[];
         suppressMultiSort?: boolean;
         groupSuppressAutoColumn?: boolean;
         groupHeaders?: boolean;
         dontUseScrolls?: boolean;
-        suppressDescSort?: boolean;
         unSortIcon?: boolean;
         rowStyle?: any;
         rowClass?: any;

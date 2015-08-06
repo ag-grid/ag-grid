@@ -57,6 +57,18 @@ module awk.grid {
             });
         }
 
+        public refreshFilterIcon(): void {
+            this.children.forEach( (childElement: RenderedHeaderElement)=> {
+                childElement.refreshFilterIcon();
+            });
+        }
+
+        public refreshSortIcon(): void {
+            this.children.forEach( (childElement: RenderedHeaderElement)=> {
+                childElement.refreshSortIcon();
+            });
+        }
+
         private setupComponents() {
             this.eHeaderGroup = document.createElement('div');
             this.eHeaderGroup.className = 'ag-header-group';

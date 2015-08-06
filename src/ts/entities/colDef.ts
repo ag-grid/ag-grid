@@ -7,6 +7,9 @@ module awk.grid {
         /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
         sortedAt?: number;
 
+        /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
+        sortingOrder?: string[];
+
         /** The name to render in the column header */
         headerName: string;
 

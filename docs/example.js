@@ -83,8 +83,6 @@ gridsModule.controller('mainController', function($scope) {
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
-        //suppressUnSort: true,
-        //suppressDescSort: true,
         //suppressMultiSort: true,
         showToolPanel: true,
         //toolPanelSuppressPivot: true,
@@ -120,7 +118,7 @@ gridsModule.controller('mainController', function($scope) {
 
         // callback when row clicked
         rowClicked: function(params) {
-            //console.log("Callback rowClicked: " + params.data + " - " + params.event);
+            console.log("Callback rowClicked: " + params.data + " - " + params.event);
         },
         // callback when cell clicked
         cellClicked: function(params) {

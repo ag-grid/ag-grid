@@ -49,12 +49,43 @@ colDef.comparator = function (value1, value2, data1, data2, isInverted) {
         Example below shows the following:
         <ul>
             <li>Default sorting on the Athlete column.</li>
-            <li>No sort icon on the Yea column.</li>
+            <li>No sort icon on the Year column.</li>
             <li>Custom sorting on the Date column.</li>
         </ul>
     </p>
 
     <show-example example="example1"></show-example>
+
+    <h4>Sorting Order</h4>
+
+    <p>
+        By default, the sorting order is as follows:
+    </p>
+    <p>
+        <b>ascending -> descending -> none</b>.
+    </p>
+    <p>
+        In other words, when you click a column that is not sorted, it will sort ascending. The next click
+        will make it sort descending. Another click will remove the sort.
+    </p>
+    <p>
+        It is possible to override this behaviour by providing your own <i>sortOrder</i> on either
+        the gridOptions or the colDef. If defined both in colDef and gridOptions, the colDef will get
+        preference, allowing you to defined a common default, and then tailoring per column.
+    </p>
+
+    <p>
+        The example below shows different combinations of sorting orders as follows:
+        <ul>
+        <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
+        <li><b>Column Athlete:</b> ascending -> descending</li>
+        <li><b>Column Age:</b> descending -> ascending</li>
+        <li><b>Column Country:</b> descending -> no sort </li>
+        <li><b>Column Year:</b> ascending only</li>
+    </ul>
+    </p>
+
+    <show-example example="exampleSortingOrder"></show-example>
 
     <h4>Sorting API</h4>
 
