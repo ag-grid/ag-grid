@@ -116,8 +116,9 @@ module awk.grid {
 
         public onNewRowsLoaded(): void {
             var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+            var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
             // default is reset
-            this.model.refreshUniqueValues(keepSelection);
+            this.model.refreshUniqueValues(keepSelection, isSelectAll);
             this.setContainerHeight();
             this.refreshVirtualRows();
         }

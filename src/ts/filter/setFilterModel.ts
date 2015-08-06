@@ -32,7 +32,10 @@ module awk.grid {
             this.selectEverything();
         }
 
-        refreshUniqueValues(keepSelection: any) {
+        // if keepSelection not set will always select all filters
+        // if keepSelection set will keep current state of selected filters
+        //    unless selectAll chosen in which case will select all
+        refreshUniqueValues(keepSelection: any, isSelectAll: boolean) {
             this.createUniqueValues();
 
             var oldModel = Object.keys(this.selectedValuesMap);
@@ -41,7 +44,7 @@ module awk.grid {
             this.filterDisplayedValues();
 
             if (keepSelection) {
-                this.setModel(oldModel);
+                this.setModel(oldModel, isSelectAll);
             } else {
                 this.selectEverything();
             }
@@ -208,8 +211,8 @@ module awk.grid {
             return selectedValues;
         }
 
-        setModel(model: any) {
-            if (model) {
+        setModel(model: any, isSelectAll: boolean) {
+            if (model && !isSelectAll) {
                 this.selectNothing();
                 for (var i = 0; i < model.length; i++) {
                     var newValue = model[i];
