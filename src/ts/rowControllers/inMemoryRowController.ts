@@ -11,7 +11,7 @@ module awk.grid {
 
         private gridOptionsWrapper: any;
         private columnController: ColumnController;
-        private angularGrid: any;
+        private angularGrid: Grid;
         private filterManager: any;
         private $scope: any;
 

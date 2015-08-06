@@ -13,30 +13,27 @@ module awk.grid {
 
     export class ValuesSelectionPanel {
 
-        private gridOptionsWrapper: any;
-        private columnController: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private columnController: ColumnController;
         private cColumnList: any;
         private layout: any;
         private popupService: PopupService;
 
-        constructor(columnController: any, gridOptionsWrapper: any, popupService: PopupService) {
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService) {
             this.popupService = popupService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
 
-            var that = this;
-            this.columnController.addListener({
-                columnsChanged: that.columnsChanged.bind(that)
-            });
+            this.columnController.addChangeListener(this.columnsChanged.bind(this));
         }
 
         public getLayout() {
             return this.layout;
         }
 
-        private columnsChanged(allColumns: Column[], pivotColumns: Column[], valueColumns: Column[]) {
-            this.cColumnList.setModel(valueColumns);
+        private columnsChanged() {
+            this.cColumnList.setModel(this.columnController.getValueColumns());
         }
 
         public addDragSource(dragSource: any) {

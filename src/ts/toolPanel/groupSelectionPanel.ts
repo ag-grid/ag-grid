@@ -12,25 +12,22 @@ module awk.grid {
     export class GroupSelectionPanel {
 
         gridOptionsWrapper: any;
-        columnController: any;
+        columnController: ColumnController;
         inMemoryRowController: any;
         cColumnList: any;
         layout: any;
 
-        constructor(columnController: any, inMemoryRowController: any, gridOptionsWrapper: any) {
+        constructor(columnController: ColumnController, inMemoryRowController: any, gridOptionsWrapper: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
             this.inMemoryRowController = inMemoryRowController;
 
-            var that = this;
-            this.columnController.addListener({
-                columnsChanged: that.columnsChanged.bind(that)
-            });
+            this.columnController.addChangeListener(this.columnsChanged.bind(this));
         }
 
-        private columnsChanged(newColumns: any, newGroupedColumns: any) {
-            this.cColumnList.setModel(newGroupedColumns);
+        private columnsChanged() {
+            this.cColumnList.setModel(this.columnController.getGroupedColumns());
         }
 
         public addDragSource(dragSource: any) {

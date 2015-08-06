@@ -11,24 +11,21 @@ module awk.grid {
     export class ColumnSelectionPanel {
 
         private gridOptionsWrapper: GridOptionsWrapper;
-        private columnController: any;
+        private columnController: ColumnController;
         private cColumnList: any;
         layout: any;
         private eRootPanel: any;
 
-        constructor(columnController: any, gridOptionsWrapper: GridOptionsWrapper) {
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
 
-            var that = this;
-            this.columnController.addListener({
-                columnsChanged: that.columnsChanged.bind(that)
-            });
+            this.columnController.addChangeListener(this.columnsChanged.bind(this));
         }
 
-        private columnsChanged(newColumns: any) {
-            this.cColumnList.setModel(newColumns);
+        private columnsChanged() {
+            this.cColumnList.setModel(this.columnController.getAllColumns());
         }
 
         public getDragSource() {

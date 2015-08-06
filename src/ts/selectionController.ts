@@ -16,7 +16,7 @@ module awk.grid {
     export class SelectionController {
 
         eRowsParent: any;
-        angularGrid: any;
+        angularGrid: Grid;
         gridOptionsWrapper: any;
         $scope: any;
         rowRenderer: RowRenderer;
@@ -24,7 +24,7 @@ module awk.grid {
         selectedNodesById: any;
         rowModel: any;
 
-        init(angularGrid: any, gridPanel: any, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
+        init(angularGrid: Grid, gridPanel: any, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
             this.eRowsParent = gridPanel.getRowsParent();
             this.angularGrid = angularGrid;
             this.gridOptionsWrapper = gridOptionsWrapper;

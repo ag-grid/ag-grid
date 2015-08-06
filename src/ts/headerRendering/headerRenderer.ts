@@ -1,9 +1,9 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
 /// <reference path="../svgFactory.ts" />
-/// <reference path="renderedHeaderElement.ts" />
-/// <reference path="renderedHeaderCell.ts" />
-/// <reference path="renderedHeaderGroupCell.ts" />
+/// <reference path="../headerRendering/renderedHeaderElement.ts" />
+/// <reference path="../headerRendering/renderedHeaderCell.ts" />
+/// <reference path="../headerRendering/renderedHeaderGroupCell.ts" />
 
 module awk.grid {
 
