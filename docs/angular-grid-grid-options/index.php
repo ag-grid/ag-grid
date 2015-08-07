@@ -239,6 +239,11 @@ include '../documentation_header.php';
                 isScrollLag. This is a function, as it's expected your code will check the environment to decide
                 whether to use scroll lag or not.</td>
         </tr>
+        <tr>
+            <th>suppressMenuHide</th>
+            <td>Set to true to always show the column menu button, rather than only showing when the mouse is
+            over the column header.</td>
+        </tr>
     </table>
 
 </div>

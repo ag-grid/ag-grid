@@ -92,13 +92,16 @@ module awk.grid {
                 that.filterManager.showFilter(that.column, this);
             };
             this.eHeaderCell.appendChild(eMenuButton);
-            this.eHeaderCell.onmouseenter = function () {
-                eMenuButton.style.opacity = '1';
-            };
-            this.eHeaderCell.onmouseleave = function () {
+
+            if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
                 eMenuButton.style.opacity = '0';
-            };
-            eMenuButton.style.opacity = '0';
+                this.eHeaderCell.onmouseenter = function () {
+                    eMenuButton.style.opacity = '1';
+                };
+                this.eHeaderCell.onmouseleave = function () {
+                    eMenuButton.style.opacity = '0';
+                };
+            }
             eMenuButton.style['transition'] = 'opacity 0.5s, border 0.2s';
             var style: any = eMenuButton.style;
             style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';

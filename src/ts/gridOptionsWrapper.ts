@@ -38,6 +38,7 @@ module awk.grid {
         public isGroupHeaders() { return isTrue(this.gridOptions.groupHeaders); }
         public isDontUseScrolls() { return isTrue(this.gridOptions.dontUseScrolls); }
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
+        public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
         public getRowStyle() { return this.gridOptions.rowStyle; }
         public getRowClass() { return this.gridOptions.rowClass; }
         public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
@@ -84,7 +85,7 @@ module awk.grid {
         public setSelectedNodesById(newSelectedNodes: any) { return this.gridOptions.selectedNodesById = newSelectedNodes; }
         public getIcons() { return this.gridOptions.icons; }
         public getIsScrollLag() { return this.gridOptions.isScrollLag; }
-        public getSortingOrder() { return this.gridOptions.sortingOrder; }
+        public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
 
         public getGroupRowInnerRenderer() {
             if (this.gridOptions.groupInnerRenderer) {

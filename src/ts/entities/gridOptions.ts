@@ -75,6 +75,7 @@ module awk.grid {
         localeText?: any;
         isScrollLag?(): boolean;
         suppressScrollLag?(): boolean;
+        suppressMenuHide?: boolean;
     }
 
 }
