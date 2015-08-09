@@ -158,12 +158,12 @@ module awk.grid {
             eInput.addEventListener("blur", blurListener);
 
             //stop editing if enter pressed
-            eInput.addEventListener('keypress', function (event: any) {
+            eInput.addEventListener('keypress', (event: any) => {
                 var key = event.which || event.keyCode;
                 // 13 is enter
                 if (key == Constants.KEY_ENTER) {
-                    that.stopEditing(eInput, blurListener);
-                    that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, that.column.colDef, true);
+                    this.stopEditing(eInput, blurListener);
+                    this.focusCell(true);
                 }
             });
 
@@ -178,6 +178,10 @@ module awk.grid {
                     return false;
                 }
             });
+        }
+
+        public focusCell(forceBrowserFocus: boolean): void {
+            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.index, this.column.colDef, forceBrowserFocus);
         }
 
         private stopEditing(eInput: any, blurListener: any) {
@@ -308,7 +312,7 @@ module awk.grid {
                 // text field, the text field, the focus doesn't get to the text
                 // field, instead to goes to the div behind, making it impossible to
                 // select the text field.
-                that.rowRenderer.focusCell(that.vGridCell.getElement(), that.rowIndex, that.column.index, colDef, false);
+                that.focusCell(false);
                 if (that.gridOptionsWrapper.getCellClicked()) {
                     var paramsForGrid = {
                         node: that.node,

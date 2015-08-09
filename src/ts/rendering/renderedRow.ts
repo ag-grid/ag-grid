@@ -145,7 +145,7 @@ module awk.grid {
             });
         }
 
-        public getRenderedCellForColumn(column: Column): any {
+        public getRenderedCellForColumn(column: Column): RenderedCell {
             return this.renderedCells[column.index];
         }
 

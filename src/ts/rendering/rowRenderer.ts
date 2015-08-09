@@ -454,10 +454,11 @@ module awk.grid {
                     }
                 }
 
-                var nextRenderedRow = this.renderedRows[currentRowIndex];
-                var nextRenderedCell = nextRenderedRow.getRenderedCellForColumn(currentCol);
+                var nextRenderedRow: RenderedRow = this.renderedRows[currentRowIndex];
+                var nextRenderedCell: RenderedCell = nextRenderedRow.getRenderedCellForColumn(currentCol);
                 if (nextRenderedCell.isCellEditable()) {
                     nextRenderedCell.startEditing();
+                    nextRenderedCell.focusCell(false);
                     return;
                 }
             }
