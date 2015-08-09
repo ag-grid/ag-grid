@@ -14,11 +14,17 @@ include '../documentation_header.php';
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created using open Web technology. They are
         part of the browser and so they do not need external libraries such as AngularJS or JQuery.
     </p>
-    <p>
-        Angular Grid presents itself as a web component if such is available from the browser. Web components
-        are still not available in all browsers, but you can use libraries to provide polyfills. All the examples
-        on this page use <a href="http://cdnjs.com/libraries/webcomponentsjs">webcomponent.js</a> polyfill from Google.
-    </p>
+    <note>
+        Web components are an emerging technology and not available in all browsers. Some browsers lacking support
+        can be plugged using polyfills. The examples on this page use
+        <a href="http://cdnjs.com/libraries/webcomponentsjs">webcomponent.js</a>
+        polyfill from Google. The examples on this page have been tested to work with latest versions of Chrome
+        and Firefox on Windows. They failed using IE 11 and Safari on Windows. I have not done extensive testing
+        on which browsers Web Components as what browsers support Web Components and which don't is not a grid
+        problem / discussion, it's specific to Web Components. If you are going to use Web Components in your
+        application, then which browsers your application will run on is a big question you need to answer for
+        yourself.
+    </note>
 
     <h4>Using Angular Grid Web Component</h4>
 
