@@ -14,6 +14,16 @@ include '../documentation_header.php';
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created using open Web technology. They are
         part of the browser and so they do not need external libraries such as AngularJS or JQuery.
     </p>
+    <p>
+        Web Components are of particular interest to Angular Grid as I see them as the future. They will also
+        pave the way for Angular 2 integration, as Angular 2 reusable widgets it based around Web Component
+        technology.
+    </p>
+    <p>
+        Angular Grid and Web Components is work in progress. This page shows how Angular Grid currently works
+        with Web Components. However I expect changes to be made here as I more tightly integrate the Angular Grid
+        interface into the expectations around Web Components and also make it work well with Angular 2.
+    </p>
     <note>
         Web components are an emerging technology and not available in all browsers. Some browsers lacking support
         can be plugged using polyfills. The examples on this page use

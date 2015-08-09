@@ -27,7 +27,11 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>26th July 2015</b>
+        <b>9th Aug 2015</b>
+    </p>
+
+    <p>
+        <b>Over 700 stars on GitHub, whoop whoop!!!</b>
     </p>
 
     <p>
@@ -35,25 +39,39 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        Flights, airports, London, Edinburgh, Dublin, busy days for me from my day job and personal live perspective.
+        Last weekend didn't see a release as I was celebrating my Dad's 70th birthday.
+        Anyway, I'm sure nobody cares..... :)
+    </p>
+
+    <p>
+        What I did get done:
         <ul>
-            <li>
-                Introduced minWidth and maxWidth for columns.
-            </li>
-            <li>
-                Chaining of cell expressions via getValue() method. Explained <a href="angular-grid-value-getters/index.php">here</a>.
-            </li>
-            <li>
-                Other minor bug fixes.
-            </li>
-        </ul>
-    Release 1.12.4 contains all the above.
+        <li>
+            Major refactoring around the column controller, all in preparing for future changes. If you are looking
+            at the code, you will notice that the columnController is now where ALL column updates are made.
+            The toolPanel and the rowRenderer now treat the column model as read only and use methods on the
+            columnController to make changes.
+        </li>
+        <li>
+            I researching and prototyping around Web Components and Angular 2.0. I complete a first pass on a
+            web component which you can check out <a href="/example-web-component-grid/index.php">here</a>.
+        </li>
+        <li>
+            Other minor bug fixes.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+    Release 1.12.5 contains all the above.
     </p>
 
     <p>
         <b>Next Week</b>
     </p>
     <p>
-        Next week I'll be continuing to work through the issues in Gibhub.
+        I'm doing a lot of learning and prototyping around Web Components and Angular 2.0.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
@@ -218,6 +236,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>26th July</b> minWidth and maxWidth for columns. Chaining of cell expressions.
+    </p>
 
     <hr/>
 
