@@ -134,7 +134,10 @@
     // wait for the document to be loaded, otherwise
     // Angular Grid will not find the div in the document.
     document.addEventListener("DOMContentLoaded", function() {
-        window.angularGrid('#myGrid', gridOptions);
+
+        var myAgileGrid = document.querySelector('#myAgileGrid');
+        myAgileGrid.setGridOptions(gridOptions);
+
         addQuickFilterListener();
     });
 
@@ -157,7 +160,8 @@
     function createRowData() {
         var rowData = [];
 
-        for (var i = 0; i < 10000; i++) {
+        for (var i = 0; i < 100; i++) {
+            //for (var i = 0; i < 10000; i++) {
             var countryData = countries[i % countries.length];
             rowData.push({
                 name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
@@ -187,7 +191,7 @@
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data.skills[skill]) {
-                skills.push('<img src="/example-html5-datagrid/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/example-web-component-grid/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');

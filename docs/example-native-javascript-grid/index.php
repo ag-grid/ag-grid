@@ -1,5 +1,5 @@
 <?php
-$key = "No Angular";
+$key = "Native Javascript";
 $pageTitle = "HTML 5 Grid without Angular JS";
 $pageDescription = "How to use Angular Grid to create an HTML 5 grid without using AngularJS";
 $pageKeyboards = "HTML 5 Javascript grid without AngularJS";
@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>No AngularJS</h2>
+    <h2>Native Javascript</h2>
 
     <p>
         It is possible to not use AngularJS and still use Angular Grid. This is because Angular Grid

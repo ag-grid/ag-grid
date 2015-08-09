@@ -323,10 +323,20 @@
                     <a class="sidebarLink" href="/example-expressions-and-context/index.php">Expressions and Context</a>
                 <?php } ?>
 
-                <?php if ($key == "No Angular") { ?>
-                    <span class="sidebarLinkSelected">No AngularJS</span>
+                <h4>
+                    Without AngularJS
+                </h4>
+
+                <?php if ($key == "Native Javascript") { ?>
+                    <span class="sidebarLinkSelected">Native Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/example-html5-datagrid/index.php">No AngularJS</a>
+                    <a class="sidebarLink" href="/example-native-javascript-grid/index.php">Native Javascript</a>
+                <?php } ?>
+
+                <?php if ($key == "Web Components") { ?>
+                    <span class="sidebarLinkSelected">Web Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-web-component-grid/index.php">Web Components</a>
                 <?php } ?>
 
             </div>

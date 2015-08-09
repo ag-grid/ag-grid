@@ -37,6 +37,11 @@ declare var module: any;
         exports.angularGrid = angularGridGlobalFunction;
     }
 
+    // register web component if browser allows it
+    if ((<any>document).registerElement) {
+        registerWebComponent();
+    }
+
     root.angularGrid = angularGridGlobalFunction;
 
     function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
@@ -68,6 +73,15 @@ declare var module: any;
         $scope.$on("$destroy", function() {
             grid.setFinished();
         });
+    }
+
+    function registerWebComponent() {
+        var AgileGridProto = Object.create(HTMLElement.prototype);
+        console.log('init');
+        AgileGridProto.setGridOptions = function(options: any) {
+            angularGridGlobalFunction(this, options);
+        };
+        (<any>document).registerElement('agile-grid', {prototype: AgileGridProto});
     }
 
     // Global Function - this function is used for creating a grid, outside of any AngularJS
