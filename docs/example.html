@@ -21,9 +21,9 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-        <script src="./dist/angular-grid.js?ignore=notused3"></script>
-        <link rel="stylesheet" type="text/css" href="./dist/angular-grid.css?ignore=notused3">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused3">
+        <script src="./dist/angular-grid.js?ignore=notused4"></script>
+        <link rel="stylesheet" type="text/css" href="./dist/angular-grid.css?ignore=notused4">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused4">
         <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css">
 
         <script src="example.js"></script>
@@ -129,9 +129,16 @@
                     <option value="ag-dark">Dark</option>
                 </select>
 
+                <span style="padding-left: 20px; display: inline-block;">
+                    Jump to:
+                    <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
+                    <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
+                </span>
             </div>
 
             <div style="padding: 4px;">
+
+                <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
 
                 Selection:
                 <select ng-model="rowSelection" ng-change="onSelectionChanged()" style="width: 100px;">
@@ -141,48 +148,21 @@
                     <option value="multiple">Multiple</option>
                 </select>
 
-                Group By:
-                <select ng-model="groupBy" ng-change="onGroupByChanged()" style="width: 90px;">
-                    <option value="">-none-</option>
-                    <option value="continent">Continent</option>
-                    <option value="language">Language</option>
-                    <option value="continent,language">Continent, Language</option>
-                    <option value="language,continent">Language, Continent</option>
-                </select>
-
-                <span ng-show="groupBy">
-
-                    Group Type:
-                    <select ng-model="groupType" ng-change="onGroupByChanged()" style="width: 90px;">
-                        <option value="col">Col</option>
-                        <option value="colWithFooter">Col with Footer</option>
-                        <option value="row">Row</option>
-                        <option value="rowWithFooter">Row with Footer</option>
-                    </select>
-
-                    <button ng-click="angularGrid.api.expandAll()">Expand All</button>
-                    <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
-
-                </span>
-
-            </div>
-            <!-- Second row of header, has quick filter -->
-            <div style="padding: 4px;">
-                <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
-
-                <span style="padding-left: 20px; display: inline-block;">
-                    Jump to:
-                    <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
-                    <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
-                </span>
-
                 <span style="padding-left: 20px; display: inline-block;">
                     <button ng-click="toggleToolPanel()">Tool Panel</button>
                 </span>
-                <!--
-                                <input placeholder="Line number..." type="text" ng-model="jumpToRowText"/>
-                                <button ng-click="jumpToRow()">Go</button>
-                -->
+
+                Group Type:
+                <select ng-model="groupType" ng-change="onGroupByChanged()" style="width: 90px;">
+                    <option value="col">Col</option>
+                    <option value="colWithFooter">Col with Footer</option>
+                    <option value="row">Row</option>
+                    <option value="rowWithFooter">Row with Footer</option>
+                </select>
+
+                <button ng-click="angularGrid.api.expandAll()">Expand All</button>
+                <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
+
             </div>
         </div>
         <!-- The table div -->

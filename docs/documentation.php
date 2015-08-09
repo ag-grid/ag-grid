@@ -64,6 +64,16 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>Help!!</b> As part of my Angular 2 integration, I need to understand how the core Angular 2 works,
+        in particular the View Manager and DOM compiling and associated classes. There appears to be tons of information
+        on the web on how to build basic Components (Directives) in Angular 2, lots and lots of little pages explaining
+        the very same beginners concepts, they are almost all rehashes of the same simple example. What I need is
+        a good understanding of the internals of Angular 2 views, so that I can create an Angular 2 context
+        for each grid row (similar to how I am creating scopes for each row in Angular 1.x). If anyone has
+        a decent understanding on how to go about this, please get in touch!!
+    </p>
+
+    <p>
     Release 1.12.5 contains all the above.
     </p>
 
