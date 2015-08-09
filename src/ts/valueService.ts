@@ -16,16 +16,16 @@ module awk.grid {
             this.columnController = columnController;
         }
 
-        public getValue(column: Column, data: any, node: any):any {
+        public getValue(colDef: ColDef, data: any, node: any):any {
 
             var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-            var field = column.colDef.field;
+            var field = colDef.field;
 
             var result: any;
 
             // if there is a value getter, this gets precedence over a field
-            if (column.colDef.valueGetter) {
-                result = this.executeValueGetter(column.colDef.valueGetter, data, column.colDef, node);
+            if (colDef.valueGetter) {
+                result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
             } else if (field && data) {
                 result = data[field];
             } else {
@@ -35,7 +35,7 @@ module awk.grid {
             // the result could be an expression itself, if we are allowing cell values to be expressions
             if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
                 var cellValueGetter = result.substring(1);
-                result = this.executeValueGetter(cellValueGetter, data, column.colDef, node);
+                result = this.executeValueGetter(cellValueGetter, data, colDef, node);
             }
 
             return result;
@@ -67,7 +67,7 @@ module awk.grid {
         private getValueCallback(data: any, node: any, field: string): any {
             var otherColumn = this.columnController.getColumn(field);
             if (otherColumn) {
-                return this.getValue(otherColumn, data, node);
+                return this.getValue(otherColumn.colDef, data, node);
             } else {
                 return null;
             }

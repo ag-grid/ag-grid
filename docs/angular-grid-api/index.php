@@ -230,6 +230,12 @@ include '../documentation_header.php';
                 for the next 500ms refresh.</td>
         </tr>
 
+        <tr>
+            <th>getValue(colDef, data, node)</th>
+            <td>Gets the value for a cell. This is what gets passed to the cellRenderer for rendering.
+                This is useful if you want the raw value eg for csv export.</td>
+        </tr>
+
     </table>
 
 </div>

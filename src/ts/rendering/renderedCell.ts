@@ -78,7 +78,7 @@ module awk.grid {
         }
 
         private getValue(): any {
-            return this.valueService.getValue(this.column, this.data, this.node);
+            return this.valueService.getValue(this.column.colDef, this.data, this.node);
         }
 
         public getVGridCell(): awk.vdom.VHtmlElement {

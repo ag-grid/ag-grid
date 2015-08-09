@@ -38,6 +38,7 @@ module awk.grid {
         private rowRenderer: RowRenderer;
         private headerRenderer: HeaderRenderer;
         private filterManager: FilterManager;
+        private valueService: ValueService;
         private toolPanel: any;
         private gridPanel: GridPanel;
         private eRootPanel: any;
@@ -55,7 +56,7 @@ module awk.grid {
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
-                this.gridOptionsWrapper, this.gridPanel);
+                this.gridOptionsWrapper, this.gridPanel, this.valueService);
 
             var that = this;
             this.quickFilter = null;
@@ -182,6 +183,7 @@ module awk.grid {
             this.filterManager = filterManager;
             this.toolPanel = toolPanel;
             this.gridPanel = gridPanel;
+            this.valueService = valueService;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.layout,

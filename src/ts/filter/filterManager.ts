@@ -181,7 +181,7 @@ module awk.grid {
         private createValueGetter(column: Column) {
             var that = this;
             return function valueGetter(node: any) {
-                return that.valueService.getValue(column, node.data, node);
+                return that.valueService.getValue(column.colDef, node.data, node);
             };
         }
 

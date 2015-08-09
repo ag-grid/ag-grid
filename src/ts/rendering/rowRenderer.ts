@@ -252,7 +252,7 @@ module awk.grid {
             if (this.gridOptionsWrapper.isAngularCompileRows()) {
                 // we do it in a timeout, in case we are already in an apply
                 setTimeout(function () {
-                    that.$scope.$apply();
+                    that.$scope.$digest();
                 }, 0);
             }
 

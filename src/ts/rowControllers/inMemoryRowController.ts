@@ -116,7 +116,7 @@ module awk.grid {
                 var $scope = this.$scope;
                 if ($scope) {
                     setTimeout(function () {
-                        $scope.$apply();
+                        $scope.$digest();
                     }, 0);
                 }
             }
@@ -334,8 +334,8 @@ module awk.grid {
             var that = this;
 
             function compare(objA:any, objB:any, column:Column, isInverted:any) {
-                var valueA = that.valueService.getValue(column, objA.data, objA);
-                var valueB = that.valueService.getValue(column, objB.data, objB);
+                var valueA = that.valueService.getValue(column.colDef, objA.data, objA);
+                var valueB = that.valueService.getValue(column.colDef, objB.data, objB);
                 if (column.colDef.comparator) {
                     //if comparator provided, use it
                     return column.colDef.comparator(valueA, valueB, objA, objB, isInverted);
@@ -610,7 +610,7 @@ module awk.grid {
             var that = this;
             this.columnController.getAllColumns().forEach(function (column: Column) {
                 var data = node.data;
-                var value = that.valueService.getValue(column, data, node);
+                var value = that.valueService.getValue(column.colDef, data, node);
                 if (value && value !== '') {
                     aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
                 }

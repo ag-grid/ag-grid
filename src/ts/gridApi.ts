@@ -14,7 +14,8 @@ module awk.grid {
                     private inMemoryRowController: InMemoryRowController,
                     private selectionController: SelectionController,
                     private gridOptionsWrapper: GridOptionsWrapper,
-                    private gridPanel: GridPanel) {}
+                    private gridPanel: GridPanel,
+                    private valueService: ValueService) {}
 
         setDatasource(datasource:any) {
             this.grid.setDatasource(datasource);
@@ -235,5 +236,10 @@ module awk.grid {
         doLayout() {
             this.grid.doLayout();
         }
+
+        getValue(colDef: ColDef, data: any, node: any): any {
+            return this.valueService.getValue(colDef, data, node);
+        }
+
     }
 }

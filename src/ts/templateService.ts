@@ -67,10 +67,9 @@ module awk.grid {
             if (this.$scope) {
                 var that = this;
                 setTimeout(function () {
-                    that.$scope.$apply();
+                    that.$scope.$digest();
                 }, 0);
             }
         }
     }
 }
-
