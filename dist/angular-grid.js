@@ -1,6 +1,6 @@
 /**
  * angular-grid - High performance and feature rich data grid for AngularJS
- * @version v1.12.5
+ * @version v1.12.6
  * @link http://www.angulargrid.com/
  * @license MIT
  */
@@ -5676,7 +5676,7 @@ var awk;
                     node.level = levelToInsertChild + 1;
                     for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                         var groupColumn = groupedCols[currentLevel];
-                        groupKey = this.valueService.getValue(groupColumn, data, node);
+                        groupKey = this.valueService.getValue(groupColumn.colDef, data, node);
                         if (currentLevel === 0) {
                             currentGroup = topMostGroup;
                         }

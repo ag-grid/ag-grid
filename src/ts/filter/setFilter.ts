@@ -350,12 +350,20 @@ module awk.grid {
                     return model.getMiniFilter();
                 },
                 selectEverything: function () {
+                    that.eSelectAll.indeterminate = false;
+                    that.eSelectAll.checked = true;
+                    // not sure if we need to call this, as checking the checkout above might
+                    // fire events.
                     model.selectEverything();
                 },
                 isFilterActive: function () {
                     return model.isFilterActive();
                 },
                 selectNothing: function () {
+                    that.eSelectAll.indeterminate = false;
+                    that.eSelectAll.checked = false;
+                    // not sure if we need to call this, as checking the checkout above might
+                    // fire events.
                     model.selectNothing();
                 },
                 unselectValue: function (value: any) {
