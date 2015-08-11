@@ -34,7 +34,7 @@
     "nib": "^1.1.0",
     "stylus": "^0.50.0",
     "vinyl-buffer": "^1.0.0",
-    "typescript": "^1.0.0",
+    "typescript": "1.5.3",
     "merge2": "0.3.6"
   }
 }

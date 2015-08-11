@@ -241,6 +241,7 @@ module awk.grid {
                         colDef: colDef,
                         event: event,
                         eventSource: this,
+                        context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
                     that.gridOptionsWrapper.getCellDoubleClicked()(paramsForGrid);
@@ -254,6 +255,7 @@ module awk.grid {
                         colDef: colDef,
                         event: event,
                         eventSource: this,
+                        context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
                     colDef.cellDoubleClicked(paramsForColDef);
@@ -322,6 +324,7 @@ module awk.grid {
                         colDef: colDef,
                         event: event,
                         eventSource: this,
+                        context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
                     that.gridOptionsWrapper.getCellClicked()(paramsForGrid);
@@ -335,6 +338,7 @@ module awk.grid {
                         colDef: colDef,
                         event: event,
                         eventSource: this,
+                        context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
                     colDef.cellClicked(paramsForColDef);
