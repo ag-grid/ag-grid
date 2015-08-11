@@ -31,6 +31,7 @@ module awk.grid {
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
         public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }
         public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
+        public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
         public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
         public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
         public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }

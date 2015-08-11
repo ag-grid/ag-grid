@@ -92,7 +92,8 @@ module awk.grid {
             } else if (this.node.group) {
                 // if header and header is expanded, we show data in footer only
                 var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
-                if (this.node.expanded && footersEnabled) {
+                var suppressHideHeader = this.gridOptionsWrapper.isGroupSuppressBlankHeader();
+                if (this.node.expanded && footersEnabled && !suppressHideHeader) {
                     return undefined;
                 } else {
                     return this.node.data;

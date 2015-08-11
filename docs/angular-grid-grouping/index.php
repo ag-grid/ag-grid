@@ -96,6 +96,13 @@ include '../documentation_header.php';
                 the rows, but not add parent group row to each group.
             </td>
         </tr>
+        <tr>
+            <th>groupSuppressBlankHeader</th>
+            <td>If true, and showing footer, aggregate data will be displayed at both the header and footer
+                levels always. This stops the possibly undesirable behaviour of the header details 'jumping'
+                to the footer on expand.
+            </td>
+        </tr>
     </table>
 
     <h3>Grouping columns</h3>

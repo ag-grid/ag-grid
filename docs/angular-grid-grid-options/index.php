@@ -123,7 +123,7 @@ include '../documentation_header.php';
         <tr>
             <th>groupKeys<br/> groupUseEntireRow<br/> groupRowInnerRenderer<br/>
                 groupDefaultExpanded<br/> groupAggFields <br/> groupAggFunction<br/>
-                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHidePivotColumns</th>
+                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHidePivotColumns <br/> groupSuppressBlankHeader</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
