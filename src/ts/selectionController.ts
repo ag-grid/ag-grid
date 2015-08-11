@@ -15,16 +15,16 @@ module awk.grid {
 
     export class SelectionController {
 
-        eRowsParent: any;
-        angularGrid: Grid;
-        gridOptionsWrapper: any;
-        $scope: any;
-        rowRenderer: RowRenderer;
-        selectedRows: any;
-        selectedNodesById: any;
-        rowModel: any;
+        private eRowsParent: any;
+        private angularGrid: Grid;
+        private gridOptionsWrapper: any;
+        private $scope: any;
+        private rowRenderer: RowRenderer;
+        private selectedRows: any;
+        private selectedNodesById: any;
+        private rowModel: any;
 
-        init(angularGrid: Grid, gridPanel: any, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
+        public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
             this.eRowsParent = gridPanel.getRowsParent();
             this.angularGrid = angularGrid;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -37,12 +37,12 @@ module awk.grid {
             gridOptionsWrapper.setSelectedRows(this.selectedRows);
         }
 
-        initSelectedNodesById() {
+        private initSelectedNodesById() {
             this.selectedNodesById = {};
             this.gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
         }
 
-        getSelectedNodes() {
+        public getSelectedNodes() {
             var selectedNodes: any = [];
             var keys = Object.keys(this.selectedNodesById);
             for (var i = 0; i < keys.length; i++) {
@@ -53,12 +53,12 @@ module awk.grid {
             return selectedNodes;
         }
 
-// returns a list of all nodes at 'best cost' - a feature to be used
-// with groups / trees. if a group has all it's children selected,
-// then the group appears in the result, but not the children.
-// Designed for use with 'children' as the group selection type,
-// where groups don't actually appear in the selection normally.
-        getBestCostNodeSelection() {
+        // returns a list of all nodes at 'best cost' - a feature to be used
+        // with groups / trees. if a group has all it's children selected,
+        // then the group appears in the result, but not the children.
+        // Designed for use with 'children' as the group selection type,
+        // where groups don't actually appear in the selection normally.
+        public getBestCostNodeSelection() {
 
             if (typeof this.rowModel.getTopLevelNodes !== 'function') {
                 throw 'selectAll not available when rows are on the server';
@@ -90,13 +90,13 @@ module awk.grid {
             return result;
         }
 
-        setRowModel(rowModel: any) {
+        public setRowModel(rowModel: any) {
             this.rowModel = rowModel;
         }
 
-// public - this clears the selection, but doesn't clear down the css - when it is called, the
-// caller then gets the grid to refresh.
-        deselectAll() {
+        // this clears the selection, but doesn't clear down the css - when it is called, the
+        // caller then gets the grid to refresh.
+        public deselectAll() {
             this.initSelectedNodesById();
             //var keys = Object.keys(this.selectedNodesById);
             //for (var i = 0; i < keys.length; i++) {
@@ -105,9 +105,9 @@ module awk.grid {
             this.syncSelectedRowsAndCallListener();
         }
 
-// public - this selects everything, but doesn't clear down the css - when it is called, the
-// caller then gets the grid to refresh.
-        selectAll() {
+        // this selects everything, but doesn't clear down the css - when it is called, the
+        // caller then gets the grid to refresh.
+        public selectAll() {
 
             if (typeof this.rowModel.getTopLevelNodes !== 'function') {
                 throw 'selectAll not available when rows are on the server';
@@ -176,7 +176,7 @@ module awk.grid {
             this.updateGroupParentsIfNeeded();
         }
 
-        recursivelySelectAllChildren(node: any, suppressEvents?: any) {
+        private recursivelySelectAllChildren(node: any, suppressEvents?: any) {
             var atLeastOne = false;
             if (node.children) {
                 for (var i = 0; i < node.children.length; i++) {
@@ -195,7 +195,7 @@ module awk.grid {
             return atLeastOne;
         }
 
-        recursivelyDeselectAllChildren(node: any) {
+        private recursivelyDeselectAllChildren(node: any) {
             if (node.children) {
                 for (var i = 0; i < node.children.length; i++) {
                     var child = node.children[i];
@@ -208,11 +208,10 @@ module awk.grid {
             }
         }
 
-// private
-// 1 - selects a node
-// 2 - updates the UI
-// 3 - calls callbacks
-        doWorkOfSelectNode(node: any, suppressEvents: any) {
+        // 1 - selects a node
+        // 2 - updates the UI
+        // 3 - calls callbacks
+        private doWorkOfSelectNode(node: any, suppressEvents: any) {
             if (this.selectedNodesById[node.id]) {
                 return false;
             }
@@ -234,12 +233,11 @@ module awk.grid {
             return true;
         }
 
-// private
-// 1 - selects a node
-// 2 - updates the UI
-// 3 - calls callbacks
-// wow - what a big name for a method, exception case, it's saying what the method does
-        addCssClassForNode_andInformVirtualRowListener(node: any) {
+        // 1 - selects a node
+        // 2 - updates the UI
+        // 3 - calls callbacks
+        // wow - what a big name for a method, exception case, it's saying what the method does
+        private addCssClassForNode_andInformVirtualRowListener(node: any) {
             var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
             if (virtualRenderedRowIndex >= 0) {
                 utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
@@ -249,11 +247,10 @@ module awk.grid {
             }
         }
 
-// private
-// 1 - un-selects a node
-// 2 - updates the UI
-// 3 - calls callbacks
-        doWorkOfDeselectAllNodes(nodeToKeepSelected?: any) {
+        // 1 - un-selects a node
+        // 2 - updates the UI
+        // 3 - calls callbacks
+        private doWorkOfDeselectAllNodes(nodeToKeepSelected?: any) {
             // not doing multi-select, so deselect everything other than the 'just selected' row
             var atLeastOneSelectionChange: any;
             var selectedNodeKeys = Object.keys(this.selectedNodesById);
@@ -271,8 +268,7 @@ module awk.grid {
             return atLeastOneSelectionChange;
         }
 
-// private
-        deselectRealNode(node: any) {
+        private deselectRealNode(node: any) {
             // deselect the css
             this.removeCssClassForNode(node);
 
@@ -285,8 +281,7 @@ module awk.grid {
             delete this.selectedNodesById[node.id];
         }
 
-// private
-        removeCssClassForNode(node: any) {
+        private removeCssClassForNode(node: any) {
             var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
             if (virtualRenderedRowIndex >= 0) {
                 utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
@@ -295,14 +290,14 @@ module awk.grid {
             }
         }
 
-// public (selectionRendererFactory)
-        deselectIndex(rowIndex: any) {
+        // used by selectionRendererFactory
+        public deselectIndex(rowIndex: any) {
             var node = this.rowModel.getVirtualRow(rowIndex);
             this.deselectNode(node);
         }
 
-// public (api)
-        deselectNode(node: any) {
+        // used by api
+        public deselectNode(node: any) {
             if (node) {
                 if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
                     // want to deselect children, not this node, so recursively deselect
@@ -315,15 +310,14 @@ module awk.grid {
             this.updateGroupParentsIfNeeded();
         }
 
-        // public (selectionRendererFactory & api)
-        selectIndex(index: any, tryMulti: any, suppressEvents?: any) {
+        // used by selectionRendererFactory & api
+        public selectIndex(index: any, tryMulti: any, suppressEvents?: any) {
             var node = this.rowModel.getVirtualRow(index);
             this.selectNode(node, tryMulti, suppressEvents);
         }
 
-        // private
         // updates the selectedRows with the selectedNodes and calls selectionChanged listener
-        syncSelectedRowsAndCallListener(suppressEvents?: any) {
+        private syncSelectedRowsAndCallListener(suppressEvents?: any) {
             // update selected rows
             var selectedRows = this.selectedRows;
             var oldCount = selectedRows.length;
@@ -353,8 +347,7 @@ module awk.grid {
             }
         }
 
-// private
-        recursivelyCheckIfSelected(node: any) {
+        private recursivelyCheckIfSelected(node: any) {
             var foundSelected = false;
             var foundUnselected = false;
 
@@ -403,12 +396,12 @@ module awk.grid {
             }
         }
 
-// public (selectionRendererFactory)
-// returns:
-// true: if selected
-// false: if unselected
-// undefined: if it's a group and 'children selection' is used and 'children' are a mix of selected and unselected
-        isNodeSelected(node: any) {
+        // used by selectionRendererFactory
+        // returns:
+        // true: if selected
+        // false: if unselected
+        // undefined: if it's a group and 'children selection' is used and 'children' are a mix of selected and unselected
+        public isNodeSelected(node: any) {
             if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
                 // doing child selection, we need to traverse the children
                 var resultOfChildren = this.recursivelyCheckIfSelected(node);
@@ -425,7 +418,7 @@ module awk.grid {
             }
         }
 
-        updateGroupParentsIfNeeded() {
+        private updateGroupParentsIfNeeded() {
             // we only do this if parent nodes are responsible
             // for selecting their children.
             if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {

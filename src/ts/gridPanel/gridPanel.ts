@@ -213,23 +213,23 @@ module awk.grid {
             return this.ePinnedColsContainer;
         }
 
-        private getHeaderContainer() {
+        public getHeaderContainer() {
             return this.eHeaderContainer;
         }
 
-        private getRoot() {
+        public getRoot() {
             return this.eRoot;
         }
 
-        private getPinnedHeader() {
+        public getPinnedHeader() {
             return this.ePinnedHeader;
         }
 
-        private getHeader() {
-            return this.eHeader;
-        }
+        //private getHeader() {
+        //    return this.eHeader;
+        //}
 
-        private getRowsParent() {
+        public getRowsParent() {
             return this.eParentOfRows;
         }
 

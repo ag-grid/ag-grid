@@ -1,8 +1,4 @@
-/// <reference path="utils.ts"/>
-
 module awk.grid {
-
-    var _ = Utils;
 
     export class GroupCreator {
 

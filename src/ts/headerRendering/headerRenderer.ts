@@ -34,7 +34,7 @@ module awk.grid {
             this.findAllElements(gridPanel);
         }
 
-        private findAllElements(gridPanel: any) {
+        private findAllElements(gridPanel: GridPanel) {
             this.ePinnedHeader = gridPanel.getPinnedHeader();
             this.eHeaderContainer = gridPanel.getHeaderContainer();
             this.eRoot = gridPanel.getRoot();

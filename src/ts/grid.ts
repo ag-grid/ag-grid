@@ -18,6 +18,7 @@
 /// <reference path="entities/gridOptions.ts" />
 /// <reference path="gridApi.ts" />
 /// <reference path="valueService.ts" />
+/// <reference path="masterSlaveService.ts" />
 
 module awk.grid {
 
@@ -39,6 +40,7 @@ module awk.grid {
         private headerRenderer: HeaderRenderer;
         private filterManager: FilterManager;
         private valueService: ValueService;
+        private masterSlaveService: MasterSlaveService;
         private toolPanel: any;
         private gridPanel: GridPanel;
         private eRootPanel: any;
@@ -56,7 +58,7 @@ module awk.grid {
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
-                this.gridOptionsWrapper, this.gridPanel, this.valueService);
+                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService);
 
             var that = this;
             this.quickFilter = null;
@@ -128,6 +130,7 @@ module awk.grid {
             var popupService = new PopupService();
             var valueService = new ValueService();
             var groupCreator = new GroupCreator();
+            var masterSlaveService = new MasterSlaveService();
 
             // initialise all the beans
             templateService.init($scope);
@@ -135,7 +138,8 @@ module awk.grid {
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
-            columnController.init(this, selectionRendererFactory, gridOptionsWrapper, expressionService, valueService);
+            columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
+                expressionService, valueService, masterSlaveService);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
@@ -146,6 +150,7 @@ module awk.grid {
             gridPanel.init(columnController, rowRenderer);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
+            masterSlaveService.init(gridOptionsWrapper, columnController);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;
@@ -184,6 +189,7 @@ module awk.grid {
             this.toolPanel = toolPanel;
             this.gridPanel = gridPanel;
             this.valueService = valueService;
+            this.masterSlaveService = masterSlaveService;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.layout,

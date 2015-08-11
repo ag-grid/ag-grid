@@ -3,14 +3,14 @@ var module = angular.module("example", ["angularGrid"]);
 
 module.controller("exampleCtrl", function($scope) {
 
-    ///// top table
-    var columnDefsTop = [
+    ///// left table
+    var columnDefsLeft = [
         {headerName: "Function", field: 'function', width: 150},
         {headerName: "Value", field: 'value', width: 100},
         {headerName: "Times 10", valueGetter: 'getValue("value") * 10', width: 100},
     ];
 
-    var rowDataTop = [
+    var rowDataLeft = [
         {function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber'},
         {function: 'Number x 2', value: '=ctx.theNumber * 2'},
         {function: 'Todays Date', value: '=new Date().toLocaleDateString()'},
@@ -18,10 +18,10 @@ module.controller("exampleCtrl", function($scope) {
         {function: 'Sum B', value: '=ctx.sum("b")'}
     ];
 
-    $scope.gridOptionsTop = {
+    $scope.gridOptionsLeft = {
         enableCellExpressions: true,
-        columnDefs: columnDefsTop,
-        rowData: rowDataTop,
+        columnDefs: columnDefsLeft,
+        rowData: rowDataLeft,
         context: {
             theNumber: 4
         },
@@ -30,13 +30,13 @@ module.controller("exampleCtrl", function($scope) {
         }
     };
 
-    ///// bottom table
-    var columnDefsBottom = [
+    ///// Right table
+    var columnDefsRight = [
         {headerName: 'A', field: 'a', width: 150, editable: true, newValueHandler: numberNewValueHandler, cellValueChanged: cellValueChanged},
         {headerName: 'B', field: 'b', width: 150, editable: true, newValueHandler: numberNewValueHandler, cellValueChanged: cellValueChanged}
     ];
 
-    var rowDataBottom = [
+    var rowDataRight = [
         {a: 1, b: 22},
         {a: 2, b: 33},
         {a: 3, b: 44},
@@ -46,25 +46,25 @@ module.controller("exampleCtrl", function($scope) {
         {a: 7, b: 88}
     ];
 
-    $scope.gridOptionsBottom = {
-        columnDefs: columnDefsBottom,
-        rowData: rowDataBottom,
+    $scope.gridOptionsRight = {
+        columnDefs: columnDefsRight,
+        rowData: rowDataRight,
         ready: function(api) {
             api.sizeColumnsToFit();
         }
     };
 
-    $scope.gridOptionsTop.context.sum = function(field) {
+    $scope.gridOptionsLeft.context.sum = function(field) {
         var result = 0;
-        rowDataBottom.forEach( function(item) {
+        rowDataRight.forEach( function(item) {
             result += item[field];
         });
         return result;
     };
 
-    // tell top grid to refresh when number changes
+    // tell Left grid to refresh when number changes
     $scope.onNewNumber = function() {
-        $scope.gridOptionsTop.api.refreshView();
+        $scope.gridOptionsLeft.api.refreshView();
     };
 
     // we want to convert the strings to numbers
@@ -75,8 +75,8 @@ module.controller("exampleCtrl", function($scope) {
         data[field] = valueAsNumber;
     }
 
-    // we want to tell the top grid to refresh when the bottom grid values change
+    // we want to tell the Left grid to refresh when the Right grid values change
     function cellValueChanged() {
-        $scope.gridOptionsTop.api.refreshView();
+        $scope.gridOptionsLeft.api.refreshView();
     }
 });

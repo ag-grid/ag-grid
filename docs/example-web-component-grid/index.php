@@ -12,11 +12,11 @@ include '../documentation_header.php';
 
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created using open Web technology. They are
-        part of the browser and so they do not need external libraries such as AngularJS or JQuery.
+        part of the browser and so they do not depend on external libraries such as AngularJS or JQuery.
     </p>
     <p>
         Web Components are of particular interest to Angular Grid as I see them as the future. They will also
-        pave the way for Angular 2 integration, as Angular 2 reusable widgets it based around Web Component
+        pave the way for Angular 2 integration, as Angular 2 reusable widgets is based around Web Component
         technology.
     </p>
     <p>
@@ -40,7 +40,7 @@ include '../documentation_header.php';
 
     <p>
         Angular Grid registers as a tag named 'agile-grid' (Angular Grid will renamed to Agile Grid in the
-        coming weeks). To insert a grid into you application, use the agile-grid tag and then provide the grid
+        coming weeks). To insert a grid into your application, use the agile-grid tag and then provide the grid
         options through Javascript.
     </p>
 

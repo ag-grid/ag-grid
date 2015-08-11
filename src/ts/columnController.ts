@@ -3,6 +3,7 @@
 /// <reference path="entities/column.ts" />
 /// <reference path="entities/columnGroup.ts" />
 /// <reference path="columnChangeEvent.ts" />
+/// <reference path="masterSlaveService.ts" />
 
 module awk.grid {
 
@@ -20,6 +21,7 @@ module awk.grid {
         private selectionRendererFactory: SelectionRendererFactory;
         private expressionService: ExpressionService;
         private changedListeners: ColumnChangedListener[];
+        private masterSlaveController: MasterSlaveService;
 
         private allColumns: Column[]; // every column available
         private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
@@ -37,12 +39,13 @@ module awk.grid {
 
         public init(angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                    valueService: ValueService) {
+                    valueService: ValueService, masterSlaveController: MasterSlaveService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.selectionRendererFactory = selectionRendererFactory;
             this.expressionService = expressionService;
             this.valueService = valueService;
+            this.masterSlaveController = masterSlaveController;
         }
 
         public isSetupComplete(): boolean {
@@ -354,33 +357,8 @@ module awk.grid {
             for (var i = 0; i < this.changedListeners.length; i++) {
                 this.changedListeners[i](event);
             }
+            this.masterSlaveController.fireColumnEvent(event);
         }
-
-/*
-        private firePivotChanged() {
-            for (var i = 0; i < this.changedListeners.length; i++) {
-                if (this.changedListeners[i].pivotChanged) {
-                    this.changedListeners[i].pivotChanged();
-                }
-            }
-        }
-
-        private fireColumnsChanged() {
-            for (var i = 0; i < this.changedListeners.length; i++) {
-                if (this.changedListeners[i].columnsChanged) {
-                    this.changedListeners[i].columnsChanged();
-                }
-            }
-        }
-
-        private fireValuesChanged() {
-            for (var i = 0; i < this.changedListeners.length; i++) {
-                if (this.changedListeners[i].valuesChanged) {
-                    this.changedListeners[i].valuesChanged();
-                }
-            }
-        }
-*/
 
         // called by angularGrid
         public setColumns(columnDefs: any) {

@@ -12,15 +12,15 @@
 <div style="float: left; width: 50%;">
     <div style="height: 10%; box-sizing: border-box; padding: 8px;">
         Enter a number to analyse:
-        <input type="text" ng-model="gridOptionsTop.context.theNumber" ng-change="onNewNumber()"/>
+        <input type="text" ng-model="gridOptionsLeft.context.theNumber" ng-change="onNewNumber()"/>
     </div>
-    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsTop" class="ag-fresh"></div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsLeft" class="ag-fresh"></div>
 </div>
 <div style="float: left; width: 50%;">
     <div style="height: 10%; box-sizing: border-box; padding: 8px;">
         Edit data on RHS, table updates on LHS
     </div>
-    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsBottom" class="ag-fresh"></div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" ag-grid="gridOptionsRight" class="ag-fresh"></div>
 </div>
 
 </body>

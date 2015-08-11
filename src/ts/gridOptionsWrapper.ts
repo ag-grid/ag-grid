@@ -86,6 +86,7 @@ module awk.grid {
         public getIcons() { return this.gridOptions.icons; }
         public getIsScrollLag() { return this.gridOptions.isScrollLag; }
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
+        public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
 
         public getGroupRowInnerRenderer() {
             if (this.gridOptions.groupInnerRenderer) {
