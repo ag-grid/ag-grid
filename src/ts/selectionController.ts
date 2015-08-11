@@ -342,7 +342,7 @@ module awk.grid {
             var that = this;
             if (this.$scope) {
                 setTimeout(function () {
-                    that.$scope.$digest();
+                    that.$scope.$apply();
                 }, 0);
             }
         }
