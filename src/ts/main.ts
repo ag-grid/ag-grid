@@ -77,7 +77,6 @@ declare var module: any;
 
     function registerWebComponent() {
         var AgileGridProto = Object.create(HTMLElement.prototype);
-        console.log('init');
         AgileGridProto.setGridOptions = function(options: any) {
             angularGridGlobalFunction(this, options);
         };
