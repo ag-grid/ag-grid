@@ -29,9 +29,8 @@ include '../documentation_header.php';
     </p>
 
     <ul>
-        <li><b>api.getColumnState()</b>: To show / hide a specific column, where colId = the id of the
-            column you want to show / hide and hide = true to hide, false to show.</li>
-        <li><b>api.setColumnState(state)</b>: Same as above, but you pass a list of column id's in.</li>
+        <li><b>api.getColumnState()</b>: Returns the state of a particular column.</li>
+        <li><b>api.setColumnState(state)</b>: To set the state of a particular column.</li>
     </ul>
 
     <p>
