@@ -162,6 +162,7 @@ declare module awk.grid {
         isGroupSuppressAutoColumn(): boolean;
         isGroupHeaders(): boolean;
         isDontUseScrolls(): boolean;
+        isSuppressHorizontalScroll(): boolean;
         isUnSortIcon(): boolean;
         isSuppressMenuHide(): boolean;
         getRowStyle(): any;
@@ -225,9 +226,12 @@ declare module awk.grid {
     class MasterSlaveService {
         private gridOptionsWrapper;
         private columnController;
+        private gridPanel;
         private consuming;
-        init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController): void;
+        init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel): void;
         fireColumnEvent(event: ColumnChangeEvent): void;
+        fireHorizontalScrollEvent(horizontalScroll: number): void;
+        onScrollEvent(horizontalScroll: number): void;
         onColumnEvent(event: ColumnChangeEvent): void;
     }
 }
@@ -1055,6 +1059,7 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class GridPanel {
+        private masterSlaveService;
         gridOptionsWrapper: any;
         forPrint: any;
         scrollWidth: any;
@@ -1073,13 +1078,14 @@ declare module awk.grid {
         eParentOfRows: any;
         eBodyViewportWrapper: any;
         ePinnedColsViewport: any;
+        private scrollLagCounter;
         constructor(gridOptionsWrapper: any);
+        init(columnModel: any, rowRenderer: any, masterSlaveService: MasterSlaveService): void;
         private setupComponents();
         ensureIndexVisible(index: any): void;
         ensureColIndexVisible(index: any): void;
         showLoading(loading: any): void;
         getWidthForSizeColsToFit(): any;
-        init(columnModel: any, rowRenderer: any): void;
         setRowModel(rowModel: any): void;
         getBodyContainer(): any;
         getBodyViewport(): any;
@@ -1094,7 +1100,7 @@ declare module awk.grid {
         showPinnedColContainersIfNeeded(): void;
         setHeaderHeight(): void;
         setPinnedColHeight(): void;
-        private scrollLagCounter;
+        setHorizontalScrollPosition(hScrollPosition: number): void;
         private addScrollListener();
         private requestDrawVirtualRows();
         private scrollHeader(bodyLeftPosition);
@@ -1358,6 +1364,7 @@ declare module awk.grid {
         suppressCellSelection?: boolean;
         sortingOrder?: string[];
         suppressMultiSort?: boolean;
+        suppressHorizontalScroll?: boolean;
         groupSuppressAutoColumn?: boolean;
         groupHeaders?: boolean;
         dontUseScrolls?: boolean;
@@ -1434,9 +1441,10 @@ declare module awk.grid {
         private gridOptionsWrapper;
         private gridPanel;
         private valueService;
-        private masterSlaveController;
-        constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveController: MasterSlaveService);
-        processMasterEvent(event: ColumnChangeEvent): void;
+        private masterSlaveService;
+        constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveService: MasterSlaveService);
+        /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+        __getMasterSlaveService(): MasterSlaveService;
         setDatasource(datasource: any): void;
         onNewDatasource(): void;
         setRows(rows: any): void;

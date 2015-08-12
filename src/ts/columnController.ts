@@ -456,7 +456,7 @@ module awk.grid {
                 var availablePixels = gridWidth - getTotalWidth(colsToNotSpread);
                 if (availablePixels <= 0) {
                     // no width, set everything to minimum
-                    colsToSpread.forEach( function(column: Column) {
+                    colsToSpread.forEach( (column: Column) => {
                         column.setMinimum();
                         this.updateGroupWidthsAfterColumnResize(column);
                     });

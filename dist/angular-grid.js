@@ -1,6 +1,6 @@
 /**
  * angular-grid - High performance and feature rich data grid for AngularJS
- * @version v1.12.7
+ * @version v1.12.8
  * @link http://www.angulargrid.com/
  * @license MIT
  */
@@ -153,6 +153,10 @@ var awk;
                 element.addEventListener("changed", listener);
                 element.addEventListener("paste", listener);
                 element.addEventListener("input", listener);
+                // IE doesn't fire changed for special keys (eg delete, backspace), so need to
+                // listen for this further ones
+                element.addEventListener("keydown", listener);
+                element.addEventListener("keyup", listener);
             };
             //if value is undefined, null or blank, returns null, otherwise returns the value
             Utils.makeNull = function (value) {
@@ -601,6 +605,7 @@ var awk;
             GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function () { return isTrue(this.gridOptions.groupSuppressAutoColumn); };
             GridOptionsWrapper.prototype.isGroupHeaders = function () { return isTrue(this.gridOptions.groupHeaders); };
             GridOptionsWrapper.prototype.isDontUseScrolls = function () { return isTrue(this.gridOptions.dontUseScrolls); };
+            GridOptionsWrapper.prototype.isSuppressHorizontalScroll = function () { return isTrue(this.gridOptions.suppressHorizontalScroll); };
             GridOptionsWrapper.prototype.isUnSortIcon = function () { return isTrue(this.gridOptions.unSortIcon); };
             GridOptionsWrapper.prototype.isSuppressMenuHide = function () { return isTrue(this.gridOptions.suppressMenuHide); };
             GridOptionsWrapper.prototype.getRowStyle = function () { return this.gridOptions.rowStyle; };
@@ -743,9 +748,10 @@ var awk;
                 // we don't fire back any events.
                 this.consuming = false;
             }
-            MasterSlaveService.prototype.init = function (gridOptionsWrapper, columnController) {
+            MasterSlaveService.prototype.init = function (gridOptionsWrapper, columnController, gridPanel) {
                 this.gridOptionsWrapper = gridOptionsWrapper;
                 this.columnController = columnController;
+                this.gridPanel = gridPanel;
             };
             MasterSlaveService.prototype.fireColumnEvent = function (event) {
                 if (this.consuming) {
@@ -755,10 +761,28 @@ var awk;
                 if (slaveGrids) {
                     slaveGrids.forEach(function (slaveGridOptions) {
                         if (slaveGridOptions.api) {
-                            slaveGridOptions.api.processMasterEvent(event);
+                            slaveGridOptions.api.__getMasterSlaveService().onColumnEvent(event);
                         }
                     });
                 }
+            };
+            MasterSlaveService.prototype.fireHorizontalScrollEvent = function (horizontalScroll) {
+                if (this.consuming) {
+                    return;
+                }
+                var slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
+                if (slaveGrids) {
+                    slaveGrids.forEach(function (slaveGridOptions) {
+                        if (slaveGridOptions.api) {
+                            slaveGridOptions.api.__getMasterSlaveService().onScrollEvent(horizontalScroll);
+                        }
+                    });
+                }
+            };
+            MasterSlaveService.prototype.onScrollEvent = function (horizontalScroll) {
+                this.consuming = true;
+                this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
+                this.consuming = false;
             };
             MasterSlaveService.prototype.onColumnEvent = function (event) {
                 this.consuming = true;
@@ -1157,6 +1181,7 @@ var awk;
             };
             // called from api
             ColumnController.prototype.sizeColumnsToFit = function (gridWidth) {
+                var _this = this;
                 // avoid divide by zero
                 if (gridWidth <= 0 || this.displayedColumns.length === 0) {
                     return;
@@ -1175,7 +1200,7 @@ var awk;
                         // no width, set everything to minimum
                         colsToSpread.forEach(function (column) {
                             column.setMinimum();
-                            this.updateGroupWidthsAfterColumnResize(column);
+                            _this.updateGroupWidthsAfterColumnResize(column);
                         });
                     }
                     else {
@@ -1555,13 +1580,17 @@ var awk;
                 if (filterText && filterText.trim() === '') {
                     filterText = null;
                 }
-                if (filterText) {
-                    this.filterText = filterText.toLowerCase();
+                var newFilterText;
+                if (filterText !== null && filterText !== undefined) {
+                    newFilterText = filterText.toLowerCase();
                 }
                 else {
-                    this.filterText = null;
+                    newFilterText = null;
                 }
-                this.filterChanged();
+                if (this.filterText !== newFilterText) {
+                    this.filterText = newFilterText;
+                    this.filterChanged();
+                }
             };
             TextFilter.prototype.filterChanged = function () {
                 if (!this.applyActive) {
@@ -1748,13 +1777,17 @@ var awk;
                 if (filterText && filterText.trim() === '') {
                     filterText = null;
                 }
-                if (filterText) {
-                    this.filterNumber = parseFloat(filterText);
+                var newFilter;
+                if (filterText !== null && filterText !== undefined) {
+                    newFilter = parseFloat(filterText);
                 }
                 else {
-                    this.filterNumber = null;
+                    newFilter = null;
                 }
-                this.filterChanged();
+                if (this.filterNumber !== newFilter) {
+                    this.filterNumber = newFilter;
+                    this.filterChanged();
+                }
             };
             NumberFilter.prototype.createApi = function () {
                 var that = this;
@@ -7030,6 +7063,11 @@ var awk;
                 this.setupComponents();
                 this.scrollWidth = utils.getScrollbarWidth();
             }
+            GridPanel.prototype.init = function (columnModel, rowRenderer, masterSlaveService) {
+                this.columnModel = columnModel;
+                this.rowRenderer = rowRenderer;
+                this.masterSlaveService = masterSlaveService;
+            };
             GridPanel.prototype.setupComponents = function () {
                 if (this.forPrint) {
                     this.eRoot = utils.loadTemplate(gridNoScrollsHtml);
@@ -7047,6 +7085,9 @@ var awk;
                     name: 'eGridPanel'
                 });
                 this.addScrollListener();
+                if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
+                    this.eBodyViewport.style.overflowX = 'hidden';
+                }
             };
             GridPanel.prototype.ensureIndexVisible = function (index) {
                 var lastRow = this.rowModel.getVirtualRowCount();
@@ -7131,10 +7172,6 @@ var awk;
                     availableWidth -= this.scrollWidth;
                 }
                 return availableWidth;
-            };
-            GridPanel.prototype.init = function (columnModel, rowRenderer) {
-                this.columnModel = columnModel;
-                this.rowRenderer = rowRenderer;
             };
             GridPanel.prototype.setRowModel = function (rowModel) {
                 this.rowModel = rowModel;
@@ -7232,33 +7269,37 @@ var awk;
                     this.ePinnedColsViewport.style.height = bodyHeight + "px";
                 }
             };
+            GridPanel.prototype.setHorizontalScrollPosition = function (hScrollPosition) {
+                this.eBodyViewport.scrollLeft = hScrollPosition;
+            };
             GridPanel.prototype.addScrollListener = function () {
+                var _this = this;
                 // if printing, then no scrolling, so no point in listening for scroll events
                 if (this.forPrint) {
                     return;
                 }
-                var that = this;
                 var lastLeftPosition = -1;
                 var lastTopPosition = -1;
                 this.eBodyViewport.addEventListener("scroll", function () {
-                    var newLeftPosition = that.eBodyViewport.scrollLeft;
-                    var newTopPosition = that.eBodyViewport.scrollTop;
+                    var newLeftPosition = _this.eBodyViewport.scrollLeft;
+                    var newTopPosition = _this.eBodyViewport.scrollTop;
                     if (newLeftPosition !== lastLeftPosition) {
                         lastLeftPosition = newLeftPosition;
-                        that.scrollHeader(newLeftPosition);
+                        _this.scrollHeader(newLeftPosition);
                     }
                     if (newTopPosition !== lastTopPosition) {
                         lastTopPosition = newTopPosition;
-                        that.scrollPinned(newTopPosition);
-                        that.requestDrawVirtualRows();
+                        _this.scrollPinned(newTopPosition);
+                        _this.requestDrawVirtualRows();
                     }
+                    _this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
                 });
                 this.ePinnedColsViewport.addEventListener("scroll", function () {
                     // this means the pinned panel was moved, which can only
                     // happen when the user is navigating in the pinned container
                     // as the pinned col should never scroll. so we rollback
                     // the scroll on the pinned.
-                    that.ePinnedColsViewport.scrollTop = 0;
+                    _this.ePinnedColsViewport.scrollTop = 0;
                 });
             };
             GridPanel.prototype.requestDrawVirtualRows = function () {
@@ -8045,7 +8086,7 @@ var awk;
     var grid;
     (function (grid_2) {
         var GridApi = (function () {
-            function GridApi(grid, rowRenderer, headerRenderer, filterManager, columnController, inMemoryRowController, selectionController, gridOptionsWrapper, gridPanel, valueService, masterSlaveController) {
+            function GridApi(grid, rowRenderer, headerRenderer, filterManager, columnController, inMemoryRowController, selectionController, gridOptionsWrapper, gridPanel, valueService, masterSlaveService) {
                 this.grid = grid;
                 this.rowRenderer = rowRenderer;
                 this.headerRenderer = headerRenderer;
@@ -8056,10 +8097,11 @@ var awk;
                 this.gridOptionsWrapper = gridOptionsWrapper;
                 this.gridPanel = gridPanel;
                 this.valueService = valueService;
-                this.masterSlaveController = masterSlaveController;
+                this.masterSlaveService = masterSlaveService;
             }
-            GridApi.prototype.processMasterEvent = function (event) {
-                this.masterSlaveController.onColumnEvent(event);
+            /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+            GridApi.prototype.__getMasterSlaveService = function () {
+                return this.masterSlaveService;
             };
             GridApi.prototype.setDatasource = function (datasource) {
                 this.grid.setDatasource(datasource);
@@ -8412,10 +8454,10 @@ var awk;
                 headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager, $scope, $compile);
                 inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope, groupCreator, valueService);
                 virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
-                gridPanel.init(columnController, rowRenderer);
+                gridPanel.init(columnController, rowRenderer, masterSlaveService);
                 valueService.init(gridOptionsWrapper, expressionService, columnController);
                 groupCreator.init(valueService);
-                masterSlaveService.init(gridOptionsWrapper, columnController);
+                masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel);
                 var toolPanelLayout = null;
                 var toolPanel = null;
                 if (!forPrint) {
