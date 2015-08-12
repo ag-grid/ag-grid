@@ -134,13 +134,7 @@ module awk.grid {
                 column.actualWidth = newWidth;
 
                 // if part of a group, update the groups width
-                if (this.columnGroups) {
-                    this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
-                        if (columnGroup.displayedColumns.indexOf(column) >= 0) {
-                            columnGroup.calculateActualWidth();
-                        }
-                    });
-                }
+                this.updateGroupWidthsAfterColumnResize(column);
 
                 this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_RESIZED, column);
             }
@@ -149,6 +143,16 @@ module awk.grid {
                 this.gridOptionsWrapper.getColumnResized()(column);
             }
 
+        }
+
+        private updateGroupWidthsAfterColumnResize(column: Column) {
+            if (this.columnGroups) {
+                this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
+                    if (columnGroup.displayedColumns.indexOf(column) >= 0) {
+                        columnGroup.calculateActualWidth();
+                    }
+                });
+            }
         }
 
         public setColumnAggFunction(column: Column, aggFunc: string) {
@@ -454,6 +458,7 @@ module awk.grid {
                     // no width, set everything to minimum
                     colsToSpread.forEach( function(column: Column) {
                         column.setMinimum();
+                        this.updateGroupWidthsAfterColumnResize(column);
                     });
                 } else {
                     var scale = availablePixels / getTotalWidth(colsToSpread);
@@ -481,6 +486,7 @@ module awk.grid {
                                 column.actualWidth = newWidth;
                             }
                         }
+                        this.updateGroupWidthsAfterColumnResize(column);
                     }
                 }
             }

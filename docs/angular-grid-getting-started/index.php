@@ -39,7 +39,7 @@ include '../documentation_header.php';
         changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.
         <br/>
         So eg, the example has this:<br/>
-        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused4"><br/></i>
+        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused5"><br/></i>
         But all you need is this:<br/>
         <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css"></i>
     </note>
