@@ -51,6 +51,7 @@ module awk.grid {
                 });
             }
         }
+
         public onScrollEvent(horizontalScroll: number): void {
             this.consuming = true;
             this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
@@ -68,13 +69,23 @@ module awk.grid {
                 slaveColumn = this.columnController.getColumn(masterColumn.colId);
             }
 
+            var masterColumnGroup = event.getColumnGroup();
+            var slaveColumnGroup: ColumnGroup;
+            if (masterColumnGroup) {
+                slaveColumnGroup = this.columnController.getColumnGroup(masterColumnGroup.name);
+            }
+
             switch (event.getType()) {
-                case ColumnChangeEvent.TYPE_EVERYTHING: break;
-                case ColumnChangeEvent.TYPE_PIVOT_CHANGE: break;
-                case ColumnChangeEvent.TYPE_VALUE_CHANGE: break;
-                case ColumnChangeEvent.TYPE_COLUMN_MOVED: break;
-                case ColumnChangeEvent.TYPE_COLUMN_VISIBLE: break;
-                case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED: break;
+                //case ColumnChangeEvent.TYPE_EVERYTHING:
+                //case ColumnChangeEvent.TYPE_PIVOT_CHANGE:
+                //case ColumnChangeEvent.TYPE_VALUE_CHANGE:
+                //case ColumnChangeEvent.TYPE_COLUMN_MOVED:
+                //case ColumnChangeEvent.TYPE_COLUMN_VISIBLE:
+                case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED:
+                    if (masterColumnGroup && slaveColumnGroup) {
+                        this.columnController.columnGroupOpened(slaveColumnGroup, masterColumnGroup.expanded);
+                    }
+                    break;
                 case ColumnChangeEvent.TYPE_COLUMN_RESIZED:
                     this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth);
                     break;

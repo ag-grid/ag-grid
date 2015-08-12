@@ -5,6 +5,7 @@ module awk.grid {
 
         private type: string;
         private column: Column;
+        private columnGroup: ColumnGroup;
 
         /** A new set of columns has been entered, everything has potentially changed. */
         public static TYPE_EVERYTHING = 'everything';
@@ -27,9 +28,10 @@ module awk.grid {
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static TYPE_COLUMN_RESIZED = 'columnResized';
 
-        constructor(type: string, column: Column) {
+        constructor(type: string, column: Column, columnGroup: ColumnGroup) {
             this.type = type;
             this.column = column;
+            this.columnGroup = columnGroup;
         }
         
         public getType(): string {
@@ -38,6 +40,10 @@ module awk.grid {
 
         public getColumn(): Column {
             return this.column;
+        }
+
+        public getColumnGroup(): ColumnGroup {
+            return this.columnGroup;
         }
 
         public isPivotChanged(): boolean {

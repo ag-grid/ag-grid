@@ -10,10 +10,11 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
+        {headerName: "Total", headerGroup: "Medals", headerGroupShow: 'closed', field: "total", valueGetter: "data.gold + data.silver + data.bronze", width: 100},
+        {headerName: "Gold", headerGroup: "Medals", headerGroupShow: 'open', field: "gold", width: 100},
+        {headerName: "Silver", headerGroup: "Medals", headerGroupShow: 'open', field: "silver", width: 100},
+        {headerName: "Bronze", headerGroup: "Medals", headerGroupShow: 'open', field: "bronze", width: 100},
+        {headerName: "Total", headerGroup: "Medals", headerGroupShow: 'open', field: "total", width: 100}
     ];
 
     var gridOptionsTop = {

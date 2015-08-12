@@ -144,7 +144,8 @@ module awk.grid {
 
             var that = this;
             eGroupIcon.onclick = function() {
-                that.columnController.headerGroupOpened(that.columnGroup);
+                var newExpandedValue = !that.columnGroup.expanded;
+                that.columnController.columnGroupOpened(that.columnGroup, newExpandedValue);
             };
         }
 

@@ -356,8 +356,18 @@ module awk.grid {
             this.changedListeners.push(listener);
         }
 
-        public fireColumnChanged(type: string, column?: Column): void {
-            var event = new ColumnChangeEvent(type, column);
+        public getColumnGroup(name: string): ColumnGroup {
+            if (this.columnGroups) {
+                for (var i = 0; i<this.columnGroups.length; i++) {
+                    if (this.columnGroups[i].name === name) {
+                        return this.columnGroups[i];
+                    }
+                }
+            }
+        }
+
+        public fireColumnChanged(type: string, column?: Column, columnGroup?: ColumnGroup): void {
+            var event = new ColumnChangeEvent(type, column, columnGroup);
             for (var i = 0; i < this.changedListeners.length; i++) {
                 this.changedListeners[i](event);
             }
@@ -392,11 +402,11 @@ module awk.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        public headerGroupOpened(group: any): void {
-            group.expanded = !group.expanded;
+        public columnGroupOpened(group: ColumnGroup, newValue: boolean): void {
+            group.expanded = newValue;
             this.updateGroups();
             this.updateDisplayedColumns();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED);
+            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED, null, group);
         }
 
         // called from API
