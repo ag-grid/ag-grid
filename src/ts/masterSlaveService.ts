@@ -7,15 +7,19 @@ module awk.grid {
 
         private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
+        private gridPanel: GridPanel;
 
         // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
         private consuming = false;
 
-        public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController) {
+        public init(gridOptionsWrapper: GridOptionsWrapper,
+                    columnController: ColumnController,
+                    gridPanel: GridPanel) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnController = columnController;
+            this.gridPanel = gridPanel;
         }
 
         public fireColumnEvent(event: ColumnChangeEvent): void {
@@ -27,10 +31,30 @@ module awk.grid {
             if (slaveGrids) {
                 slaveGrids.forEach( (slaveGridOptions: GridOptions) => {
                     if (slaveGridOptions.api) {
-                        slaveGridOptions.api.processMasterEvent(event);
+                        slaveGridOptions.api.__getMasterSlaveService().onColumnEvent(event);
                     }
                 });
             }
+        }
+
+        public fireHorizontalScrollEvent(horizontalScroll: number): void {
+            if (this.consuming) {
+                return;
+            }
+
+            var slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
+            if (slaveGrids) {
+                slaveGrids.forEach( (slaveGridOptions: GridOptions) => {
+                    if (slaveGridOptions.api) {
+                        slaveGridOptions.api.__getMasterSlaveService().onScrollEvent(horizontalScroll);
+                    }
+                });
+            }
+        }
+        public onScrollEvent(horizontalScroll: number): void {
+            this.consuming = true;
+            this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
+            this.consuming = false;
         }
 
         public onColumnEvent(event: ColumnChangeEvent): void {

@@ -151,12 +151,16 @@ module awk.grid {
             if (filterText && filterText.trim() === '') {
                 filterText = null;
             }
-            if (filterText) {
-                this.filterNumber = parseFloat(filterText);
+            var newFilter: number;
+            if (filterText !== null && filterText !== undefined) {
+                newFilter = parseFloat(filterText);
             } else {
-                this.filterNumber = null;
+                newFilter = null;
             }
-            this.filterChanged();
+            if (this.filterNumber !== newFilter) {
+                this.filterNumber = newFilter;
+                this.filterChanged();
+            }
         }
 
         private createApi() {

@@ -143,12 +143,16 @@ module awk.grid {
             if (filterText && filterText.trim() === '') {
                 filterText = null;
             }
-            if (filterText) {
-                this.filterText = filterText.toLowerCase();
+            var newFilterText: string;
+            if (filterText!==null && filterText!==undefined) {
+                newFilterText = filterText.toLowerCase();
             } else {
-                this.filterText = null;
+                newFilterText = null;
             }
-            this.filterChanged();
+            if (this.filterText !== newFilterText) {
+                this.filterText = newFilterText;
+                this.filterChanged();
+            }
         }
 
         private filterChanged() {

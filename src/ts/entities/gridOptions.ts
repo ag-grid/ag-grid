@@ -18,6 +18,7 @@ module awk.grid {
         suppressCellSelection?: boolean;
         sortingOrder?: string[];
         suppressMultiSort?: boolean;
+        suppressHorizontalScroll?: boolean;
         groupSuppressAutoColumn?: boolean;
         groupHeaders?: boolean;
         dontUseScrolls?: boolean;

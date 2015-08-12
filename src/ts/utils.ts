@@ -123,6 +123,10 @@ module awk.grid {
             element.addEventListener("changed", listener);
             element.addEventListener("paste", listener);
             element.addEventListener("input", listener);
+            // IE doesn't fire changed for special keys (eg delete, backspace), so need to
+            // listen for this further ones
+            element.addEventListener("keydown", listener);
+            element.addEventListener("keyup", listener);
         }
 
         //if value is undefined, null or blank, returns null, otherwise returns the value

@@ -147,10 +147,10 @@ module awk.grid {
             inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
                 groupCreator, valueService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
-            gridPanel.init(columnController, rowRenderer);
+            gridPanel.init(columnController, rowRenderer, masterSlaveService);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
-            masterSlaveService.init(gridOptionsWrapper, columnController);
+            masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;

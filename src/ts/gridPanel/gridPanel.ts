@@ -43,6 +43,7 @@ module awk.grid {
 
     export class GridPanel {
 
+        private masterSlaveService: MasterSlaveService;
         gridOptionsWrapper: any;
         forPrint: any;
         scrollWidth: any;
@@ -63,12 +64,20 @@ module awk.grid {
         eBodyViewportWrapper: any;
         ePinnedColsViewport: any;
 
+        private scrollLagCounter = 0;
+
         constructor(gridOptionsWrapper: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
             this.forPrint = this.gridOptionsWrapper.isDontUseScrolls();
             this.setupComponents();
             this.scrollWidth = utils.getScrollbarWidth();
+        }
+
+        public init(columnModel: any, rowRenderer: any, masterSlaveService: MasterSlaveService) {
+            this.columnModel = columnModel;
+            this.rowRenderer = rowRenderer;
+            this.masterSlaveService = masterSlaveService;
         }
 
         private setupComponents() {
@@ -91,6 +100,10 @@ module awk.grid {
             });
 
             this.addScrollListener();
+
+            if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
+                this.eBodyViewport.style.overflowX = 'hidden';
+            }
         }
 
         public ensureIndexVisible(index: any) {
@@ -190,11 +203,6 @@ module awk.grid {
                 availableWidth -= this.scrollWidth;
             }
             return availableWidth;
-        }
-
-        public init(columnModel: any, rowRenderer: any) {
-            this.columnModel = columnModel;
-            this.rowRenderer = rowRenderer;
         }
 
         public setRowModel(rowModel: any) {
@@ -307,7 +315,9 @@ module awk.grid {
             }
         }
 
-        private scrollLagCounter = 0;
+        public setHorizontalScrollPosition(hScrollPosition: number): void {
+            this.eBodyViewport.scrollLeft = hScrollPosition;
+        }
 
         private addScrollListener() {
             // if printing, then no scrolling, so no point in listening for scroll events
@@ -315,32 +325,33 @@ module awk.grid {
                 return;
             }
 
-            var that = this;
             var lastLeftPosition = -1;
             var lastTopPosition = -1;
 
-            this.eBodyViewport.addEventListener("scroll", function () {
-                var newLeftPosition = that.eBodyViewport.scrollLeft;
-                var newTopPosition = that.eBodyViewport.scrollTop;
+            this.eBodyViewport.addEventListener("scroll", () => {
+                var newLeftPosition = this.eBodyViewport.scrollLeft;
+                var newTopPosition = this.eBodyViewport.scrollTop;
 
                 if (newLeftPosition !== lastLeftPosition) {
                     lastLeftPosition = newLeftPosition;
-                    that.scrollHeader(newLeftPosition);
+                    this.scrollHeader(newLeftPosition);
                 }
 
                 if (newTopPosition !== lastTopPosition) {
                     lastTopPosition = newTopPosition;
-                    that.scrollPinned(newTopPosition);
-                    that.requestDrawVirtualRows();
+                    this.scrollPinned(newTopPosition);
+                    this.requestDrawVirtualRows();
                 }
+
+                this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             });
 
-            this.ePinnedColsViewport.addEventListener("scroll", function () {
+            this.ePinnedColsViewport.addEventListener("scroll", () => {
                 // this means the pinned panel was moved, which can only
                 // happen when the user is navigating in the pinned container
                 // as the pinned col should never scroll. so we rollback
                 // the scroll on the pinned.
-                that.ePinnedColsViewport.scrollTop = 0;
+                this.ePinnedColsViewport.scrollTop = 0;
             });
 
         }

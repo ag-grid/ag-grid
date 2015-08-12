@@ -38,6 +38,7 @@ module awk.grid {
         public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
         public isGroupHeaders() { return isTrue(this.gridOptions.groupHeaders); }
         public isDontUseScrolls() { return isTrue(this.gridOptions.dontUseScrolls); }
+        public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
         public getRowStyle() { return this.gridOptions.rowStyle; }

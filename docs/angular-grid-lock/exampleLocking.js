@@ -18,6 +18,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var gridOptionsTop = {
         columnDefs: columnDefs,
+        groupHeaders: true,
         rowData: null,
         enableColResize: true,
         slaveGrids: []
@@ -25,8 +26,10 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     var gridOptionsBottom = {
         columnDefs: columnDefs,
+        groupHeaders: true,
         rowData: null,
         enableColResize: true,
+        suppressHorizontalScroll: true,
         slaveGrids: []
     };
 

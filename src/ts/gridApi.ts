@@ -16,10 +16,11 @@ module awk.grid {
                     private gridOptionsWrapper: GridOptionsWrapper,
                     private gridPanel: GridPanel,
                     private valueService: ValueService,
-                    private masterSlaveController: MasterSlaveService) {}
+                    private masterSlaveService: MasterSlaveService) {}
 
-        public processMasterEvent(event: ColumnChangeEvent): void {
-            this.masterSlaveController.onColumnEvent(event);
+        /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+        public __getMasterSlaveService(): MasterSlaveService {
+            return this.masterSlaveService;
         }
 
         public setDatasource(datasource:any) {
