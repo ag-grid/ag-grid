@@ -242,7 +242,17 @@ include '../documentation_header.php';
         <tr>
             <th>suppressMenuHide</th>
             <td>Set to true to always show the column menu button, rather than only showing when the mouse is
-            over the column header.</td>
+                over the column header.</td>
+        </tr>
+        <tr>
+            <th>suppressHorizontalScroll</th>
+            <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
+                and will scroll with a master grid.</td>
+        </tr>
+        <tr>
+            <th>slaveGrids</th>
+            <td>A list of grids to treat as slaves. If a grid is a slave, it's columns and horizontal scrolling
+            will try to mirror the columns of the master.</td>
         </tr>
     </table>
 

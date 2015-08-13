@@ -211,6 +211,12 @@
                     <a class="sidebarLink" href="/angular-grid-internationalisation/index.php">Internationalisation</a>
                 <?php } ?>
 
+                <?php if ($key == "Master / Slave") { ?>
+                    <span class="sidebarLinkSelected">Master / Slave</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-master-slave/index.php">Master / Slave</a>
+                <?php } ?>
+
                 <h4>
                     Working with Data
                 </h4>

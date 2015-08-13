@@ -77,7 +77,7 @@ module awk.grid {
             // because we could be taking out 'pivot' columns, the displayed
             // columns may differ, so need to work out all the columns again
             this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_PIVOT_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
         }
 
         public removePivotColumn(column: Column): void {
@@ -87,7 +87,7 @@ module awk.grid {
             }
             _.removeFromArray(this.pivotColumns, column);
             this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_PIVOT_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
         }
 
         public addValueColumn(column: Column): void {
@@ -103,7 +103,7 @@ module awk.grid {
                 column.aggFunc = constants.SUM;
             }
             this.valueColumns.push(column);
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_VALUE_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
         }
 
         public removeValueColumn(column: Column): void {
@@ -112,7 +112,7 @@ module awk.grid {
                 return;
             }
             _.removeFromArray(this.valueColumns, column);
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_VALUE_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
         }
 
         public setColumnWidth(column: Column, newWidth: number): void {
@@ -136,7 +136,8 @@ module awk.grid {
                 // if part of a group, update the groups width
                 this.updateGroupWidthsAfterColumnResize(column);
 
-                this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_RESIZED, column);
+                var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_RESIZED).withColumn(column);
+                this.fireColumnChanged(event);
             }
 
             if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
@@ -157,14 +158,14 @@ module awk.grid {
 
         public setColumnAggFunction(column: Column, aggFunc: string) {
             column.aggFunc = aggFunc;
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_VALUE_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
         }
 
         public movePivotColumn(fromIndex: number, toIndex: number): void {
             var column = this.pivotColumns[fromIndex];
             this.pivotColumns.splice(fromIndex, 1);
             this.pivotColumns.splice(toIndex, 0, column);
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_PIVOT_CHANGE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
         }
 
         public moveColumn(fromIndex: number, toIndex: number): void {
@@ -172,7 +173,10 @@ module awk.grid {
             this.allColumns.splice(fromIndex, 1);
             this.allColumns.splice(toIndex, 0, column);
             this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_MOVED);
+            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_MOVED)
+                .withFromIndex(fromIndex)
+                .withToIndex(toIndex);
+            this.fireColumnChanged(event);
             if (typeof this.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
                 this.gridOptionsWrapper.getColumnOrderChanged()(this.allColumns);
             }
@@ -212,7 +216,7 @@ module awk.grid {
             column.visible = visible;
 
             this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_VISIBLE);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VISIBLE).withColumn(column));
 
             if (typeof this.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
                 this.gridOptionsWrapper.getColumnVisibilityChanged()(this.allColumns);
@@ -309,10 +313,11 @@ module awk.grid {
 
             this.updateModel();
 
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_EVERYTHING);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_EVERYTHING));
         }
 
         public getColumn(key: any) {
+            if (!key) {return null;}
             for (var i = 0; i < this.allColumns.length; i++) {
                 var colDefMatches = this.allColumns[i].colDef === key;
                 var fieldMatches = this.allColumns[i].colDef.field === key;
@@ -357,6 +362,7 @@ module awk.grid {
         }
 
         public getColumnGroup(name: string): ColumnGroup {
+            if (!name) {return null;}
             if (this.columnGroups) {
                 for (var i = 0; i<this.columnGroups.length; i++) {
                     if (this.columnGroups[i].name === name) {
@@ -366,8 +372,7 @@ module awk.grid {
             }
         }
 
-        public fireColumnChanged(type: string, column?: Column, columnGroup?: ColumnGroup): void {
-            var event = new ColumnChangeEvent(type, column, columnGroup);
+        public fireColumnChanged(event: ColumnChangeEvent): void {
             for (var i = 0; i < this.changedListeners.length; i++) {
                 this.changedListeners[i](event);
             }
@@ -381,7 +386,7 @@ module awk.grid {
             this.createPivotColumns();
             this.createValueColumns();
             this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_EVERYTHING);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_EVERYTHING));
             this.setupComplete = true;
         }
 
@@ -406,20 +411,31 @@ module awk.grid {
             group.expanded = newValue;
             this.updateGroups();
             this.updateDisplayedColumns();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED, null, group);
+            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED).withColumnGroup(group);
+            this.fireColumnChanged(event);
         }
 
         // called from API
         public hideColumns(colIds: any, hide: any) {
-            for (var i = 0; i < this.allColumns.length; i++) {
-                var idThisCol = this.allColumns[i].colId;
+            var updatedCols: Column[] = [];
+            this.allColumns.forEach( (column: Column) => {
+                var idThisCol = column.colId;
                 var hideThisCol = colIds.indexOf(idThisCol) >= 0;
-                if (hideThisCol) {
-                    this.allColumns[i].visible = !hide;
+                var newVisible = !hide;
+                if (hideThisCol && column.visible !== newVisible) {
+                    column.visible = newVisible;
+                    updatedCols.push(column);
                 }
+            });
+
+            if (updatedCols.length>0) {
+                this.updateModel();
+                updatedCols.forEach( (column: Column) => {
+                    var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VISIBLE)
+                        .withColumn(column);
+                    this.fireColumnChanged(event);
+                });
             }
-            this.updateModel();
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_VISIBLE);
         }
 
         private updateModel() {
@@ -502,7 +518,7 @@ module awk.grid {
             }
 
             // widths set, refresh the gui
-            this.fireColumnChanged(ColumnChangeEvent.TYPE_COLUMN_RESIZED);
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_RESIZED));
 
             function moveToNotSpread(column: Column) {
                 _.removeFromArray(colsToSpread, column);

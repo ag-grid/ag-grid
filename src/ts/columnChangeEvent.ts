@@ -6,6 +6,8 @@ module awk.grid {
         private type: string;
         private column: Column;
         private columnGroup: ColumnGroup;
+        private fromIndex: number;
+        private toIndex: number;
 
         /** A new set of columns has been entered, everything has potentially changed. */
         public static TYPE_EVERYTHING = 'everything';
@@ -28,12 +30,48 @@ module awk.grid {
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static TYPE_COLUMN_RESIZED = 'columnResized';
 
-        constructor(type: string, column: Column, columnGroup: ColumnGroup) {
+        constructor(type: string) {
             this.type = type;
-            this.column = column;
-            this.columnGroup = columnGroup;
         }
-        
+
+        public toString(): string {
+            var result = 'ColumnChangeEvent {type: ' + this.type;
+            if (this.column) { result += ', column: ' + this.column.colId; }
+            if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.name; }
+            if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
+            if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
+            result += '}';
+            return result;
+        }
+
+        public withColumn(column: Column): ColumnChangeEvent {
+            this.column = column;
+            return this;
+        }
+
+        public withColumnGroup(columnGroup: ColumnGroup): ColumnChangeEvent {
+            this.columnGroup = columnGroup;
+            return this;
+        }
+
+        public withFromIndex(fromIndex: number): ColumnChangeEvent {
+            this.fromIndex = fromIndex;
+            return this;
+        }
+
+        public withToIndex(toIndex: number): ColumnChangeEvent {
+            this.toIndex = toIndex;
+            return this;
+        }
+
+        public getFromIndex(): number  {
+            return this.fromIndex;
+        }
+
+        public getToIndex(): number  {
+            return this.toIndex;
+        }
+
         public getType(): string {
             return this.type;
         }

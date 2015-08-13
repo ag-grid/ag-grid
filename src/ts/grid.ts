@@ -19,6 +19,7 @@
 /// <reference path="gridApi.ts" />
 /// <reference path="valueService.ts" />
 /// <reference path="masterSlaveService.ts" />
+/// <reference path="logger.ts" />
 
 module awk.grid {
 
@@ -131,6 +132,7 @@ module awk.grid {
             var valueService = new ValueService();
             var groupCreator = new GroupCreator();
             var masterSlaveService = new MasterSlaveService();
+            var loggerFactory = new LoggerFactory(gridOptionsWrapper.isDebug());
 
             // initialise all the beans
             templateService.init($scope);
@@ -150,7 +152,7 @@ module awk.grid {
             gridPanel.init(columnController, rowRenderer, masterSlaveService);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
-            masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel);
+            masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;

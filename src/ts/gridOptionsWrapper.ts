@@ -57,6 +57,7 @@ module awk.grid {
         public isAngularCompileRows() { return isTrue(this.gridOptions.angularCompileRows); }
         public isAngularCompileFilters() { return isTrue(this.gridOptions.angularCompileFilters); }
         public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
+        public isDebug() { return isTrue(this.gridOptions.debug); }
         public getColumnDefs() { return this.gridOptions.columnDefs; }
         public getRowHeight() { return this.gridOptions.rowHeight; }
         public getBeforeFilterChanged() { return this.gridOptions.beforeFilterChanged; }

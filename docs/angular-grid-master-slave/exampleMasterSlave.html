@@ -5,10 +5,15 @@
     <script src="../dist/angular-grid.js?ignore=notused5"></script>
     <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused5">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused5">
-    <script src="exampleLocking.js"></script>
+    <script src="exampleMasterSlave.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<div ag-grid="gridOptionsTop" style="height: 50%;" class="ag-fresh"></div>
-<div ag-grid="gridOptionsBottom" style="height: 50%;" class="ag-fresh"></div>
+<div style="height: 10%">
+    <label><input type="checkbox" ng-model="cbAthlete" ng-change="onCbAthlete()"/>Athlete</label>
+    <label><input type="checkbox" ng-model="cbAge" ng-change="onCbAge()"/>Age</label>
+    <label><input type="checkbox" ng-model="cbCountry" ng-change="onCbCountry()"/>Country</label>
+</div>
+<div ag-grid="gridOptionsTop" style="height: 45%;" class="ag-fresh"></div>
+<div ag-grid="gridOptionsBottom" style="height: 45%;" class="ag-fresh"></div>
 </body>
 </html>
