@@ -62,6 +62,7 @@ module awk.grid {
         public getRowHeight() { return this.gridOptions.rowHeight; }
         public getBeforeFilterChanged() { return this.gridOptions.beforeFilterChanged; }
         public getAfterFilterChanged() { return this.gridOptions.afterFilterChanged; }
+        public getFilterModified() { return this.gridOptions.filterModified; }
         public getBeforeSortChanged() { return this.gridOptions.beforeSortChanged; }
         public getAfterSortChanged() { return this.gridOptions.afterSortChanged; }
         public getModelUpdated() { return this.gridOptions.modelUpdated; }

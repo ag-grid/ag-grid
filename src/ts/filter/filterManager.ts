@@ -215,11 +215,13 @@ module awk.grid {
                 gui: <any> null
             };
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
+            var filterModifiedCallback = this.grid.onFilterModified.bind(this.grid);
             var filterParams = colDef.filterParams;
             var params = {
                 colDef: colDef,
                 rowModel: this.rowModel,
                 filterChangedCallback: filterChangedCallback,
+                filterModifiedCallback: filterModifiedCallback,
                 filterParams: filterParams,
                 localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
                 valueGetter: this.createValueGetter(column),

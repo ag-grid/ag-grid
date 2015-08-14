@@ -333,6 +333,12 @@ module awk.grid {
             }
         }
 
+        public onFilterModified() {
+            if (typeof this.gridOptionsWrapper.getFilterModified() === 'function') {
+                this.gridOptionsWrapper.getFilterModified()();
+            }
+        }
+
         public onFilterChanged() {
             if (typeof this.gridOptionsWrapper.getBeforeFilterChanged() === 'function') {
                 this.gridOptionsWrapper.getBeforeFilterChanged()();

@@ -10,7 +10,6 @@ include '../documentation_header.php';
 
     <h2>Filtering</h2>
 
-
     <p>
         You have two options for filtering, one is use on of the default built-in filters (easy but restricted to
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
@@ -152,6 +151,13 @@ columnDefinition = {
     <p>
         This is handy if the filtering operation is taking a long time (usually it doesn't), or if doing
         server side filtering (thus preventing unnecessary calls to the server).
+    </p>
+
+    <p>
+        The example below also demonstrates the filter hook callbacks (see your browser dev console).
+        <li>filterModified gets called when the filter changes regardless of the apply button.</li>
+        <li>beforeFilterChanged gets called before a new filter is applied.</li>
+        <li>afterFilterChanged gets called after a new filter is applied.</li>
     </p>
 
     <show-example example="exampleFilterApply"></show-example>

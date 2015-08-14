@@ -28,7 +28,10 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
-        enableFilter: true
+        enableFilter: true,
+        beforeFilterChanged: function() {console.log('beforeFilterChanged');},
+        afterFilterChanged: function() {console.log('afterFilterChanged');},
+        filterModified: function() {console.log('filterModified');}
     };
 
     $http.get("../olympicWinners.json")
