@@ -115,9 +115,18 @@ module awk.grid {
             this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
         }
 
+        // returns true if the col is either in all columns or visible columns.
+        // we need to check visible columns because the grouping column could come
+        // from the gridOptions, so that's a special case
+        private doesColumnExistInGrid(column: Column): boolean {
+            var columnInAllColumns = this.allColumns.indexOf(column) >= 0;
+            var columnInVisibleColumns = this.visibleColumns.indexOf(column) >= 0;
+            return columnInAllColumns || columnInVisibleColumns;
+        }
+
         public setColumnWidth(column: Column, newWidth: number): void {
-            if (this.allColumns.indexOf(column) < 0) {
-                console.warn('column not a value');
+            if (!this.doesColumnExistInGrid(column)) {
+                console.warn('column does not exist');
                 return;
             }
 
