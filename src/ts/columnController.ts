@@ -327,13 +327,25 @@ module awk.grid {
 
         public getColumn(key: any) {
             if (!key) {return null;}
-            for (var i = 0; i < this.allColumns.length; i++) {
-                var colDefMatches = this.allColumns[i].colDef === key;
-                var fieldMatches = this.allColumns[i].colDef.field === key;
-                if (colDefMatches || fieldMatches) {
-                    return this.allColumns[i];
+
+            // need both allColumns and visibleColumns, in case the
+            // grouping column that came from the grid options
+            var listsToCheck = [this.allColumns, this.visibleColumns];
+
+            for (var j = 0; j<listsToCheck.length; j++) {
+                var list = listsToCheck[j];
+                if (!list) {
+                    continue;
+                }
+                for (var i = 0; i < list.length; i++) {
+                    var colDefMatches = list[i].colDef === key;
+                    var fieldMatches = list[i].colId === key;
+                    if (colDefMatches || fieldMatches) {
+                        return list[i];
+                    }
                 }
             }
+
         }
 
         public getDisplayNameForCol(column: any): string {
