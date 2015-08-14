@@ -617,7 +617,8 @@ module awk.grid {
                     };
                 }
                 // no group column provided, need to create one here
-                var groupColumn = new Column(groupColDef, this.gridOptionsWrapper.getColWidth());
+                var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
+                var groupColumn = new Column(groupColDef, groupColumnWidth);
                 this.visibleColumns.push(groupColumn);
             }
 
