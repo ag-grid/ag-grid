@@ -50,9 +50,15 @@ include '../documentation_header.php';
                 a grouping column (normally the first on the left) to show the group.</td>
         </tr>
         <tr>
-            <th>groupRowInnerRenderer</th>
+            <th>groupRowRenderer</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
-                presentation of the group. This is only used when groupUseEntireRow=true.</td>
+                presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control
+                of the row, so the grid will not provide any default expand / collapse or selection checkbox.</td>
+        </tr>
+        <tr>
+            <th>groupRowInnerRenderer</th>
+            <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
+                expand / collapse function. The innerRenderer is responsible for just the inside part of the row.</td>
         </tr>
         <tr>
             <th>groupDefaultExpanded</th>
@@ -310,7 +316,76 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     <h3>Group Row Rendering</h3>
 
     <p>
-        It is possible to override the rendering of the group row. Below shows an example of aggregating,
+        It is possible to override the rendering of the group row using <i>groupRowRenderer</i> and
+        <i>groupRowInnerRenderer</i>. Use groupRowRenderer to take full control of the row rendering,
+        and provide a cellRenderer exactly how you would provide on for custom rendering of cells
+        for non-groups.
+    </p>
+    <p>
+        The following pieces of code do the exact same thing:
+        <pre><code>
+// option 1 - tell the grid to group by row, the grid defaults to using
+// the default group cell renderer for the row with default settings.
+gridOptions.groupUseEntireRow = true;
+
+// option 2 - this does the exact same as the above, except we configure
+// it explicitly rather than letting the grid choose the defaults.
+// we tell the grid what renderer to use (the build in renderer) and we
+// configure the default renderer with our own inner renderer
+gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowRenderer: {
+    renderer: 'group',
+    innerRenderer: function(params) {return params.node.key;},
+};
+
+// option 3 - again the exact same. we allow the grid to choose the group
+// cell renderer, but we provide our own inner renderer.
+gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
+</code></pre>
+    </p>
+    <p>
+        The above probably reads a bit confusing. So here are rules to help you choose:
+    <ul>
+        <li>
+            If you are happy with what you get with just setting groupUseEntireRow = true,
+            then stick with that, don't bother with the renderers.
+        </li>
+        <li>
+            If you want to change the inside of the renderer, but are happy with the
+            expand / collapse etc of the group row, then just set the groupRowInnerRenderer.
+        </li>
+        <li>
+            If you want to customise the entire row, you are not happy with what you
+            get for free with the group cell renderer, then set your own renderer
+            with groupRowRenderer, or use groupRowRenderer to configure the default
+            group renderer.
+        </li>
+    </ul>
+    </p>
+    <p>
+        Here is an example of taking full control, creating your own renderer. In practice,
+        this example is a bit useless, as you will need to add functionality to at least expand
+        and collapse the group, however it demonstrates the configuration:
+        <pre><code>gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowRenderer: function(params) {return params.node.key;};
+</code></pre>
+    <p>
+        This example takes full control also, but uses the provided group renderer
+    but configured differently by asking for a checkbox for selection:
+        <pre><code>gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowRenderer: {
+    renderer: 'group',
+    checkbox: true,
+    // innerRenderer is optional, we could leave this out and use the default
+    innerRenderer: function(params) {return params.node.key;},
+}
+</code></pre>
+    </p>
+
+    </p>
+    <p>
+        Below shows an example of aggregating,
         then using the entire row to give a summary.
     </p>
 

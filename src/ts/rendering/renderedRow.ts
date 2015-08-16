@@ -231,21 +231,24 @@ module awk.grid {
             if (padding) {
                 eRow = document.createElement('span');
             } else {
+                var rowCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+                if (!rowCellRenderer) {
+                    rowCellRenderer = {
+                        renderer: 'group',
+                        innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
+                    };
+                }
                 var params = {
                     node: this.node,
                     data: this.node.data,
                     rowIndex: this.rowIndex,
                     api: this.gridOptionsWrapper.getApi(),
                     colDef: {
-                        cellRenderer: {
-                            renderer: 'group',
-                            innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
-                        }
+                        cellRenderer: rowCellRenderer
                     }
                 };
                 eRow = this.cellRendererMap['group'](params);
             }
-
             if (this.node.footer) {
                 _.addCssClass(eRow, 'ag-footer-cell-entire-row');
             } else {

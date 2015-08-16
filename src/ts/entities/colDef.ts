@@ -34,7 +34,7 @@ module awk.grid {
         valueGetter?: string | Function;
 
         /** To provide custom rendering to the header. */
-        headerCellRenderer?: Function;
+        headerCellRenderer?: Function | Object;
 
         /** CSS class for the header */
         headerClass?: (params: any) => any | string[];

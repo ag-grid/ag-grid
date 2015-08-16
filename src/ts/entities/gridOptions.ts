@@ -71,6 +71,7 @@ module awk.grid {
         icons?: any; // should be typed
         groupInnerRenderer?(params: any): void;
         groupRowInnerRenderer?(params: any): void;
+        groupRowRenderer?: Function | Object;
         colWidth?: number;
         headerHeight?: number;
         pinnedColumnCount?: number;
