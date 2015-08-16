@@ -50,6 +50,7 @@ module awk.grid {
         selectionChanged?(): void;
         beforeFilterChanged?(): void;
         afterFilterChanged?(): void;
+        filterModified?(): void;
         beforeSortChanged?(): void;
         afterSortChanged?(): void;
         virtualRowRemoved?(row: any, rowIndex: number): void;

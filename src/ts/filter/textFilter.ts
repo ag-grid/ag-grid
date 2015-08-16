@@ -32,6 +32,7 @@ module awk.grid {
 
         private filterParams: any;
         private filterChangedCallback: any;
+        private filterModifiedCallback: any;
         private localeTextFunc: any;
         private valueGetter: any;
         private filterText: any;
@@ -48,6 +49,7 @@ module awk.grid {
             this.filterParams = params.filterParams;
             this.applyActive = this.filterParams && this.filterParams.apply == true;
             this.filterChangedCallback = params.filterChangedCallback;
+            this.filterModifiedCallback = params.filterModifiedCallback;
             this.localeTextFunc = params.localeTextFunc;
             this.valueGetter = params.valueGetter;
             this.createGui();
@@ -156,6 +158,7 @@ module awk.grid {
         }
 
         private filterChanged() {
+            this.filterModifiedCallback();
             if (!this.applyActive) {
                 this.filterChangedCallback();
             }

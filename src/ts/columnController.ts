@@ -115,9 +115,18 @@ module awk.grid {
             this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
         }
 
+        // returns true if the col is either in all columns or visible columns.
+        // we need to check visible columns because the grouping column could come
+        // from the gridOptions, so that's a special case
+        private doesColumnExistInGrid(column: Column): boolean {
+            var columnInAllColumns = this.allColumns.indexOf(column) >= 0;
+            var columnInVisibleColumns = this.visibleColumns.indexOf(column) >= 0;
+            return columnInAllColumns || columnInVisibleColumns;
+        }
+
         public setColumnWidth(column: Column, newWidth: number): void {
-            if (this.allColumns.indexOf(column) < 0) {
-                console.warn('column not a value');
+            if (!this.doesColumnExistInGrid(column)) {
+                console.warn('column does not exist');
                 return;
             }
 
@@ -318,13 +327,25 @@ module awk.grid {
 
         public getColumn(key: any) {
             if (!key) {return null;}
-            for (var i = 0; i < this.allColumns.length; i++) {
-                var colDefMatches = this.allColumns[i].colDef === key;
-                var fieldMatches = this.allColumns[i].colDef.field === key;
-                if (colDefMatches || fieldMatches) {
-                    return this.allColumns[i];
+
+            // need both allColumns and visibleColumns, in case the
+            // grouping column that came from the grid options
+            var listsToCheck = [this.allColumns, this.visibleColumns];
+
+            for (var j = 0; j<listsToCheck.length; j++) {
+                var list = listsToCheck[j];
+                if (!list) {
+                    continue;
+                }
+                for (var i = 0; i < list.length; i++) {
+                    var colDefMatches = list[i].colDef === key;
+                    var fieldMatches = list[i].colId === key;
+                    if (colDefMatches || fieldMatches) {
+                        return list[i];
+                    }
                 }
             }
+
         }
 
         public getDisplayNameForCol(column: any): string {
@@ -608,7 +629,8 @@ module awk.grid {
                     };
                 }
                 // no group column provided, need to create one here
-                var groupColumn = new Column(groupColDef, this.gridOptionsWrapper.getColWidth());
+                var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
+                var groupColumn = new Column(groupColDef, groupColumnWidth);
                 this.visibleColumns.push(groupColumn);
             }
 

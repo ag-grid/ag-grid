@@ -41,6 +41,7 @@ module awk.grid {
         private rowHeight: any;
         private model: any;
         private filterChangedCallback: any;
+        private filterModifiedCallback: any;
         private valueGetter: any;
         private rowsInBodyContainer: any;
         private colDef: any;
@@ -62,6 +63,7 @@ module awk.grid {
             this.applyActive = this.filterParams && this.filterParams.apply == true;
             this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
             this.filterChangedCallback = params.filterChangedCallback;
+            this.filterModifiedCallback = params.filterModifiedCallback;
             this.valueGetter = params.valueGetter;
             this.rowsInBodyContainer = {};
             this.colDef = params.colDef;
@@ -286,6 +288,7 @@ module awk.grid {
         }
 
         private filterChanged() {
+            this.filterModifiedCallback();
             if (!this.applyActive) {
                 this.filterChangedCallback();
             }

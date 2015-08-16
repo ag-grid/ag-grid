@@ -36,31 +36,13 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
         {headerName : 'Jun', headerGroup: 'Monthly Data', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
             cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Jul', headerGroup: 'Monthly Data', field: 'jul', month: 6, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
-        {headerName : 'Aug', headerGroup: 'Monthly Data', field: 'aug', month: 7, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
-        {headerName : 'Sep', headerGroup: 'Monthly Data', field: 'sep', month: 8, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
-        {headerName : 'Oct', headerGroup: 'Monthly Data', field: 'oct', month: 9, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
-        {headerName : 'Nov', headerGroup: 'Monthly Data', field: 'nov', month: 10, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure',  valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
-        {headerName : 'Dec', headerGroup: 'Monthly Data', field: 'dec', month: 11, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
-
         {headerName : 'YTD', headerGroup: 'Totals', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
             valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}}
 
     ];
 
     $scope.gridOptions = {
-        groupColumnDef: {headerName : "Location", field: "city", width: 300,
+        groupColumnDef: {headerName : "Location", field: "city", width: 200,
             cellRenderer: {
                 renderer: 'group',
                 checkbox: true
@@ -108,8 +90,8 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
         if (newMonth < -1) {
             newMonth = -1;
         }
-        if (newMonth > 11) {
-            newMonth = 11;
+        if (newMonth > 5) {
+            newMonth = 5;
         }
 
         $scope.gridOptions.context.month = newMonth;
@@ -147,6 +129,7 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
         .then(function(res){
             $scope.gridOptions.rowData = res.data;
             $scope.gridOptions.api.onNewRows();
+            $scope.gridOptions.api.sizeColumnsToFit();
         });
 
     function modelUpdated() {

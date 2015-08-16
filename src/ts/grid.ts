@@ -136,6 +136,7 @@ module awk.grid {
 
             // initialise all the beans
             templateService.init($scope);
+            expressionService.init(loggerFactory);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer);
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
                 columnController, popupService, valueService);
@@ -330,6 +331,12 @@ module awk.grid {
                 }
                 this.quickFilter = newFilter;
                 this.onFilterChanged();
+            }
+        }
+
+        public onFilterModified() {
+            if (typeof this.gridOptionsWrapper.getFilterModified() === 'function') {
+                this.gridOptionsWrapper.getFilterModified()();
             }
         }
 

@@ -160,9 +160,9 @@ include '../documentation_header.php';
                 gets called after the grid executes the sort.</td>
         </tr>
         <tr>
-            <th>beforeFilterChanged()<br/>afterFilterChanged()</th>
+            <th>filterModified()<br/>beforeFilterChanged()<br/>afterFilterChanged()</th>
             <td>Callbacks that get called when the filtering changes. 'before' method gets called before the grid executes the filter. 'after' method
-                gets called after the grid executes the filter.</td>
+                gets called after the grid executes the filter. filterModified is useful when using the Apply button.</td>
         </tr>
         <tr>
             <th>columnResized</th>
