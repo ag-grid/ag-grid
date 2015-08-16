@@ -17,6 +17,7 @@ module awk.grid {
 
         static KEY_TAB = 9;
         static KEY_ENTER = 13;
+        static KEY_ESCAPE = 27;
         static KEY_SPACE = 32;
         static KEY_DOWN = 40;
         static KEY_UP = 38;

@@ -7,9 +7,11 @@ module awk.grid {
     export class PopupService {
 
         private ePopupParent: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
 
-        public init(ePopupParent: any) {
+        public init(ePopupParent: any, gridOptionsWrapper: GridOptionsWrapper) {
             this.ePopupParent = ePopupParent;
+            this.gridOptionsWrapper = gridOptionsWrapper;
         }
 
         public positionPopup(eventSource: any, ePopup: any, minWidth: any) {
@@ -52,22 +54,33 @@ module awk.grid {
 
             this.ePopupParent.appendChild(eChild);
 
+            var that = this;
+
             // if we add these listeners now, then the current mouse
             // click will be included, which we don't want
             setTimeout(function() {
+                if(that.gridOptionsWrapper.isFilterClosedOnEscPressed()) {
+                    eBody.addEventListener('keydown', hidePopupOnEsc);
+                }
                 eBody.addEventListener('click', hidePopup);
                 eChild.addEventListener('click', consumeClick);
             }, 0);
 
             var eventFromChild: any = null;
 
-            var that = this;
+            function hidePopupOnEsc(event) {
+                var key = event.which || event.keyCode;
+                if(key === grid.Constants.KEY_ESCAPE) {
+                    hidePopup(null);
+                }
+            }
 
             function hidePopup(event: any) {
                 if (event && event === eventFromChild) {
                     return;
                 }
                 that.ePopupParent.removeChild(eChild);
+                eBody.removeEventListener('keydown', hidePopupOnEsc);
                 eBody.removeEventListener('click', hidePopup);
                 eChild.removeEventListener('click', consumeClick);
             }
