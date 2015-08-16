@@ -8,7 +8,7 @@ module awk {
         doesFilterPass(params: any): boolean;
 
         // optional methods
-        afterGuiAttached?(): void;
+        afterGuiAttached?(params?: {hidePopup?: Function}): void;
         onNewRowsLoaded?(): void;
     }
 

@@ -276,10 +276,10 @@ module awk.grid {
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
             this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
-            this.popupService.addAsModalPopup(filterWrapper.gui);
+            var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui);
 
             if (filterWrapper.filter.afterGuiAttached) {
-                filterWrapper.filter.afterGuiAttached();
+                filterWrapper.filter.afterGuiAttached({ hidePopup: hidePopup });
             }
         }
     }

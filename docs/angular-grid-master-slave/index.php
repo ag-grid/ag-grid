@@ -16,6 +16,10 @@ include '../documentation_header.php';
         is consuming the event is called the slave.
     </p>
 
+    <note>
+        Using Master / Slave you can put a footer into your grid.
+    </note>
+
     <h4>Configuration</h4>
 
     <p>

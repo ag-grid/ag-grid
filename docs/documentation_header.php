@@ -330,7 +330,7 @@
                 <?php } ?>
 
                 <h4>
-                    Without AngularJS
+                    Beyong Angular 1.x
                 </h4>
 
                 <?php if ($key == "Native Javascript") { ?>
@@ -340,9 +340,15 @@
                 <?php } ?>
 
                 <?php if ($key == "Web Components") { ?>
-                    <span class="sidebarLinkSelected">Web Components</span>
+                    <span class="sidebarLinkSelected"><img src="/images/lab.png"/>Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/example-web-component-grid/index.php">Web Components</a>
+                    <a class="sidebarLink" href="/example-web-component-grid/index.php"><img src="/images/lab.png"/>Web Components</a>
+                <?php } ?>
+
+                <?php if ($key == "Angular 2") { ?>
+                    <span class="sidebarLinkSelected"><img src="/images/lab.png"/>Angular 2</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/example-angular-2/index.php"><img src="/images/lab.png"/>Angular 2</a>
                 <?php } ?>
 
             </div>

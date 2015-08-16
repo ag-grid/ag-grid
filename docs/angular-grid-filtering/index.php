@@ -185,7 +185,7 @@ columnDefinition = {
     MyCustomFilter.prototype.doesFilterPass = function (params) {}
 
     // optional methods
-    MyCustomFilter.prototype.afterGuiAttached = function() {}
+    MyCustomFilter.prototype.afterGuiAttached = function(params) {}
     MyCustomFilter.prototype.onNewRowsLoaded = function () {}
 
     </pre>
@@ -235,10 +235,12 @@ columnDefinition = {
                 for now, the model can be ignored).</td>
         </tr>
         <tr>
-            <th>afterGuiAttached</th>
+            <th>afterGuiAttached(params)</th>
             <td>Gets called after the gui returned in getGui is attached to the DOM. This is useful for any
                 logic that requires attachment before executing, such as putting focus on a particular DOM
-                element.</td>
+                element. The params has one callback method 'hidePopup', which you can call at any later
+                point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
+                after it is pressed.</td>
         </tr>
         <tr>
             <th>onNewRowsLoaded</th>
