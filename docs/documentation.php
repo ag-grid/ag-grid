@@ -31,7 +31,7 @@ include 'documentation_header.php';
     </p>
 
     <p>
-        <b>Over 700 stars on GitHub, whoop whoop!!!</b>
+        <b>Over 750 stars on GitHub, whoop whoop!!!</b>
     </p>
 
     <p>
@@ -39,49 +39,34 @@ include 'documentation_header.php';
     </p>
 
     <p>
-        Flights, airports, London, Edinburgh, Dublin, busy days for me from my day job and personal live perspective.
-        Last weekend didn't see a release as I was celebrating my Dad's 70th birthday.
-        Anyway, I'm sure nobody cares..... :)
+        Last week was all about implementing the cool new feature <a href="/angular-grid-master-slave/index.php">
+        Master / Slave</a>. With this feature, you can implement grid footers. However it is much more powerful
+        than that, floating footers is just one usage of it. Check out it's documentation page.
     </p>
 
     <p>
-        What I did get done:
-        <ul>
-        <li>
-            Major refactoring around the column controller, all in preparing for future changes. If you are looking
-            at the code, you will notice that the columnController is now where ALL column updates are made.
-            The toolPanel and the rowRenderer now treat the column model as read only and use methods on the
-            columnController to make changes.
-        </li>
-        <li>
-            I researching and prototyping around Web Components and Angular 2.0. I complete a first pass on a
-            web component which you can check out <a href="/example-web-component-grid/index.php">here</a>.
-        </li>
-        <li>
-            Other minor bug fixes.
-        </li>
-    </ul>
+        I also did a bunch of tweaks and fixes. Some of you will be aware of these as they follow chatter on
+        Github issues or the forum. If your really interested, check out the Github log.
     </p>
 
     <p>
-        <b>Help!!</b> As part of my Angular 2 integration, I need to understand how the core Angular 2 works,
-        in particular the View Manager and DOM compiling and associated classes. There appears to be tons of information
-        on the web on how to build basic Components (Directives) in Angular 2, lots and lots of little pages explaining
-        the very same beginners concepts, they are almost all rehashes of the same simple example. What I need is
-        a good understanding of the internals of Angular 2 views, so that I can create an Angular 2 context
-        for each grid row (similar to how I am creating scopes for each row in Angular 1.x). If anyone has
-        a decent understanding on how to go about this, please get in touch!!
+        On other news, I'm getting very deep and dirty with Angular 2. I've researched all the web examples
+        I could find and am now reading through the source code. I'm pretty excited about it, Angular 2 is
+        much different to Angular 1. I'm hoping to have a fully working Angular 2 ag-Grid in the coming
+        weeks.
     </p>
 
     <p>
-    Release 1.12.5 contains all the above.
+        Release 1.13 contains all the above.
     </p>
 
     <p>
         <b>Next Week</b>
     </p>
     <p>
-        I'm doing a lot of learning and prototyping around Web Components and Angular 2.0.
+        I'm going to continue with my Angular 2 and Web Components research. I am also going to have an
+        extended weekend break at <a href="http://www.greenman.net/">Greenman Festival</a>. So between
+        my research and my festival, I'm not going to get many new features implemented.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>

@@ -2,6 +2,9 @@ declare module awk.grid {
     class ColumnChangeEvent {
         private type;
         private column;
+        private columnGroup;
+        private fromIndex;
+        private toIndex;
         /** A new set of columns has been entered, everything has potentially changed. */
         static TYPE_EVERYTHING: string;
         /** A pivot column was added, removed or order changed. */
@@ -16,9 +19,17 @@ declare module awk.grid {
         static TYPE_COLUMN_GROUP_OPENED: string;
         /** One or more columns was resized. If just one, the column in the event is set. */
         static TYPE_COLUMN_RESIZED: string;
-        constructor(type: string, column: Column);
+        constructor(type: string);
+        toString(): string;
+        withColumn(column: Column): ColumnChangeEvent;
+        withColumnGroup(columnGroup: ColumnGroup): ColumnChangeEvent;
+        withFromIndex(fromIndex: number): ColumnChangeEvent;
+        withToIndex(toIndex: number): ColumnChangeEvent;
+        getFromIndex(): number;
+        getToIndex(): number;
         getType(): string;
         getColumn(): Column;
+        getColumnGroup(): ColumnGroup;
         isPivotChanged(): boolean;
         isValueChanged(): boolean;
         isIndividualColumnResized(): boolean;
@@ -181,10 +192,12 @@ declare module awk.grid {
         isAngularCompileRows(): boolean;
         isAngularCompileFilters(): boolean;
         isAngularCompileHeaders(): boolean;
+        isDebug(): boolean;
         getColumnDefs(): any[];
         getRowHeight(): number;
         getBeforeFilterChanged(): () => void;
         getAfterFilterChanged(): () => void;
+        getFilterModified(): () => void;
         getBeforeSortChanged(): () => void;
         getAfterSortChanged(): () => void;
         getModelUpdated(): () => void;
@@ -213,6 +226,7 @@ declare module awk.grid {
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
+        getGroupRowRenderer(): Object;
         getGroupRowInnerRenderer(): (params: any) => void;
         getColWidth(): number;
         getHeaderHeight(): number;
@@ -223,12 +237,28 @@ declare module awk.grid {
     }
 }
 declare module awk.grid {
+    class LoggerFactory {
+        private logging;
+        constructor(logging: boolean);
+        create(name: string): Logger;
+    }
+    class Logger {
+        private logging;
+        private name;
+        constructor(name: string, logging: boolean);
+        log(message: string): void;
+    }
+}
+declare module awk.grid {
     class MasterSlaveService {
         private gridOptionsWrapper;
         private columnController;
         private gridPanel;
+        private logger;
         private consuming;
-        init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel): void;
+        init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel, loggerFactory: LoggerFactory): void;
+        private fireEvent(callback);
+        private onEvent(callback);
         fireColumnEvent(event: ColumnChangeEvent): void;
         fireHorizontalScrollEvent(horizontalScroll: number): void;
         onScrollEvent(horizontalScroll: number): void;
@@ -263,6 +293,7 @@ declare module awk.grid {
         removePivotColumn(column: Column): void;
         addValueColumn(column: Column): void;
         removeValueColumn(column: Column): void;
+        private doesColumnExistInGrid(column);
         setColumnWidth(column: Column, newWidth: number): void;
         private updateGroupWidthsAfterColumnResize(column);
         setColumnAggFunction(column: Column, aggFunc: string): void;
@@ -282,10 +313,11 @@ declare module awk.grid {
         getColumn(key: any): Column;
         getDisplayNameForCol(column: any): string;
         addChangeListener(listener: ColumnChangedListener): void;
-        fireColumnChanged(type: string, column?: Column): void;
+        getColumnGroup(name: string): ColumnGroup;
+        fireColumnChanged(event: ColumnChangeEvent): void;
         setColumns(columnDefs: any): void;
         private checkForDeprecatedItems(columnDefs);
-        headerGroupOpened(group: any): void;
+        columnGroupOpened(group: ColumnGroup, newValue: boolean): void;
         hideColumns(colIds: any, hide: any): void;
         private updateModel();
         private updateDisplayedColumns();
@@ -304,10 +336,12 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class ExpressionService {
-        expressionToFunctionCache: any;
-        evaluate(expression: any, params: any): any;
-        createExpressionFunction(expression: any): any;
-        createFunctionBody(expression: any): any;
+        private expressionToFunctionCache;
+        private logger;
+        init(loggerFactory: LoggerFactory): void;
+        evaluate(expression: string, params: any): any;
+        private createExpressionFunction(expression);
+        private createFunctionBody(expression);
     }
 }
 declare module awk.grid {
@@ -320,6 +354,7 @@ declare module awk.grid {
     class TextFilter implements Filter {
         private filterParams;
         private filterChangedCallback;
+        private filterModifiedCallback;
         private localeTextFunc;
         private valueGetter;
         private filterText;
@@ -350,6 +385,7 @@ declare module awk.grid {
     class NumberFilter implements Filter {
         private filterParams;
         private filterChangedCallback;
+        private filterModifiedCallback;
         private localeTextFunc;
         private valueGetter;
         private filterNumber;
@@ -429,6 +465,7 @@ declare module awk.grid {
         private rowHeight;
         private model;
         private filterChangedCallback;
+        private filterModifiedCallback;
         private valueGetter;
         private rowsInBodyContainer;
         private colDef;
@@ -1287,7 +1324,7 @@ declare module awk.grid {
         /** Expression or function to get the cells value. */
         valueGetter?: string | Function;
         /** To provide custom rendering to the header. */
-        headerCellRenderer?: Function;
+        headerCellRenderer?: Function | Object;
         /** CSS class for the header */
         headerClass?: (params: any) => any | string[];
         /** Initial width, in pixels, of the cell */
@@ -1396,6 +1433,7 @@ declare module awk.grid {
         selectionChanged?(): void;
         beforeFilterChanged?(): void;
         afterFilterChanged?(): void;
+        filterModified?(): void;
         beforeSortChanged?(): void;
         afterSortChanged?(): void;
         virtualRowRemoved?(row: any, rowIndex: number): void;
@@ -1419,6 +1457,7 @@ declare module awk.grid {
         icons?: any;
         groupInnerRenderer?(params: any): void;
         groupRowInnerRenderer?(params: any): void;
+        groupRowRenderer?: Function | Object;
         colWidth?: number;
         headerHeight?: number;
         pinnedColumnCount?: number;
@@ -1427,6 +1466,7 @@ declare module awk.grid {
         suppressScrollLag?(): boolean;
         suppressMenuHide?: boolean;
         slaveGrids?: GridOptions[];
+        debug?: boolean;
     }
 }
 declare module awk.grid {
@@ -1544,6 +1584,7 @@ declare module awk.grid {
         setFinished(): void;
         getQuickFilter(): string;
         onQuickFilterChanged(newFilter: any): void;
+        onFilterModified(): void;
         onFilterChanged(): void;
         onRowClicked(event: any, rowIndex: any, node: any): void;
         showLoadingPanel(show: any): void;
@@ -1565,7 +1606,6 @@ declare module awk.grid {
         doLayout(): void;
     }
 }
-declare var angular: any;
 declare var exports: any;
 declare var module: any;
 declare module awk {
@@ -1573,7 +1613,9 @@ declare module awk {
         getGui(): any;
         isFilterActive(): boolean;
         doesFilterPass(params: any): boolean;
-        afterGuiAttached?(): void;
+        afterGuiAttached?(params?: {
+            hidePopup?: Function;
+        }): void;
         onNewRowsLoaded?(): void;
     }
 }
