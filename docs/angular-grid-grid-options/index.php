@@ -245,10 +245,6 @@ include '../documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>filterClosedOnEscPressed</th>
-            <td>Set to true to close filter popup when the escape key is pressed.</td>
-        </tr>
-        <tr>
             <th>suppressHorizontalScroll</th>
             <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
                 and will scroll with a master grid.</td>

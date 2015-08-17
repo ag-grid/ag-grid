@@ -7,11 +7,9 @@ module awk.grid {
     export class PopupService {
 
         private ePopupParent: any;
-        private gridOptionsWrapper: GridOptionsWrapper;
 
-        public init(ePopupParent: any, gridOptionsWrapper: GridOptionsWrapper) {
+        public init(ePopupParent: any) {
             this.ePopupParent = ePopupParent;
-            this.gridOptionsWrapper = gridOptionsWrapper;
         }
 
         public positionPopup(eventSource: any, ePopup: any, minWidth: any) {
@@ -40,7 +38,7 @@ module awk.grid {
         //adds an element to a div, but also listens to background checking for clicks,
         //so that when the background is clicked, the child is removed again, giving
         //a model look to popups.
-        public addAsModalPopup(eChild: any) {
+        public addAsModalPopup(eChild: any, closeOnEsc: boolean) {
             var eBody = document.body;
             if (!eBody) {
                 console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -59,7 +57,7 @@ module awk.grid {
             // if we add these listeners now, then the current mouse
             // click will be included, which we don't want
             setTimeout(function() {
-                if(that.gridOptionsWrapper.isFilterClosedOnEscPressed()) {
+                if(closeOnEsc) {
                     eBody.addEventListener('keydown', hidePopupOnEsc);
                 }
                 eBody.addEventListener('click', hidePopup);

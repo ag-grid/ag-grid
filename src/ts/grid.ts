@@ -201,7 +201,7 @@ module awk.grid {
                 dontFill: forPrint,
                 name: 'eRootPanel'
             });
-            popupService.init(this.eRootPanel.getGui(), gridOptionsWrapper);
+            popupService.init(this.eRootPanel.getGui());
 
             // default is we don't show paging panel, this is set to true when datasource is set
             this.eRootPanel.setSouthVisible(false);

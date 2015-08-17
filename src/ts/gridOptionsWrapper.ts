@@ -41,7 +41,6 @@ module awk.grid {
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
-        public isFilterClosedOnEscPressed() { return isTrue(this.gridOptions.filterClosedOnEscPressed); }
         public getRowStyle() { return this.gridOptions.rowStyle; }
         public getRowClass() { return this.gridOptions.rowClass; }
         public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }

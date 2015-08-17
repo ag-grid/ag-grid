@@ -80,7 +80,6 @@ module awk.grid {
         isScrollLag?(): boolean;
         suppressScrollLag?(): boolean;
         suppressMenuHide?: boolean;
-        filterClosedOnEscPressed?: boolean;
         slaveGrids?: GridOptions[];
         debug?: boolean;
     }
