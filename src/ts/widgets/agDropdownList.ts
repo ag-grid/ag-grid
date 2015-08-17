@@ -77,7 +77,7 @@ module awk.grid {
         onClick() {
             var agListGui = this.agList.getGui();
             this.popupService.positionPopup(this.eGui, agListGui, -1);
-            this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui);
+            this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
         }
 
         getGui() {
