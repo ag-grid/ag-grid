@@ -405,7 +405,7 @@ module awk.grid {
             var renderedRow = this.renderedRows[rowIndex];
             var column = this.columnModel.getDisplayedColumns()[colIndex];
             if (renderedRow && column) {
-                var eCell = renderedRow.getCellForCol(column.colId);
+                var eCell = renderedRow.getCellForCol(column);
                 this.focusCell(eCell, rowIndex, colIndex, column.colDef, true);
             }
         }
