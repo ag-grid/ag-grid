@@ -7,7 +7,7 @@
 
 module awk.grid {
 
-    var utils = Utils;
+    var _ = Utils;
 
     export class FilterManager {
 
@@ -34,33 +34,27 @@ module awk.grid {
         }
 
         public setFilterModel(model: any) {
-            var that = this;
             if (model) {
                 // mark the filters as we set them, so any active filters left over we stop
-                var processedFields = Object.keys(model);
-                utils.iterateObject(this.allFilters, function (key, filterWrapper) {
-                    var field = filterWrapper.column.colDef.field;
-                    utils.removeFromArray(processedFields, field);
-                    if (field) {
-                        var newModel = model[field];
-                        that.setModelOnFilterWrapper(filterWrapper.filter, newModel);
-                    } else {
-                        console.warn('Warning ag-grid - no field found for column while doing setFilterModel');
-                    }
+                var modelKeys = Object.keys(model);
+                _.iterateObject(this.allFilters, (colId, filterWrapper) => {
+                    _.removeFromArray(modelKeys, colId);
+                    var newModel = model[colId];
+                    this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
                 });
                 // at this point, processedFields contains data for which we don't have a filter working yet
-                utils.iterateArray(processedFields, function (field) {
-                    var column = that.columnModel.getColumn(field);
+                _.iterateArray(modelKeys, (colId) => {
+                    var column = this.columnModel.getColumn(colId);
                     if (!column) {
-                        console.warn('Warning ag-grid - no column found for field ' + field);
+                        console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                         return;
                     }
-                    var filterWrapper = that.getOrCreateFilterWrapper(column);
-                    that.setModelOnFilterWrapper(filterWrapper.filter, model[field]);
+                    var filterWrapper = this.getOrCreateFilterWrapper(column);
+                    this.setModelOnFilterWrapper(filterWrapper.filter, model[colId]);
                 });
             } else {
-                utils.iterateObject(this.allFilters, function (key, filterWrapper) {
-                    that.setModelOnFilterWrapper(filterWrapper.filter, null);
+                _.iterateObject(this.allFilters, (key, filterWrapper) => {
+                    this.setModelOnFilterWrapper(filterWrapper.filter, null);
                 });
             }
         }
@@ -81,7 +75,7 @@ module awk.grid {
 
         public getFilterModel() {
             var result = <any>{};
-            utils.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
+            _.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
                 // because user can provide filters, we provide useful error checking and messages
                 if (typeof filterWrapper.filter.getApi !== 'function') {
                     console.warn('Warning ag-grid - filter missing getApi method, which is needed for getFilterModel');
@@ -94,12 +88,7 @@ module awk.grid {
                 }
                 var model = filterApi.getModel();
                 if (model) {
-                    var field = filterWrapper.column.colDef.field;
-                    if (!field) {
-                        console.warn('Warning ag-grid - cannot get filter model when no field value present for column');
-                    } else {
-                        result[field] = model;
-                    }
+                    result[key] = model;
                 }
             });
             return result;
@@ -112,11 +101,8 @@ module awk.grid {
         // returns true if at least one filter is active
         private isFilterPresent() {
             var atLeastOneActive = false;
-            var that = this;
 
-            var keys = Object.keys(this.allFilters);
-            keys.forEach(function (key) {
-                var filterWrapper = that.allFilters[key];
+            _.iterateObject(this.allFilters, function (key, filterWrapper) {
                 if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
                     console.error('Filter is missing method isFilterActive');
                 }
@@ -124,6 +110,7 @@ module awk.grid {
                     atLeastOneActive = true;
                 }
             });
+
             return atLeastOneActive;
         }
 
@@ -252,7 +239,7 @@ module awk.grid {
             var eFilterGui = document.createElement('div');
             eFilterGui.className = 'ag-filter';
             var guiFromFilter = filterWrapper.filter.getGui();
-            if (utils.isNodeOrElement(guiFromFilter)) {
+            if (_.isNodeOrElement(guiFromFilter)) {
                 //a dom node or element was returned, so add child
                 eFilterGui.appendChild(guiFromFilter);
             } else {

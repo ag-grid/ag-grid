@@ -339,8 +339,8 @@ module awk.grid {
                 }
                 for (var i = 0; i < list.length; i++) {
                     var colDefMatches = list[i].colDef === key;
-                    var fieldMatches = list[i].colId === key;
-                    if (colDefMatches || fieldMatches) {
+                    var idMatches = list[i].colId === key;
+                    if (colDefMatches || idMatches) {
                         return list[i];
                     }
                 }
