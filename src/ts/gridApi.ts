@@ -247,5 +247,8 @@ module awk.grid {
             return this.valueService.getValue(colDef, data, node);
         }
 
+        public getColumnController(): ColumnController {
+            return this.columnController;
+        }
     }
 }
