@@ -49,6 +49,10 @@ include '../documentation_header.php';
             <td>Tooltip for the column header</td>
         </tr>
         <tr>
+            <th>headerClass</th>
+            <td>Class to use for the cell. Can be string, array of strings, or function.</td>
+        </tr>
+        <tr>
             <th>valueGetter(params)</th>
             <td>Expression or function to get the cells value.</td>
         </tr>
