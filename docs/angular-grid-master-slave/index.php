@@ -88,6 +88,7 @@ gridOptionsMaster = {
         note the following:
         <li>The top grid has no horizontal scroll bar, suppressed via a grid option.</li>
         <li>The bottom grid has no header, suppressed via a grid option.</li>
+        <li>sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column widths as the slave.</li>
     </p>
 
     <show-example example="exampleFloatingFooter"></show-example>

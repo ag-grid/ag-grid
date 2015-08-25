@@ -69,4 +69,8 @@ module.controller("exampleCtrl", function($scope, $http) {
             gridOptionsTop.api.setRows(res.data);
         });
 
+    $scope.btSizeColsToFix = function() {
+        gridOptionsTop.api.sizeColumnsToFit();
+        console.log('btSizeColsToFix ');
+    };
 });

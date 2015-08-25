@@ -497,6 +497,9 @@ module awk.grid {
                 return column.colDef.suppressSizeToFit !== true;
             });
 
+            // make a copy of the cols that are going to be resized
+            var colsToFireEventFor = colsToSpread.slice(0);
+
             var finishedResizing = false;
             while (!finishedResizing) {
                 finishedResizing = true;
@@ -539,7 +542,10 @@ module awk.grid {
             }
 
             // widths set, refresh the gui
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_RESIZED));
+            colsToFireEventFor.forEach( (column: Column) => {
+                var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_RESIZED).withColumn(column);
+                this.fireColumnChanged(event);
+            });
 
             function moveToNotSpread(column: Column) {
                 _.removeFromArray(colsToSpread, column);
