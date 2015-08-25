@@ -66,7 +66,7 @@ module awk.grid {
 
             var eventFromChild: any = null;
 
-            function hidePopupOnEsc(event) {
+            function hidePopupOnEsc(event: any) {
                 var key = event.which || event.keyCode;
                 if(key === grid.Constants.KEY_ESCAPE) {
                     hidePopup(null);

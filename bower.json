@@ -15,6 +15,9 @@
   "moduleType": [
     "node"
   ],
+  "typescript": {
+    "definitions": "dist/angular-grid.d.ts"
+  },
   "keywords": [
     "grid",
     "data",
