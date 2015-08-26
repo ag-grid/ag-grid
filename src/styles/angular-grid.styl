@@ -38,6 +38,12 @@
     overflow: hidden
     height: 100%
 
+.ag-pinned-header 
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
+
 .ag-header-viewport
     box-sizing: border-box
     display: inline-block
@@ -113,7 +119,14 @@
 .ag-pinned-cols-viewport
     float: left
     position: absolute
-    overflow: hidden
+    overflow-x: hidden
+    overflow-y: scroll
+    height: 100%
+    padding-right: 25px
+    -ms-overflow-style: none !important
+
+.ag-pinned-header::-webkit-scrollbar
+    width: 0 !important
 
 .ag-pinned-cols-container
     display: inline-block
