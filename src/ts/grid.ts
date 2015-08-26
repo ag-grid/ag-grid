@@ -607,13 +607,12 @@ module awk.grid {
         }
 
         public doLayout() {
-            // need to do layout first, as drawVirtualRows and setPinnedColHeight
+            // need to do layout first, as drawVirtualRows
             // need to know the result of the resizing of the panels.
             var sizeChanged = this.eRootPanel.doLayout();
             // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
             if (sizeChanged) {
                 this.rowRenderer.drawVirtualRows();
-                this.gridPanel.setPinnedColHeight();
             }
         }
     }

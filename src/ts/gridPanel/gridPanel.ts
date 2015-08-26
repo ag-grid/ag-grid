@@ -310,14 +310,6 @@ module awk.grid {
             }
         }
 
-        // see if a grey box is needed at the bottom of the pinned col
-        public setPinnedColHeight() {
-            if (!this.forPrint) {
-                var bodyHeight = this.eBodyViewport.offsetHeight;
-                this.ePinnedColsViewport.style.height = bodyHeight + "px";
-            }
-        }
-
         public setHorizontalScrollPosition(hScrollPosition: number): void {
             this.eBodyViewport.scrollLeft = hScrollPosition;
         }

@@ -1136,7 +1136,6 @@ declare module awk.grid {
         setPinnedColContainerWidth(): void;
         showPinnedColContainersIfNeeded(): void;
         setHeaderHeight(): void;
-        setPinnedColHeight(): void;
         setHorizontalScrollPosition(hScrollPosition: number): void;
         private addScrollListener();
         private requestDrawVirtualRows();
