@@ -232,7 +232,10 @@ module awk.grid {
         }
 
         static removeFromArray<T>(array: T[], object: T) {
-            array.splice(array.indexOf(object), 1);
+            if (array.indexOf(object) >= 0) {
+                array.splice(array.indexOf(object), 1);
+            }
+            
         }
 
         static defaultComparator(valueA: any, valueB: any) {
