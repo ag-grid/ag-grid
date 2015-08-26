@@ -266,7 +266,11 @@ module awk.grid {
             var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui, true);
 
             if (filterWrapper.filter.afterGuiAttached) {
-                filterWrapper.filter.afterGuiAttached({ hidePopup: hidePopup });
+                var params = {
+                    hidePopup: hidePopup,
+                    eventSource: eventSource
+                };
+                filterWrapper.filter.afterGuiAttached(params);
             }
         }
     }
