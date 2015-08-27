@@ -125,6 +125,12 @@ module awk.grid {
             this.refreshVirtualRows();
         }
 
+	public setFilteredDisplayValues(values: any): void {
+    	    this.model.setFilteredDisplayValues(values)
+            this.setContainerHeight();
+            this.refreshVirtualRows();
+        }
+
         private createTemplate() {
             return template
                 .replace('[SELECT ALL]', this.localeTextFunc('selectAll', 'Select All'))

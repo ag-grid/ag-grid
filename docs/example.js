@@ -82,6 +82,7 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+        enableFilterExcel: true, //If true, changing filtering in one column will have effect on filters in all columns, inspirated by Excel
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
