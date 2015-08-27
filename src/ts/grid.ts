@@ -28,7 +28,6 @@ module awk.grid {
         private virtualRowCallbacks = <any>{};
         private gridOptions: GridOptions;
         private gridOptionsWrapper: GridOptionsWrapper;
-        private quickFilter: string;
         private inMemoryRowController: InMemoryRowController;
         private doingVirtualPaging: boolean;
         private paginationController: PaginationController;
@@ -62,7 +61,6 @@ module awk.grid {
                 this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService);
 
             var that = this;
-            this.quickFilter = null;
 
             // if using angular, watch for quickFilter changes
             if ($scope) {
@@ -308,28 +306,9 @@ module awk.grid {
             this.finished = true;
         }
 
-        public getQuickFilter() {
-            return this.quickFilter;
-        }
-
         public onQuickFilterChanged(newFilter: any) {
-            if (newFilter === undefined || newFilter === "") {
-                newFilter = null;
-            }
-            if (this.quickFilter !== newFilter) {
-                if (this.gridOptionsWrapper.isVirtualPaging()) {
-                    console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
-                    return;
-                }
-
-                //want 'null' to mean to filter, so remove undefined and empty string
-                if (newFilter === undefined || newFilter === "") {
-                    newFilter = null;
-                }
-                if (newFilter !== null) {
-                    newFilter = newFilter.toUpperCase();
-                }
-                this.quickFilter = newFilter;
+            var actuallyChanged = this.filterManager.setQuickFilter(newFilter);
+            if (actuallyChanged) {
                 this.onFilterChanged();
             }
         }
@@ -344,6 +323,7 @@ module awk.grid {
             if (typeof this.gridOptionsWrapper.getBeforeFilterChanged() === 'function') {
                 this.gridOptionsWrapper.getBeforeFilterChanged()();
             }
+            this.filterManager.updateFilterStatus();
             this.headerRenderer.updateFilterIcons();
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
                 // if doing server side filtering, changing the sort has the impact

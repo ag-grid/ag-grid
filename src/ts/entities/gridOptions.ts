@@ -82,6 +82,7 @@ module awk.grid {
         suppressMenuHide?: boolean;
         slaveGrids?: GridOptions[];
         debug?: boolean;
+        filterHideNotAvailable?: boolean;
     }
 
 }
