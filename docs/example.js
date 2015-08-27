@@ -82,7 +82,7 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        enableFilterExcel: true, //If true, changing filtering in one column will have effect on filters in all columns, inspirated by Excel
+        //filterHideNotAvailable: true, //If true, changing filtering in one column will have effect on filters in all columns, inspirated by Excel
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
@@ -169,13 +169,14 @@ gridsModule.controller('mainController', function($scope) {
         firstColumn,
         {headerName: "Country", field: "country", headerGroup: 'Participant', width: 150, editable: true, cellRenderer: countryCellRenderer, filter: 'set',
             floatCell: true,
-            filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
+            filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20, newRowsAction: 'keep'},
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
             }
         },
         {headerName: "Language", field: "language", headerGroup: 'Participant', width: 150, editable: true, filter: 'set', cellRenderer: languageCellRenderer,
+            filterParams: {newRowsAction: 'keep'},
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'

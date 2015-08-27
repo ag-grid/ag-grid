@@ -304,8 +304,7 @@ module awk.grid {
             this.rowsAfterSort = rowNodesReadyForSorting;
         }
 
-        // private
-        recursivelyResetSort(rowNodes: any[]) {
+        private recursivelyResetSort(rowNodes: any[]) {
             if (!rowNodes) {
                 return;
             }
@@ -392,32 +391,29 @@ module awk.grid {
             this.rowsAfterGroup = rowsAfterGroup;
         }
 
-        // private
-        doFilter() {
-            var doingFilter: any;
+        private doFilter() {
+            var doingFilter: boolean;
 
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
                 doingFilter = false;
             } else {
-                var quickFilterPresent = this.angularGrid.getQuickFilter() !== null;
-                var advancedFilterPresent = this.filterManager.isFilterPresent();
-                doingFilter = quickFilterPresent || advancedFilterPresent;
+                doingFilter = this.filterManager.isAnyFilterPresent();
             }
 
             var rowsAfterFilter: any;
             if (doingFilter) {
-                rowsAfterFilter = this.filterItems(this.rowsAfterGroup, quickFilterPresent, advancedFilterPresent);
+                rowsAfterFilter = this.filterItems(this.rowsAfterGroup);
             } else {
                 // do it here
                 rowsAfterFilter = this.rowsAfterGroup;
                 this.recursivelyResetFilter(this.rowsAfterGroup);
             }
-	    this.filterManager.refreshDisplayedValues();
+
+	        this.filterManager.refreshDisplayedValues();
             this.rowsAfterFilter = rowsAfterFilter;
         }
 
-        // private
-        filterItems(rowNodes: any, quickFilterPresent: any, advancedFilterPresent: any) {
+        private filterItems(rowNodes: any) {
             var result = <any>[];
 
             for (var i = 0, l = rowNodes.length; i < l; i++) {
@@ -425,13 +421,13 @@ module awk.grid {
 
                 if (node.group) {
                     // deal with group
-                    node.childrenAfterFilter = this.filterItems(node.children, quickFilterPresent, advancedFilterPresent);
+                    node.childrenAfterFilter = this.filterItems(node.children);
                     if (node.childrenAfterFilter.length > 0) {
                         node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
                         result.push(node);
                     }
                 } else {
-                    if (this.doesRowPassFilter(node, quickFilterPresent, advancedFilterPresent)) {
+                    if (this.filterManager.doesRowPassFilter(node)) {
                         result.push(node);
                     }
                 }
@@ -440,8 +436,7 @@ module awk.grid {
             return result;
         }
 
-        // private
-        recursivelyResetFilter(nodes: any) {
+        private recursivelyResetFilter(nodes: any) {
             if (!nodes) {
                 return;
             }
@@ -455,7 +450,6 @@ module awk.grid {
             }
         }
 
-        // private
         // rows: the rows to put into the model
         // firstId: the first id to use, used for paging, where we are not on the first page
         public setAllRows(rows: any, firstId?: any) {
@@ -581,43 +575,6 @@ module awk.grid {
             return footerNode;
         }
 
-        // private
-        doesRowPassFilter(node: any, quickFilterPresent: any, advancedFilterPresent: any) {
-            //first up, check quick filter
-            if (quickFilterPresent) {
-                if (!node.quickFilterAggregateText) {
-                    this.aggregateRowForQuickFilter(node);
-                }
-                if (node.quickFilterAggregateText.indexOf(this.angularGrid.getQuickFilter()) < 0) {
-                    //quick filter fails, so skip item
-                    return false;
-                }
-            }
-
-            //second, check advanced filter
-            if (advancedFilterPresent) {
-                if (!this.filterManager.doesFilterPass(node)) {
-                    return false;
-                }
-            }
-
-            //got this far, all filters pass
-            return true;
-        }
-
-        // private
-        aggregateRowForQuickFilter(node: any) {
-            var aggregatedText = '';
-            var that = this;
-            this.columnController.getAllColumns().forEach(function (column: Column) {
-                var data = node.data;
-                var value = that.valueService.getValue(column.colDef, data, node);
-                if (value && value !== '') {
-                    aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
-                }
-            });
-            node.quickFilterAggregateText = aggregatedText;
-        }
     }
 }
 

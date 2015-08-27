@@ -27,6 +27,7 @@ module awk.grid {
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
         public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
+        public isFilterHideNotAvailable() { return isTrue(this.gridOptions.filterHideNotAvailable); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
         public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }

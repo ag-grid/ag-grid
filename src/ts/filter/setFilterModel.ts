@@ -1,4 +1,5 @@
 /// <reference path="../utils.ts" />
+/// <reference path="../entities/colDef.ts" />
 
 module awk.grid {
 
@@ -6,17 +7,17 @@ module awk.grid {
 
     export class SetFilterModel {
 
-        selectedValuesMap: any;
-        colDef: any;
-        rowModel: any;
-        valueGetter: any;
-        displayedValues: any;
-	filteredDisplayValues: any;
-        uniqueValues: any;
-        miniFilter: any;
-        selectedValuesCount: any;
+        private selectedValuesMap: any;
+        private colDef: ColDef;
+        private rowModel: any;
+        private valueGetter: any;
+        private displayedValues: any;
+        private filteredDisplayValues: any;
+        private uniqueValues: any;
+        private miniFilter: any;
+        private selectedValuesCount: any;
 
-        constructor(colDef: any, rowModel: any, valueGetter: any) {
+        constructor(colDef: ColDef, rowModel: any, valueGetter: any) {
             this.colDef = colDef;
             this.rowModel = rowModel;
             this.valueGetter = valueGetter;
@@ -37,7 +38,7 @@ module awk.grid {
         // if keepSelection not set will always select all filters
         // if keepSelection set will keep current state of selected filters
         //    unless selectAll chosen in which case will select all
-        refreshUniqueValues(keepSelection: any, isSelectAll: boolean) {
+        public refreshUniqueValues(keepSelection: any, isSelectAll: boolean) {
             this.createUniqueValues();
             this.filteredDisplayValues = this.uniqueValues;
 
@@ -53,9 +54,10 @@ module awk.grid {
             }
         }
 
-        createUniqueValues() {
-            if (this.colDef.filterParams && this.colDef.filterParams.values) {
-                this.uniqueValues = utils.toStrings(this.colDef.filterParams.values);
+        private createUniqueValues() {
+            var filterParams = <SetFilterParameters> this.colDef.filterParams;
+            if (this.colDef.filterParams && filterParams.values) {
+                this.uniqueValues = utils.toStrings(filterParams.values);
             } else {
                 this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues(this.rowModel.getTopLevelNodes()));
             }
@@ -67,12 +69,13 @@ module awk.grid {
             }
         }
 
-	setFilteredDisplayValues(rows: any) {
-    	    this.filteredDisplayValues = utils.toStrings(this.iterateThroughNodesForValues(rows));
-	    this.filterDisplayedValues()
-    	};
+    	public setFilteredDisplayValues(rows: any) {
+            var values: any[] = this.iterateThroughNodesForValues(rows);
+    	    this.filteredDisplayValues = utils.toStrings(values);
+    	    this.filterDisplayedValues();
+    	}
 
-        iterateThroughNodesForValues(topLevelNodes: any) {
+        private iterateThroughNodesForValues(topLevelNodes: any): any[] {
             var uniqueCheck = <any>{};
             var result = <any>[];
 
@@ -113,8 +116,8 @@ module awk.grid {
             return result;
         }
 
-//sets mini filter. returns true if it changed from last value, otherwise false
-        setMiniFilter(newMiniFilter: any) {
+        //sets mini filter. returns true if it changed from last value, otherwise false
+        public setMiniFilter(newMiniFilter: any) {
             newMiniFilter = utils.makeNull(newMiniFilter);
             if (this.miniFilter === newMiniFilter) {
                 //do nothing if filter has not changed
@@ -125,11 +128,11 @@ module awk.grid {
             return true;
         }
 
-        getMiniFilter() {
+        public getMiniFilter() {
             return this.miniFilter;
         }
 
-        filterDisplayedValues() {
+        private filterDisplayedValues() {
             // if no filter, just use the unique values
             if (this.miniFilter === null) {
                 this.displayedValues = this.filteredDisplayValues;
@@ -147,15 +150,15 @@ module awk.grid {
             }
         }
 
-        getDisplayedValueCount() {
+        public getDisplayedValueCount() {
             return this.displayedValues.length;
         }
 
-        getDisplayedValue(index: any) {
+        public getDisplayedValue(index: any) {
             return this.displayedValues[index];
         }
 
-        selectEverything() {
+        public selectEverything() {
             var count = this.uniqueValues.length;
             for (var i = 0; i < count; i++) {
                 var value = this.uniqueValues[i];
@@ -164,50 +167,50 @@ module awk.grid {
             this.selectedValuesCount = count;
         }
 
-        isFilterActive() {
+        public isFilterActive() {
             return this.uniqueValues.length !== this.selectedValuesCount;
         }
 
-        selectNothing() {
+        public selectNothing() {
             this.selectedValuesMap = {};
             this.selectedValuesCount = 0;
         }
 
-        getUniqueValueCount() {
+        public getUniqueValueCount() {
             return this.uniqueValues.length;
         }
 
-        getUniqueValue(index: any) {
+        public getUniqueValue(index: any) {
             return this.uniqueValues[index];
         }
 
-        unselectValue(value: any) {
+        public unselectValue(value: any) {
             if (this.selectedValuesMap[value] !== undefined) {
                 delete this.selectedValuesMap[value];
                 this.selectedValuesCount--;
             }
         }
 
-        selectValue(value: any) {
+        public selectValue(value: any) {
             if (this.selectedValuesMap[value] === undefined) {
                 this.selectedValuesMap[value] = null;
                 this.selectedValuesCount++;
             }
         }
 
-        isValueSelected(value: any) {
+        public isValueSelected(value: any) {
             return this.selectedValuesMap[value] !== undefined;
         }
 
-        isEverythingSelected() {
+        public isEverythingSelected() {
             return this.uniqueValues.length === this.selectedValuesCount;
         }
 
-        isNothingSelected() {
+        public isNothingSelected() {
             return this.uniqueValues.length === 0;
         }
 
-        getModel() {
+        public getModel() {
             if (!this.isFilterActive()) {
                 return null;
             }
@@ -218,7 +221,7 @@ module awk.grid {
             return selectedValues;
         }
 
-        setModel(model: any, isSelectAll: boolean) {
+        public setModel(model: any, isSelectAll: boolean) {
             if (model && !isSelectAll) {
                 this.selectNothing();
                 for (var i = 0; i < model.length; i++) {

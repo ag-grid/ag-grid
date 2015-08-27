@@ -4,6 +4,7 @@
 /// <reference path="setFilter.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
+/// <reference path="../grid.ts" />
 
 module awk.grid {
 
@@ -16,21 +17,25 @@ module awk.grid {
         private gridOptionsWrapper: GridOptionsWrapper;
         private grid: any;
         private allFilters: any;
-        private columnModel: any;
         private rowModel: any;
         private popupService: PopupService;
         private valueService: ValueService;
+        private columnController: ColumnController;
+        private quickFilter: string;
+        private advancedFilterPresent: boolean;
 
-        public init(grid: any, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
-                    columnModel: any, popupService: PopupService, valueService: ValueService) {
+        public init(grid: Grid, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
+                    columnController: ColumnController, popupService: PopupService, valueService: ValueService) {
             this.$compile = $compile;
             this.$scope = $scope;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.grid = grid;
             this.allFilters = {};
-            this.columnModel = columnModel;
+            this.columnController = columnController;
             this.popupService = popupService;
             this.valueService = valueService;
+            this.columnController = columnController;
+            this.quickFilter = null;
         }
 
         public setFilterModel(model: any) {
@@ -44,7 +49,7 @@ module awk.grid {
                 });
                 // at this point, processedFields contains data for which we don't have a filter working yet
                 _.iterateArray(modelKeys, (colId) => {
-                    var column = this.columnModel.getColumn(colId);
+                    var column = this.columnController.getColumn(colId);
                     if (!column) {
                         console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                         return;
@@ -99,7 +104,7 @@ module awk.grid {
         }
 
         // returns true if at least one filter is active
-        private isFilterPresent() {
+        private isAdvancedFilterPresent() {
             var atLeastOneActive = false;
 
             _.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -112,6 +117,10 @@ module awk.grid {
             });
 
             return atLeastOneActive;
+        }
+
+        public isAnyFilterPresent(): boolean {
+            return this.isQuickFilterPresent() || this.isAdvancedFilterPresent();
         }
 
         // returns true if given col has a filter active
@@ -127,7 +136,7 @@ module awk.grid {
             return filterPresent;
         }
 
-        private doesFilterPass(node: any, skipColumnFilter: any) {
+        private doesFilterPass(node: any, skipColumnFilter?: any) {
             var data = node.data;
             var colKeys = Object.keys(this.allFilters);
             for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
@@ -157,29 +166,99 @@ module awk.grid {
             return true;
         }
 
-	public refreshDisplayedValues() {
-	    	if (!this.grid.gridOptions.enableFilterExcel) {
+        // returns true if it has changed (not just same value again)
+        public setQuickFilter(newFilter: any): boolean {
+            if (newFilter === undefined || newFilter === "") {
+                newFilter = null;
+            }
+            if (this.quickFilter !== newFilter) {
+                if (this.gridOptionsWrapper.isVirtualPaging()) {
+                    console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+                    return;
+                }
+
+                //want 'null' to mean to filter, so remove undefined and empty string
+                if (newFilter === undefined || newFilter === "") {
+                    newFilter = null;
+                }
+                if (newFilter !== null) {
+                    newFilter = newFilter.toUpperCase();
+                }
+                this.quickFilter = newFilter;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public updateFilterStatus(): void {
+            this.advancedFilterPresent = this.isAdvancedFilterPresent();
+        }
+
+        private isQuickFilterPresent(): boolean {
+            return this.quickFilter !== null;
+        }
+
+        public doesRowPassFilter(node: any) {
+            //first up, check quick filter
+            if (this.isQuickFilterPresent()) {
+                if (!node.quickFilterAggregateText) {
+                    this.aggregateRowForQuickFilter(node);
+                }
+                if (node.quickFilterAggregateText.indexOf(this.quickFilter) < 0) {
+                    //quick filter fails, so skip item
+                    return false;
+                }
+            }
+
+            //second, check advanced filter
+            if (this.advancedFilterPresent) {
+                if (!this.doesFilterPass(node)) {
+                    return false;
+                }
+            }
+
+            //got this far, all filters pass
+            return true;
+        }
+
+        private aggregateRowForQuickFilter(node: any) {
+            var aggregatedText = '';
+            var that = this;
+            this.columnController.getAllColumns().forEach(function (column: Column) {
+                var data = node.data;
+                var value = that.valueService.getValue(column.colDef, data, node);
+                if (value && value !== '') {
+                    aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
+                }
+            });
+            node.quickFilterAggregateText = aggregatedText;
+        }
+
+        public refreshDisplayedValues() {
+	    	if (!this.gridOptionsWrapper.isFilterHideNotAvailable()) {
 	    		return
 	    	}
-	    	var rows = this.rowModel.getTopLevelNodes()
-		var colKeys = Object.keys(this.allFilters);
 
-		for (var i = 0, l = colKeys.length; i < l; i++) {
-		    var colId = colKeys[i];
-		    var filterWrapper = this.allFilters[colId];
-		    // if no filter, always pass
-		    if (filterWrapper === undefined || (typeof filterWrapper.filter.setFilteredDisplayValues !== 'function')) {
-			continue;
-		    }
-		    var displayedFilterValues = new Array();
-			for (var j = 0; j < rows.length; j++) {
-				if (this.doesFilterPass(rows[j], i)) {
-					displayedFilterValues.push(rows[j])
-				}
-			}
-		    filterWrapper.filter.setFilteredDisplayValues(displayedFilterValues)
-		}
-	}
+	    	var rows = this.rowModel.getTopLevelNodes();
+    		var colKeys = Object.keys(this.allFilters);
+
+            for (var i = 0, l = colKeys.length; i < l; i++) {
+                var colId = colKeys[i];
+                var filterWrapper = this.allFilters[colId];
+                // if no filter, always pass
+                if (filterWrapper === undefined || (typeof filterWrapper.filter.setFilteredDisplayValues !== 'function')) {
+                    continue;
+                }
+                var displayedFilterValues = new Array();
+                for (var j = 0; j < rows.length; j++) {
+                    if (this.doesFilterPass(rows[j], i)) {
+                        displayedFilterValues.push(rows[j])
+                    }
+                }
+                filterWrapper.filter.setFilteredDisplayValues(displayedFilterValues)
+            }
+        }
 
         public onNewRowsLoaded() {
             var that = this;
