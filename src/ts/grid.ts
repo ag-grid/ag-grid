@@ -323,7 +323,7 @@ module awk.grid {
             if (typeof this.gridOptionsWrapper.getBeforeFilterChanged() === 'function') {
                 this.gridOptionsWrapper.getBeforeFilterChanged()();
             }
-            this.filterManager.updateFilterStatus();
+            this.filterManager.onFilterChanged();
             this.headerRenderer.updateFilterIcons();
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
                 // if doing server side filtering, changing the sort has the impact

@@ -103,7 +103,7 @@ module awk.grid {
             this.rowModel = rowModel;
         }
 
-        // returns true if at least one filter is active
+        // returns true if any advanced filter (ie not quick filter) active
         private isAdvancedFilterPresent() {
             var atLeastOneActive = false;
 
@@ -119,6 +119,7 @@ module awk.grid {
             return atLeastOneActive;
         }
 
+        // returns true if quickFilter or advancedFilter
         public isAnyFilterPresent(): boolean {
             return this.isQuickFilterPresent() || this.isAdvancedFilterPresent();
         }
@@ -191,8 +192,14 @@ module awk.grid {
             }
         }
 
-        public updateFilterStatus(): void {
+        public onFilterChanged(): void {
             this.advancedFilterPresent = this.isAdvancedFilterPresent();
+
+            _.iterateObject(this.allFilters, function (key, filterWrapper) {
+                if (filterWrapper.filter.onAnyFilterChanged) {
+                    filterWrapper.filter.onAnyFilterChanged();
+                }
+            });
         }
 
         private isQuickFilterPresent(): boolean {

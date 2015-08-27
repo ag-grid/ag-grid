@@ -28,9 +28,9 @@ module awk.grid {
             this.displayedValues = this.uniqueValues;
             this.filteredDisplayValues = this.uniqueValues;
             this.miniFilter = null;
-            //we use a map rather than an array for the selected values as the lookup
-            //for a map is much faster than the lookup for an array, especially when
-            //the length of the array is thousands of records long
+            // we use a map rather than an array for the selected values as the lookup
+            // for a map is much faster than the lookup for an array, especially when
+            // the length of the array is thousands of records long
             this.selectedValuesMap = {};
             this.selectEverything();
         }

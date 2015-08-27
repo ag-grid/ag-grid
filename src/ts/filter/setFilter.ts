@@ -125,11 +125,17 @@ module awk.grid {
             this.refreshVirtualRows();
         }
 
-    	public setFilteredDisplayValues(values: any): void {
-    	    this.model.setFilteredDisplayValues(values)
+        public onAnyFilterChanged(): void {
+
+        }
+
+/*
+        public setFilteredDisplayValues(values: any): void {
+    	    this.model.setFilteredDisplayValues(values);
             this.setContainerHeight();
             this.refreshVirtualRows();
         }
+*/
 
         private createTemplate() {
             return template
