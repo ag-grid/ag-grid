@@ -448,13 +448,16 @@ function numberNewValueHandler(params) {
     data[field] = valueAsNumber;
 }
 
-function PersonFilter(params) {
+function PersonFilter() {
+}
+
+PersonFilter.prototype.init = function (params) {
     this.$scope = params.$scope;
     this.$scope.onFilterChanged = function() {
         params.filterChangedCallback();
     };
     this.valueGetter = params.valueGetter;
-}
+};
 
 PersonFilter.prototype.getGui = function () {
     return '<div style="padding: 4px; width: 200px;">' +
@@ -491,7 +494,11 @@ PersonFilter.prototype.isFilterActive = function () {
     return value !== null && value !== undefined && value !== '';
 };
 
-function WinningsFilter(params) {
+function WinningsFilter() {
+}
+
+WinningsFilter.prototype.init = function (params) {
+
     var uniqueId = Math.random();
     this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");

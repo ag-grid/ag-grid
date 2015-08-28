@@ -3,31 +3,46 @@
 
 module awk.grid {
 
-    var utils = Utils;
+    var _ = Utils;
 
     export class SetFilterModel {
 
-        private selectedValuesMap: any;
         private colDef: ColDef;
+        private filterParams: SetFilterParameters;
+
         private rowModel: any;
         private valueGetter: any;
-        private displayedValues: any;
-        private filteredDisplayValues: any;
-        private uniqueValues: any;
+        private allUniqueValues: any; // all values in the table
+        private availableUniqueValues: any; // all values not filtered by other rows
+        private displayedValues: any; // all values we are rendering on screen (ie after mini filter)
         private miniFilter: any;
         private selectedValuesCount: any;
+        private selectedValuesMap: any;
 
-        constructor(colDef: ColDef, rowModel: any, valueGetter: any) {
+        // so make code more readable, we work these out once, and
+        // then refer to each time. both are derived from the filterParams
+        private showingAvailableOnly: boolean;
+        private usingProvidedSet: boolean;
+
+        private doesRowPassOtherFilters: any;
+
+        constructor(colDef: ColDef, rowModel: any, valueGetter: any, doesRowPassOtherFilters: any) {
             this.colDef = colDef;
             this.rowModel = rowModel;
             this.valueGetter = valueGetter;
+            this.doesRowPassOtherFilters = doesRowPassOtherFilters;
 
-            this.createUniqueValues();
+            this.filterParams = <SetFilterParameters> this.colDef.filterParams;
+            this.usingProvidedSet = this.filterParams && this.filterParams.values;
+            this.showingAvailableOnly = true;
+
+            this.createAllUniqueValues();
+            this.createAvailableUniqueValues();
 
             // by default, no filter, so we display everything
-            this.displayedValues = this.uniqueValues;
-            this.filteredDisplayValues = this.uniqueValues;
+            this.displayedValues = this.availableUniqueValues;
             this.miniFilter = null;
+
             // we use a map rather than an array for the selected values as the lookup
             // for a map is much faster than the lookup for an array, especially when
             // the length of the array is thousands of records long
@@ -39,13 +54,13 @@ module awk.grid {
         // if keepSelection set will keep current state of selected filters
         //    unless selectAll chosen in which case will select all
         public refreshUniqueValues(keepSelection: any, isSelectAll: boolean) {
-            this.createUniqueValues();
-            this.filteredDisplayValues = this.uniqueValues;
+            this.createAllUniqueValues();
+            this.createAvailableUniqueValues();
 
             var oldModel = Object.keys(this.selectedValuesMap);
 
             this.selectedValuesMap = {};
-            this.filterDisplayedValues();
+            this.processMiniFilter();
 
             if (keepSelection) {
                 this.setModel(oldModel, isSelectAll);
@@ -54,55 +69,68 @@ module awk.grid {
             }
         }
 
-        private createUniqueValues() {
-            var filterParams = <SetFilterParameters> this.colDef.filterParams;
-            if (this.colDef.filterParams && filterParams.values) {
-                this.uniqueValues = utils.toStrings(filterParams.values);
-            } else {
-                this.uniqueValues = utils.toStrings(this.iterateThroughNodesForValues(this.rowModel.getTopLevelNodes()));
-            }
-
-            if (this.colDef.comparator) {
-                this.uniqueValues.sort(this.colDef.comparator);
-            } else {
-                this.uniqueValues.sort(utils.defaultComparator);
+        public refreshAvailableUniqueValues() {
+            if (this.showingAvailableOnly) {
+                this.createAvailableUniqueValues();
+                this.processMiniFilter();
             }
         }
 
-    	public setFilteredDisplayValues(rows: any) {
-            var values: any[] = this.iterateThroughNodesForValues(rows);
-    	    this.filteredDisplayValues = utils.toStrings(values);
-    	    this.filterDisplayedValues();
-    	}
+        private createAllUniqueValues() {
+            if (this.usingProvidedSet) {
+                this.allUniqueValues = _.toStrings(this.filterParams.values);
+            } else {
+                this.allUniqueValues = _.toStrings(this.getUniqueValues(false));
+            }
 
-        private iterateThroughNodesForValues(topLevelNodes: any): any[] {
+            if (this.colDef.comparator) {
+                this.allUniqueValues.sort(this.colDef.comparator);
+            } else {
+                this.allUniqueValues.sort(_.defaultComparator);
+            }
+        }
+
+        private createAvailableUniqueValues() {
+            var dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;
+            if (dontCheckAvailableValues) {
+                this.availableUniqueValues = this.allUniqueValues;
+                return;
+            }
+
+            this.availableUniqueValues = _.toStrings(this.getUniqueValues(true));
+            if (this.colDef.comparator) {
+                this.availableUniqueValues.sort(this.colDef.comparator);
+            } else {
+                this.availableUniqueValues.sort(_.defaultComparator);
+            }
+        }
+
+        private getUniqueValues(filterOutNotAvailable: boolean): any[] {
             var uniqueCheck = <any>{};
             var result = <any>[];
 
-            var that = this;
+            this.rowModel.forEachInMemory( (node: any)=> {
+                if (!node.group) {
+                    var value = this.valueGetter(node);
+                    if (value === "" || value === undefined) {
+                        value = null;
+                    }
 
-            function recursivelyProcess(nodes: any) {
-                for (var i = 0; i < nodes.length; i++) {
-                    var node = nodes[i];
-                    if (node.group && !node.footer) {
-                        // group node, so dig deeper
-                        recursivelyProcess(node.children);
-                    } else {
-                        var value = that.valueGetter(node);
-                        if (value === "" || value === undefined) {
-                            value = null;
-                        }
-
-                        if (value != null && Array.isArray(value)) {
-                            for (var j = 0; j < value.length; j++) {
-                                addUniqueValueIfMissing(value[j])
-                            }
-                        } else {
-                            addUniqueValueIfMissing(value)
+                    if (filterOutNotAvailable) {
+                        if (!this.doesRowPassOtherFilters(node)) {
+                            return;
                         }
                     }
+
+                    if (value != null && Array.isArray(value)) {
+                        for (var j = 0; j < value.length; j++) {
+                            addUniqueValueIfMissing(value[j])
+                        }
+                    } else {
+                        addUniqueValueIfMissing(value)
+                    }
                 }
-            }
+            });
 
             function addUniqueValueIfMissing(value: any) {
                 if (!uniqueCheck.hasOwnProperty(value)) {
@@ -111,20 +139,18 @@ module awk.grid {
                 }
             }
 
-            recursivelyProcess(topLevelNodes);
-
             return result;
         }
 
         //sets mini filter. returns true if it changed from last value, otherwise false
         public setMiniFilter(newMiniFilter: any) {
-            newMiniFilter = utils.makeNull(newMiniFilter);
+            newMiniFilter = _.makeNull(newMiniFilter);
             if (this.miniFilter === newMiniFilter) {
                 //do nothing if filter has not changed
                 return false;
             }
             this.miniFilter = newMiniFilter;
-            this.filterDisplayedValues();
+            this.processMiniFilter();
             return true;
         }
 
@@ -132,18 +158,18 @@ module awk.grid {
             return this.miniFilter;
         }
 
-        private filterDisplayedValues() {
+        private processMiniFilter() {
             // if no filter, just use the unique values
             if (this.miniFilter === null) {
-                this.displayedValues = this.filteredDisplayValues;
+                this.displayedValues = this.availableUniqueValues;
                 return;
             }
 
             // if filter present, we filter down the list
             this.displayedValues = [];
             var miniFilterUpperCase = this.miniFilter.toUpperCase();
-            for (var i = 0, l = this.filteredDisplayValues.length; i < l; i++) {
-                var filteredValue = this.filteredDisplayValues[i];
+            for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+                var filteredValue = this.availableUniqueValues[i];
                 if (filteredValue !== null && filteredValue.toString().toUpperCase().indexOf(miniFilterUpperCase) >= 0) {
                     this.displayedValues.push(filteredValue);
                 }
@@ -159,16 +185,16 @@ module awk.grid {
         }
 
         public selectEverything() {
-            var count = this.uniqueValues.length;
+            var count = this.allUniqueValues.length;
             for (var i = 0; i < count; i++) {
-                var value = this.uniqueValues[i];
+                var value = this.allUniqueValues[i];
                 this.selectedValuesMap[value] = null;
             }
             this.selectedValuesCount = count;
         }
 
         public isFilterActive() {
-            return this.uniqueValues.length !== this.selectedValuesCount;
+            return this.allUniqueValues.length !== this.selectedValuesCount;
         }
 
         public selectNothing() {
@@ -177,11 +203,11 @@ module awk.grid {
         }
 
         public getUniqueValueCount() {
-            return this.uniqueValues.length;
+            return this.allUniqueValues.length;
         }
 
         public getUniqueValue(index: any) {
-            return this.uniqueValues[index];
+            return this.allUniqueValues[index];
         }
 
         public unselectValue(value: any) {
@@ -203,11 +229,11 @@ module awk.grid {
         }
 
         public isEverythingSelected() {
-            return this.uniqueValues.length === this.selectedValuesCount;
+            return this.allUniqueValues.length === this.selectedValuesCount;
         }
 
         public isNothingSelected() {
-            return this.uniqueValues.length === 0;
+            return this.allUniqueValues.length === 0;
         }
 
         public getModel() {
@@ -215,7 +241,7 @@ module awk.grid {
                 return null;
             }
             var selectedValues = <any>[];
-            utils.iterateObject(this.selectedValuesMap, function (key: any) {
+            _.iterateObject(this.selectedValuesMap, function (key: any) {
                 selectedValues.push(key);
             });
             return selectedValues;
@@ -226,7 +252,7 @@ module awk.grid {
                 this.selectNothing();
                 for (var i = 0; i < model.length; i++) {
                     var newValue = model[i];
-                    if (this.uniqueValues.indexOf(newValue) >= 0) {
+                    if (this.allUniqueValues.indexOf(newValue) >= 0) {
                         this.selectValue(model[i]);
                     } else {
                         console.warn('Value ' + newValue + ' is not a valid value for filter');

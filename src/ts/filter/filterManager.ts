@@ -137,19 +137,20 @@ module awk.grid {
             return filterPresent;
         }
 
-        private doesFilterPass(node: any, skipColumnFilter?: any) {
+        private doesFilterPass(node: any, filterToSkip?: any) {
             var data = node.data;
             var colKeys = Object.keys(this.allFilters);
             for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
-               	if (skipColumnFilter === i) {
-               		continue
-                }
                 var colId = colKeys[i];
                 var filterWrapper = this.allFilters[colId];
 
                 // if no filter, always pass
                 if (filterWrapper === undefined) {
                     continue;
+                }
+
+                if (filterWrapper.filter === filterToSkip) {
+                    continue
                 }
 
                 if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
@@ -206,7 +207,11 @@ module awk.grid {
             return this.quickFilter !== null;
         }
 
-        public doesRowPassFilter(node: any) {
+        public doesRowPassOtherFilters(filterToSkip: any, node: any): boolean {
+            return this.doesRowPassFilter(node, filterToSkip);
+        }
+
+        public doesRowPassFilter(node: any, filterToSkip?: any): boolean {
             //first up, check quick filter
             if (this.isQuickFilterPresent()) {
                 if (!node.quickFilterAggregateText) {
@@ -220,7 +225,7 @@ module awk.grid {
 
             //second, check advanced filter
             if (this.advancedFilterPresent) {
-                if (!this.doesFilterPass(node)) {
+                if (!this.doesFilterPass(node, filterToSkip)) {
                     return false;
                 }
             }
@@ -314,9 +319,28 @@ module awk.grid {
                 scope: <any> null,
                 gui: <any> null
             };
+
+            if (typeof colDef.filter === 'function') {
+                // if user provided a filter, just use it
+                // first up, create child scope if needed
+                if (this.gridOptionsWrapper.isAngularCompileFilters()) {
+                    filterWrapper.scope = this.$scope.$new();;
+                }
+                // now create filter (had to cast to any to get 'new' working)
+                filterWrapper.filter = new (<any>colDef.filter)();
+            } else if (colDef.filter === 'text') {
+                filterWrapper.filter = new TextFilter();
+            } else if (colDef.filter === 'number') {
+                filterWrapper.filter = new NumberFilter();
+            } else {
+                filterWrapper.filter = new SetFilter();
+            }
+
             var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
             var filterModifiedCallback = this.grid.onFilterModified.bind(this.grid);
+            var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
             var filterParams = colDef.filterParams;
+
             var params = {
                 colDef: colDef,
                 rowModel: this.rowModel,
@@ -325,25 +349,10 @@ module awk.grid {
                 filterParams: filterParams,
                 localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
                 valueGetter: this.createValueGetter(column),
-                $scope: <any> null
+                doesRowPassOtherFilter: doesRowPassOtherFilters,
+                $scope: filterWrapper.scope
             };
-            if (typeof colDef.filter === 'function') {
-                // if user provided a filter, just use it
-                // first up, create child scope if needed
-                if (this.gridOptionsWrapper.isAngularCompileFilters()) {
-                    var scope = this.$scope.$new();
-                    filterWrapper.scope = scope;
-                    params.$scope = scope;
-                }
-                // now create filter (had to cast to any to get 'new' working)
-                filterWrapper.filter = new (<any>colDef.filter)(params);
-            } else if (colDef.filter === 'text') {
-                filterWrapper.filter = new TextFilter(params);
-            } else if (colDef.filter === 'number') {
-                filterWrapper.filter = new NumberFilter(params);
-            } else {
-                filterWrapper.filter = new SetFilter(params);
-            }
+            filterWrapper.filter.init(params);
 
             if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
                 throw 'Filter is missing method getGui';

@@ -45,7 +45,7 @@ module awk.grid {
         private applyActive: any;
         private eApplyButton: any;
 
-        constructor(params: any) {
+        public init(params: any): void {
             this.filterParams = params.filterParams;
             this.applyActive = this.filterParams && this.filterParams.apply == true;
             this.filterChangedCallback = params.filterChangedCallback;

@@ -57,11 +57,11 @@ module awk.grid {
         private applyActive: any;
         private eApplyButton: any;
 
-        constructor(params: any) {
+        public init(params: any): void {
             this.filterParams = params.filterParams;
             this.rowHeight = (this.filterParams && this.filterParams.cellHeight) ? this.filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
             this.applyActive = this.filterParams && this.filterParams.apply == true;
-            this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter);
+            this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
             this.filterChangedCallback = params.filterChangedCallback;
             this.filterModifiedCallback = params.filterModifiedCallback;
             this.valueGetter = params.valueGetter;
@@ -126,16 +126,10 @@ module awk.grid {
         }
 
         public onAnyFilterChanged(): void {
-
-        }
-
-/*
-        public setFilteredDisplayValues(values: any): void {
-    	    this.model.setFilteredDisplayValues(values);
+            this.model.refreshAvailableUniqueValues();
             this.setContainerHeight();
             this.refreshVirtualRows();
         }
-*/
 
         private createTemplate() {
             return template
