@@ -105,8 +105,8 @@ colDef.comparator = function (value1, value2, data1, data2, isInverted) {
     </p>
 
     <pre>[
-    {field: country, sort: 'asc'},
-    {field: sport, sort: 'desc'}
+    {colId: country, sort: 'asc'},
+    {colId: sport, sort: 'desc'}
 ]</pre>
 
     <p>

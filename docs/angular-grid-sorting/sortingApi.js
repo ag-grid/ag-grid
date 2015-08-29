@@ -24,30 +24,30 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.sortByAthleteAsc = function() {
         var sort = [
-            {field: 'athlete', sort: 'asc'}
+            {colId: 'athlete', sort: 'asc'}
         ];
         $scope.gridOptions.api.setSortModel(sort);
     };
 
     $scope.sortByAthleteDesc = function() {
         var sort = [
-            {field: 'athlete', sort: 'desc'}
+            {colId: 'athlete', sort: 'desc'}
         ];
         $scope.gridOptions.api.setSortModel(sort);
     };
 
     $scope.sortByCountryThenSport = function() {
         var sort = [
-            {field: 'country', sort: 'asc'},
-            {field: 'sport', sort: 'asc'}
+            {colId: 'country', sort: 'asc'},
+            {colId: 'sport', sort: 'asc'}
         ];
         $scope.gridOptions.api.setSortModel(sort);
     };
 
     $scope.sortBySportThenCountry = function() {
         var sort = [
-            {field: 'sport', sort: 'asc'},
-            {field: 'country', sort: 'asc'}
+            {colId: 'sport', sort: 'asc'},
+            {colId: 'country', sort: 'asc'}
         ];
         $scope.gridOptions.api.setSortModel(sort);
     };
@@ -60,7 +60,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             console.log('State of sorting is:');
             for (var i = 0; i<sortState.length; i++) {
                 var item = sortState[i];
-                console.log(i + ' = {field: ' + item.field + ', sort: ' + item.sort + '}');
+                console.log(i + ' = {colId: ' + item.colId + ', sort: ' + item.sort + '}');
             }
         }
     };

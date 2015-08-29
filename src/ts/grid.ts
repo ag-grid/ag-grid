@@ -474,7 +474,7 @@ module awk.grid {
             var result = <any>[];
             for (i = 0; i < columnsWithSorting.length; i++) {
                 var resultEntry = {
-                    field: columnsWithSorting[i].colDef.field,
+                    colId: columnsWithSorting[i].colId,
                     sort: columnsWithSorting[i].sort
                 };
                 result.push(resultEntry);
@@ -499,9 +499,9 @@ module awk.grid {
                 if (sortModelProvided && !column.colDef.suppressSorting) {
                     for (var j = 0; j < sortModel.length; j++) {
                         var sortModelEntry = sortModel[j];
-                        if (typeof sortModelEntry.field === 'string'
-                            && typeof column.colDef.field === 'string'
-                            && sortModelEntry.field === column.colDef.field) {
+                        if (typeof sortModelEntry.colId === 'string'
+                            && typeof column.colId === 'string'
+                            && sortModelEntry.colId === column.colId) {
                             sortForCol = sortModelEntry.sort;
                             sortedAt = j;
                         }

@@ -37,15 +37,24 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>Mouse Wheel Scroll from Pinned Columns:</b> Mouse wheel now scrolls when over the pinned columns.
+    </p>
+
+    <p>
         <b>Excel Like Filtering:</b> Now the set filters allow you to remove items that are already
         filtered out, just like Excel. Read about it <a href="/angular-grid-filtering/index.php">here</a>.
         If you don't want this in your set filters, add suppressRemoveEntries=true to the filter config.
     </p>
 
     <p>
-        <b>Breaking change:</b> If you implemented your own custom filters, then when you move to 1.14, note
+        <b>Breaking change 1:</b> If you implemented your own custom filters, then when you move to 1.14, note
         that the filter constructor function now takes no parameters and an 'init' method is used instead.
         I've put some helpful warning messages in if the grid senses you are doing it the old way.
+    </p>
+
+    <p>
+        <b>Breaking change 2:</b> The API for sorting is now based on colId (Column ID) and not field.
+        So if setting sorts progmatically, the sort model should have 'colId' not 'field'.
     </p>
 
     <p>
