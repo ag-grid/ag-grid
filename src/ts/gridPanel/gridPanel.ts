@@ -288,6 +288,9 @@ module awk.grid {
             //some browsers had layout issues with the blank divs, so if blank,
             //we don't display them
             if (showingPinnedCols) {
+                // this allows CSS to target specific elements on the grid when showing pinned cols
+                utils.addCssClass(this.eRoot, 'ag-showing-pinned-cols');
+
                 this.ePinnedHeader.style.display = 'inline-block';
                 this.ePinnedColsViewport.style.display = 'inline';
             } else {
@@ -304,14 +307,6 @@ module awk.grid {
             } else {
                 this.eHeader.style['height'] = headerHeightPixels;
                 this.eBody.style['paddingTop'] = headerHeightPixels;
-            }
-        }
-
-        // see if a grey box is needed at the bottom of the pinned col
-        public setPinnedColHeight() {
-            if (!this.forPrint) {
-                var bodyHeight = this.eBodyViewport.offsetHeight;
-                this.ePinnedColsViewport.style.height = bodyHeight + "px";
             }
         }
 
@@ -339,7 +334,7 @@ module awk.grid {
 
                 if (newTopPosition !== lastTopPosition) {
                     lastTopPosition = newTopPosition;
-                    this.scrollPinned(newTopPosition);
+                    _this.ePinnedColsViewport.scrollTop = newTopPosition;
                     this.requestDrawVirtualRows();
                 }
 
@@ -347,13 +342,10 @@ module awk.grid {
             });
 
             this.ePinnedColsViewport.addEventListener("scroll", () => {
-                // this means the pinned panel was moved, which can only
-                // happen when the user is navigating in the pinned container
-                // as the pinned col should never scroll. so we rollback
-                // the scroll on the pinned.
-                this.ePinnedColsViewport.scrollTop = 0;
+                // update body viewport with current scroll position
+                // this allows us to scroll on both pinned columns AND body
+                _this.eBodyViewport.scrollTop = _this.ePinnedColsViewport.scrollTop;
             });
-
         }
 
         private requestDrawVirtualRows() {
@@ -388,11 +380,6 @@ module awk.grid {
         private scrollHeader(bodyLeftPosition: any) {
             // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + "px,0,0)";
             this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
-        }
-
-        private scrollPinned(bodyTopPosition: any) {
-            // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + "px,0)";
-            this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
         }
     }
 }
