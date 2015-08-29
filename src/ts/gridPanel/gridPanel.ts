@@ -259,7 +259,32 @@ module awk.grid {
                 this.eHeaderContainer = this.eRoot.querySelector(".ag-header-container");
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
                 this.eParentOfRows = this.eBody;
+
+                // IE9, Chrome, Safari, Opera
+                this.ePinnedColsViewport.addEventListener('mousewheel', this.mouseWheelListener.bind(this));
+                // Firefox
+                this.ePinnedColsViewport.addEventListener('DOMMouseScroll', this.mouseWheelListener.bind(this));
             }
+        }
+
+        private mouseWheelListener(event: any): void {
+            var delta: number;
+            if (event.deltaY && event.deltaX != 0) {
+                // tested on chrome
+                delta = event.deltaY;
+            } else if (event.wheelDelta && event.wheelDelta != 0) {
+                // tested on IE
+                delta = -event.wheelDelta;
+            } else if (event.detail && event.detail != 0) {
+                // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
+                delta = event.detail * 20;
+            } else {
+                // couldn't find delta
+                return;
+            }
+
+            var newTopPosition = this.eBodyViewport.scrollTop + delta;
+            this.eBodyViewport.scrollTop = newTopPosition;
         }
 
         public setBodyContainerWidth() {
