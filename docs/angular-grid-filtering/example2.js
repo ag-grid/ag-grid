@@ -30,13 +30,16 @@ module.controller("exampleCtrl", function($scope, $http) {
         });
 
 
-    function PersonFilter(params) {
+    function PersonFilter() {
+    }
+
+    PersonFilter.prototype.init = function (params) {
         this.$scope = params.$scope;
         this.$scope.onFilterChanged = function() {
             params.filterChangedCallback();
         };
         this.valueGetter = params.valueGetter;
-    }
+    };
 
     PersonFilter.prototype.getGui = function () {
         return '<div style="padding: 4px; width: 200px;">' +

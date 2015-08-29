@@ -27,46 +27,38 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>9th Aug 2015</b>
+        <b>30th Aug 2015 - 800 stars on Github and counting!!</b>
     </p>
 
-    <p>
-        <b>Over 750 stars on GitHub, whoop whoop!!!</b>
-    </p>
+    <p>&nbsp;</p>
 
     <p>
         <b>Last Week</b>
     </p>
 
     <p>
-        Last week was all about implementing the cool new feature <a href="/angular-grid-master-slave/index.php">
-        Master / Slave</a>. With this feature, you can implement grid footers. However it is much more powerful
-        than that, floating footers is just one usage of it. Check out it's documentation page.
+        <b>Excel Like Filtering:</b> Now the set filters allow you to remove items that are already
+        filtered out, just like Excel. Read about it <a href="/angular-grid-filtering/index.php">here</a>.
+        If you don't want this in your set filters, add suppressRemoveEntries=true to the filter config.
     </p>
 
     <p>
-        I also did a bunch of tweaks and fixes. Some of you will be aware of these as they follow chatter on
-        Github issues or the forum. If your really interested, check out the Github log.
+        <b>Breaking change:</b> If you implemented your own custom filters, then when you move to 1.14, note
+        that the filter constructor function now takes no parameters and an 'init' method is used instead.
+        I've put some helpful warning messages in if the grid senses you are doing it the old way.
     </p>
 
     <p>
-        On other news, I'm getting very deep and dirty with Angular 2. I've researched all the web examples
-        I could find and am now reading through the source code. I'm pretty excited about it, Angular 2 is
-        much different to Angular 1. I'm hoping to have a fully working Angular 2 ag-Grid in the coming
-        weeks.
+        Release 1.14 contains all the above.
     </p>
 
-    <p>
-        Release 1.13 contains all the above.
-    </p>
+    <p>&nbsp;</p>
 
     <p>
         <b>Next Week</b>
     </p>
     <p>
-        I'm going to continue with my Angular 2 and Web Components research. I am also going to have an
-        extended weekend break at <a href="http://www.greenman.net/">Greenman Festival</a>. So between
-        my research and my festival, I'm not going to get many new features implemented.
+        I'm going to continue with my Angular 2 and Web Components research.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>

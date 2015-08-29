@@ -82,7 +82,6 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        filterHideNotAvailable: true, //If true, changing filtering in one column will have effect on filters in all columns, inspirated by Excel
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
@@ -191,7 +190,7 @@ gridsModule.controller('mainController', function($scope) {
         {headerName: "Bought", field: "bought", filter: 'set', headerGroup: 'Game', editable: true, width: 100,
             cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
             floatCell: true,
-            filterParams: {cellRenderer: booleanFilterCellRenderer}},
+            filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
         {headerName: "Bank Balance", field: "bankBalance", headerGroup: 'Performance', width: 150, editable: true, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             filterParams: {cellRenderer: currencyRenderer},
             aggFunc: 'sum',
@@ -478,7 +477,7 @@ PersonFilter.prototype.doesFilterPass = function (params) {
         return true;
     }
     // make sure each word passes separately, ie search for firstname, lastname
-    var passed = true;
+    var passed = true;asdf;
     var value = this.valueGetter(params);
     filterText.toLowerCase().split(" ").forEach(function(filterWord) {
         if (value.toString().toLowerCase().indexOf(filterWord)<0) {
@@ -523,7 +522,7 @@ WinningsFilter.prototype.init = function (params) {
     this.cbGreater50.onclick = this.filterChangedCallback;
     this.cbGreater90.onclick = this.filterChangedCallback;
     this.valueGetter = params.valueGetter;
-}
+};
 
 WinningsFilter.prototype.getGui = function () {
     return this.eGui;

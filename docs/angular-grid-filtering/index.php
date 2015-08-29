@@ -104,6 +104,8 @@ columnDefinition = {
                 to do with new values into the set (should they be selected or not??).</li>
             <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
                 automatically as the selection changes.</li>
+            <li><b>suppressRemoveEntries:</b> Set to true to stop the filter from removing values that are no
+                longer available (like what Excel does).</li>
         </ul>
 
     </p>
@@ -177,9 +179,10 @@ columnDefinition = {
     <pre>
 
     // Class function.
-    function MyCustomFilter(params) {}
+    function MyCustomFilter() {}
 
     // mandatory methods
+    MyCustomFilter.prototype.init = function (params) {}
     MyCustomFilter.prototype.getGui = function () {}
     MyCustomFilter.prototype.isFilterActive = function() {}
     MyCustomFilter.prototype.doesFilterPass = function (params) {}
@@ -187,6 +190,7 @@ columnDefinition = {
     // optional methods
     MyCustomFilter.prototype.afterGuiAttached = function(params) {}
     MyCustomFilter.prototype.onNewRowsLoaded = function () {}
+    MyCustomFilter.prototype.onAnyFilterChanged = function () {}
 
     </pre>
 
@@ -196,8 +200,9 @@ columnDefinition = {
             <th>Description</th>
         </tr>
         <tr>
-            <th>MyCustomFilter</th>
-            <td>Constructor function for the class. Takes one parameter with the following attributes:
+            <th>init(params)</th>
+            <td>Init method called on the filter once after 'new' is called on the function. Takes one parameter
+                with the following attributes:
                 <ul>
                     <li>colDef: The col def this filter is for.</li>
                     <li>rowModel: The internal row model inside Angular Grid. This should be treated as
@@ -205,8 +210,22 @@ columnDefinition = {
                         visible (ie not already filtered), c) what groups d) what order - all of this
                         can be read from the rowModel.
                     </li>
-                    <li>filterChangedCallback: A function callback, to be called, when the filter changes,
-                        to inform the grid to filter the data.
+                    <li>filterChangedCallback(): A function callback, to be called, when the filter changes,
+                        to inform the grid to filter the data. The grid will respond by filtering the data.
+                    </li>
+                    <li>filterModifiedCallback(): A function callback, to be <i>optionally</i> called, when the filter changes,
+                        but before 'Apply' is pressed. The grid does nothing except call
+                        gridOptions.filterModified().
+                    </li>
+                    <li>valueGetter(node): A function callback, call with a node to be given the value for that
+                        filters column for that node. The callback takes care of selecting the right colDef
+                        and deciding whether to use valueGetter or field etc.
+                    </li>
+                    <li>doesRowPassOtherFilter(node): A function callback, call with a node to be told whether
+                        the node passes all filters except the current filter. This is useful if you want
+                        to only present to the user values that this filter can filter given the status
+                        of the other filters. The set filter uses this to remove from the list, items that
+                        are no longer available due to the state of other filters (like Excel type filtering).
                     </li>
                     <li>
                         filterParams: The filter parameters, as provided in the column definition.

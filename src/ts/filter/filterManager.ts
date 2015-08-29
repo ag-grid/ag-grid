@@ -327,6 +327,7 @@ module awk.grid {
                     filterWrapper.scope = this.$scope.$new();;
                 }
                 // now create filter (had to cast to any to get 'new' working)
+                this.assertMethodHasNoParameters(colDef.filter);
                 filterWrapper.filter = new (<any>colDef.filter)();
             } else if (colDef.filter === 'text') {
                 filterWrapper.filter = new TextFilter();
@@ -352,6 +353,9 @@ module awk.grid {
                 doesRowPassOtherFilter: doesRowPassOtherFilters,
                 $scope: filterWrapper.scope
             };
+            if (!filterWrapper.filter.init) { // because users can do custom filters, give nice error message
+                throw 'Filter is missing method init';
+            }
             filterWrapper.filter.init(params);
 
             if (!filterWrapper.filter.getGui) { // because users can do custom filters, give nice error message
@@ -378,6 +382,14 @@ module awk.grid {
             }
 
             return filterWrapper;
+        }
+
+        private assertMethodHasNoParameters(theMethod: any) {
+            var getRowsParams = _.getFunctionParameters(theMethod);
+            if (getRowsParams.length > 0) {
+                console.warn('ag-grid: It looks like your filter is of the old type and expecting parameters in the constructor.');
+                console.warn('ag-grid: From ag-grid 1.14, the constructor should take no parameters and init() used instead.');
+            }
         }
 
         public showFilter(column: Column, eventSource: any) {

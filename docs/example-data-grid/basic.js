@@ -238,7 +238,10 @@ fileBrowserModule.controller('basicController', function($scope) {
         '<b>TITLE_NAME</b>' +
         '</div>';
 
-    function SkillFilter(params) {
+    function SkillFilter() {
+    }
+
+    SkillFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.model = {
             android: false,
@@ -247,7 +250,7 @@ fileBrowserModule.controller('basicController', function($scope) {
             mac: false,
             windows: false
         };
-    }
+    };
 
     SkillFilter.prototype.getGui = function () {
         var eGui = document.createElement('div');
@@ -312,11 +315,14 @@ fileBrowserModule.controller('basicController', function($scope) {
     var PROFICIENCY_NAMES = ['No Filter', 'Above 40%', 'Above 60%', 'Above 80%'];
     var PROFICIENCY_VALUES = [PROFICIENCY_NONE, PROFICIENCY_ABOVE40, PROFICIENCY_ABOVE60, PROFICIENCY_ABOVE80];
 
-    function ProficiencyFilter(params) {
+    function ProficiencyFilter() {
+    }
+
+    ProficiencyFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
         this.valueGetter = params.valueGetter;
-    }
+    };
 
     ProficiencyFilter.prototype.getGui = function () {
         var eGui = document.createElement('div');

@@ -34,7 +34,7 @@ module awk.grid {
 
             this.filterParams = <SetFilterParameters> this.colDef.filterParams;
             this.usingProvidedSet = this.filterParams && this.filterParams.values;
-            this.showingAvailableOnly = true;
+            this.showingAvailableOnly = this.filterParams && !this.filterParams.suppressRemoveEntries;
 
             this.createAllUniqueValues();
             this.createAvailableUniqueValues();
@@ -53,7 +53,7 @@ module awk.grid {
         // if keepSelection not set will always select all filters
         // if keepSelection set will keep current state of selected filters
         //    unless selectAll chosen in which case will select all
-        public refreshUniqueValues(keepSelection: any, isSelectAll: boolean) {
+        public refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean) {
             this.createAllUniqueValues();
             this.createAvailableUniqueValues();
 
@@ -69,7 +69,7 @@ module awk.grid {
             }
         }
 
-        public refreshAvailableUniqueValues() {
+        public refreshAfterAnyFilterChanged() {
             if (this.showingAvailableOnly) {
                 this.createAvailableUniqueValues();
                 this.processMiniFilter();

@@ -120,13 +120,13 @@ module awk.grid {
             var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
             var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
             // default is reset
-            this.model.refreshUniqueValues(keepSelection, isSelectAll);
+            this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
             this.setContainerHeight();
             this.refreshVirtualRows();
         }
 
         public onAnyFilterChanged(): void {
-            this.model.refreshAvailableUniqueValues();
+            this.model.refreshAfterAnyFilterChanged();
             this.setContainerHeight();
             this.refreshVirtualRows();
         }
@@ -269,7 +269,7 @@ module awk.grid {
             this.rowsInBodyContainer[rowIndex] = eFilterValue;
         }
 
-        onCheckboxClicked(eCheckbox: any, value: any) {
+        private onCheckboxClicked(eCheckbox: any, value: any) {
             var checked = eCheckbox.checked;
             if (checked) {
                 this.model.selectValue(value);
