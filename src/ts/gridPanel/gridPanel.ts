@@ -267,7 +267,7 @@ module awk.grid {
             }
         }
 
-        private mouseWheelListener(event: any): void {
+        private mouseWheelListener(event: any): boolean {
             var delta: number;
             if (event.deltaY && event.deltaX != 0) {
                 // tested on chrome
@@ -285,6 +285,10 @@ module awk.grid {
 
             var newTopPosition = this.eBodyViewport.scrollTop + delta;
             this.eBodyViewport.scrollTop = newTopPosition;
+
+            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+            event.preventDefault();
+            return false;
         }
 
         public setBodyContainerWidth() {
