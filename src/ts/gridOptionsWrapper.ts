@@ -51,7 +51,7 @@ module awk.grid {
         public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
         public getGroupAggFields() { return this.gridOptions.groupAggFields; }
-        public getAllRows() { return this.gridOptions.rowData; }
+        public getAllRows(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
         public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
@@ -93,6 +93,22 @@ module awk.grid {
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
+
+        public isExternalFilterPresent() {
+            if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
+                return this.gridOptions.isExternalFilterPresent();
+            } else {
+                return false;
+            }
+        }
+
+        public doesExternalFilterPass(node: RowNode) {
+            if (typeof this.gridOptions.doesExternalFilterPass === 'function') {
+                return this.gridOptions.doesExternalFilterPass(node);
+            } else {
+                return false;
+            }
+        }
 
         public getGroupRowInnerRenderer() {
             if (this.gridOptions.groupInnerRenderer) {

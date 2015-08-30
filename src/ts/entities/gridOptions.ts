@@ -78,6 +78,8 @@ module awk.grid {
         localeText?: any;
         isScrollLag?(): boolean;
         suppressScrollLag?(): boolean;
+        isExternalFilterPresent?(): boolean;
+        doesExternalFilterPass?(node: RowNode): boolean;
         suppressMenuHide?: boolean;
         slaveGrids?: GridOptions[];
         debug?: boolean;

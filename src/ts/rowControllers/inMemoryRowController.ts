@@ -1,6 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
 /// <reference path="../groupCreator.ts" />
+/// <reference path="../entities/rowNode.ts" />
 
 module awk.grid {
 
@@ -9,17 +10,17 @@ module awk.grid {
 
     export class InMemoryRowController {
 
-        private gridOptionsWrapper: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
         private angularGrid: Grid;
-        private filterManager: any;
+        private filterManager: FilterManager;
         private $scope: any;
 
-        private allRows: any;
-        private rowsAfterGroup: any;
-        private rowsAfterFilter: any;
-        private rowsAfterSort: any;
-        private rowsAfterMap: any;
+        private allRows: RowNode[];
+        private rowsAfterGroup: RowNode[];
+        private rowsAfterFilter: RowNode[];
+        private rowsAfterSort: RowNode[];
+        private rowsAfterMap: RowNode[];
         private model: any;
 
         private groupCreator: GroupCreator;
@@ -29,8 +30,8 @@ module awk.grid {
             this.createModel();
         }
 
-        init(gridOptionsWrapper: any, columnController: ColumnController, angularGrid: any, filterManager: any,
-             $scope: any, groupCreator: GroupCreator, valueService: ValueService) {
+        init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, angularGrid: any,
+             filterManager: FilterManager, $scope: any, groupCreator: GroupCreator, valueService: ValueService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnController = columnController;
             this.angularGrid = angularGrid;
@@ -46,8 +47,7 @@ module awk.grid {
             this.rowsAfterMap = null;
         }
 
-// private
-        createModel() {
+        private createModel() {
             var that = this;
             this.model = {
                 // this method is implemented by the inMemory model only,
@@ -56,10 +56,10 @@ module awk.grid {
                 getTopLevelNodes: function () {
                     return that.rowsAfterGroup;
                 },
-                getVirtualRow: function (index: any) {
+                getVirtualRow: function (index: any): RowNode {
                     return that.rowsAfterMap[index];
                 },
-                getVirtualRowCount: function () {
+                getVirtualRowCount: function (): number {
                     if (that.rowsAfterMap) {
                         return that.rowsAfterMap.length;
                     } else {
@@ -72,13 +72,11 @@ module awk.grid {
             };
         }
 
-// public
-        getModel() {
+        public getModel() {
             return this.model;
         }
 
-// public
-        forEachInMemory(callback: any) {
+        public forEachInMemory(callback: any) {
 
             // iterates through each item in memory, and calls the callback function
             function doCallback(list: any) {
@@ -96,8 +94,7 @@ module awk.grid {
             doCallback(this.rowsAfterGroup);
         }
 
-// public
-        updateModel(step: any) {
+        public updateModel(step: any) {
 
             // fallthrough in below switch is on purpose
             switch (step) {
@@ -123,8 +120,7 @@ module awk.grid {
 
         }
 
-// private
-        defaultGroupAggFunctionFactory(valueColumns: any, valueKeys: any) {
+        private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {
 
             return function groupAggFunction(rows: any) {
 
@@ -150,7 +146,7 @@ module awk.grid {
                 return result;
             };
 
-            function aggregateColumn(rows: any, aggFunc: any, colKey: any) {
+            function aggregateColumn(rows: RowNode[], aggFunc: string, colKey: string) {
                 var resultForColumn: any = null;
                 for (var i = 0; i < rows.length; i++) {
                     var row = rows[i];
@@ -184,7 +180,7 @@ module awk.grid {
             }
         }
 
-        // public - it's possible to recompute the aggregate without doing the other parts
+        // it's possible to recompute the aggregate without doing the other parts
         public doAggregate() {
 
             var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
@@ -209,8 +205,7 @@ module awk.grid {
             }
         }
 
-        // public
-        expandOrCollapseAll(expand: any, rowNodes: any) {
+        public expandOrCollapseAll(expand: boolean, rowNodes: RowNode[]) {
             // if first call in recursion, we set list to parent list
             if (rowNodes === null) {
                 rowNodes = this.rowsAfterGroup;
@@ -220,17 +215,15 @@ module awk.grid {
                 return;
             }
 
-            var _this = this;
-            rowNodes.forEach(function (node: any) {
+            rowNodes.forEach( (node: RowNode) => {
                 if (node.group) {
                     node.expanded = expand;
-                    _this.expandOrCollapseAll(expand, node.children);
+                    this.expandOrCollapseAll(expand, node.children);
                 }
             });
         }
 
-        // private
-        recursivelyClearAggData(nodes: any) {
+        private recursivelyClearAggData(nodes: RowNode[]) {
             for (var i = 0, l = nodes.length; i < l; i++) {
                 var node = nodes[i];
                 if (node.group) {
@@ -241,8 +234,7 @@ module awk.grid {
             }
         }
 
-        // private
-        recursivelyCreateAggData(nodes: any, groupAggFunction: any, level: number) {
+        private recursivelyCreateAggData(nodes: RowNode[], groupAggFunction: any, level: number) {
             for (var i = 0, l = nodes.length; i < l; i++) {
                 var node = nodes[i];
                 if (node.group) {
@@ -260,8 +252,7 @@ module awk.grid {
             }
         }
 
-        // private
-        doSort() {
+        private doSort() {
             var sorting: any;
 
             // if the sorting is already done by the server, then we should not do it here
@@ -270,7 +261,7 @@ module awk.grid {
             } else {
                 //see if there is a col we are sorting by
                 var sortingOptions = <any>[];
-                this.columnController.getAllColumns().forEach(function (column: any) {
+                this.columnController.getAllColumns().forEach(function (column: Column) {
                     if (column.sort) {
                         var ascending = column.sort === constants.ASC;
                         sortingOptions.push({
@@ -304,7 +295,7 @@ module awk.grid {
             this.rowsAfterSort = rowNodesReadyForSorting;
         }
 
-        private recursivelyResetSort(rowNodes: any[]) {
+        private recursivelyResetSort(rowNodes: RowNode[]) {
             if (!rowNodes) {
                 return;
             }
@@ -319,7 +310,7 @@ module awk.grid {
             this.updateChildIndexes(rowNodes);
         }
 
-        private sortList(nodes: any, sortOptions: any) {
+        private sortList(nodes: RowNode[], sortOptions: any) {
 
             // sort any groups recursively
             for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
@@ -360,7 +351,7 @@ module awk.grid {
             this.updateChildIndexes(nodes);
         }
 
-        private updateChildIndexes(nodes: any[]) {
+        private updateChildIndexes(nodes: RowNode[]) {
             for (var j = 0; j<nodes.length; j++) {
                 var node = nodes[j];
                 node.firstChild = j === 0;
@@ -400,7 +391,7 @@ module awk.grid {
                 doingFilter = this.filterManager.isAnyFilterPresent();
             }
 
-            var rowsAfterFilter: any;
+            var rowsAfterFilter: RowNode[];
             if (doingFilter) {
                 rowsAfterFilter = this.filterItems(this.rowsAfterGroup);
             } else {
@@ -412,8 +403,8 @@ module awk.grid {
             this.rowsAfterFilter = rowsAfterFilter;
         }
 
-        private filterItems(rowNodes: any) {
-            var result = <any>[];
+        private filterItems(rowNodes: RowNode[]) {
+            var result: RowNode[] = [];
 
             for (var i = 0, l = rowNodes.length; i < l; i++) {
                 var node = rowNodes[i];
@@ -435,7 +426,7 @@ module awk.grid {
             return result;
         }
 
-        private recursivelyResetFilter(nodes: any) {
+        private recursivelyResetFilter(nodes: RowNode[]) {
             if (!nodes) {
                 return;
             }
@@ -451,19 +442,19 @@ module awk.grid {
 
         // rows: the rows to put into the model
         // firstId: the first id to use, used for paging, where we are not on the first page
-        public setAllRows(rows: any, firstId?: any) {
-            var nodes: any;
+        public setAllRows(rows: RowNode[], firstId?: number) {
+            var nodes: RowNode[];
             if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
                 nodes = rows;
                 this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
             } else {
                 // place each row into a wrapper
-                var nodes = <any>[];
+                var nodes: RowNode[] = [];
                 if (rows) {
                     for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                        nodes.push({
-                            data: rows[i]
-                        });
+                        var node = <RowNode>{};
+                        node.data = rows[i];
+                        nodes.push(node);
                     }
                 }
             }
@@ -481,7 +472,7 @@ module awk.grid {
 
         // add in index - this is used by the selectionController - so quick
         // to look up selected rows
-        recursivelyAddIdToNodes(nodes: any, index: any) {
+        private recursivelyAddIdToNodes(nodes: RowNode[], index: number) {
             if (!nodes) {
                 return;
             }
@@ -497,7 +488,7 @@ module awk.grid {
 
         // add in index - this is used by the selectionController - so quick
         // to look up selected rows
-        recursivelyCheckUserProvidedNodes(nodes: any, parent: any, level: any) {
+        private recursivelyCheckUserProvidedNodes(nodes: RowNode[], parent: RowNode, level: number) {
             if (!nodes) {
                 return;
             }
@@ -513,8 +504,7 @@ module awk.grid {
             }
         }
 
-        // private
-        getTotalChildCount(rowNodes: any) {
+        private getTotalChildCount(rowNodes: any) {
             var count = 0;
             for (var i = 0, l = rowNodes.length; i < l; i++) {
                 var item = rowNodes[i];
@@ -527,8 +517,7 @@ module awk.grid {
             return count;
         }
 
-        // private
-        doGroupMapping() {
+        private doGroupMapping() {
             // even if not doing grouping, we do the mapping, as the client might
             // of passed in data that already has a grouping in it somewhere
             var rowsAfterMap = <any>[];
@@ -536,8 +525,7 @@ module awk.grid {
             this.rowsAfterMap = rowsAfterMap;
         }
 
-        // private
-        addToMap(mappedData: any, originalNodes: any) {
+        private addToMap(mappedData: any, originalNodes: any) {
             if (!originalNodes) {
                 return;
             }
@@ -559,8 +547,7 @@ module awk.grid {
             }
         }
 
-        // private
-        createFooterNode(groupNode: any) {
+        private createFooterNode(groupNode: any) {
             var footerNode = <any>{};
             Object.keys(groupNode).forEach(function (key) {
                 footerNode[key] = groupNode[key];

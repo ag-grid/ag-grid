@@ -94,6 +94,14 @@ include '../documentation_header.php';
             <td>Rows are filtered using this text as a 'quick filter'.</td>
         </tr>
         <tr>
+            <th>isExternalFilterPresent()</th>
+            <td>Grid calls this method to know if external filter is present.</td>
+        </tr>
+        <tr>
+            <th>doesExternalFilterPass(node)</th>
+            <td>Return true if external filter passes, otherwise false.</td>
+        </tr>
+        <tr>
             <th>rowClass</th>
             <td>Class to use for the row. Can be string, array of strings, or function.</td>
         </tr>

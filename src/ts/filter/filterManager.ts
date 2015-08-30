@@ -5,6 +5,7 @@
 /// <reference path="../widgets/agPopupService.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
 /// <reference path="../grid.ts" />
+/// <reference path="../entities/rowNode.ts" />
 
 module awk.grid {
 
@@ -22,7 +23,9 @@ module awk.grid {
         private valueService: ValueService;
         private columnController: ColumnController;
         private quickFilter: string;
+
         private advancedFilterPresent: boolean;
+        private externalFilterPresent: boolean;
 
         public init(grid: Grid, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
                     columnController: ColumnController, popupService: PopupService, valueService: ValueService) {
@@ -121,7 +124,7 @@ module awk.grid {
 
         // returns true if quickFilter or advancedFilter
         public isAnyFilterPresent(): boolean {
-            return this.isQuickFilterPresent() || this.isAdvancedFilterPresent();
+            return this.isQuickFilterPresent() || this.advancedFilterPresent || this.externalFilterPresent;
         }
 
         // returns true if given col has a filter active
@@ -137,7 +140,7 @@ module awk.grid {
             return filterPresent;
         }
 
-        private doesFilterPass(node: any, filterToSkip?: any) {
+        private doesFilterPass(node: RowNode, filterToSkip?: any) {
             var data = node.data;
             var colKeys = Object.keys(this.allFilters);
             for (var i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
@@ -195,6 +198,7 @@ module awk.grid {
 
         public onFilterChanged(): void {
             this.advancedFilterPresent = this.isAdvancedFilterPresent();
+            this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
 
             _.iterateObject(this.allFilters, function (key, filterWrapper) {
                 if (filterWrapper.filter.onAnyFilterChanged) {
@@ -223,7 +227,14 @@ module awk.grid {
                 }
             }
 
-            //second, check advanced filter
+            //secondly, give the client a chance to reject this row
+            if (this.externalFilterPresent) {
+                if (!this.gridOptionsWrapper.doesExternalFilterPass(node)) {
+                    return false;
+                }
+            }
+
+            //lastly, check our internal advanced filter
             if (this.advancedFilterPresent) {
                 if (!this.doesFilterPass(node, filterToSkip)) {
                     return false;
@@ -234,7 +245,7 @@ module awk.grid {
             return true;
         }
 
-        private aggregateRowForQuickFilter(node: any) {
+        private aggregateRowForQuickFilter(node: RowNode) {
             var aggregatedText = '';
             var that = this;
             this.columnController.getAllColumns().forEach(function (column: Column) {

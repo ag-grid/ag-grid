@@ -46,6 +46,12 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>External Filtering:</b> Now you can combine your own 'outside of the grid' filters with the
+        grid filtering, making it easy to add bespoke headers to the grid for 'user friendly' filters.
+        See the 'external filtering' seciton <a href="/angular-grid-filtering/index.php#externalFiltering">here</a>.
+    </p>
+
+    <p>
         <b>Excel Like Filtering:</b> Now the set filters allow you to remove items that are already
         filtered out, just like Excel. Read about it <a href="/angular-grid-filtering/index.php">here</a>.
         If you don't want this in your set filters, add suppressRemoveEntries=true to the filter config.

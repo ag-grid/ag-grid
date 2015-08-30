@@ -86,7 +86,7 @@ gridsModule.controller('mainController', function($scope) {
         //groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
-        showToolPanel: true,
+        showToolPanel: false,
         //toolPanelSuppressPivot: true,
         //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
