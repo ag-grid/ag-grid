@@ -28,7 +28,7 @@ module awk.grid {
                 '</div>'+
             '</div>'+
             '<div class="ag-filter-apply-panel" id="applyPanel">'+
-                '<button type="button" id="applyButton">Apply Filter</button>' +
+                '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
             '</div>'+
         '</div>';
 
@@ -134,7 +134,8 @@ module awk.grid {
         private createTemplate() {
             return template
                 .replace('[SELECT ALL]', this.localeTextFunc('selectAll', 'Select All'))
-                .replace('[SEARCH...]', this.localeTextFunc('searchOoo', 'Search...'));
+                .replace('[SEARCH...]', this.localeTextFunc('searchOoo', 'Search...'))
+                .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
         }
 
         private createGui() {

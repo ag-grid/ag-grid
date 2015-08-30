@@ -19,7 +19,7 @@ module awk.grid {
                     '<input class="ag-filter-filter" id="filterText" type="text" placeholder="[FILTER...]"/>'+
                 '</div>'+
                 '<div class="ag-filter-apply-panel" id="applyPanel">'+
-                    '<button type="button" id="applyButton">Apply Filter</button>' +
+                    '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
                 '</div>'+
             '</div>';
 
@@ -111,7 +111,7 @@ module awk.grid {
                 .replace('[CONTAINS]', this.localeTextFunc('contains', 'Contains'))
                 .replace('[STARTS WITH]', this.localeTextFunc('startsWith', 'Starts with'))
                 .replace('[ENDS WITH]', this.localeTextFunc('endsWith', 'Ends with'))
-                ;
+                .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
         }
 
         private createGui() {

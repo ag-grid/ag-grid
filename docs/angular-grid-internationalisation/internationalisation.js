@@ -43,6 +43,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             blanks: 'daBlanc',
             // for number filter and string filter
             filterOoo: 'daFilter...',
+            applyFilter: 'daApplyFilter...',
             // for number filter
             equals: 'daEquals',
             lessThan: 'daLessThan',

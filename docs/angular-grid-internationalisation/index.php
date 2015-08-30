@@ -38,6 +38,7 @@ include '../documentation_header.php';
             equals: 'daEquals',
             lessThan: 'daLessThan',
             greaterThan: 'daGreaterThan',
+            applyFilter: 'daApplyFilter',
             filterOoo: 'daFilter...',
             // for text filter
             contains: 'daContains',
