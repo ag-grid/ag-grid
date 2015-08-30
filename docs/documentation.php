@@ -41,6 +41,11 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>Column API:</b> Don't like my tool panel? No worries, now you can build your own!! A new
+        <a href="/angular-grid-column-api/index.php">Column API</a> allows you full control of the columns.
+    </p>
+
+    <p>
         <b>Excel Like Filtering:</b> Now the set filters allow you to remove items that are already
         filtered out, just like Excel. Read about it <a href="/angular-grid-filtering/index.php">here</a>.
         If you don't want this in your set filters, add suppressRemoveEntries=true to the filter config.

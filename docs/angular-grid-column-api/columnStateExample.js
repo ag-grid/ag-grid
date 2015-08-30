@@ -21,7 +21,12 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowData: null,
         enableSorting: true,
         enableColResize: true,
-        showToolPanel: true
+        showToolPanel: true,
+        ready: function() {
+            $scope.gridOptions.columnApi.addChangeListener( function(event) {
+                console.log('Got column event: ' + event);
+            });
+        }
     };
 
     $http.get("../olympicWinners.json")
@@ -31,27 +36,27 @@ module.controller("exampleCtrl", function($scope, $http) {
         });
 
     $scope.printState = function() {
-        var state = $scope.gridOptions.api.getColumnState();
+        var state = $scope.gridOptions.columnApi.getState();
         console.log(state);
     };
 
     var savedState;
 
     $scope.saveState = function() {
-        savedState = $scope.gridOptions.api.getColumnState();
+        savedState = $scope.gridOptions.columnApi.getState();
         console.log('column state saved');
     };
 
     $scope.restoreState = function() {
-        $scope.gridOptions.api.setColumnState(savedState);
+        $scope.gridOptions.columnApi.setState(savedState);
         console.log('column state restored');
     };
 
     $scope.showAthlete = function(show) {
-        $scope.gridOptions.api.hideColumn('athlete', !show);
+        $scope.gridOptions.columnApi.hideColumn('athlete', !show);
     };
 
     $scope.showMedals = function(show) {
-        $scope.gridOptions.api.hideColumns(['gold','silver','bronze'], !show);
+        $scope.gridOptions.columnApi.hideColumns(['gold','silver','bronze'], !show);
     };
 });

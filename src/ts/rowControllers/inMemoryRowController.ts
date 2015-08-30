@@ -377,7 +377,7 @@ module awk.grid {
 
         private doPivoting() {
             var rowsAfterGroup: any;
-            var groupedCols = this.columnController.getGroupedColumns();
+            var groupedCols = this.columnController.getPivotedColumns();
             var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
 
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;

@@ -26,7 +26,6 @@ module awk.grid {
         rowStyle?: any;
         rowClass?: any;
         headerCellRenderer?: any;
-        api?: any; // change to typed
         groupDefaultExpanded?: any;
         groupKeys?: string[];
         groupAggFunction?(nodes: any[]): any;
@@ -83,6 +82,8 @@ module awk.grid {
         slaveGrids?: GridOptions[];
         debug?: boolean;
         filterHideNotAvailable?: boolean;
+        api?: GridApi; // change to typed
+        columnApi?: ColumnApi; // change to typed
     }
 
 }

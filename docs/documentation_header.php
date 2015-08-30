@@ -233,6 +233,16 @@
                     <a class="sidebarLink" href="/angular-grid-tool-panel/index.php">Tool Panel</a>
                 <?php } ?>
 
+                <h4>
+                    API's
+                </h4>
+
+                <?php if ($key == "Grid API") { ?>
+                    <span class="sidebarLinkSelected">Grid API</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-api/index.php">Grid API</a>
+                <?php } ?>
+
                 <?php if ($key == "Column API") { ?>
                     <span class="sidebarLinkSelected">Column API</span>
                 <?php } else { ?>
@@ -293,12 +303,6 @@
                     <span class="sidebarLinkSelected">No Scrolling</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-no-scrolls/index.php">No Scrolling</a>
-                <?php } ?>
-
-                <?php if ($key == "API") { ?>
-                    <span class="sidebarLinkSelected">API</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-api/index.php">API</a>
                 <?php } ?>
 
                 <h4>

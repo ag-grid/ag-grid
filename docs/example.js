@@ -47,6 +47,7 @@ gridsModule.controller('mainController', function($scope) {
 
     $scope.colCount = 20;
     $scope.rowCount = 100;
+    $scope.pinnedColumnCount = 0;
 
     $scope.size = 'fill'; // model for size select
     $scope.width = '100%'; // the div gets it's width and height from here
@@ -255,7 +256,8 @@ gridsModule.controller('mainController', function($scope) {
     };
 
     $scope.onPinnedColCountChanged = function() {
-        angularGrid.api.onNewCols();
+        var newCount = Number($scope.pinnedColumnCount);
+        angularGrid.columnApi.setPinnedColumnCount(newCount);
     };
 
     $scope.onColCountChanged = function() {

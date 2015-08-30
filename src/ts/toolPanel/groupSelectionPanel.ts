@@ -27,7 +27,7 @@ module awk.grid {
         }
 
         private columnsChanged() {
-            this.cColumnList.setModel(this.columnController.getGroupedColumns());
+            this.cColumnList.setModel(this.columnController.getPivotedColumns());
         }
 
         public addDragSource(dragSource: any) {

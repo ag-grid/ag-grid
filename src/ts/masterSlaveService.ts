@@ -115,6 +115,10 @@ module awk.grid {
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
                         this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth);
                         break;
+                    case ColumnChangeEvent.TYPE_PINNED_COUNT_CHANGED:
+                        this.logger.log('onColumnEvent-> processing '+event);
+                        this.columnController.setPinnedColumnCount(event.getPinnedColumnCount());
+                        break;
                 }
 
             });

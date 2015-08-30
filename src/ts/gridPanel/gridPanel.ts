@@ -39,61 +39,65 @@ module awk.grid {
                 '</div>'+
             '</div>';
 
-    var utils = Utils;
+    var _ = Utils;
 
     export class GridPanel {
 
         private masterSlaveService: MasterSlaveService;
-        gridOptionsWrapper: any;
-        forPrint: any;
-        scrollWidth: any;
-        eRoot: any;
-        layout: any;
-        rowModel: any;
-        eBodyViewport: any;
-        columnModel: any;
-        eBody: any;
-        rowRenderer: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private forPrint: boolean;
+        private scrollWidth: number;
+        private layout: BorderLayout;
+        private rowModel: any;
+        private columnModel: ColumnController;
+        private rowRenderer: RowRenderer;
 
-        eBodyContainer: any;
-        ePinnedColsContainer: any;
-        eHeaderContainer: any;
-        ePinnedHeader: any;
-        eHeader: any;
-        eParentOfRows: any;
-        eBodyViewportWrapper: any;
-        ePinnedColsViewport: any;
+        private eBodyViewport: HTMLElement;
+        private eRoot: HTMLElement;
+        private eBody: HTMLElement;
+        private eBodyContainer: HTMLElement;
+        private ePinnedColsContainer: HTMLElement;
+        private eHeaderContainer: HTMLElement;
+        private ePinnedHeader: HTMLElement;
+        private eHeader: HTMLElement;
+        private eParentOfRows: HTMLElement;
+        private eBodyViewportWrapper: HTMLElement;
+        private ePinnedColsViewport: HTMLElement;
 
         private scrollLagCounter = 0;
 
-        constructor(gridOptionsWrapper: any) {
+        constructor(gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
             this.forPrint = this.gridOptionsWrapper.isDontUseScrolls();
             this.setupComponents();
-            this.scrollWidth = utils.getScrollbarWidth();
+            this.scrollWidth = _.getScrollbarWidth();
         }
 
-        public init(columnModel: any, rowRenderer: any, masterSlaveService: MasterSlaveService) {
+        public init(columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService) {
             this.columnModel = columnModel;
             this.rowRenderer = rowRenderer;
             this.masterSlaveService = masterSlaveService;
         }
 
+        public getLayout(): BorderLayout {
+            return this.layout;
+        }
+
         private setupComponents() {
 
             if (this.forPrint) {
-                this.eRoot = utils.loadTemplate(gridNoScrollsHtml);
-                utils.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
+                this.eRoot = <HTMLElement> _.loadTemplate(gridNoScrollsHtml);
+                _.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
             } else {
-                this.eRoot = utils.loadTemplate(gridHtml);
-                utils.addCssClass(this.eRoot, 'ag-root ag-scrolls');
+                this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
+                _.addCssClass(this.eRoot, 'ag-root ag-scrolls');
             }
 
             this.findElements();
 
             this.layout = new BorderLayout({
-                overlay: utils.loadTemplate(loadingHtml),
+                overlay: _.loadTemplate(loadingHtml),
                 center: this.eRoot,
                 dontFill: this.forPrint,
                 name: 'eGridPanel'
@@ -233,30 +237,30 @@ module awk.grid {
             return this.ePinnedHeader;
         }
 
-        //private getHeader() {
-        //    return this.eHeader;
-        //}
-
         public getRowsParent() {
             return this.eParentOfRows;
         }
 
+        private queryHtmlElement(selector: string): HTMLElement {
+            return <HTMLElement> this.eRoot.querySelector(selector);
+        }
+
         private findElements() {
             if (this.forPrint) {
-                this.eHeaderContainer = this.eRoot.querySelector(".ag-header-container");
-                this.eBodyContainer = this.eRoot.querySelector(".ag-body-container");
+                this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
+                this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
                 // for no-scrolls, all rows live in the body container
                 this.eParentOfRows = this.eBodyContainer;
             } else {
-                this.eBody = this.eRoot.querySelector(".ag-body");
-                this.eBodyContainer = this.eRoot.querySelector(".ag-body-container");
-                this.eBodyViewport = this.eRoot.querySelector(".ag-body-viewport");
-                this.eBodyViewportWrapper = this.eRoot.querySelector(".ag-body-viewport-wrapper");
-                this.ePinnedColsContainer = this.eRoot.querySelector(".ag-pinned-cols-container");
-                this.ePinnedColsViewport = this.eRoot.querySelector(".ag-pinned-cols-viewport");
-                this.ePinnedHeader = this.eRoot.querySelector(".ag-pinned-header");
-                this.eHeader = this.eRoot.querySelector(".ag-header");
-                this.eHeaderContainer = this.eRoot.querySelector(".ag-header-container");
+                this.eBody = this.queryHtmlElement('.ag-body');
+                this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
+                this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
+                this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
+                this.ePinnedColsContainer = this.queryHtmlElement('.ag-pinned-cols-container');
+                this.ePinnedColsViewport = this.queryHtmlElement('.ag-pinned-cols-viewport');
+                this.ePinnedHeader = this.queryHtmlElement('.ag-pinned-header');
+                this.eHeader = this.queryHtmlElement('.ag-header');
+                this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
                 this.eParentOfRows = this.eBody;
 
@@ -292,7 +296,7 @@ module awk.grid {
         }
 
         public setBodyContainerWidth() {
-            var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
+            var mainRowWidth = this.columnModel.getBodyContainerWidth() + 'px';
             this.eBodyContainer.style.width = mainRowWidth;
         }
 
@@ -301,7 +305,7 @@ module awk.grid {
                 // pinned col doesn't exist when doing forPrint
                 return;
             }
-            var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + "px";
+            var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + 'px';
             this.ePinnedColsContainer.style.width = pinnedColWidth;
             this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
         }
@@ -312,7 +316,7 @@ module awk.grid {
                 return;
             }
 
-            var showingPinnedCols = this.gridOptionsWrapper.getPinnedColCount() > 0;
+            var showingPinnedCols = this.columnModel.isPinning();
 
             //some browsers had layout issues with the blank divs, so if blank,
             //we don't display them
@@ -340,7 +344,7 @@ module awk.grid {
         public setPinnedColHeight() {
             if (!this.forPrint) {
                 var bodyHeight = this.eBodyViewport.offsetHeight;
-                this.ePinnedColsViewport.style.height = bodyHeight + "px";
+                this.ePinnedColsViewport.style.height = bodyHeight + 'px';
             }
         }
 
@@ -357,7 +361,7 @@ module awk.grid {
             var lastLeftPosition = -1;
             var lastTopPosition = -1;
 
-            this.eBodyViewport.addEventListener("scroll", () => {
+            this.eBodyViewport.addEventListener('scroll', () => {
                 var newLeftPosition = this.eBodyViewport.scrollLeft;
                 var newTopPosition = this.eBodyViewport.scrollTop;
 
@@ -375,7 +379,7 @@ module awk.grid {
                 this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             });
 
-            this.ePinnedColsViewport.addEventListener("scroll", () => {
+            this.ePinnedColsViewport.addEventListener('scroll', () => {
                 // this means the pinned panel was moved, which can only
                 // happen when the user is navigating in the pinned container
                 // as the pinned col should never scroll. so we rollback
@@ -398,7 +402,7 @@ module awk.grid {
             } else if (this.gridOptionsWrapper.getIsScrollLag()) {
                 useScrollLag = this.gridOptionsWrapper.getIsScrollLag()();
             } else {
-                useScrollLag = utils.isBrowserIE() || utils.isBrowserSafari();
+                useScrollLag = _.isBrowserIE() || _.isBrowserSafari();
             }
             if (useScrollLag) {
                 this.scrollLagCounter++;
@@ -415,13 +419,13 @@ module awk.grid {
         }
 
         private scrollHeader(bodyLeftPosition: any) {
-            // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + "px,0,0)";
-            this.eHeaderContainer.style.left = -bodyLeftPosition + "px";
+            // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
+            this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
         }
 
         private scrollPinned(bodyTopPosition: any) {
-            // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + "px,0)";
-            this.ePinnedColsContainer.style.top = -bodyTopPosition + "px";
+            // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
+            this.ePinnedColsContainer.style.top = -bodyTopPosition + 'px';
         }
     }
 }

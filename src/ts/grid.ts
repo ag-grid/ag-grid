@@ -59,6 +59,7 @@ module awk.grid {
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
                 this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService);
+            this.gridOptions.columnApi = this.columnController.getColumnApi();
 
             var that = this;
 
@@ -193,7 +194,7 @@ module awk.grid {
             this.masterSlaveService = masterSlaveService;
 
             this.eRootPanel = new BorderLayout({
-                center: gridPanel.layout,
+                center: gridPanel.getLayout(),
                 east: toolPanelLayout,
                 south: paginationGui,
                 dontFill: forPrint,
@@ -222,6 +223,8 @@ module awk.grid {
                 } else {
                     this.refreshHeaderAndBody();
                 }
+
+                this.gridPanel.showPinnedColContainersIfNeeded();
             });
         }
 

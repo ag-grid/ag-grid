@@ -10,27 +10,200 @@ include '../documentation_header.php';
 
     <h2>Column API</h2>
 
-    <h3>Show / Hide Columns</h3>
+    <p>
+        The column api has methods for interacting with the columns of the grid. Using the column API, you
+        have FULL control of how the columns are displayed. It has everything you needs should you wish
+        to build your own column management GUI (instead of what's provided in the tool panel).
+        A reference to the column api is part of the gridOptions.
+    </p>
+
+    <pre><code>var pinning = gridOptions.columnApi.isPinning();</code></pre>
+
+    <note>
+        It is important to NEVER update the details of a column directly (I'm talking about a Column,
+        not a colDef). The grid should be left to update the attributes of the column. For example, if
+        you want to change a columns width, do NOT change the width on the Column object, use the
+        columnApi.setColumnWidth() method instead.
+    </note>
 
     <p>
-        To show and hide columns via the API, use the methods:
+        Below lists all the methods on the column API. At the bottom of this page there is an example.
+        Note that when talking about columns, a Column Group refers to grouping of the columns in
+        the header, a Column Pivot refers to grouping of the data when doing aggregation and grouping
+        of rows.
+    </p>
+
+    <p>
+        Most of the methods below work with Columns, not colDef's. A Column is a grid internal
+        representation for a column. When you pass a list of colDefs to the grid (via gridOptions.colDefs)
+        the grid wraps each of these colDefs in a Column object. It is the Column object that
+        contains the run-time information about the column. For example, if the column width changes,
+        the actual column width is updated in the Column oject, the colDef never has it's details changed.
+        The fact that the colDef is never changed allows you to use the same colDef across many grids
+        (probably only useful to a select few of you).
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Function</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>addChangeListener(listener)</th>
+            <td>Add a change listener to receive events of changes to the column state.</td>
+        </tr>
+        <tr>
+            <th>sizeColumnsToFit(width)</th>
+            <td>Get the columns to fit to a particular size. The gridApi.sizeColumnsToFit() uses
+            this method and passes in the grid width.</td>
+        </tr>
+        <tr>
+            <th>hideColumn(colId, hide)</th>
+            <td>To show / hide a specific column, where colId = the id of the
+                column you want to show / hide and hide = true to hide, false to show</td>
+        </tr>
+        <tr>
+            <th>hideColumns(colIds, hide)</th>
+            <td>To show / hide a list of columns.</td>
+        </tr>
+        <tr>
+            <th>columnGroupOpened(group, newValue)</th>
+            <td>Call this if  you want to open or close a column group.</td>
+        </tr>
+        <tr>
+            <th>getColumnGroup(name)</th>
+            <td>Returns the column group with the given name.</td>
+        </tr>
+        <tr>
+            <th>getDisplayNameForCol(column)</th>
+            <td>Returns the display name for a col. Useful if you are doing your own header rendering
+            and want the grid to work out if headerValueGetter is used, or if you are doing your own
+            column management GUI, to know what to show as the column name.</td>
+        </tr>
+        <tr>
+            <th>getColumn(key)</th>
+            <td>Returns the column with the given 'key'. The key can either be the colId (a string)
+            or the colDef (an object).</td>
+        </tr>
+        <tr>
+            <th>setState(columnState)</th>
+            <td>Sets the state of the columns. See example below.</td>
+        </tr>
+        <tr>
+            <th>getState()</th>
+            <td>Gets the state of the columns. See example below.</td>
+        </tr>
+        <tr>
+            <th>isPinning()</th>
+            <td>Returns true if pinning, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>getVisibleColAfter(col)</th>
+            <td>Returns the column to the right of the provided column, taking into consideration open / closed
+            column groups and visible columns. This is useful if you need to know what column is beside yours eg
+                if implementing your own cell navigation.</td>
+        </tr>
+        <tr>
+            <th>getVisibleColBefore(col)</th>
+            <td>Same as getVisibleColAfter except gives col to the left.</td>
+        </tr>
+        <tr>
+            <th>setColumnVisible(column, visible)</th>
+            <td>Sets the visibility of a column.</td>
+        </tr>
+        <tr>
+            <th>getAllColumns()</th>
+            <td>Returns all the columns, regardless of visible or not.</td>
+        </tr>
+        <tr>
+            <th>getDisplayedColumns()</th>
+            <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
+            the columns).</td>
+        </tr>
+        <tr>
+            <th>moveColumn(fromIndex, toIndex)</th>
+            <td>Moves a column.</td>
+        </tr>
+        <tr>
+            <th>getPivotedColumns()</th>
+            <td>Returns the pivoted columns. Pivoted columns are used for row grouping.</td>
+        </tr>
+        <tr>
+            <th>addPivotColumn(column)</th>
+            <td>Removes a pivoted column.</td>
+        </tr>
+        <tr>
+            <th>removePivotColumn(column)</th>
+            <td>Removes a pivoted column.</td>
+        </tr>
+        <tr>
+            <th>movePivotColumn(fromIndex, toIndex)</th>
+            <td>Moves a pivot column.</td>
+        </tr>
+        <tr>
+            <th>setColumnAggFunction(column, aggFunc)</th>
+            <td>Sets teh agg function for a column. Set to one of [min,max,sum].</td>
+        </tr>
+        <tr>
+            <th>setColumnWidth(column, newWidth)</th>
+            <td>Sets the column width.</td>
+        </tr>
+        <tr>
+            <th>addValueColumn(column)</th>
+            <td>Adds a value column.</td>
+        </tr>
+        <tr>
+            <th>removeValueColumn(column)</th>
+            <td>Removes a value column</td>
+        </tr>
+        <tr>
+            <th>getValueColumns()</th>
+            <td>Returns the value columns. Value columns are used for row aggregation.</td>
+        </tr>
+        <tr>
+            <th>setPinnedColumnCount(count)</th>
+            <td>Sets the number of pinned columns.</td>
+        </tr>
+        <tr>
+            <th>getHeaderGroups()</th>
+            <td>Returns all the header groups.</td>
+        </tr>
+    </table>
+
+    <h2>Column Changed Events</h2>
+
+    <p>
+        A column change event gets fired whenever something changes with one of the columns.
+        You add a column change event as follows:
+    </p>
+
+    <pre><code>gridOptions.columnApi.addChangeListener( function(event) {
+    console.log('Got column event: ' + event);
+});
+</code></pre>
+
+    Column change events have the following types:
     <ul>
-        <li><b>api.hideColumn(colId, hide)</b>: To show / hide a specific column, where colId = the id of the
-            column you want to show / hide and hide = true to hide, false to show.</li>
-        <li><b>api.hideColumns(colIds, hide)</b>: Same as above, but you pass a list of column id's in.</li>
+        <li><b>everything</b>: Shotgun - gets called when new columsn are set, so everything has changed.</li>
+        <li><b>columnResized</b>: A column was resized.</li>
+        <li><b>pivot</b>: A pivot column was added or removed.</li>
+        <li><b>value</b>: A value column was added or removed.</li>
+        <li><b>columnMoved</b>: A column was moved.</li>
+        <li><b>columnVisible</b>: A column was hidden / shown.</li>
+        <li><b>columnGroupOpened</b>: A column group was opened / closed.</li>
+        <li><b>pinnedCountChanged</b>: The number of pinned columns has changed.</li>
     </ul>
 
-    <h3>Save / Restore Full State</h3>
+    <h2>Deep Dive - Save / Restore Full State</h2>
 
     <p>
         The show / hide above shows and hides specific columns. It is also possible to store the
-        entire state of the columns and restore them again. This includes visibility (overlaps with the
-        above), width, pivots and values.
+        entire state of the columns and restore them again. This includes visibility, width, pivots and values.
     </p>
 
     <ul>
-        <li><b>api.getColumnState()</b>: Returns the state of a particular column.</li>
-        <li><b>api.setColumnState(state)</b>: To set the state of a particular column.</li>
+        <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
+        <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
     </ul>
 
     <p>
@@ -63,6 +236,11 @@ include '../documentation_header.php';
         If multiple columns are used to pivot, this index provides the order of the pivot.</li>
         <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
     </ul>
+    </p>
+
+    <p>
+        The example below shows hiding / showing columns as well as saving / restoring the entire state.
+        The example also registers for column events, the result of which are printed to the console.
     </p>
 
     <show-example example="columnStateExample"></show-example>

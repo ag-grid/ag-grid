@@ -16,7 +16,8 @@ module awk.grid {
                     private gridOptionsWrapper: GridOptionsWrapper,
                     private gridPanel: GridPanel,
                     private valueService: ValueService,
-                    private masterSlaveService: MasterSlaveService) {}
+                    private masterSlaveService: MasterSlaveService) {
+        }
 
         /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
         public __getMasterSlaveService(): MasterSlaveService {
@@ -224,18 +225,22 @@ module awk.grid {
         }
 
         public hideColumn(colId:any, hide:any) {
+            console.warn('ag-Grid: hideColumn deprecated - use hideColumn on columnApi instead eg api.columnApi.hideColumn()');
             this.columnController.hideColumns([colId], hide);
         }
 
         public hideColumns(colIds:any, hide:any) {
+            console.warn('ag-Grid: hideColumns deprecated - use hideColumns on columnApi instead eg api.columnApi.hideColumns()');
             this.columnController.hideColumns(colIds, hide);
         }
 
         public getColumnState() {
+            console.warn('ag-Grid: getColumnState deprecated - use getColumnState on columnApi instead eg api.columnApi.getState()');
             return this.columnController.getState();
         }
 
         public setColumnState(state:any) {
+            console.warn('ag-Grid: setColumnState deprecated - use setColumnState on columnApi instead eg api.columnApi.setState()');
             this.columnController.setState(state);
         }
 
@@ -247,8 +252,5 @@ module awk.grid {
             return this.valueService.getValue(colDef, data, node);
         }
 
-        public getColumnController(): ColumnController {
-            return this.columnController;
-        }
     }
 }

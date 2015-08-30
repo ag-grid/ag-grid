@@ -8,6 +8,7 @@ module awk.grid {
         private columnGroup: ColumnGroup;
         private fromIndex: number;
         private toIndex: number;
+        private pinnedColumnCount: number;
 
         /** A new set of columns has been entered, everything has potentially changed. */
         public static TYPE_EVERYTHING = 'everything';
@@ -30,6 +31,9 @@ module awk.grid {
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static TYPE_COLUMN_RESIZED = 'columnResized';
 
+        /** One or more columns was resized. If just one, the column in the event is set. */
+        public static TYPE_PINNED_COUNT_CHANGED = 'pinnedCountChanged';
+
         constructor(type: string) {
             this.type = type;
         }
@@ -40,6 +44,7 @@ module awk.grid {
             if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.name; }
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
+            if (this.pinnedColumnCount) { result += ', pinnedColumnCount: ' + this.pinnedColumnCount; }
             result += '}';
             return result;
         }
@@ -59,6 +64,11 @@ module awk.grid {
             return this;
         }
 
+        public withPinnedColumnCount(pinnedColumnCount: number): ColumnChangeEvent {
+            this.pinnedColumnCount = pinnedColumnCount;
+            return this;
+        }
+
         public withToIndex(toIndex: number): ColumnChangeEvent {
             this.toIndex = toIndex;
             return this;
@@ -70,6 +80,10 @@ module awk.grid {
 
         public getToIndex(): number  {
             return this.toIndex;
+        }
+
+        public getPinnedColumnCount(): number  {
+            return this.pinnedColumnCount;
         }
 
         public getType(): string {

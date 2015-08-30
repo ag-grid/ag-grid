@@ -1,13 +1,13 @@
 <?php
-$key = "API";
+$key = "Grid API";
 $pageTitle = "Angular Compiling";
-$pageDescription = "Angular Grid Angular Compiling";
-$pageKeyboards = "Angular Grid Angular Compiling";
+$pageDescription = "Angular Grid API";
+$pageKeyboards = "Angular Grid API";
 include '../documentation_header.php';
 ?>
 
 <div>
-    <h2>API</h2>
+    <h2>Grid API</h2>
 
     Angular Grid exposes an API for the rest of your application to interact with it.
 
