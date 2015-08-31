@@ -479,7 +479,7 @@ PersonFilter.prototype.doesFilterPass = function (params) {
         return true;
     }
     // make sure each word passes separately, ie search for firstname, lastname
-    var passed = true;asdf;
+    var passed = true;
     var value = this.valueGetter(params);
     filterText.toLowerCase().split(" ").forEach(function(filterWord) {
         if (value.toString().toLowerCase().indexOf(filterWord)<0) {

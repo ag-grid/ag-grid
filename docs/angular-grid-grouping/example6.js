@@ -12,22 +12,22 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150, cellClassRules: classRules},
-        {headerName: "Age", field: "age", width: 90, cellClassRules: classRules},
         {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, cellStyle: function(params) {
             // color red for the first group
             if (params.node.parent.parent.firstChild) {
                 return {color: "red"};
             }
         }},
-        {headerName: "Year", field: "year", width: 90, cellClassRules: classRules},
-        {headerName: "Date", field: "date", width: 110, cellClassRules: classRules},
         {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, cellStyle: function(params) {
             // color blue for the first in the current sub group
             if (params.node.firstChild) {
                 return {color: "blue"};
             }
         }},
+        {headerName: "Athlete", field: "athlete", width: 150, cellClassRules: classRules},
+        {headerName: "Age", field: "age", width: 90, cellClassRules: classRules},
+        {headerName: "Year", field: "year", width: 90, cellClassRules: classRules},
+        {headerName: "Date", field: "date", width: 110, cellClassRules: classRules},
         {headerName: "Gold", field: "gold", width: 100, cellClassRules: classRules},
         {headerName: "Silver", field: "silver", width: 100, cellClassRules: classRules},
         {headerName: "Bronze", field: "bronze", width: 100, cellClassRules: classRules},
@@ -44,6 +44,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $http.get("../olympicWinners.json")
         .then(function(res){
+            res.data.reverse();
             $scope.gridOptions.rowData = res.data;
             $scope.gridOptions.api.setSortModel([{field: 'country', sort: 'asc'}]);
             $scope.gridOptions.api.onNewRows();

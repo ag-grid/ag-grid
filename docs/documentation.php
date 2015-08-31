@@ -27,7 +27,7 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>30th Aug 2015 - 800 stars on Github and counting!!</b>
+        <b>30th Aug 2015 - Over 800 stars on Github and counting!!</b>
     </p>
 
     <p>&nbsp;</p>
@@ -36,37 +36,40 @@ include 'documentation_header.php';
         <b>Last Week</b>
     </p>
 
-    <p>
-        <b>Mouse Wheel Scroll from Pinned Columns:</b> Mouse wheel now scrolls when over the pinned columns.
-    </p>
+    <ul>
 
-    <p>
+    <li>
+        <b>Mouse Wheel Scroll from Pinned Columns:</b> Mouse wheel now scrolls when over the pinned columns.
+    </li>
+
+    <li>
         <b>Column API:</b> Don't like my tool panel? No worries, now you can build your own!! A new
         <a href="/angular-grid-column-api/index.php">Column API</a> allows you full control of the columns.
-    </p>
+    </li>
 
-    <p>
+    <li>
         <b>External Filtering:</b> Now you can combine your own 'outside of the grid' filters with the
         grid filtering, making it easy to add bespoke headers to the grid for 'user friendly' filters.
         See the 'external filtering' seciton <a href="/angular-grid-filtering/index.php#externalFiltering">here</a>.
-    </p>
+    </li>
 
-    <p>
+    <li>
         <b>Excel Like Filtering:</b> Now the set filters allow you to remove items that are already
         filtered out, just like Excel. Read about it <a href="/angular-grid-filtering/index.php">here</a>.
         If you don't want this in your set filters, add suppressRemoveEntries=true to the filter config.
-    </p>
+    </li>
 
-    <p>
+    <li>
         <b>Breaking change 1:</b> If you implemented your own custom filters, then when you move to 1.14, note
         that the filter constructor function now takes no parameters and an 'init' method is used instead.
         I've put some helpful warning messages in if the grid senses you are doing it the old way.
-    </p>
+    </li>
 
-    <p>
+    <li>
         <b>Breaking change 2:</b> The API for sorting is now based on colId (Column ID) and not field.
-        So if setting sorts progmatically, the sort model should have 'colId' not 'field'.
-    </p>
+        So if setting sorts progmatically, or doing server side sorting, the sort model now has 'colId' not 'field'.
+    </li>
+    </ul>
 
     <p>
         Release 1.14 contains all the above.
@@ -79,6 +82,15 @@ include 'documentation_header.php';
     </p>
     <p>
         I'm going to continue with my Angular 2 and Web Components research.
+    </p>
+
+
+    <p>
+        <b>Angular Air</b>
+    </p>
+    <p>
+        On Tuesday 15th September I will be on <a href="http://angular-air.com/">Angular Air</a> talking about
+        my work with ag-Grid.
     </p>
 
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
@@ -243,6 +255,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>16th Aug</b> Master & Slave Grids.
+    </p>
 
     <hr/>
 

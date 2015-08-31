@@ -10,13 +10,16 @@ include '../documentation_header.php';
 
     <h2>Pinning</h2>
 
-    Enter the number of columns you wish to pin in the Grid Options pinnedColumnCount attribute.
+    <p>
+        Enter the number of columns you wish to pin in the Grid Options pinnedColumnCount attribute.
+        The pinned columns are always the columns on the left hand side.
+    </p>
+    <pre><code>gridOptions.pinnedColumnCount = count;</code></pre>
 
-    <p/>
+    <p>To change the number of pinned columns after grid creation, call:</p>
+    <pre><code>gridOptions.columnApi.setPinnedColumnCount(newCount);</code></pre>
 
-    The pinned columns are always the columns on the left hand side.
-
-    <p/>
+    <p>Below shows an example with 2 pinned columns.</p>
 
     <show-example example="example1"></show-example>
 </div>

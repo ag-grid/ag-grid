@@ -91,8 +91,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         resultOfSort.sort(function(a,b) {
             for (var k = 0; k<sortModel.length; k++) {
                 var sortColModel = sortModel[k];
-                var valueA = a[sortColModel.field];
-                var valueB = b[sortColModel.field];
+                var valueA = a[sortColModel.colId];
+                var valueB = b[sortColModel.colId];
                 // this filter didn't find a difference, move onto the next one
                 if (valueA==valueB) {
                     continue;

@@ -4,7 +4,7 @@ var module = angular.module("example", ["angularGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150, sortingOrder: ['desc','asc']},
+        {headerName: "Athlete", field: "athlete", width: 150, sortingOrder: ['asc','desc']},
         {headerName: "Age", field: "age", width: 90, sortingOrder: ['desc','asc']},
         {headerName: "Country", field: "country", width: 120, sortingOrder: ['desc',null]},
         {headerName: "Year", field: "year", width: 90, sortingOrder: ['asc']},

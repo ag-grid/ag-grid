@@ -197,7 +197,7 @@ columnDefinition = {
 
     <show-example example="exampleFilterExternal"></show-example>
 
-    <h2>Custom Filtering</h2>
+    <h2>Custom Column Filtering</h2>
 
     <p>
         If the filters provided don't provide what you want, then it's time to build your own filter class.
