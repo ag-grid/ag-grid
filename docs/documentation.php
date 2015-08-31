@@ -18,8 +18,12 @@ include 'documentation_header.php';
                 frameborder="0" scrolling="0" width="160px" height="30px">
         </iframe>
     </div>
-    <div style="text-align: center; font-weight: bold; font-size: 22px;">
-        Show your support, star Angular Grid on Github
+    <div style="text-align: center; font-size: 22px;">
+        Show your support, star
+            <span style="font-family: Impact, Charcoal, sans-serif; padding-left: 6px; padding-right: 6px;">
+                <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span>
+            </span>
+        on Github
     </div>
 </div>
 
@@ -71,6 +75,10 @@ include 'documentation_header.php';
     </li>
     </ul>
 
+    <p>
+        And then the usual bug fixes as per Github and board chatter. If you want to see exactly, check out
+        Github history.
+    </p>
     <p>
         Release 1.14 contains all the above.
     </p>
