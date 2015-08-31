@@ -22,6 +22,10 @@ module awk.grid {
         quickFilterAggregateText?: string;
         /** Groups only - Children of this group */
         children?: RowNode[];
+        /** Groups only - The field we are pivoting on eg Country*/
+        field?: string;
+        /** Groups only - The key for the pivot eg Ireland, UK, USA */
+        key?: any;
         /** Groups only - Filtered children of this group */
         childrenAfterFilter?: RowNode[];
         /** Groups only - Sorted children of this group */
@@ -32,6 +36,8 @@ module awk.grid {
         expanded?: boolean;
         /** Groups only - If doing footers, reference to the footer node for this group */
         sibling?: RowNode;
+        /** Not to be used, internal temporary map used by the grid when creating groups */
+        _childrenMap?: {}
     }
 
 }

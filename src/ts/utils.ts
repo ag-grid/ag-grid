@@ -269,8 +269,7 @@ module awk.grid {
         }
 
         /** 
-         * tries to use the provided renderer. if a renderer found, returns true.
-         * if no renderer, returns false.
+         * Tries to use the provided renderer.
          */
         static useRenderer<TParams>(eParent: Element, eRenderer: (params:TParams) => Node | string, params: TParams) {
             var resultFromRenderer = eRenderer(params);
@@ -279,14 +278,14 @@ module awk.grid {
                 var eTextSpan = document.createElement('span');
                 eTextSpan.innerHTML = resultFromRenderer;
                 eParent.appendChild(eTextSpan);
-            } else {
+            } else if (this.isNodeOrElement(resultFromRenderer)) {
                 //a dom node or element was returned, so add child
-                eParent.appendChild(resultFromRenderer);
+                eParent.appendChild(<Node>resultFromRenderer);
             }
         }
 
         /** 
-         * if icon provided, use this (either a string, or a function callback).
+         * If icon provided, use this (either a string, or a function callback).
          * if not, then use the second parameter, which is the svgFactory function
          */
         static createIcon(iconName: any, gridOptionsWrapper: any, colDefWrapper: any, svgFactoryFunc: () => Node) {
