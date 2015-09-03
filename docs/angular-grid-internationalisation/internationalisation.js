@@ -37,6 +37,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             last: 'daLasten',
             first: 'daFirsten',
             previous: 'daPreviousen',
+            loadingOoo: 'daLoading...',
             // for set filter
             selectAll: 'daSelect Allen',
             searchOoo: 'daSearch...',

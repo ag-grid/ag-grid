@@ -30,6 +30,7 @@ include '../documentation_header.php';
             last: 'daLasten',
             first: 'daFirsten',
             previous: 'daPreviousen',
+            loadingOoo: 'daLoading...',
             // for set filter
             selectAll: 'daSelect Allen',
             searchOoo: 'daSearch...',

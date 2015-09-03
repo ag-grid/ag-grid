@@ -35,7 +35,7 @@ module awk.grid {
     var loadingHtml =
             '<div class="ag-loading-panel">'+
                 '<div class="ag-loading-wrapper">'+
-                    '<span class="ag-loading-center">Loading...</span>'+
+                    '<span class="ag-loading-center">[LOADING...]</span>'+
                 '</div>'+
             '</div>';
 
@@ -97,7 +97,7 @@ module awk.grid {
             this.findElements();
 
             this.layout = new BorderLayout({
-                overlay: _.loadTemplate(loadingHtml),
+                overlay: _.loadTemplate(this.createTemplate()),
                 center: this.eRoot,
                 dontFill: this.forPrint,
                 name: 'eGridPanel'
@@ -108,6 +108,11 @@ module awk.grid {
             if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
                 this.eBodyViewport.style.overflowX = 'hidden';
             }
+        }
+
+        private createTemplate(): string {
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            return loadingHtml.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'))
         }
 
         public ensureIndexVisible(index: any) {
