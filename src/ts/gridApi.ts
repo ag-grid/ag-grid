@@ -43,11 +43,13 @@ module awk.grid {
         public setFrozenTopRowData(rows: any[]): void {
             this.gridOptionsWrapper.setFrozenTopRowData(rows);
             this.gridPanel.onBodyHeightChange();
+            this.refreshView();
         }
 
         public setFrozenBottomRowData(rows: any[]): void {
             this.gridOptionsWrapper.setFrozenBottomRowData(rows);
             this.gridPanel.onBodyHeightChange();
+            this.refreshView();
         }
 
         public onNewCols() {
@@ -61,6 +63,7 @@ module awk.grid {
 
         public refreshView() {
             this.rowRenderer.refreshView();
+            this.rowRenderer.refreshAllFrozenRows();
         }
 
         public softRefreshView() {

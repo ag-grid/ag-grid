@@ -20,6 +20,9 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         pinnedColumnCount: 2,
+        enableColResize: true,
+        enableSorting: true,
+        enableFilter: true,
         // no rows to float to start with
         floatingHeaderRowData: [],
         floatingFooterRowData: []
@@ -51,10 +54,12 @@ module.controller("exampleCtrl", function($scope, $http) {
             result.push({
                 athlete: prefix + ' Athlete ' + i,
                 age: prefix + ' Age ' + i,
-                country: prefix + ' Country ' + i
+                country: prefix + ' Country ' + i,
+                year: prefix + ' Year ' + i,
+                date: prefix + ' Date ' + i,
+                sport: prefix + ' Sport ' + i
             });
         }
         return result;
     }
-
 });

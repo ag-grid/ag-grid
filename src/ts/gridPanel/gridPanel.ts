@@ -10,9 +10,13 @@ module awk.grid {
                     <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
                 </div>
                 <!-- frozen top -->
-                <div class="ag-frozen-top"></div>
+                <div class="ag-frozen-top">
+                    <div class="ag-pinned-frozen-top"></div><div class="ag-frozen-top-viewport"><div class="ag-frozen-top-container"></div></div>
+                </div>
                 <!-- frozen bottom -->
-                <div class="ag-frozen-bottom"></div>
+                <div class="ag-frozen-bottom">
+                    <div class="ag-pinned-frozen-bottom"></div><div class="ag-frozen-bottom-viewport"><div class="ag-frozen-bottom-container"></div></div>
+                </div>
                 <!-- body -->
                 <div class="ag-body">
                     <div class="ag-pinned-cols-viewport">
@@ -70,8 +74,14 @@ module awk.grid {
         private eParentOfRows: HTMLElement;
         private eBodyViewportWrapper: HTMLElement;
         private ePinnedColsViewport: HTMLElement;
+
         private eFrozenTop: HTMLElement;
+        private ePinnedFrozenTop: HTMLElement;
+        private eFrozenTopContainer: HTMLElement;
+
         private eFrozenBottom: HTMLElement;
+        private ePinnedFrozenBottom: HTMLElement;
+        private eFrozenBottomContainer: HTMLElement;
 
         constructor(gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -118,6 +128,22 @@ module awk.grid {
             if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
                 this.eBodyViewport.style.overflowX = 'hidden';
             }
+        }
+
+        public getPinnedFrozenTop(): HTMLElement {
+            return this.ePinnedFrozenTop;
+        }
+
+        public getFrozenTopContainer(): HTMLElement {
+            return this.eFrozenTopContainer;
+        }
+
+        public getPinnedFrozenBottom(): HTMLElement {
+            return this.ePinnedFrozenBottom;
+        }
+
+        public getFrozenBottomContainer(): HTMLElement {
+            return this.eFrozenBottomContainer;
         }
 
         private createTemplate(): string {
@@ -276,8 +302,15 @@ module awk.grid {
                 this.ePinnedHeader = this.queryHtmlElement('.ag-pinned-header');
                 this.eHeader = this.queryHtmlElement('.ag-header');
                 this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
-                this.eFrozenBottom = this.queryHtmlElement('.ag-frozen-bottom');
+
                 this.eFrozenTop = this.queryHtmlElement('.ag-frozen-top');
+                this.ePinnedFrozenTop = this.queryHtmlElement('.ag-pinned-frozen-top');
+                this.eFrozenTopContainer = this.queryHtmlElement('.ag-frozen-top-container');
+
+                this.eFrozenBottom = this.queryHtmlElement('.ag-frozen-bottom');
+                this.ePinnedFrozenBottom = this.queryHtmlElement('.ag-pinned-frozen-bottom');
+                this.eFrozenBottomContainer = this.queryHtmlElement('.ag-frozen-bottom-container');
+
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
                 this.eParentOfRows = this.eBody;
 
@@ -315,6 +348,8 @@ module awk.grid {
         public setBodyContainerWidth() {
             var mainRowWidth = this.columnModel.getBodyContainerWidth() + 'px';
             this.eBodyContainer.style.width = mainRowWidth;
+            this.eFrozenBottomContainer.style.width = mainRowWidth;
+            this.eFrozenTopContainer.style.width = mainRowWidth;
         }
 
         public setPinnedColContainerWidth() {
@@ -324,6 +359,9 @@ module awk.grid {
             }
             var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + 'px';
             this.ePinnedColsContainer.style.width = pinnedColWidth;
+            this.ePinnedFrozenBottom.style.width = pinnedColWidth;
+            this.ePinnedFrozenTop.style.width = pinnedColWidth;
+
             this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
         }
 
@@ -476,6 +514,8 @@ module awk.grid {
         private scrollHeader(bodyLeftPosition: any) {
             // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
             this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
+            this.eFrozenBottomContainer.style.left = -bodyLeftPosition + 'px';
+            this.eFrozenTopContainer.style.left = -bodyLeftPosition + 'px';
         }
 
         private scrollPinned(bodyTopPosition: any) {

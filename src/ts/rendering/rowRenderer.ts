@@ -20,16 +20,24 @@ module awk.grid {
         private expressionService: ExpressionService;
         private templateService: TemplateService;
         private cellRendererMap: {[key: string]: any};
-        private renderedRows: {[key: string]: RenderedRow};
         private rowModel: any;
-        private eBodyContainer: any;
-        private eBodyViewport: any;
-        private ePinnedColsContainer: any;
-        private eParentOfRows: any;
-        private firstVirtualRenderedRow: any;
-        private lastVirtualRenderedRow: any;
+        private firstVirtualRenderedRow: number;
+        private lastVirtualRenderedRow: number;
         private focusedCell: any;
         private valueService: ValueService;
+
+        private renderedRows: {[key: string]: RenderedRow};
+        private renderedTopFrozenRows: RenderedRow[] = [];
+        private renderedBottomFrozenRows: RenderedRow[] = [];
+
+        private eBodyContainer: HTMLElement;
+        private eBodyViewport: HTMLElement;
+        private ePinnedColsContainer: HTMLElement;
+        private eFrozenTopContainer: HTMLElement;
+        private eFrozenTopPinnedContainer: HTMLElement;
+        private eFrozenBottomContainer: HTMLElement;
+        private eFrozenBottomPinnedContainer: HTMLElement;
+        private eParentOfRows: HTMLElement;
 
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
                     angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
@@ -74,7 +82,7 @@ module awk.grid {
         public setMainRowWidths() {
             var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 
-            var unpinnedRows: [any] = this.eBodyContainer.querySelectorAll(".ag-row");
+            var unpinnedRows: [any] = (<any>this.eBodyContainer).querySelectorAll(".ag-row");
             for (var i = 0; i < unpinnedRows.length; i++) {
                 unpinnedRows[i].style.width = mainRowWidth;
             }
@@ -82,9 +90,59 @@ module awk.grid {
 
         private findAllElements(gridPanel: any) {
             this.eBodyContainer = gridPanel.getBodyContainer();
-            this.eBodyViewport = gridPanel.getBodyViewport();
             this.ePinnedColsContainer = gridPanel.getPinnedColsContainer();
+
+            this.eFrozenTopContainer = gridPanel.getFrozenTopContainer();
+            this.eFrozenTopPinnedContainer = gridPanel.getPinnedFrozenTop();
+            this.eFrozenBottomContainer = gridPanel.getFrozenBottomContainer();
+            this.eFrozenBottomPinnedContainer = gridPanel.getPinnedFrozenBottom();
+
+            this.eBodyViewport = gridPanel.getBodyViewport();
             this.eParentOfRows = gridPanel.getRowsParent();
+        }
+
+        public refreshAllFrozenRows(): void {
+            this.refreshFrozenRows(
+                this.renderedTopFrozenRows,
+                this.gridOptionsWrapper.getFrozenTopRowData(),
+                this.eFrozenTopPinnedContainer,
+                this.eFrozenTopContainer);
+            this.refreshFrozenRows(
+                this.renderedBottomFrozenRows,
+                this.gridOptionsWrapper.getFrozenBottomRowData(),
+                this.eFrozenBottomPinnedContainer,
+                this.eFrozenBottomContainer);
+        }
+
+        private refreshFrozenRows(renderedRows: RenderedRow[], rowData: any[],  pinnedContainer: HTMLElement, bodyContainer: HTMLElement): void {
+            renderedRows.forEach( (row: RenderedRow) => {
+                row.destroy();
+            });
+
+            renderedRows.length = 0;
+
+            // if no cols, don't draw row - can we get rid of this???
+            var columns = this.columnModel.getDisplayedColumns();
+            if (!columns || columns.length == 0) {
+                return;
+            }
+
+            // should we be storing this somewhere???
+            var mainRowWidth = this.columnModel.getBodyContainerWidth();
+
+            if (rowData) {
+                rowData.forEach( (data: any, rowIndex: number) => {
+                    var node: RowNode = {
+                        data: data
+                    };
+                    var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
+                        this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
+                        this.$compile, this.templateService, this.selectionController, this,
+                        bodyContainer, pinnedContainer, node, rowIndex);
+                    renderedRow.setMainRowWidth(mainRowWidth);
+                    renderedRows.push(renderedRow);
+                })
+            }
         }
 
         public refreshView(refreshFromIndex?: any) {
