@@ -221,6 +221,12 @@
                     Working with Data
                 </h4>
 
+                <?php if ($key == "Floating") { ?>
+                    <span class="sidebarLinkSelected">Floating Header & Footer</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-floating/index.php">Floating Header & Footer</a>
+                <?php } ?>
+
                 <?php if ($key == "Grouping") { ?>
                     <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
                 <?php } else { ?>

@@ -40,6 +40,16 @@ module awk.grid {
             this.grid.setRows();
         }
 
+        public setFrozenTopRowData(rows: any[]): void {
+            this.gridOptionsWrapper.setFrozenTopRowData(rows);
+            this.gridPanel.onBodyHeightChange();
+        }
+
+        public setFrozenBottomRowData(rows: any[]): void {
+            this.gridOptionsWrapper.setFrozenBottomRowData(rows);
+            this.gridPanel.onBodyHeightChange();
+        }
+
         public onNewCols() {
             this.grid.onNewCols();
         }
@@ -214,6 +224,18 @@ module awk.grid {
 
         public setFocusedCell(rowIndex:any, colIndex:any) {
             this.grid.setFocusedCell(rowIndex, colIndex);
+        }
+
+        public setHeaderHeight(headerHeight: number) {
+            this.gridOptionsWrapper.setHeaderHeight(headerHeight);
+            this.gridPanel.onBodyHeightChange();
+        }
+
+        public setGroupHeaders(groupHeaders: boolean) {
+            this.gridOptionsWrapper.setGroupHeaders(groupHeaders);
+            this.columnController.onColumnsChanged();
+            // if using the default height, then this is impacted by the header count
+            this.gridPanel.onBodyHeightChange();
         }
 
         public showToolPanel(show:any) {

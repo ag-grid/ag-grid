@@ -135,7 +135,7 @@ module awk.grid {
             }
             this.pinnedColumnCount = count;
             this.updateModel();
-            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED).withPinnedColumnCount(count);
+            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
             this.fireColumnChanged(event);
         }
 
@@ -209,6 +209,7 @@ module awk.grid {
             }
 
             if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
+                console.warn('ag-Grid: gridOptions.columnResized is deprecated - use the column API and events instead');
                 this.gridOptionsWrapper.getColumnResized()(column);
             }
 
@@ -246,6 +247,7 @@ module awk.grid {
                 .withToIndex(toIndex);
             this.fireColumnChanged(event);
             if (typeof this.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
+                console.warn('ag-Grid: gridOptions.columnOrderChanged is deprecated, use the column API and events instead');
                 this.gridOptionsWrapper.getColumnOrderChanged()(this.allColumns);
             }
         }
@@ -287,6 +289,7 @@ module awk.grid {
             this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VISIBLE).withColumn(column));
 
             if (typeof this.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
+                console.warn('agGrid: gridOptions.columnVisibilityChanged is deprecated - use the column events instead');
                 this.gridOptionsWrapper.getColumnVisibilityChanged()(this.allColumns);
             }
         }
@@ -460,7 +463,8 @@ module awk.grid {
         }
 
         // called by angularGrid
-        public setColumns(columnDefs: any) {
+        public onColumnsChanged() {
+            var columnDefs = this.gridOptionsWrapper.getColumnDefs();
             this.checkForDeprecatedItems(columnDefs);
             this.createColumns(columnDefs);
             this.createPivotColumns();

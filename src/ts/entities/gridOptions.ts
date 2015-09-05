@@ -3,43 +3,83 @@
 module awk.grid {
 
     export interface GridOptions {
-        rowSelection?: string;
-        rowDeselection?: boolean;
-        context?: any;
+
+        // set once in init, can never change
         virtualPaging?: boolean;
-        showToolPanel?: boolean;
         toolPanelSuppressPivot?: boolean;
         toolPanelSuppressValues?: boolean;
         rowsAlreadyGrouped?: boolean;
-        groupSelectsChildren?: boolean;
-        groupHidePivotColumns?: boolean;
-        groupIncludeFooter?: boolean;
         suppressRowClickSelection?: boolean;
         suppressCellSelection?: boolean;
         sortingOrder?: string[];
         suppressMultiSort?: boolean;
         suppressHorizontalScroll?: boolean;
-        groupSuppressAutoColumn?: boolean;
-        groupHeaders?: boolean;
-        dontUseScrolls?: boolean;
         unSortIcon?: boolean;
-        rowStyle?: any;
-        rowClass?: any;
-        headerCellRenderer?: any;
-        groupDefaultExpanded?: any;
-        groupKeys?: string[];
-        groupAggFunction?(nodes: any[]): any;
-        groupAggFields?: string[];
-        rowData?: any[];
+        rowHeight?: number;
+        rowBuffer?: number;
+        enableColResize?: boolean;
+        enableCellExpressions?: boolean;
+        enableSorting?: boolean;
+        enableServerSideSorting?: boolean;
+        enableFilter?: boolean;
+        enableServerSideFilter?: boolean;
+        icons?: any; // should be typed
+        colWidth?: number;
+        localeText?: any;
+        suppressMenuHide?: boolean;
+        debug?: boolean;
+
+        angularCompileRows?: boolean;
+        angularCompileFilters?: boolean;
+        angularCompileHeaders?: boolean;
+
+        groupSuppressAutoColumn?: boolean;
+        groupSelectsChildren?: boolean;
+        groupHidePivotColumns?: boolean;
+        groupIncludeFooter?: boolean;
         groupUseEntireRow?: boolean;
         groupColumnDef?: any; // change to typed
         groupSuppressRow?: boolean;
         groupSuppressBlankHeader?: boolean;
-        angularCompileRows?: boolean;
-        angularCompileFilters?: boolean;
-        angularCompileHeaders?: boolean;
+
+        dontUseScrolls?: boolean;
+
+        // changeable with impact
+        rowData?: any[];
+        frozenTopRowData?: any[];
+        frozenBottomRowData?: any[];
+        rowSelection?: string;
+        rowDeselection?: boolean;
+        showToolPanel?: boolean;
+        groupKeys?: string[];
+        groupAggFunction?(nodes: any[]): any;
+        groupAggFields?: string[];
         columnDefs?: any[]; // change to typed
-        rowHeight?: number;
+        datasource?: any; // should be typed
+        pinnedColumnCount?: number;
+        // in properties
+        groupHeaders?: boolean;
+        headerHeight?: number;
+
+        // changeable, but no immediate impact
+        context?: any;
+        rowStyle?: any;
+        rowClass?: any;
+        headerCellRenderer?: any;
+        groupDefaultExpanded?: any;
+        slaveGrids?: GridOptions[];
+
+        // callbacks
+        ready?(api: any): void;
+        groupInnerRenderer?(params: any): void;
+        groupRowInnerRenderer?(params: any): void;
+        groupRowRenderer?: Function | Object;
+        isScrollLag?(): boolean;
+        suppressScrollLag?(): boolean;
+        isExternalFilterPresent?(): boolean;
+        doesExternalFilterPass?(node: RowNode): boolean;
+
+        // events
         modelUpdated?(): void;
         cellClicked?(params: any): void;
         cellDoubleClicked?(params: any): void;
@@ -54,36 +94,17 @@ module awk.grid {
         afterSortChanged?(): void;
         virtualRowRemoved?(row: any, rowIndex: number): void;
         rowClicked?(params: any): void;
+
+        // deprecated
         columnResized?(column: Column):void;
         columnVisibilityChanged?(columns: Column[]):void;
         columnOrderChanged?(columns: Column[]):void;
-        datasource?: any; // should be typed
-        ready?(api: any): void; // should be typed
-        rowBuffer?: number;
-        enableColResize?: boolean;
-        enableCellExpressions?: boolean;
-        enableSorting?: boolean;
-        enableServerSideSorting?: boolean;
-        enableFilter?: boolean;
-        enableServerSideFilter?: boolean;
+
+        // unknown
         selectedRows?: any[];
         selectedNodesById?: {[email: number]: any;}; // should be typed to node
-        icons?: any; // should be typed
-        groupInnerRenderer?(params: any): void;
-        groupRowInnerRenderer?(params: any): void;
-        groupRowRenderer?: Function | Object;
-        colWidth?: number;
-        headerHeight?: number;
-        pinnedColumnCount?: number;
-        localeText?: any;
-        isScrollLag?(): boolean;
-        suppressScrollLag?(): boolean;
-        isExternalFilterPresent?(): boolean;
-        doesExternalFilterPass?(node: RowNode): boolean;
-        suppressMenuHide?: boolean;
-        slaveGrids?: GridOptions[];
-        debug?: boolean;
-        filterHideNotAvailable?: boolean;
+
+        // apis, set by the grid on init
         api?: GridApi; // change to typed
         columnApi?: ColumnApi; // change to typed
     }

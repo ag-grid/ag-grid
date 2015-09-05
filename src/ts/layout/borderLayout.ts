@@ -6,28 +6,30 @@ module awk.grid {
 
     export class BorderLayout {
 
-        eNorthWrapper: any;
-        eSouthWrapper: any;
-        eEastWrapper: any;
-        eWestWrapper: any;
-        eCenterWrapper: any;
-        eOverlayWrapper: any;
-        eCenterRow: any;
+        private eNorthWrapper: any;
+        private eSouthWrapper: any;
+        private eEastWrapper: any;
+        private eWestWrapper: any;
+        private eCenterWrapper: any;
+        private eOverlayWrapper: any;
+        private eCenterRow: any;
 
-        eNorthChildLayout: any;
-        eSouthChildLayout: any;
-        eEastChildLayout: any;
-        eWestChildLayout: any;
-        eCenterChildLayout: any;
+        private eNorthChildLayout: any;
+        private eSouthChildLayout: any;
+        private eEastChildLayout: any;
+        private eWestChildLayout: any;
+        private eCenterChildLayout: any;
 
-        isLayoutPanel: any;
-        fullHeight: any;
-        layoutActive: any;
+        private isLayoutPanel: any;
+        private fullHeight: any;
+        private layoutActive: any;
 
-        eGui: any;
-        id: any;
-        childPanels: any;
-        centerHeightLastTime: any;
+        private eGui: any;
+        private id: any;
+        private childPanels: any;
+        private centerHeightLastTime: any;
+
+        private sizeChangeListners = <any>[];
 
         constructor(params:any) {
 
@@ -90,7 +92,17 @@ module awk.grid {
             this.setOverlayVisible(false);
         }
 
-        setupPanels(params: any) {
+        public addSizeChangeListener(listener: Function): void {
+            this.sizeChangeListners.push(listener);
+        }
+
+        public fireSizeChanged(): void {
+            this.sizeChangeListners.forEach( function(listener: Function) {
+                listener();
+            });
+        }
+
+        private setupPanels(params: any) {
             this.eNorthWrapper = this.eGui.querySelector('#north');
             this.eSouthWrapper = this.eGui.querySelector('#south');
             this.eEastWrapper = this.eGui.querySelector('#east');
@@ -108,7 +120,7 @@ module awk.grid {
             this.setupPanel(params.overlay, this.eOverlayWrapper);
         }
 
-        setupPanel(content: any, ePanel: any) {
+        private setupPanel(content: any, ePanel: any) {
             if (!ePanel) {
                 return;
             }
@@ -127,12 +139,12 @@ module awk.grid {
             }
         }
 
-        getGui() {
+        public getGui() {
             return this.eGui;
         }
 
         // returns true if any item changed size, otherwise returns false
-        doLayout() {
+        public doLayout() {
 
             if (!_.isVisible(this.eGui)) {
                 return false;
@@ -161,10 +173,15 @@ module awk.grid {
             if (centerChanged) {
                 atLeastOneChanged = true;
             }
+
+            if (atLeastOneChanged) {
+                this.fireSizeChanged();
+            }
+
             return atLeastOneChanged;
         }
 
-        layoutChild(childPanel: any) {
+        private layoutChild(childPanel: any) {
             if (childPanel) {
                 return childPanel.doLayout();
             } else {
@@ -172,10 +189,30 @@ module awk.grid {
             }
         }
 
-        layoutHeight() {
+        private layoutHeight() {
             if (this.fullHeight) {
+                return this.layoutHeightFullHeight();
+            } else {
+                return this.layoutHeightNormal();
+            }
+        }
+
+        // full height never changes the height, because the center is always 100%,
+        // however we do check for change, to inform the listeners
+        private layoutHeightFullHeight() {
+            var centerHeight = _.offsetHeight(this.eGui);
+            if (centerHeight < 0) {
+                centerHeight = 0;
+            }
+            if (this.centerHeightLastTime !== centerHeight) {
+                this.centerHeightLastTime = centerHeight;
+                return true;
+            } else {
                 return false;
             }
+        }
+
+        private layoutHeightNormal() {
 
             var totalHeight = _.offsetHeight(this.eGui);
             var northHeight = _.offsetHeight(this.eNorthWrapper);
@@ -195,7 +232,11 @@ module awk.grid {
             }
         }
 
-        layoutWidth() {
+        public getCentreHeight(): number {
+            return this.centerHeightLastTime;
+        }
+
+        private layoutWidth() {
             var totalWidth = _.offsetWidth(this.eGui);
             var eastWidth = _.offsetWidth(this.eEastWrapper);
             var westWidth = _.offsetWidth(this.eWestWrapper);
@@ -208,21 +249,21 @@ module awk.grid {
             this.eCenterWrapper.style.width = centerWidth + 'px';
         }
 
-        setEastVisible(visible: any) {
+        public setEastVisible(visible: any) {
             if (this.eEastWrapper) {
                 this.eEastWrapper.style.display = visible ? '' : 'none';
             }
             this.doLayout();
         }
 
-        setOverlayVisible(visible: any) {
+        public setOverlayVisible(visible: any) {
             if (this.eOverlayWrapper) {
                 this.eOverlayWrapper.style.display = visible ? '' : 'none';
             }
             this.doLayout();
         }
 
-        setSouthVisible(visible: any) {
+        public setSouthVisible(visible: any) {
             if (this.eSouthWrapper) {
                 this.eSouthWrapper.style.display = visible ? '' : 'none';
             }

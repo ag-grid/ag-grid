@@ -259,10 +259,6 @@ module awk.grid {
         }
 
         public refreshDisplayedValues() {
-	    	if (!this.gridOptionsWrapper.isFilterHideNotAvailable()) {
-	    		return
-	    	}
-
 	    	var rows = this.rowModel.getTopLevelNodes();
     		var colKeys = Object.keys(this.allFilters);
 

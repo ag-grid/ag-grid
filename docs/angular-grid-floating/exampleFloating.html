@@ -1,0 +1,37 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/angular-grid.js?ignore=notused6"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused6">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused6">
+    <script src="exampleFloating.js"></script>
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+
+    <div style="padding-bottom: 4px;">
+        Float Top:
+        <select ng-model="headerRowsToFloat" ng-change="onFrozenTopCount()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        Float Bottom:
+        <select ng-model="footerRowsToFloat" ng-change="onFrozenBottomCount()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+    </div>
+
+    <span ng-repeat="selecteRow in gridOptions.selectedRows">
+        {{selecteRow.athlete}}
+    </span>
+
+    <div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+</body>
+</html>

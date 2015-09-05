@@ -229,11 +229,19 @@ include '../documentation_header.php';
                 where the grid size has changed and you want to lay the grid out without waiting
                 for the next 500ms refresh.</td>
         </tr>
-
         <tr>
             <th>getValue(colDef, data, node)</th>
             <td>Gets the value for a cell. This is what gets passed to the cellRenderer for rendering.
                 This is useful if you want the raw value eg for csv export.</td>
+        </tr>
+        <tr>
+            <th>setGroupHeaders(value)</th>
+            <td>To set group headers (true / false) after the grid has initialised.</td>
+        </tr>
+        <tr>
+            <th>setHeaderHeight(value)</th>
+            <td>To set the header height (in pixels) after the grid has initialised. Set to null or undefined
+            to use the default.</td>
         </tr>
 
     </table>

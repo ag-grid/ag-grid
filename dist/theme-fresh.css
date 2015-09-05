@@ -90,6 +90,12 @@
 .ag-fresh .ag-body {
   background-color: #fafafa;
 }
+.ag-fresh .ag-frozen-top {
+  background-color: #204d74;
+}
+.ag-fresh .ag-frozen-bottom {
+  background-color: #28a4c9;
+}
 .ag-fresh .ag-row-selected {
   background-color: #b0e0e6;
 }

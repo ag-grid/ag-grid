@@ -75,12 +75,12 @@ module awk.grid {
                 window.addEventListener('resize', this.doLayout.bind(this));
             }
 
-            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows());
+            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData());
             this.setupColumns();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
 
             // if no data provided initially, and not doing infinite scrolling, show the loading panel
-            var showLoading = !this.gridOptionsWrapper.getAllRows() && !this.gridOptionsWrapper.isVirtualPaging();
+            var showLoading = !this.gridOptionsWrapper.getRowData() && !this.gridOptionsWrapper.isVirtualPaging();
             this.showLoadingPanel(showLoading);
 
             // if datasource provided, use it
@@ -393,8 +393,7 @@ module awk.grid {
         }
 
         private setupColumns() {
-            this.gridPanel.setHeaderHeight();
-            this.columnController.setColumns(this.gridOptionsWrapper.getColumnDefs());
+            this.columnController.onColumnsChanged();
             this.gridPanel.showPinnedColContainersIfNeeded();
         }
 
@@ -411,7 +410,7 @@ module awk.grid {
             if (rows) {
                 this.gridOptions.rowData = rows;
             }
-            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getAllRows(), firstId);
+            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData(), firstId);
             this.selectionController.deselectAll();
             this.filterManager.onNewRowsLoaded();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
@@ -596,7 +595,6 @@ module awk.grid {
             // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
             if (sizeChanged) {
                 this.rowRenderer.drawVirtualRows();
-                this.gridPanel.setPinnedColHeight();
             }
         }
     }

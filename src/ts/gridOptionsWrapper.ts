@@ -13,9 +13,26 @@ module awk.grid {
 
         private gridOptions: GridOptions;
 
+        private groupHeaders: boolean;
+        private headerHeight: number;
+        private rowHeight: number;
+        private frozenTopRowData: any[];
+        private frozenBottomRowData: any[];
+
         constructor(gridOptions: GridOptions) {
             this.gridOptions = gridOptions;
-            this.setupDefaults();
+
+            this.headerHeight = gridOptions.headerHeight;
+            this.groupHeaders = gridOptions.groupHeaders;
+            this.rowHeight = gridOptions.rowHeight;
+            this.frozenTopRowData = gridOptions.frozenTopRowData;
+            this.frozenBottomRowData = gridOptions.frozenBottomRowData;
+
+            // set defaults
+            if (!this.rowHeight) {
+                this.rowHeight = DEFAULT_ROW_HEIGHT;
+            }
+
             this.checkForDeprecated();
         }
 
@@ -27,7 +44,6 @@ module awk.grid {
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
         public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
-        public isFilterHideNotAvailable() { return isTrue(this.gridOptions.filterHideNotAvailable); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
         public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }
@@ -37,7 +53,6 @@ module awk.grid {
         public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
         public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
         public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
-        public isGroupHeaders() { return isTrue(this.gridOptions.groupHeaders); }
         public isDontUseScrolls() { return isTrue(this.gridOptions.dontUseScrolls); }
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
@@ -51,7 +66,7 @@ module awk.grid {
         public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
         public getGroupAggFields() { return this.gridOptions.groupAggFields; }
-        public getAllRows(): any[] { return this.gridOptions.rowData; }
+        public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
         public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
@@ -60,7 +75,6 @@ module awk.grid {
         public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
         public isDebug() { return isTrue(this.gridOptions.debug); }
         public getColumnDefs() { return this.gridOptions.columnDefs; }
-        public getRowHeight() { return this.gridOptions.rowHeight; }
         public getBeforeFilterChanged() { return this.gridOptions.beforeFilterChanged; }
         public getAfterFilterChanged() { return this.gridOptions.afterFilterChanged; }
         public getFilterModified() { return this.gridOptions.filterModified; }
@@ -93,6 +107,30 @@ module awk.grid {
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
+        public getRowHeight() { return this.rowHeight; }
+
+        // properties
+        public getHeaderHeight(): number {
+            if (typeof this.headerHeight === 'number') {
+                return this.headerHeight;
+            } else {
+                // otherwise return 25 if no grouping, 50 if grouping
+                if (this.groupHeaders) {
+                    return 50;
+                } else {
+                    return 25;
+                }
+            }
+        }
+        public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
+
+        public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
+        public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
+
+        public getFrozenTopRowData(): any[] { return this.frozenTopRowData; }
+        public setFrozenTopRowData(rows: any[]): void { this.frozenTopRowData = rows; }
+        public getFrozenBottomRowData(): any[] { return this.frozenBottomRowData; }
+        public setFrozenBottomRowData(rows: any[]): void { this.frozenBottomRowData = rows; }
 
         public isExternalFilterPresent() {
             if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
@@ -124,26 +162,6 @@ module awk.grid {
                 return 200;
             } else {
                 return this.gridOptions.colWidth;
-            }
-        }
-
-        public getHeaderHeight() {
-            if (typeof this.gridOptions.headerHeight === 'number') {
-                // if header height provided, used it
-                return this.gridOptions.headerHeight;
-            } else {
-                // otherwise return 25 if no grouping, 50 if grouping
-                if (this.isGroupHeaders()) {
-                    return 50;
-                } else {
-                    return 25;
-                }
-            }
-        }
-
-        private setupDefaults() {
-            if (!this.gridOptions.rowHeight) {
-                this.gridOptions.rowHeight = DEFAULT_ROW_HEIGHT;
             }
         }
 

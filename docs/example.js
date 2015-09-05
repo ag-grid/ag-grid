@@ -307,8 +307,8 @@ gridsModule.controller('mainController', function($scope) {
     };
 
     $scope.onGroupHeaders = function() {
-        angularGrid.groupHeaders = $scope.groupHeaders === 'true';
-        angularGrid.api.onNewCols();
+        var groupHeaders = $scope.groupHeaders === 'true';
+        angularGrid.api.setGroupHeaders(groupHeaders);
     };
 
     $scope.onSize = function() {
@@ -319,6 +319,9 @@ gridsModule.controller('mainController', function($scope) {
             $scope.width = '800px';
             $scope.height = '600px';
         }
+        setTimeout( function() {
+            angularGrid.api.doLayout();
+        }, 0);
     };
 
     $scope.onGroupByChanged = function() {
