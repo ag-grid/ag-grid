@@ -358,6 +358,13 @@ module awk.grid {
             this.renderedRows[rowIndex] = renderedRow;
         }
 
+        public getRenderedNodes() {
+            var renderedRows = this.renderedRows;
+            return Object.keys(renderedRows).map(key => {
+                return renderedRows[key].getRowNode();
+            });
+        }
+
         public getIndexOfRenderedNode(node: any): number {
             var renderedRows = this.renderedRows;
             var keys: string[] = Object.keys(renderedRows);

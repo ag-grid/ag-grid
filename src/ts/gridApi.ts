@@ -165,6 +165,10 @@ module awk.grid {
             return this.selectionController.getBestCostNodeSelection();
         }
 
+        public getRenderedNodes() {
+            return this.rowRenderer.getRenderedNodes();
+        }
+
         public ensureColIndexVisible(index:any) {
             this.gridPanel.ensureColIndexVisible(index);
         }

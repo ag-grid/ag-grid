@@ -150,6 +150,11 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>getRenderedNodes()</th>
+            <td>Retrieve rendered nodes. Due to virtulisation this will contain only the current visible rows and the amount in the buffer.
+            </td>
+        </tr>
+        <tr>
             <th>showLoading(show)</th>
             <td>Show or hide the loading icon. Pass either true or false. If the method onNewRows
                 is called, the loading icon is automatically hidden.
