@@ -10,16 +10,16 @@
 <body ng-app="example" ng-controller="exampleCtrl">
 
     <div style="padding-bottom: 4px;">
-        Float Top:
-        <select ng-model="headerRowsToFloat" ng-change="onFrozenTopCount()">
+        Rows to Freeze on Top:
+        <select ng-model="headerRowsToFloat" ng-change="onFloatingTopCount()">
             <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
         </select>
-        Float Bottom:
-        <select ng-model="footerRowsToFloat" ng-change="onFrozenBottomCount()">
+        Rows to Freeze on Bottom:
+        <select ng-model="footerRowsToFloat" ng-change="onFloatingBottomCount()">
             <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>

@@ -15,7 +15,7 @@ module awk.grid {
 
     export class SelectionController {
 
-        private eRowsParent: any;
+        private eParentsOfRows: HTMLElement[];
         private angularGrid: Grid;
         private gridOptionsWrapper: any;
         private $scope: any;
@@ -25,7 +25,7 @@ module awk.grid {
         private rowModel: any;
 
         public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
-            this.eRowsParent = gridPanel.getRowsParent();
+            this.eParentsOfRows = gridPanel.getRowsParent();
             this.angularGrid = angularGrid;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.$scope = $scope;
@@ -240,7 +240,9 @@ module awk.grid {
         private addCssClassForNode_andInformVirtualRowListener(node: any) {
             var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
             if (virtualRenderedRowIndex >= 0) {
-                utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+                this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
+                    utils.querySelectorAll_addCssClass(rowContainer, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+                });
 
                 // inform virtual row listener
                 this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
@@ -284,7 +286,9 @@ module awk.grid {
         private removeCssClassForNode(node: any) {
             var virtualRenderedRowIndex = this.rowRenderer.getIndexOfRenderedNode(node);
             if (virtualRenderedRowIndex >= 0) {
-                utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+                this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
+                    utils.querySelectorAll_removeCssClass(rowContainer, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
+                });
                 // inform virtual row listener
                 this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, false);
             }
@@ -434,11 +438,13 @@ module awk.grid {
                     var selected = this.isNodeSelected(node);
                     this.angularGrid.onVirtualRowSelected(rowIndex, selected);
 
-                    if (selected) {
-                        utils.querySelectorAll_addCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
-                    } else {
-                        utils.querySelectorAll_removeCssClass(this.eRowsParent, '[row="' + rowIndex + '"]', 'ag-row-selected');
-                    }
+                    this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
+                        if (selected) {
+                            utils.querySelectorAll_addCssClass(rowContainer, '[row="' + rowIndex + '"]', 'ag-row-selected');
+                        } else {
+                            utils.querySelectorAll_removeCssClass(rowContainer, '[row="' + rowIndex + '"]', 'ag-row-selected');
+                        }
+                    });
                 }
             }
         }

@@ -9,11 +9,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
+        {headerName: "Sport", field: "sport", width: 110}
     ];
 
     $scope.gridOptions = {
@@ -23,29 +19,43 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableColResize: true,
         enableSorting: true,
         enableFilter: true,
+        rowStyle: function(params) {
+            if (params.node.floating) {
+                return {'font-weight': 'bold'}
+            }
+        },
         // no rows to float to start with
         floatingHeaderRowData: [],
         floatingFooterRowData: []
     };
 
-    $scope.headerRowsToFloat = '0';
-    $scope.footerRowsToFloat = '0';
+    $scope.headerRowsToFloat = '1';
+    $scope.footerRowsToFloat = '1';
 
-    $scope.onFrozenTopCount = function() {
+    $scope.onFloatingTopCount = function() {
         var count = Number($scope.headerRowsToFloat);
-        var rows = createData(count, 'H');
-        $scope.gridOptions.api.setFrozenTopRowData(rows);
+        var rows = createData(count, 'Top');
+        $scope.gridOptions.api.setFloatingTopRowData(rows);
     };
 
-    $scope.onFrozenBottomCount = function() {
+    $scope.onFloatingBottomCount = function() {
         var count = Number($scope.footerRowsToFloat);
-        var rows = createData(count, 'F');
-        $scope.gridOptions.api.setFrozenBottomRowData(rows);
+        var rows = createData(count, 'Bottom');
+        $scope.gridOptions.api.setFloatingBottomRowData(rows);
     };
 
     $http.get("../olympicWinners.json")
         .then(function(res){
             $scope.gridOptions.api.setRows(res.data);
+            // initilise the floating rows
+            $scope.onFloatingTopCount();
+            $scope.onFloatingBottomCount();
+
+            // if this timeout is missing, we size to fix before the scrollbar shows,
+            // which doesn't fit the columns very well
+            setTimeout( function() {
+                $scope.gridOptions.api.sizeColumnsToFit();
+            }, 0);
         });
 
     function createData(count, prefix) {

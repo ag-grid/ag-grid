@@ -16,8 +16,8 @@ module awk.grid {
         private groupHeaders: boolean;
         private headerHeight: number;
         private rowHeight: number;
-        private frozenTopRowData: any[];
-        private frozenBottomRowData: any[];
+        private floatingTopRowData: any[];
+        private floatingBottomRowData: any[];
 
         constructor(gridOptions: GridOptions) {
             this.gridOptions = gridOptions;
@@ -25,8 +25,8 @@ module awk.grid {
             this.headerHeight = gridOptions.headerHeight;
             this.groupHeaders = gridOptions.groupHeaders;
             this.rowHeight = gridOptions.rowHeight;
-            this.frozenTopRowData = gridOptions.frozenTopRowData;
-            this.frozenBottomRowData = gridOptions.frozenBottomRowData;
+            this.floatingTopRowData = gridOptions.floatingTopRowData;
+            this.floatingBottomRowData = gridOptions.floatingBottomRowData;
 
             // set defaults
             if (!this.rowHeight) {
@@ -127,10 +127,10 @@ module awk.grid {
         public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
         public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
 
-        public getFrozenTopRowData(): any[] { return this.frozenTopRowData; }
-        public setFrozenTopRowData(rows: any[]): void { this.frozenTopRowData = rows; }
-        public getFrozenBottomRowData(): any[] { return this.frozenBottomRowData; }
-        public setFrozenBottomRowData(rows: any[]): void { this.frozenBottomRowData = rows; }
+        public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
+        public setFloatingTopRowData(rows: any[]): void { this.floatingTopRowData = rows; }
+        public getFloatingBottomRowData(): any[] { return this.floatingBottomRowData; }
+        public setFloatingBottomRowData(rows: any[]): void { this.floatingBottomRowData = rows; }
 
         public isExternalFilterPresent() {
             if (typeof this.gridOptions.isExternalFilterPresent === 'function') {

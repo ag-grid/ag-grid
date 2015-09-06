@@ -45,6 +45,14 @@ include '../documentation_header.php';
             <td>Data to be displayed as rows in the table</td>
         </tr>
         <tr>
+            <th>floatingTopRowData</th>
+            <td>Data to be displayed as floating top rows in the table</td>
+        </tr>
+        <tr>
+            <th>floatingBottomRowData</th>
+            <td>Data to be displayed as floating bottom rows in the table</td>
+        </tr>
+        <tr>
             <th>rowSelection</th>
             <td>Type of row selection, set to either 'single' or 'multiple' to enable selection.</td>
         </tr>

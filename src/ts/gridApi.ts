@@ -40,14 +40,14 @@ module awk.grid {
             this.grid.setRows();
         }
 
-        public setFrozenTopRowData(rows: any[]): void {
-            this.gridOptionsWrapper.setFrozenTopRowData(rows);
+        public setFloatingTopRowData(rows: any[]): void {
+            this.gridOptionsWrapper.setFloatingTopRowData(rows);
             this.gridPanel.onBodyHeightChange();
             this.refreshView();
         }
 
-        public setFrozenBottomRowData(rows: any[]): void {
-            this.gridOptionsWrapper.setFrozenBottomRowData(rows);
+        public setFloatingBottomRowData(rows: any[]): void {
+            this.gridOptionsWrapper.setFloatingBottomRowData(rows);
             this.gridPanel.onBodyHeightChange();
             this.refreshView();
         }
@@ -63,7 +63,6 @@ module awk.grid {
 
         public refreshView() {
             this.rowRenderer.refreshView();
-            this.rowRenderer.refreshAllFrozenRows();
         }
 
         public softRefreshView() {

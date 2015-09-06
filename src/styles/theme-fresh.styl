@@ -63,14 +63,23 @@
     .ag-header-icon
         color: maroon;
 
-    .ag-dark .ag-header-expand-icon:hover
-        cursor: pointer;
+    .ag-row-selected
+        background-color: powderblue !important;
 
-    .ag-row-odd
-        background-color: #f6f6f6;
+    .ag-body
+        .ag-row-odd
+            background-color: #f6f6f6;
 
-    .ag-row-even
-        background-color: white;
+        .ag-row-even
+            background-color: white;
+
+    .ag-floating-top
+        .ag-row
+            background-color: #f0f0f0;
+
+    .ag-floating-bottom
+        .ag-row
+            background-color: #f0f0f0;
 
     .ag-loading-panel
         background-color: rgba(255, 255, 255, 0.5);
@@ -84,18 +93,9 @@
     .ag-body
         background-color: #fafafa;
 
-    .ag-frozen-top
-        background-color: #204d74;
-
-    .ag-frozen-bottom
-        background-color: #28a4c9;
-
     .ag-body-viewport {}
 
     .ag-pinned-cols-viewport {}
-
-    .ag-row-selected
-        background-color: powderblue;
 
     .ag-group-cell-entire-row
         background-color: #aaa;

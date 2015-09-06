@@ -57,6 +57,9 @@ module awk.grid {
         /** A function for rendering a cell. */
         cellRenderer?: Function | {};
 
+        /** A function for rendering a floating cell. */
+        floatingCellRenderer?: Function | {};
+
         /** Function callback, gets called when a cell is clicked. */
         cellClicked?: Function;
 

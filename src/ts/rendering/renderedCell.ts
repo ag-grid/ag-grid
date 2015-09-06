@@ -24,7 +24,7 @@ module awk.grid {
 
         private column: Column;
         private data: any;
-        private node: any;
+        private node: RowNode;
         private rowIndex: number;
         private editingCell: boolean;
 
@@ -66,7 +66,7 @@ module awk.grid {
             this.columnController = columnController;
             this.valueService = valueService;
 
-            this.checkboxSelection = this.column.colDef.checkboxSelection;
+            this.checkboxSelection = this.column.colDef.checkboxSelection && !node.floating;
 
             this.node = node;
             this.rowIndex = rowIndex;
@@ -109,7 +109,7 @@ module awk.grid {
             this.vGridCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
 
             // only set tab index if cell selection is enabled
-            if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
+            if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
                 this.vGridCell.setAttribute("tabindex", "-1");
             }
 
@@ -118,7 +118,10 @@ module awk.grid {
 
             this.addCellClickedHandler();
             this.addCellDoubleClickedHandler();
-            this.addCellNavigationHandler();
+
+            if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
+                this.addCellNavigationHandler();
+            }
 
             this.vGridCell.addStyles({width: this.column.actualWidth + "px"});
 
@@ -315,7 +318,9 @@ module awk.grid {
                 // text field, the text field, the focus doesn't get to the text
                 // field, instead to goes to the div behind, making it impossible to
                 // select the text field.
-                that.focusCell(false);
+                if (!that.node.floating) {
+                    that.focusCell(false);
+                }
                 if (that.gridOptionsWrapper.getCellClicked()) {
                     var paramsForGrid = {
                         node: that.node,
@@ -537,11 +542,8 @@ module awk.grid {
                 this.vCellWrapper.addClass('ag-cell-wrapper');
                 this.vGridCell.appendChild(this.vCellWrapper);
 
-                var colDef = this.column.colDef;
-                if (colDef.checkboxSelection) {
-                    this.createSelectionCheckbox();
-                    this.vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
-                }
+                this.createSelectionCheckbox();
+                this.vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
 
                 // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
                 this.vSpanWithValue = new awk.vdom.VHtmlElement('span');
@@ -587,8 +589,10 @@ module awk.grid {
                 if (template) {
                     this.vParentOfValue.setInnerHtml(template);
                 }
+            } else if (colDef.floatingCellRenderer) {
+                this.useCellRenderer(colDef.floatingCellRenderer);
             } else if (colDef.cellRenderer) {
-                this.useCellRenderer();
+                this.useCellRenderer(colDef.cellRenderer);
             } else {
                 // if we insert undefined, then it displays as the string 'undefined', ugly!
                 if (this.value !== undefined && this.value !== null && this.value !== '') {
@@ -597,7 +601,7 @@ module awk.grid {
             }
         }
 
-        private useCellRenderer() {
+        private useCellRenderer(cellRenderer: Function | {}) {
             var colDef = this.column.colDef;
 
             var rendererParams = {
@@ -614,19 +618,19 @@ module awk.grid {
                 refreshCell: this.refreshCell.bind(this),
                 eGridCell: this.vGridCell
             };
-            var cellRenderer: Function;
-            if (typeof colDef.cellRenderer === 'object' && colDef.cellRenderer !== null) {
-                var cellRendererObj = <{ renderer: string }> colDef.cellRenderer;
-                cellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-                if (!cellRenderer) {
-                    throw 'Cell renderer ' + colDef.cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
+            var actualCellRenderer: Function;
+            if (typeof cellRenderer === 'object' && cellRenderer !== null) {
+                var cellRendererObj = <{ renderer: string }> cellRenderer;
+                actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
+                if (!actualCellRenderer) {
+                    throw 'Cell renderer ' + cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
                 }
-            } else if (typeof colDef.cellRenderer === 'function') {
-                cellRenderer = <Function>colDef.cellRenderer;
+            } else if (typeof cellRenderer === 'function') {
+                actualCellRenderer = <Function>cellRenderer;
             } else {
                 throw 'Cell Renderer must be String or Function';
             }
-            var resultFromRenderer = cellRenderer(rendererParams);
+            var resultFromRenderer = actualCellRenderer(rendererParams);
             if (_.isNodeOrElement(resultFromRenderer)) {
                 // a dom node or element was returned, so add child
                 this.vParentOfValue.appendChild(resultFromRenderer);

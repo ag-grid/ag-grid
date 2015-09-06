@@ -46,8 +46,8 @@ module awk.grid {
 
         // changeable with impact
         rowData?: any[];
-        frozenTopRowData?: any[];
-        frozenBottomRowData?: any[];
+        floatingTopRowData?: any[];
+        floatingBottomRowData?: any[];
         rowSelection?: string;
         rowDeselection?: boolean;
         showToolPanel?: boolean;

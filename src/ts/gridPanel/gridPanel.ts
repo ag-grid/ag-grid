@@ -9,13 +9,13 @@ module awk.grid {
                 <div class="ag-header">
                     <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
                 </div>
-                <!-- frozen top -->
-                <div class="ag-frozen-top">
-                    <div class="ag-pinned-frozen-top"></div><div class="ag-frozen-top-viewport"><div class="ag-frozen-top-container"></div></div>
+                <!-- floating top -->
+                <div class="ag-floating-top">
+                    <div class="ag-pinned-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
                 </div>
-                <!-- frozen bottom -->
-                <div class="ag-frozen-bottom">
-                    <div class="ag-pinned-frozen-bottom"></div><div class="ag-frozen-bottom-viewport"><div class="ag-frozen-bottom-container"></div></div>
+                <!-- floating bottom -->
+                <div class="ag-floating-bottom">
+                    <div class="ag-pinned-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
                 </div>
                 <!-- body -->
                 <div class="ag-body">
@@ -31,12 +31,16 @@ module awk.grid {
             </div>`;
 
     var gridNoScrollsHtml =
-            '<div>'+
-                '<!-- header -->'+
-                '<div class="ag-header-container"></div>'+
-                '<!-- body -->'+
-                '<div class="ag-body-container"></div>'+
-            '</div>';
+            `<div>
+                <!-- header -->
+                <div class="ag-header-container"></div>
+                <!-- floating top -->
+                <div class="ag-floating-top-container"></div>
+                <!-- body -->
+                <div class="ag-body-container"></div>
+                <!-- floating bottom -->
+                <div class="ag-floating-bottom-container"></div>
+            </div>`;
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
@@ -71,17 +75,17 @@ module awk.grid {
         private eHeaderContainer: HTMLElement;
         private ePinnedHeader: HTMLElement;
         private eHeader: HTMLElement;
-        private eParentOfRows: HTMLElement;
+        private eParentsOfRows: HTMLElement[];
         private eBodyViewportWrapper: HTMLElement;
         private ePinnedColsViewport: HTMLElement;
 
-        private eFrozenTop: HTMLElement;
-        private ePinnedFrozenTop: HTMLElement;
-        private eFrozenTopContainer: HTMLElement;
+        private eFloatingTop: HTMLElement;
+        private ePinnedFloatingTop: HTMLElement;
+        private eFloatingTopContainer: HTMLElement;
 
-        private eFrozenBottom: HTMLElement;
-        private ePinnedFrozenBottom: HTMLElement;
-        private eFrozenBottomContainer: HTMLElement;
+        private eFloatingBottom: HTMLElement;
+        private ePinnedFloatingBottom: HTMLElement;
+        private eFloatingBottomContainer: HTMLElement;
 
         constructor(gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -130,20 +134,20 @@ module awk.grid {
             }
         }
 
-        public getPinnedFrozenTop(): HTMLElement {
-            return this.ePinnedFrozenTop;
+        public getPinnedFloatingTop(): HTMLElement {
+            return this.ePinnedFloatingTop;
         }
 
-        public getFrozenTopContainer(): HTMLElement {
-            return this.eFrozenTopContainer;
+        public getFloatingTopContainer(): HTMLElement {
+            return this.eFloatingTopContainer;
         }
 
-        public getPinnedFrozenBottom(): HTMLElement {
-            return this.ePinnedFrozenBottom;
+        public getPinnedFloatingBottom(): HTMLElement {
+            return this.ePinnedFloatingBottom;
         }
 
-        public getFrozenBottomContainer(): HTMLElement {
-            return this.eFrozenBottomContainer;
+        public getFloatingBottomContainer(): HTMLElement {
+            return this.eFloatingBottomContainer;
         }
 
         private createTemplate(): string {
@@ -278,8 +282,8 @@ module awk.grid {
             return this.ePinnedHeader;
         }
 
-        public getRowsParent() {
-            return this.eParentOfRows;
+        public getRowsParent(): HTMLElement[] {
+            return this.eParentsOfRows;
         }
 
         private queryHtmlElement(selector: string): HTMLElement {
@@ -290,8 +294,10 @@ module awk.grid {
             if (this.forPrint) {
                 this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
                 this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
-                // for no-scrolls, all rows live in the body container
-                this.eParentOfRows = this.eBodyContainer;
+                this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
+                this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
+
+                this.eParentsOfRows = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
             } else {
                 this.eBody = this.queryHtmlElement('.ag-body');
                 this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -303,16 +309,16 @@ module awk.grid {
                 this.eHeader = this.queryHtmlElement('.ag-header');
                 this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
 
-                this.eFrozenTop = this.queryHtmlElement('.ag-frozen-top');
-                this.ePinnedFrozenTop = this.queryHtmlElement('.ag-pinned-frozen-top');
-                this.eFrozenTopContainer = this.queryHtmlElement('.ag-frozen-top-container');
+                this.eFloatingTop = this.queryHtmlElement('.ag-floating-top');
+                this.ePinnedFloatingTop = this.queryHtmlElement('.ag-pinned-floating-top');
+                this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
 
-                this.eFrozenBottom = this.queryHtmlElement('.ag-frozen-bottom');
-                this.ePinnedFrozenBottom = this.queryHtmlElement('.ag-pinned-frozen-bottom');
-                this.eFrozenBottomContainer = this.queryHtmlElement('.ag-frozen-bottom-container');
+                this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
+                this.ePinnedFloatingBottom = this.queryHtmlElement('.ag-pinned-floating-bottom');
+                this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
-                this.eParentOfRows = this.eBody;
+                this.eParentsOfRows = [this.eBody, this.eFloatingTop, this.eFloatingBottom];
 
                 // IE9, Chrome, Safari, Opera
                 this.ePinnedColsViewport.addEventListener('mousewheel', this.mouseWheelListener.bind(this));
@@ -348,8 +354,10 @@ module awk.grid {
         public setBodyContainerWidth() {
             var mainRowWidth = this.columnModel.getBodyContainerWidth() + 'px';
             this.eBodyContainer.style.width = mainRowWidth;
-            this.eFrozenBottomContainer.style.width = mainRowWidth;
-            this.eFrozenTopContainer.style.width = mainRowWidth;
+            if (!this.forPrint) {
+                this.eFloatingBottomContainer.style.width = mainRowWidth;
+                this.eFloatingTopContainer.style.width = mainRowWidth;
+            }
         }
 
         public setPinnedColContainerWidth() {
@@ -359,8 +367,8 @@ module awk.grid {
             }
             var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + 'px';
             this.ePinnedColsContainer.style.width = pinnedColWidth;
-            this.ePinnedFrozenBottom.style.width = pinnedColWidth;
-            this.ePinnedFrozenTop.style.width = pinnedColWidth;
+            this.ePinnedFloatingBottom.style.width = pinnedColWidth;
+            this.ePinnedFloatingTop.style.width = pinnedColWidth;
 
             this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
         }
@@ -405,33 +413,33 @@ module awk.grid {
             var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
             this.eHeader.style['height'] = headerHeight + 'px';
 
-            var frozenTopCount = 0;
-            if (this.gridOptionsWrapper.getFrozenTopRowData()) {
-                frozenTopCount = this.gridOptionsWrapper.getFrozenTopRowData().length;
+            var floatingTopCount = 0;
+            if (this.gridOptionsWrapper.getFloatingTopRowData()) {
+                floatingTopCount = this.gridOptionsWrapper.getFloatingTopRowData().length;
             }
-            var frozenBottomCount = 0;
-            if (this.gridOptionsWrapper.getFrozenBottomRowData()) {
-                frozenBottomCount = this.gridOptionsWrapper.getFrozenBottomRowData().length;
+            var floatingBottomCount = 0;
+            if (this.gridOptionsWrapper.getFloatingBottomRowData()) {
+                floatingBottomCount = this.gridOptionsWrapper.getFloatingBottomRowData().length;
             }
 
             var rowHeight = this.gridOptionsWrapper.getRowHeight();
 
             // padding top covers the header and the floating rows on top
-            var frozenTopHeight = frozenTopCount * rowHeight;
-            var paddingTop = headerHeight + frozenTopHeight;
+            var floatingTopHeight = floatingTopCount * rowHeight;
+            var paddingTop = headerHeight + floatingTopHeight;
             // bottom is just the bottom floating rows
-            var frozenBottomHeight = frozenBottomCount * rowHeight;
-            var frozenBottomTop = heightOfContainer - frozenBottomHeight;
+            var floatingBottomHeight = floatingBottomCount * rowHeight;
+            var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
-            var heightOfCentreRows = heightOfContainer - headerHeight - frozenBottomHeight - frozenTopHeight;
+            var heightOfCentreRows = heightOfContainer - headerHeight - floatingBottomHeight - floatingTopHeight;
 
             this.eBody.style.paddingTop = paddingTop + 'px';
-            this.eBody.style.paddingBottom = frozenBottomHeight + 'px';
+            this.eBody.style.paddingBottom = floatingBottomHeight + 'px';
 
-            this.eFrozenTop.style.top = headerHeight + 'px';
-            this.eFrozenTop.style.height = frozenTopHeight + 'px';
-            this.eFrozenBottom.style.height = frozenBottomHeight + 'px';
-            this.eFrozenBottom.style.top = frozenBottomTop + 'px';
+            this.eFloatingTop.style.top = headerHeight + 'px';
+            this.eFloatingTop.style.height = floatingTopHeight + 'px';
+            this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
+            this.eFloatingBottom.style.top = floatingBottomTop + 'px';
 
             this.ePinnedColsViewport.style.height = heightOfCentreRows + 'px';
         }
@@ -514,8 +522,8 @@ module awk.grid {
         private scrollHeader(bodyLeftPosition: any) {
             // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
             this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
-            this.eFrozenBottomContainer.style.left = -bodyLeftPosition + 'px';
-            this.eFrozenTopContainer.style.left = -bodyLeftPosition + 'px';
+            this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
+            this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
         }
 
         private scrollPinned(bodyTopPosition: any) {

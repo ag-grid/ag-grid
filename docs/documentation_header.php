@@ -222,9 +222,9 @@
                 </h4>
 
                 <?php if ($key == "Floating") { ?>
-                    <span class="sidebarLinkSelected">Floating Header & Footer</span>
+                    <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-floating/index.php">Floating Header & Footer</a>
+                    <a class="sidebarLink" href="/angular-grid-floating/index.php">Floating Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Grouping") { ?>

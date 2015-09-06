@@ -68,14 +68,20 @@
 .ag-fresh .ag-header-icon {
   color: #800000;
 }
-.ag-fresh .ag-dark .ag-header-expand-icon:hover {
-  cursor: pointer;
+.ag-fresh .ag-row-selected {
+  background-color: #b0e0e6 !important;
 }
-.ag-fresh .ag-row-odd {
+.ag-fresh .ag-body .ag-row-odd {
   background-color: #f6f6f6;
 }
-.ag-fresh .ag-row-even {
+.ag-fresh .ag-body .ag-row-even {
   background-color: #fff;
+}
+.ag-fresh .ag-floating-top .ag-row {
+  background-color: #f0f0f0;
+}
+.ag-fresh .ag-floating-bottom .ag-row {
+  background-color: #f0f0f0;
 }
 .ag-fresh .ag-loading-panel {
   background-color: rgba(255,255,255,0.5);
@@ -89,9 +95,6 @@
 }
 .ag-fresh .ag-body {
   background-color: #fafafa;
-}
-.ag-fresh .ag-row-selected {
-  background-color: #b0e0e6;
 }
 .ag-fresh .ag-group-cell-entire-row {
   background-color: #aaa;

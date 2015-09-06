@@ -91,9 +91,16 @@ module awk.grid {
             this.addDynamicStyles();
             this.addDynamicClasses();
 
-            this.vBodyRow.setAttribute('row', this.rowIndex.toString());
+            var rowStr = this.rowIndex.toString();
+            if (this.node.floatingBottom) {
+                rowStr = 'fb-' + rowStr;
+            } else if (this.node.floatingTop) {
+                rowStr = 'ft-' + rowStr;
+            }
+
+            this.vBodyRow.setAttribute('row', rowStr);
             if (this.pinning) {
-                this.vPinnedRow.setAttribute('row', this.rowIndex.toString());
+                this.vPinnedRow.setAttribute('row', rowStr);
             }
 
             // if showing scrolls, position on the container

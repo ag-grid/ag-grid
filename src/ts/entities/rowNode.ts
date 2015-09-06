@@ -18,8 +18,16 @@ module awk.grid {
         lastChild?: boolean;
         /** The index of this node in the group */
         childIndex?: number;
+        /** True if this row is a floating row */
+        floating?: boolean;
+        /** True if this row is a floating top row */
+        floatingTop?: boolean;
+        /** True if this row is a floating bottom row */
+        floatingBottom?: boolean;
         /** If using quick filter, stores a string representation of the row for searching against */
         quickFilterAggregateText?: string;
+        /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
+        footer?: boolean;
         /** Groups only - Children of this group */
         children?: RowNode[];
         /** Groups only - The field we are pivoting on eg Country*/

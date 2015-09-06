@@ -158,6 +158,11 @@ declare module awk.grid {
 declare module awk.grid {
     class GridOptionsWrapper {
         private gridOptions;
+        private groupHeaders;
+        private headerHeight;
+        private rowHeight;
+        private floatingTopRowData;
+        private floatingBottomRowData;
         constructor(gridOptions: GridOptions);
         isRowSelection(): boolean;
         isRowDeselection(): boolean;
@@ -167,7 +172,6 @@ declare module awk.grid {
         isShowToolPanel(): boolean;
         isToolPanelSuppressPivot(): boolean;
         isToolPanelSuppressValues(): boolean;
-        isFilterHideNotAvailable(): boolean;
         isRowsAlreadyGrouped(): boolean;
         isGroupSelectsChildren(): boolean;
         isGroupHidePivotColumns(): boolean;
@@ -177,7 +181,6 @@ declare module awk.grid {
         isSuppressCellSelection(): boolean;
         isSuppressMultiSort(): boolean;
         isGroupSuppressAutoColumn(): boolean;
-        isGroupHeaders(): boolean;
         isDontUseScrolls(): boolean;
         isSuppressHorizontalScroll(): boolean;
         isUnSortIcon(): boolean;
@@ -191,7 +194,7 @@ declare module awk.grid {
         getGroupKeys(): string[];
         getGroupAggFunction(): (nodes: any[]) => any;
         getGroupAggFields(): string[];
-        getAllRows(): any[];
+        getRowData(): any[];
         isGroupUseEntireRow(): boolean;
         getGroupColumnDef(): any;
         isGroupSuppressRow(): boolean;
@@ -200,7 +203,6 @@ declare module awk.grid {
         isAngularCompileHeaders(): boolean;
         isDebug(): boolean;
         getColumnDefs(): any[];
-        getRowHeight(): number;
         getBeforeFilterChanged(): () => void;
         getAfterFilterChanged(): () => void;
         getFilterModified(): () => void;
@@ -233,12 +235,19 @@ declare module awk.grid {
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
         getGroupRowRenderer(): Object;
+        getRowHeight(): number;
+        getHeaderHeight(): number;
+        setHeaderHeight(headerHeight: number): void;
+        isGroupHeaders(): boolean;
+        setGroupHeaders(groupHeaders: boolean): void;
+        getFloatingTopRowData(): any[];
+        setFloatingTopRowData(rows: any[]): void;
+        getFloatingBottomRowData(): any[];
+        setFloatingBottomRowData(rows: any[]): void;
         isExternalFilterPresent(): boolean;
         doesExternalFilterPass(node: RowNode): boolean;
         getGroupRowInnerRenderer(): (params: any) => void;
         getColWidth(): number;
-        getHeaderHeight(): number;
-        private setupDefaults();
         private checkForDeprecated();
         getPinnedColCount(): number;
         getLocaleTextFunc(): (key: any, defaultValue: any) => any;
@@ -358,7 +367,7 @@ declare module awk.grid {
         addChangeListener(listener: ColumnChangedListener): void;
         getColumnGroup(name: string): ColumnGroup;
         private fireColumnChanged(event);
-        setColumns(columnDefs: any): void;
+        onColumnsChanged(): void;
         private checkForDeprecatedItems(columnDefs);
         columnGroupOpened(group: ColumnGroup, newValue: boolean): void;
         hideColumns(colIds: any, hide: any): void;
@@ -495,6 +504,8 @@ declare module awk.grid {
         cellStyle?: {} | ((params: any) => {});
         /** A function for rendering a cell. */
         cellRenderer?: Function | {};
+        /** A function for rendering a floating cell. */
+        floatingCellRenderer?: Function | {};
         /** Function callback, gets called when a cell is clicked. */
         cellClicked?: Function;
         /** Function callback, gets called when a cell is double clicked. */
@@ -670,8 +681,16 @@ declare module awk.grid {
         lastChild?: boolean;
         /** The index of this node in the group */
         childIndex?: number;
+        /** True if this row is a floating row */
+        floating?: boolean;
+        /** True if this row is a floating top row */
+        floatingTop?: boolean;
+        /** True if this row is a floating bottom row */
+        floatingBottom?: boolean;
         /** If using quick filter, stores a string representation of the row for searching against */
         quickFilterAggregateText?: string;
+        /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
+        footer?: boolean;
         /** Groups only - Children of this group */
         children?: RowNode[];
         /** Groups only - The field we are pivoting on eg Country*/
@@ -852,7 +871,7 @@ declare module awk.grid {
         isVolatile(): boolean;
         refreshCell(): void;
         private putDataIntoCell();
-        private useCellRenderer();
+        private useCellRenderer(cellRenderer);
         private addClasses();
     }
 }
@@ -935,21 +954,31 @@ declare module awk.grid {
         private expressionService;
         private templateService;
         private cellRendererMap;
-        private renderedRows;
         private rowModel;
-        private eBodyContainer;
-        private eBodyViewport;
-        private ePinnedColsContainer;
-        private eParentOfRows;
         private firstVirtualRenderedRow;
         private lastVirtualRenderedRow;
         private focusedCell;
         private valueService;
+        private renderedRows;
+        private renderedTopFloatingRows;
+        private renderedBottomFloatingRows;
+        private eAllBodyContainers;
+        private eAllPinnedContainers;
+        private eBodyContainer;
+        private eBodyViewport;
+        private ePinnedColsContainer;
+        private eFloatingTopContainer;
+        private eFloatingTopPinnedContainer;
+        private eFloatingBottomContainer;
+        private eFloatingBottomPinnedContainer;
+        private eParentsOfRows;
         init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any, selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService, valueService: ValueService): void;
         setRowModel(rowModel: any): void;
         onIndividualColumnResized(column: Column): void;
         setMainRowWidths(): void;
         private findAllElements(gridPanel);
+        refreshAllFloatingRows(): void;
+        private refreshFloatingRows(renderedRows, rowData, pinnedContainer, bodyContainer, isTop);
         refreshView(refreshFromIndex?: any): void;
         softRefreshView(): void;
         rowDataChanged(rows: any): void;
@@ -958,8 +987,8 @@ declare module awk.grid {
         private removeVirtualRow(rowsToRemove, fromIndex?);
         private unbindVirtualRow(indexToRemove);
         drawVirtualRows(): void;
-        getFirstVirtualRenderedRow(): any;
-        getLastVirtualRenderedRow(): any;
+        getFirstVirtualRenderedRow(): number;
+        getLastVirtualRenderedRow(): number;
         private ensureRowsRendered();
         private insertRow(node, rowIndex, mainRowWidth);
         getIndexOfRenderedNode(node: any): number;
@@ -974,7 +1003,7 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class SelectionController {
-        private eRowsParent;
+        private eParentsOfRows;
         private angularGrid;
         private gridOptionsWrapper;
         private $scope;
@@ -1251,33 +1280,39 @@ declare module awk.grid {
 }
 declare module awk.grid {
     class BorderLayout {
-        eNorthWrapper: any;
-        eSouthWrapper: any;
-        eEastWrapper: any;
-        eWestWrapper: any;
-        eCenterWrapper: any;
-        eOverlayWrapper: any;
-        eCenterRow: any;
-        eNorthChildLayout: any;
-        eSouthChildLayout: any;
-        eEastChildLayout: any;
-        eWestChildLayout: any;
-        eCenterChildLayout: any;
-        isLayoutPanel: any;
-        fullHeight: any;
-        layoutActive: any;
-        eGui: any;
-        id: any;
-        childPanels: any;
-        centerHeightLastTime: any;
+        private eNorthWrapper;
+        private eSouthWrapper;
+        private eEastWrapper;
+        private eWestWrapper;
+        private eCenterWrapper;
+        private eOverlayWrapper;
+        private eCenterRow;
+        private eNorthChildLayout;
+        private eSouthChildLayout;
+        private eEastChildLayout;
+        private eWestChildLayout;
+        private eCenterChildLayout;
+        private isLayoutPanel;
+        private fullHeight;
+        private layoutActive;
+        private eGui;
+        private id;
+        private childPanels;
+        private centerHeightLastTime;
+        private sizeChangeListners;
         constructor(params: any);
-        setupPanels(params: any): void;
-        setupPanel(content: any, ePanel: any): any;
+        addSizeChangeListener(listener: Function): void;
+        fireSizeChanged(): void;
+        private setupPanels(params);
+        private setupPanel(content, ePanel);
         getGui(): any;
         doLayout(): boolean;
-        layoutChild(childPanel: any): any;
-        layoutHeight(): boolean;
-        layoutWidth(): void;
+        private layoutChild(childPanel);
+        private layoutHeight();
+        private layoutHeightFullHeight();
+        private layoutHeightNormal();
+        getCentreHeight(): number;
+        private layoutWidth();
         setEastVisible(visible: any): void;
         setOverlayVisible(visible: any): void;
         setSouthVisible(visible: any): void;
@@ -1287,12 +1322,13 @@ declare module awk.grid {
     class GridPanel {
         private masterSlaveService;
         private gridOptionsWrapper;
-        private forPrint;
-        private scrollWidth;
-        private layout;
-        private rowModel;
         private columnModel;
         private rowRenderer;
+        private rowModel;
+        private layout;
+        private forPrint;
+        private scrollWidth;
+        private scrollLagCounter;
         private eBodyViewport;
         private eRoot;
         private eBody;
@@ -1301,14 +1337,24 @@ declare module awk.grid {
         private eHeaderContainer;
         private ePinnedHeader;
         private eHeader;
-        private eParentOfRows;
+        private eParentsOfRows;
         private eBodyViewportWrapper;
         private ePinnedColsViewport;
-        private scrollLagCounter;
+        private eFloatingTop;
+        private ePinnedFloatingTop;
+        private eFloatingTopContainer;
+        private eFloatingBottom;
+        private ePinnedFloatingBottom;
+        private eFloatingBottomContainer;
         constructor(gridOptionsWrapper: GridOptionsWrapper);
         init(columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService): void;
         getLayout(): BorderLayout;
         private setupComponents();
+        getPinnedFloatingTop(): HTMLElement;
+        getFloatingTopContainer(): HTMLElement;
+        getPinnedFloatingBottom(): HTMLElement;
+        getFloatingBottomContainer(): HTMLElement;
+        private createTemplate();
         ensureIndexVisible(index: any): void;
         ensureColIndexVisible(index: any): void;
         showLoading(loading: any): void;
@@ -1320,15 +1366,17 @@ declare module awk.grid {
         getHeaderContainer(): HTMLElement;
         getRoot(): HTMLElement;
         getPinnedHeader(): HTMLElement;
-        getRowsParent(): HTMLElement;
+        getRowsParent(): HTMLElement[];
         private queryHtmlElement(selector);
         private findElements();
         private mouseWheelListener(event);
         setBodyContainerWidth(): void;
         setPinnedColContainerWidth(): void;
         showPinnedColContainersIfNeeded(): void;
-        setHeaderHeight(): void;
-        setPinnedColHeight(): void;
+        onBodyHeightChange(): void;
+        private sizeHeaderAndBody();
+        private sizeHeaderAndBodyNormal();
+        private sizeHeaderAndBodyForPrint();
         setHorizontalScrollPosition(hScrollPosition: number): void;
         private addScrollListener();
         private requestDrawVirtualRows();
@@ -1493,43 +1541,69 @@ declare module awk.grid {
 }
 declare module awk.grid {
     interface GridOptions {
-        rowSelection?: string;
-        rowDeselection?: boolean;
-        context?: any;
         virtualPaging?: boolean;
-        showToolPanel?: boolean;
         toolPanelSuppressPivot?: boolean;
         toolPanelSuppressValues?: boolean;
         rowsAlreadyGrouped?: boolean;
-        groupSelectsChildren?: boolean;
-        groupHidePivotColumns?: boolean;
-        groupIncludeFooter?: boolean;
         suppressRowClickSelection?: boolean;
         suppressCellSelection?: boolean;
         sortingOrder?: string[];
         suppressMultiSort?: boolean;
         suppressHorizontalScroll?: boolean;
-        groupSuppressAutoColumn?: boolean;
-        groupHeaders?: boolean;
-        dontUseScrolls?: boolean;
         unSortIcon?: boolean;
-        rowStyle?: any;
-        rowClass?: any;
-        headerCellRenderer?: any;
-        groupDefaultExpanded?: any;
-        groupKeys?: string[];
-        groupAggFunction?(nodes: any[]): any;
-        groupAggFields?: string[];
-        rowData?: any[];
+        rowHeight?: number;
+        rowBuffer?: number;
+        enableColResize?: boolean;
+        enableCellExpressions?: boolean;
+        enableSorting?: boolean;
+        enableServerSideSorting?: boolean;
+        enableFilter?: boolean;
+        enableServerSideFilter?: boolean;
+        icons?: any;
+        colWidth?: number;
+        localeText?: any;
+        suppressMenuHide?: boolean;
+        debug?: boolean;
+        angularCompileRows?: boolean;
+        angularCompileFilters?: boolean;
+        angularCompileHeaders?: boolean;
+        groupSuppressAutoColumn?: boolean;
+        groupSelectsChildren?: boolean;
+        groupHidePivotColumns?: boolean;
+        groupIncludeFooter?: boolean;
         groupUseEntireRow?: boolean;
         groupColumnDef?: any;
         groupSuppressRow?: boolean;
         groupSuppressBlankHeader?: boolean;
-        angularCompileRows?: boolean;
-        angularCompileFilters?: boolean;
-        angularCompileHeaders?: boolean;
+        dontUseScrolls?: boolean;
+        rowData?: any[];
+        floatingTopRowData?: any[];
+        floatingBottomRowData?: any[];
+        rowSelection?: string;
+        rowDeselection?: boolean;
+        showToolPanel?: boolean;
+        groupKeys?: string[];
+        groupAggFunction?(nodes: any[]): any;
+        groupAggFields?: string[];
         columnDefs?: any[];
-        rowHeight?: number;
+        datasource?: any;
+        pinnedColumnCount?: number;
+        groupHeaders?: boolean;
+        headerHeight?: number;
+        context?: any;
+        rowStyle?: any;
+        rowClass?: any;
+        headerCellRenderer?: any;
+        groupDefaultExpanded?: any;
+        slaveGrids?: GridOptions[];
+        ready?(api: any): void;
+        groupInnerRenderer?(params: any): void;
+        groupRowInnerRenderer?(params: any): void;
+        groupRowRenderer?: Function | Object;
+        isScrollLag?(): boolean;
+        suppressScrollLag?(): boolean;
+        isExternalFilterPresent?(): boolean;
+        doesExternalFilterPass?(node: RowNode): boolean;
         modelUpdated?(): void;
         cellClicked?(params: any): void;
         cellDoubleClicked?(params: any): void;
@@ -1547,35 +1621,10 @@ declare module awk.grid {
         columnResized?(column: Column): void;
         columnVisibilityChanged?(columns: Column[]): void;
         columnOrderChanged?(columns: Column[]): void;
-        datasource?: any;
-        ready?(api: any): void;
-        rowBuffer?: number;
-        enableColResize?: boolean;
-        enableCellExpressions?: boolean;
-        enableSorting?: boolean;
-        enableServerSideSorting?: boolean;
-        enableFilter?: boolean;
-        enableServerSideFilter?: boolean;
         selectedRows?: any[];
         selectedNodesById?: {
             [email: number]: any;
         };
-        icons?: any;
-        groupInnerRenderer?(params: any): void;
-        groupRowInnerRenderer?(params: any): void;
-        groupRowRenderer?: Function | Object;
-        colWidth?: number;
-        headerHeight?: number;
-        pinnedColumnCount?: number;
-        localeText?: any;
-        isScrollLag?(): boolean;
-        suppressScrollLag?(): boolean;
-        isExternalFilterPresent?(): boolean;
-        doesExternalFilterPass?(node: RowNode): boolean;
-        suppressMenuHide?: boolean;
-        slaveGrids?: GridOptions[];
-        debug?: boolean;
-        filterHideNotAvailable?: boolean;
         api?: GridApi;
         columnApi?: ColumnApi;
     }
@@ -1600,6 +1649,8 @@ declare module awk.grid {
         onNewDatasource(): void;
         setRows(rows: any): void;
         onNewRows(): void;
+        setFloatingTopRowData(rows: any[]): void;
+        setFloatingBottomRowData(rows: any[]): void;
         onNewCols(): void;
         unselectAll(): void;
         refreshView(): void;
@@ -1639,6 +1690,8 @@ declare module awk.grid {
         getFilterModel(): any;
         getFocusedCell(): any;
         setFocusedCell(rowIndex: any, colIndex: any): void;
+        setHeaderHeight(headerHeight: number): void;
+        setGroupHeaders(groupHeaders: boolean): void;
         showToolPanel(show: any): void;
         isToolPanelShowing(): boolean;
         hideColumn(colId: any, hide: any): void;

@@ -81,6 +81,11 @@ include '../documentation_header.php';
             <td>A function for rendering a cell.</td>
         </tr>
         <tr>
+            <th>floatingCellRenderer(params)</th>
+            <td>A function for rendering floating cells. If both cellRenderer and floatingCellRenderer are
+            provided, frozen cells will use floatingCellRenderer if available, if not then cellRenderer.</td>
+        </tr>
+        <tr>
             <th>cellClicked(params)</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>

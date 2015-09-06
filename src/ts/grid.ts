@@ -359,6 +359,11 @@ module awk.grid {
                 return;
             }
 
+            // we also don't allow selection of floating rows
+            if (node.floating) {
+                return;
+            }
+
             // making local variables to make the below more readable
             var gridOptionsWrapper = this.gridOptionsWrapper;
             var selectionController = this.selectionController;
