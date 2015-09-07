@@ -431,7 +431,7 @@ module awk.grid {
 
             var firstRow = this.rowRenderer.getFirstVirtualRenderedRow();
             var lastRow = this.rowRenderer.getLastVirtualRenderedRow();
-            for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+            for (var rowIndex = firstRow; rowIndex <= lastRow - 1; rowIndex++) {
                 // see if node is a group
                 var node = this.rowModel.getVirtualRow(rowIndex);
                 if (node.group) {
@@ -450,4 +450,3 @@ module awk.grid {
         }
     }
 }
-
