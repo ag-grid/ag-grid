@@ -68,6 +68,9 @@ module awk.grid {
                 },
                 forEachInMemory: function (callback: any) {
                     that.forEachInMemory(callback);
+                },
+                getRowsAfterFilter: function (){
+                    return that.rowsAfterFilter
                 }
             };
         }
