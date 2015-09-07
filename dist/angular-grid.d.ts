@@ -234,7 +234,7 @@ declare module awk.grid {
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
-        getGroupRowRenderer(): Object;
+        getGroupRowRenderer(): Object | Function;
         getRowHeight(): number;
         getHeaderHeight(): number;
         setHeaderHeight(headerHeight: number): void;
@@ -991,6 +991,7 @@ declare module awk.grid {
         getLastVirtualRenderedRow(): number;
         private ensureRowsRendered();
         private insertRow(node, rowIndex, mainRowWidth);
+        getRenderedNodes(): any[];
         getIndexOfRenderedNode(node: any): number;
         navigateToNextCell(key: any, rowIndex: number, column: Column): void;
         private getNextCellToFocus(key, lastCellToFocus);
@@ -1676,6 +1677,7 @@ declare module awk.grid {
         isNodeSelected(node: any): boolean;
         getSelectedNodes(): any;
         getBestCostNodeSelection(): any;
+        getRenderedNodes(): any[];
         ensureColIndexVisible(index: any): void;
         ensureIndexVisible(index: any): void;
         ensureNodeVisible(comparator: any): void;
