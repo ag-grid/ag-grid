@@ -183,7 +183,7 @@ include '../documentation_header.php';
 
     Column change events have the following types:
     <ul>
-        <li><b>everything</b>: Shotgun - gets called when new columsn are set, so everything has changed.</li>
+        <li><b>everything</b>: Shotgun - gets called when new columns are set, so everything has changed.</li>
         <li><b>columnResized</b>: A column was resized.</li>
         <li><b>pivot</b>: A pivot column was added or removed.</li>
         <li><b>value</b>: A value column was added or removed.</li>
@@ -196,8 +196,8 @@ include '../documentation_header.php';
     <h2>Deep Dive - Save / Restore Full State</h2>
 
     <p>
-        The show / hide above shows and hides specific columns. It is also possible to store the
-        entire state of the columns and restore them again. This includes visibility, width, pivots and values.
+        It is also possible to store the entire state of the columns and restore them again via
+        the API. This includes visibility, width, pivots and values.
     </p>
 
     <ul>

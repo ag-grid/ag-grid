@@ -333,7 +333,7 @@ module awk.grid {
 
         private addHeaderClassesFromCollDef() {
             if (this.column.colDef.headerClass) {
-                var classToUse: any;
+                var classToUse: string | string[];
                 if (typeof this.column.colDef.headerClass === 'function') {
                     var params = {
                         colDef: this.column.colDef,
@@ -341,9 +341,10 @@ module awk.grid {
                         context: this.gridOptionsWrapper.getContext(),
                         api: this.gridOptionsWrapper.getApi()
                     };
-                    classToUse = this.column.colDef.headerClass(params);
+                    var headerClassFunc = <(params: any) => string | string[]> this.column.colDef.headerClass;
+                    classToUse = headerClassFunc(params);
                 } else {
-                    classToUse = this.column.colDef.headerClass;
+                    classToUse = <string | string[]> this.column.colDef.headerClass;
                 }
 
                 if (typeof classToUse === 'string') {
