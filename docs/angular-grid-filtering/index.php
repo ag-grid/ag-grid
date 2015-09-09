@@ -288,7 +288,9 @@ columnDefinition = {
         </tr>
         <tr>
             <th>afterGuiAttached(params)</th>
-            <td>Gets called after the gui returned in getGui is attached to the DOM. This is useful for any
+            <td>Gets called every time the popup is shown, after the gui returned in getGui is attached to the DOM.
+                If the filter popup is closed and reopened, this method is called each time the filter is shown.
+                This is useful for any
                 logic that requires attachment before executing, such as putting focus on a particular DOM
                 element. The params has one callback method 'hidePopup', which you can call at any later
                 point to hide the popup - good if you have an 'Apply' button and you want to hide the popup

@@ -37,7 +37,7 @@ module awk.grid {
         headerCellRenderer?: Function | Object;
 
         /** CSS class for the header */
-        headerClass?: (params: any) => any | string[];
+        headerClass?: string | string[] | ((params: any) => string | string[]);
 
         /** Initial width, in pixels, of the cell */
         width?: number;

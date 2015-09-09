@@ -21,7 +21,7 @@ include '../documentation_header.php';
 
     <p>
         The datasource is set in the grid options, either before the table is initialised, or by calling setDatasource
-        APi method.
+        API method.
     </p>
 
         <pre>// before grid initialised
@@ -33,7 +33,7 @@ gridOptions.datasource = myDataSource;</pre>
         to the gridOptions yet by the grid. To get around this, set the datasource in the 'ready()' method.
     </note>
 
-    <h4>Changing up a Datasource</h4>
+    <h4>Changing a Datasource</h4>
 
     <p>
         Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your

@@ -38,7 +38,7 @@ include '../documentation_header.php';
         representation for a column. When you pass a list of colDefs to the grid (via gridOptions.colDefs)
         the grid wraps each of these colDefs in a Column object. It is the Column object that
         contains the run-time information about the column. For example, if the column width changes,
-        the actual column width is updated in the Column oject, the colDef never has it's details changed.
+        the actual column width is updated in the Column object, the colDef never has it's details changed.
         The fact that the colDef is never changed allows you to use the same colDef across many grids
         (probably only useful to a select few of you).
     </p>
@@ -184,7 +184,7 @@ include '../documentation_header.php';
 
     Column change events have the following types:
     <ul>
-        <li><b>everything</b>: Shotgun - gets called when new columsn are set, so everything has changed.</li>
+        <li><b>everything</b>: Shotgun - gets called when new columns are set, so everything has changed.</li>
         <li><b>columnResized</b>: A column was resized.</li>
         <li><b>pivot</b>: A pivot column was added or removed.</li>
         <li><b>value</b>: A value column was added or removed.</li>
@@ -197,8 +197,8 @@ include '../documentation_header.php';
     <h2>Deep Dive - Save / Restore Full State</h2>
 
     <p>
-        The show / hide above shows and hides specific columns. It is also possible to store the
-        entire state of the columns and restore them again. This includes visibility, width, pivots and values.
+        It is also possible to store the entire state of the columns and restore them again via
+        the API. This includes visibility, width, pivots and values.
     </p>
 
     <ul>
