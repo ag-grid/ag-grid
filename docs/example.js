@@ -176,6 +176,7 @@ gridsModule.controller('mainController', function($scope) {
             }
         },
         {headerName: "Language", field: "language", headerGroup: 'Participant', width: 150, editable: true, filter: 'set', cellRenderer: languageCellRenderer,
+            headerTooltip: "Example tooltip for Language",
             filterParams: {newRowsAction: 'keep'},
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',

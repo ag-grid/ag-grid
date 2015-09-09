@@ -143,7 +143,7 @@ gridOptions.groupColumnDef = null; // or undefined</pre>
     <p>
         A group column definition is exactly the same as any other column definition, the only difference is
         the cell renderer will render the cell using the group info. So when defining a group column, be sure
-        to either choose the build in group cell renderer, or provide your own cell renderer that takes care
+        to either choose the built in group cell renderer, or provide your own cell renderer that takes care
         of the grouping.
     </p>
         <pre>gridOptions.isgroupSuppressAutoColumn = false; // or undefined
@@ -162,7 +162,7 @@ gridOptions.groupColumnDef = {
     <p>
         Tell the grid you don't want it's help, that you will provide the group column yourself, included
         in he main list of columns. If you use this, make sure you do have at least one column showing the
-        group, otherwise the grid will not make sense as you will have to way to expand / contract the groups.
+        group, otherwise the grid will not make sense as you will have no way to expand / contract the groups.
     </p>
     <p>
         This method can also be used to have multiple columns to display the groups, useful when you want to split
@@ -242,7 +242,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     <h4>Example Option 1 - Summing Fields</h4>
 
     <p>
-        The example below shows simple sum aggregation. The fields gold, silver, bronze and total and aggregated
+        The example below shows simple sum aggregation. The fields gold, silver, bronze and total are aggregated
         using simple sum aggregation.
     </p>
     <p>

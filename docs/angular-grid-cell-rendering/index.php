@@ -81,14 +81,59 @@ var colDef = {
 
     Cell renderer functions take a params object with the following values:<br/>
 
-    value: The value to be rendered.<br/>
-    data: The row (from the rowData array, where value was taken) been rendered.<br/>
-    colDef: The colDef been rendered.<br/>
-    $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
-    rowIndex: The index of the row renderer, after sorting and filtering.<br/>
-    api: A reference to the Angular Grid api.<br/>
-    context: The context as set on the gridOptions.<br/>
-    refreshCell: A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.<br/>
+    <table class="table">
+        <tr>
+            <th>Value</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>value</th>
+            <td>The value to be rendered.</td>
+        </tr>
+        <tr>
+            <th>data</th>
+            <td>The row (from the rowData array, where value was taken) been rendered.</td>
+        </tr>
+        <tr>
+            <th>colDef</th>
+            <td>The colDef been rendered.</td>
+        </tr>
+        <tr>
+            <th>column</th>
+            <td>The column been rendered (in ag-Grid, each colDef is wrapped by a Column).</td>
+        </tr>
+        <tr>
+            <th>$scope</th>
+            <td>If compiling to Angular, is the row's child scope, otherwise null.</td>
+        </tr>
+        <tr>
+            <th>rowIndex</th>
+            <td>The index of the row renderer, after sorting and filtering.</td>
+        </tr>
+        <tr>
+            <th>api</th>
+            <td>A reference to the ag-Grid api.</td>
+        </tr>
+        <tr>
+            <th>context</th>
+            <td>The context as set on the gridOptions.</td>
+        </tr>
+        <tr>
+            <th>refreshCell</th>
+            <td>A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.
+            Useful if you update the data for the cell and want to just render again from scratch.</td>
+        </tr>
+        <tr>
+            <th>valueGetter</th>
+            <td>A function, that when called, gives you the value, calling the relevant valueGetter / expression
+            if neccessary. This can be called at any time after rendering, so you could implement some kind of
+            refresh and get the latest value this way when the 'value' param would be stale.</td>
+        </tr>
+        <tr>
+            <th>eGridCell</th>
+            <td>A reference to the virtual cell (during the rendering process, virtual cells are used).</td>
+        </tr>
+    </table>
 
     <h4>Angular Compiling</h4>
 

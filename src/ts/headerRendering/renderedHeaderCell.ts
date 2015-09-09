@@ -200,7 +200,8 @@ module awk.grid {
                 $scope: this.childScope,
                 context: this.gridOptionsWrapper.getContext(),
                 value: headerNameValue,
-                api: this.gridOptionsWrapper.getApi()
+                api: this.gridOptionsWrapper.getApi(),
+                eHeaderCell: this.eHeaderCell
             };
             var cellRendererResult = headerCellRenderer(cellRendererParams);
             var childToAppend: any;
