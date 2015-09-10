@@ -12,9 +12,8 @@ include '../documentation_header.php';
 
     <p>
         The column api has methods for interacting with the columns of the grid. Using the column API, you
-        have FULL control of how the columns are displayed. It has everything you needs should you wish
+        have FULL control of how the columns are displayed. It has everything you need should you wish
         to build your own column management GUI (instead of what's provided in the tool panel).
-        A reference to the column api is part of the gridOptions.
     </p>
 
     <pre><code>var pinning = gridOptions.columnApi.isPinning();</code></pre>
@@ -142,7 +141,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>setColumnAggFunction(column, aggFunc)</th>
-            <td>Sets teh agg function for a column. Set to one of [min,max,sum].</td>
+            <td>Sets the agg function for a column. Set to one of [min,max,sum].</td>
         </tr>
         <tr>
             <th>setColumnWidth(column, newWidth)</th>

@@ -31,6 +31,41 @@ include '../documentation_header.php';
     </p>
 
     <show-example example="example1"></show-example>
+
+    <p>
+        Header renderers receive the following parameters:
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Value</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>value</th>
+            <td>The value to render, ie the header name.</td>
+        </tr>
+        <tr>
+            <th>colDef</th>
+            <td>The colDef this header is for.</td>
+        </tr>
+        <tr>
+            <th>context</th>
+            <td>The grid context, as provided in the gridOptions.</td>
+        </tr>
+        <tr>
+            <th>$scope</th>
+            <td>If Angular compiling the headers, contains the scope for this header column.</td>
+        </tr>
+        <tr>
+            <th>api</th>
+            <td>The grid API.</td>
+        </tr>
+        <tr>
+            <th>eHeaderCell</th>
+            <td>The outer header cell. Unlike cellRenderers, this is not virtual, it's the actual cell.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

@@ -80,19 +80,30 @@ include 'documentation_header.php';
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<!--<div style="text-align: center; padding: 20px;;">
+<div style="text-align: center; padding: 20px;;">
 <span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
     <p>
         <img src="images/panda.png"/>
-        <b>15th June 2015</b>
+        <b>It's nice to hear when it's working out!!</b>
         <img src="images/panda.png"/>
     </p>
+    <hr/>
     <p>
-        Two small bugs found in 1.9.0 (issues with 'soft refresh' and 'setSortModel').
-        Both of these fixed in 1.9.2.
+        Ceolter, I just wanted to say thank you very very much. First for creating it and second for sharing.
     </p>
+    <p>
+        Some of the features I need are not implemented yet and maybe will never be but when I showed the difference of performance and ease-of-maintenance to my stakeholders between what you created and the last plugin I was using, they accepted not only that I change the implementation but also to postpone the release dates of some of their requested features.
+    </p>
+    <p>
+        For reference in the last 5 years I had to use: Silverlight grid, Telerik asp.net grid, Telerik Silverlight grid, jqgrid, datatable, slickgrid, Kendo UI grid and handsontable. And ag-Grid kills them all.    </p>
+    </p>
+    <p>
+    <a href="http://www.angulargrid.com/forum/showthread.php?tid=2759">From here</a>
+    </p>
+    <hr/>
 </span>
-</div>-->
+</div>
+
 
 <div style="text-align: center; margin-top: 50px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
