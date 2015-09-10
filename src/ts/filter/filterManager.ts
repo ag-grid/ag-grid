@@ -259,6 +259,12 @@ module awk.grid {
         }
 
         public refreshDisplayedValues() {
+            if (!this.rowModel.getTopLevelNodes) {
+                console.error('ag-Grid: could not find getTopLevelNodes on rowModel. you cannot use setFilter when' +
+                    'doing virtualScrolling as the filter has no way of getting the full set of values to display. ' +
+                    'Either stop using this filter type, or provide the filter with a set of values (see the docs' +
+                    'on configuring the setFilter).')
+            }
 	    	var rows = this.rowModel.getTopLevelNodes();
     		var colKeys = Object.keys(this.allFilters);
 
