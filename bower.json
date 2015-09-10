@@ -35,5 +35,6 @@
   "devDependencies": {
   },
   "dependencies": {
+    "angular": "*"
   }
 }
