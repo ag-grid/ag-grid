@@ -121,7 +121,9 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>moveColumn(fromIndex, toIndex)</th>
-            <td>Moves a column.</td>
+            <td>Moves a column. The column is first removed at 'fromIndex'. It is then re-inserted
+                at 'toIndex' using the new list (thus index locations will change to the right of
+                of the column after the removal).</td>
         </tr>
         <tr>
             <th>getPivotedColumns()</th>
