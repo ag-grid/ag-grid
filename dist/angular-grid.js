@@ -796,6 +796,9 @@ var awk;
             GridOptionsWrapper.prototype.getRowSelected = function () {
                 return this.gridOptions.rowSelected;
             };
+            GridOptionsWrapper.prototype.getRowDeSelected = function () {
+                return this.gridOptions.rowDeSelected;
+            };
             GridOptionsWrapper.prototype.getColumnResized = function () {
                 return this.gridOptions.columnResized;
             };
@@ -5541,6 +5544,7 @@ var awk;
                         this.recursivelyDeselectAllChildren(node);
                     }
                     else {
+                        this.gridOptionsWrapper.getRowDeSelected()(node.data,node);
                         this.deselectRealNode(node);
                     }
                 }
