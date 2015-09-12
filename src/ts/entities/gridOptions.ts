@@ -45,9 +45,9 @@ module awk.grid {
         dontUseScrolls?: boolean;
 
         // changeable with impact
-        rowData?: any[];
-        floatingTopRowData?: any[];
-        floatingBottomRowData?: any[];
+        rowData?: any[]; // should this be immutable for ag2?
+        floatingTopRowData?: any[]; // should this be immutable ag2?
+        floatingBottomRowData?: any[]; // should this be immutable ag2?
         rowSelection?: string;
         rowDeselection?: boolean;
         showToolPanel?: boolean;
