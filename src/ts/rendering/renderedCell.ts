@@ -589,7 +589,7 @@ module awk.grid {
                 if (template) {
                     this.vParentOfValue.setInnerHtml(template);
                 }
-            } else if (colDef.floatingCellRenderer) {
+            } else if (colDef.floatingCellRenderer && this.node.floating) {
                 this.useCellRenderer(colDef.floatingCellRenderer);
             } else if (colDef.cellRenderer) {
                 this.useCellRenderer(colDef.cellRenderer);
