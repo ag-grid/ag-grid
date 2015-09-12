@@ -1,6 +1,6 @@
 /**
  * angular-grid - High performance and feature rich data grid for AngularJS
- * @version v1.15.0
+ * @version v1.15.1
  * @link http://www.angulargrid.com/
  * @license MIT
  */
@@ -3136,6 +3136,9 @@ var awk;
                 node.quickFilterAggregateText = aggregatedText;
             };
             FilterManager.prototype.refreshDisplayedValues = function () {
+                if (!this.rowModel.getTopLevelNodes) {
+                    console.error('ag-Grid: could not find getTopLevelNodes on rowModel. you cannot use setFilter when' + 'doing virtualScrolling as the filter has no way of getting the full set of values to display. ' + 'Either stop using this filter type, or provide the filter with a set of values (see the docs' + 'on configuring the setFilter).');
+                }
                 var rows = this.rowModel.getTopLevelNodes();
                 var colKeys = Object.keys(this.allFilters);
                 for (var i = 0, l = colKeys.length; i < l; i++) {
@@ -4118,9 +4121,9 @@ var awk;
                 this.eCheckbox.type = "checkbox";
                 this.eCheckbox.name = "name";
                 this.eCheckbox.className = 'ag-selection-checkbox';
-                this.eCheckbox.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                });
+                //this.eCheckbox.addEventListener('click', function (event) {
+                //    event.stopPropagation();
+                //});
                 var that = this;
                 this.checkboxOnChangeListener = function () {
                     var newValue = that.eCheckbox.checked;
@@ -4194,7 +4197,7 @@ var awk;
                         this.vParentOfValue.setInnerHtml(template);
                     }
                 }
-                else if (colDef.floatingCellRenderer) {
+                else if (colDef.floatingCellRenderer && this.node.floating) {
                     this.useCellRenderer(colDef.floatingCellRenderer);
                 }
                 else if (colDef.cellRenderer) {
@@ -5109,6 +5112,12 @@ var awk;
                 renderedRow.setMainRowWidth(mainRowWidth);
                 this.renderedRows[rowIndex] = renderedRow;
             };
+            RowRenderer.prototype.getRenderedNodes = function () {
+                var renderedRows = this.renderedRows;
+                return Object.keys(renderedRows).map(function (key) {
+                    return renderedRows[key].getRowNode();
+                });
+            };
             RowRenderer.prototype.getIndexOfRenderedNode = function (node) {
                 var renderedRows = this.renderedRows;
                 var keys = Object.keys(renderedRows);
@@ -5892,7 +5901,8 @@ var awk;
                     $scope: this.childScope,
                     context: this.gridOptionsWrapper.getContext(),
                     value: headerNameValue,
-                    api: this.gridOptionsWrapper.getApi()
+                    api: this.gridOptionsWrapper.getApi(),
+                    eHeaderCell: this.eHeaderCell
                 };
                 var cellRendererResult = headerCellRenderer(cellRendererParams);
                 var childToAppend;
@@ -6018,7 +6028,8 @@ var awk;
                             context: this.gridOptionsWrapper.getContext(),
                             api: this.gridOptionsWrapper.getApi()
                         };
-                        classToUse = this.column.colDef.headerClass(params);
+                        var headerClassFunc = this.column.colDef.headerClass;
+                        classToUse = headerClassFunc(params);
                     }
                     else {
                         classToUse = this.column.colDef.headerClass;
@@ -8839,6 +8850,9 @@ var awk;
             };
             GridApi.prototype.getBestCostNodeSelection = function () {
                 return this.selectionController.getBestCostNodeSelection();
+            };
+            GridApi.prototype.getRenderedNodes = function () {
+                return this.rowRenderer.getRenderedNodes();
             };
             GridApi.prototype.ensureColIndexVisible = function (index) {
                 this.gridPanel.ensureColIndexVisible(index);

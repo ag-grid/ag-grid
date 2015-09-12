@@ -491,7 +491,7 @@ declare module awk.grid {
         /** To provide custom rendering to the header. */
         headerCellRenderer?: Function | Object;
         /** CSS class for the header */
-        headerClass?: (params: any) => any | string[];
+        headerClass?: string | string[] | ((params: any) => string | string[]);
         /** Initial width, in pixels, of the cell */
         width?: number;
         /** Min width, in pixels, of the cell */
@@ -991,6 +991,7 @@ declare module awk.grid {
         getLastVirtualRenderedRow(): number;
         private ensureRowsRendered();
         private insertRow(node, rowIndex, mainRowWidth);
+        getRenderedNodes(): any[];
         getIndexOfRenderedNode(node: any): number;
         navigateToNextCell(key: any, rowIndex: number, column: Column): void;
         private getNextCellToFocus(key, lastCellToFocus);
@@ -1676,6 +1677,7 @@ declare module awk.grid {
         isNodeSelected(node: any): boolean;
         getSelectedNodes(): any;
         getBestCostNodeSelection(): any;
+        getRenderedNodes(): any[];
         ensureColIndexVisible(index: any): void;
         ensureIndexVisible(index: any): void;
         ensureNodeVisible(comparator: any): void;
