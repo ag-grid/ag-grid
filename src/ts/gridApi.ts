@@ -24,11 +24,6 @@ module awk.grid {
             return this.masterSlaveService;
         }
 
-        /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-        public __registerGenericEventListener(listener: (eventName: string, event: any)=>void): void {
-            this.gridOptionsWrapper.registerGenericEventListener(listener);
-        }
-
         public setDatasource(datasource:any) {
             this.grid.setDatasource(datasource);
         }

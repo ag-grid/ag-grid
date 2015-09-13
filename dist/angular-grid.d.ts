@@ -1,4 +1,30 @@
 declare module awk.grid {
+    class AgGridDirective {
+        private elementDef;
+        private _gridOptions;
+        private _agGrid;
+        modelUpdated: any;
+        cellClicked: any;
+        cellDoubleClicked: any;
+        cellValueChanged: any;
+        cellFocused: any;
+        rowSelected: any;
+        selectionChanged: any;
+        beforeFilterChanged: any;
+        afterFilterChanged: any;
+        filterModified: any;
+        beforeSortChanged: any;
+        afterSortChanged: any;
+        virtualRowRemoved: any;
+        rowClicked: any;
+        ready: any;
+        constructor(elementDef: any);
+        gridOptions: GridOptions;
+        quickFilterText: string;
+        private genericEventListener(eventName, event);
+    }
+}
+declare module awk.grid {
     class ColumnChangeEvent {
         private type;
         private column;
@@ -116,6 +142,21 @@ declare module awk.grid {
         static KEY_UP: number;
         static KEY_LEFT: number;
         static KEY_RIGHT: number;
+        static EVENT_MODEL_UPDATED: string;
+        static EVENT_CELL_CLICKED: string;
+        static EVENT_CELL_DOUBLE_CLICKED: string;
+        static EVENT_CELL_VALUE_CHANGED: string;
+        static EVENT_CELL_FOCUSED: string;
+        static EVENT_ROW_SELECTED: string;
+        static EVENT_SELECTION_CHANGED: string;
+        static EVENT_BEFORE_FILTER_CHANGED: string;
+        static EVENT_AFTER_FILTER_CHANGED: string;
+        static EVENT_FILTER_MODIFIED: string;
+        static EVENT_BEFORE_SORT_CHANGED: string;
+        static EVENT_AFTER_SORT_CHANGED: string;
+        static EVENT_VIRTUAL_ROW_REMOVED: string;
+        static EVENT_ROW_CLICKED: string;
+        static EVENT_READY: string;
     }
 }
 declare module awk.grid {
@@ -156,6 +197,9 @@ declare module awk.grid {
     }
 }
 declare module awk.grid {
+    interface GenericEventListener {
+        (eventName: string, event: any): void;
+    }
     class GridOptionsWrapper {
         private gridOptions;
         private groupHeaders;
@@ -163,7 +207,9 @@ declare module awk.grid {
         private rowHeight;
         private floatingTopRowData;
         private floatingBottomRowData;
-        constructor(gridOptions: GridOptions);
+        private $scope;
+        private genericEventListeners;
+        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener, $scope: any);
         isRowSelection(): boolean;
         isRowDeselection(): boolean;
         isRowSelectionMulti(): boolean;
@@ -203,24 +249,10 @@ declare module awk.grid {
         isAngularCompileHeaders(): boolean;
         isDebug(): boolean;
         getColumnDefs(): any[];
-        getBeforeFilterChanged(): () => void;
-        getAfterFilterChanged(): () => void;
-        getFilterModified(): () => void;
-        getBeforeSortChanged(): () => void;
-        getAfterSortChanged(): () => void;
-        getModelUpdated(): () => void;
-        getCellClicked(): (params: any) => void;
-        getCellDoubleClicked(): (params: any) => void;
-        getCellValueChanged(): (params: any) => void;
-        getCellFocused(): (params: any) => void;
-        getRowSelected(): (rowIndex: number, selected: boolean) => void;
         getColumnResized(): (column: Column) => void;
         getColumnVisibilityChanged(): (columns: Column[]) => void;
         getColumnOrderChanged(): (columns: Column[]) => void;
-        getSelectionChanged(): () => void;
-        getVirtualRowRemoved(): (row: any, rowIndex: number) => void;
         getDatasource(): any;
-        getReady(): (api: any) => void;
         getRowBuffer(): number;
         isEnableSorting(): boolean;
         isEnableCellExpressions(): boolean;
@@ -234,7 +266,7 @@ declare module awk.grid {
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
-        getGroupRowRenderer(): Object;
+        getGroupRowRenderer(): Object | Function;
         getRowHeight(): number;
         getHeaderHeight(): number;
         setHeaderHeight(headerHeight: number): void;
@@ -251,6 +283,7 @@ declare module awk.grid {
         private checkForDeprecated();
         getPinnedColCount(): number;
         getLocaleTextFunc(): (key: any, defaultValue: any) => any;
+        fireEvent(eventName: string, event?: any): void;
     }
 }
 declare module awk.grid {
@@ -1012,7 +1045,7 @@ declare module awk.grid {
         private selectedRows;
         private selectedNodesById;
         private rowModel;
-        init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: any, $scope: any, rowRenderer: any): void;
+        init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper, $scope: any, rowRenderer: any): void;
         private initSelectedNodesById();
         getSelectedNodes(): any;
         getBestCostNodeSelection(): any;
@@ -1610,14 +1643,14 @@ declare module awk.grid {
         cellDoubleClicked?(params: any): void;
         cellValueChanged?(params: any): void;
         cellFocused?(params: any): void;
-        rowSelected?(rowIndex: number, selected: boolean): void;
+        rowSelected?(params: any): void;
         selectionChanged?(): void;
         beforeFilterChanged?(): void;
         afterFilterChanged?(): void;
         filterModified?(): void;
         beforeSortChanged?(): void;
         afterSortChanged?(): void;
-        virtualRowRemoved?(row: any, rowIndex: number): void;
+        virtualRowRemoved?(params: any): void;
         rowClicked?(params: any): void;
         columnResized?(column: Column): void;
         columnVisibilityChanged?(columns: Column[]): void;
@@ -1738,7 +1771,7 @@ declare module awk.grid {
         private toolPanelShowing;
         private doingPagination;
         rowModel: any;
-        constructor(eGridDiv: any, gridOptions: any, $scope: any, $compile: any, quickFilterOnScope: any);
+        constructor(eGridDiv: any, gridOptions: any, genericEventListener?: GenericEventListener, $scope?: any, $compile?: any, quickFilterOnScope?: any);
         private periodicallyDoLayout();
         private setupComponents($scope, $compile, eUserProvidedDiv);
         private onIndividualColumnResized(column);

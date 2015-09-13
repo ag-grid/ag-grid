@@ -26,6 +26,7 @@ module awk.grid {
         public afterSortChanged = new ng.EventEmitter();
         public virtualRowRemoved = new ng.EventEmitter();
         public rowClicked = new ng.EventEmitter();
+        public ready = new ng.EventEmitter();
 
         constructor(private elementDef: any) {
         }
@@ -33,8 +34,7 @@ module awk.grid {
         set gridOptions(gridOptions: GridOptions) {
             this._gridOptions = gridOptions;
             var nativeElement = this.elementDef.nativeElement;
-            this._agGrid = new awk.grid.Grid(nativeElement, gridOptions);
-            this._gridOptions.api.__registerGenericEventListener(this.genericEventListener.bind(this));
+            this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
         }
 
         set quickFilterText(text: string) {
@@ -58,6 +58,7 @@ module awk.grid {
                 case Constants.EVENT_FILTER_MODIFIED: emitter = this.filterModified; break;
                 case Constants.EVENT_VIRTUAL_ROW_REMOVED: emitter = this.virtualRowRemoved; break;
                 case Constants.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
+                case Constants.EVENT_READY: emitter = this.ready; break;
             }
 
             if (emitter) {
@@ -79,7 +80,7 @@ module awk.grid {
                 events: ['modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellValueChanged', 'cellFocused',
                             'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                             'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                            'rowClicked'],
+                            'rowClicked','ready'],
                 properties: ['gridOptions','quickFilterText'],
                 compileChildren: false // no angular on the inside thanks
             }),

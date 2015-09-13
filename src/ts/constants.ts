@@ -38,6 +38,7 @@ module awk.grid {
         static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
         static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
         static EVENT_ROW_CLICKED = 'rowClicked';
+        static EVENT_READY = 'ready';
 
     }
 

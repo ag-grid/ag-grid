@@ -50,10 +50,10 @@ module awk.grid {
         // these are public, as they are used by the api
         rowModel: any;
 
-        constructor(eGridDiv: any, gridOptions: any, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
+        constructor(eGridDiv: any, gridOptions: any, genericEventListener: GenericEventListener = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
-            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, $scope);
+            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, genericEventListener, $scope);
 
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
@@ -94,9 +94,8 @@ module awk.grid {
             this.periodicallyDoLayout();
 
             // if ready function provided, use it
-            if (typeof this.gridOptionsWrapper.getReady() == 'function') {
-                this.gridOptionsWrapper.getReady()(gridOptions.api);
-            }
+            var readyParams = {api: gridOptions.api};
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_READY, readyParams);
         }
 
         private periodicallyDoLayout() {

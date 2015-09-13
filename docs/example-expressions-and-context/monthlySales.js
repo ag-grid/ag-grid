@@ -63,8 +63,8 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
             month: 0,
             months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
         },
-        ready: function(api) {
-            api.sizeColumnsToFit();
+        ready: function(event) {
+            event.api.sizeColumnsToFit();
         },
         icons: {
             menu: '<i class="fa fa-bars"/>',

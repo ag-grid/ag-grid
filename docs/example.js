@@ -133,8 +133,8 @@ gridsModule.controller('mainController', function($scope) {
         cellFocused: function(params) {
             console.log('Callback cellFocused: ' + params.rowIndex + " - " + params.colIndex);
         },
-        ready: function(api) {
-            console.log('Callback ready: api = ' + api);
+        ready: function(event) {
+            console.log('Callback ready: api = ' + event.api);
         }
     };
     $scope.angularGrid = angularGrid;

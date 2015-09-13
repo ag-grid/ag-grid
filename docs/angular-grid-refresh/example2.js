@@ -106,12 +106,13 @@ module.controller("exampleCtrl", function($scope) {
         groupIncludeFooter: true,
         groupDefaultExpanded: 1,
         groupAggFunction: groupAggFunction,
+        groupSuppressAutoColumn: true,
         columnDefs: columnDefs,
         rowData: data,
         rowSelection: 'single',
         enableSorting: true,
-        ready: function(api) {
-            api.sizeColumnsToFit();
+        ready: function(params) {
+            params.api.sizeColumnsToFit();
         }
     };
 

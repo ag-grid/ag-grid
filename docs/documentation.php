@@ -31,26 +31,36 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>30th Aug 2015 <!--- Over 800 stars on Github and counting!!--></b>
+        <b>13th Aug 2015 <!--- Over 800 stars on Github and counting!!--></b>
     </p>
 
-    <p>&nbsp;</p>
-
-    <p>
+<!--    <p>
         <b>Last Week</b>
     </p>
-
-    <p>
-    </p>
-    <p>
-        Release 1.15 contains the above.
+-->
+    <p style="font-size: 40px">
+        <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> meets Angular 2
     </p>
 
     <p>
-        Breaking changes:
-        rowSelected: now takes params with 'node' instead of 'data' and 'row index'.
-        virtualRowRemoved: now takes params with 'node' and 'index' instead of 'data' and 'row index'.
+        After weeks of just research Angular 2 and Web Components, this week I decided to put my new
+        skills into practice. I have now done a first pass of support for AngularJS 2.
+        <a href="example-angular-2/index.php">Check it out here</a>.
     </p>
+
+    <p>
+        If you upgrade, I had to do some changes with the following callbacks, the make them work like events:
+        <ul>
+        <li>
+            rowSelected: now takes params with 'node' instead of 'data' and 'row index'.
+        </li>
+        <li>
+            virtualRowRemoved: now takes params with 'node' and 'index' instead of 'data' and 'row index'.
+        </li>
+        <li>
+            ready: now takes params with 'api' instead of just 'api'.
+        </li>
+    </ul>
 
     <p>&nbsp;</p>
 
@@ -58,44 +68,20 @@ include 'documentation_header.php';
         <b>Next Week</b>
     </p>
     <p>
-        I'm going to continue with my Angular 2 and Web Components research. Oh - and I'm probably going to
-        implement a 'size grid to fit' soon - so the grid will size to the number of rows you have showing.
+        I'm going to continue with Angular 2 and Web Components. I'm looking forward to having ag-Grid
+        available as an a) Angular 1 Directive, b) Angular 2 Component, c) Web Component and d) Plain Javascript.
     </p>
 
-    <p>
+<!--    <p>
         <b>Angular Air</b>
     </p>
     <p>
         On Tuesday 15th September I will be on <a href="http://angular-air.com/">Angular Air</a> talking about
         my work with ag-Grid.
     </p>
-
+-->
     <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-</div>
-
-<div style="text-align: center; padding: 20px;;">
-<span style="border: 2px solid darkblue; padding: 10px; font-size: 14px; display: inline-block;">
-    <p>
-        <img src="images/panda.png"/>
-        <b>It's nice to hear when it's working out!!</b>
-        <img src="images/panda.png"/>
-    </p>
-    <hr/>
-    <p>
-        Ceolter, I just wanted to say thank you very very much. First for creating it and second for sharing.
-    </p>
-    <p>
-        Some of the features I need are not implemented yet and maybe will never be but when I showed the difference of performance and ease-of-maintenance to my stakeholders between what you created and the last plugin I was using, they accepted not only that I change the implementation but also to postpone the release dates of some of their requested features.
-    </p>
-    <p>
-        For reference in the last 5 years I had to use: Silverlight grid, Telerik asp.net grid, Telerik Silverlight grid, jqgrid, datatable, slickgrid, Kendo UI grid and handsontable. And ag-Grid kills them all.    </p>
-    </p>
-    <p>
-    <a href="http://www.angulargrid.com/forum/showthread.php?tid=2759">From here</a>
-    </p>
-    <hr/>
-</span>
 </div>
 
 
@@ -243,6 +229,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>6th Aug</b> Floating headers and footers
+    </p>
 
     <hr/>
 

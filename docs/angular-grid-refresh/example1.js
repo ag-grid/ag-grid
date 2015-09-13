@@ -78,8 +78,8 @@ module.controller("exampleCtrl", function($scope) {
         rowSelection: 'single',
         enableSorting: true,
         cellValueChanged: cellValueChangedFunction,
-        ready: function(api) {
-            api.sizeColumnsToFit();
+        ready: function(event) {
+            event.api.sizeColumnsToFit();
         }
     };
 

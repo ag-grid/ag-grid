@@ -9,6 +9,10 @@ module awk.grid {
         return value === true || value === 'true';
     }
 
+    export interface GenericEventListener {
+        (eventName: string, event: any): void;
+    }
+
     export class GridOptionsWrapper {
 
         private gridOptions: GridOptions;
@@ -20,11 +24,14 @@ module awk.grid {
         private floatingBottomRowData: any[];
         private $scope: any;
 
-        private genericEventListeners: ((eventName: string, event: any)=>void) [] = [];
+        private genericEventListeners: GenericEventListener [] = [];
 
-        constructor(gridOptions: GridOptions, $scope: any) {
+        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener, $scope: any) {
             this.gridOptions = gridOptions;
             this.$scope = $scope;
+            if (genericEventListener) {
+                this.genericEventListeners.push(genericEventListener);
+            }
 
             this.headerHeight = gridOptions.headerHeight;
             this.groupHeaders = gridOptions.groupHeaders;
@@ -83,7 +90,6 @@ module awk.grid {
         public getColumnVisibilityChanged() { return this.gridOptions.columnVisibilityChanged; }
         public getColumnOrderChanged() { return this.gridOptions.columnOrderChanged; }
         public getDatasource() { return this.gridOptions.datasource; }
-        public getReady() { return this.gridOptions.ready; }
         public getRowBuffer() { return this.gridOptions.rowBuffer; }
         public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
         public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
@@ -198,7 +204,7 @@ module awk.grid {
             if (typeof (<any>this.gridOptions)[eventName] === 'function') {
                 (<any>this.gridOptions)[eventName](event);
             }
-            this.genericEventListeners.forEach( (listener: (eventName: string, event: any)=>void) => {
+            this.genericEventListeners.forEach( (listener: GenericEventListener) => {
                 listener(eventName, event);
             });
             // if doing angular 1, and we have scope, then apply after firing the event
@@ -207,10 +213,6 @@ module awk.grid {
                     this.$scope.$apply();
                 }, 0);
             }
-        }
-
-        public registerGenericEventListener(listener: (eventName: string, event: any)=>void): void {
-            this.genericEventListeners.push(listener);
         }
     }
 }

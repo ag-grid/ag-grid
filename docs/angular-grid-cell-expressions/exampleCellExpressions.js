@@ -25,8 +25,8 @@ module.controller("exampleCtrl", function($scope) {
         context: {
             theNumber: 4
         },
-        ready: function(api) {
-            api.sizeColumnsToFit();
+        ready: function(event) {
+            event.api.sizeColumnsToFit();
         }
     };
 
@@ -49,8 +49,8 @@ module.controller("exampleCtrl", function($scope) {
     $scope.gridOptionsRight = {
         columnDefs: columnDefsRight,
         rowData: rowDataRight,
-        ready: function(api) {
-            api.sizeColumnsToFit();
+        ready: function(event) {
+            event.api.sizeColumnsToFit();
         }
     };
 

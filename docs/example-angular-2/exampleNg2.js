@@ -133,14 +133,26 @@ var SampleAppComponent = function() {
         groupHeaders: true,
         rowHeight: 22,
         pinnedColumnCount: 3,
-        modelUpdated: this.modelUpdated.bind(this),
         suppressRowClickSelection: true
     };
 
 };
 
+SampleAppComponent.prototype.calculateRowCount = function() {
+    var model = this.gridOptions.api.getModel();
+    var totalRows = this.gridOptions.rowData.length;
+    var processedRows = model.getVirtualRowCount();
+    this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+};
+
 SampleAppComponent.prototype.onModelUpdated = function() {
     console.log('onModelUpdated');
+    this.calculateRowCount();
+};
+
+SampleAppComponent.prototype.onReady = function($event) {
+    console.log('onReady');
+    this.calculateRowCount();
 };
 
 SampleAppComponent.prototype.onCellClicked = function($event) {
@@ -199,13 +211,6 @@ SampleAppComponent.prototype.onQuickFilterChanged = function($event) {
     this.gridOptions.api.setQuickFilter($event.target.value);
 };
 
-SampleAppComponent.prototype.modelUpdated = function() {
-    var model = this.gridOptions.api.getModel();
-    var totalRows = this.gridOptions.rowData.length;
-    var processedRows = model.getVirtualRowCount();
-    this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-};
-
 SampleAppComponent.annotations = [
     new ng.Component({
         selector: 'sample-app'
@@ -224,8 +229,7 @@ SampleAppComponent.annotations = [
                     '</div>' +
                     '<div style="clear: both;"/>' +
                 '</div>' +
-                '<div style="width: 100%; height: 400px;"> ' +
-                '<ag-grid-a2 ' +
+                '<ag-grid-a2 style="width: 100%; height: 400px;" ' +
                     '[grid-options]="gridOptions" ' +
                     '(model-updated)="onModelUpdated()" ' +
                     '(cell-clicked)="onCellClicked($event)" ' +
@@ -241,8 +245,8 @@ SampleAppComponent.annotations = [
                     '(after-sort-changed)="onAfterSortChanged()" ' +
                     '(virtual-row-removed)="onVirtualRowRemoved($event)" ' +
                     '(row-clicked)="onRowClicked($event)" ' +
+                    '(ready)="onReady($event)" ' +
                     'class="ag-fresh"/>' +
-                '</div>' +
             '</div>'
     })
 ];

@@ -72,7 +72,7 @@ declare var module: any;
         }
 
         var eGridDiv = $element[0];
-        var grid = new awk.grid.Grid(eGridDiv, gridOptions, $scope, $compile, quickFilterOnScope);
+        var grid = new awk.grid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.setFinished();
