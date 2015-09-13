@@ -31,6 +31,7 @@
     "gulp-typescript": "^2.5.0",
     "gulp-sourcemaps": "1.5.2",
     "gulp-header": "^1.0.0",
+    "gulp-tsd": "0.0.4",
     "nib": "^1.1.0",
     "stylus": "^0.50.0",
     "vinyl-buffer": "^1.0.0",

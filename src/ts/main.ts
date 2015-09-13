@@ -1,4 +1,5 @@
 /// <reference path="grid.ts" />
+/// <reference path="agGridNg2.ts" />
 
 declare var exports: any;
 declare var module: any;
@@ -11,8 +12,9 @@ declare var module: any;
     // provide a reference to angular
     var angular = (<any> window).angular;
 
-    // if angular is present, register the directive
-    if (typeof angular !== 'undefined') {
+    // if angular is present, register the directive - checking for 'module' and 'directive' also to make
+    // sure it's Angular 1 and not Angular 2
+    if (typeof angular !== 'undefined' && typeof angular.module !== 'undefined' && angular.directive !== 'undefined') {
         var angularModule = angular.module("angularGrid", []);
         angularModule.directive("angularGrid", function() {
             return {
@@ -98,7 +100,7 @@ declare var module: any;
         } else {
             eGridDiv = element;
         }
-        new awk.grid.Grid(eGridDiv, gridOptions, null, null, null);
+        new awk.grid.Grid(eGridDiv, gridOptions);
     }
 
 }).call(window);

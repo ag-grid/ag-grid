@@ -17,14 +17,14 @@ module awk.grid {
 
         private eParentsOfRows: HTMLElement[];
         private angularGrid: Grid;
-        private gridOptionsWrapper: any;
+        private gridOptionsWrapper: GridOptionsWrapper;
         private $scope: any;
         private rowRenderer: RowRenderer;
         private selectedRows: any;
         private selectedNodesById: any;
         private rowModel: any;
 
-        public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: any, $scope: any, rowRenderer: any) {
+        public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper, $scope: any, rowRenderer: any) {
             this.eParentsOfRows = gridPanel.getRowsParent();
             this.angularGrid = angularGrid;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -226,8 +226,9 @@ module awk.grid {
             }
 
             // inform the rowSelected listener, if any
-            if (!suppressEvents && typeof this.gridOptionsWrapper.getRowSelected() === "function") {
-                this.gridOptionsWrapper.getRowSelected()(node.data, node);
+            if (!suppressEvents) {
+                var event: any = {node: node};
+                this.gridOptionsWrapper.fireEvent(Constants.EVENT_ROW_SELECTED, event)
             }
 
             return true;
@@ -339,8 +340,8 @@ module awk.grid {
             // page had a popup in the 'selection' page as soon as the page was loaded!!
             var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
 
-            if (!nothingChangedMustBeInitialising && !suppressEvents && typeof this.gridOptionsWrapper.getSelectionChanged() === "function") {
-                this.gridOptionsWrapper.getSelectionChanged()();
+            if (!nothingChangedMustBeInitialising && !suppressEvents) {
+                this.gridOptionsWrapper.fireEvent(Constants.EVENT_SELECTION_CHANGED);
             }
 
             var that = this;

@@ -50,10 +50,10 @@ module awk.grid {
         // these are public, as they are used by the api
         rowModel: any;
 
-        constructor(eGridDiv: any, gridOptions: any, $scope: any, $compile: any, quickFilterOnScope: any) {
+        constructor(eGridDiv: any, gridOptions: any, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
-            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions);
+            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, $scope);
 
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
@@ -317,15 +317,11 @@ module awk.grid {
         }
 
         public onFilterModified() {
-            if (typeof this.gridOptionsWrapper.getFilterModified() === 'function') {
-                this.gridOptionsWrapper.getFilterModified()();
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_FILTER_MODIFIED);
         }
 
         public onFilterChanged() {
-            if (typeof this.gridOptionsWrapper.getBeforeFilterChanged() === 'function') {
-                this.gridOptionsWrapper.getBeforeFilterChanged()();
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_BEFORE_FILTER_CHANGED);
             this.filterManager.onFilterChanged();
             this.headerRenderer.updateFilterIcons();
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
@@ -336,22 +332,18 @@ module awk.grid {
                 // if doing in memory filtering, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_FILTER);
             }
-            if (typeof this.gridOptionsWrapper.getAfterFilterChanged() === 'function') {
-                this.gridOptionsWrapper.getAfterFilterChanged()();
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_AFTER_FILTER_CHANGED);
         }
 
         public onRowClicked(event: any, rowIndex: any, node: any) {
 
-            if (this.gridOptions.rowClicked) {
-                var params = {
-                    node: node,
-                    data: node.data,
-                    event: event,
-                    rowIndex: rowIndex
-                };
-                this.gridOptions.rowClicked(params);
-            }
+            var params = {
+                node: node,
+                data: node.data,
+                event: event,
+                rowIndex: rowIndex
+            };
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_ROW_CLICKED, params)
 
             // we do not allow selecting groups by clicking (as the click here expands the group)
             // so return if it's a group row
@@ -528,9 +520,7 @@ module awk.grid {
         }
 
         public onSortingChanged() {
-            if (typeof this.gridOptionsWrapper.getBeforeSortChanged() === 'function') {
-                this.gridOptionsWrapper.getBeforeSortChanged()();
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_BEFORE_SORT_CHANGED);
             this.headerRenderer.updateSortIcons();
             if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
                 // if doing server side sorting, changing the sort has the impact
@@ -540,9 +530,7 @@ module awk.grid {
                 // if doing in memory sorting, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_SORT);
             }
-            if (typeof this.gridOptionsWrapper.getAfterSortChanged() === 'function') {
-                this.gridOptionsWrapper.getAfterSortChanged()();
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_AFTER_SORT_CHANGED);
         }
 
         public addVirtualRowListener(rowIndex: any, callback: any) {

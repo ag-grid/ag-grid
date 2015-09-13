@@ -251,9 +251,8 @@ module awk.grid {
             var renderedRow = this.renderedRows[indexToRemove];
             renderedRow.destroy();
 
-            if (this.gridOptionsWrapper.getVirtualRowRemoved()) {
-                this.gridOptionsWrapper.getVirtualRowRemoved()(renderedRow.getRowNode().data, indexToRemove);
-            }
+            var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_VIRTUAL_ROW_REMOVED, event);
             this.angularGrid.onVirtualRowRemoved(indexToRemove);
 
             delete this.renderedRows[indexToRemove];
@@ -481,9 +480,7 @@ module awk.grid {
                 eCell.focus();
             }
 
-            if (typeof this.gridOptionsWrapper.getCellFocused() === 'function') {
-                this.gridOptionsWrapper.getCellFocused()(this.focusedCell);
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_FOCUSED, this.focusedCell);
         }
 
         // for API

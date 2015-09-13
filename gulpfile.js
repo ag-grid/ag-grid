@@ -6,11 +6,13 @@ var rename = require("gulp-rename");
 var stylus = require('gulp-stylus');
 var buffer = require('vinyl-buffer');
 var nib = require('nib');
-var typescript = require('gulp-typescript');
+var gulpTypescript = require('gulp-typescript');
+var typescript = require('typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var header = require('gulp-header');
 var merge = require('merge2');
 var pkg = require('./package.json');
+var tsd = require('gulp-tsd');
 
 //var headerTemplate = '// Angular Grid\n// Written by Niall Crosby\n// www.angulargrid.com\n\n// Version 1.10.1\n\n';
 var headerTemplate = ['/**',
@@ -21,8 +23,8 @@ var headerTemplate = ['/**',
     ' */',
     ''].join('\n');
 
-gulp.task('default', ['stylus', 'debug-build', 'watch']);
-gulp.task('release', ['stylus', 'ts-release']);
+gulp.task('default', ['stylus', 'tsd', 'debug-build', 'watch']);
+gulp.task('release', ['stylus', 'tsd', 'ts-release']);
 
 // Build
 gulp.task('debug-build', ['stylus', 'ts-debug']);
@@ -33,14 +35,44 @@ gulp.task('ts-release', tsReleaseTask);
 // Watch
 gulp.task('watch', watchTask);
 
+gulp.task('tsd', function (callback) {
+    tsd({
+        command: 'reinstall',
+        config: './tsd.json'
+    }, callback);
+});
+
+gulp.task('es6', function (callback) {
+    var tsResult = gulp
+        .src('src/es6/**/*.ts')
+        .pipe(sourcemaps.init()) // for sourcemaps only
+        .pipe(gulpTypescript({
+            typescript: typescript,
+            noImplicitAny: true,
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
+            target: 'es5',
+            module: 'commonjs'
+        }));
+
+    return tsResult.js
+        .pipe(sourcemaps.write()) // for sourcemaps only
+        .pipe(gulp.dest('./docs/dist'));
+});
+
 // does TS compiling, sourcemaps = yes, minification = no, distFolder = no
 function tsDebugTask() {
 
     var tsResult = gulp
         .src('src/ts/**/*.ts')
         .pipe(sourcemaps.init()) // for sourcemaps only
-        .pipe(typescript({
+        .pipe(gulpTypescript({
+            typescript: typescript,
             noImplicitAny: true,
+            //experimentalDecorators: true,
+            //emitDecoratorMetadata: true,
+            target: 'es5',
+            //module: 'commonjs',
             out: 'angular-grid.js'
         }));
 
@@ -55,8 +87,13 @@ function tsDebugTask() {
 function tsReleaseTask() {
     var tsResult = gulp
         .src('src/ts/**/*.ts')
-        .pipe(typescript({
+        .pipe(gulpTypescript({
+            typescript: typescript,
             noImplicitAny: true,
+            //experimentalDecorators: true,
+            //emitDecoratorMetadata: true,
+            target: 'es5',
+            //module: 'commonjs',
             declarationFiles: true,
             out: 'angular-grid.js'
         }));

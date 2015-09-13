@@ -108,16 +108,7 @@ module awk.grid {
                     this.doGroupMapping();
             }
 
-            if (typeof this.gridOptionsWrapper.getModelUpdated() === 'function') {
-                this.gridOptionsWrapper.getModelUpdated()();
-                var $scope = this.$scope;
-                if ($scope) {
-                    setTimeout(function () {
-                        $scope.$apply();
-                    }, 0);
-                }
-            }
-
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_MODEL_UPDATED);
         }
 
         private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {
