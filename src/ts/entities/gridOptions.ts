@@ -41,7 +41,6 @@ module awk.grid {
         groupColumnDef?: any; // change to typed
         groupSuppressRow?: boolean;
         groupSuppressBlankHeader?: boolean;
-
         dontUseScrolls?: boolean;
 
         // changeable with impact
@@ -85,14 +84,14 @@ module awk.grid {
         cellDoubleClicked?(params: any): void;
         cellValueChanged?(params: any): void;
         cellFocused?(params: any): void;
-        rowSelected?(rowIndex: number, selected: boolean): void;
+        rowSelected?(params: any): void;
         selectionChanged?(): void;
         beforeFilterChanged?(): void;
         afterFilterChanged?(): void;
         filterModified?(): void;
         beforeSortChanged?(): void;
         afterSortChanged?(): void;
-        virtualRowRemoved?(row: any, rowIndex: number): void;
+        virtualRowRemoved?(params: any): void;
         rowClicked?(params: any): void;
 
         // deprecated

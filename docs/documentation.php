@@ -40,22 +40,16 @@ include 'documentation_header.php';
         <b>Last Week</b>
     </p>
 
-    <ul>
-
-        <li>
-            <b>Floating Headers and Footers:</b> Finally it's here!!! One of the most asked for features, floating
-            rows for the top and bottom of your grids!!! Read all about it
-            <a href="/angular-grid-floating/index.php">here</a>.
-        </li>
-
-    </ul>
-
     <p>
-        And then the usual bug fixes as per Github and board chatter. If you want to see exactly, check out
-        Github history.
     </p>
     <p>
         Release 1.15 contains the above.
+    </p>
+
+    <p>
+        Breaking changes:
+        rowSelected: now takes params with 'node' instead of 'data' and 'row index'.
+        virtualRowRemoved: now takes params with 'node' and 'index' instead of 'data' and 'row index'.
     </p>
 
     <p>&nbsp;</p>

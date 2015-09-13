@@ -221,9 +221,7 @@ module awk.grid {
             if (typeof colDef.cellValueChanged === 'function') {
                 colDef.cellValueChanged(paramsForCallbacks);
             }
-            if (typeof this.gridOptionsWrapper.getCellValueChanged() === 'function') {
-                this.gridOptionsWrapper.getCellValueChanged()(paramsForCallbacks);
-            }
+            this.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
 
             _.removeAllChildren(this.vGridCell.getElement());
             if (this.checkboxSelection) {
@@ -236,20 +234,19 @@ module awk.grid {
             var that = this;
             var colDef = this.column.colDef;
             this.vGridCell.addEventListener('dblclick', function (event: any) {
-                if (that.gridOptionsWrapper.getCellDoubleClicked()) {
-                    var paramsForGrid = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    that.gridOptionsWrapper.getCellDoubleClicked()(paramsForGrid);
-                }
+                var paramsForGrid = {
+                    node: that.node,
+                    data: that.node.data,
+                    value: that.value,
+                    rowIndex: that.rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    context: that.gridOptionsWrapper.getContext(),
+                    api: that.gridOptionsWrapper.getApi()
+                };
+                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
+
                 if (colDef.cellDoubleClicked) {
                     var paramsForColDef = {
                         node: that.node,
@@ -321,20 +318,18 @@ module awk.grid {
                 if (!that.node.floating) {
                     that.focusCell(false);
                 }
-                if (that.gridOptionsWrapper.getCellClicked()) {
-                    var paramsForGrid = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    that.gridOptionsWrapper.getCellClicked()(paramsForGrid);
-                }
+                var paramsForGrid = {
+                    node: that.node,
+                    data: that.node.data,
+                    value: that.value,
+                    rowIndex: that.rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    context: that.gridOptionsWrapper.getContext(),
+                    api: that.gridOptionsWrapper.getApi()
+                };
+                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_CLICKED, paramsForGrid);
                 if (colDef.cellClicked) {
                     var paramsForColDef = {
                         node: that.node,

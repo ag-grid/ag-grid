@@ -2,7 +2,7 @@
 
 module awk.grid {
 
-    var DEFAULT_ROW_HEIGHT = 30;
+    var DEFAULT_ROW_HEIGHT = 25;
     var constants = Constants;
 
     function isTrue(value: any) {
@@ -18,9 +18,13 @@ module awk.grid {
         private rowHeight: number;
         private floatingTopRowData: any[];
         private floatingBottomRowData: any[];
+        private $scope: any;
 
-        constructor(gridOptions: GridOptions) {
+        private genericEventListeners: ((eventName: string, event: any)=>void) [] = [];
+
+        constructor(gridOptions: GridOptions, $scope: any) {
             this.gridOptions = gridOptions;
+            this.$scope = $scope;
 
             this.headerHeight = gridOptions.headerHeight;
             this.groupHeaders = gridOptions.groupHeaders;
@@ -75,22 +79,9 @@ module awk.grid {
         public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
         public isDebug() { return isTrue(this.gridOptions.debug); }
         public getColumnDefs() { return this.gridOptions.columnDefs; }
-        public getBeforeFilterChanged() { return this.gridOptions.beforeFilterChanged; }
-        public getAfterFilterChanged() { return this.gridOptions.afterFilterChanged; }
-        public getFilterModified() { return this.gridOptions.filterModified; }
-        public getBeforeSortChanged() { return this.gridOptions.beforeSortChanged; }
-        public getAfterSortChanged() { return this.gridOptions.afterSortChanged; }
-        public getModelUpdated() { return this.gridOptions.modelUpdated; }
-        public getCellClicked() { return this.gridOptions.cellClicked; }
-        public getCellDoubleClicked() { return this.gridOptions.cellDoubleClicked; }
-        public getCellValueChanged() { return this.gridOptions.cellValueChanged; }
-        public getCellFocused() { return this.gridOptions.cellFocused; }
-        public getRowSelected() { return this.gridOptions.rowSelected; }
         public getColumnResized() { return this.gridOptions.columnResized; }
         public getColumnVisibilityChanged() { return this.gridOptions.columnVisibilityChanged; }
         public getColumnOrderChanged() { return this.gridOptions.columnOrderChanged; }
-        public getSelectionChanged() { return this.gridOptions.selectionChanged; }
-        public getVirtualRowRemoved() { return this.gridOptions.virtualRowRemoved; }
         public getDatasource() { return this.gridOptions.datasource; }
         public getReady() { return this.gridOptions.ready; }
         public getRowBuffer() { return this.gridOptions.rowBuffer; }
@@ -201,6 +192,25 @@ module awk.grid {
                     return defaultValue;
                 }
             };
+        }
+
+        public fireEvent(eventName: string, event?: any): void {
+            if (typeof (<any>this.gridOptions)[eventName] === 'function') {
+                (<any>this.gridOptions)[eventName](event);
+            }
+            this.genericEventListeners.forEach( (listener: (eventName: string, event: any)=>void) => {
+                listener(eventName, event);
+            });
+            // if doing angular 1, and we have scope, then apply after firing the event
+            if (this.$scope) {
+                setTimeout( ()=> {
+                    this.$scope.$apply();
+                }, 0);
+            }
+        }
+
+        public registerGenericEventListener(listener: (eventName: string, event: any)=>void): void {
+            this.genericEventListeners.push(listener);
         }
     }
 }
