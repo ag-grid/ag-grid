@@ -13,6 +13,7 @@ module awk.grid {
         private _agGrid: awk.grid.Grid;
 
         private api: GridApi;
+        private columnApi: ColumnApi;
 
         public modelUpdated = new ng.EventEmitter();
         public cellClicked = new ng.EventEmitter();
@@ -38,6 +39,7 @@ module awk.grid {
             var nativeElement = this.elementDef.nativeElement;
             this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
             this.api = this._gridOptions.api;
+            this.columnApi = this._gridOptions.columnApi;
         }
 
         set quickFilterText(text: string) {
@@ -62,6 +64,9 @@ module awk.grid {
                 case Constants.EVENT_VIRTUAL_ROW_REMOVED: emitter = this.virtualRowRemoved; break;
                 case Constants.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
                 case Constants.EVENT_READY: emitter = this.ready; break;
+                default:
+                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + eventName);
+                    return;
             }
 
             if (emitter) {

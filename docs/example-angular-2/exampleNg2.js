@@ -227,8 +227,12 @@ SampleAppComponent.annotations = [
                         '<b>Employees Skills and Contact Details</b> ' +
                         '{{rowCount}}' +
                     '</div>' +
+                    'Grid API: ' +
                     '<button (click)="agGrid.api.selectAll()">Select All</button>' +
                     '<button (click)="agGrid.api.deselectAll()">Clear Selection</button>' +
+                    'Column API: ' +
+                    '<button (click)="agGrid.columnApi.hideColumn(\'country\', true)">Hide Country Col</button>' +
+                    '<button (click)="agGrid.columnApi.hideColumn(\'country\', false)">Show Country Col</button>' +
                     '<div style="clear: both;"/>' +
                 '</div>' +
                 '<ag-grid-a2 ' +
