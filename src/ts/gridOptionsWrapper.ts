@@ -22,13 +22,11 @@ module awk.grid {
         private rowHeight: number;
         private floatingTopRowData: any[];
         private floatingBottomRowData: any[];
-        private $scope: any;
 
         private genericEventListeners: GenericEventListener [] = [];
 
-        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener, $scope: any) {
+        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener) {
             this.gridOptions = gridOptions;
-            this.$scope = $scope;
             if (genericEventListener) {
                 this.genericEventListeners.push(genericEventListener);
             }
@@ -207,12 +205,6 @@ module awk.grid {
             this.genericEventListeners.forEach( (listener: GenericEventListener) => {
                 listener(eventName, event);
             });
-            // if doing angular 1, and we have scope, then apply after firing the event
-            if (this.$scope) {
-                setTimeout( ()=> {
-                    this.$scope.$apply();
-                }, 0);
-            }
         }
     }
 }

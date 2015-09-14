@@ -80,7 +80,7 @@ module awk.grid {
         }
 
         public getModel() {
-            return this.grid.rowModel;
+            return this.grid.getRowModel();
         }
 
         public onGroupExpandedOrCollapsed(refreshFromIndex:any) {
@@ -182,7 +182,7 @@ module awk.grid {
         }
 
         public forEachInMemory(callback:any) {
-            this.grid.rowModel.forEachInMemory(callback);
+            this.grid.getRowModel().forEachInMemory(callback);
         }
 
         public getFilterApiForColDef(colDef:any) {

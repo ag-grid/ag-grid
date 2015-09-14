@@ -109,6 +109,11 @@ module awk.grid {
             }
 
             this.gridOptionsWrapper.fireEvent(Constants.EVENT_MODEL_UPDATED);
+            if (this.$scope) {
+                setTimeout( () => {
+                    this.$scope.$apply();
+                }, 0);
+            }
         }
 
         private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {

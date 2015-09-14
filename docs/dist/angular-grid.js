@@ -1,6 +1,6 @@
 /**
  * angular-grid - High performance and feature rich data grid for AngularJS
- * @version v1.16.0
+ * @version v1.16.1
  * @link http://www.angulargrid.com/
  * @license MIT
  */
@@ -38,6 +38,7 @@ var awk;
                     this._gridOptions = gridOptions;
                     var nativeElement = this.elementDef.nativeElement;
                     this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
+                    this.api = this._gridOptions.api;
                 },
                 enumerable: true,
                 configurable: true
@@ -779,10 +780,9 @@ var awk;
             return value === true || value === 'true';
         }
         var GridOptionsWrapper = (function () {
-            function GridOptionsWrapper(gridOptions, genericEventListener, $scope) {
+            function GridOptionsWrapper(gridOptions, genericEventListener) {
                 this.genericEventListeners = [];
                 this.gridOptions = gridOptions;
-                this.$scope = $scope;
                 if (genericEventListener) {
                     this.genericEventListeners.push(genericEventListener);
                 }
@@ -948,19 +948,12 @@ var awk;
                 };
             };
             GridOptionsWrapper.prototype.fireEvent = function (eventName, event) {
-                var _this = this;
                 if (typeof this.gridOptions[eventName] === 'function') {
                     this.gridOptions[eventName](event);
                 }
                 this.genericEventListeners.forEach(function (listener) {
                     listener(eventName, event);
                 });
-                // if doing angular 1, and we have scope, then apply after firing the event
-                if (this.$scope) {
-                    setTimeout(function () {
-                        _this.$scope.$apply();
-                    }, 0);
-                }
             };
             return GridOptionsWrapper;
         })();
@@ -6478,6 +6471,7 @@ var awk;
                 doCallback(this.rowsAfterGroup);
             };
             InMemoryRowController.prototype.updateModel = function (step) {
+                var _this = this;
                 // fallthrough in below switch is on purpose
                 switch (step) {
                     case constants.STEP_EVERYTHING:
@@ -6490,6 +6484,11 @@ var awk;
                         this.doGroupMapping();
                 }
                 this.gridOptionsWrapper.fireEvent(grid.Constants.EVENT_MODEL_UPDATED);
+                if (this.$scope) {
+                    setTimeout(function () {
+                        _this.$scope.$apply();
+                    }, 0);
+                }
             };
             InMemoryRowController.prototype.defaultGroupAggFunctionFactory = function (valueColumns, valueKeys) {
                 return function groupAggFunction(rows) {
@@ -8855,7 +8854,7 @@ var awk;
                 this.headerRenderer.updateFilterIcons();
             };
             GridApi.prototype.getModel = function () {
-                return this.grid.rowModel;
+                return this.grid.getRowModel();
             };
             GridApi.prototype.onGroupExpandedOrCollapsed = function (refreshFromIndex) {
                 this.grid.updateModelAndRefresh(grid_2.Constants.STEP_MAP, refreshFromIndex);
@@ -8934,7 +8933,7 @@ var awk;
                 this.grid.ensureNodeVisible(comparator);
             };
             GridApi.prototype.forEachInMemory = function (callback) {
-                this.grid.rowModel.forEachInMemory(callback);
+                this.grid.getRowModel().forEachInMemory(callback);
             };
             GridApi.prototype.getFilterApiForColDef = function (colDef) {
                 console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
@@ -9121,7 +9120,7 @@ var awk;
                 if (quickFilterOnScope === void 0) { quickFilterOnScope = null; }
                 this.virtualRowCallbacks = {};
                 this.gridOptions = gridOptions;
-                this.gridOptionsWrapper = new grid.GridOptionsWrapper(this.gridOptions, genericEventListener, $scope);
+                this.gridOptionsWrapper = new grid.GridOptionsWrapper(this.gridOptions, genericEventListener);
                 this.setupComponents($scope, $compile, eGridDiv);
                 this.gridOptions.api = new grid.GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager, this.columnController, this.inMemoryRowController, this.selectionController, this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService);
                 this.gridOptions.columnApi = this.columnController.getColumnApi();
@@ -9153,6 +9152,9 @@ var awk;
                 var readyParams = { api: gridOptions.api };
                 this.gridOptionsWrapper.fireEvent(grid.Constants.EVENT_READY, readyParams);
             }
+            Grid.prototype.getRowModel = function () {
+                return this.rowModel;
+            };
             Grid.prototype.periodicallyDoLayout = function () {
                 if (!this.finished) {
                     var that = this;

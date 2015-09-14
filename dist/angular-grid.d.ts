@@ -3,6 +3,7 @@ declare module awk.grid {
         private elementDef;
         private _gridOptions;
         private _agGrid;
+        private api;
         modelUpdated: any;
         cellClicked: any;
         cellDoubleClicked: any;
@@ -207,9 +208,8 @@ declare module awk.grid {
         private rowHeight;
         private floatingTopRowData;
         private floatingBottomRowData;
-        private $scope;
         private genericEventListeners;
-        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener, $scope: any);
+        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener);
         isRowSelection(): boolean;
         isRowDeselection(): boolean;
         isRowSelectionMulti(): boolean;
@@ -1770,8 +1770,9 @@ declare module awk.grid {
         private eRootPanel;
         private toolPanelShowing;
         private doingPagination;
-        rowModel: any;
+        private rowModel;
         constructor(eGridDiv: any, gridOptions: any, genericEventListener?: GenericEventListener, $scope?: any, $compile?: any, quickFilterOnScope?: any);
+        getRowModel(): any;
         private periodicallyDoLayout();
         private setupComponents($scope, $compile, eUserProvidedDiv);
         private onIndividualColumnResized(column);

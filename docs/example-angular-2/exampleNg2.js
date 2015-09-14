@@ -227,10 +227,20 @@ SampleAppComponent.annotations = [
                         '<b>Employees Skills and Contact Details</b> ' +
                         '{{rowCount}}' +
                     '</div>' +
+                    '<button (click)="agGrid.api.selectAll()">Select All</button>' +
+                    '<button (click)="agGrid.api.deselectAll()">Clear Selection</button>' +
                     '<div style="clear: both;"/>' +
                 '</div>' +
-                '<ag-grid-a2 style="width: 100%; height: 400px;" ' +
+                '<ag-grid-a2 ' +
+                    // adds in id, that we access from Select All and Clear Selection buttons
+                    '#ag-grid ' +
+                    // set width and height for grid, nothing specific to Angular 2 !!
+                    'style="width: 100%; height: 400px;" ' +
+                    // put in the style, again nothing specific to Angular 2
+                    'class="ag-fresh" ' +
+                    // pass the grid the init options
                     '[grid-options]="gridOptions" ' +
+                    // attach methods to all the events
                     '(model-updated)="onModelUpdated()" ' +
                     '(cell-clicked)="onCellClicked($event)" ' +
                     '(cell-double-clicked)="onCellDoubleClicked($event)" ' +
@@ -246,7 +256,7 @@ SampleAppComponent.annotations = [
                     '(virtual-row-removed)="onVirtualRowRemoved($event)" ' +
                     '(row-clicked)="onRowClicked($event)" ' +
                     '(ready)="onReady($event)" ' +
-                    'class="ag-fresh"/>' +
+                '/>' +
             '</div>'
     })
 ];

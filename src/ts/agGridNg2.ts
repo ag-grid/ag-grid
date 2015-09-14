@@ -12,6 +12,8 @@ module awk.grid {
         private _gridOptions: GridOptions;
         private _agGrid: awk.grid.Grid;
 
+        private api: GridApi;
+
         public modelUpdated = new ng.EventEmitter();
         public cellClicked = new ng.EventEmitter();
         public cellDoubleClicked = new ng.EventEmitter();
@@ -35,6 +37,7 @@ module awk.grid {
             this._gridOptions = gridOptions;
             var nativeElement = this.elementDef.nativeElement;
             this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
+            this.api = this._gridOptions.api;
         }
 
         set quickFilterText(text: string) {

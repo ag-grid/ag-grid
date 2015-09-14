@@ -46,14 +46,12 @@ module awk.grid {
         private eRootPanel: any;
         private toolPanelShowing: boolean;
         private doingPagination: boolean;
-
-        // these are public, as they are used by the api
-        rowModel: any;
+        private rowModel: any;
 
         constructor(eGridDiv: any, gridOptions: any, genericEventListener: GenericEventListener = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
-            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, genericEventListener, $scope);
+            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, genericEventListener);
 
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
@@ -96,6 +94,10 @@ module awk.grid {
             // if ready function provided, use it
             var readyParams = {api: gridOptions.api};
             this.gridOptionsWrapper.fireEvent(Constants.EVENT_READY, readyParams);
+        }
+
+        public getRowModel(): any {
+            return this.rowModel;
         }
 
         private periodicallyDoLayout() {
