@@ -11,8 +11,13 @@ include '../documentation_header.php';
     <h2>Internationalisation</h2>
 
     <p>
-        You can change the text in the paging panels and the default filters by providing a <i>localeText</i> to
-        the <i>gridOptions</i>. The example below shows all the text that can be defined.
+        You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
+        a <i>localeTextFunc</i> to the <i>gridOptions</i>.</p>
+
+    <h3>Using <i>localeText</i></h3>
+
+    <p>
+        The example below shows all the text that can be defined.
     </p>
 
     <pre>    $scope.gridOptions = {
@@ -57,6 +62,28 @@ include '../documentation_header.php';
     };</pre>
 
     <show-example example="internationalisation"></show-example>
+
+    <h3>Using <i>localeTextFunc</i></h3>
+
+    <p>
+        The sample code below shows a function can be declared that uses a translate filter where
+        the keys for all grid related translations are assumed to be prefixed with the string
+        &quot;grid.&quot;. The $filter is assumed to be injected and available in the scope of the
+        function.
+    </p>
+
+    <pre>    $scope.gridOptions = {
+        enableSorting: true,
+        enableFilter: true,
+        enableColResize: true,
+        columnDefs: columnDefs,
+        localeTextFunc: function(key, defaultValue) {
+		    var gridKey = 'grid.' + key;
+		    var value = $filter('translate')(gridKey);
+		    return value === gridKey ? defaultValue : value;
+        }
+    };</pre>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

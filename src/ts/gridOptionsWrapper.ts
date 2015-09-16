@@ -187,6 +187,9 @@ module awk.grid {
         }
 
         public getLocaleTextFunc() {
+            if(this.gridOptions.localeTextFunc) {
+                return this.gridOptions.localeTextFunc;
+            }
             var that = this;
             return function (key: any, defaultValue: any) {
                 var localeText = that.gridOptions.localeText;
