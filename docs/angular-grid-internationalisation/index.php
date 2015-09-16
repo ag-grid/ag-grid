@@ -66,10 +66,14 @@ include '../documentation_header.php';
     <h3>Using <i>localeTextFunc</i></h3>
 
     <p>
-        The sample code below shows a function can be declared that uses a translate filter where
-        the keys for all grid related translations are assumed to be prefixed with the string
-        &quot;grid.&quot;. The $filter is assumed to be injected and available in the scope of the
-        function.
+        The example above works great if all you are translating is ag-Grid. However what if you want
+        to bind into your wider applications internationalisation? That can be done by providing your
+        own <i>localeTextFunc</i>, which is an alternative to the above.
+    </p>
+
+    <p>
+        The sample code below shows how such a function can used. The function takes the key from the grid
+        and uses a translate function outside of the grid for doing the translation.
     </p>
 
     <pre>    $scope.gridOptions = {
@@ -78,7 +82,10 @@ include '../documentation_header.php';
         enableColResize: true,
         columnDefs: columnDefs,
         localeTextFunc: function(key, defaultValue) {
+            // to avoid key clash with external keys, we add 'grid' to the start of each key.
 		    var gridKey = 'grid.' + key;
+            // look the value up. here we use the AngularJS $filter service, however you can use whatever
+            // service you want, AngularJS or otherwise.
 		    var value = $filter('translate')(gridKey);
 		    return value === gridKey ? defaultValue : value;
         }

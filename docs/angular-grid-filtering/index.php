@@ -264,6 +264,9 @@ columnDefinition = {
                         filterParams: The filter parameters, as provided in the column definition.
                     </li>
                     <li>
+                        context: The context for this grid. See section on <a href="../angular-grid-context/">Context</a>
+                    </li>
+                    <li>
                         $scope: If the grid options angularCompileFilters is set to true, then a new child
                         scope is created for each column filter and provided here.
                     </li>
