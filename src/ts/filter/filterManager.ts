@@ -364,6 +364,7 @@ module awk.grid {
                 localeTextFunc: this.gridOptionsWrapper.getLocaleTextFunc(),
                 valueGetter: this.createValueGetter(column),
                 doesRowPassOtherFilter: doesRowPassOtherFilters,
+                context: this.gridOptionsWrapper.getContext,
                 $scope: filterWrapper.scope
             };
             if (!filterWrapper.filter.init) { // because users can do custom filters, give nice error message

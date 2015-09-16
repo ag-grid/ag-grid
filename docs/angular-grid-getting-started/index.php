@@ -68,7 +68,7 @@ include '../documentation_header.php';
         the width and height you give it.
     </p>
 
-    <pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh" style="height 100%"</b>>&lt;/div></pre>
+    <pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"</b>>&lt;/div></pre>
 
     <p>
         (note: a div by default has 100% width, so the width is not specified explicitly above).
