@@ -26,6 +26,7 @@ module awk.grid {
         icons?: any; // should be typed
         colWidth?: number;
         localeText?: any;
+        localeTextFunc?: Function;
         suppressMenuHide?: boolean;
         debug?: boolean;
 
