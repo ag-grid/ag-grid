@@ -94,10 +94,10 @@ include '../documentation_header.php';
         set rowDeselection=true in the grid options.
     </p>
 
-    <h3>Using <i>forEachInMemory</i></h3>
+    <h3>Using <i>forEachNode</i></h3>
 
     <p>
-        There is an api function <i>forEachInMemory</i>. This is useful for doing group selections
+        There is an api function <i>forEachNode</i>. This is useful for doing group selections
         on a business key. The example below shows selecting all rows with country = 'United States'.
         This method is also useful when you load data and need to know the node equivalent of the
         data for selection purposes.

@@ -181,8 +181,21 @@ module awk.grid {
             this.grid.ensureNodeVisible(comparator);
         }
 
-        public forEachInMemory(callback:any) {
-            this.grid.getRowModel().forEachInMemory(callback);
+        public forEachInMemory(callback: Function) {
+            console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, I just renamed it, forEachInMemory is deprecated');
+            this.forEachNode(callback);
+        }
+
+        public forEachNode(callback: Function) {
+            this.grid.getRowModel().forEachNode(callback);
+        }
+
+        public forEachNodeAfterFilter(callback: Function) {
+            this.grid.getRowModel().forEachNodeAfterFilter(callback);
+        }
+
+        public forEachNodeAfterFilterAndSort(callback: Function) {
+            this.grid.getRowModel().forEachNodeAfterFilterAndSort(callback);
         }
 
         public getFilterApiForColDef(colDef:any) {

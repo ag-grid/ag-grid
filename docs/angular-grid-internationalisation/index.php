@@ -73,7 +73,9 @@ include '../documentation_header.php';
 
     <p>
         The sample code below shows how such a function can used. The function takes the key from the grid
-        and uses a translate function outside of the grid for doing the translation.
+        and uses a translate function outside of the grid for doing the translation. If no match is found,
+        then the default value should be returned (which is the English value for the grid, the grids
+        default language).
     </p>
 
     <pre>    $scope.gridOptions = {

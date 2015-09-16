@@ -217,22 +217,30 @@ SampleAppComponent.annotations = [
     }),
     new ng.View({
         directives: [awk.grid.AgGridDirective],
+        // put padding into the buttons
+        styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         template:
             '<div style="width: 800px;">' +
-                '<div style="padding: 4px">' +
+                '<div style="padding: 4px;">' +
                     '<div style="float: right;">' +
                         '<input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput" placeholder="Type text to filter..."/>' +
                     '</div>' +
-                    '<div style="padding: 4px;">' +
+                    '<div >' +
                         '<b>Employees Skills and Contact Details</b> ' +
                         '{{rowCount}}' +
                     '</div>' +
-                    'Grid API: ' +
-                    '<button (click)="agGrid.api.selectAll()">Select All</button>' +
-                    '<button (click)="agGrid.api.deselectAll()">Clear Selection</button>' +
-                    'Column API: ' +
-                    '<button (click)="agGrid.columnApi.hideColumn(\'country\', true)">Hide Country Col</button>' +
-                    '<button (click)="agGrid.columnApi.hideColumn(\'country\', false)">Show Country Col</button>' +
+                '</div>' +
+                '<div style="padding: 4px;" class="toolbar">' +
+                    '<span>' +
+                        'Grid API: ' +
+                        '<button (click)="agGrid.api.selectAll()">Select All</button>' +
+                        '<button (click)="agGrid.api.deselectAll()">Clear Selection</button>' +
+                    '</span>' +
+                    '<span style="margin-left: 20px;">' +
+                        'Column API: ' +
+                        '<button (click)="agGrid.columnApi.hideColumn(\'country\', true)">Hide Country Column</button>' +
+                        '<button (click)="agGrid.columnApi.hideColumn(\'country\', false)">Show Country Column</button>' +
+                    '</span>' +
                     '<div style="clear: both;"/>' +
                 '</div>' +
                 '<ag-grid-a2 ' +

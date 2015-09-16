@@ -1,6 +1,6 @@
 <?php
 $key = "Getting Started";
-$pageTitle = "Angular Compiling";
+$pageTitle = "Getting Started";
 $pageDescription = "Angular Grid Angular Compiling";
 $pageKeyboards = "Angular Grid Angular Compiling";
 include '../documentation_header.php';

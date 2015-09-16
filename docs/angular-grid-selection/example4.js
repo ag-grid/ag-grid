@@ -23,7 +23,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     $scope.selectAllAmerican = function() {
-        $scope.gridOptions.api.forEachInMemory( function (node) {
+        $scope.gridOptions.api.forEachNode( function (node) {
             if (node.data.country === 'United States') {
                 $scope.gridOptions.api.selectNode(node, true);
             }

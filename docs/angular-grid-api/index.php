@@ -246,7 +246,23 @@ include '../documentation_header.php';
         <tr>
             <th>setHeaderHeight(value)</th>
             <td>To set the header height (in pixels) after the grid has initialised. Set to null or undefined
-            to use the default.</td>
+                to use the default.</td>
+        </tr>
+        <tr>
+            <th>forEachNode(callback)</th>
+            <td>Iterates through each node (row) in the grid and calls the callback for each node.
+                This works similar to the 'forEach' method on a Javascript array. This is called
+                for every node, ignoring any filtering or sorting applied within the grid.
+        </td>
+        </tr>
+        <tr>
+            <th>forEachNodeAfterFilter(callback)</th>
+            <td>Similar to forEachNode, except skips any filtered out data.</td>
+        </tr>
+        <tr>
+            <th>forEachNodeAfterFilterAndSort(callback)</th>
+            <td>Similar to forEachNode, except skips any filtered out data and each the callback
+                is called in the order the rows are displayed in the grid.</td>
         </tr>
 
     </table>

@@ -324,7 +324,7 @@ module awk.grid {
             }
         }
 
-        forEachInMemory(callback: any) {
+        forEachNode(callback: any) {
             var pageKeys = Object.keys(this.pageCache);
             for (var i = 0; i < pageKeys.length; i++) {
                 var pageKey = pageKeys[i];
@@ -346,7 +346,16 @@ module awk.grid {
                     return that.virtualRowCount;
                 },
                 forEachInMemory: function (callback: any) {
-                    that.forEachInMemory(callback);
+                    that.forEachNode(callback);
+                },
+                forEachNode: function (callback: any) {
+                    that.forEachNode(callback);
+                },
+                forEachNodeAfterFilter: function (callback: any) {
+                    console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+                },
+                forEachNodeAfterFilterAndSort: function (callback: any) {
+                    console.warn('forEachNodeAfterFilterAndSort - does not work with virtual pagination');
                 }
             };
         }

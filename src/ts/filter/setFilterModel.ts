@@ -109,7 +109,7 @@ module awk.grid {
             var uniqueCheck = <any>{};
             var result = <any>[];
 
-            this.rowModel.forEachInMemory( (node: any)=> {
+            this.rowModel.forEachNode( (node: any)=> {
                 if (!node.group) {
                     var value = this.valueGetter(node);
                     if (value === "" || value === undefined) {

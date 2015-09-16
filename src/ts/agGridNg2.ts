@@ -15,6 +15,7 @@ module awk.grid {
         private api: GridApi;
         private columnApi: ColumnApi;
 
+        // core grid events
         public modelUpdated = new ng.EventEmitter();
         public cellClicked = new ng.EventEmitter();
         public cellDoubleClicked = new ng.EventEmitter();
@@ -30,6 +31,16 @@ module awk.grid {
         public virtualRowRemoved = new ng.EventEmitter();
         public rowClicked = new ng.EventEmitter();
         public ready = new ng.EventEmitter();
+
+        // column grid events
+        public columnEverythingChanged = new ng.EventEmitter();
+        public columnPivotChanged = new ng.EventEmitter();
+        public columnValueChanged = new ng.EventEmitter();
+        public columnMoved = new ng.EventEmitter();
+        public columnVisible = new ng.EventEmitter();
+        public columnGroupOpened = new ng.EventEmitter();
+        public columnResized = new ng.EventEmitter();
+        public columnPinnedCountChanged = new ng.EventEmitter();
 
         constructor(private elementDef: any) {
         }

@@ -68,6 +68,15 @@ module awk.grid {
                 },
                 forEachInMemory: function (callback: any) {
                     that.forEachInMemory(callback);
+                },
+                forEachNode: function (callback: any) {
+                    that.forEachNode(callback);
+                },
+                forEachNodeAfterFilter: function (callback: any) {
+                    that.forEachNodeAfterFilter(callback);
+                },
+                forEachNodeAfterFilterAndSort: function (callback: any) {
+                    that.forEachNodeAfterFilterAndSort(callback);
                 }
             };
         }
@@ -76,22 +85,34 @@ module awk.grid {
             return this.model;
         }
 
-        public forEachInMemory(callback: any) {
+        public forEachInMemory(callback: Function) {
+            console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, I just renamed it, forEachInMemory is deprecated');
+            this.forEachNode(callback);
+        }
 
-            // iterates through each item in memory, and calls the callback function
-            function doCallback(list: any) {
-                if (list) {
-                    for (var i = 0; i < list.length; i++) {
-                        var item = list[i];
-                        callback(item);
-                        if (item.group && item.children) {
-                            doCallback(item.children);
-                        }
+        public forEachNode(callback: Function) {
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback);
+        }
+
+        public forEachNodeAfterFilter(callback: Function) {
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback);
+        }
+
+        public forEachNodeAfterFilterAndSort(callback: Function) {
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback);
+        }
+
+        // iterates through each item in memory, and calls the callback function
+        private recursivelyWalkNodesAndCallback(list: any, callback: Function) {
+            if (list) {
+                for (var i = 0; i < list.length; i++) {
+                    var item = list[i];
+                    callback(item);
+                    if (item.group && item.children) {
+                        this.recursivelyWalkNodesAndCallback(item.children, callback);
                     }
                 }
             }
-
-            doCallback(this.rowsAfterGroup);
         }
 
         public updateModel(step: any) {
