@@ -51,10 +51,29 @@ module awk.grid {
             this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
             this.api = this._gridOptions.api;
             this.columnApi = this._gridOptions.columnApi;
+            this.columnApi.addChangeListener(this.columnEventListener.bind(this));
         }
 
         set quickFilterText(text: string) {
             this._gridOptions.api.setQuickFilter(text);
+        }
+
+        private columnEventListener(event: ColumnChangeEvent): void {
+            var emitter: any;
+            switch (event.getType()) {
+                case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
+                case ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
+                case ColumnChangeEvent.TYPE_COLUMN_MOVED: emitter = this.columnMoved; break;
+                case ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
+                case ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
+                case ColumnChangeEvent.TYPE_COLUMN_RESIZED: emitter = this.columnResized; break;
+                case ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
+                case ColumnChangeEvent.TYPE_COLUMN_VISIBLE: emitter = this.columnVisible; break;
+                default:
+                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + event);
+                    return;
+            }
+            emitter.next(event);
         }
 
         private genericEventListener(eventName: string, event: any): void {
@@ -80,14 +99,17 @@ module awk.grid {
                     return;
             }
 
-            if (emitter) {
-                if (event===null || event===undefined) {
-                    event = {};
-                }
-                emitter.next(event);
+            // not all the grid events have data, but angular 2 requires some object to be the
+            // event, so put in an empty object if missing the event.
+            if (event===null || event===undefined) {
+                event = {};
             }
+
+            emitter.next(event);
         }
+
     }
+
 
     // provide a reference to angular
     var ng = (<any> window).ng;
@@ -96,10 +118,15 @@ module awk.grid {
         (<any>AgGridDirective).annotations = [
             new ng.Component({
                 selector: 'ag-grid-a2',
-                events: ['modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellValueChanged', 'cellFocused',
-                            'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
-                            'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                            'rowClicked','ready'],
+                events: [
+                    // core grid events
+                    'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellValueChanged', 'cellFocused',
+                    'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+                    'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
+                    'rowClicked','ready',
+                    // column events
+                    'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
+                    'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
                 properties: ['gridOptions','quickFilterText'],
                 compileChildren: false // no angular on the inside thanks
             }),

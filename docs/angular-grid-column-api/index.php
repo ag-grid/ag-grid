@@ -185,14 +185,14 @@ include '../documentation_header.php';
 
     Column change events have the following types:
     <ul>
-        <li><b>everything</b>: Shotgun - gets called when new columns are set, so everything has changed.</li>
+        <li><b>columnEverythingChanged</b>: Shotgun - gets called when new columns are set, so everything has changed.</li>
         <li><b>columnResized</b>: A column was resized.</li>
-        <li><b>pivot</b>: A pivot column was added or removed.</li>
-        <li><b>value</b>: A value column was added or removed.</li>
+        <li><b>columnPivotChanged</b>: A pivot column was added or removed.</li>
+        <li><b>columnValueChanged</b>: A value column was added or removed.</li>
         <li><b>columnMoved</b>: A column was moved.</li>
         <li><b>columnVisible</b>: A column was hidden / shown.</li>
         <li><b>columnGroupOpened</b>: A column group was opened / closed.</li>
-        <li><b>pinnedCountChanged</b>: The number of pinned columns has changed.</li>
+        <li><b>columnPinnedCountChanged</b>: The number of pinned columns has changed.</li>
     </ul>
 
     <h2>Deep Dive - Save / Restore Full State</h2>

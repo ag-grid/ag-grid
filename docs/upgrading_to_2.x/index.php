@@ -1,14 +1,17 @@
 
 Names of Column Events Changed:
 
-columnEverythingChanged
-columnPivotChanged
-columnValueChanged
-columnMoved
-columnVisible
-columnGroupOpened
-columnResized
-columnPinnedCountChanged
+Changed:
+everything -> columnEverythingChanged
+pivot -> columnPivotChanged
+value -> columnValueChanged
+pinnedCountChanged -> columnPinnedCountChanged
+
+No change:
+columnMoved -> columnMoved
+columnVisible -> columnVisible
+columnGroupOpened -> columnGroupOpened
+columnResized -> columnResized
 
 forEachInMemory now replaced with:
 

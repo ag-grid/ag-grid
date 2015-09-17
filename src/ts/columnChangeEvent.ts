@@ -11,16 +11,16 @@ module awk.grid {
         private pinnedColumnCount: number;
 
         /** A new set of columns has been entered, everything has potentially changed. */
-        public static TYPE_EVERYTHING = 'everything';
+        public static TYPE_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
 
         /** A pivot column was added, removed or order changed. */
-        public static TYPE_PIVOT_CHANGE = 'pivot';
+        public static TYPE_COLUMN_PIVOT_CHANGE = 'columnPivotChanged';
 
         /** A value column was added, removed or agg function was changed. */
-        public static TYPE_VALUE_CHANGE = 'value';
+        public static TYPE_COLUMN_VALUE_CHANGE = 'columnValueChanged';
 
         /** A column was moved */
-        public static TYPE_COLUMN_MOVED = 'columnMoved';
+        public static TYPE_COLUMN_MOVED = 'columnPinnedCountChanged';
 
         /** One or more columns was shown / hidden */
         public static TYPE_COLUMN_VISIBLE = 'columnVisible';
@@ -32,7 +32,7 @@ module awk.grid {
         public static TYPE_COLUMN_RESIZED = 'columnResized';
 
         /** One or more columns was resized. If just one, the column in the event is set. */
-        public static TYPE_PINNED_COUNT_CHANGED = 'pinnedCountChanged';
+        public static TYPE_COLUMN_PINNED_COUNT_CHANGED = 'columnPinnedCountChanged';
 
         constructor(type: string) {
             this.type = type;
@@ -99,11 +99,11 @@ module awk.grid {
         }
 
         public isPivotChanged(): boolean {
-            return this.type === ColumnChangeEvent.TYPE_PIVOT_CHANGE || this.type === ColumnChangeEvent.TYPE_EVERYTHING;
+            return this.type === ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE || this.type === ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED;
         }
 
         public isValueChanged(): boolean {
-            return this.type === ColumnChangeEvent.TYPE_VALUE_CHANGE || this.type === ColumnChangeEvent.TYPE_EVERYTHING;
+            return this.type === ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE || this.type === ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED;
         }
 
         public isIndividualColumnResized(): boolean {

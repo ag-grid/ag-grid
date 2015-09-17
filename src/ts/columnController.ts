@@ -121,7 +121,7 @@ module awk.grid {
             // because we could be taking out 'pivot' columns, the displayed
             // columns may differ, so need to work out all the columns again
             this.updateModel();
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE));
         }
 
         public setPinnedColumnCount(count: number): void {
@@ -135,7 +135,7 @@ module awk.grid {
             }
             this.pinnedColumnCount = count;
             this.updateModel();
-            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
+            var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
             this.fireColumnChanged(event);
         }
 
@@ -146,7 +146,7 @@ module awk.grid {
             }
             _.removeFromArray(this.pivotColumns, column);
             this.updateModel();
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE));
         }
 
         public addValueColumn(column: Column): void {
@@ -162,7 +162,7 @@ module awk.grid {
                 column.aggFunc = constants.SUM;
             }
             this.valueColumns.push(column);
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE));
         }
 
         public removeValueColumn(column: Column): void {
@@ -171,7 +171,7 @@ module awk.grid {
                 return;
             }
             _.removeFromArray(this.valueColumns, column);
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE));
         }
 
         // returns true if the col is either in all columns or visible columns.
@@ -227,14 +227,14 @@ module awk.grid {
 
         public setColumnAggFunction(column: Column, aggFunc: string): void {
             column.aggFunc = aggFunc;
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_VALUE_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE));
         }
 
         public movePivotColumn(fromIndex: number, toIndex: number): void {
             var column = this.pivotColumns[fromIndex];
             this.pivotColumns.splice(fromIndex, 1);
             this.pivotColumns.splice(toIndex, 0, column);
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_PIVOT_CHANGE));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE));
         }
 
         public moveColumn(fromIndex: number, toIndex: number): void {
@@ -384,7 +384,7 @@ module awk.grid {
 
             this.updateModel();
 
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_EVERYTHING));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED));
         }
 
         public getColumn(key: any): Column {
@@ -470,7 +470,7 @@ module awk.grid {
             this.createPivotColumns();
             this.createValueColumns();
             this.updateModel();
-            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_EVERYTHING));
+            this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED));
             this.setupComplete = true;
         }
 

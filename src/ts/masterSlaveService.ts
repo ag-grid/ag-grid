@@ -96,9 +96,9 @@ module awk.grid {
 
                 switch (event.getType()) {
                     // we don't do anything for these three events
-                    //case ColumnChangeEvent.TYPE_EVERYTHING:
-                    //case ColumnChangeEvent.TYPE_PIVOT_CHANGE:
-                    //case ColumnChangeEvent.TYPE_VALUE_CHANGE:
+                    //case ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED:
+                    //case ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE:
+                    //case ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE:
                     case ColumnChangeEvent.TYPE_COLUMN_MOVED:
                         this.logger.log('onColumnEvent-> processing '+event+' fromIndex = '+ event.getFromIndex() + ', toIndex = ' + event.getToIndex());
                         this.columnController.moveColumn(event.getFromIndex(), event.getToIndex());
@@ -115,7 +115,7 @@ module awk.grid {
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
                         this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth);
                         break;
-                    case ColumnChangeEvent.TYPE_PINNED_COUNT_CHANGED:
+                    case ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED:
                         this.logger.log('onColumnEvent-> processing '+event);
                         this.columnController.setPinnedColumnCount(event.getPinnedColumnCount());
                         break;

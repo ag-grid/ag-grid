@@ -200,7 +200,9 @@ SampleAppComponent.prototype.onAfterSortChanged = function() {
 };
 
 SampleAppComponent.prototype.onVirtualRowRemoved = function($event) {
-    console.log('onVirtualRowRemoved: ' + $event.rowIndex);
+    // because this event gets fired LOTS of times, we don't print it to the
+    // console. if you want to see it, just uncomment out this line
+    // console.log('onVirtualRowRemoved: ' + $event.rowIndex);
 };
 
 SampleAppComponent.prototype.onRowClicked = function($event) {
@@ -209,6 +211,12 @@ SampleAppComponent.prototype.onRowClicked = function($event) {
 
 SampleAppComponent.prototype.onQuickFilterChanged = function($event) {
     this.gridOptions.api.setQuickFilter($event.target.value);
+};
+
+// here we use one generic event to handle all the column type events.
+// the method just prints the event name
+SampleAppComponent.prototype.onColumnEvent = function($event) {
+    console.log('onColumnEvent: ' + $event);
 };
 
 SampleAppComponent.annotations = [
@@ -268,6 +276,15 @@ SampleAppComponent.annotations = [
                     '(virtual-row-removed)="onVirtualRowRemoved($event)" ' +
                     '(row-clicked)="onRowClicked($event)" ' +
                     '(ready)="onReady($event)" ' +
+                    // attach to column events
+                    '(column-everything-changed)="onColumnEvent($event)" ' +
+                    '(column-pivot-changed)="onColumnEvent($event)" ' +
+                    '(column-value-changed)="onColumnEvent($event)" ' +
+                    '(column-moved)="onColumnEvent($event)" ' +
+                    '(column-visible)="onColumnEvent($event)" ' +
+                    '(column-group-opened)="onColumnEvent($event)" ' +
+                    '(column-resized)="onColumnEvent($event)" ' +
+                    '(column-pinned-count-changed)="onColumnEvent($event)" ' +
                 '/>' +
             '</div>'
     })
