@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     ng.bootstrap(SampleAppComponent);
 });
 
-
 var SampleAppComponent = function() {
 
     this.gridOptions = {
@@ -20,6 +19,10 @@ var SampleAppComponent = function() {
     };
 
 };
+
+//SampleAppComponent.prototype.bla = function(event) {
+//    console.log('event = ' + event);
+//};
 
 SampleAppComponent.prototype.calculateRowCount = function() {
     var model = this.gridOptions.api.getModel();

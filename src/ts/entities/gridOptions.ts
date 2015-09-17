@@ -23,33 +23,31 @@ module awk.grid {
         enableServerSideSorting?: boolean;
         enableFilter?: boolean;
         enableServerSideFilter?: boolean;
-        icons?: any; // should be typed
         colWidth?: number;
-        localeText?: any;
-        localeTextFunc?: Function;
         suppressMenuHide?: boolean;
         debug?: boolean;
-
+        icons?: any; // should be typed
         angularCompileRows?: boolean;
         angularCompileFilters?: boolean;
         angularCompileHeaders?: boolean;
+        // just set once
+        localeText?: any;
+        localeTextFunc?: Function;
 
         groupSuppressAutoColumn?: boolean;
         groupSelectsChildren?: boolean;
         groupHidePivotColumns?: boolean;
         groupIncludeFooter?: boolean;
         groupUseEntireRow?: boolean;
-        groupColumnDef?: any; // change to typed
         groupSuppressRow?: boolean;
         groupSuppressBlankHeader?: boolean;
         dontUseScrolls?: boolean;
+        groupColumnDef?: any; // change to typed
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
         floatingTopRowData?: any[]; // should this be immutable ag2?
         floatingBottomRowData?: any[]; // should this be immutable ag2?
-        rowSelection?: string;
-        rowDeselection?: boolean;
         showToolPanel?: boolean;
         groupKeys?: string[];
         groupAggFunction?(nodes: any[]): any;
@@ -68,6 +66,8 @@ module awk.grid {
         headerCellRenderer?: any;
         groupDefaultExpanded?: any;
         slaveGrids?: GridOptions[];
+        rowSelection?: string;
+        rowDeselection?: boolean;
 
         // callbacks
         ready?(api: any): void;

@@ -9,8 +9,11 @@ module awk.grid {
     // as angular 2 is optional for ag-grid
     export class AgGridDirective {
 
-        private _gridOptions: GridOptions;
+        // not intended for user to interact with. so putting _ in so if use gets reference
+        // to this object, they kind'a know it's not part of the agreed interface
         private _agGrid: awk.grid.Grid;
+
+        private gridOptions: GridOptions;
 
         private api: GridApi;
         private columnApi: ColumnApi;
@@ -42,25 +45,33 @@ module awk.grid {
         public columnResized = new ng.EventEmitter();
         public columnPinnedCountChanged = new ng.EventEmitter();
 
-        constructor(private elementDef: any) {
-            console.log('constructor');
-        }
+        // properties
+        public showToolPanel: boolean;
 
-        set gridOptions(gridOptions: GridOptions) {
-            this._gridOptions = gridOptions;
-            var nativeElement = this.elementDef.nativeElement;
-            this._agGrid = new awk.grid.Grid(nativeElement, gridOptions, this.genericEventListener.bind(this));
-            this.api = this._gridOptions.api;
-            this.columnApi = this._gridOptions.columnApi;
-            this.columnApi.addChangeListener(this.columnEventListener.bind(this));
+        constructor(private elementDef: any) {
         }
 
         set quickFilterText(text: string) {
-            this._gridOptions.api.setQuickFilter(text);
+            if (this.gridOptions) {
+                this.gridOptions.api.setQuickFilter(text);
+            }
         }
 
-        public onInit() {
-            console.log('onInit');
+        // this gets called after the directive is initialised
+        public onInit(): void {
+            var nativeElement = this.elementDef.nativeElement;
+            this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions, this.genericEventListener.bind(this));
+            this.api = this.gridOptions.api;
+            this.columnApi = this.gridOptions.columnApi;
+            this.columnApi.addChangeListener(this.columnEventListener.bind(this));
+        }
+
+        public onChange(changes: any): void {
+            if (changes && changes.showToolPanel) {
+                this.api.showToolPanel(changes.showToolPanel);
+            }
+            //console.log('got changes');
+            //console.log(changes);
         }
 
         private columnEventListener(event: ColumnChangeEvent): void {
@@ -132,9 +143,9 @@ module awk.grid {
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                properties: ['gridOptions','quickFilterText','soup'],
+                properties: ['gridOptions','quickFilterText'],
                 compileChildren: false, // no angular on the inside thanks
-                lifecycle: [ng.LifecycleEvent.onInit]
+                lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]
             }),
         new ng.View({
                 template: '',
