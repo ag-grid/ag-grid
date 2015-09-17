@@ -3,6 +3,117 @@ document.addEventListener('DOMContentLoaded', function () {
     ng.bootstrap(SampleAppComponent);
 });
 
+
+var SampleAppComponent = function() {
+
+    this.gridOptions = {
+        columnDefs: columnDefs,
+        rowData: createRowData(),
+        rowSelection: 'multiple',
+        enableColResize: true,
+        enableSorting: true,
+        enableFilter: true,
+        groupHeaders: true,
+        rowHeight: 22,
+        pinnedColumnCount: 3,
+        suppressRowClickSelection: true
+    };
+
+};
+
+SampleAppComponent.prototype.calculateRowCount = function() {
+    var model = this.gridOptions.api.getModel();
+    var totalRows = this.gridOptions.rowData.length;
+    var processedRows = model.getVirtualRowCount();
+    this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+};
+
+SampleAppComponent.prototype.onModelUpdated = function() {
+    console.log('onModelUpdated');
+    this.calculateRowCount();
+};
+
+SampleAppComponent.prototype.onReady = function($event) {
+    console.log('onReady');
+    this.calculateRowCount();
+};
+
+SampleAppComponent.prototype.onCellClicked = function($event) {
+    console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+};
+
+SampleAppComponent.prototype.onCellValueChanged = function($event) {
+    console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
+};
+
+SampleAppComponent.prototype.onCellDoubleClicked = function($event) {
+    console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+};
+
+SampleAppComponent.prototype.onCellFocused = function($event) {
+    console.log('onCellFocused: (' + $event.rowIndex + ',' + $event.colIndex + ')');
+};
+
+SampleAppComponent.prototype.onRowSelected = function($event) {
+    console.log('onRowSelected: ' + $event.node.data.name);
+};
+
+SampleAppComponent.prototype.onSelectionChanged = function() {
+    console.log('selectionChanged');
+};
+
+SampleAppComponent.prototype.onBeforeFilterChanged = function() {
+    console.log('beforeFilterChanged');
+};
+
+SampleAppComponent.prototype.onAfterFilterChanged = function() {
+    console.log('afterFilterChanged');
+};
+
+SampleAppComponent.prototype.onFilterModified = function() {
+    console.log('onFilterModified');
+};
+
+SampleAppComponent.prototype.onBeforeSortChanged = function() {
+    console.log('onBeforeSortChanged');
+};
+
+SampleAppComponent.prototype.onAfterSortChanged = function() {
+    console.log('onAfterSortChanged');
+};
+
+SampleAppComponent.prototype.onVirtualRowRemoved = function($event) {
+    // because this event gets fired LOTS of times, we don't print it to the
+    // console. if you want to see it, just uncomment out this line
+    // console.log('onVirtualRowRemoved: ' + $event.rowIndex);
+};
+
+SampleAppComponent.prototype.onRowClicked = function($event) {
+    console.log('onRowClicked: ' + $event.node.data.name);
+};
+
+SampleAppComponent.prototype.onQuickFilterChanged = function($event) {
+    this.gridOptions.api.setQuickFilter($event.target.value);
+};
+
+// here we use one generic event to handle all the column type events.
+// the method just prints the event name
+SampleAppComponent.prototype.onColumnEvent = function($event) {
+    console.log('onColumnEvent: ' + $event);
+};
+
+SampleAppComponent.annotations = [
+    new ng.Component({
+        selector: 'sample-app'
+    }),
+    new ng.View({
+        directives: [awk.grid.AgGridDirective],
+        // put padding into the buttons
+        styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
+        templateUrl: 'sampleAppComponent.html'
+    })
+];
+
 var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
@@ -119,175 +230,6 @@ var columnDefs = [
     {headerName: "Mobile", field: "mobile", headerGroup: 'Contact', width: 150, filter: 'text'},
     {headerName: "Land-line", field: "landline", headerGroup: 'Contact', width: 150, filter: 'text'},
     {headerName: "Address", field: "address", headerGroup: 'Contact', width: 500, filter: 'text'}
-];
-
-var SampleAppComponent = function() {
-
-    this.gridOptions = {
-        columnDefs: columnDefs,
-        rowData: createRowData(),
-        rowSelection: 'multiple',
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
-        groupHeaders: true,
-        rowHeight: 22,
-        pinnedColumnCount: 3,
-        suppressRowClickSelection: true
-    };
-
-};
-
-SampleAppComponent.prototype.calculateRowCount = function() {
-    var model = this.gridOptions.api.getModel();
-    var totalRows = this.gridOptions.rowData.length;
-    var processedRows = model.getVirtualRowCount();
-    this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-};
-
-SampleAppComponent.prototype.onModelUpdated = function() {
-    console.log('onModelUpdated');
-    this.calculateRowCount();
-};
-
-SampleAppComponent.prototype.onReady = function($event) {
-    console.log('onReady');
-    this.calculateRowCount();
-};
-
-SampleAppComponent.prototype.onCellClicked = function($event) {
-    console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-};
-
-SampleAppComponent.prototype.onCellValueChanged = function($event) {
-    console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
-};
-
-SampleAppComponent.prototype.onCellDoubleClicked = function($event) {
-    console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-};
-
-SampleAppComponent.prototype.onCellFocused = function($event) {
-    console.log('onCellFocused: (' + $event.rowIndex + ',' + $event.colIndex + ')');
-};
-
-SampleAppComponent.prototype.onRowSelected = function($event) {
-    console.log('onRowSelected: ' + $event.node.data.name);
-};
-
-SampleAppComponent.prototype.onSelectionChanged = function() {
-    console.log('selectionChanged');
-};
-
-SampleAppComponent.prototype.onBeforeFilterChanged = function() {
-    console.log('beforeFilterChanged');
-};
-
-SampleAppComponent.prototype.onAfterFilterChanged = function() {
-    console.log('afterFilterChanged');
-};
-
-SampleAppComponent.prototype.onFilterModified = function() {
-    console.log('onFilterModified');
-};
-
-SampleAppComponent.prototype.onBeforeSortChanged = function() {
-    console.log('onBeforeSortChanged');
-};
-
-SampleAppComponent.prototype.onAfterSortChanged = function() {
-    console.log('onAfterSortChanged');
-};
-
-SampleAppComponent.prototype.onVirtualRowRemoved = function($event) {
-    // because this event gets fired LOTS of times, we don't print it to the
-    // console. if you want to see it, just uncomment out this line
-    // console.log('onVirtualRowRemoved: ' + $event.rowIndex);
-};
-
-SampleAppComponent.prototype.onRowClicked = function($event) {
-    console.log('onRowClicked: ' + $event.node.data.name);
-};
-
-SampleAppComponent.prototype.onQuickFilterChanged = function($event) {
-    this.gridOptions.api.setQuickFilter($event.target.value);
-};
-
-// here we use one generic event to handle all the column type events.
-// the method just prints the event name
-SampleAppComponent.prototype.onColumnEvent = function($event) {
-    console.log('onColumnEvent: ' + $event);
-};
-
-SampleAppComponent.annotations = [
-    new ng.Component({
-        selector: 'sample-app'
-    }),
-    new ng.View({
-        directives: [awk.grid.AgGridDirective],
-        // put padding into the buttons
-        styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
-        template:
-            '<div style="width: 800px;">' +
-                '<div style="padding: 4px;">' +
-                    '<div style="float: right;">' +
-                        '<input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput" placeholder="Type text to filter..."/>' +
-                    '</div>' +
-                    '<div >' +
-                        '<b>Employees Skills and Contact Details</b> ' +
-                        '{{rowCount}}' +
-                    '</div>' +
-                '</div>' +
-                '<div style="padding: 4px;" class="toolbar">' +
-                    '<span>' +
-                        'Grid API: ' +
-                        '<button (click)="agGrid.api.selectAll()">Select All</button>' +
-                        '<button (click)="agGrid.api.deselectAll()">Clear Selection</button>' +
-                    '</span>' +
-                    '<span style="margin-left: 20px;">' +
-                        'Column API: ' +
-                        '<button (click)="agGrid.columnApi.hideColumn(\'country\', true)">Hide Country Column</button>' +
-                        '<button (click)="agGrid.columnApi.hideColumn(\'country\', false)">Show Country Column</button>' +
-                    '</span>' +
-                    '<div style="clear: both;"/>' +
-                '</div>' +
-                '<ag-grid-a2 ' +
-                    // adds in id, that we access from Select All and Clear Selection buttons
-                    '#ag-grid ' +
-                    // set width and height for grid, nothing specific to Angular 2 !!
-                    'style="width: 100%; height: 400px;" ' +
-                    // put in the style, again nothing specific to Angular 2
-                    'class="ag-fresh" ' +
-                    // pass the grid the init options
-                    '[grid-options]="gridOptions" ' +
-                    // attach methods to all the events
-                    '(model-updated)="onModelUpdated()" ' +
-                    '(cell-clicked)="onCellClicked($event)" ' +
-                    '(cell-double-clicked)="onCellDoubleClicked($event)" ' +
-                    '(cell-value-changed)="onCellValueChanged($event)" ' +
-                    '(cell-focused)="onCellFocused($event)" ' +
-                    '(row-selected)="onRowSelected($event)" ' +
-                    '(selection-changed)="onSelectionChanged()" ' +
-                    '(before-filter-changed)="onBeforeFilterChanged()" ' +
-                    '(after-filter-changed)="onAfterFilterChanged()" ' +
-                    '(filter-modified)="onFilterModified()" ' +
-                    '(before-sort-changed)="onBeforeSortChanged()" ' +
-                    '(after-sort-changed)="onAfterSortChanged()" ' +
-                    '(virtual-row-removed)="onVirtualRowRemoved($event)" ' +
-                    '(row-clicked)="onRowClicked($event)" ' +
-                    '(ready)="onReady($event)" ' +
-                    // attach to column events
-                    '(column-everything-changed)="onColumnEvent($event)" ' +
-                    '(column-pivot-changed)="onColumnEvent($event)" ' +
-                    '(column-value-changed)="onColumnEvent($event)" ' +
-                    '(column-moved)="onColumnEvent($event)" ' +
-                    '(column-visible)="onColumnEvent($event)" ' +
-                    '(column-group-opened)="onColumnEvent($event)" ' +
-                    '(column-resized)="onColumnEvent($event)" ' +
-                    '(column-pinned-count-changed)="onColumnEvent($event)" ' +
-                '/>' +
-            '</div>'
-    })
 ];
 
 function createRowData() {

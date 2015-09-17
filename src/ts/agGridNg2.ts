@@ -43,6 +43,7 @@ module awk.grid {
         public columnPinnedCountChanged = new ng.EventEmitter();
 
         constructor(private elementDef: any) {
+            console.log('constructor');
         }
 
         set gridOptions(gridOptions: GridOptions) {
@@ -56,6 +57,10 @@ module awk.grid {
 
         set quickFilterText(text: string) {
             this._gridOptions.api.setQuickFilter(text);
+        }
+
+        public onInit() {
+            console.log('onInit');
         }
 
         private columnEventListener(event: ColumnChangeEvent): void {
@@ -127,8 +132,9 @@ module awk.grid {
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                properties: ['gridOptions','quickFilterText'],
-                compileChildren: false // no angular on the inside thanks
+                properties: ['gridOptions','quickFilterText','soup'],
+                compileChildren: false, // no angular on the inside thanks
+                lifecycle: [ng.LifecycleEvent.onInit]
             }),
         new ng.View({
                 template: '',
