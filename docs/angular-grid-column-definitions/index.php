@@ -98,7 +98,7 @@ include '../documentation_header.php';
             <td>Name of function to use for aggregation. One of [sum,min,max].</td>
         </tr>
         <tr>
-            <th>comparator()</th>
+            <th>comparator(valueA, valueB, nodeA, nodeB, isInverted)</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
         <tr>

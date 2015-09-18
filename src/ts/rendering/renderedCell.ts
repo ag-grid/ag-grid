@@ -499,9 +499,9 @@ module awk.grid {
             this.eCheckbox.name = "name";
             this.eCheckbox.className = 'ag-selection-checkbox';
 
-            //this.eCheckbox.addEventListener('click', function (event) {
-            //    event.stopPropagation();
-            //});
+            this.eCheckbox.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
 
             var that = this;
             this.checkboxOnChangeListener = function() {

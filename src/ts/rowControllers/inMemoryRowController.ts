@@ -340,23 +340,23 @@ module awk.grid {
 
             var that = this;
 
-            function compare(objA:any, objB:any, column:Column, isInverted:any) {
-                var valueA = that.valueService.getValue(column.colDef, objA.data, objA);
-                var valueB = that.valueService.getValue(column.colDef, objB.data, objB);
+            function compare(nodeA: RowNode, nodeB: RowNode, column:Column, isInverted: boolean) {
+                var valueA = that.valueService.getValue(column.colDef, nodeA.data, nodeA);
+                var valueB = that.valueService.getValue(column.colDef, nodeB.data, nodeB);
                 if (column.colDef.comparator) {
                     //if comparator provided, use it
-                    return column.colDef.comparator(valueA, valueB, objA, objB, isInverted);
+                    return column.colDef.comparator(valueA, valueB, nodeA, nodeB, isInverted);
                 } else {
                     //otherwise do our own comparison
                     return _.defaultComparator(valueA, valueB);
                 }
             }
 
-            nodes.sort(function (objA:any, objB:any) {
+            nodes.sort(function (nodeA: RowNode, nodeB: RowNode) {
                 // Iterate columns, return the first that doesn't match
                 for (var i = 0, len = sortOptions.length; i < len; i++) {
                     var sortOption = sortOptions[i];
-                    var compared = compare(objA, objB, sortOption.column, sortOption.inverter === -1);
+                    var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
                     if (compared !== 0) {
                         return compared * sortOption.inverter;
                     }
