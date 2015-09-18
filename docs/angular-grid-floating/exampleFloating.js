@@ -29,8 +29,8 @@ module.controller("exampleCtrl", function($scope, $http) {
             }
         },
         // no rows to float to start with
-        floatingHeaderRowData: [],
-        floatingFooterRowData: []
+        floatingTopRowData: [],
+        floatingBottomRowData: []
     };
 
     $scope.headerRowsToFloat = '1';

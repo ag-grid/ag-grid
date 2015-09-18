@@ -545,7 +545,7 @@ module awk.grid {
             // inform the callbacks of the event
             if (this.virtualRowCallbacks[rowIndex]) {
                 this.virtualRowCallbacks[rowIndex].forEach(function (callback: any) {
-                    if (typeof callback.rowRemoved === 'function') {
+                    if (typeof callback.rowSelected === 'function') {
                         callback.rowSelected(selected);
                     }
                 });
