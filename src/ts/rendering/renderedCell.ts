@@ -118,6 +118,7 @@ module awk.grid {
 
             this.addCellClickedHandler();
             this.addCellDoubleClickedHandler();
+            this.addCellRightClickedHandler();
 
             if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
                 this.addCellNavigationHandler();
@@ -260,6 +261,43 @@ module awk.grid {
                         api: that.gridOptionsWrapper.getApi()
                     };
                     colDef.cellDoubleClicked(paramsForColDef);
+                }
+                if (that.isCellEditable()) {
+                    that.startEditing();
+                }
+            });
+        }
+
+        private addCellRightClickedHandler() {
+            var that = this;
+            var colDef = this.column.colDef;
+            this.vGridCell.addEventListener('contextmenu', function (event: any) {
+                var paramsForGrid = {
+                    node: that.node,
+                    data: that.node.data,
+                    value: that.value,
+                    rowIndex: that.rowIndex,
+                    colDef: colDef,
+                    event: event,
+                    eventSource: this,
+                    context: that.gridOptionsWrapper.getContext(),
+                    api: that.gridOptionsWrapper.getApi()
+                };
+                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_RIGHT_CLICKED, paramsForGrid);
+
+                if (colDef.cellRightClicked) {
+                    var paramsForColDef = {
+                        node: that.node,
+                        data: that.node.data,
+                        value: that.value,
+                        rowIndex: that.rowIndex,
+                        colDef: colDef,
+                        event: event,
+                        eventSource: this,
+                        context: that.gridOptionsWrapper.getContext(),
+                        api: that.gridOptionsWrapper.getApi()
+                    };
+                    colDef.cellRightClicked(paramsForColDef);
                 }
                 if (that.isCellEditable()) {
                     that.startEditing();

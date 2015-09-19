@@ -66,6 +66,9 @@ module awk.grid {
         /** Function callback, gets called when a cell is double clicked. */
         cellDoubleClicked?: Function;
 
+        /** Function callback, gets called when a cell is right clicked. */
+        cellRightClicked?: Function;
+
         /** Name of function to use for aggregation. One of [sum,min,max]. */
         aggFunc?: string;
 
