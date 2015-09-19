@@ -62,7 +62,7 @@ module awk.grid {
         public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
         public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
         public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
-        public isDontUseScrolls() { return isTrue(this.gridOptions.dontUseScrolls); }
+        public isForPrint() { return isTrue(this.gridOptions.forPrint); }
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
@@ -172,7 +172,7 @@ module awk.grid {
         public getPinnedColCount() {
             // if not using scrolls, then pinned columns doesn't make
             // sense, so always return 0
-            if (this.isDontUseScrolls()) {
+            if (this.isForPrint()) {
                 return 0;
             }
             if (this.gridOptions.pinnedColumnCount) {
@@ -184,7 +184,7 @@ module awk.grid {
         }
 
         public getLocaleTextFunc() {
-            if(this.gridOptions.localeTextFunc) {
+            if (this.gridOptions.localeTextFunc) {
                 return this.gridOptions.localeTextFunc;
             }
             var that = this;

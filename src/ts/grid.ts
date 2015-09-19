@@ -68,7 +68,7 @@ module awk.grid {
                 });
             }
 
-            var forPrint = this.gridOptionsWrapper.isDontUseScrolls();
+            var forPrint = this.gridOptionsWrapper.isForPrint();
             if (!forPrint) {
                 window.addEventListener('resize', this.doLayout.bind(this));
             }
@@ -114,7 +114,7 @@ module awk.grid {
 
             // make local references, to make the below more human readable
             var gridOptionsWrapper = this.gridOptionsWrapper;
-            var forPrint = gridOptionsWrapper.isDontUseScrolls();
+            var forPrint = gridOptionsWrapper.isForPrint();
 
             // create all the beans
             var selectionController = new SelectionController();
@@ -566,7 +566,10 @@ module awk.grid {
             delete this.virtualRowCallbacks[rowIndex];
         }
 
-        public onNewCols() {
+        public setColumnDefs(colDefs?: ColDef[]) {
+            if (colDefs) {
+                this.gridOptions.columnDefs = colDefs;
+            }
             this.setupColumns();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
             // found that adding pinned column can upset the layout

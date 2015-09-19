@@ -95,7 +95,7 @@ gridsModule.controller('mainController', function($scope) {
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
-        //dontUseScrolls: true,
+        //forPrint: true,
         //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,

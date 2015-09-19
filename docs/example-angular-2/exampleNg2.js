@@ -4,25 +4,37 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 var SampleAppComponent = function() {
-
-    this.gridOptions = {
-        columnDefs: columnDefs,
-        rowData: createRowData(),
-        rowSelection: 'multiple',
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
-        groupHeaders: true,
-        rowHeight: 22,
-        pinnedColumnCount: 3,
-        suppressRowClickSelection: true
-    };
-
+    this.columnDefs = columnDefs;
+    this.createRowData();
 };
 
-//SampleAppComponent.prototype.bla = function(event) {
-//    console.log('event = ' + event);
-//};
+SampleAppComponent.prototype.createRowData = function() {
+    var rowData = [];
+
+    for (var i = 0; i < 200; i++) {
+        var countryData = countries[i % countries.length];
+        rowData.push({
+            name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
+            skills: {
+                android: Math.random() < 0.4,
+                html5: Math.random() < 0.4,
+                mac: Math.random() < 0.4,
+                windows: Math.random() < 0.4,
+                css: Math.random() < 0.4
+            },
+            address: addresses[i % addresses.length],
+            years: Math.round(Math.random() * 100),
+            proficiency: Math.round(Math.random() * 100),
+            country: countryData.country,
+            continent: countryData.continent,
+            language: countryData.language,
+            mobile: createRandomPhoneNumber(),
+            landline: createRandomPhoneNumber()
+        });
+    }
+
+    this.rowData = rowData;
+};
 
 SampleAppComponent.prototype.calculateRowCount = function() {
     var model = this.gridOptions.api.getModel();
@@ -239,39 +251,11 @@ var columnDefs = [
     {headerName: "Address", field: "address", headerGroup: 'Contact', width: 500, filter: 'text'}
 ];
 
-function createRowData() {
-    var rowData = [];
-
-    for (var i = 0; i < 10000; i++) {
-        var countryData = countries[i % countries.length];
-        rowData.push({
-            name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
-            skills: {
-                android: Math.random() < 0.4,
-                html5: Math.random() < 0.4,
-                mac: Math.random() < 0.4,
-                windows: Math.random() < 0.4,
-                css: Math.random() < 0.4
-            },
-            address: addresses[i % addresses.length],
-            years: Math.round(Math.random() * 100),
-            proficiency: Math.round(Math.random() * 100),
-            country: countryData.country,
-            continent: countryData.continent,
-            language: countryData.language,
-            mobile: createRandomPhoneNumber(),
-            landline: createRandomPhoneNumber()
-        });
-    }
-
-    return rowData;
-}
-
 function skillsCellRenderer(params) {
     var data = params.data;
     var skills = [];
     IT_SKILLS.forEach(function (skill) {
-        if (data.skills[skill]) {
+        if (data && data.skills && data.skills[skill]) {
             skills.push('<img src="/example-angular-2/' + skill + '.png" width="16px" title="' + skill + '" />');
         }
     });

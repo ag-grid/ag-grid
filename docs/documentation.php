@@ -261,7 +261,7 @@ include 'documentation_header.php';
     <hr/>
 
     <p>
-        <b>6th Aug</b> Floating headers and footers
+        <b>6th Sep</b> Floating headers and footers
     </p>
 
     <hr/>

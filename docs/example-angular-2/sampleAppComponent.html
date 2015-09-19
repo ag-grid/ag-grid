@@ -21,45 +21,56 @@
             <button (click)="agGrid.columnApi.hideColumn('country', false)">Show Country Column</button>
         </span>
     </div>
-    <div style="padding: 4px;">
+    <div style="padding: 4px;" class="toolbar">
         <label>
             <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
             Show Tool Panel
         </label>
+        <button (click)="createRowData()">Refresh Data</button>
     </div>
-<!--
-    [show-tool-panel]="showToolPanel"
--->
-    <ag-grid-a2 #ag-grid style="width: 100%; height: 400px;" class="ag-fresh"
 
-                [grid-options]="gridOptions"
+    <ag-grid-ng2 #ag-grid style="width: 100%; height: 400px;" class="ag-fresh"
 
-                [show-tool-panel]="showToolPanel"
+                 [column-defs]="columnDefs"
+                 [show-tool-panel]="showToolPanel"
+                 [row-data]="rowData"
 
-                (model-updated)="onModelUpdated()"
-                (cell-clicked)="onCellClicked($event)"
-                (cell-double-clicked)="onCellDoubleClicked($event)"
-                (cell-context-menu)="onCellContextMenu($event)"
-                (cell-value-changed)="onCellValueChanged($event)"
-                (cell-focused)="onCellFocused($event)"
-                (row-selected)="onRowSelected($event)"
-                (selection-changed)="onSelectionChanged()"
-                (before-filter-changed)="onBeforeFilterChanged()"
-                (after-filter-changed)="onAfterFilterChanged()"
-                (filter-modified)="onFilterModified()"
-                (before-sort-changed)="onBeforeSortChanged()"
-                (after-sort-changed)="onAfterSortChanged()"
-                (virtual-row-removed)="onVirtualRowRemoved($event)"
-                (row-clicked)="onRowClicked($event)"
-                (ready)="onReady($event)"
+                 enable-col-resize="true"
+                 enable-sorting="true"
+                 enable-filter="true"
+                 group-headers="true"
+                 suppress-row-click-selection="true"
+                 tool-panel-suppress-pivot="true"
+                 tool-panel-suppress-values="true"
+                 row-height="22"
+                 row-selection="multiple"
+                 pinned-column-count="3"
 
-                (column-everything-changed)="onColumnEvent($event)"
-                (column-pivot-changed)="onColumnEvent($event)"
-                (column-value-changed)="onColumnEvent($event)"
-                (column-moved)="onColumnEvent($event)"
-                (column-visible)="onColumnEvent($event)"
-                (column-group-opened)="onColumnEvent($event)"
-                (column-resized)="onColumnEvent($event)"
-                (column-pinned-count-changed)="onColumnEvent($event)"
+                 (model-updated)="onModelUpdated()"
+                 (model-updated)="onModelUpdated()"
+                 (cell-clicked)="onCellClicked($event)"
+                 (cell-double-clicked)="onCellDoubleClicked($event)"
+                 (cell-context-menu)="onCellContextMenu($event)"
+                 (cell-value-changed)="onCellValueChanged($event)"
+                 (cell-focused)="onCellFocused($event)"
+                 (row-selected)="onRowSelected($event)"
+                 (selection-changed)="onSelectionChanged()"
+                 (before-filter-changed)="onBeforeFilterChanged()"
+                 (after-filter-changed)="onAfterFilterChanged()"
+                 (filter-modified)="onFilterModified()"
+                 (before-sort-changed)="onBeforeSortChanged()"
+                 (after-sort-changed)="onAfterSortChanged()"
+                 (virtual-row-removed)="onVirtualRowRemoved($event)"
+                 (row-clicked)="onRowClicked($event)"
+                 (ready)="onReady($event)"
+
+                 (column-everything-changed)="onColumnEvent($event)"
+                 (column-pivot-changed)="onColumnEvent($event)"
+                 (column-value-changed)="onColumnEvent($event)"
+                 (column-moved)="onColumnEvent($event)"
+                 (column-visible)="onColumnEvent($event)"
+                 (column-group-opened)="onColumnEvent($event)"
+                 (column-resized)="onColumnEvent($event)"
+                 (column-pinned-count-changed)="onColumnEvent($event)"
     />
 </div>

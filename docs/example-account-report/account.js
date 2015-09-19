@@ -35,7 +35,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         groupAggFields: ['amount1','gbp1','amount2','gbp2','amount3','gbp3','amount4','gbp4'],
         enableColResize: true,
         enableSorting: false,
-        dontUseScrolls: true,
+        forPrint: true,
         groupSuppressAutoColumn: true,
         icons: {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',

@@ -25,7 +25,7 @@ module.controller("exampleCtrl", function($scope) {
         enableSorting: true, //one of [true, false]
         enableFilter: true, //one of [true, false]
         rowSelection: "single",
-        dontUseScrolls: true
+        forPrint: true
     };
 
 });

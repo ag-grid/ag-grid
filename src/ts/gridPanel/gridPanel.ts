@@ -90,7 +90,7 @@ module awk.grid {
         constructor(gridOptionsWrapper: GridOptionsWrapper) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
-            this.forPrint = this.gridOptionsWrapper.isDontUseScrolls();
+            this.forPrint = this.gridOptionsWrapper.isForPrint();
             this.setupComponents();
             this.scrollWidth = _.getScrollbarWidth();
         }

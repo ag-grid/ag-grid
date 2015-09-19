@@ -4,6 +4,56 @@
 
 module awk.grid {
 
+    var SIMPLE_PROPERTY_NAMES = [
+        'sortingOrder',
+        'icons','localeText','localeTextFunc',
+        'groupColumnDef','context','rowStyle','rowClass','headerCellRenderer',
+        'groupDefaultExpanded','slaveGrids','rowSelection'];
+
+    var SIMPLE_NUMBER_PROPERTY_NAMES = [
+        'rowHeight','rowBuffer','colWidth'
+    ];
+
+    var SIMPLE_BOOLEAN_PROPERTY_NAMES = [
+        'virtualPaging','toolPanelSuppressPivot','toolPanelSuppressValues','rowsAlreadyGrouped',
+        'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
+        'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
+        'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
+        'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
+        'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
+        'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort'
+    ];
+
+    var WITH_IMPACT_NUMBER = ['pinnedColumnCount','headerHeight'];
+    var WITH_IMPACT_BOOLEAN = ['groupHeaders','showToolPanel'];
+    var WITH_IMPACT_OTHER = [
+        'rowData','floatingTopRowData','floatingBottomRowData','groupKeys','groupAggFunction',
+        'groupAggFields','columnDefs','datasource','quickFilterText'];
+
+    var CALLBACKS = ['groupInnerRenderer','groupRowInnerRenderer',
+        'groupRowRenderer','isScrollLag','suppressScrollLag',
+        'isExternalFilterPresent','doesExternalFilterPass'];
+
+    function toBoolean(value: any): boolean {
+        if (typeof value === 'boolean') {
+            return value;
+        } else if (typeof value === 'string') {
+            return value.toUpperCase() === 'TRUE';
+        } else {
+            return false;
+        }
+    }
+
+    function toNumber(value: any): number {
+        if (typeof value === 'number') {
+            return value;
+        } else if (typeof value === 'string') {
+            return Number(value);
+        } else {
+            return undefined;
+        }
+    }
+
     // we are not using annotations on purpose, as if we do, then there is a runtime dependency
     // on the annotation, which would break this code if angular 2 was not included, which is bad,
     // as angular 2 is optional for ag-grid
@@ -12,6 +62,7 @@ module awk.grid {
         // not intended for user to interact with. so putting _ in so if use gets reference
         // to this object, they kind'a know it's not part of the agreed interface
         private _agGrid: awk.grid.Grid;
+        private _initialised = false;
 
         private gridOptions: GridOptions;
 
@@ -47,32 +98,189 @@ module awk.grid {
         public columnPinnedCountChanged = new ng.EventEmitter();
 
         // properties
+        public virtualPaging: boolean;
+        public toolPanelSuppressPivot: boolean;
+        public toolPanelSuppressValues: boolean;
+        public rowsAlreadyGrouped: boolean;
+        public suppressRowClickSelection: boolean;
+        public suppressCellSelection: boolean;
+        public sortingOrder: string[];
+        public suppressMultiSort: boolean;
+        public suppressHorizontalScroll: boolean;
+        public unSortIcon: boolean;
+        public rowHeight: number;
+        public rowBuffer: number;
+        public enableColResize: boolean;
+        public enableCellExpressions: boolean;
+        public enableSorting: boolean;
+        public enableServerSideSorting: boolean;
+        public enableFilter: boolean;
+        public enableServerSideFilter: boolean;
+        public colWidth: number;
+        public suppressMenuHide: boolean;
+        public debug: boolean;
+        public icons: any; // should be typed
+        public angularCompileRows: boolean;
+        public angularCompileFilters: boolean;
+        public angularCompileHeaders: boolean;
+        public localeText: any;
+        public localeTextFunc: Function;
+
+        public groupSuppressAutoColumn: boolean;
+        public groupSelectsChildren: boolean;
+        public groupHidePivotColumns: boolean;
+        public groupIncludeFooter: boolean;
+        public groupUseEntireRow: boolean;
+        public groupSuppressRow: boolean;
+        public groupSuppressBlankHeader: boolean;
+        public groupColumnDef: any; // change to typed
+        public forPrint: boolean;
+
+        // changeable, but no immediate impact
+        public context: any;
+        public rowStyle: any;
+        public rowClass: any;
+        public headerCellRenderer: any;
+        public groupDefaultExpanded: any;
+        public slaveGrids: GridOptions[];
+        public rowSelection: string;
+        public rowDeselection: boolean;
+
+        // changeable with impact
+        public rowData: any[]; // should this be immutable for ag2?
+        public floatingTopRowData: any[]; // should this be immutable ag2?
+        public floatingBottomRowData: any[]; // should this be immutable ag2?
         public showToolPanel: boolean;
+        public groupKeys: string[];
+        public groupAggFunction: (nodes: any[]) => void;
+        public groupAggFields: string[];
+        public columnDefs: any[]; // change to typed
+        public datasource: any; // should be typed
+        public pinnedColumnCount: number;
+        public quickFilterText: string;
+        // in properties
+        public groupHeaders: boolean;
+        public headerHeight: number;
 
         constructor(private elementDef: any) {
         }
 
-        set quickFilterText(text: string) {
-            if (this.gridOptions) {
-                this.gridOptions.api.setQuickFilter(text);
+        private initGridOptions(): void {
+            // create empty grid options if none were passed
+            if (typeof this.gridOptions !== 'object') {
+                this.gridOptions = <GridOptions> {};
             }
+            // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
+            var pThis = <any>this;
+            var pGridOptions = <any>this.gridOptions;
+            // add in all the simple properties
+            SIMPLE_PROPERTY_NAMES.concat(WITH_IMPACT_OTHER).concat(CALLBACKS).forEach( (key)=> {
+                if (typeof (pThis)[key] !== 'undefined') {
+                    pGridOptions[key] = pThis[key];
+                }
+            });
+            SIMPLE_BOOLEAN_PROPERTY_NAMES.concat(WITH_IMPACT_BOOLEAN).forEach( (key)=> {
+                if (typeof (pThis)[key] !== 'undefined') {
+                    pGridOptions[key] = toBoolean(pThis[key]);
+                }
+            });
+            SIMPLE_NUMBER_PROPERTY_NAMES.concat(WITH_IMPACT_NUMBER).forEach( (key)=> {
+                if (typeof (pThis)[key] !== 'undefined') {
+                    pGridOptions[key] = toNumber(pThis[key]);
+                }
+            });
         }
 
         // this gets called after the directive is initialised
         public onInit(): void {
+            this.initGridOptions();
             var nativeElement = this.elementDef.nativeElement;
             this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions, this.genericEventListener.bind(this));
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
             this.columnApi.addChangeListener(this.columnEventListener.bind(this));
+            this._initialised = true;
         }
 
         public onChange(changes: any): void {
-            if (changes && changes.showToolPanel) {
-                this.api.showToolPanel(changes.showToolPanel.currentValue);
+            if (!this._initialised || !changes) { return; }
+
+            // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
+            //var pThis = <any>this;
+            var pGridOptions = <any>this.gridOptions;
+
+            // check if any change for the simple types, and if so, then just copy in the new value
+            SIMPLE_PROPERTY_NAMES.forEach( (key)=> {
+                if (changes[key]) {
+                    pGridOptions[key] = changes[key].currentValue;
+                }
+            });
+            SIMPLE_BOOLEAN_PROPERTY_NAMES.forEach( (key)=> {
+                if (changes[key]) {
+                    pGridOptions[key] = toBoolean(changes[key].currentValue);
+                }
+            });
+            SIMPLE_NUMBER_PROPERTY_NAMES.forEach( (key)=> {
+                if (changes[key]) {
+                    pGridOptions[key] = toNumber(changes[key].currentValue);
+                }
+            });
+
+            if (changes.showToolPanel) {
+                this.api.showToolPanel(this.showToolPanel);
             }
-            //console.log('got changes');
-            //console.log(changes);
+
+            if (changes.quickFilterText) {
+                this.api.setQuickFilter(this.quickFilterText);
+            }
+
+            if (changes.rowData) {
+                this.api.setRows(this.rowData);
+            }
+
+            if (changes.floatingTopRowData) {
+                this.api.setFloatingTopRowData(this.floatingTopRowData);
+            }
+
+            if (changes.floatingBottomRowData) {
+                this.api.setFloatingBottomRowData(this.floatingBottomRowData);
+            }
+
+            if (changes.columnDefs) {
+                this.api.setColumnDefs(this.columnDefs);
+            }
+
+            if (changes.datasource) {
+                this.api.setDatasource(this.datasource);
+            }
+
+            if (changes.pinnedColumnCount) {
+                this.columnApi.setPinnedColumnCount(this.pinnedColumnCount);
+            }
+
+            if (changes.pinnedColumnCount) {
+                this.columnApi.setPinnedColumnCount(this.pinnedColumnCount);
+            }
+
+            if (changes.groupHeaders) {
+                this.api.setGroupHeaders(this.groupHeaders);
+            }
+
+            if (changes.headerHeight) {
+                this.api.setHeaderHeight(this.headerHeight);
+            }
+
+            // need to review these, they are not impacting anything, they should
+            // call something on the API to update the grid
+            if (changes.groupKeys) {
+                this.gridOptions.groupKeys = this.groupKeys;
+            }
+            if (changes.groupAggFunction) {
+                this.gridOptions.groupAggFunction = this.groupAggFunction;
+            }
+            if (changes.groupAggFields) {
+                this.gridOptions.groupAggFields = this.groupAggFields;
+            }
         }
 
         private columnEventListener(event: ColumnChangeEvent): void {
@@ -135,7 +343,7 @@ module awk.grid {
     if (ng && ng.Component) {
         (<any>AgGridDirective).annotations = [
             new ng.Component({
-                selector: 'ag-grid-a2',
+                selector: 'ag-grid-ng2',
                 events: [
                     // core grid events
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
@@ -145,7 +353,15 @@ module awk.grid {
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                properties: ['gridOptions','quickFilterText','showToolPanel'],
+                properties: ['gridOptions']
+                    .concat(SIMPLE_PROPERTY_NAMES)
+                    .concat(SIMPLE_BOOLEAN_PROPERTY_NAMES)
+                    .concat(SIMPLE_NUMBER_PROPERTY_NAMES)
+                    .concat(WITH_IMPACT_OTHER)
+                    .concat(WITH_IMPACT_BOOLEAN)
+                    .concat(WITH_IMPACT_NUMBER)
+                    .concat(CALLBACKS)
+                ,
                 compileChildren: false, // no angular on the inside thanks
                 lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]
             }),

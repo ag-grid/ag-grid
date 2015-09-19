@@ -61,7 +61,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         },
         columnDefs: columnDefs,
         rowData: data,
-        dontUseScrolls: true
+        forPrint: true
     };
 
 });

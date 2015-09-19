@@ -104,7 +104,7 @@ module awk.grid {
             }
 
             // if showing scrolls, position on the container
-            if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+            if (!this.gridOptionsWrapper.isForPrint()) {
                 this.vBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
                 if (this.pinning) {
                     this.vPinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";

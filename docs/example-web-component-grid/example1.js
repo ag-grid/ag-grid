@@ -17,7 +17,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     suppressRowClickSelection: true,
-    dontUseScrolls: true // because so little data, no need to use scroll bars
+    forPrint: true // because so little data, no need to use scroll bars
 };
 
 // wait for the document to be loaded, otherwise

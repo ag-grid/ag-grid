@@ -53,7 +53,11 @@ module awk.grid {
         }
 
         public onNewCols() {
-            this.grid.onNewCols();
+            this.grid.setColumnDefs();
+        }
+
+        public setColumnDefs(colDefs: ColDef[]) {
+            this.grid.setColumnDefs(colDefs);
         }
 
         public unselectAll() {
@@ -141,8 +145,8 @@ module awk.grid {
         }
 
         public sizeColumnsToFit() {
-            if (this.gridOptionsWrapper.isDontUseScrolls()) {
-                console.warn('ag-grid: sizeColumnsToFit does not work when dontUseScrolls=true');
+            if (this.gridOptionsWrapper.isForPrint()) {
+                console.warn('ag-grid: sizeColumnsToFit does not work when forPrint=true');
                 return;
             }
             var availableWidth = this.gridPanel.getWidthForSizeColsToFit();

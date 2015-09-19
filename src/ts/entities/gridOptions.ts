@@ -41,8 +41,18 @@ module awk.grid {
         groupUseEntireRow?: boolean;
         groupSuppressRow?: boolean;
         groupSuppressBlankHeader?: boolean;
-        dontUseScrolls?: boolean;
+        forPrint?: boolean;
         groupColumnDef?: any; // change to typed
+
+        // changeable, but no immediate impact
+        context?: any;
+        rowStyle?: any;
+        rowClass?: any;
+        headerCellRenderer?: any;
+        groupDefaultExpanded?: any;
+        slaveGrids?: GridOptions[];
+        rowSelection?: string;
+        rowDeselection?: boolean;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
@@ -59,18 +69,7 @@ module awk.grid {
         groupHeaders?: boolean;
         headerHeight?: number;
 
-        // changeable, but no immediate impact
-        context?: any;
-        rowStyle?: any;
-        rowClass?: any;
-        headerCellRenderer?: any;
-        groupDefaultExpanded?: any;
-        slaveGrids?: GridOptions[];
-        rowSelection?: string;
-        rowDeselection?: boolean;
-
         // callbacks
-        ready?(api: any): void;
         groupInnerRenderer?(params: any): void;
         groupRowInnerRenderer?(params: any): void;
         groupRowRenderer?: Function | Object;
@@ -80,6 +79,7 @@ module awk.grid {
         doesExternalFilterPass?(node: RowNode): boolean;
 
         // events
+        ready?(api: any): void;
         modelUpdated?(): void;
         cellClicked?(params: any): void;
         cellDoubleClicked?(params: any): void;

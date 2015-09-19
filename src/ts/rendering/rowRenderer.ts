@@ -169,7 +169,7 @@ module awk.grid {
         }
 
         public refreshView(refreshFromIndex?: any) {
-            if (!this.gridOptionsWrapper.isDontUseScrolls()) {
+            if (!this.gridOptionsWrapper.isForPrint()) {
                 var rowCount = this.rowModel.getVirtualRowCount();
                 var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
                 this.eBodyContainer.style.height = containerHeight + "px";
@@ -264,7 +264,7 @@ module awk.grid {
 
             var rowCount = this.rowModel.getVirtualRowCount();
 
-            if (this.gridOptionsWrapper.isDontUseScrolls()) {
+            if (this.gridOptionsWrapper.isForPrint()) {
                 first = 0;
                 last = rowCount;
             } else {
