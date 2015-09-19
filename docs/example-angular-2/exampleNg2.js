@@ -53,6 +53,10 @@ SampleAppComponent.prototype.onCellDoubleClicked = function($event) {
     console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
 };
 
+SampleAppComponent.prototype.onCellContextMenu = function($event) {
+    console.log('onCellContextMenu: ' + $event.rowIndex + ' ' + $event.colDef.field);
+};
+
 SampleAppComponent.prototype.onCellFocused = function($event) {
     console.log('onCellFocused: (' + $event.rowIndex + ',' + $event.colIndex + ')');
 };

@@ -22,6 +22,7 @@ module awk.grid {
         public modelUpdated = new ng.EventEmitter();
         public cellClicked = new ng.EventEmitter();
         public cellDoubleClicked = new ng.EventEmitter();
+        public cellContextMenu = new ng.EventEmitter();
         public cellValueChanged = new ng.EventEmitter();
         public cellFocused = new ng.EventEmitter();
         public rowSelected = new ng.EventEmitter();
@@ -98,6 +99,7 @@ module awk.grid {
                 case Constants.EVENT_MODEL_UPDATED: emitter = this.modelUpdated; break;
                 case Constants.EVENT_CELL_CLICKED: emitter = this.cellClicked; break;
                 case Constants.EVENT_CELL_DOUBLE_CLICKED: emitter = this.cellDoubleClicked; break;
+                case Constants.EVENT_CELL_CONTEXT_MENU: emitter = this.cellContextMenu; break;
                 case Constants.EVENT_CELL_VALUE_CHANGED: emitter = this.cellValueChanged; break;
                 case Constants.EVENT_CELL_FOCUSED: emitter = this.cellFocused; break;
                 case Constants.EVENT_ROW_SELECTED: emitter = this.rowSelected; break;
@@ -136,7 +138,7 @@ module awk.grid {
                 selector: 'ag-grid-a2',
                 events: [
                     // core grid events
-                    'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellValueChanged', 'cellFocused',
+                    'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
                     'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
                     'rowClicked','ready',

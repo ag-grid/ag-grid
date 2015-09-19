@@ -83,6 +83,7 @@ module awk.grid {
         modelUpdated?(): void;
         cellClicked?(params: any): void;
         cellDoubleClicked?(params: any): void;
+        cellContextMenu?(params: any): void;
         cellValueChanged?(params: any): void;
         cellFocused?(params: any): void;
         rowSelected?(params: any): void;

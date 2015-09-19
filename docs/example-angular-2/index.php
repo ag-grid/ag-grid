@@ -42,7 +42,7 @@ include '../documentation_header.php';
     </p>
     <p>
         <i>modelUpdated,
-            cellClicked, cellDoubleClicked, cellValueChanged, cellFocused,
+            cellClicked, cellDoubleClicked, cellContextMenu, cellValueChanged, cellFocused,
             rowSelected, selectionChanged, beforeFilterChanged, afterFilterChanged,
             filterModified, beforeSortChanged, afterSortChanged, virtualRowRemoved,
             rowClicked.</i>

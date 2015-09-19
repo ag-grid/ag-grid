@@ -27,6 +27,7 @@ module awk.grid {
         static EVENT_MODEL_UPDATED = 'modelUpdated';
         static EVENT_CELL_CLICKED = 'cellClicked';
         static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+        static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
         static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
         static EVENT_CELL_FOCUSED = 'cellFocused';
         static EVENT_ROW_SELECTED = 'rowSelected';

@@ -94,6 +94,10 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
+            <th>cellContextMenu(params)</th>
+            <td>Function callback, gets called when a cell is right clicked.</td>
+        </tr>
+        <tr>
             <th>aggFunc</th>
             <td>Name of function to use for aggregation. One of [sum,min,max].</td>
         </tr>
