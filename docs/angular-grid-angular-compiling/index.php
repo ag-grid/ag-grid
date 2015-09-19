@@ -34,7 +34,7 @@ include '../documentation_header.php';
 
     <h4>Example using Angular Compile</h4>
 
-    Angular compiling is turned on by setting the grid options attribute angularCompile to true.
+    Angular compiling is turned on by setting the grid options attribute angularCompileRows to true.
     <p/>
     Below then uses three columns rendered using customer Angular renderers.
     <p/>

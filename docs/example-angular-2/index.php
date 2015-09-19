@@ -16,6 +16,12 @@ include '../documentation_header.php';
         how progress is coming along.
     </p>
 
+    <note>
+        I tested the below example to work on my Windows 8 machine with latest Chrome, Internet Explorer
+        and Firefox. It didn't work on Safari on Windows 8 with an ng2 error. Also I tried with my flatmates
+        new Windows 10 and Slate browser, and ng2 failed there also.
+    </note>
+
     <show-example example="exampleNg2"></show-example>
 
     <h2>Notes on Angular 2 and ag-Grid</h2>

@@ -6,7 +6,7 @@ $pageKeyboards = "AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px;">
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px 5px 5px;">
     <div style="float: left;">
         <img src="images/star.png"/>
     </div>
@@ -27,6 +27,29 @@ include 'documentation_header.php';
     </div>
 </div>
 
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
+        <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
+            <img src="images/angularAir.png"/>
+        </a>
+    </div>
+    <div style="float: left; width: 450px;">
+        <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
+            <div style="font-size: 20px; color: #167ac6;">
+                Angular Air Episode 32: ag-Grid
+            </div>
+        </a>
+        <div style="color: #767676">
+            by Angular Air
+        </div>
+        <div style="color: #767676">
+            Niall Crosby discusses ag-Grid with the Angular Air team. Hear Niall speak openly
+            about the story of ag-Grid, Angular 2 and Web Components, and also the future of ag-Grid.
+        </div>
+    </div>
+</div>
+
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
 
@@ -43,14 +66,15 @@ include 'documentation_header.php';
     </p>
 
     <p>
-        After weeks of just research Angular 2 and Web Components, this week I decided to put my new
-        skills into practice. I have now done a first pass of support for AngularJS 2.
+        After weeks of researching Angular 2 and Web Components, this week I decided to put my new
+        skills into practice. I have a first pass of an ag-Grid Component for AngularJS 2.
         <a href="example-angular-2/index.php">Check it out here</a>.
     </p>
 
     <p>
-        If you upgrade, I had to do some changes with the following callbacks, the make them work like events:
-        <ul>
+        The only major change in the latest is Angular 2 support, so not much point in grabbing it, however if
+        you do upgrade, I had to do some changes with the following callbacks, to make them work like events:
+    <ul>
         <li>
             rowSelected: now takes params with 'node' instead of 'data' and 'row index'.
         </li>
@@ -61,6 +85,10 @@ include 'documentation_header.php';
             ready: now takes params with 'api' instead of just 'api'.
         </li>
     </ul>
+
+    <p>
+        Also check out a new theme in the test drive - baramwindy92 put this on the message board. Looks nice!
+    </p>
 
     <p>&nbsp;</p>
 
