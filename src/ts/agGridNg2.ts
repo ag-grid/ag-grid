@@ -69,7 +69,7 @@ module awk.grid {
 
         public onChange(changes: any): void {
             if (changes && changes.showToolPanel) {
-                this.api.showToolPanel(changes.showToolPanel);
+                this.api.showToolPanel(changes.showToolPanel.currentValue);
             }
             //console.log('got changes');
             //console.log(changes);
@@ -145,7 +145,7 @@ module awk.grid {
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                properties: ['gridOptions','quickFilterText'],
+                properties: ['gridOptions','quickFilterText','showToolPanel'],
                 compileChildren: false, // no angular on the inside thanks
                 lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]
             }),

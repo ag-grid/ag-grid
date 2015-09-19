@@ -228,7 +228,7 @@ var IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
 var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
 var columnDefs = [
-    {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
+    {headerName: 'Selected', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true },
     {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150, editable: true},
     {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
         filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},

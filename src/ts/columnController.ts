@@ -207,12 +207,6 @@ module awk.grid {
                 var event = new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_RESIZED).withColumn(column);
                 this.fireColumnChanged(event);
             }
-
-            if (typeof this.gridOptionsWrapper.getColumnResized() === 'function') {
-                console.warn('ag-Grid: gridOptions.columnResized is deprecated - use the column API and events instead');
-                this.gridOptionsWrapper.getColumnResized()(column);
-            }
-
         }
 
         private updateGroupWidthsAfterColumnResize(column: Column) {
@@ -246,10 +240,6 @@ module awk.grid {
                 .withFromIndex(fromIndex)
                 .withToIndex(toIndex);
             this.fireColumnChanged(event);
-            if (typeof this.gridOptionsWrapper.getColumnOrderChanged() === 'function') {
-                console.warn('ag-Grid: gridOptions.columnOrderChanged is deprecated, use the column API and events instead');
-                this.gridOptionsWrapper.getColumnOrderChanged()(this.allColumns);
-            }
         }
 
         // used by:
@@ -287,11 +277,6 @@ module awk.grid {
 
             this.updateModel();
             this.fireColumnChanged(new ColumnChangeEvent(ColumnChangeEvent.TYPE_COLUMN_VISIBLE).withColumn(column));
-
-            if (typeof this.gridOptionsWrapper.getColumnVisibilityChanged() === 'function') {
-                console.warn('agGrid: gridOptions.columnVisibilityChanged is deprecated - use the column events instead');
-                this.gridOptionsWrapper.getColumnVisibilityChanged()(this.allColumns);
-            }
         }
 
         public getVisibleColBefore(col: any): Column {

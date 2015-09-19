@@ -84,9 +84,6 @@ module awk.grid {
         public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
         public isDebug() { return isTrue(this.gridOptions.debug); }
         public getColumnDefs() { return this.gridOptions.columnDefs; }
-        public getColumnResized() { return this.gridOptions.columnResized; }
-        public getColumnVisibilityChanged() { return this.gridOptions.columnVisibilityChanged; }
-        public getColumnOrderChanged() { return this.gridOptions.columnOrderChanged; }
         public getDatasource() { return this.gridOptions.datasource; }
         public getRowBuffer() { return this.gridOptions.rowBuffer; }
         public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }

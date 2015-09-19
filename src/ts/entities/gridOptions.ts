@@ -96,11 +96,6 @@ module awk.grid {
         virtualRowRemoved?(params: any): void;
         rowClicked?(params: any): void;
 
-        // deprecated
-        columnResized?(column: Column):void;
-        columnVisibilityChanged?(columns: Column[]):void;
-        columnOrderChanged?(columns: Column[]):void;
-
         // unknown
         selectedRows?: any[];
         selectedNodesById?: {[email: number]: any;}; // should be typed to node

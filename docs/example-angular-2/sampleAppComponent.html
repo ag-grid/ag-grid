@@ -23,10 +23,8 @@
     </div>
     <div style="padding: 4px;">
         <label>
-<!--
             <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
             Show Tool Panel
--->
         </label>
     </div>
 <!--
@@ -36,6 +34,7 @@
 
                 [grid-options]="gridOptions"
 
+                [show-tool-panel]="showToolPanel"
 
                 (model-updated)="onModelUpdated()"
                 (cell-clicked)="onCellClicked($event)"

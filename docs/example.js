@@ -418,11 +418,11 @@ gridsModule.controller('mainController', function($scope) {
         console.log('Callback selectionChanged: selection count = ' + $scope.angularGrid.selectedRows.length);
     }
 
-    function rowSelected(row, node) {
+    function rowSelected(event) {
         // this clogs the console, when to many rows displayed, and use selected 'select all'.
         // so check 'not to many rows'
         if (angularGrid.rowData.length <= 100) {
-            var valueToPrint = node.group ? 'group ('+node.key+')' : row.name;
+            var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
             console.log("Callback rowSelected: " + valueToPrint);
         }
     }
