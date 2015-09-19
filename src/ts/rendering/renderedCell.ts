@@ -118,7 +118,7 @@ module awk.grid {
 
             this.addCellClickedHandler();
             this.addCellDoubleClickedHandler();
-            this.addCellRightClickedHandler();
+            this.addCellContextMenuHandler();
 
             if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
                 this.addCellNavigationHandler();
@@ -268,7 +268,7 @@ module awk.grid {
             });
         }
 
-        private addCellRightClickedHandler() {
+        private addCellContextMenuHandler() {
             var that = this;
             var colDef = this.column.colDef;
             this.vGridCell.addEventListener('contextmenu', function (event: any) {
@@ -283,9 +283,9 @@ module awk.grid {
                     context: that.gridOptionsWrapper.getContext(),
                     api: that.gridOptionsWrapper.getApi()
                 };
-                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_RIGHT_CLICKED, paramsForGrid);
+                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
 
-                if (colDef.cellRightClicked) {
+                if (colDef.cellContextMenu) {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
@@ -297,10 +297,7 @@ module awk.grid {
                         context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
-                    colDef.cellRightClicked(paramsForColDef);
-                }
-                if (that.isCellEditable()) {
-                    that.startEditing();
+                    colDef.cellContextMenu(paramsForColDef);
                 }
             });
         }

@@ -94,7 +94,7 @@ include '../documentation_header.php';
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
-            <th>cellRightClicked(params)</th>
+            <th>cellContextMenu(params)</th>
             <td>Function callback, gets called when a cell is right clicked.</td>
         </tr>
         <tr>

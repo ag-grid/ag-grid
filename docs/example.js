@@ -131,8 +131,8 @@ gridsModule.controller('mainController', function($scope) {
             console.log("Callback cellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
         // callback when cell right clicked
-        cellRightClicked:  function(params) {
-            console.log("Callback cellRightClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        cellContextMenu:  function(params) {
+            console.log("Callback cellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
         cellFocused: function(params) {
             console.log('Callback cellFocused: ' + params.rowIndex + " - " + params.colIndex);
