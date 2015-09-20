@@ -16,12 +16,12 @@ include '../documentation_header.php';
         In your html include Angular Grid's resources as follows:
     </p>
 
-        <pre>&lt;script src="../dist/angular-grid.js">&lt;/script>
-&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css">
+        <pre>&lt;script src="../dist/ag-grid.js">&lt;/script>
+&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css">
 &lt;link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css"></pre>
 
     <p>
-        If you want non-minified versions, you need to include: angular-grid.js, angular-grid.css, theme-fresh.css
+        If you want non-minified versions, you need to include: ag-grid.js, ag-grid.css, theme-fresh.css
         (optional if you want bundled fresh theme) and theme-dark.css (optional if you want bundled dark theme).
     </p>
     <p>
@@ -39,9 +39,9 @@ include '../documentation_header.php';
         changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.
         <br/>
         So eg, the example has this:<br/>
-        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css?ignore=notused8"><br/></i>
+        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused8"><br/></i>
         But all you need is this:<br/>
-        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/angular-grid.css"></i>
+        <i>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css"></i>
     </note>
 
     <h4>Creating the AngularJS Module</h4>

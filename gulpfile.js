@@ -14,7 +14,6 @@ var merge = require('merge2');
 var pkg = require('./package.json');
 var tsd = require('gulp-tsd');
 
-//var headerTemplate = '// Angular Grid\n// Written by Niall Crosby\n// www.angulargrid.com\n\n// Version 1.10.1\n\n';
 var headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
     ' * @version v<%= pkg.version %>',
@@ -73,12 +72,12 @@ function tsDebugTask() {
             //emitDecoratorMetadata: true,
             target: 'es5',
             //module: 'commonjs',
-            out: 'angular-grid.js'
+            out: 'ag-grid.js'
         }));
 
     return tsResult.js
         .pipe(sourcemaps.write()) // for sourcemaps only
-        .pipe(rename('angular-grid.js'))
+        .pipe(rename('ag-grid.js'))
         .pipe(gulp.dest('./docs/dist'));
 
 }
@@ -95,19 +94,19 @@ function tsReleaseTask() {
             target: 'es5',
             //module: 'commonjs',
             declarationFiles: true,
-            out: 'angular-grid.js'
+            out: 'ag-grid.js'
         }));
 
     return merge([
         tsResult.dts.pipe(gulp.dest('dist')),
         tsResult.js
-            .pipe(rename('angular-grid.js'))
+            .pipe(rename('ag-grid.js'))
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('./dist'))
             .pipe(gulp.dest('./docs/dist'))
             .pipe(buffer())
             .pipe(uglify())
-            .pipe(rename('angular-grid.min.js'))
+            .pipe(rename('ag-grid.min.js'))
             .pipe(gulp.dest('./dist'))
             .pipe(gulp.dest('./docs/dist'))
     ]);

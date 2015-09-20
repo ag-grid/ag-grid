@@ -42,3 +42,7 @@ agile-grid is now ag-grid
 awk -> is now ag  (only bothers TypeScript people)
 
 Events merged into one.
+
+
+Dist file names all changed.
+
