@@ -46,3 +46,6 @@ Events merged into one.
 
 Dist file names all changed.
 
+npm package is now ag-Grid (not angular-grid)
+
+angular module is now agGrid (not angularGrid)

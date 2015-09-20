@@ -1,5 +1,5 @@
 
-var module = angular.module("example", ["angularGrid"]);
+var module = angular.module("example", ["agGrid"]);
 
 module.controller("exampleCtrl", function($scope, $http) {
 
@@ -17,13 +17,11 @@ module.controller("exampleCtrl", function($scope, $http) {
     ];
 
     $scope.gridOptions = {
-        columnDefs: columnDefs,
-        rowData: null
+        columnDefs: columnDefs
     };
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            $scope.gridOptions.rowData = res.data;
-            $scope.gridOptions.api.onNewRows();
+            $scope.gridOptions.api.setRows(res.data);
         });
 });

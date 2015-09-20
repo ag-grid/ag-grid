@@ -1,4 +1,4 @@
-var gridsModule = angular.module("testAngularGrid", ["angularGrid"]);
+var gridsModule = angular.module("testAngularGrid", ["agGrid"]);
 
 gridsModule.controller('mainController', function($scope) {
 

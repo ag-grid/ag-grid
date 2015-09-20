@@ -1,16 +1,17 @@
 {
-  "name": "angular-grid",
+  "name": "ag-grid",
   "version": "1.16.1",
-  "description": "High performance and feature rich data grid for AngularJS",
-  "main": "dist/angular-grid.min.js",
+  "description": "Advanced Javascript Datagrid. Supports raw Javascrip, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "main": "dist/ag-grid.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/angular-grid.git"
+    "url": "https://github.com/ceolter/ag-grid.git"
   },
   "keywords": [
+    "web-components",
     "grid",
     "data",
     "table",
@@ -19,9 +20,9 @@
   "author": "Niall Crosby <info@angulargrid.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceolter/angular-grid/issues"
+    "url": "https://github.com/ceolter/ag-grid/issues"
   },
-  "homepage": "http://www.angulargrid.com/",
+  "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-foreach": "^0.1.0",

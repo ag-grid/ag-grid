@@ -1,4 +1,4 @@
-var fileBrowserModule = angular.module('basic', ['angularGrid']);
+var fileBrowserModule = angular.module('basic', ['agGrid']);
 
 fileBrowserModule.controller('basicController', function($scope) {
 

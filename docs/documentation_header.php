@@ -92,12 +92,41 @@
                     <a class="sidebarLink" href="/angular-grid-getting-started/index.php">Getting Started</a>
                 <?php } ?>
 
+                <?php if ($key == "Getting Started ng1") { ?>
+                    <span class="sidebarLinkSelected childItem">> AngularJS 1.x</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-angularjs-1/index.php">> AngularJS 1.x</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started ng2") { ?>
+                    <span class="sidebarLinkSelected childItem">> AngularJS 2.0</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-angularjs-2/index.php">> AngularJS 2.0</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started Web Components") { ?>
+                    <span class="sidebarLinkSelected childItem">> Web Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-web-components/index.php">> Web Components</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started Javascript") { ?>
+                    <span class="sidebarLinkSelected childItem">> Javascript</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-javascript/index.php">> Javascript</a>
+                <?php } ?>
+
+                <?php if ($key == "Width & Height") { ?>
+                    <span class="sidebarLinkSelected">Width & Height</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
+                <?php } ?>
+
                 <?php if ($key == "Grid Options") { ?>
                     <span class="sidebarLinkSelected">Grid Options</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
                 <?php } ?>
-
 
                 <h4>
                     Columns & Cells

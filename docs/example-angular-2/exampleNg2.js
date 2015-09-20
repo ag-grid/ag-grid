@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 var SampleAppComponent = function() {
+    // we pass an empty gridOptions in, so we can grab the api out
+    this.gridOptions = {};
     this.columnDefs = columnDefs;
     this.createRowData();
 };

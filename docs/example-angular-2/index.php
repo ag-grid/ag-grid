@@ -1,7 +1,7 @@
 <?php
 $key = "Angular 2";
 $pageTitle = "Angular 2 Data Grid";
-$pageDescription = "This page describes how to use ag-grid (Angular Grid) with Angular 2.";
+$pageDescription = "This page describes how to use ag-grid with Angular 2.";
 $pageKeyboards = "AngularJS Angular 2 Data Grid";
 include '../documentation_header.php';
 ?>
@@ -22,7 +22,7 @@ include '../documentation_header.php';
         new Windows 10 and Slate browser, and ng2 failed there also.
     </note>
 
-    <show-example example="exampleNg2"></show-example>
+    <show-example example="exampleNg2" extra-pages="sampleAppComponent.html"></show-example>
 
     <h2>Notes on Angular 2 and ag-Grid</h2>
 

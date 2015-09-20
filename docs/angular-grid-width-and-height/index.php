@@ -29,9 +29,7 @@ include '../documentation_header.php';
     If the width and / or height change after the grid is initialised, the grid will
     automatically resize to fill the new area.
 
-    <show-example example="example1"></show-example>
-
-    <p/>
+    <show-example example="exampleWidthAndHeight"></show-example>
 
 </div>
 

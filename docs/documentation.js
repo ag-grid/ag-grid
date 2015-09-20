@@ -16,6 +16,20 @@
         $scope.source =  example + ".html";
         $scope.selectedTab = 'example';
 
+        if ($attrs.extraPages) {
+            $scope.extraPages = $attrs.extraPages.split(',');
+            $scope.extraPageContent = {};
+            $scope.extraPages.forEach( function(page) {
+                $http.get("./"+page).
+                    success(function(data, status, headers, config) {
+                        $scope.extraPageContent[page] = data;
+                    }).
+                    error(function(data, status, headers, config) {
+                        $scope.extraPageContent[page] = data;
+                    });
+            });
+        }
+
         if ($attrs.exampleHeight) {
             $scope.iframeStyle = {height: $attrs.exampleHeight};
         } else {
@@ -36,6 +50,13 @@
             error(function(data, status, headers, config) {
                 $scope.javascript = data;
             });
+
+        $scope.isActive = function(item) {
+            return $scope.selectedTab == item;
+        };
+        $scope.setActive = function(item) {
+            $scope.selectedTab = item;
+        };
     }
 
     module.directive("note", function() {

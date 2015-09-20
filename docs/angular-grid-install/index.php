@@ -26,19 +26,18 @@ include '../documentation_header.php';
             <img src="../images/npm.png"/>
             Install with NPM
         </h3>
-        npm install angular-grid
+        npm install ag-grid
         </p>
     </div>
     <div>
         <h3><img src="../images/github.png"/> Download from Github</h3>
         <p>
-            Angular Grid on <a href="https://github.com/ceolter/angular-grid">Github</a>
+            ag-Grid on <a href="https://github.com/ceolter/angular-grid">Github</a>
         </p>
     </div>
 
-
     <h2>
-        Angular Grid - The MIT License (MIT)
+        ag-Grid - The MIT License (MIT)
     </h2>
 
     <p class="license">

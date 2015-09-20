@@ -1,5 +1,5 @@
 
-var module = angular.module("example", ["angularGrid"]);
+var module = angular.module("example", ["agGrid"]);
 
 module.controller("exampleCtrl", function($scope) {
 
@@ -17,8 +17,7 @@ module.controller("exampleCtrl", function($scope) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData,
-        forPrint: true // because so little data, no need to use scroll bars
+        rowData: rowData
     };
 
 });
