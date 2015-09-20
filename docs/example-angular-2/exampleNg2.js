@@ -37,10 +37,12 @@ SampleAppComponent.prototype.createRowData = function() {
 };
 
 SampleAppComponent.prototype.calculateRowCount = function() {
-    var model = this.gridOptions.api.getModel();
-    var totalRows = this.gridOptions.rowData.length;
-    var processedRows = model.getVirtualRowCount();
-    this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+    if (this.api && this.rowData) {
+        var model = this.api.getModel();
+        var totalRows = this.rowData.length;
+        var processedRows = model.getVirtualRowCount();
+        this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+    }
 };
 
 SampleAppComponent.prototype.onModelUpdated = function() {

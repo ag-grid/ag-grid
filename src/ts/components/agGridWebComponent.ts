@@ -38,7 +38,8 @@ module awk.grid {
         };
 
         AgileGridProto.columnEventListener = function(gridEvent: ColumnChangeEvent): void {
-            var browserEvent = new Event(gridEvent.getType().toLowerCase());
+            var eventLowerCase = gridEvent.getType().toLowerCase();
+            var browserEvent = new Event(eventLowerCase);
 
             var browserEventNoType = <any> browserEvent;
             browserEventNoType.column = gridEvent.getColumn();
@@ -49,21 +50,10 @@ module awk.grid {
 
             this.dispatchEvent(browserEvent);
 
-            //var emitter: any;
-            //switch (event.getType()) {
-            //    case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_MOVED: emitter = this.columnMoved; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_RESIZED: emitter = this.columnResized; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
-            //    case ColumnChangeEvent.TYPE_COLUMN_VISIBLE: emitter = this.columnVisible; break;
-            //    default:
-            //        console.log('ag-Grid: AgGridDirective - unknown event type: ' + event);
-            //        return;
-            //}
-            //emitter.next(event);
+            var callbackMethod = 'on' + eventLowerCase;
+            if (typeof this[callbackMethod] === 'function') {
+                this[callbackMethod](browserEvent);
+            }
         };
 
         AgileGridProto.genericEventListener = function(eventName: string, event: any): void {

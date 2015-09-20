@@ -143,6 +143,10 @@
             console.log('get columnresized: ' + event);
         });
 
+        myGrid.oncolumnresized = function(event) {
+            console.log('function oncolumnresized: ' + event);
+        };
+
         addQuickFilterListener();
     });
 
