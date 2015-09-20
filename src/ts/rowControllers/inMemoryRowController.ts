@@ -25,13 +25,15 @@ module awk.grid {
 
         private groupCreator: GroupCreator;
         private valueService: ValueService;
+        private eventService: EventService;
 
         constructor() {
             this.createModel();
         }
 
         init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, angularGrid: any,
-             filterManager: FilterManager, $scope: any, groupCreator: GroupCreator, valueService: ValueService) {
+             filterManager: FilterManager, $scope: any, groupCreator: GroupCreator, valueService: ValueService,
+             eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnController = columnController;
             this.angularGrid = angularGrid;
@@ -39,6 +41,7 @@ module awk.grid {
             this.$scope = $scope;
             this.groupCreator = groupCreator;
             this.valueService = valueService;
+            this.eventService = eventService;
 
             this.allRows = null;
             this.rowsAfterGroup = null;
@@ -129,7 +132,7 @@ module awk.grid {
                     this.doGroupMapping();
             }
 
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_MODEL_UPDATED);
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
             if (this.$scope) {
                 setTimeout( () => {
                     this.$scope.$apply();

@@ -87,15 +87,13 @@ module awk.grid {
         private ePinnedFloatingBottom: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
 
-        constructor(gridOptionsWrapper: GridOptionsWrapper) {
+        public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
             this.forPrint = this.gridOptionsWrapper.isForPrint();
             this.setupComponents();
             this.scrollWidth = _.getScrollbarWidth();
-        }
 
-        public init(columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService) {
             this.columnModel = columnModel;
             this.rowRenderer = rowRenderer;
             this.masterSlaveService = masterSlaveService;

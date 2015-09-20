@@ -25,6 +25,7 @@ module awk.grid {
         private lastVirtualRenderedRow: number;
         private focusedCell: any;
         private valueService: ValueService;
+        private eventService: EventService;
 
         private renderedRows: {[key: string]: RenderedRow};
         private renderedTopFloatingRows: RenderedRow[] = [];
@@ -45,7 +46,7 @@ module awk.grid {
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
                     angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
                     selectionController: SelectionController, expressionService: ExpressionService,
-                    templateService: TemplateService, valueService: ValueService) {
+                    templateService: TemplateService, valueService: ValueService, eventService: EventService) {
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
@@ -58,6 +59,7 @@ module awk.grid {
             this.templateService = templateService;
             this.valueService = valueService;
             this.findAllElements(gridPanel);
+            this.eventService = eventService;
 
             this.cellRendererMap = {
                 'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory),
@@ -161,7 +163,7 @@ module awk.grid {
                     var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
                         this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                         this.$compile, this.templateService, this.selectionController, this,
-                        bodyContainer, pinnedContainer, node, rowIndex);
+                        bodyContainer, pinnedContainer, node, rowIndex, this.eventService);
                     renderedRow.setMainRowWidth(mainRowWidth);
                     renderedRows.push(renderedRow);
                 })
@@ -252,7 +254,7 @@ module awk.grid {
             renderedRow.destroy();
 
             var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_VIRTUAL_ROW_REMOVED, event);
+            this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
             this.angularGrid.onVirtualRowRemoved(indexToRemove);
 
             delete this.renderedRows[indexToRemove];
@@ -351,7 +353,7 @@ module awk.grid {
             var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
                 this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                 this.$compile, this.templateService, this.selectionController, this,
-                this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex);
+                this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex, this.eventService);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;
@@ -480,7 +482,7 @@ module awk.grid {
                 eCell.focus();
             }
 
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_FOCUSED, this.focusedCell);
+            this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, this.focusedCell);
         }
 
         // for API

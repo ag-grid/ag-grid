@@ -23,13 +23,16 @@ module awk.grid {
         private selectedRows: any;
         private selectedNodesById: any;
         private rowModel: any;
+        private eventService: EventService;
 
-        public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper, $scope: any, rowRenderer: any) {
+        public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper,
+                    $scope: any, rowRenderer: RowRenderer, eventService: EventService) {
             this.eParentsOfRows = gridPanel.getRowsParent();
             this.angularGrid = angularGrid;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.$scope = $scope;
             this.rowRenderer = rowRenderer;
+            this.eventService = eventService;
 
             this.initSelectedNodesById();
 
@@ -228,7 +231,7 @@ module awk.grid {
             // inform the rowSelected listener, if any
             if (!suppressEvents) {
                 var event: any = {node: node};
-                this.gridOptionsWrapper.fireEvent(Constants.EVENT_ROW_SELECTED, event)
+                this.eventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event)
             }
 
             return true;
@@ -341,7 +344,7 @@ module awk.grid {
             var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
 
             if (!nothingChangedMustBeInitialising && !suppressEvents) {
-                this.gridOptionsWrapper.fireEvent(Constants.EVENT_SELECTION_CHANGED);
+                this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
             }
 
             var that = this;

@@ -169,12 +169,12 @@ module awk.grid {
         public onInit(): void {
             this.initGridOptions();
             var nativeElement = this.elementDef.nativeElement;
-            this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions, this.genericEventListener.bind(this));
+            this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions);
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
 
             var eventService = this._agGrid.getEventService();
-            eventService.addGlobalListener(this.columnEventListener.bind(this));
+            eventService.addGlobalListener(this.globalEventListener.bind(this));
 
             this._initialised = true;
         }
@@ -260,9 +260,9 @@ module awk.grid {
             }
         }
 
-        private columnEventListener(event: ColumnChangeEvent): void {
+        private globalEventListener(eventType: string, event: ColumnChangeEvent): void {
             var emitter: any;
-            switch (event.getType()) {
+            switch (eventType) {
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
@@ -271,48 +271,29 @@ module awk.grid {
                 case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
                 case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
                 case Events.EVENT_COLUMN_VISIBLE: emitter = this.columnVisible; break;
+                case Events.EVENT_MODEL_UPDATED: emitter = this.modelUpdated; break;
+                case Events.EVENT_CELL_CLICKED: emitter = this.cellClicked; break;
+                case Events.EVENT_CELL_DOUBLE_CLICKED: emitter = this.cellDoubleClicked; break;
+                case Events.EVENT_CELL_CONTEXT_MENU: emitter = this.cellContextMenu; break;
+                case Events.EVENT_CELL_VALUE_CHANGED: emitter = this.cellValueChanged; break;
+                case Events.EVENT_CELL_FOCUSED: emitter = this.cellFocused; break;
+                case Events.EVENT_ROW_SELECTED: emitter = this.rowSelected; break;
+                case Events.EVENT_SELECTION_CHANGED: emitter = this.selectionChanged; break;
+                case Events.EVENT_BEFORE_FILTER_CHANGED: emitter = this.beforeFilterChanged; break;
+                case Events.EVENT_AFTER_FILTER_CHANGED: emitter = this.afterFilterChanged; break;
+                case Events.EVENT_AFTER_SORT_CHANGED: emitter = this.afterSortChanged; break;
+                case Events.EVENT_BEFORE_SORT_CHANGED: emitter = this.beforeSortChanged; break;
+                case Events.EVENT_FILTER_MODIFIED: emitter = this.filterModified; break;
+                case Events.EVENT_VIRTUAL_ROW_REMOVED: emitter = this.virtualRowRemoved; break;
+                case Events.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
+                case Events.EVENT_READY: emitter = this.ready; break;
                 default:
-                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + event);
+                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + eventType);
                     return;
             }
             emitter.next(event);
         }
-
-        private genericEventListener(eventName: string, event: any): void {
-            var emitter: any;
-            switch (eventName) {
-                case Constants.EVENT_MODEL_UPDATED: emitter = this.modelUpdated; break;
-                case Constants.EVENT_CELL_CLICKED: emitter = this.cellClicked; break;
-                case Constants.EVENT_CELL_DOUBLE_CLICKED: emitter = this.cellDoubleClicked; break;
-                case Constants.EVENT_CELL_CONTEXT_MENU: emitter = this.cellContextMenu; break;
-                case Constants.EVENT_CELL_VALUE_CHANGED: emitter = this.cellValueChanged; break;
-                case Constants.EVENT_CELL_FOCUSED: emitter = this.cellFocused; break;
-                case Constants.EVENT_ROW_SELECTED: emitter = this.rowSelected; break;
-                case Constants.EVENT_SELECTION_CHANGED: emitter = this.selectionChanged; break;
-                case Constants.EVENT_BEFORE_FILTER_CHANGED: emitter = this.beforeFilterChanged; break;
-                case Constants.EVENT_AFTER_FILTER_CHANGED: emitter = this.afterFilterChanged; break;
-                case Constants.EVENT_AFTER_SORT_CHANGED: emitter = this.afterSortChanged; break;
-                case Constants.EVENT_BEFORE_SORT_CHANGED: emitter = this.beforeSortChanged; break;
-                case Constants.EVENT_FILTER_MODIFIED: emitter = this.filterModified; break;
-                case Constants.EVENT_VIRTUAL_ROW_REMOVED: emitter = this.virtualRowRemoved; break;
-                case Constants.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
-                case Constants.EVENT_READY: emitter = this.ready; break;
-                default:
-                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + eventName);
-                    return;
-            }
-
-            // not all the grid events have data, but angular 2 requires some object to be the
-            // event, so put in an empty object if missing the event.
-            if (event===null || event===undefined) {
-                event = {};
-            }
-
-            emitter.next(event);
-        }
-
     }
-
 
     // provide a reference to angular
     var ng = (<any> window).ng;

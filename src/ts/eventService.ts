@@ -39,14 +39,17 @@ module awk.grid {
             _.removeFromArray(this.globalListeners, listener);
         }
 
-        public dispatchEvent(eventType: string, event: any): void {
+        public dispatchEvent(eventType: string, event?: any): void {
+            if (!event) {
+                event = {};
+            }
             var listenerList = this.getListenerList(eventType);
             listenerList.forEach( (listener)=> {
                 listener(event);
             });
 
             this.globalListeners.forEach( (listener)=> {
-                listener(event);
+                listener(eventType, event);
             });
         }
     }

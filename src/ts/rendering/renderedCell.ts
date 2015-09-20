@@ -42,6 +42,7 @@ module awk.grid {
         private eCheckbox: HTMLInputElement;
         private columnController: ColumnController;
         private valueService: ValueService;
+        private eventService: EventService;
 
         private value: any;
         private checkboxSelection: boolean;
@@ -51,7 +52,7 @@ module awk.grid {
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
                     node: any, rowIndex: number, scope: any, columnController: ColumnController,
-                    valueService: ValueService) {
+                    valueService: ValueService, eventService: EventService) {
 
             this.isFirstColumn = isFirstColumn;
             this.column = column;
@@ -65,6 +66,7 @@ module awk.grid {
             this.templateService = templateService;
             this.columnController = columnController;
             this.valueService = valueService;
+            this.eventService = eventService;
 
             this.checkboxSelection = this.column.colDef.checkboxSelection && !node.floating;
 
@@ -222,7 +224,7 @@ module awk.grid {
             if (typeof colDef.cellValueChanged === 'function') {
                 colDef.cellValueChanged(paramsForCallbacks);
             }
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+            this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
 
             _.removeAllChildren(this.vGridCell.getElement());
             if (this.checkboxSelection) {
@@ -246,7 +248,7 @@ module awk.grid {
                     context: that.gridOptionsWrapper.getContext(),
                     api: that.gridOptionsWrapper.getApi()
                 };
-                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
 
                 if (colDef.cellDoubleClicked) {
                     var paramsForColDef = {
@@ -283,7 +285,7 @@ module awk.grid {
                     context: that.gridOptionsWrapper.getContext(),
                     api: that.gridOptionsWrapper.getApi()
                 };
-                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
 
                 if (colDef.cellContextMenu) {
                     var paramsForColDef = {
@@ -364,7 +366,7 @@ module awk.grid {
                     context: that.gridOptionsWrapper.getContext(),
                     api: that.gridOptionsWrapper.getApi()
                 };
-                that.gridOptionsWrapper.fireEvent(Constants.EVENT_CELL_CLICKED, paramsForGrid);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, paramsForGrid);
                 if (colDef.cellClicked) {
                     var paramsForColDef = {
                         node: that.node,

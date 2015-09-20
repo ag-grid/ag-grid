@@ -25,6 +25,23 @@ module awk.grid {
 
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static EVENT_COLUMN_PINNED_COUNT_CHANGED = 'columnPinnedCountChanged';
+
+        public static EVENT_MODEL_UPDATED = 'modelUpdated';
+        public static EVENT_CELL_CLICKED = 'cellClicked';
+        public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+        public static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
+        public static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
+        public static EVENT_CELL_FOCUSED = 'cellFocused';
+        public static EVENT_ROW_SELECTED = 'rowSelected';
+        public static EVENT_SELECTION_CHANGED = 'selectionChanged';
+        public static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
+        public static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+        public static EVENT_FILTER_MODIFIED = 'filterModified';
+        public static EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+        public static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
+        public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
+        public static EVENT_ROW_CLICKED = 'rowClicked';
+        public static EVENT_READY = 'ready';
     }
 
 }

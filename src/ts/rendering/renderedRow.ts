@@ -39,6 +39,7 @@ module awk.grid {
         private eBodyContainer: HTMLElement;
         private ePinnedContainer: HTMLElement;
         private valueService: ValueService;
+        private eventService: EventService;
 
         constructor(gridOptionsWrapper: GridOptionsWrapper,
                     valueService: ValueService,
@@ -55,7 +56,8 @@ module awk.grid {
                     eBodyContainer: HTMLElement,
                     ePinnedContainer: HTMLElement,
                     node: any,
-                    rowIndex: number) {
+                    rowIndex: number,
+                    eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.valueService = valueService;
             this.parentScope = parentScope;
@@ -71,6 +73,7 @@ module awk.grid {
             this.eBodyContainer = eBodyContainer;
             this.ePinnedContainer = ePinnedContainer;
             this.pinning = columnController.isPinning();
+            this.eventService = eventService;
 
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
             var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
@@ -199,7 +202,7 @@ module awk.grid {
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
                     this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnController,
-                    this.valueService);
+                    this.valueService, this.eventService);
 
                 var vGridCell = renderedCell.getVGridCell();
 

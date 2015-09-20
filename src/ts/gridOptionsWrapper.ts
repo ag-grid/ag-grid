@@ -23,19 +23,16 @@ module awk.grid {
         private floatingTopRowData: any[];
         private floatingBottomRowData: any[];
 
-        private genericEventListeners: GenericEventListener [] = [];
-
-        constructor(gridOptions: GridOptions, genericEventListener: GenericEventListener) {
+        public init(gridOptions: GridOptions, eventService: EventService): void {
             this.gridOptions = gridOptions;
-            if (genericEventListener) {
-                this.genericEventListeners.push(genericEventListener);
-            }
 
             this.headerHeight = gridOptions.headerHeight;
             this.groupHeaders = gridOptions.groupHeaders;
             this.rowHeight = gridOptions.rowHeight;
             this.floatingTopRowData = gridOptions.floatingTopRowData;
             this.floatingBottomRowData = gridOptions.floatingBottomRowData;
+
+            eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
             // set defaults
             if (!this.rowHeight) {
@@ -198,13 +195,10 @@ module awk.grid {
             };
         }
 
-        public fireEvent(eventName: string, event?: any): void {
+        public globalEventHandler(eventName: string, event?: any): void {
             if (typeof (<any>this.gridOptions)[eventName] === 'function') {
                 (<any>this.gridOptions)[eventName](event);
             }
-            this.genericEventListeners.forEach( (listener: GenericEventListener) => {
-                listener(eventName, event);
-            });
         }
     }
 }

@@ -23,24 +23,6 @@ module awk.grid {
         static KEY_UP = 38;
         static KEY_LEFT = 37;
         static KEY_RIGHT = 39;
-
-        static EVENT_MODEL_UPDATED = 'modelUpdated';
-        static EVENT_CELL_CLICKED = 'cellClicked';
-        static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
-        static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
-        static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
-        static EVENT_CELL_FOCUSED = 'cellFocused';
-        static EVENT_ROW_SELECTED = 'rowSelected';
-        static EVENT_SELECTION_CHANGED = 'selectionChanged';
-        static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
-        static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
-        static EVENT_FILTER_MODIFIED = 'filterModified';
-        static EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
-        static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
-        static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
-        static EVENT_ROW_CLICKED = 'rowClicked';
-        static EVENT_READY = 'ready';
-
     }
 
 /*

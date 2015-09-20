@@ -5,8 +5,8 @@ module awk.grid {
 
         private logging: boolean;
 
-        constructor(logging: boolean) {
-            this.logging = logging;
+        public init(gridOptionsWrapper: GridOptionsWrapper): void {
+            this.logging = gridOptionsWrapper.isDebug();
         }
 
         public create(name: string) {

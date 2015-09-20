@@ -53,7 +53,6 @@ module awk.grid {
         constructor(eGridDiv: any, gridOptions: any, genericEventListener: GenericEventListener = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
-            this.gridOptionsWrapper = new GridOptionsWrapper(this.gridOptions, genericEventListener);
 
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
@@ -95,7 +94,7 @@ module awk.grid {
 
             // if ready function provided, use it
             var readyParams = {api: gridOptions.api};
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_READY, readyParams);
+            this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
         }
 
         public getRowModel(): any {
@@ -114,11 +113,9 @@ module awk.grid {
 
         private setupComponents($scope: any, $compile: any, eUserProvidedDiv: any) {
 
-            // make local references, to make the below more human readable
-            var gridOptionsWrapper = this.gridOptionsWrapper;
-            var forPrint = gridOptionsWrapper.isForPrint();
-
             // create all the beans
+            var eventService = new EventService();
+            var gridOptionsWrapper = new GridOptionsWrapper();
             var selectionController = new SelectionController();
             var filterManager = new FilterManager();
             var selectionRendererFactory = new SelectionRendererFactory();
@@ -129,38 +126,39 @@ module awk.grid {
             var virtualPageRowController = new VirtualPageRowController();
             var expressionService = new ExpressionService();
             var templateService = new TemplateService();
-            var gridPanel = new GridPanel(gridOptionsWrapper);
+            var gridPanel = new GridPanel();
             var popupService = new PopupService();
             var valueService = new ValueService();
             var groupCreator = new GroupCreator();
             var masterSlaveService = new MasterSlaveService();
-            var eventService = new EventService();
-            var loggerFactory = new LoggerFactory(gridOptionsWrapper.isDebug());
+            var loggerFactory = new LoggerFactory();
 
             // initialise all the beans
+            gridOptionsWrapper.init(this.gridOptions, eventService);
+            loggerFactory.init(gridOptionsWrapper);
+            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
             templateService.init($scope);
             expressionService.init(loggerFactory);
-            selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer);
+            selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer, eventService);
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
                 expressionService, valueService, masterSlaveService, eventService);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
-                $scope, selectionController, expressionService, templateService, valueService);
+                $scope, selectionController, expressionService, templateService, valueService, eventService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
                 $scope, $compile);
             inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
-                groupCreator, valueService);
+                groupCreator, valueService, eventService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
-            gridPanel.init(columnController, rowRenderer, masterSlaveService);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
             masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;
-            if (!forPrint) {
+            if (!gridOptionsWrapper.isForPrint()) {
                 toolPanel = new ToolPanel();
                 toolPanelLayout = toolPanel.layout;
                 toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, popupService, eventService);
@@ -177,7 +175,7 @@ module awk.grid {
             // and the last bean, done in it's own section, as it's optional
             var paginationController: any = null;
             var paginationGui: any = null;
-            if (!forPrint) {
+            if (!gridOptionsWrapper.isForPrint()) {
                 paginationController = new PaginationController();
                 paginationController.init(this, gridOptionsWrapper);
                 paginationGui = paginationController.getGui();
@@ -197,12 +195,13 @@ module awk.grid {
             this.valueService = valueService;
             this.masterSlaveService = masterSlaveService;
             this.eventService = eventService;
+            this.gridOptionsWrapper = gridOptionsWrapper;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.getLayout(),
                 east: toolPanelLayout,
                 south: paginationGui,
-                dontFill: forPrint,
+                dontFill: gridOptionsWrapper.isForPrint(),
                 name: 'eRootPanel'
             });
             popupService.init(this.eRootPanel.getGui());
@@ -335,11 +334,11 @@ module awk.grid {
         }
 
         public onFilterModified() {
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_FILTER_MODIFIED);
+            this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
         }
 
         public onFilterChanged() {
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_BEFORE_FILTER_CHANGED);
+            this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
             this.filterManager.onFilterChanged();
             this.headerRenderer.updateFilterIcons();
             if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
@@ -350,7 +349,7 @@ module awk.grid {
                 // if doing in memory filtering, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_FILTER);
             }
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_AFTER_FILTER_CHANGED);
+            this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
         }
 
         public onRowClicked(event: any, rowIndex: any, node: any) {
@@ -361,7 +360,7 @@ module awk.grid {
                 event: event,
                 rowIndex: rowIndex
             };
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_ROW_CLICKED, params)
+            this.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, params)
 
             // we do not allow selecting groups by clicking (as the click here expands the group)
             // so return if it's a group row
@@ -538,7 +537,7 @@ module awk.grid {
         }
 
         public onSortingChanged() {
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_BEFORE_SORT_CHANGED);
+            this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
             this.headerRenderer.updateSortIcons();
             if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
                 // if doing server side sorting, changing the sort has the impact
@@ -548,7 +547,7 @@ module awk.grid {
                 // if doing in memory sorting, we just update the in memory data
                 this.updateModelAndRefresh(Constants.STEP_SORT);
             }
-            this.gridOptionsWrapper.fireEvent(Constants.EVENT_AFTER_SORT_CHANGED);
+            this.eventService.dispatchEvent(Events.EVENT_AFTER_SORT_CHANGED);
         }
 
         public addVirtualRowListener(rowIndex: any, callback: any) {
