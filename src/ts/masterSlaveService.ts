@@ -1,6 +1,8 @@
 /// <reference path="columnController.ts" />
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="logger.ts" />
+/// <reference path="events.ts" />
+/// <reference path="eventService.ts" />
 
 module awk.grid {
 
@@ -10,6 +12,7 @@ module awk.grid {
         private columnController: ColumnController;
         private gridPanel: GridPanel;
         private logger: Logger;
+        private eventService: EventService;
 
         // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
@@ -19,11 +22,19 @@ module awk.grid {
         public init(gridOptionsWrapper: GridOptionsWrapper,
                     columnController: ColumnController,
                     gridPanel: GridPanel,
-                    loggerFactory: LoggerFactory) {
+                    loggerFactory: LoggerFactory,
+                    eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnController = columnController;
             this.gridPanel = gridPanel;
+            this.eventService = eventService;
             this.logger = loggerFactory.create('MasterSlaveService');
+
+            eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.fireColumnEvent.bind(this));
         }
 
         // common logic across all the fire methods
@@ -54,7 +65,7 @@ module awk.grid {
             this.consuming = false;
         }
 
-        public fireColumnEvent(event: ColumnChangeEvent): void {
+        private fireColumnEvent(event: ColumnChangeEvent): void {
             this.fireEvent( (slaveService: MasterSlaveService)=> {
                 slaveService.onColumnEvent(event);
             });
@@ -95,27 +106,23 @@ module awk.grid {
                 if (masterColumnGroup && !slaveColumnGroup) { return; }
 
                 switch (event.getType()) {
-                    // we don't do anything for these three events
-                    //case ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED:
-                    //case ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE:
-                    //case ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE:
-                    case ColumnChangeEvent.TYPE_COLUMN_MOVED:
+                    case Events.EVENT_COLUMN_MOVED:
                         this.logger.log('onColumnEvent-> processing '+event+' fromIndex = '+ event.getFromIndex() + ', toIndex = ' + event.getToIndex());
                         this.columnController.moveColumn(event.getFromIndex(), event.getToIndex());
                         break;
-                    case ColumnChangeEvent.TYPE_COLUMN_VISIBLE:
+                    case Events.EVENT_COLUMN_VISIBLE:
                         this.logger.log('onColumnEvent-> processing '+event+' visible = '+ masterColumn.visible);
                         this.columnController.setColumnVisible(slaveColumn, masterColumn.visible);
                         break;
-                    case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED:
+                    case Events.EVENT_COLUMN_GROUP_OPENED:
                         this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.expanded);
                         this.columnController.columnGroupOpened(slaveColumnGroup, masterColumnGroup.expanded);
                         break;
-                    case ColumnChangeEvent.TYPE_COLUMN_RESIZED:
+                    case Events.EVENT_COLUMN_RESIZED:
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
                         this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth);
                         break;
-                    case ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED:
+                    case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED:
                         this.logger.log('onColumnEvent-> processing '+event);
                         this.columnController.setPinnedColumnCount(event.getPinnedColumnCount());
                         break;

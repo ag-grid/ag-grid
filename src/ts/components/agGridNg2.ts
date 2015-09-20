@@ -172,7 +172,10 @@ module awk.grid {
             this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions, this.genericEventListener.bind(this));
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
-            this.columnApi.addChangeListener(this.columnEventListener.bind(this));
+
+            var eventService = this._agGrid.getEventService();
+            eventService.addGlobalListener(this.columnEventListener.bind(this));
+
             this._initialised = true;
         }
 
@@ -260,14 +263,14 @@ module awk.grid {
         private columnEventListener(event: ColumnChangeEvent): void {
             var emitter: any;
             switch (event.getType()) {
-                case ColumnChangeEvent.TYPE_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
-                case ColumnChangeEvent.TYPE_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
-                case ColumnChangeEvent.TYPE_COLUMN_MOVED: emitter = this.columnMoved; break;
-                case ColumnChangeEvent.TYPE_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
-                case ColumnChangeEvent.TYPE_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
-                case ColumnChangeEvent.TYPE_COLUMN_RESIZED: emitter = this.columnResized; break;
-                case ColumnChangeEvent.TYPE_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
-                case ColumnChangeEvent.TYPE_COLUMN_VISIBLE: emitter = this.columnVisible; break;
+                case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
+                case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
+                case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
+                case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
+                case Events.EVENT_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
+                case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
+                case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
+                case Events.EVENT_COLUMN_VISIBLE: emitter = this.columnVisible; break;
                 default:
                     console.log('ag-Grid: AgGridDirective - unknown event type: ' + event);
                     return;

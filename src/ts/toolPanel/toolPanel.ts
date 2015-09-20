@@ -16,7 +16,8 @@ module awk.grid {
             this.layout = new VerticalStack();
         }
 
-        init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: any, popupService: PopupService) {
+        public init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper,
+             popupService: PopupService, eventService: EventService) {
 
             var suppressPivotAndValues = gridOptionsWrapper.isToolPanelSuppressPivot();
             var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();
@@ -25,19 +26,21 @@ module awk.grid {
             var showValues = !suppressPivotAndValues && !suppressValues;
 
             // top list, column reorder and visibility
-            var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper);
+            var columnSelectionPanel = new ColumnSelectionPanel(columnController, gridOptionsWrapper, eventService);
             var heightColumnSelection = suppressPivotAndValues ? '100%' : '50%';
             this.layout.addPanel(columnSelectionPanel.layout, heightColumnSelection);
             var dragSource = columnSelectionPanel.getDragSource();
 
             if (showValues) {
-                var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper, popupService);
+                var valuesSelectionPanel = new ValuesSelectionPanel(columnController, gridOptionsWrapper,
+                    popupService, eventService);
                 this.layout.addPanel(valuesSelectionPanel.getLayout(), '25%');
                 valuesSelectionPanel.addDragSource(dragSource);
             }
 
             if (showPivot) {
-                var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController, gridOptionsWrapper);
+                var groupSelectionPanel = new GroupSelectionPanel(columnController, inMemoryRowController,
+                    gridOptionsWrapper, eventService);
                 var heightPivotSelection = showValues ? '25%' : '50%';
                 this.layout.addPanel(groupSelectionPanel.layout, heightPivotSelection);
                 groupSelectionPanel.addDragSource(dragSource);

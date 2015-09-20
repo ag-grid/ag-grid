@@ -1,6 +1,7 @@
 /// <reference path="../widgets/agList.ts" />
 /// <reference path="../utils.ts" />
 /// <reference path="../svgFactory.ts" />
+/// <reference path="../constants.ts" />
 /// <reference path="../layout/BorderLayout.ts" />
 
 module awk.grid {
@@ -16,12 +17,14 @@ module awk.grid {
         layout: any;
         private eRootPanel: any;
 
-        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper) {
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
 
-            this.columnController.addChangeListener(this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.columnsChanged.bind(this));
         }
 
         private columnsChanged() {

@@ -19,13 +19,15 @@ module awk.grid {
         private layout: any;
         private popupService: PopupService;
 
-        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService) {
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper,
+                    popupService: PopupService, eventService: EventService) {
             this.popupService = popupService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
 
-            this.columnController.addChangeListener(this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.columnsChanged.bind(this));
         }
 
         public getLayout() {

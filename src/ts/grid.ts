@@ -20,6 +20,7 @@
 /// <reference path="valueService.ts" />
 /// <reference path="masterSlaveService.ts" />
 /// <reference path="logger.ts" />
+/// <reference path="eventService.ts" />
 
 module awk.grid {
 
@@ -41,6 +42,7 @@ module awk.grid {
         private filterManager: FilterManager;
         private valueService: ValueService;
         private masterSlaveService: MasterSlaveService;
+        private eventService: EventService;
         private toolPanel: any;
         private gridPanel: GridPanel;
         private eRootPanel: any;
@@ -132,6 +134,7 @@ module awk.grid {
             var valueService = new ValueService();
             var groupCreator = new GroupCreator();
             var masterSlaveService = new MasterSlaveService();
+            var eventService = new EventService();
             var loggerFactory = new LoggerFactory(gridOptionsWrapper.isDebug());
 
             // initialise all the beans
@@ -142,7 +145,7 @@ module awk.grid {
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
-                expressionService, valueService, masterSlaveService);
+                expressionService, valueService, masterSlaveService, eventService);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
@@ -153,14 +156,14 @@ module awk.grid {
             gridPanel.init(columnController, rowRenderer, masterSlaveService);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
-            masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory);
+            masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService);
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;
             if (!forPrint) {
                 toolPanel = new ToolPanel();
                 toolPanelLayout = toolPanel.layout;
-                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, popupService);
+                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, popupService, eventService);
             }
 
             // this is a child bean, get a reference and pass it on
@@ -193,6 +196,7 @@ module awk.grid {
             this.gridPanel = gridPanel;
             this.valueService = valueService;
             this.masterSlaveService = masterSlaveService;
+            this.eventService = eventService;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.getLayout(),
@@ -211,22 +215,35 @@ module awk.grid {
 
             eUserProvidedDiv.appendChild(this.eRootPanel.getGui());
 
-            columnController.addChangeListener( (event: ColumnChangeEvent) => {
-                if (event.isPivotChanged()) {
-                    this.inMemoryRowController.onPivotChanged();
-                }
-                if (event.isValueChanged()) {
-                    this.inMemoryRowController.doAggregate();
-                }
+            eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_CHANGE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
+        }
 
-                if (event.isIndividualColumnResized()) {
-                    this.onIndividualColumnResized(event.getColumn());
-                } else {
-                    this.refreshHeaderAndBody();
-                }
+        private onColumnChanged(event: ColumnChangeEvent): void {
+            if (event.isPivotChanged()) {
+                this.inMemoryRowController.onPivotChanged();
+            }
+            if (event.isValueChanged()) {
+                this.inMemoryRowController.doAggregate();
+            }
 
-                this.gridPanel.showPinnedColContainersIfNeeded();
-            });
+            if (event.isIndividualColumnResized()) {
+                this.onIndividualColumnResized(event.getColumn());
+            } else {
+                this.refreshHeaderAndBody();
+            }
+
+            this.gridPanel.showPinnedColContainersIfNeeded();
+        }
+
+        public getEventService(): EventService {
+            return this.eventService;
         }
 
         private onIndividualColumnResized(column: Column): void {

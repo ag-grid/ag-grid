@@ -13,7 +13,10 @@ module awk.grid {
            this._agGrid = new awk.grid.Grid(this, options, this.genericEventListener.bind(this));
            this.api = options.api;
            this.columnApi = options.columnApi;
-           this.columnApi.addChangeListener(this.columnEventListener.bind(this));
+
+           var eventService = this._agGrid.getEventService();
+           eventService.addGlobalListener(this.columnEventListener.bind(this));
+
            //this._initialised = true;
        };
 

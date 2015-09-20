@@ -48,10 +48,6 @@ include '../documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>addChangeListener(listener)</th>
-            <td>Add a change listener to receive events of changes to the column state.</td>
-        </tr>
-        <tr>
             <th>sizeColumnsToFit(width)</th>
             <td>Get the columns to fit to a particular size. The gridApi.sizeColumnsToFit() uses
             this method and passes in the grid width.</td>

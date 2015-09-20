@@ -17,13 +17,15 @@ module awk.grid {
         cColumnList: any;
         layout: any;
 
-        constructor(columnController: ColumnController, inMemoryRowController: any, gridOptionsWrapper: any) {
+        constructor(columnController: ColumnController, inMemoryRowController: any,
+                    gridOptionsWrapper: GridOptionsWrapper, eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
             this.inMemoryRowController = inMemoryRowController;
 
-            this.columnController.addChangeListener(this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.columnsChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_CHANGE, this.columnsChanged.bind(this));
         }
 
         private columnsChanged() {
