@@ -1,44 +1,18 @@
+/// <reference path='componentUtil.ts'/>
+
 // todo:
 // + need to hook into destroy callback
 // + how can we make this element extend div?
 
 module awk.grid {
 
-    var SIMPLE_PROPERTY_NAMES = [
-        'sortingOrder',
-        'icons','localeText','localeTextFunc',
-        'groupColumnDef','context','rowStyle','rowClass','headerCellRenderer',
-        'groupDefaultExpanded','slaveGrids','rowSelection'];
-
-    var SIMPLE_NUMBER_PROPERTY_NAMES = [
-        'rowHeight','rowBuffer','colWidth'
-    ];
-
-    var SIMPLE_BOOLEAN_PROPERTY_NAMES = [
-        'virtualPaging','toolPanelSuppressPivot','toolPanelSuppressValues','rowsAlreadyGrouped',
-        'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
-        'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
-        'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
-        'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
-        'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
-        'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort'
-    ];
-
-    var WITH_IMPACT_NUMBER = ['pinnedColumnCount','headerHeight'];
-    var WITH_IMPACT_BOOLEAN = ['groupHeaders','showToolPanel'];
-    var WITH_IMPACT_OTHER = [
-        'rowData','floatingTopRowData','floatingBottomRowData','groupKeys','groupAggFunction',
-        'groupAggFields','columnDefs','datasource','quickFilterText'];
-
-    var CALLBACKS = ['groupInnerRenderer','groupRowInnerRenderer',
-        'groupRowRenderer','isScrollLag','suppressScrollLag',
-        'isExternalFilterPresent','doesExternalFilterPass'];
-
     function toBoolean(value: any): boolean {
         if (typeof value === 'boolean') {
             return value;
         } else if (typeof value === 'string') {
-            return value.toUpperCase() === 'TRUE';
+            // for boolean, compare to empty String to allow attributes appearing with
+            // not value to be treated as 'true'
+            return value.toUpperCase() === 'TRUE' || value=='';
         } else {
             return false;
         }
@@ -174,17 +148,17 @@ module awk.grid {
             var pThis = <any>this;
             var pGridOptions = <any>this.gridOptions;
             // add in all the simple properties
-            SIMPLE_PROPERTY_NAMES.concat(WITH_IMPACT_OTHER).concat(CALLBACKS).forEach( (key)=> {
+            ComponentUtil.SIMPLE_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES).concat(ComponentUtil.CALLBACKS).forEach( (key)=> {
                 if (typeof (pThis)[key] !== 'undefined') {
                     pGridOptions[key] = pThis[key];
                 }
             });
-            SIMPLE_BOOLEAN_PROPERTY_NAMES.concat(WITH_IMPACT_BOOLEAN).forEach( (key)=> {
+            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES).forEach( (key)=> {
                 if (typeof (pThis)[key] !== 'undefined') {
                     pGridOptions[key] = toBoolean(pThis[key]);
                 }
             });
-            SIMPLE_NUMBER_PROPERTY_NAMES.concat(WITH_IMPACT_NUMBER).forEach( (key)=> {
+            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES).forEach( (key)=> {
                 if (typeof (pThis)[key] !== 'undefined') {
                     pGridOptions[key] = toNumber(pThis[key]);
                 }
@@ -210,17 +184,17 @@ module awk.grid {
             var pGridOptions = <any>this.gridOptions;
 
             // check if any change for the simple types, and if so, then just copy in the new value
-            SIMPLE_PROPERTY_NAMES.forEach( (key)=> {
+            ComponentUtil.SIMPLE_PROPERTIES.forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = changes[key].currentValue;
                 }
             });
-            SIMPLE_BOOLEAN_PROPERTY_NAMES.forEach( (key)=> {
+            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = toBoolean(changes[key].currentValue);
                 }
             });
-            SIMPLE_NUMBER_PROPERTY_NAMES.forEach( (key)=> {
+            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = toNumber(changes[key].currentValue);
                 }
@@ -354,13 +328,13 @@ module awk.grid {
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
                 properties: ['gridOptions']
-                    .concat(SIMPLE_PROPERTY_NAMES)
-                    .concat(SIMPLE_BOOLEAN_PROPERTY_NAMES)
-                    .concat(SIMPLE_NUMBER_PROPERTY_NAMES)
-                    .concat(WITH_IMPACT_OTHER)
-                    .concat(WITH_IMPACT_BOOLEAN)
-                    .concat(WITH_IMPACT_NUMBER)
-                    .concat(CALLBACKS)
+                    .concat(ComponentUtil.SIMPLE_PROPERTIES)
+                    .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
+                    .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
+                    .concat(ComponentUtil.CALLBACKS)
                 ,
                 compileChildren: false, // no angular on the inside thanks
                 lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]

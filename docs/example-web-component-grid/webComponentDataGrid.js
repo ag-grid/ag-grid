@@ -135,8 +135,13 @@
     // Angular Grid will not find the div in the document.
     document.addEventListener("DOMContentLoaded", function() {
 
-        var myAgileGrid = document.querySelector('#myAgileGrid');
-        myAgileGrid.setGridOptions(gridOptions);
+        var myGrid = document.querySelector('#myGrid');
+        myGrid.setGridOptions(gridOptions);
+        myGrid.setAttribute('row-height', 55);
+
+        myGrid.addEventListener('columnresized', function(event) {
+            console.log('get columnresized: ' + event);
+        });
 
         addQuickFilterListener();
     });

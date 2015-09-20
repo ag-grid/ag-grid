@@ -29,3 +29,11 @@ forEachNodeAfterFilterAndSort(callback) -
 dontUseScrolls -> forPrint
 
 // remove onNewRows and onNewCols
+
+
+best practices for Web Components:
+http://webcomponents.org/articles/web-components-best-practices/
+
+
+web component changes:
+agile-grid is now ag-grid

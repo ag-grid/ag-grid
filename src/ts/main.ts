@@ -1,5 +1,6 @@
 /// <reference path="grid.ts" />
-/// <reference path="agGridNg2.ts" />
+/// <reference path="components/agGridNg2.ts" />
+/// <reference path="components/agGridWebComponent.ts" />
 
 declare var exports: any;
 declare var module: any;
@@ -42,9 +43,9 @@ declare var module: any;
     }
 
     // register web component if browser allows it
-    if ((<any>document).registerElement) {
-        registerWebComponent();
-    }
+    //if ((<any>document).registerElement) {
+    //    registerWebComponent();
+    //}
 
     root.angularGrid = angularGridGlobalFunction;
 
@@ -79,13 +80,13 @@ declare var module: any;
         });
     }
 
-    function registerWebComponent() {
-        var AgileGridProto = Object.create(HTMLElement.prototype);
-        AgileGridProto.setGridOptions = function(options: any) {
-            angularGridGlobalFunction(this, options);
-        };
-        (<any>document).registerElement('agile-grid', {prototype: AgileGridProto});
-    }
+    //function registerWebComponent() {
+    //    var AgileGridProto = Object.create(HTMLElement.prototype);
+    //    AgileGridProto.setGridOptions = function(options: any) {
+    //        angularGridGlobalFunction(this, options);
+    //    };
+    //    (<any>document).registerElement('agile-grid', {prototype: AgileGridProto});
+    //}
 
     // Global Function - this function is used for creating a grid, outside of any AngularJS
     function angularGridGlobalFunction(element: any, gridOptions: any) {
