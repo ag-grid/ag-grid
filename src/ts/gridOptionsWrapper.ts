@@ -1,6 +1,6 @@
 /// <reference path="constants.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var DEFAULT_ROW_HEIGHT = 25;
     var constants = Constants;

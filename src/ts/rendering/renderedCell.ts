@@ -9,16 +9,16 @@
 /// <reference path="../virtualDom/vHtmlElement.ts" />
 /// <reference path="../virtualDom/vWrapperElement.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 
     export class RenderedCell {
 
-        private vGridCell: awk.vdom.VHtmlElement; // the outer cell
-        private vSpanWithValue: awk.vdom.VHtmlElement; // inner cell
-        private vCellWrapper: awk.vdom.VHtmlElement;
-        private vParentOfValue: awk.vdom.VHtmlElement;
+        private vGridCell: ag.vdom.VHtmlElement; // the outer cell
+        private vSpanWithValue: ag.vdom.VHtmlElement; // inner cell
+        private vCellWrapper: ag.vdom.VHtmlElement;
+        private vParentOfValue: ag.vdom.VHtmlElement;
 
         private checkboxOnChangeListener: EventListener;
 
@@ -83,7 +83,7 @@ module awk.grid {
             return this.valueService.getValue(this.column.colDef, this.data, this.node);
         }
 
-        public getVGridCell(): awk.vdom.VHtmlElement {
+        public getVGridCell(): ag.vdom.VHtmlElement {
             return this.vGridCell;
         }
 
@@ -107,7 +107,7 @@ module awk.grid {
         }
 
         private setupComponents() {
-            this.vGridCell = new awk.vdom.VHtmlElement("div");
+            this.vGridCell = new ag.vdom.VHtmlElement("div");
             this.vGridCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
 
             // only set tab index if cell selection is enabled
@@ -570,15 +570,15 @@ module awk.grid {
 
         private createParentOfValue() {
             if (this.checkboxSelection) {
-                this.vCellWrapper = new awk.vdom.VHtmlElement('span');
+                this.vCellWrapper = new ag.vdom.VHtmlElement('span');
                 this.vCellWrapper.addClass('ag-cell-wrapper');
                 this.vGridCell.appendChild(this.vCellWrapper);
 
                 this.createSelectionCheckbox();
-                this.vCellWrapper.appendChild(new awk.vdom.VWrapperElement(this.eCheckbox));
+                this.vCellWrapper.appendChild(new ag.vdom.VWrapperElement(this.eCheckbox));
 
                 // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-                this.vSpanWithValue = new awk.vdom.VHtmlElement('span');
+                this.vSpanWithValue = new ag.vdom.VHtmlElement('span');
                 this.vSpanWithValue.addClass('ag-cell-value');
 
                 this.vCellWrapper.appendChild(this.vSpanWithValue);

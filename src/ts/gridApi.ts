@@ -2,7 +2,7 @@
 /// <reference path="rendering/rowRenderer.ts" />
 /// <reference path="headerRendering/headerRenderer.ts" />
 
-module awk.grid {
+module ag.grid {
 
     export class GridApi {
 

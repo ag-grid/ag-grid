@@ -1,6 +1,6 @@
 /// <reference path="vElement.ts" />
 
-module awk.vdom {
+module ag.vdom {
 
     export class VWrapperElement extends VElement {
 

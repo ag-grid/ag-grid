@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../layout/borderLayout.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var gridHtml =
             `<div>

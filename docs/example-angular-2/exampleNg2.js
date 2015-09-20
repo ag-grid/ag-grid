@@ -128,7 +128,7 @@ SampleAppComponent.annotations = [
         selector: 'sample-app'
     }),
     new ng.View({
-        directives: [awk.grid.AgGridDirective],
+        directives: [ag.grid.AgGridDirective],
         // put padding into the buttons
         styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         templateUrl: 'sampleAppComponent.html'

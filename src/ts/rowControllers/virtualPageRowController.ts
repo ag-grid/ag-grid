@@ -5,7 +5,7 @@
  * or standard pagination, the inMemoryRowController is used.
  */
 
-module awk.grid {
+module ag.grid {
 
     var utils = Utils;
     var logging = false;

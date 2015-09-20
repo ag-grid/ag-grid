@@ -4,7 +4,7 @@
 // + need to hook into destroy callback
 // + how can we make this element extend div?
 
-module awk.grid {
+module ag.grid {
 
     function toBoolean(value: any): boolean {
         if (typeof value === 'boolean') {
@@ -35,7 +35,7 @@ module awk.grid {
 
         // not intended for user to interact with. so putting _ in so if use gets reference
         // to this object, they kind'a know it's not part of the agreed interface
-        private _agGrid: awk.grid.Grid;
+        private _agGrid: ag.grid.Grid;
         private _initialised = false;
 
         private gridOptions: GridOptions;
@@ -169,7 +169,7 @@ module awk.grid {
         public onInit(): void {
             this.initGridOptions();
             var nativeElement = this.elementDef.nativeElement;
-            this._agGrid = new awk.grid.Grid(nativeElement, this.gridOptions);
+            this._agGrid = new ag.grid.Grid(nativeElement, this.gridOptions);
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
 

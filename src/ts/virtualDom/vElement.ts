@@ -1,8 +1,8 @@
 /// <reference path="../utils.ts" />
 
-module awk.vdom {
+module ag.vdom {
 
-    var _ = awk.grid.Utils;
+    var _ = ag.grid.Utils;
 
     export class VElement {
 

@@ -4,7 +4,7 @@
 /// <reference path='../columnController.ts' />
 /// <reference path='renderedHeaderElement.ts' />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
     var constants = Constants;

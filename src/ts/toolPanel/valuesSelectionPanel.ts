@@ -5,7 +5,7 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../widgets/agDropdownList.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var svgFactory = SvgFactory.getInstance();
     var constants = Constants;

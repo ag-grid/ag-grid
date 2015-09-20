@@ -1,6 +1,6 @@
 /// <reference path='componentUtil.ts'/>
 
-module awk.grid {
+module ag.grid {
    if ((<any>document).registerElement) {
 
         // i don't think this type of extension is pssible in TypeScript, so back to
@@ -10,7 +10,7 @@ module awk.grid {
        AgileGridProto.setGridOptions = function(options: any) {
 
            //this.initGridOptions();
-           this._agGrid = new awk.grid.Grid(this, options, this.genericEventListener.bind(this));
+           this._agGrid = new ag.grid.Grid(this, options, this.genericEventListener.bind(this));
            this.api = options.api;
            this.columnApi = options.columnApi;
 

@@ -1,4 +1,4 @@
-module awk {
+module ag.grid {
 
     export interface Filter {
 

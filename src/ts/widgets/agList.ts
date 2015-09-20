@@ -4,7 +4,7 @@
 
 declare function require(name: string): any;
 
-module awk.grid {
+module ag.grid {
 
     //var template = require('./agList.html');
     var utils = Utils;

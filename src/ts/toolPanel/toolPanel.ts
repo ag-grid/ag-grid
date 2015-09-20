@@ -4,7 +4,7 @@
 /// <reference path="./valuesSelectionPanel.ts" />
 /// <reference path="../layout/verticalStack.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var utils = Utils;
 

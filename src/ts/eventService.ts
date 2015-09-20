@@ -1,6 +1,6 @@
 /// <reference path="utils.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 

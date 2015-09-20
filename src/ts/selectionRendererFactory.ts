@@ -1,5 +1,5 @@
 
-module awk.grid {
+module ag.grid {
 
     export class SelectionRendererFactory {
 

@@ -7,7 +7,7 @@
 /// <reference path="../grid.ts" />
 /// <reference path="../entities/rowNode.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 

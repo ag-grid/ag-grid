@@ -9,7 +9,7 @@
 /// <reference path="renderedCell.ts" />
 /// <reference path="../virtualDom/vHtmlElement.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 
@@ -216,7 +216,7 @@ module awk.grid {
             }
         }
 
-        private bindVirtualElement(vElement: awk.vdom.VHtmlElement): void {
+        private bindVirtualElement(vElement: ag.vdom.VHtmlElement): void {
             var html = vElement.toHtmlString();
             var element: Element = <Element> _.loadTemplate(html);
             vElement.elementAttached(element);
@@ -307,7 +307,7 @@ module awk.grid {
         }
 
         private createRowContainer() {
-            var vRow = new awk.vdom.VHtmlElement('div');
+            var vRow = new ag.vdom.VHtmlElement('div');
             var that = this;
             vRow.addEventListener("click", function (event) {
                 that.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), that.node)

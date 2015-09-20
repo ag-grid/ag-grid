@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../entities/colDef.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 

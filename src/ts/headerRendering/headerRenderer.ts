@@ -5,7 +5,7 @@
 /// <reference path="../headerRendering/renderedHeaderCell.ts" />
 /// <reference path="../headerRendering/renderedHeaderGroupCell.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var utils = Utils;
 

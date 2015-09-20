@@ -3,7 +3,7 @@
 /// <reference path="renderedRow.ts" />
 /// <reference path="../cellRenderers/groupCellRendererFactory.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 

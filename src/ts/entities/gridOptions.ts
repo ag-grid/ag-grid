@@ -1,6 +1,6 @@
 /// <reference path="colDef.ts" />
 
-module awk.grid {
+module ag.grid {
 
     export interface GridOptions {
 

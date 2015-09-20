@@ -1,6 +1,6 @@
 /** The filter parameters for set filter */
 
-module awk.grid {
+module ag.grid {
 
     export interface SetFilterParameters {
 

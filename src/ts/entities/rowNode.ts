@@ -1,4 +1,4 @@
-module awk.grid {
+module ag.grid {
 
     export interface RowNode {
         /** Unique ID for the node. Can be though of as the index of the row in the original list,

@@ -22,7 +22,7 @@
 /// <reference path="logger.ts" />
 /// <reference path="eventService.ts" />
 
-module awk.grid {
+module ag.grid {
 
     export class Grid {
 

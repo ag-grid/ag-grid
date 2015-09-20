@@ -1,5 +1,5 @@
 
-module awk.grid {
+module ag.grid {
 
     var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
     var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;

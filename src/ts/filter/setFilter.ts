@@ -2,7 +2,7 @@
 /// <reference path="setFilterModel.ts" />
 /// <reference path="setFilterParameters.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 

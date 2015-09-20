@@ -1,6 +1,7 @@
 /// <reference path="../utils.ts" />
+/// <reference path="../constants.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
 
@@ -68,7 +69,7 @@ module awk.grid {
 
             function hidePopupOnEsc(event: any) {
                 var key = event.which || event.keyCode;
-                if(key === grid.Constants.KEY_ESCAPE) {
+                if (key === Constants.KEY_ESCAPE) {
                     hidePopup(null);
                 }
             }

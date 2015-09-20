@@ -2,7 +2,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var svgFactory = SvgFactory.getInstance();
     var utils = Utils;

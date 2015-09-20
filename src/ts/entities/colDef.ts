@@ -1,4 +1,4 @@
-module awk.grid {
+module ag.grid {
 
     export interface ColDef {
         /** If sorting by default, set it here. Set to 'asc' or 'desc' */

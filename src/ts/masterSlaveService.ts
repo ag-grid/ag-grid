@@ -4,7 +4,7 @@
 /// <reference path="events.ts" />
 /// <reference path="eventService.ts" />
 
-module awk.grid {
+module ag.grid {
 
     export class MasterSlaveService {
 

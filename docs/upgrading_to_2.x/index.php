@@ -37,3 +37,8 @@ http://webcomponents.org/articles/web-components-best-practices/
 
 web component changes:
 agile-grid is now ag-grid
+
+
+awk -> is now ag  (only bothers TypeScript people)
+
+Events merged into one.

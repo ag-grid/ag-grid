@@ -2,7 +2,7 @@
 /// <reference path="expressionService.ts" />
 /// <reference path="columnController.ts" />
 
-module awk.grid {
+module ag.grid {
 
     export class ValueService {
 

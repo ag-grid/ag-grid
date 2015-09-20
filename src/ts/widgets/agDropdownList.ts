@@ -3,7 +3,7 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../widgets/agPopupService.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var utils = Utils;
     var svgFactory = SvgFactory.getInstance();

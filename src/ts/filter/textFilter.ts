@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="textAndNumberFilterParameters.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var utils = Utils;
 

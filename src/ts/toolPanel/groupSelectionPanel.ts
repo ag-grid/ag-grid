@@ -4,7 +4,7 @@
 /// <reference path="../layout/BorderLayout.ts" />
 /// <reference path="../constants.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
     var svgFactory = SvgFactory.getInstance();

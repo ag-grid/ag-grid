@@ -5,7 +5,7 @@
 /// <reference path="columnChangeEvent.ts" />
 /// <reference path="masterSlaveService.ts" />
 
-module awk.grid {
+module ag.grid {
 
     var _ = Utils;
     var constants = Constants;

@@ -1,6 +1,6 @@
 /// <references path='events.ts'/>
 
-module awk.grid {
+module ag.grid {
 
     export class ColumnChangeEvent {
 
