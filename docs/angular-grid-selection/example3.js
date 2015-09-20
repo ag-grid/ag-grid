@@ -20,8 +20,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowSelection: 'multiple',
         rowData: null,
-        rowSelected: rowSelectedFunc,
-        selectionChanged: selectionChangedFunc
+        onRowSelected: rowSelectedFunc,
+        onSelectionChanged: selectionChangedFunc
     };
 
     function rowSelectedFunc(row) {

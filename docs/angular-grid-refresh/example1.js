@@ -77,8 +77,8 @@ module.controller("exampleCtrl", function($scope) {
         groupHeaders: true,
         rowSelection: 'single',
         enableSorting: true,
-        cellValueChanged: cellValueChangedFunction,
-        ready: function(event) {
+        onCellValueChanged: cellValueChangedFunction,
+        onReady: function(event) {
             event.api.sizeColumnsToFit();
         }
     };

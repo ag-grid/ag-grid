@@ -16,7 +16,8 @@ module ag.grid {
                     private gridOptionsWrapper: GridOptionsWrapper,
                     private gridPanel: GridPanel,
                     private valueService: ValueService,
-                    private masterSlaveService: MasterSlaveService) {
+                    private masterSlaveService: MasterSlaveService,
+                    private eventService: EventService) {
         }
 
         /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -297,5 +298,20 @@ module ag.grid {
             return this.valueService.getValue(colDef, data, node);
         }
 
+        public addEventListener(eventType: string, listener: Function): void {
+            this.eventService.addEventListener(eventType, listener);
+        }
+
+        public addGlobalListener(listener: Function): void {
+            this.eventService.addGlobalListener(listener);
+        }
+
+        public removeEventListener(eventType: string, listener: Function): void {
+            this.eventService.removeEventListener(eventType, listener);
+        }
+
+        public removeGlobalListener(listener: Function): void {
+            this.eventService.removeGlobalListener(listener);
+        }
     }
 }

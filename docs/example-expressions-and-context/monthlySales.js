@@ -57,13 +57,13 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
         groupHeaders: true,
         groupKeys: ['country'],
         rowHeight: 22,
-        modelUpdated: modelUpdated,
+        onModelUpdated: modelUpdated,
         groupSelectsChildren: true,
         context: {
             month: 0,
             months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
         },
-        ready: function(event) {
+        onReady: function(event) {
             event.api.sizeColumnsToFit();
         },
         icons: {

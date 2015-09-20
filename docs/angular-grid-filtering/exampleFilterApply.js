@@ -29,9 +29,9 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         enableFilter: true,
-        beforeFilterChanged: function() {console.log('beforeFilterChanged');},
-        afterFilterChanged: function() {console.log('afterFilterChanged');},
-        filterModified: function() {console.log('filterModified');}
+        onBeforeFilterChanged: function() {console.log('onBeforeFilterChanged');},
+        onAfterFilterChanged: function() {console.log('onAfterFilterChanged');},
+        onFilterModified: function() {console.log('onFilterModified');}
     };
 
     $http.get("../olympicWinners.json")

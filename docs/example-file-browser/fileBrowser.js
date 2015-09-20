@@ -141,7 +141,7 @@ fileBrowserModule.controller('fileBrowserController', function($scope) {
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>'
         },
-        rowClicked: rowClicked
+        onRowClicked: rowClicked
     };
 
     $scope.selectedFile = 'Select a file below...';

@@ -195,9 +195,19 @@ module ag.grid {
             };
         }
 
+        // responsible for calling the onXXX functions on gridOptions
         public globalEventHandler(eventName: string, event?: any): void {
-            if (typeof (<any>this.gridOptions)[eventName] === 'function') {
-                (<any>this.gridOptions)[eventName](event);
+            var callbackMethodName = this.getCallbackForEvent(eventName);
+            if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
+                (<any>this.gridOptions)[callbackMethodName](event);
+            }
+        }
+
+        private getCallbackForEvent(eventName: string): string {
+            if (!eventName || eventName.length < 2) {
+                return eventName;
+            } else {
+                return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
             }
         }
     }

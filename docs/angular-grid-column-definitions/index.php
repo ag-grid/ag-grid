@@ -86,15 +86,15 @@ include '../documentation_header.php';
             provided, frozen cells will use floatingCellRenderer if available, if not then cellRenderer.</td>
         </tr>
         <tr>
-            <th>cellClicked(params)</th>
+            <th>onCellClicked(params)</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
-            <th>cellDoubleClicked(params)</th>
+            <th>onCellDoubleClicked(params)</th>
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
-            <th>cellContextMenu(params)</th>
+            <th>onCellContextMenu(params)</th>
             <td>Function callback, gets called when a cell is right clicked.</td>
         </tr>
         <tr>
@@ -152,7 +152,7 @@ include '../documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
-            <th>newValueHandler(params)<br/>cellValueChanged(params)</th>
+            <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>
             <td>Callbacks for editing. See editing section for further details.</td>
         </tr>
         <tr>

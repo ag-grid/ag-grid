@@ -22,7 +22,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableSorting: true,
         enableColResize: true,
         showToolPanel: true,
-        ready: function() {
+        onReady: function() {
             $scope.gridOptions.columnApi.addChangeListener( function(event) {
                 console.log('Got column event: ' + event);
             });

@@ -221,8 +221,8 @@ module ag.grid {
             this.value = this.getValue();
 
             paramsForCallbacks.newValue = this.value;
-            if (typeof colDef.cellValueChanged === 'function') {
-                colDef.cellValueChanged(paramsForCallbacks);
+            if (typeof colDef.onCellValueChanged === 'function') {
+                colDef.onCellValueChanged(paramsForCallbacks);
             }
             this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
 
@@ -250,7 +250,7 @@ module ag.grid {
                 };
                 that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
 
-                if (colDef.cellDoubleClicked) {
+                if (colDef.onCellDoubleClicked) {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
@@ -262,7 +262,7 @@ module ag.grid {
                         context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
-                    colDef.cellDoubleClicked(paramsForColDef);
+                    colDef.onCellDoubleClicked(paramsForColDef);
                 }
                 if (that.isCellEditable()) {
                     that.startEditing();
@@ -287,7 +287,7 @@ module ag.grid {
                 };
                 that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
 
-                if (colDef.cellContextMenu) {
+                if (colDef.onCellContextMenu) {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
@@ -299,7 +299,7 @@ module ag.grid {
                         context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
-                    colDef.cellContextMenu(paramsForColDef);
+                    colDef.onCellContextMenu(paramsForColDef);
                 }
             });
         }
@@ -367,7 +367,7 @@ module ag.grid {
                     api: that.gridOptionsWrapper.getApi()
                 };
                 that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, paramsForGrid);
-                if (colDef.cellClicked) {
+                if (colDef.onCellClicked) {
                     var paramsForColDef = {
                         node: that.node,
                         data: that.node.data,
@@ -379,7 +379,7 @@ module ag.grid {
                         context: that.gridOptionsWrapper.getContext(),
                         api: that.gridOptionsWrapper.getApi()
                     };
-                    colDef.cellClicked(paramsForColDef);
+                    colDef.onCellClicked(paramsForColDef);
                 }
             });
         }

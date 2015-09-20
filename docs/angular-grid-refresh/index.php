@@ -56,7 +56,7 @@ include '../documentation_header.php';
     <p>
         The example below shows refreshing in action. The weekday columns are editable. As you edit the cells,
         the numbers on the right has side change. The <i>volatile summary</i> change as the cells change, as
-        the columns are marked as <i>volatile</i> and the grid <i>cellValueChanged()</i> function is calling <i>api.softRefresh()</i>
+        the columns are marked as <i>volatile</i> and the grid <i>onCellValueChanged()</i> function is calling <i>api.softRefresh()</i>
     </p>
     <p>
         Note that the class rules are reapplied as the total and value change, marking the value as bold and

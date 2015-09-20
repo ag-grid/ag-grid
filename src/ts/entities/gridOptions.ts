@@ -79,22 +79,22 @@ module ag.grid {
         doesExternalFilterPass?(node: RowNode): boolean;
 
         // events
-        ready?(api: any): void;
-        modelUpdated?(): void;
-        cellClicked?(params: any): void;
-        cellDoubleClicked?(params: any): void;
-        cellContextMenu?(params: any): void;
-        cellValueChanged?(params: any): void;
-        cellFocused?(params: any): void;
-        rowSelected?(params: any): void;
-        selectionChanged?(): void;
-        beforeFilterChanged?(): void;
-        afterFilterChanged?(): void;
-        filterModified?(): void;
-        beforeSortChanged?(): void;
-        afterSortChanged?(): void;
-        virtualRowRemoved?(params: any): void;
-        rowClicked?(params: any): void;
+        onReady?(api: any): void;
+        onModelUpdated?(): void;
+        onCellClicked?(params: any): void;
+        onCellDoubleClicked?(params: any): void;
+        onCellContextMenu?(params: any): void;
+        onCellValueChanged?(params: any): void;
+        onCellFocused?(params: any): void;
+        onRowSelected?(params: any): void;
+        onSelectionChanged?(): void;
+        onBeforeFilterChanged?(): void;
+        onAfterFilterChanged?(): void;
+        onFilterModified?(): void;
+        onBeforeSortChanged?(): void;
+        onAfterSortChanged?(): void;
+        onVirtualRowRemoved?(params: any): void;
+        onRowClicked?(params: any): void;
 
         // unknown
         selectedRows?: any[];

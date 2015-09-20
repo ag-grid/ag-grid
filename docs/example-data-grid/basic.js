@@ -130,11 +130,11 @@ fileBrowserModule.controller('basicController', function($scope) {
         groupHeaders: true,
         rowHeight: 22,
         pinnedColumnCount: 3,
-        modelUpdated: modelUpdated,
+        onModelUpdated: onModelUpdated,
         suppressRowClickSelection: true
     };
 
-    function modelUpdated() {
+    function onModelUpdated() {
         var model = $scope.gridOptions.api.getModel();
         var totalRows = $scope.gridOptions.rowData.length;
         var processedRows = model.getVirtualRowCount();

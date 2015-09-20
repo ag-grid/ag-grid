@@ -111,7 +111,7 @@ module.controller("exampleCtrl", function($scope) {
         rowData: data,
         rowSelection: 'single',
         enableSorting: true,
-        ready: function(params) {
+        onReady: function(params) {
             params.api.sizeColumnsToFit();
         }
     };

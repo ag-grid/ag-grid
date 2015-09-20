@@ -57,7 +57,7 @@ module ag.grid {
             this.setupComponents($scope, $compile, eGridDiv);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
-                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService);
+                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService);
             this.gridOptions.columnApi = this.columnController.getColumnApi();
 
             var that = this;

@@ -25,15 +25,15 @@ module.controller("exampleCtrl", function($scope) {
         context: {
             theNumber: 4
         },
-        ready: function(event) {
+        onReady: function(event) {
             event.api.sizeColumnsToFit();
         }
     };
 
     ///// Right table
     var columnDefsRight = [
-        {headerName: 'A', field: 'a', width: 150, editable: true, newValueHandler: numberNewValueHandler, cellValueChanged: cellValueChanged},
-        {headerName: 'B', field: 'b', width: 150, editable: true, newValueHandler: numberNewValueHandler, cellValueChanged: cellValueChanged}
+        {headerName: 'A', field: 'a', width: 150, editable: true, newValueHandler: numberNewValueHandler, onCellValueChanged: cellValueChanged},
+        {headerName: 'B', field: 'b', width: 150, editable: true, newValueHandler: numberNewValueHandler, onCellValueChanged: cellValueChanged}
     ];
 
     var rowDataRight = [
@@ -49,7 +49,7 @@ module.controller("exampleCtrl", function($scope) {
     $scope.gridOptionsRight = {
         columnDefs: columnDefsRight,
         rowData: rowDataRight,
-        ready: function(event) {
+        onReady: function(event) {
             event.api.sizeColumnsToFit();
         }
     };

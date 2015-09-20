@@ -99,8 +99,8 @@ gridsModule.controller('mainController', function($scope) {
         //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
-        rowSelected: rowSelected, //callback when row selected
-        selectionChanged: selectionChanged, //callback when selection changed,
+        onRowSelected: rowSelected, //callback when row selected
+        onSelectionChanged: selectionChanged, //callback when selection changed,
         icons: {
             //menu: '<i class="fa fa-bars"/>',
             //columnVisible: '<i class="fa fa-eye"/>',
@@ -119,26 +119,26 @@ gridsModule.controller('mainController', function($scope) {
         //suppressScrollLag: true,
 
         // callback when row clicked
-        rowClicked: function(params) {
-            console.log("Callback rowClicked: " + params.data + " - " + params.event);
+        onRowClicked: function(params) {
+            console.log("Callback onRowClicked: " + params.data + " - " + params.event);
         },
         // callback when cell clicked
-        cellClicked: function(params) {
-            console.log("Callback cellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        onCellClicked: function(params) {
+            console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
         // callback when cell double clicked
-        cellDoubleClicked:  function(params) {
-            console.log("Callback cellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        onCellDoubleClicked:  function(params) {
+            console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
         // callback when cell right clicked
-        cellContextMenu:  function(params) {
-            console.log("Callback cellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        onCellContextMenu:  function(params) {
+            console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
         },
-        cellFocused: function(params) {
-            console.log('Callback cellFocused: ' + params.rowIndex + " - " + params.colIndex);
+        onCellFocused: function(params) {
+            console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
         },
-        ready: function(event) {
-            console.log('Callback ready: api = ' + event.api);
+        onReady: function(event) {
+            console.log('Callback onReady: api = ' + event.api);
         }
     };
     $scope.angularGrid = angularGrid;

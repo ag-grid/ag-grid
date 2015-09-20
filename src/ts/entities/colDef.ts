@@ -60,15 +60,6 @@ module ag.grid {
         /** A function for rendering a floating cell. */
         floatingCellRenderer?: Function | {};
 
-        /** Function callback, gets called when a cell is clicked. */
-        cellClicked?: Function;
-
-        /** Function callback, gets called when a cell is double clicked. */
-        cellDoubleClicked?: Function;
-
-        /** Function callback, gets called when a cell is right clicked. */
-        cellContextMenu?: Function;
-
         /** Name of function to use for aggregation. One of [sum,min,max]. */
         aggFunc?: string;
 
@@ -105,9 +96,6 @@ module ag.grid {
         /** Callbacks for editing.See editing section for further details. */
         newValueHandler?: Function;
 
-        /** Callbacks for editing.See editing section for further details. */
-        cellValueChanged?: Function;
-
         /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
         volatile?: boolean;
 
@@ -123,6 +111,20 @@ module ag.grid {
         /** The filter params are specific to each filter! */
         filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
 
+        /** Rules for applying css classes */
         cellClassRules?: { [cssClassName: string]: (Function | string) };
+
+        /** Callbacks for editing.See editing section for further details. */
+        onCellValueChanged?: Function;
+
+        /** Function callback, gets called when a cell is clicked. */
+        onCellClicked?: Function;
+
+        /** Function callback, gets called when a cell is double clicked. */
+        onCellDoubleClicked?: Function;
+
+        /** Function callback, gets called when a cell is right clicked. */
+        onCellContextMenu?: Function;
+
     }
 }

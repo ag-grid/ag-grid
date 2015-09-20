@@ -306,7 +306,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
 
         <pre>
         // add a listener to the editable colDef
-        colDef.cellValueChanged = function() {
+        colDef.onCellValueChanged = function() {
             gridOptions.api.recomputeAggregates();
         }
         </pre>

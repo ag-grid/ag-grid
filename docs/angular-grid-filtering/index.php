@@ -157,9 +157,9 @@ columnDefinition = {
 
     <p>
         The example below also demonstrates the filter hook callbacks (see your browser dev console).
-        <li>filterModified gets called when the filter changes regardless of the apply button.</li>
-        <li>beforeFilterChanged gets called before a new filter is applied.</li>
-        <li>afterFilterChanged gets called after a new filter is applied.</li>
+        <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
+        <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
+        <li>onAfterFilterChanged gets called after a new filter is applied.</li>
     </p>
 
     <show-example example="exampleFilterApply"></show-example>

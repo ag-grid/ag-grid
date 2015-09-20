@@ -25,7 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,
-        ready: function() {
+        onReady: function() {
             $scope.gridOptions.api.sizeColumnsToFit()
         }
     };

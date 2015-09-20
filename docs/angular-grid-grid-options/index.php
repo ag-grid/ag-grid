@@ -148,45 +148,45 @@ include '../documentation_header.php';
             if you have many (more than 500??) rows as the browser will probably die.</td>
         </tr>
         <tr>
-            <th>rowSelected</th>
+            <th>onRowSelected</th>
             <td>Function callback, gets called when a row is selected.</td>
         </tr>
         <tr>
-            <th>rowClicked</th>
+            <th>onRowClicked</th>
             <td>Function callback, gets called when a row is clicked.</td>
         </tr>
         <tr>
-            <th>cellClicked</th>
+            <th>onCellClicked</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
         <tr>
-            <th>cellDoubleClicked</th>
+            <th>onCellDoubleClicked</th>
             <td>Function callback, gets called when a cell is double clicked.</td>
         </tr>
         <tr>
-            <th>cellContextMenu</th>
+            <th>onCellContextMenu</th>
             <td>Function callback, gets called when a cell is right clicked.</td>
         </tr>
         <tr>
-            <th>cellFocused</th>
+            <th>onCellFocused</th>
             <td>Function callback, gets called when a cell is focused.</td>
         </tr>
         <tr>
-            <th>modelUpdated</th>
+            <th>onModelUpdated</th>
             <td>Function callback, gets called when displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
-            <th>beforeSortChanged()<br/>afterSortChanged()</th>
+            <th>onBeforeSortChanged()<br/>onAfterSortChanged()</th>
             <td>Callbacks that get called when the sorting changes. 'before' method gets called before the grid executes the sort. 'after' method
                 gets called after the grid executes the sort.</td>
         </tr>
         <tr>
-            <th>filterModified()<br/>beforeFilterChanged()<br/>afterFilterChanged()</th>
+            <th>onFilterModified()<br/>onBeforeFilterChanged()<br/>onAfterFilterChanged()</th>
             <td>Callbacks that get called when the filtering changes. 'before' method gets called before the grid executes the filter. 'after' method
                 gets called after the grid executes the filter. filterModified is useful when using the Apply button.</td>
         </tr>
         <tr>
-            <th>ready</th>
+            <th>onReady</th>
             <td>Function callback, gets called after Angular Grid has initialised. The name 'ready'
                 was influenced by the authors time programming the Commodore 64. Use this function if,
                 for example, you need to use the grid's API to fix the columns to size.</td>
@@ -201,11 +201,11 @@ include '../documentation_header.php';
                 click on them.</td>
         </tr>
         <tr>
-            <th>selectionChanged()</th>
+            <th>onSelectionChanged()</th>
             <td>Function callback, gets called when a selection is changed.</td>
         </tr>
         <tr>
-            <th>cellValueChanged()</th>
+            <th>onCellValueChanged()</th>
             <td>Function callback, gets called when a value has changed after editing.</td>
         </tr>
         <tr>
