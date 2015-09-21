@@ -74,6 +74,15 @@ include '../documentation_header.php';
                 when working with tree / aggregated data, as the node can be traversed.</td>
         </tr>
         <tr>
+            <th>getSelectedNodesById()</th>
+            <td>Returns a list of selected nodes by id. This is the internal representation for selection,
+                useful to lookup nodes by their unique id.</td>
+        </tr>
+        <tr>
+            <th>getSelectedRows()</th>
+            <td>Returns a list of selected rows (ie row data that you provided).</td>
+        </tr>
+        <tr>
             <th>isNodeSelected(node)</th>
             <td>Returns true if the node is selected, or false if it is not selected. If the node is a group node,
                 and the group selection is set to 'children', then this will return true if all child (and grand child)

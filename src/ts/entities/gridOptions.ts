@@ -96,10 +96,6 @@ module ag.grid {
         onVirtualRowRemoved?(params: any): void;
         onRowClicked?(params: any): void;
 
-        // unknown
-        selectedRows?: any[];
-        selectedNodesById?: {[email: number]: any;}; // should be typed to node
-
         // apis, set by the grid on init
         api?: GridApi; // change to typed
         columnApi?: ColumnApi; // change to typed

@@ -85,8 +85,6 @@ module ag.grid {
         public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
         public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
         public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
-        public setSelectedRows(newSelectedRows: any) { return this.gridOptions.selectedRows = newSelectedRows; }
-        public setSelectedNodesById(newSelectedNodes: any) { return this.gridOptions.selectedNodesById = newSelectedNodes; }
         public getIcons() { return this.gridOptions.icons; }
         public getIsScrollLag() { return this.gridOptions.isScrollLag; }
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }

@@ -334,10 +334,10 @@
                     <a class="sidebarLink" href="/angular-grid-loading/index.php">Loading Overlay</a>
                 <?php } ?>
 
-                <?php if ($key == "No Scrolls") { ?>
-                    <span class="sidebarLinkSelected">No Scrolling</span>
+                <?php if ($key == "For Print") { ?>
+                    <span class="sidebarLinkSelected">For Print</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-no-scrolls/index.php">No Scrolling</a>
+                    <a class="sidebarLink" href="/angular-grid-for-print/index.php">For Print</a>
                 <?php } ?>
 
                 <h4>

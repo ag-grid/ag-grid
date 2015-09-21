@@ -35,14 +35,19 @@ module ag.grid {
             this.eventService = eventService;
 
             this.initSelectedNodesById();
-
             this.selectedRows = [];
-            gridOptionsWrapper.setSelectedRows(this.selectedRows);
         }
 
         private initSelectedNodesById() {
             this.selectedNodesById = {};
-            this.gridOptionsWrapper.setSelectedNodesById(this.selectedNodesById);
+        }
+
+        public getSelectedNodesById() {
+            return this.selectedNodesById;
+        }
+
+        public getSelectedRows() {
+            return this.selectedRows;
         }
 
         public getSelectedNodes() {
@@ -344,7 +349,11 @@ module ag.grid {
             var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
 
             if (!nothingChangedMustBeInitialising && !suppressEvents) {
-                this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+                var event = {
+                    selectedNodesById: this.selectedNodesById,
+                    selectedRows: this.selectedRows
+                };
+                this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED, event);
             }
 
             var that = this;

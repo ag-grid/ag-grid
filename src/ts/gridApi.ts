@@ -166,8 +166,16 @@ module ag.grid {
             return this.selectionController.isNodeSelected(node);
         }
 
-        public getSelectedNodes() {
+        public getSelectedNodesById(): {[nodeId: number]: RowNode;} {
+            return this.selectionController.getSelectedNodesById();
+        }
+
+        public getSelectedNodes(): RowNode[] {
             return this.selectionController.getSelectedNodes();
+        }
+
+        public getSelectedRows(): any[] {
+            return this.selectionController.getSelectedRows();
         }
 
         public getBestCostNodeSelection() {
