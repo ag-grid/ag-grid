@@ -9,10 +9,6 @@ module ag.grid {
         return value === true || value === 'true';
     }
 
-    export interface GenericEventListener {
-        (eventName: string, event: any): void;
-    }
-
     export class GridOptionsWrapper {
 
         private gridOptions: GridOptions;

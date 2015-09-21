@@ -33,6 +33,10 @@ module ag.grid {
             this.grid.setDatasource();
         }
 
+        public setRowData(rowData:any) {
+            this.grid.setRows(rowData);
+        }
+
         public setRows(rows:any) {
             this.grid.setRows(rows);
         }

@@ -15,14 +15,12 @@ var rowData = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
-    suppressRowClickSelection: true,
-    forPrint: true // because so little data, no need to use scroll bars
+    rowData: rowData
 };
 
 // wait for the document to be loaded, otherwise
 // grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
-    var myAgileGrid = document.querySelector('#myAgileGrid');
+    var myAgileGrid = document.querySelector('#myGrid');
     myAgileGrid.setGridOptions(gridOptions);
 });

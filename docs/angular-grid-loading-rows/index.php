@@ -14,7 +14,7 @@ include '../documentation_header.php';
 
     If rows are loaded after the grid is initialised, call the grid's API function to update the rows after the load.
 
-    <pre><code>$scope.gridOptions.api.onNewRows()</code></pre>
+    <pre><code>$scope.gridOptions.api.setRowData()</code></pre>
 
     <p/>
 

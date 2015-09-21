@@ -25,8 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         .then(function(res){
             // wait for a second before setting the results into the table
             setTimeout( function() {
-                $scope.gridOptions.rowData = res.data;
-                $scope.gridOptions.api.onNewRows();
+                $scope.gridOptions.api.setRowData(res.data);
             }, 2000);
         });
 });

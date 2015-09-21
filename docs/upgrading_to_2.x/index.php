@@ -51,3 +51,5 @@ npm package is now ag-Grid (not angular-grid)
 angular module is now agGrid (not angularGrid)
 
 angularGrid global func is now agGridGlobalFunc
+
+api setRows is now setRowData

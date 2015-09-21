@@ -13,7 +13,7 @@ var SampleAppComponent = function() {
 SampleAppComponent.prototype.createRowData = function() {
     var rowData = [];
 
-    for (var i = 0; i < 200; i++) {
+    for (var i = 0; i < 10000; i++) {
         var countryData = countries[i % countries.length];
         rowData.push({
             name: firstNames[i % firstNames.length] + ' ' + lastNames[i % lastNames.length],
@@ -39,8 +39,8 @@ SampleAppComponent.prototype.createRowData = function() {
 };
 
 SampleAppComponent.prototype.calculateRowCount = function() {
-    if (this.api && this.rowData) {
-        var model = this.api.getModel();
+    if (this.gridOptions.api && this.rowData) {
+        var model = this.gridOptions.api.getModel();
         var totalRows = this.rowData.length;
         var processedRows = model.getVirtualRowCount();
         this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
@@ -52,7 +52,7 @@ SampleAppComponent.prototype.onModelUpdated = function() {
     this.calculateRowCount();
 };
 
-SampleAppComponent.prototype.onReady = function($event) {
+SampleAppComponent.prototype.onReady = function() {
     console.log('onReady');
     this.calculateRowCount();
 };
@@ -314,7 +314,7 @@ var SKILL_TEMPLATE =
     '    <div style="text-align: center;">SKILL_NAME</div>' +
     '    <div>' +
     '      <input type="checkbox"/>' +
-    '      <img src="/example-angular-2/SKILL.png" width="30px"/>' +
+    '      <img src="/images/skills/SKILL.png" width="30px"/>' +
     '    </div>' +
     '  </span>' +
     '</label>';

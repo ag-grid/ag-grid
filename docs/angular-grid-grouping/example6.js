@@ -45,8 +45,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $http.get("../olympicWinners.json")
         .then(function(res){
             res.data.reverse();
-            $scope.gridOptions.rowData = res.data;
+            $scope.gridOptions.api.setRowData(res.data);
             $scope.gridOptions.api.setSortModel([{field: 'country', sort: 'asc'}]);
-            $scope.gridOptions.api.onNewRows();
         });
 });

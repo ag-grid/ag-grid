@@ -50,11 +50,11 @@ module ag.grid {
         private doingPagination: boolean;
         private rowModel: any;
 
-        constructor(eGridDiv: any, gridOptions: any, genericEventListener: GenericEventListener = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
+        constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
 
-            this.setupComponents($scope, $compile, eGridDiv);
+            this.setupComponents($scope, $compile, eGridDiv, globalEventListener);
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
                 this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService);
@@ -111,7 +111,7 @@ module ag.grid {
             }
         }
 
-        private setupComponents($scope: any, $compile: any, eUserProvidedDiv: any) {
+        private setupComponents($scope: any, $compile: any, eUserProvidedDiv: any, globalEventListener: Function) {
 
             // create all the beans
             var eventService = new EventService();
@@ -155,6 +155,10 @@ module ag.grid {
             valueService.init(gridOptionsWrapper, expressionService, columnController);
             groupCreator.init(valueService);
             masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService);
+
+            if (globalEventListener) {
+                eventService.addGlobalListener(globalEventListener);
+            }
 
             var toolPanelLayout: any = null;
             var toolPanel: any = null;

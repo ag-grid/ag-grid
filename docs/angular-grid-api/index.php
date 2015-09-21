@@ -25,14 +25,8 @@ include '../documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>onNewRows()</th>
-            <td>Inform the grid that the rows have changed. The grid will assume the rows are brand new
-                and draw all rows from scratch.</td>
-        </tr>
-        <tr>
-            <th>setRows(rows)</th>
-            <td>Set new rows into the grid. This is the same as setting new rows in gridOptions and then calling
-                onNewRows()</td>
+            <th>setRowData(rows)</th>
+            <td>Set new rows into the grid.</td>
         </tr>
         <tr>
             <th>onNewDatasource()</th>
@@ -162,7 +156,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>showLoading(show)</th>
-            <td>Show or hide the loading icon. Pass either true or false. If the method onNewRows
+            <td>Show or hide the loading icon. Pass either true or false. If the method setRowData
                 is called, the loading icon is automatically hidden.
             </td>
         </tr>

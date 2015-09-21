@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/example-web-component-grid/html5grid.css" rel="stylesheet">
+    <link href="html5grid.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -20,8 +20,13 @@
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused8">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused8">
 
-    <script src="/example-web-component-grid/webComponentDataGrid.js"></script>
+    <script src="webComponentDataGrid.js"></script>
 
+    <style>
+        .toolbar button {
+            margin: 2px; padding: 0px;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,11 +39,44 @@
             <div style="padding: 4px;">
                 <b>Employees Skills and Contact Details</b> <span id="rowCount"/>
             </div>
-            <div style="clear: both;"/>
+        <div style="clear: both;"/>
+        <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button onclick="document.querySelector('#myGrid').api.selectAll()">Select All</button>
+                <button onclick="document.querySelector('#myGrid').api.deselectAll()">Clear Selection</button>
+            </span>
+            <span style="margin-left: 20px;">
+                Column API:
+                <button onclick="document.querySelector('#myGrid').api.hideColumn('country', true)">Hide Country Column</button>
+                <button onclick="document.querySelector('#myGrid').api.hideColumn('country', false)">Show Country Column</button>
+            </span>
         </div>
+        <div style="padding: 4px;" class="toolbar">
+            <label>
+                <input type="checkbox" onchange="document.querySelector('#myGrid').showToolPanel=this.checked"/>
+                Show Tool Panel
+            </label>
+            <button id="btRefreshDataViaApi">Refresh Data via API</button>
+            <button id="btRefreshDataViaElement">Refresh Data via Element</button>
+        </div>
+
         <!-- Putting the width and height on a wrapped element, as couldn't get web component to accept css -->
-        <div style="height: 400px; width: 800px;">
-            <ag-grid id="myGrid" class="ag-fresh ag-basic" row-height="100"></ag-grid>
+        <div style="height: 350px; width: 800px;">
+            <ag-grid id="myGrid" class="ag-fresh ag-basic"
+
+                     enable-col-resize
+                     enable-sorting
+                     enable-filter
+                     group-headers
+                     suppress-row-click-selection
+                     tool-panel-suppress-pivot
+                     tool-panel-suppress-values
+                     row-height="22"
+                     row-selection="multiple"
+                     pinned-column-count="3"
+
+                    ></ag-grid>
         </div>
     </div>
 

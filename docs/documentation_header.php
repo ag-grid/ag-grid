@@ -113,7 +113,7 @@
                 <?php if ($key == "Getting Started Web Components") { ?>
                     <span class="sidebarLinkSelected childItem">> Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-web-components/index.php">> Web Components</a>
+                    <a class="sidebarLink childItem" href="/best-web-component-grid/index.php">> Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>

@@ -6,28 +6,6 @@
 
 module ag.grid {
 
-    function toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        } else if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // not value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value=='';
-        } else {
-            return false;
-        }
-    }
-
-    function toNumber(value: any): number {
-        if (typeof value === 'number') {
-            return value;
-        } else if (typeof value === 'string') {
-            return Number(value);
-        } else {
-            return undefined;
-        }
-    }
-
     // we are not using annotations on purpose, as if we do, then there is a runtime dependency
     // on the annotation, which would break this code if angular 2 was not included, which is bad,
     // as angular 2 is optional for ag-grid
@@ -139,128 +117,23 @@ module ag.grid {
         constructor(private elementDef: any) {
         }
 
-        private initGridOptions(): void {
-            // create empty grid options if none were passed
-            if (typeof this.gridOptions !== 'object') {
-                this.gridOptions = <GridOptions> {};
-            }
-            // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-            var pThis = <any>this;
-            var pGridOptions = <any>this.gridOptions;
-            // add in all the simple properties
-            ComponentUtil.SIMPLE_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES).concat(ComponentUtil.CALLBACKS).forEach( (key)=> {
-                if (typeof (pThis)[key] !== 'undefined') {
-                    pGridOptions[key] = pThis[key];
-                }
-            });
-            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES).forEach( (key)=> {
-                if (typeof (pThis)[key] !== 'undefined') {
-                    pGridOptions[key] = toBoolean(pThis[key]);
-                }
-            });
-            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES).forEach( (key)=> {
-                if (typeof (pThis)[key] !== 'undefined') {
-                    pGridOptions[key] = toNumber(pThis[key]);
-                }
-            });
-        }
-
         // this gets called after the directive is initialised
         public onInit(): void {
-            this.initGridOptions();
+            this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
             var nativeElement = this.elementDef.nativeElement;
-            this._agGrid = new ag.grid.Grid(nativeElement, this.gridOptions);
+            var globalEventLister = this.globalEventListener.bind(this);
+            this._agGrid = new ag.grid.Grid(nativeElement, this.gridOptions, globalEventLister);
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
-
-            var eventService = this._agGrid.getEventService();
-            eventService.addGlobalListener(this.globalEventListener.bind(this));
 
             this._initialised = true;
         }
 
         public onChange(changes: any): void {
-            if (!this._initialised || !changes) { return; }
-
-            // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-            //var pThis = <any>this;
-            var pGridOptions = <any>this.gridOptions;
-
-            // check if any change for the simple types, and if so, then just copy in the new value
-            ComponentUtil.SIMPLE_PROPERTIES.forEach( (key)=> {
-                if (changes[key]) {
-                    pGridOptions[key] = changes[key].currentValue;
-                }
-            });
-            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.forEach( (key)=> {
-                if (changes[key]) {
-                    pGridOptions[key] = toBoolean(changes[key].currentValue);
-                }
-            });
-            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.forEach( (key)=> {
-                if (changes[key]) {
-                    pGridOptions[key] = toNumber(changes[key].currentValue);
-                }
-            });
-
-            if (changes.showToolPanel) {
-                this.api.showToolPanel(this.showToolPanel);
-            }
-
-            if (changes.quickFilterText) {
-                this.api.setQuickFilter(this.quickFilterText);
-            }
-
-            if (changes.rowData) {
-                this.api.setRows(this.rowData);
-            }
-
-            if (changes.floatingTopRowData) {
-                this.api.setFloatingTopRowData(this.floatingTopRowData);
-            }
-
-            if (changes.floatingBottomRowData) {
-                this.api.setFloatingBottomRowData(this.floatingBottomRowData);
-            }
-
-            if (changes.columnDefs) {
-                this.api.setColumnDefs(this.columnDefs);
-            }
-
-            if (changes.datasource) {
-                this.api.setDatasource(this.datasource);
-            }
-
-            if (changes.pinnedColumnCount) {
-                this.columnApi.setPinnedColumnCount(this.pinnedColumnCount);
-            }
-
-            if (changes.pinnedColumnCount) {
-                this.columnApi.setPinnedColumnCount(this.pinnedColumnCount);
-            }
-
-            if (changes.groupHeaders) {
-                this.api.setGroupHeaders(this.groupHeaders);
-            }
-
-            if (changes.headerHeight) {
-                this.api.setHeaderHeight(this.headerHeight);
-            }
-
-            // need to review these, they are not impacting anything, they should
-            // call something on the API to update the grid
-            if (changes.groupKeys) {
-                this.gridOptions.groupKeys = this.groupKeys;
-            }
-            if (changes.groupAggFunction) {
-                this.gridOptions.groupAggFunction = this.groupAggFunction;
-            }
-            if (changes.groupAggFields) {
-                this.gridOptions.groupAggFields = this.groupAggFields;
-            }
+            ComponentUtil.processOnChange(changes, this.gridOptions, this);
         }
 
-        private globalEventListener(eventType: string, event: ColumnChangeEvent): void {
+        private globalEventListener(eventType: string, event: any): void {
             var emitter: any;
             switch (eventType) {
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;

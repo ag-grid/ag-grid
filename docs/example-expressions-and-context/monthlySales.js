@@ -127,8 +127,7 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
 
     $http.get("./monthlySales.json")
         .then(function(res){
-            $scope.gridOptions.rowData = res.data;
-            $scope.gridOptions.api.onNewRows();
+            $scope.gridOptions.api.setRowData(res.data);
             $scope.gridOptions.api.sizeColumnsToFit();
         });
 

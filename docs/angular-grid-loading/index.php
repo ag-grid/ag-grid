@@ -22,7 +22,7 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        When the api function onNewRows is called, the loading panel is hidden.
+        When the api function setRowData is called, the loading panel is hidden.
     </p>
 
     <p>

@@ -231,7 +231,7 @@ gridsModule.controller('mainController', function($scope) {
     });
 
     createCols();
-    createData();
+    angularGrid.rowData = createData();
 
     //setInterval(function() {
     //    $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
@@ -255,8 +255,8 @@ gridsModule.controller('mainController', function($scope) {
         angularGrid.api.showLoading(true);
         // put into a timeout, so browser gets a chance to update the loading panel
         setTimeout( function () {
-            createData();
-            angularGrid.api.onNewRows();
+            var data = createData();
+            angularGrid.api.setRowData(data);
         }, 0);
     };
 
@@ -269,9 +269,9 @@ gridsModule.controller('mainController', function($scope) {
         angularGrid.api.showLoading(true);
         setTimeout( function () {
             createCols();
-            createData();
+            var data = createData();
             angularGrid.api.onNewCols();
-            angularGrid.api.onNewRows();
+            angularGrid.api.setRowData(data);
         });
     };
 
@@ -347,7 +347,8 @@ gridsModule.controller('mainController', function($scope) {
 
         createCols();
         angularGrid.api.onNewCols();
-        angularGrid.api.onNewRows();
+        var data = createData();
+        angularGrid.api.setRowData(data);
     };
 
     $scope.toggleToolPanel = function() {
@@ -411,7 +412,7 @@ gridsModule.controller('mainController', function($scope) {
             }
             data.push(rowItem);
         }
-        angularGrid.rowData = data;
+        return data;
     }
 
     function selectionChanged() {

@@ -107,7 +107,7 @@
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
+        {headerName: 'Selected', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
         {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150},
         {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
@@ -121,33 +121,36 @@
     var gridOptions = {
         columnDefs: columnDefs,
         rowData: createRowData(),
-        rowSelection: 'multiple',
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
-        groupHeaders: true,
-        rowHeight: 22,
-        pinnedColumnCount: 3,
-        modelUpdated: modelUpdated
+        // a callback that gets called whenever the grids data changes
+        onModelUpdated: modelUpdated
     };
 
     // wait for the document to be loaded, otherwise
-    // Angular Grid will not find the div in the document.
+    // ag-Grid will not find the div in the document.
     document.addEventListener("DOMContentLoaded", function() {
 
         var myGrid = document.querySelector('#myGrid');
         myGrid.setGridOptions(gridOptions);
-        myGrid.setAttribute('row-height', 55);
+        //myGrid.setAttribute('row-height', 55);
 
+        // add events to grid option 1 - add an event listener
         myGrid.addEventListener('columnresized', function(event) {
-            console.log('get columnresized: ' + event);
+            console.log('event from myGrid.addEventListener(): ' + event.agGridDetails);
         });
 
+        // add events to grid option 2 - callback on the element
         myGrid.oncolumnresized = function(event) {
-            console.log('function oncolumnresized: ' + event);
+            console.log('event from myGrid.oncolumnresized(): ' + event.agGridDetails);
+        };
+
+        // add events to grid option 3 - callback on the grid options
+        gridOptions.onColumnResized = function(event) {
+            console.log('event from gridOptions.onColumnResized(): ' + event);
         };
 
         addQuickFilterListener();
+        addRefreshDataViaApi();
+        addRefreshDataViaElement();
     });
 
     function addQuickFilterListener() {
@@ -155,6 +158,23 @@
         eInput.addEventListener("input", function () {
             var text = eInput.value;
             gridOptions.api.setQuickFilter(text);
+        });
+    }
+
+    function addRefreshDataViaApi() {
+        var eButton = document.querySelector('#btRefreshDataViaApi');
+        eButton.addEventListener("click", function () {
+            var data = createRowData();
+            gridOptions.api.setRowData(data);
+        });
+    }
+
+    function addRefreshDataViaElement() {
+        var eButton = document.querySelector('#btRefreshDataViaElement');
+        eButton.addEventListener("click", function () {
+            var myGrid = document.querySelector('#myGrid');
+            var data = createRowData();
+            myGrid.rowData = data;
         });
     }
 
@@ -169,7 +189,7 @@
     function createRowData() {
         var rowData = [];
 
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 10000; i++) {
             //for (var i = 0; i < 10000; i++) {
             var countryData = countries[i % countries.length];
             rowData.push({
@@ -200,7 +220,7 @@
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data.skills[skill]) {
-                skills.push('<img src="/example-web-component-grid/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
@@ -254,7 +274,7 @@
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
         '      <input type="checkbox"/>' +
-        '      <img src="/example-html5-datagrid/SKILL.png" width="30px"/>' +
+        '      <img src="/images/skills/SKILL.png" width="30px"/>' +
         '    </div>' +
         '  </span>' +
         '</label>';

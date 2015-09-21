@@ -139,7 +139,7 @@ SampleAppComponent.annotations = [
     </p>
 
     <ul>
-        <li><b>Events:</b> All data our of the grid comes through events. These use
+        <li><b>Events:</b> All data out of the grid comes through events. These use
             Angular 2 event bindings eg <i>(model-updated)="onModelUpdated()"</i>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
@@ -167,7 +167,7 @@ SampleAppComponent.annotations = [
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
             b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
-            variable of the grid.
+            property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
             <i>rowData</i> property.
         </li>
