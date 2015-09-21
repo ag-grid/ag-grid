@@ -122,10 +122,50 @@
                     <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
                 <?php } ?>
 
+                <h4>
+                    Interfacing
+                </h4>
+
+                <?php if ($key == "Interfacing Overview") { ?>
+                    <span class="sidebarLinkSelected">Overview</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Overview</a>
+                <?php } ?>
+
+                <?php if ($key == "Properties") { ?>
+                    <span class="sidebarLinkSelected">Properties</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Properties</a>
+                <?php } ?>
+
+                <?php if ($key == "Events") { ?>
+                    <span class="sidebarLinkSelected">Events</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Events</a>
+                <?php } ?>
+
+                <?php if ($key == "Interfacing Callbacks") { ?>
+                    <span class="sidebarLinkSelected">Callbacks</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Callbacks</a>
+                <?php } ?>
+
                 <?php if ($key == "Grid Options") { ?>
                     <span class="sidebarLinkSelected">Grid Options</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
+                <?php } ?>
+
+                <?php if ($key == "Grid API") { ?>
+                    <span class="sidebarLinkSelected">Grid API</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-api/index.php">Grid API</a>
+                <?php } ?>
+
+                <?php if ($key == "Column API") { ?>
+                    <span class="sidebarLinkSelected">Column API</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-column-api/index.php">Column API</a>
                 <?php } ?>
 
                 <h4>
@@ -266,22 +306,6 @@
                     <span class="sidebarLinkSelected">Tool Panel</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-tool-panel/index.php">Tool Panel</a>
-                <?php } ?>
-
-                <h4>
-                    API's
-                </h4>
-
-                <?php if ($key == "Grid API") { ?>
-                    <span class="sidebarLinkSelected">Grid API</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-api/index.php">Grid API</a>
-                <?php } ?>
-
-                <?php if ($key == "Column API") { ?>
-                    <span class="sidebarLinkSelected">Column API</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-column-api/index.php">Column API</a>
                 <?php } ?>
 
                 <h4>
