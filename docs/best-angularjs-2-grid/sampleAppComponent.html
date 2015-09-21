@@ -37,17 +37,16 @@
                  [row-data]="rowData"
 
                  enable-col-resize
-                 enable-sorting="true"
-                 enable-filter="true"
-                 group-headers="true"
-                 suppress-row-click-selection="true"
-                 tool-panel-suppress-pivot="true"
-                 tool-panel-suppress-values="true"
+                 enable-sorting
+                 enable-filter
+                 group-headers
+                 suppress-row-click-selection
+                 tool-panel-suppress-pivot
+                 tool-panel-suppress-values
                  row-height="22"
                  row-selection="multiple"
                  pinned-column-count="3"
 
-                 (model-updated)="onModelUpdated()"
                  (model-updated)="onModelUpdated()"
                  (cell-clicked)="onCellClicked($event)"
                  (cell-double-clicked)="onCellDoubleClicked($event)"

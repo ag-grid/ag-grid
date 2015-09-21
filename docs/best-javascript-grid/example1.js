@@ -15,14 +15,12 @@ var rowData = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
-    suppressRowClickSelection: true,
-    forPrint: true // because so little data, no need to use scroll bars
+    rowData: rowData
 };
 
 // wait for the document to be loaded, otherwise
-// Angular Grid will not find the div in the document.
+// ag-Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
     // angularGrid is a global function
-    angularGrid('#myGrid', gridOptions);
+    agGridGlobalFunc('#myGrid', gridOptions);
 });

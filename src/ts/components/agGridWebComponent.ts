@@ -79,7 +79,7 @@ module ag.grid {
             //    case Constants.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
             //    case Constants.EVENT_READY: emitter = this.ready; break;
             //default:
-            //    console.log('ag-Grid: AgGridDirective - unknown event type: ' + eventName);
+            //    console.log('ag-Grid: AgGridNg2 - unknown event type: ' + eventName);
             //    return;
             //}
             //

@@ -31,7 +31,7 @@ module ag.grid {
     // we are not using annotations on purpose, as if we do, then there is a runtime dependency
     // on the annotation, which would break this code if angular 2 was not included, which is bad,
     // as angular 2 is optional for ag-grid
-    export class AgGridDirective {
+    export class AgGridNg2 {
 
         // not intended for user to interact with. so putting _ in so if use gets reference
         // to this object, they kind'a know it's not part of the agreed interface
@@ -288,7 +288,7 @@ module ag.grid {
                 case Events.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
                 case Events.EVENT_READY: emitter = this.ready; break;
                 default:
-                    console.log('ag-Grid: AgGridDirective - unknown event type: ' + eventType);
+                    console.log('ag-Grid: AgGridNg2 - unknown event type: ' + eventType);
                     return;
             }
             emitter.next(event);
@@ -299,7 +299,7 @@ module ag.grid {
     var ng = (<any> window).ng;
     // check for angular and component, as if angular 1, we will find angular but the wrong version
     if (ng && ng.Component) {
-        (<any>AgGridDirective).annotations = [
+        (<any>AgGridNg2).annotations = [
             new ng.Component({
                 selector: 'ag-grid-ng2',
                 events: [
@@ -329,7 +329,7 @@ module ag.grid {
                 encapsulation: ng.ViewEncapsulation.None
             })
         ];
-        (<any>AgGridDirective).parameters = [[ng.ElementRef]];
+        (<any>AgGridNg2).parameters = [[ng.ElementRef]];
     }
 
 }

@@ -130,7 +130,7 @@ SampleAppComponent.annotations = [
         selector: 'sample-app'
     }),
     new ng.View({
-        directives: [ag.grid.AgGridDirective],
+        directives: [ag.grid.AgGridNg2],
         // put padding into the buttons
         styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         templateUrl: 'sampleAppComponent.html'
@@ -260,7 +260,7 @@ function skillsCellRenderer(params) {
     var skills = [];
     IT_SKILLS.forEach(function (skill) {
         if (data && data.skills && data.skills[skill]) {
-            skills.push('<img src="/example-angular-2/' + skill + '.png" width="16px" title="' + skill + '" />');
+            skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
         }
     });
     return skills.join(' ');

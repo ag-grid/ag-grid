@@ -1,6 +1,4 @@
-var fileBrowserModule = angular.module('basic', ['agGrid']);
-
-fileBrowserModule.controller('basicController', function($scope) {
+(function () {
 
     var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
         "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
@@ -120,7 +118,7 @@ fileBrowserModule.controller('basicController', function($scope) {
         {headerName: "Address", field: "address", headerGroup: 'Contact', width: 500, filter: 'text'}
     ];
 
-    $scope.gridOptions = {
+    var gridOptions = {
         columnDefs: columnDefs,
         rowData: createRowData(),
         rowSelection: 'multiple',
@@ -130,15 +128,30 @@ fileBrowserModule.controller('basicController', function($scope) {
         groupHeaders: true,
         rowHeight: 22,
         pinnedColumnCount: 3,
-        onModelUpdated: onModelUpdated,
-        suppressRowClickSelection: true
+        modelUpdated: modelUpdated
     };
 
-    function onModelUpdated() {
-        var model = $scope.gridOptions.api.getModel();
-        var totalRows = $scope.gridOptions.rowData.length;
+    // wait for the document to be loaded, otherwise
+    // Angular Grid will not find the div in the document.
+    document.addEventListener("DOMContentLoaded", function() {
+        window.agGridGlobalFunc('#myGrid', gridOptions);
+        addQuickFilterListener();
+    });
+
+    function addQuickFilterListener() {
+        var eInput = document.querySelector('#quickFilterInput');
+        eInput.addEventListener("input", function () {
+            var text = eInput.value;
+            gridOptions.api.setQuickFilter(text);
+        });
+    }
+
+    function modelUpdated() {
+        var model = gridOptions.api.getModel();
+        var totalRows = gridOptions.rowData.length;
         var processedRows = model.getVirtualRowCount();
-        $scope.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+        var eSpan = document.querySelector('#rowCount');
+        eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }
 
     function createRowData() {
@@ -174,14 +187,14 @@ fileBrowserModule.controller('basicController', function($scope) {
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data.skills[skill]) {
-                skills.push('<img src="/example-data-grid/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
     }
 
     function countryCellRenderer(params) {
-        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='../images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
+        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='http://flags.fmcdn.net/data/flags/mini/" + COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
@@ -228,7 +241,7 @@ fileBrowserModule.controller('basicController', function($scope) {
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
         '      <input type="checkbox"/>' +
-        '      <img src="/example-data-grid/SKILL.png" width="30px"/>' +
+        '      <img src="/example-native-javascript-grid/SKILL.png" width="30px"/>' +
         '    </div>' +
         '  </span>' +
         '</label>';
@@ -370,4 +383,4 @@ fileBrowserModule.controller('basicController', function($scope) {
         return this.selected !== PROFICIENCY_NONE;
     };
 
-});
+})();

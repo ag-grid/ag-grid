@@ -33,7 +33,7 @@ declare var module: any;
         exports.angularGrid = angularGridGlobalFunction;
     }
 
-    root.angularGrid = angularGridGlobalFunction;
+    root.agGridGlobalFunc = angularGridGlobalFunction;
 
     function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
         var gridOptions: any;

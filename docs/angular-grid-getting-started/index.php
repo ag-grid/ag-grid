@@ -16,10 +16,12 @@ include '../documentation_header.php';
         In your html include ag-Grid's files as follows:
     </p>
 
-        <pre>&lt;script src="pathToGrid/ag-grid.js">&lt;/script>
+        <pre>&lt;!-- This is the javascript code for ag-Grid -->
+&lt;script src="pathToGrid/ag-grid.js">&lt;/script>
+&lt;!-- This is the core css required for ag-Grid, manages the layout -->
 &lt;link rel="stylesheet" type="text/css" href="pathToGrid/ag-grid.css">
 
-&lt;!-- These are optional, depending on what themes you want to use -->
+&lt;!-- This is the styling (not core) part of the css, include the theme you want, or create your own theme instead -->
 &lt;link rel="stylesheet" type="text/css" href="pathToGrid/theme-fresh.css">
 &lt;link rel="stylesheet" type="text/css" href="pathToGrid/theme-dark.css">
 &lt;link rel="stylesheet" type="text/css" href="pathToGrid/theme-blue.css"></pre>

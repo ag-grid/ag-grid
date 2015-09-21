@@ -1,8 +1,8 @@
 <?php
 $key = "Getting Started ng1";
-$pageTitle = "Getting Started AngularJS 1";
-$pageDescription = "Getting Started AngularJS 1";
-$pageKeyboards = "Getting Started AngularJS 1";
+$pageTitle = "Best AngularJS Grid";
+$pageDescription = "Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
+$pageKeyboards = "Best AngularJS Grid Datagrid";
 include '../documentation_header.php';
 ?>
 
@@ -53,27 +53,37 @@ include '../documentation_header.php';
         minimum you provide the columns (columnDefs) and the rows (rowData).
     </p>
 
-    <h4>Very Simple Example</h4>
+    <h2>Basic AngularJS 1.x Example</h2>
     <show-example example="example1" example-height="200px"></show-example>
 
-    <h2>Loading Rows</h2>
+    <h2>Advanced AngularJS 1.x Example</h2>
 
-    <h4>Calling setRows()</h4>
+    <p>
+        This below example has much more details. The mechanism for setting up the grid
+        is the same as above. Don't worry about the finer details for now, how all the
+        different options are configured is explained in the relevant parts of the documentation.
+    </p>
 
-    If rows are loaded after the grid is initialised, call the grid's API function to update the rows after the load.
+    <show-example example="basic"></show-example>
+
+    <h2>Loading Rows in AngularJS</h2>
+
+    <p>
+        Below is another simple example, but it loads rows instead of creating rows on the fly.
+        This example is used as as starting point for most of the further examples in the
+        documentation.
+    </p>
+
+    <p>
+        The rows are loaded after the grid is initialised, so the grid's API is used to
+        update the rows into the grid. The API is explained in full in it's own section
+        within the documentation.
+    </p>
 
     <pre><code>$scope.gridOptions.api.setRows(newRows)</code></pre>
 
-    <p/>
-
-    The API is explained in full in it's own section.
-
-    <p/>
 
     <show-example example="example2"></show-example>
-
-
-
 
 </div>
 

@@ -62,7 +62,7 @@
         </div>
     </nav>
 
-    <div class="container" style="margin-top: 70px">
+    <div class="container" style="margin-top: 20px">
 
         <div class="row">
 
@@ -92,28 +92,28 @@
                     <a class="sidebarLink" href="/angular-grid-getting-started/index.php">Getting Started</a>
                 <?php } ?>
 
+                <?php if ($key == "Getting Started Javascript") { ?>
+                    <span class="sidebarLinkSelected childItem">> Javascript</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="/best-javascript-grid/index.php">> Javascript</a>
+                <?php } ?>
+
                 <?php if ($key == "Getting Started ng1") { ?>
                     <span class="sidebarLinkSelected childItem">> AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-angularjs-1/index.php">> AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="/best-angularjs-grid/index.php">> AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
                     <span class="sidebarLinkSelected childItem">> AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-angularjs-2/index.php">> AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="/best-angularjs-2-grid/index.php">> AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
                     <span class="sidebarLinkSelected childItem">> Web Components</span>
                 <?php } else { ?>
                     <a class="sidebarLink childItem" href="/angular-grid-getting-started-web-components/index.php">> Web Components</a>
-                <?php } ?>
-
-                <?php if ($key == "Getting Started Javascript") { ?>
-                    <span class="sidebarLinkSelected childItem">> Javascript</span>
-                <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/angular-grid-getting-started-javascript/index.php">> Javascript</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>
