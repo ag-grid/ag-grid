@@ -9,10 +9,10 @@ $ bower install ag-grid
 
 #### Install with Npm
 ```sh
-$ npm install angular-grid
+$ npm install ag-grid
 ```
 
-See the [www.angulargrid.com](http://www.angulargrid.com) for overview and documentation.
+See the [www.ag-grid.com](http://www.ag-grid.com) for overview and documentation.
 
 
 Building
