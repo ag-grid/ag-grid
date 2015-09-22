@@ -42,6 +42,41 @@ include '../documentation_header.php';
         (probably only useful to a select few of you).
     </p>
 
+    <p>
+        The grid API exposes functions that go beyond events and properties that
+        you application can call. The grid needs to be initialised before the API
+        can be accessed.
+    </p>
+
+    <h4>
+        <img src="/images/javascript.png" height="20"/>
+        <img src="/images/angularjs.png" height="20px"/>
+        Javascript and AngularJS 1.x
+    </h4>
+    <p>
+        Use columnApi placed inside gridOptions by the grid during initialisation.
+    </p>
+
+    <h4>
+        <img src="/images/angular2.png" height="20px"/>
+        AngularJS 2
+    </h4>
+    <p>
+        Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+        use columnApi directly on the AngularJS 2 grid component.
+    </p>
+
+    <h4>
+        <img src="/images/webcomponents.png" height="20px"/>
+        Web Components
+    </h4>
+    <p>
+        Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+        use columnApi directly on the DOM element.
+    </p>
+
+    <h2>List of Column API Functions</h2>
+
     <table class="table">
         <tr>
             <th>Function</th>
@@ -166,30 +201,6 @@ include '../documentation_header.php';
             <td>Returns all the header groups.</td>
         </tr>
     </table>
-
-    <h2>Column Changed Events</h2>
-
-    <p>
-        A column change event gets fired whenever something changes with one of the columns.
-        You add a column change event as follows:
-    </p>
-
-    <pre><code>gridOptions.columnApi.addChangeListener( function(event) {
-    console.log('Got column event: ' + event);
-});
-</code></pre>
-
-    Column change events have the following types:
-    <ul>
-        <li><b>columnEverythingChanged</b>: Shotgun - gets called when new columns are set, so everything has changed.</li>
-        <li><b>columnResized</b>: A column was resized.</li>
-        <li><b>columnPivotChanged</b>: A pivot column was added or removed.</li>
-        <li><b>columnValueChanged</b>: A value column was added or removed.</li>
-        <li><b>columnMoved</b>: A column was moved.</li>
-        <li><b>columnVisible</b>: A column was hidden / shown.</li>
-        <li><b>columnGroupOpened</b>: A column group was opened / closed.</li>
-        <li><b>columnPinnedCountChanged</b>: The number of pinned columns has changed.</li>
-    </ul>
 
     <h2>Deep Dive - Save / Restore Full State</h2>
 

@@ -190,6 +190,13 @@ SampleAppComponent.annotations = [
         fine in these browsers using AngularJS 1.x.
     </note>
 
+    <h2>Next Steps...</h2>
+
+    <p>
+        Now you can go to <a href="../javascript-grid-interfacing-overview/index.php">interfacing</a>
+        to learn about accessing all the features of the grid.
+    </p>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

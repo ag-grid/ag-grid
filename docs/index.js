@@ -1,2 +1,2 @@
 
-indexModule = angular.module('index', ['angularGrid', 'fileBrowser', 'basic', 'account']);
+indexModule = angular.module('index', ['agGrid', 'fileBrowser', 'basic', 'account']);

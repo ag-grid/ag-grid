@@ -66,7 +66,7 @@ include '../documentation_header.php';
 
     <show-example example="basic"></show-example>
 
-    <h2>Loading Rows in AngularJS</h2>
+    <h2>Further Example Starting Point</h2>
 
     <p>
         Below is another simple example, but it loads rows instead of creating rows on the fly.
@@ -82,8 +82,14 @@ include '../documentation_header.php';
 
     <pre><code>$scope.gridOptions.api.setRows(newRows)</code></pre>
 
-
     <show-example example="example2"></show-example>
+
+    <h2>Next Steps...</h2>
+
+    <p>
+        Now you can go to <a href="../javascript-grid-interfacing-overview/index.php">interfacing</a>
+        to learn about accessing all the features of the grid.
+    </p>
 
 </div>
 

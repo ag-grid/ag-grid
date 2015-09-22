@@ -230,7 +230,7 @@ gridsModule.controller('mainController', function($scope) {
             cellStyle: {"text-align": "right"}})
     });
 
-    createCols();
+    angularGrid.columnDefs = createCols();
     angularGrid.rowData = createData();
 
     //setInterval(function() {
@@ -268,9 +268,9 @@ gridsModule.controller('mainController', function($scope) {
     $scope.onColCountChanged = function() {
         angularGrid.api.showLoading(true);
         setTimeout( function () {
-            createCols();
+            var colDefs = createCols();
             var data = createData();
-            angularGrid.api.onNewCols();
+            angularGrid.api.setColumnDefs(colDefs);
             angularGrid.api.setRowData(data);
         });
     };
@@ -329,7 +329,7 @@ gridsModule.controller('mainController', function($scope) {
         }, 0);
     };
 
-    $scope.onGroupByChanged = function() {
+    $scope.onGroupTypeChanged = function() {
         // setup keys
         var groupBy = null;
         if ($scope.groupBy!=="") {
@@ -345,10 +345,7 @@ gridsModule.controller('mainController', function($scope) {
         var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
         angularGrid.groupIncludeFooter = useFooter;
 
-        createCols();
-        angularGrid.api.onNewCols();
-        var data = createData();
-        angularGrid.api.setRowData(data);
+        angularGrid.api.refreshPivot();
     };
 
     $scope.toggleToolPanel = function() {
@@ -367,7 +364,8 @@ gridsModule.controller('mainController', function($scope) {
             var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
             columns.push(colDef);
         }
-        angularGrid.columnDefs = columns;
+
+        return columns;
     }
 
     function createData() {

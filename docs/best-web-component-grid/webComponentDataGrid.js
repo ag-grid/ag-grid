@@ -135,17 +135,17 @@
 
         // add events to grid option 1 - add an event listener
         myGrid.addEventListener('columnresized', function(event) {
-            console.log('event from myGrid.addEventListener(): ' + event.agGridDetails);
+            console.log('event via option 1: ' + event.agGridDetails);
         });
 
         // add events to grid option 2 - callback on the element
         myGrid.oncolumnresized = function(event) {
-            console.log('event from myGrid.oncolumnresized(): ' + event.agGridDetails);
+            console.log('event via option 2: ' + event.agGridDetails);
         };
 
         // add events to grid option 3 - callback on the grid options
         gridOptions.onColumnResized = function(event) {
-            console.log('event from gridOptions.onColumnResized(): ' + event);
+            console.log('event via option 3: ' + event.agGridDetails);
         };
 
         addQuickFilterListener();

@@ -61,6 +61,8 @@ module ag.grid {
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
         public getRowStyle() { return this.gridOptions.rowStyle; }
         public getRowClass() { return this.gridOptions.rowClass; }
+        public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
+        public getRowClassFunc() { return this.gridOptions.getRowClass; }
         public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
         public getApi() { return this.gridOptions.api; }
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
@@ -132,12 +134,7 @@ module ag.grid {
         }
 
         public getGroupRowInnerRenderer() {
-            if (this.gridOptions.groupInnerRenderer) {
-                console.warn('ag-grid: as of v1.10.0 (21st Jun 2015) groupInnerRenderer is now called groupRowInnerRenderer. Please change you code as groupInnerRenderer is deprecated.');
-                return this.gridOptions.groupInnerRenderer;
-            } else {
-                return this.gridOptions.groupRowInnerRenderer;
-            }
+            return this.gridOptions.groupRowInnerRenderer;
         }
 
         public getColWidth() {

@@ -11,35 +11,34 @@ module ag.grid {
     var constants = Constants;
 
     export class ColumnApi {
-        constructor(private columnController: ColumnController) {}
-        public sizeColumnsToFit(gridWidth: any): void { this.columnController.sizeColumnsToFit(gridWidth); }
-        public hideColumns(colIds: any, hide: any): void { this.columnController.hideColumns(colIds, hide); }
-        public columnGroupOpened(group: ColumnGroup, newValue: boolean): void { this.columnController.columnGroupOpened(group, newValue); }
-        public getColumnGroup(name: string): ColumnGroup { return this.columnController.getColumnGroup(name); }
-        public getDisplayNameForCol(column: any): string { return this.columnController.getDisplayNameForCol(column); }
-        public getColumn(key: any): Column { return this.columnController.getColumn(key); }
-        public setState(columnState: any): void { return this.columnController.setState(columnState); }
-        public getState(): [any] { return this.columnController.getState(); }
-        public isPinning(): boolean { return this.columnController.isPinning(); }
-        public getVisibleColAfter(col: Column): Column { return this.columnController.getVisibleColAfter(col); }
-        public getVisibleColBefore(col: Column): Column { return this.columnController.getVisibleColBefore(col); }
-        public setColumnVisible(column: Column, visible: boolean): void { this.columnController.setColumnVisible(column, visible); }
-        public getAllColumns(): Column[] { return this.columnController.getAllColumns(); }
-        public getDisplayedColumns(): Column[] { return this.columnController.getDisplayedColumns(); }
-        public getPivotedColumns(): Column[] { return this.columnController.getPivotedColumns(); }
-        public getValueColumns(): Column[] { return this.columnController.getValueColumns(); }
-        public moveColumn(fromIndex: number, toIndex: number): void { this.columnController.moveColumn(fromIndex, toIndex); }
-        public movePivotColumn(fromIndex: number, toIndex: number): void { this.columnController.movePivotColumn(fromIndex, toIndex); }
-        public setColumnAggFunction(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunction(column, aggFunc); }
-        public setColumnWidth(column: Column, newWidth: number): void { this.columnController.setColumnWidth(column, newWidth); }
-        public removeValueColumn(column: Column): void { this.columnController.removeValueColumn(column); }
-        public addValueColumn(column: Column): void { this.columnController.addValueColumn(column); }
-        public removePivotColumn(column: Column): void { this.columnController.removePivotColumn(column); }
-        public setPinnedColumnCount(count: number): void { this.columnController.setPinnedColumnCount(count); }
-        public addPivotColumn(column: Column): void { this.columnController.addPivotColumn(column); }
-        public getHeaderGroups(): ColumnGroup[] { return this.columnController.getHeaderGroups(); }
-
-        public hideColumn(colId: any, hide: any): void { this.columnController.hideColumns([colId], hide); }
+        constructor(private _columnController: ColumnController) {}
+        public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
+        public hideColumns(colIds: any, hide: any): void { this._columnController.hideColumns(colIds, hide); }
+        public columnGroupOpened(group: ColumnGroup, newValue: boolean): void { this._columnController.columnGroupOpened(group, newValue); }
+        public getColumnGroup(name: string): ColumnGroup { return this._columnController.getColumnGroup(name); }
+        public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
+        public getColumn(key: any): Column { return this._columnController.getColumn(key); }
+        public setState(columnState: any): void { return this._columnController.setState(columnState); }
+        public getState(): [any] { return this._columnController.getState(); }
+        public isPinning(): boolean { return this._columnController.isPinning(); }
+        public getVisibleColAfter(col: Column): Column { return this._columnController.getVisibleColAfter(col); }
+        public getVisibleColBefore(col: Column): Column { return this._columnController.getVisibleColBefore(col); }
+        public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
+        public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
+        public getDisplayedColumns(): Column[] { return this._columnController.getDisplayedColumns(); }
+        public getPivotedColumns(): Column[] { return this._columnController.getPivotedColumns(); }
+        public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
+        public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
+        public movePivotColumn(fromIndex: number, toIndex: number): void { this._columnController.movePivotColumn(fromIndex, toIndex); }
+        public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
+        public setColumnWidth(column: Column, newWidth: number): void { this._columnController.setColumnWidth(column, newWidth); }
+        public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
+        public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
+        public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
+        public setPinnedColumnCount(count: number): void { this._columnController.setPinnedColumnCount(count); }
+        public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
+        public getHeaderGroups(): ColumnGroup[] { return this._columnController.getHeaderGroups(); }
+        public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
     }
 
     export class ColumnController {

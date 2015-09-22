@@ -129,31 +129,25 @@
                 <?php if ($key == "Interfacing Overview") { ?>
                     <span class="sidebarLinkSelected">Overview</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Overview</a>
+                    <a class="sidebarLink" href="/javascript-grid-interfacing-overview/index.php">Overview</a>
                 <?php } ?>
 
                 <?php if ($key == "Properties") { ?>
                     <span class="sidebarLinkSelected">Properties</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Properties</a>
+                    <a class="sidebarLink" href="/javascript-grid-properties/index.php">Properties</a>
                 <?php } ?>
 
                 <?php if ($key == "Events") { ?>
                     <span class="sidebarLinkSelected">Events</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Events</a>
+                    <a class="sidebarLink" href="/javascript-grid-events/index.php">Events</a>
                 <?php } ?>
 
-                <?php if ($key == "Interfacing Callbacks") { ?>
+                <?php if ($key == "Callbacks") { ?>
                     <span class="sidebarLinkSelected">Callbacks</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Callbacks</a>
-                <?php } ?>
-
-                <?php if ($key == "Grid Options") { ?>
-                    <span class="sidebarLinkSelected">Grid Options</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/angular-grid-grid-options/index.php">Grid Options</a>
+                    <a class="sidebarLink" href="/javascript-grid-callbacks/index.php">Callbacks</a>
                 <?php } ?>
 
                 <?php if ($key == "Grid API") { ?>

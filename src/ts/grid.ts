@@ -245,6 +245,11 @@ module ag.grid {
             this.gridPanel.showPinnedColContainersIfNeeded();
         }
 
+        public refreshPivot(): void {
+            this.inMemoryRowController.onPivotChanged();
+            this.refreshHeaderAndBody();
+        }
+
         public getEventService(): EventService {
             return this.eventService;
         }

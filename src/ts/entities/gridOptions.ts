@@ -33,6 +33,7 @@ module ag.grid {
         // just set once
         localeText?: any;
         localeTextFunc?: Function;
+        suppressScrollLag?: boolean;
 
         groupSuppressAutoColumn?: boolean;
         groupSelectsChildren?: boolean;
@@ -48,7 +49,6 @@ module ag.grid {
         context?: any;
         rowStyle?: any;
         rowClass?: any;
-        headerCellRenderer?: any;
         groupDefaultExpanded?: any;
         slaveGrids?: GridOptions[];
         rowSelection?: string;
@@ -60,7 +60,6 @@ module ag.grid {
         floatingBottomRowData?: any[]; // should this be immutable ag2?
         showToolPanel?: boolean;
         groupKeys?: string[];
-        groupAggFunction?(nodes: any[]): any;
         groupAggFields?: string[];
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
@@ -70,13 +69,15 @@ module ag.grid {
         headerHeight?: number;
 
         // callbacks
-        groupInnerRenderer?(params: any): void;
         groupRowInnerRenderer?(params: any): void;
         groupRowRenderer?: Function | Object;
         isScrollLag?(): boolean;
-        suppressScrollLag?(): boolean;
         isExternalFilterPresent?(): boolean;
         doesExternalFilterPass?(node: RowNode): boolean;
+        getRowStyle?: any;
+        getRowClass?: any;
+        headerCellRenderer?: any;
+        groupAggFunction?(nodes: any[]): any;
 
         // events
         onReady?(api: any): void;

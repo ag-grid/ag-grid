@@ -283,25 +283,30 @@ module ag.grid {
         }
 
         private addDynamicStyles() {
-            if (this.gridOptionsWrapper.getRowStyle()) {
-                var cssToUse: any;
-                var rowStyle = this.gridOptionsWrapper.getRowStyle();
+            var rowStyle = this.gridOptionsWrapper.getRowStyle();
+            if (rowStyle) {
                 if (typeof rowStyle === 'function') {
-                    var params = {
-                        data: this.node.data,
-                        node: this.node,
-                        api: this.gridOptionsWrapper.getApi(),
-                        context: this.gridOptionsWrapper.getContext(),
-                        $scope: this.scope
-                    };
-                    cssToUse = rowStyle(params);
+                    console.log('ag-Grid: rowStyle should be a string or an array, not be a function, use getRowStyle() instead');
                 } else {
-                    cssToUse = rowStyle;
+                    this.vBodyRow.addStyles(rowStyle);
+                    if (this.pinning) {
+                        this.vPinnedRow.addStyles(rowStyle);
+                    }
                 }
-
-                this.vBodyRow.addStyles(cssToUse);
+            }
+            var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
+            if (rowStyleFunc) {
+                var params = {
+                    data: this.node.data,
+                    node: this.node,
+                    api: this.gridOptionsWrapper.getApi(),
+                    context: this.gridOptionsWrapper.getContext(),
+                    $scope: this.scope
+                };
+                var cssToUseFromFunc = rowStyleFunc(params);
+                this.vBodyRow.addStyles(cssToUseFromFunc);
                 if (this.pinning) {
-                    this.vPinnedRow.addStyles(cssToUse);
+                    this.vPinnedRow.addStyles(cssToUseFromFunc);
                 }
             }
         }
@@ -360,28 +365,36 @@ module ag.grid {
             }
 
             // add in extra classes provided by the config
-            if (this.gridOptionsWrapper.getRowClass()) {
-                var gridOptionsRowClass = this.gridOptionsWrapper.getRowClass();
-
-                var classToUse: any;
+            var gridOptionsRowClass = this.gridOptionsWrapper.getRowClass();
+            if (gridOptionsRowClass) {
                 if (typeof gridOptionsRowClass === 'function') {
-                    var params = {
-                        node: this.node,
-                        data: this.node.data,
-                        rowIndex: this.rowIndex,
-                        context: this.gridOptionsWrapper.getContext(),
-                        api: this.gridOptionsWrapper.getApi()
-                    };
-                    classToUse = gridOptionsRowClass(params);
+                    console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
                 } else {
-                    classToUse = gridOptionsRowClass;
+                    if (typeof gridOptionsRowClass === 'string') {
+                        classes.push(gridOptionsRowClass);
+                    } else if (Array.isArray(gridOptionsRowClass)) {
+                        gridOptionsRowClass.forEach(function (classItem: any) {
+                            classes.push(classItem);
+                        });
+                    }
                 }
+            }
 
-                if (classToUse) {
-                    if (typeof classToUse === 'string') {
-                        classes.push(classToUse);
-                    } else if (Array.isArray(classToUse)) {
-                        classToUse.forEach(function (classItem: any) {
+            var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+            if (gridOptionsRowClassFunc) {
+                var params = {
+                    node: this.node,
+                    data: this.node.data,
+                    rowIndex: this.rowIndex,
+                    context: this.gridOptionsWrapper.getContext(),
+                    api: this.gridOptionsWrapper.getApi()
+                };
+                var classToUseFromFunc = gridOptionsRowClass(params);
+                if (classToUseFromFunc) {
+                    if (typeof classToUseFromFunc === 'string') {
+                        classes.push(classToUseFromFunc);
+                    } else if (Array.isArray(classToUseFromFunc)) {
+                        classToUseFromFunc.forEach(function (classItem: any) {
                             classes.push(classItem);
                         });
                     }

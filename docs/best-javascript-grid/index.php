@@ -49,6 +49,12 @@ include '../documentation_header.php';
 
     <show-example example="html5grid"></show-example>
 
+    <h2>Next Steps...</h2>
+
+    <p>
+        Now you can go to <a href="../javascript-grid-interfacing-overview/index.php">interfacing</a>
+        to learn about accessing all the features of the grid.
+    </p>
 </div>
 
 

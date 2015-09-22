@@ -1,4 +1,4 @@
-var monthlySalesModule = angular.module('monthlySales', ['angularGrid']);
+var monthlySalesModule = angular.module('monthlySales', ['agGrid']);
 
 monthlySalesModule.controller('monthlySalesController', function($scope, $http) {
 

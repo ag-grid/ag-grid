@@ -9,15 +9,40 @@ include '../documentation_header.php';
 <div>
     <h2>Grid API</h2>
 
-    Angular Grid exposes an API for the rest of your application to interact with it.
+    <p>
+        The grid API exposes functions that go beyond events and properties that
+        you application can call. The grid needs to be initialised before the API
+        can be accessed.
+    </p>
 
-    <p/>
+    <h4>
+        <img src="/images/javascript.png" height="20"/>
+        <img src="/images/angularjs.png" height="20px"/>
+        Javascript and AngularJS 1.x
+    </h4>
+    <p>
+        Use api placed inside gridOptions by the grid during initialisation.
+    </p>
 
-    The API is placed inside the grid options wrapper with the parameter 'api'. You
-    do not need to create the API object, Angular Grid does this for you.
+    <h4>
+        <img src="/images/angular2.png" height="20px"/>
+        AngularJS 2
+    </h4>
+    <p>
+        Use api placed inside gridOptions by the grid during initialisation. You can also
+        use api directly on the AngularJS 2 grid component.
+    </p>
 
-    <p/>
-    The methods exposed through the API are as follows:
+    <h4>
+        <img src="/images/webcomponents.png" height="20px"/>
+        Web Components
+    </h4>
+    <p>
+        Use api placed inside gridOptions by the grid during initialisation. You can also
+        use api directly on the DOM element.
+    </p>
+
+    <h2>List of API Functions</h2>
 
     <table class="table">
         <tr>
@@ -29,20 +54,10 @@ include '../documentation_header.php';
             <td>Set new rows into the grid.</td>
         </tr>
         <tr>
-            <th>onNewDatasource()</th>
-            <td>Inform the grid that a new datasource has been set. The grid will reset all paging
-                and load the first page..</td>
-        </tr>
-        <tr>
             <th>setDatasource(datasource)</th>
-            <td>Set new datasource into the gird. This is the same as setting a new datasource in gridOptions
-            and then calling onNewDatasource()</td>
-        </tr>
-        <tr>
-            <th>onNewCols()</th>
-            <td>Call to inform the grid that the columns have changed. The grid will redraw all the column headers,
-                and then redraw all of the rows. The rows will not be discarded, so any selections, scrolling or groups
-                open, will stay.</td>
+            <td>Set new datasource into the gird. The grid will reset all paging
+                and load the first page. If you want to reset the paging but keep the
+                datasource, call this method with the same datasource.</td>
         </tr>
         <tr>
             <th>setColumnDefs(colDefs)</th>
@@ -189,14 +204,6 @@ include '../documentation_header.php';
                 true for match, false for no match)</td>
         </tr>
         <tr>
-            <th>forEachInMemory(callback)</th>
-            <td>The callback gets called once for each node that is in browser memory. If pagination,
-                then gets called for the currently loaded page. If virtual paging, then gets called
-                for each virtual page loaded in the page cache. If doing neither pagination or virtual
-                paging, then gets called for every single node (including group nodes).
-            </td>
-        </tr>
-        <tr>
             <th>getFilterApi(col)</th>
             <td>Returns the API for the filter for the column. Either provide the colDef (matches on object
                 reference) or the column field attribute (matches on string comparison). Matching by field
@@ -262,7 +269,8 @@ include '../documentation_header.php';
             <td>Iterates through each node (row) in the grid and calls the callback for each node.
                 This works similar to the 'forEach' method on a Javascript array. This is called
                 for every node, ignoring any filtering or sorting applied within the grid.
-        </td>
+                If pagination, then gets called for the currently loaded page.
+                If virtual paging, then gets called for each virtual page loaded in the page cache.</td>
         </tr>
         <tr>
             <th>forEachNodeAfterFilter(callback)</th>

@@ -1,5 +1,5 @@
 
-var module = angular.module('example', ['angularGrid']);
+var module = angular.module('example', ['agGrid']);
 
 module.controller('exampleCtrl', function($scope, $http) {
 

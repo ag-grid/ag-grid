@@ -20,17 +20,18 @@ module ag.grid {
             'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
             'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
-            'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort'
+            'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag'
         ];
 
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];
         public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders','showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
-            'rowData','floatingTopRowData','floatingBottomRowData','groupKeys','groupAggFunction',
+            'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
             'groupAggFields','columnDefs','datasource','quickFilterText'];
 
-        public static CALLBACKS = ['groupInnerRenderer','groupRowInnerRenderer', 'groupRowRenderer',
-            'isScrollLag','suppressScrollLag','isExternalFilterPresent','doesExternalFilterPass'];
+        public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
+            'isScrollLag','isExternalFilterPresent','doesExternalFilterPass','getRowClass','getRowStyle',
+            'headerCellRenderer'];
 
         public static ALL_PROPERTIES = ComponentUtil.SIMPLE_PROPERTIES
             .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
@@ -47,7 +48,7 @@ module ag.grid {
             // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
             var pGridOptions = <any>gridOptions;
             // add in all the simple properties
-            ComponentUtil.SIMPLE_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES).concat(ComponentUtil.CALLBACKS).forEach( (key)=> {
+            ComponentUtil.SIMPLE_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES).forEach( (key)=> {
                 if (typeof (component)[key] !== 'undefined') {
                     pGridOptions[key] = component[key];
                 }

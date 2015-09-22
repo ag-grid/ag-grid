@@ -1,4 +1,4 @@
-var fileBrowserModule = angular.module('account', ['angularGrid']);
+var fileBrowserModule = angular.module('account', ['agGrid']);
 
 fileBrowserModule.controller('accountController', function($scope) {
 

@@ -30,6 +30,7 @@ module ag.grid {
         }
 
         public onNewDatasource() {
+            console.log('ag-Grid: onNewDatasource deprecated, please use setDatasource()');
             this.grid.setDatasource();
         }
 
@@ -38,10 +39,12 @@ module ag.grid {
         }
 
         public setRows(rows:any) {
+            console.log('ag-Grid: setRows deprecated, please use setRowData()');
             this.grid.setRows(rows);
         }
 
         public onNewRows() {
+            console.log('ag-Grid: onNewRows deprecated, please use setRowData()');
             this.grid.setRows();
         }
 
@@ -58,6 +61,7 @@ module ag.grid {
         }
 
         public onNewCols() {
+            console.error("ag-Grid: deprecated, please call setColumnDefs instead providing a list of the defs");
             this.grid.setColumnDefs();
         }
 
@@ -324,6 +328,10 @@ module ag.grid {
 
         public removeGlobalListener(listener: Function): void {
             this.eventService.removeGlobalListener(listener);
+        }
+
+        public refreshPivot(): void {
+            this.grid.refreshPivot();
         }
     }
 }

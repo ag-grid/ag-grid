@@ -53,5 +53,6 @@ angular module is now agGrid (not angularGrid)
 angularGrid global func is now agGridGlobalFunc
 
 api setRows is now setRowData
+following removed: onNewRows, onNewCols, onNewDatasource, instead use setRows, setColumnDefs and setDatasource
 
 selectedNodesById and selectedRows are no longer in gridOptions. data out of the grid is now pushed through events (but you can also query it via the api).
