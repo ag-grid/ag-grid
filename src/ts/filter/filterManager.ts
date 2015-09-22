@@ -65,6 +65,7 @@ module ag.grid {
                     this.setModelOnFilterWrapper(filterWrapper.filter, null);
                 });
             }
+            this.grid.onFilterChanged();
         }
 
         private setModelOnFilterWrapper(filter: { getApi: () => { setModel: Function }}, newModel: any) {
