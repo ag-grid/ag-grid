@@ -219,6 +219,7 @@ columnDefinition = {
     MyCustomFilter.prototype.getGui = function () {}
     MyCustomFilter.prototype.isFilterActive = function() {}
     MyCustomFilter.prototype.doesFilterPass = function (params) {}
+    MyCustomFilter.prototype.getApi = function () {}
 
     // optional methods
     MyCustomFilter.prototype.afterGuiAttached = function(params) {}
@@ -307,7 +308,27 @@ columnDefinition = {
         </tr>
         <tr>
             <th>getApi</th>
-            <td>Returns the API for the filter. Useful if you want your filter manipulated via an API.</td>
+            <td>Returns the API for the filter. Useful if you want your filter manipulated via an API.
+            <pre>MyCustomFilter.prototype.getApi = function () {
+    // mandatory method - called by api.getFilterModel()
+    getModel: function() {
+        // return how you want your model to look when someone
+        // either calls getModel() directly on this filter,
+        // or somoen calles 'getFilterModel' on the main api
+        var model = {value: theFitler.value};
+    },
+    // mandatory method - called by api.setFilterModel(model)
+    setModel: function(model) {
+        // this will be passed the model that was returned in
+        // get model.
+        theFilter.value = model.value;
+    },
+    // then add as many of your own methods that you want,
+    // only you will be calling these.
+        clearMyValues: function() {
+    }
+}</pre>
+            </td>
         </tr>
     </table>
 

@@ -193,7 +193,7 @@
                 <div class="col-md-3" style="text-align: center;">
                     <a href="/best-javascript-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/javascript.png"/>
+                            <img style="height: 100px;" src="images/javascript_large.png"/>
                         </div>
                         <div class="usage-footer">
                             <b>Pure Javascript</b>
@@ -203,7 +203,7 @@
                 <div class="col-md-3" style="text-align: center;">
                     <a href="/best-angularjs-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/angularjs.png"/>
+                            <img style="height: 100px;" src="images/angularjs_large.png"/>
                         </div>
                         <div class="usage-footer">
                             <b>AngularJS 1.x</b>
@@ -213,7 +213,7 @@
                 <div class="col-md-3" style="text-align: center;">
                     <a href="/best-angularjs-2-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/angular2.png"/>
+                            <img style="height: 100px;" src="images/angular2_large.png"/>
                         </div>
                         <div class="usage-footer">
                             <b>AngularJS 2</b>
@@ -223,7 +223,7 @@
                 <div class="col-md-3" style="text-align: center;">
                     <a href="/best-web-component-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/webComponents.png"/>
+                            <img style="height: 100px;" src="images/webComponents_large.png"/>
                         </div>
                         <div class="usage-footer">
                             <b>Web Component</b>
@@ -443,7 +443,7 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="./dist/ag-grid.min.js?ignore=notused9"></script>
+<script src="minimised/ag-grid.min.js?ignore=notused9"></script>
 <link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused9">
 <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused9">
 <link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused9">
@@ -453,8 +453,8 @@
 <link href="example-account-report/account.css?ignore=notused9" rel="stylesheet">
 
 <script src="best-angularjs-grid/basic.js?ignore=notused9"></script>
-<script src="example-account-report/account.js?ignore=notused9"></script>
-<script src="example-file-browser/fileBrowser.js?ignore=notused9"></script>
-<script src="index-script.js"></script>
+<script src="minimised/account.js?ignore=notused9"></script>
+<script src="minimised/fileBrowser.js?ignore=notused9"></script>
+<script src="minimised/index-script.js"></script>
 
 <?php include_once("analytics.php"); ?>
