@@ -389,7 +389,7 @@ module ag.grid {
                     context: this.gridOptionsWrapper.getContext(),
                     api: this.gridOptionsWrapper.getApi()
                 };
-                var classToUseFromFunc = gridOptionsRowClass(params);
+                var classToUseFromFunc = gridOptionsRowClassFunc(params);
                 if (classToUseFromFunc) {
                     if (typeof classToUseFromFunc === 'string') {
                         classes.push(classToUseFromFunc);
