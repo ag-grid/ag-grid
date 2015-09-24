@@ -87,7 +87,7 @@
                             <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+                            <a class="top-button" href="http://www.angulargrid.com/forum"> <i class="fa fa-users"></i> Forum</a>
                         </span>
                     </div>
                 </div>
