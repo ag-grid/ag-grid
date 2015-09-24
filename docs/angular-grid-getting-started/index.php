@@ -57,7 +57,7 @@ include '../documentation_header.php';
     </p>
     <p>
         So eg, the example has this:<br/>
-        <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused8"><br/></pre>
+        <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused9"><br/></pre>
         But all you need is this:<br/>
         <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css"></pre>
     </p>

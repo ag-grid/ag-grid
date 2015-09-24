@@ -21,24 +21,13 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-        <script src="./dist/ag-grid.js?ignore=notused8"></script>
-        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused8">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused8">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused8">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused8">
+        <script src="./dist/ag-grid.js?ignore=notused9"></script>
+        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused9">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused9">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused9">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused9">
 
         <script src="example.js"></script>
-
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-60553231-1', 'auto');
-            ga('send', 'pageview');
-
-        </script>
 
         <style>
             label {
@@ -61,10 +50,10 @@
                     <div class="row">
                         <div class="col-md-12 top-header big-text">
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                            <a class="top-button" href="/index.php"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                            <a class="top-button-selected" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
@@ -172,5 +161,7 @@
             <div ag-grid="angularGrid" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
         </div>
     </body>
+
+    <?php include_once("analytics.php"); ?>
 
 </html>

@@ -23,16 +23,6 @@
 
     <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
 
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-60553231-1', 'auto');
-        ga('send', 'pageview');
-
-    </script>
 </head>
 
 <body ng-app="documentation">
@@ -42,10 +32,10 @@
             <div class="row">
                 <div class="col-md-12 top-header big-text">
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                            <a class="top-button" href="/index.php"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>

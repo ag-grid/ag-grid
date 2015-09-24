@@ -11,10 +11,10 @@ include 'documentation_header.php';
         <img src="images/star.png"/>
     </div>
     <div style="float: right;">
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=star&count=true&size=large"
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
                 frameborder="0" scrolling="0" width="160px" height="30px">
         </iframe>
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=watch&count=true&size=large&v=2"
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=watch&count=true&size=large&v=2"
                 frameborder="0" scrolling="0" width="160px" height="30px">
         </iframe>
     </div>
@@ -62,7 +62,7 @@ include 'documentation_header.php';
     </p>
 -->
     <p style="font-size: 40px">
-        <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> 2.0 Released
+        <b>Major Release: </b> Announcing <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> v2.0
     </p>
 
     <p>
@@ -87,6 +87,7 @@ include 'documentation_header.php';
     </p>
 
     <p>
+        <b>This release reworks the interface a bit. </b>
         To migrate from ag-Grid 1.x to 2.0, please follow this <a href="upgrading_to_2.x/index.php">migration guide</a>.
     </p>
 
@@ -96,7 +97,7 @@ include 'documentation_header.php';
         <b>Next Week</b>
     </p>
     <p>
-        Wow - I need to sleep. I need to sleep. What day is it?
+        I need to sleep. I need to sleep.
     </p>
 
 <!--    <p>

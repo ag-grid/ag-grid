@@ -66,17 +66,6 @@
             .div-outer-div { display: inline-block; height: 100%; width: 100%; }
         </style>
 
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-60553231-1', 'auto');
-            ga('send', 'pageview');
-
-        </script>
-
     </head>
 
     <body ng-app="index" class="big-text">
@@ -86,10 +75,10 @@
                 <div class="row">
                     <div class="col-md-12 top-header big-text">
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/index.html"> <i class="fa fa-home"></i> Home</a>
+                            <a class="top-button-selected" href="/index.php"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.html"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
@@ -454,16 +443,18 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="./dist/ag-grid.min.js?ignore=notused8"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused8">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused8">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused8">
+<script src="./dist/ag-grid.min.js?ignore=notused9"></script>
+<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused9">
+<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused9">
+<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused9">
 
-<link href="example-file-browser/fileBrowser.css?ignore=notused8" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused8" rel="stylesheet">
-<link href="example-account-report/account.css?ignore=notused8" rel="stylesheet">
+<link href="example-file-browser/fileBrowser.css?ignore=notused9" rel="stylesheet">
+<link href="best-angularjs-grid/basic.css?ignore=notused9" rel="stylesheet">
+<link href="example-account-report/account.css?ignore=notused9" rel="stylesheet">
 
-<script src="best-angularjs-grid/basic.js?ignore=notused8"></script>
-<script src="example-account-report/account.js?ignore=notused8"></script>
-<script src="example-file-browser/fileBrowser.js?ignore=notused8"></script>
-<script src="index.js"></script>
+<script src="best-angularjs-grid/basic.js?ignore=notused9"></script>
+<script src="example-account-report/account.js?ignore=notused9"></script>
+<script src="example-file-browser/fileBrowser.js?ignore=notused9"></script>
+<script src="index-script.js"></script>
+
+<?php include_once("analytics.php"); ?>
