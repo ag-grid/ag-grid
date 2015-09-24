@@ -140,9 +140,6 @@ declare module ag.grid {
     }
 }
 declare module ag.grid {
-    interface GenericEventListener {
-        (eventName: string, event: any): void;
-    }
     class GridOptionsWrapper {
         private gridOptions;
         private groupHeaders;
@@ -174,6 +171,8 @@ declare module ag.grid {
         isSuppressMenuHide(): boolean;
         getRowStyle(): any;
         getRowClass(): any;
+        getRowStyleFunc(): any;
+        getRowClassFunc(): any;
         getHeaderCellRenderer(): any;
         getApi(): GridApi;
         isEnableColResize(): boolean;
@@ -198,8 +197,6 @@ declare module ag.grid {
         isEnableFilter(): boolean;
         isEnableServerSideFilter(): boolean;
         isSuppressScrollLag(): boolean;
-        setSelectedRows(newSelectedRows: any): any;
-        setSelectedNodesById(newSelectedNodes: any): any;
         getIcons(): any;
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
@@ -222,6 +219,7 @@ declare module ag.grid {
         getPinnedColCount(): number;
         getLocaleTextFunc(): Function;
         globalEventHandler(eventName: string, event?: any): void;
+        private getCallbackForEvent(eventName);
     }
 }
 declare module ag.grid {
@@ -304,8 +302,8 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class ColumnApi {
-        private columnController;
-        constructor(columnController: ColumnController);
+        private _columnController;
+        constructor(_columnController: ColumnController);
         sizeColumnsToFit(gridWidth: any): void;
         hideColumns(colIds: any, hide: any): void;
         columnGroupOpened(group: ColumnGroup, newValue: boolean): void;
@@ -520,12 +518,6 @@ declare module ag.grid {
         cellRenderer?: Function | {};
         /** A function for rendering a floating cell. */
         floatingCellRenderer?: Function | {};
-        /** Function callback, gets called when a cell is clicked. */
-        cellClicked?: Function;
-        /** Function callback, gets called when a cell is double clicked. */
-        cellDoubleClicked?: Function;
-        /** Function callback, gets called when a cell is right clicked. */
-        cellContextMenu?: Function;
         /** Name of function to use for aggregation. One of [sum,min,max]. */
         aggFunc?: string;
         /** Comparator function for custom sorting. */
@@ -550,8 +542,6 @@ declare module ag.grid {
         editable?: boolean | (Function);
         /** Callbacks for editing.See editing section for further details. */
         newValueHandler?: Function;
-        /** Callbacks for editing.See editing section for further details. */
-        cellValueChanged?: Function;
         /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
         volatile?: boolean;
         /** Cell template to use for cell. Useful for AngularJS cells. */
@@ -562,9 +552,18 @@ declare module ag.grid {
         filter?: string | Function;
         /** The filter params are specific to each filter! */
         filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
+        /** Rules for applying css classes */
         cellClassRules?: {
             [cssClassName: string]: (Function | string);
         };
+        /** Callbacks for editing.See editing section for further details. */
+        onCellValueChanged?: Function;
+        /** Function callback, gets called when a cell is clicked. */
+        onCellClicked?: Function;
+        /** Function callback, gets called when a cell is double clicked. */
+        onCellDoubleClicked?: Function;
+        /** Function callback, gets called when a cell is right clicked. */
+        onCellContextMenu?: Function;
     }
 }
 declare module ag.grid {
@@ -1035,6 +1034,8 @@ declare module ag.grid {
         private eventService;
         init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper, $scope: any, rowRenderer: RowRenderer, eventService: EventService): void;
         private initSelectedNodesById();
+        getSelectedNodesById(): any;
+        getSelectedRows(): any;
         getSelectedNodes(): any;
         getBestCostNodeSelection(): any;
         setRowModel(rowModel: any): void;
@@ -1597,6 +1598,7 @@ declare module ag.grid {
         angularCompileHeaders?: boolean;
         localeText?: any;
         localeTextFunc?: Function;
+        suppressScrollLag?: boolean;
         groupSuppressAutoColumn?: boolean;
         groupSelectsChildren?: boolean;
         groupHidePivotColumns?: boolean;
@@ -1609,7 +1611,6 @@ declare module ag.grid {
         context?: any;
         rowStyle?: any;
         rowClass?: any;
-        headerCellRenderer?: any;
         groupDefaultExpanded?: any;
         slaveGrids?: GridOptions[];
         rowSelection?: string;
@@ -1619,40 +1620,37 @@ declare module ag.grid {
         floatingBottomRowData?: any[];
         showToolPanel?: boolean;
         groupKeys?: string[];
-        groupAggFunction?(nodes: any[]): any;
         groupAggFields?: string[];
         columnDefs?: any[];
         datasource?: any;
         pinnedColumnCount?: number;
         groupHeaders?: boolean;
         headerHeight?: number;
-        groupInnerRenderer?(params: any): void;
         groupRowInnerRenderer?(params: any): void;
         groupRowRenderer?: Function | Object;
         isScrollLag?(): boolean;
-        suppressScrollLag?(): boolean;
         isExternalFilterPresent?(): boolean;
         doesExternalFilterPass?(node: RowNode): boolean;
-        ready?(api: any): void;
-        modelUpdated?(): void;
-        cellClicked?(params: any): void;
-        cellDoubleClicked?(params: any): void;
-        cellContextMenu?(params: any): void;
-        cellValueChanged?(params: any): void;
-        cellFocused?(params: any): void;
-        rowSelected?(params: any): void;
-        selectionChanged?(): void;
-        beforeFilterChanged?(): void;
-        afterFilterChanged?(): void;
-        filterModified?(): void;
-        beforeSortChanged?(): void;
-        afterSortChanged?(): void;
-        virtualRowRemoved?(params: any): void;
-        rowClicked?(params: any): void;
-        selectedRows?: any[];
-        selectedNodesById?: {
-            [email: number]: any;
-        };
+        getRowStyle?: any;
+        getRowClass?: any;
+        headerCellRenderer?: any;
+        groupAggFunction?(nodes: any[]): any;
+        onReady?(api: any): void;
+        onModelUpdated?(): void;
+        onCellClicked?(params: any): void;
+        onCellDoubleClicked?(params: any): void;
+        onCellContextMenu?(params: any): void;
+        onCellValueChanged?(params: any): void;
+        onCellFocused?(params: any): void;
+        onRowSelected?(params: any): void;
+        onSelectionChanged?(): void;
+        onBeforeFilterChanged?(): void;
+        onAfterFilterChanged?(): void;
+        onFilterModified?(): void;
+        onBeforeSortChanged?(): void;
+        onAfterSortChanged?(): void;
+        onVirtualRowRemoved?(params: any): void;
+        onRowClicked?(params: any): void;
         api?: GridApi;
         columnApi?: ColumnApi;
     }
@@ -1670,11 +1668,13 @@ declare module ag.grid {
         private gridPanel;
         private valueService;
         private masterSlaveService;
-        constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveService: MasterSlaveService);
+        private eventService;
+        constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveService: MasterSlaveService, eventService: EventService);
         /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
         __getMasterSlaveService(): MasterSlaveService;
         setDatasource(datasource: any): void;
         onNewDatasource(): void;
+        setRowData(rowData: any): void;
         setRows(rows: any): void;
         onNewRows(): void;
         setFloatingTopRowData(rows: any[]): void;
@@ -1703,7 +1703,11 @@ declare module ag.grid {
         sizeColumnsToFit(): void;
         showLoading(show: any): void;
         isNodeSelected(node: any): boolean;
-        getSelectedNodes(): any;
+        getSelectedNodesById(): {
+            [nodeId: number]: RowNode;
+        };
+        getSelectedNodes(): RowNode[];
+        getSelectedRows(): any[];
         getBestCostNodeSelection(): any;
         getRenderedNodes(): any[];
         ensureColIndexVisible(index: any): void;
@@ -1733,6 +1737,11 @@ declare module ag.grid {
         setColumnState(state: any): void;
         doLayout(): void;
         getValue(colDef: ColDef, data: any, node: any): any;
+        addEventListener(eventType: string, listener: Function): void;
+        addGlobalListener(listener: Function): void;
+        removeEventListener(eventType: string, listener: Function): void;
+        removeGlobalListener(listener: Function): void;
+        refreshPivot(): void;
     }
 }
 declare module ag.grid {
@@ -1770,11 +1779,12 @@ declare module ag.grid {
         private toolPanelShowing;
         private doingPagination;
         private rowModel;
-        constructor(eGridDiv: any, gridOptions: any, genericEventListener?: GenericEventListener, $scope?: any, $compile?: any, quickFilterOnScope?: any);
+        constructor(eGridDiv: any, gridOptions: any, globalEventListener?: Function, $scope?: any, $compile?: any, quickFilterOnScope?: any);
         getRowModel(): any;
         private periodicallyDoLayout();
-        private setupComponents($scope, $compile, eUserProvidedDiv);
+        private setupComponents($scope, $compile, eUserProvidedDiv, globalEventListener);
         private onColumnChanged(event);
+        refreshPivot(): void;
         getEventService(): EventService;
         private onIndividualColumnResized(column);
         showToolPanel(show: any): void;
@@ -1815,10 +1825,14 @@ declare module ag.grid {
         static WITH_IMPACT_OTHER_PROPERTIES: string[];
         static CALLBACKS: string[];
         static ALL_PROPERTIES: string[];
+        static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions;
+        static processOnChange(changes: any, gridOptions: GridOptions, component: any): void;
+        static toBoolean(value: any): boolean;
+        static toNumber(value: any): number;
     }
 }
 declare module ag.grid {
-    class AgGridDirective {
+    class AgGridNg2 {
         private elementDef;
         private _agGrid;
         private _initialised;
@@ -1907,7 +1921,6 @@ declare module ag.grid {
         groupHeaders: boolean;
         headerHeight: number;
         constructor(elementDef: any);
-        private initGridOptions();
         onInit(): void;
         onChange(changes: any): void;
         private globalEventListener(eventType, event);
