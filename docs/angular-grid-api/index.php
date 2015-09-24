@@ -164,6 +164,24 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>isQuickFilterPresent()</th>
+            <td>
+                Returns true if the quick filter is set, otherwise false.
+            </td>
+        </tr>
+        <tr>
+            <th>isAdvancedFilterPresent()</th>
+            <td>
+                Returns true if the advanced filter is set, otherwise false.
+            </td>
+        </tr>
+        <tr>
+            <th>isAnyFilterPresent()</th>
+            <td>
+                Returns true if any filter is set. This includes quick filter, advanced filter or external filter.
+            </td>
+        </tr>
+        <tr>
             <th>addVirtualRowListener(rowIndex, callback)</th>
             <td>Register a callback for notifications about a particular virtualised row. When
                 the row is removed from the table (due to virtualisation), the callback is removed.

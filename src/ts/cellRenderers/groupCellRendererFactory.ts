@@ -39,7 +39,9 @@ module ag.grid {
             // only do this if an indent - as this overwrites the padding that
             // the theme set, which will make things look 'not aligned' for the
             // first group level.
-            if (node.footer || node.level > 0) {
+            var suppressPadding = params.colDef && params.colDef.cellRenderer
+                && params.colDef.cellRenderer.suppressPadding;
+            if (!suppressPadding && (node.footer || node.level > 0)) {
                 var paddingFactor: any;
                 if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.padding >= 0) {
                     paddingFactor = params.colDef.cellRenderer.padding;

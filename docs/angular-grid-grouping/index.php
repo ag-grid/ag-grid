@@ -211,6 +211,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
         <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
         <li><b>padding:</b> A positive number. The amount of padding, in pixels, to indent each group.</li>
+        <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
         <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     </ul>
     </p>
