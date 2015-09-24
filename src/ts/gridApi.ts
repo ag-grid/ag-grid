@@ -92,6 +92,18 @@ module ag.grid {
             this.headerRenderer.updateFilterIcons();
         }
 
+        public isAnyFilterPresent(): boolean {
+            return this.filterManager.isAnyFilterPresent();
+        }
+
+        public isAdvancedFilterPresent(): boolean {
+            return this.filterManager.isAdvancedFilterPresent();
+        }
+
+        public isQuickFilterPresent(): boolean {
+            return this.filterManager.isQuickFilterPresent();
+        }
+
         public getModel() {
             return this.grid.getRowModel();
         }

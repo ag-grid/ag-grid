@@ -108,7 +108,7 @@ module ag.grid {
         }
 
         // returns true if any advanced filter (ie not quick filter) active
-        private isAdvancedFilterPresent() {
+        public isAdvancedFilterPresent() {
             var atLeastOneActive = false;
 
             _.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -208,7 +208,7 @@ module ag.grid {
             });
         }
 
-        private isQuickFilterPresent(): boolean {
+        public isQuickFilterPresent(): boolean {
             return this.quickFilter !== null;
         }
 
