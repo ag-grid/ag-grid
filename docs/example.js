@@ -308,7 +308,6 @@ gridsModule.controller('mainController', function($scope) {
                 break;
         }
         angularGrid.api.deselectAll();
-        angularGrid.api.onNewCols();
     };
 
     $scope.onGroupHeaders = function() {
@@ -413,8 +412,8 @@ gridsModule.controller('mainController', function($scope) {
         return data;
     }
 
-    function selectionChanged() {
-        console.log('Callback selectionChanged: selection count = ' + $scope.angularGrid.selectedRows.length);
+    function selectionChanged(event) {
+        console.log('Callback selectionChanged: selection count = ' + event.selectedRows.length);
     }
 
     function rowSelected(event) {

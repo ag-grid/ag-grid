@@ -11,8 +11,8 @@ include '../documentation_header.php';
     <h2>Context</h2>
 
     <p>
-        The context object is passed to most of the callbacks used in Angular Grid, such as the cell renderers.
-        Angular Grid does not place anything into the context, it is not used at all internally by Angular
+        The context object is passed to most of the callbacks used in ag-Grid, such as the cell renderers.
+        ag-Grid does not place anything into the context, it is not used at all internally by Angular
         Grid. It's purpose is to allow the client application to pass details to custom callbacks.
     </p>
 

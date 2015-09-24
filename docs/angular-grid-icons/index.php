@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Icons</h2>
 
     <p>
-        Angular Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.
+        ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.
     </p>
 
     <p>

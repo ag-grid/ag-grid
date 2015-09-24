@@ -20,7 +20,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             var resultElement = document.createElement("span");
             for (var i = 0; i<params.value; i++) {
                 var starImageElement = document.createElement("img");
-                starImageElement.src = "http://www.angulargrid.com/images/goldStar.png";
+                starImageElement.src = "/images/goldStar.png";
                 resultElement.appendChild(starImageElement);
             }
             return resultElement;

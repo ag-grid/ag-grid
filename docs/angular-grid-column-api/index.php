@@ -16,7 +16,7 @@ include '../documentation_header.php';
         to build your own column management GUI (instead of what's provided in the tool panel).
     </p>
 
-    <pre><code>var pinning = gridOptions.columnApi.isPinning();</code></pre>
+    <pre><code>gridOptions.columnApi.hideColumn('country', true);</code></pre>
 
     <note>
         It is important to NEVER update the details of a column directly (I'm talking about a Column,

@@ -80,7 +80,7 @@ include '../documentation_header.php';
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
         </tr>
         <tr>
-            <th>deselectIndex(index)<br/>deselectNode(node</th>
+            <th>deselectIndex(index)<br/>deselectNode(node)</th>
             <td>Deselects the row node at the given index / node.</td>
         </tr>
         <tr>
@@ -158,7 +158,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>setQuickFilter(quickFilter)</th>
-            <td>Pass a quick filter text into Angular Grid for filtering. If using Angular, the grid watched the 'quickFilterText'
+            <td>Pass a quick filter text into ag-Grid for filtering. If using Angular, the grid watched the 'quickFilterText'
                 attribute of the gridOptions. If you won't want to use quickFilterText (ie if not using AngularJS) then you can
                 call this method instead to apply a quick filter.
             </td>

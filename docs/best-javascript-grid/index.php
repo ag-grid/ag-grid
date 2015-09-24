@@ -12,15 +12,14 @@ include '../documentation_header.php';
 
     <p>
         You don't have to use any framework to use ag-Grid if you don't want to.
-        Just load the ag-Grid <i>.js</i> and <i>.css</i> files as normal, and
-        then from your Javascript code, call the ag-Grid global function <i></i>
+        Just load the ag-Grid <i>.js</i> and <i>.css</i> files as normal and
+        then from your Javascript code, call the ag-Grid global function <i>agGridGlobalFunc()</i>.
         This page shows how to set up ag-Grid using just Javascript and native
         DOM manipulation.
     </p>
 
     <p>
-        To use ag-Grid using purejavascript files
-        as normal. Then use the global angularGrid function to initialise an instance of the grid.
+        To use ag-Grid using pure Javascript call the global <i>agGridGlobalFunc()</i> function to initialise an instance of the grid.
     </p>
 
     <pre>agGridGlobalFunc(cssSelectorForDiv, gridOptions);</pre>

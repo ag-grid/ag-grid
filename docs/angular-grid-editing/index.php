@@ -15,7 +15,7 @@ include '../documentation_header.php';
 
     <div class="bigTitle">Default Editing</div>
 
-    Angular Grid provides functionality for editing text values out of the box. To enable
+    ag-Grid provides functionality for editing text values out of the box. To enable
     editing for a column, set the value 'editable' to 'true' in the column definition.
 
     <p/>
@@ -40,7 +40,7 @@ include '../documentation_header.php';
         <b>rowIndex: </b>The index of the virtualised row.<br/>
         <b>colDef: </b>The column definition.<br/>
         <b>context: </b>The context as set in the gridOptions.<br/>
-        <b>api: </b>A reference to the Angular Grid API.<br/>
+        <b>api: </b>A reference to the ag-Grid API.<br/>
     </p>
 
     <h4>Callback: Cell Value Changed</h4>

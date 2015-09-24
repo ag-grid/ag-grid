@@ -20,11 +20,11 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        The gridOption group parameters are as follows:
+        Grouping has the following grid properties:
     </p>
     <table class="table">
         <tr>
-            <th>Attribute</th>
+            <th>Property</th>
             <th>Description</th>
         </tr>
         <tr>
@@ -38,27 +38,10 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>groupAggFunction(nodes, level)</th>
-            <td>If grouping, used to create complex aggregates. Provide a function to do the aggregation. Use this
-                if the default 'sum/min/max' aggregates provided is not enough.
-            </td>
-        </tr>
-        <tr>
             <th>groupUseEntireRow</th>
             <td>If grouping, set to true or false (default is false). If true, a group row will span all columns across the entire
                 width of the table. If false, the cells will be rendered as normal and you will have the opportunity to include
                 a grouping column (normally the first on the left) to show the group.</td>
-        </tr>
-        <tr>
-            <th>groupRowRenderer</th>
-            <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
-                presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control
-                of the row, so the grid will not provide any default expand / collapse or selection checkbox.</td>
-        </tr>
-        <tr>
-            <th>groupRowInnerRenderer</th>
-            <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
-                expand / collapse function. The innerRenderer is responsible for just the inside part of the row.</td>
         </tr>
         <tr>
             <th>groupDefaultExpanded</th>
@@ -108,6 +91,34 @@ include '../documentation_header.php';
                 levels always. This stops the possibly undesirable behaviour of the header details 'jumping'
                 to the footer on expand.
             </td>
+        </tr>
+    </table>
+
+    <p>
+        Grouping has the following callbacks:
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Callback</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>groupAggFunction(nodes, level)</th>
+            <td>If grouping, used to create complex aggregates. Provide a function to do the aggregation. Use this
+                if the default 'sum/min/max' aggregates provided is not enough.
+            </td>
+        </tr>
+        <tr>
+            <th>groupRowRenderer</th>
+            <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
+                presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control
+                of the row, so the grid will not provide any default expand / collapse or selection checkbox.</td>
+        </tr>
+        <tr>
+            <th>groupRowInnerRenderer</th>
+            <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
+                expand / collapse function. The innerRenderer is responsible for just the inside part of the row.</td>
         </tr>
     </table>
 
@@ -186,7 +197,8 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         keyMap: {from: 'to'},
         suppressCount: false,
         checkbox: true,
-        padding: 10
+        padding: 10,
+        innerRenderer: myInnerRenderer
 }</pre>
 
     <p>
@@ -199,6 +211,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
         <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
         <li><b>padding:</b> A positive number. The amount of padding, in pixels, to indent each group.</li>
+        <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     </ul>
     </p>
 
@@ -304,12 +317,10 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         This is through throw the api method <i>recomputeAggregates</i>. For example, if you allow editing,
         and want the aggregates to update as new values are edited, then create code like the following:
 
-        <pre>
-        // add a listener to the editable colDef
-        colDef.onCellValueChanged = function() {
-            gridOptions.api.recomputeAggregates();
-        }
-        </pre>
+        <pre>// add a listener to the editable colDef
+colDef.onCellValueChanged = function() {
+    gridOptions.api.recomputeAggregates();
+}</pre>
 
     </p>
 

@@ -10,12 +10,12 @@ include '../documentation_header.php';
 
     <h2>Styling</h2>
 
-    Angular Grid is designed to have it's look and feel derived from a theme.
+    ag-Grid is designed to have it's look and feel derived from a theme.
 
     <p/>
-    Out of the box, two themes are provided, ag-fresh and ag-dark.
+    Out of the box, three themes are provided, ag-fresh, ag-blue and ag-dark.
     <p/>
-    To use a theme, add the theme class name to the div element where the Angular Grid directive is attached.
+    To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
     The following is an example of using the ag-fresh theme:<br/>
     <pre>&lt;div ag-grid="gridOptions" class="ag-fresh">&lt;/div></pre>
@@ -30,7 +30,7 @@ include '../documentation_header.php';
 
     <p/>
     This section does not provide an example of building a theme because two themes
-    already come with Angular Grid.
+    already come with ag-Grid.
 
     <div class="bigTitle">When to Style via Themes</div>
 
@@ -61,7 +61,7 @@ include '../documentation_header.php';
 
     <div class="bigTitle">Structure Example</div>
 
-    The exact structure of the DOM within Angular Grid is dependent on it's configuration and what data is present.
+    The exact structure of the DOM within ag-Grid is dependent on it's configuration and what data is present.
     This page takes the below basic example grid, with one pinned column, as an example to demonstrate the DOM structure.
     The reader is encouraged to inspect the DOM (using your browsers developer tools) to dig deeper.
     <p/>
@@ -140,8 +140,8 @@ include '../documentation_header.php';
         <li><span class="agClass">Classes:</span> These CSS classes can have style associated with them in a theme.</li>
         <li><span class="agAttr">Row & Col Attributes:</span> These attributes can be used to identify rows and columns using CSS selectors.</li>
         <li><span class="agPos">Position Attributes:</span> Nothing to do with style, however they stick out below, so worth mentioning. These
-            are set by Angular Grid to position the rows within the containers. Because rows are virtualised, and widths are dynamic, these
-            attributes cannot be set as classes, they are set as dynamic styles by Angular Grid.</li>
+            are set by ag-Grid to position the rows within the containers. Because rows are virtualised, and widths are dynamic, these
+            attributes cannot be set as classes, they are set as dynamic styles by ag-Grid.</li>
     </ul>
 
 <pre class="codeBlock">

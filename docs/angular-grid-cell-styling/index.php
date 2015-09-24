@@ -104,14 +104,14 @@ var colDef4 = {
         data: The row (from the rowData array, where value was taken) been rendered.<br/>
         colDef: The colDef been rendered.<br/>
         context: The context as set on the gridOptions.<br/>
-        api: A reference to the Angular Grid API.<br/>
+        api: A reference to the ag-Grid API.<br/>
         $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     </p>
 
     <h3>Column Definition cellClassRules</h3>
 
     <p>
-        Angular Grid allows rules to be applied to include certain classes. If you use AngularJS, then
+        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS, then
         this is similar to ng-class, where you specify classes as Javascript object keys, and rules
         as object values.
     </p>

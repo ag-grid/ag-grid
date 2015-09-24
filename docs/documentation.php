@@ -1,8 +1,8 @@
 <?php
 $key = "index";
-$pageTitle = "Angular Grid Documentation";
-$pageDescription = "Introduction page of documentation for Angular Grid";
-$pageKeyboards = "AngularJS Angular Grid Documentation";
+$pageTitle = "ag-Grid Angular Grid Documentation";
+$pageDescription = "Introduction page of documentation for ag-Grid Angular Grid";
+$pageKeyboards = "ag-Grid AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
@@ -54,7 +54,7 @@ include 'documentation_header.php';
      xmlns="http://www.w3.org/1999/html">
 
     <p>
-        <b>13th Aug 2015 <!--- Over 800 stars on Github and counting!!--></b>
+        <b>23th Aug 2015 <!--- Over 800 stars on Github and counting!!--></b>
     </p>
 
 <!--    <p>
@@ -62,32 +62,32 @@ include 'documentation_header.php';
     </p>
 -->
     <p style="font-size: 40px">
-        <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> meets Angular 2
+        <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> 2.0 Released
     </p>
 
     <p>
-        After weeks of researching Angular 2 and Web Components, this week I decided to put my new
-        skills into practice. I have a first pass of an ag-Grid Component for AngularJS 2.
-        <a href="example-angular-2/index.php">Check it out here</a>.
-    </p>
-
-    <p>
-        The only major change in the latest is Angular 2 support, so not much point in grabbing it, however if
-        you do upgrade, I had to do some changes with the following callbacks, to make them work like events:
-    <ul>
-        <li>
-            rowSelected: now takes params with 'node' instead of 'data' and 'row index'.
-        </li>
-        <li>
-            virtualRowRemoved: now takes params with 'node' and 'index' instead of 'data' and 'row index'.
-        </li>
-        <li>
-            ready: now takes params with 'api' instead of just 'api'.
-        </li>
+        The first ag-Grid production release supporting
+        AngularJS 2 and Web Components is here.
+        ag-Grid 2.0 is now fully working with all the
+        following technologies:
+        <ul>
+        <li><b>Native Javascript</b> (no framework required)</li>
+        <li><b>AngularJS 1.x</b> (most of you are doing)</li>
+        <li><b>AngularJS 2</b> (most of you will want to be doing)</li>
+        <li><b>Web Component</b> (most of you should be considering)</li>
     </ul>
+    </p>
 
     <p>
-        Also check out a new theme in the test drive - baramwindy92 put this on the message board. Looks nice!
+        Dear Google, I'm ready now for AngularJS 2.0.
+    </p>
+
+    <p>
+        Dear Web Component community, hello, please let me know what you think of the grid as a Web Component.
+    </p>
+
+    <p>
+        To migrate from ag-Grid 1.x to 2.0, please follow this <a href="upgrading_to_2.x/index.php">migration guide</a>.
     </p>
 
     <p>&nbsp;</p>
@@ -96,8 +96,7 @@ include 'documentation_header.php';
         <b>Next Week</b>
     </p>
     <p>
-        I'm going to continue with Angular 2 and Web Components. I'm looking forward to having ag-Grid
-        available as an a) Angular 1 Directive, b) Angular 2 Component, c) Web Component and d) Plain Javascript.
+        Wow - I need to sleep. I need to sleep. What day is it?
     </p>
 
 <!--    <p>
@@ -108,7 +107,7 @@ include 'documentation_header.php';
         my work with ag-Grid.
     </p>
 -->
-    <a href="https://twitter.com/angularGrid" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @angularGrid</a>
+    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -226,19 +225,19 @@ include 'documentation_header.php';
 
             Tell Friends<br/>
 
-                <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.angulargrid.com">
+                <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com">
                     <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
                 </a>
 
-                <a class='share-link' href="https://twitter.com/home?status=Check%20out%20AngularGrid,%20a%20new%20way%20to%20show%20grid%20data%20for%20AngularJS">
+                <a class='share-link' href="https://twitter.com/home?status=Check%20out%20ag-Grid,%20a%20new%20way%20to%20show%20grid%20data%20for%20the%20web">
                     <img src="/images/twitter_32.png" alt="Share on Twitter" title="Share on Twitter"/>
                 </a>
 
-                <a class='share-link' href="https://plus.google.com/share?url=www.angulargrid.com">
+                <a class='share-link' href="https://plus.google.com/share?url=www.ag-grid.com">
                     <img src="/images/googleplus_32.png" alt="Share on Google Plus" title="Share on Google Plus"/>
                 </a>
 
-                <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.angulargrid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
+                <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.ag-grid.com&title=Angular%20Grid&summary=A%20new%20way%20to%20show%20grid%20data%20for%20AngularJS&source=">
                     <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
                 </a>
 
@@ -257,6 +256,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>13th Sep</b> First pass on AngularJS 2
+    </p>
 
     <hr/>
 

@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/documentation.css">
     <link rel="stylesheet" href="/style.css">
 
-    <link rel="shortcut icon" href="http://www.angulargrid.com/favicon.ico" />
+    <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -93,33 +93,39 @@
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Javascript") { ?>
-                    <span class="sidebarLinkSelected childItem">> Javascript</span>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/javascript.png" width="20px">Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/best-javascript-grid/index.php">> Javascript</a>
+                    <a class="sidebarLink childItem" href="/best-javascript-grid/index.php"><img src="/images/javascript.png" width="20px">Javascript</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem">> AngularJS 1.x</span>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/best-angularjs-grid/index.php">> AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="/best-angularjs-grid/index.php"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem">> AngularJS 2.0</span>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/angular2.png" width="20px">AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/best-angularjs-2-grid/index.php">> AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="/best-angularjs-2-grid/index.php"><img src="/images/angular2.png" width="20px">AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
-                    <span class="sidebarLinkSelected childItem">> Web Components</span>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/webComponents.png" width="20px">Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="/best-web-component-grid/index.php">> Web Components</a>
+                    <a class="sidebarLink childItem" href="/best-web-component-grid/index.php"><img src="/images/webComponents.png" width="20px">Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>
                     <span class="sidebarLinkSelected">Width & Height</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/angular-grid-width-and-height/index.php">Width & Height</a>
+                <?php } ?>
+
+                <?php if ($key == "Upgrading to 2.0") { ?>
+                    <span class="sidebarLinkSelected">Upgrading to 2.0</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/upgrading_to_2.x/index.php">Upgrading to 2.0</a>
                 <?php } ?>
 
                 <h4>
@@ -362,12 +368,6 @@
                     Examples
                 </h4>
 
-                <?php if ($key == "Data Grid") { ?>
-                    <span class="sidebarLinkSelected">Data Grid</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/example-data-grid/index.php">Data Grid</a>
-                <?php } ?>
-
                 <?php if ($key == "Styled Report") { ?>
                     <span class="sidebarLinkSelected">Styled Report</span>
                 <?php } else { ?>
@@ -384,28 +384,6 @@
                     <span class="sidebarLinkSelected">Expressions and Context</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="/example-expressions-and-context/index.php">Expressions and Context</a>
-                <?php } ?>
-
-                <h4>
-                    Beyong Angular 1.x
-                </h4>
-
-                <?php if ($key == "Native Javascript") { ?>
-                    <span class="sidebarLinkSelected">Native Javascript</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/example-native-javascript-grid/index.php">Native Javascript</a>
-                <?php } ?>
-
-                <?php if ($key == "Web Components") { ?>
-                    <span class="sidebarLinkSelected"><img src="/images/lab.png"/>Web Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/example-web-component-grid/index.php"><img src="/images/lab.png"/>Web Components</a>
-                <?php } ?>
-
-                <?php if ($key == "Angular 2") { ?>
-                    <span class="sidebarLinkSelected"><img src="/images/lab.png"/>Angular 2</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="/example-angular-2/index.php"><img src="/images/lab.png"/>Angular 2</a>
                 <?php } ?>
 
             </div>

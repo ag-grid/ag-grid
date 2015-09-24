@@ -15,7 +15,7 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        The tool panel panel can be shown be default by setting 'showToolPanel=true' in the gridOptions,
+        The tool panel panel can be shown be default by setting 'showToolPanel=true' property,
         or after the grid is initialised by calling the api function showToolPanel(show). You can query if
         the tool panel is showing with the api isToolPanelShowing().
     </p>
@@ -24,15 +24,15 @@ include '../documentation_header.php';
 
     <p>
         If you don't want to show the values list in the tool panel, set <i><b>toolPanelSuppressValues=true</b></i>
-        in the gridOptions. This is useful if you don't want aggregation, or you have provided your own
+        property. This is useful if you don't want aggregation, or you have provided your own
         aggregation function (which would then not use the values selected here).
     </p>
 
     <h4>Suppress Pivot</h4>
 
     <p>
-        If you don't want to show the pivot, set <i><b>toolPanelSuppressPivot=true</b></i> in
-        the gridOptions. This is used if you just want simple column visibility and reordering functionality
+        If you don't want to show the pivot, set <i><b>toolPanelSuppressPivot=true</b></i> property.
+        This is used if you just want simple column visibility and reordering functionality
         in the tool panel. Note that hiding the pivot has the impact of also hiding the values, as it
         doesn't make sense to have values if you are not pivoting.
     </p>

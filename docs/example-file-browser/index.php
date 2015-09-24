@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>File Browser</h2>
 
     <p>
-        The example below shows how you can make complex tree structure using Angular Grid.
+        The example below shows how you can make complex tree structure using ag-Grid.
     </p>
 
     <p>

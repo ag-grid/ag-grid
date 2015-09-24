@@ -31,7 +31,7 @@ include '../documentation_header.php';
         yourself.
     </note>
 
-    <h4>Using Angular Grid Web Component</h4>
+    <h4>Using ag-Grid Web Component</h4>
 
     <p>
         ag-Grid registers as a tag named 'ag-grid'. To insert a grid into your application, use the

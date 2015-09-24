@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Loading Overlay</h2>
 
     <p>
-        At any point, you can show the loading overlay on top of Angular Grid. To show or hide the overlay, call
+        At any point, you can show the loading overlay on top of ag-Grid. To show or hide the overlay, call
         the api function showLoading:
     </p>
 

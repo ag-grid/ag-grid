@@ -14,7 +14,7 @@ include '../documentation_header.php';
         Most of the time, grids look like grids. But sometimes, a different feel is required.
     </p>
     <p>
-        Angular Grid was designed to allow different designs be applied to the grid.
+        ag-Grid was designed to allow different designs be applied to the grid.
     </p>
 
     <show-example example="account"></show-example>

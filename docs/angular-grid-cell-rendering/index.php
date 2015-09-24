@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Cell Rendering</h2>
 
     <p>
-        Cell Rendering - this is a very powerful feature in Angular Grid. With this, you can put whatever
+        Cell Rendering - this is a very powerful feature in ag-Grid. With this, you can put whatever
         you want in the grid. The job of the grid is to lay out the cells. What goes into the cells,
         that's where you come in!
     </p>

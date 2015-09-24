@@ -205,8 +205,8 @@ columnDefinition = {
 
     <p>
         To provide a custom filter, instead of providing a string (eg set, text or number) for the filter in
-        the column definition, provide a function. Angular Grid will call 'new' on this function and use
-        the generated class as a filter. Angular Grid expects the filter class to have the following interface:
+        the column definition, provide a function. ag-Grid will call 'new' on this function and use
+        the generated class as a filter. ag-Grid expects the filter class to have the following interface:
     </p>
 
     <pre>
@@ -238,7 +238,7 @@ columnDefinition = {
                 with the following attributes:
                 <ul>
                     <li>colDef: The col def this filter is for.</li>
-                    <li>rowModel: The internal row model inside Angular Grid. This should be treated as
+                    <li>rowModel: The internal row model inside ag-Grid. This should be treated as
                         read only. If the filter needs to know which rows are a) in the table b) currently
                         visible (ie not already filtered), c) what groups d) what order - all of this
                         can be read from the rowModel.
