@@ -207,10 +207,10 @@ include 'documentation_header.php';
 
         <div style="display: inline-block; width: 40%;">
             Star or Watch <br/>
-                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=star&count=true&size=large"
+                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
                         frameborder="0" scrolling="0" width="160px" height="30px">
                 </iframe>
-                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=angular-grid&type=watch&count=true&size=large&v=2"
+                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=watch&count=true&size=large&v=2"
                         frameborder="0" scrolling="0" width="160px" height="30px">
                 </iframe>
         </div>

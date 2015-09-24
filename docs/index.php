@@ -75,7 +75,7 @@
                 <div class="row">
                     <div class="col-md-12 top-header big-text">
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/index.php"> <i class="fa fa-home"></i> Home</a>
+                            <a class="top-button-selected" href="/"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
@@ -87,7 +87,7 @@
                             <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="http://www.angulargrid.com/forum"> <i class="fa fa-users"></i> Forum</a>
+                            <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
                         </span>
                     </div>
                 </div>
