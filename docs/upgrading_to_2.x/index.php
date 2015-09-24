@@ -31,7 +31,7 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        I have also moved away from ag-Grid and towards ag-Grid with the naming. This includes a new
+        I have also moved away from Angular Grid and towards ag-Grid with the naming. This includes a new
         (mirrored) website www.ag-grid.com.
     </p>
 

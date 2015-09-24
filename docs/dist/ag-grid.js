@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascrip, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.0.0
+ * @version v2.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4552,7 +4552,7 @@ var ag;
                         context: this.gridOptionsWrapper.getContext(),
                         api: this.gridOptionsWrapper.getApi()
                     };
-                    var classToUseFromFunc = gridOptionsRowClass(params);
+                    var classToUseFromFunc = gridOptionsRowClassFunc(params);
                     if (classToUseFromFunc) {
                         if (typeof classToUseFromFunc === 'string') {
                             classes.push(classToUseFromFunc);
