@@ -139,7 +139,7 @@ include '../documentation_header.php';
     <p>
         Let the grid provide the default grouping column. This is the
         quickest way to get started.
-        <pre>gridOptions.isgroupSuppressAutoColumn = false; // or undefined
+        <pre>gridOptions.groupSuppressAutoColumn = false; // or undefined
 gridOptions.groupColumnDef = null; // or undefined</pre>
         All you have to do is provide your columns as normal and let the grid worry about introducing
         the column to show the group when you are grouping.
@@ -157,7 +157,7 @@ gridOptions.groupColumnDef = null; // or undefined</pre>
         to either choose the built in group cell renderer, or provide your own cell renderer that takes care
         of the grouping.
     </p>
-        <pre>gridOptions.isgroupSuppressAutoColumn = false; // or undefined
+        <pre>gridOptions.groupSuppressAutoColumn = false; // or undefined
 gridOptions.groupColumnDef = {
     cellRenderer: {
         renderer: 'group',
@@ -179,7 +179,7 @@ gridOptions.groupColumnDef = {
         This method can also be used to have multiple columns to display the groups, useful when you want to split
         the grouping across columns (eg one column is responsible
         for the country grouping, another for the language grouping).
-        <pre>gridOptions.isgroupSuppressAutoColumn = true;
+        <pre>gridOptions.groupSuppressAutoColumn = true;
 gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre>
     </p>
 

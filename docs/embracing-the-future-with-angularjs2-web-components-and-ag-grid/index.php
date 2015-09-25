@@ -8,32 +8,35 @@ include('../mediaHeader.php');
 ?>
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h2>Embracing the Future with AngularJS 2.0, Web Components and ag-Grid</h2>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-9">
 
         <p>
             The first release of ag-Grid (www.ag-grid.com) broke the ‘usual thinking’ in for AngularJS developers. It provided a high performance grid to the AngularJS community, but it didn’t use AngularJS underneath the hood. Instead it used AngularJS where appropriate, and then native Javascript and DOM manipulation at all other times. A wolf-fast grid in AngularJS clothing! This approach was novel, building a bridge between native Javascript and AngularJS without the client AngularJS application realising it was using a non-AngularJS component.
         </p>
 
         <p>
-            AngularJS 1.x had some shortcomings, which is understandable given its evolutionary development. What AngularJS is been used for today is probably beyond the intentions of Misko when he wrote those first lines of code, which is probably why the guys at Google decided to do a complete redesign for Angular 2. One of the shortcomings that particularly bothered me was the closed nature of the platform: AngularJS applications could not seamlessly use non-AngularJS components. For AngularJS to use a non-AngularJS component, it had to wrap the component with AngularJS code. This led to a sea of non-functional components who’s only purpose was to wrap non-AngularJS components – a component wrapping a component.
+            AngularJS 1.x had some shortcomings, which is understandable given its evolutionary development. What AngularJS is being used for today is probably beyond the intentions of Misko when he wrote those first lines of code, which is probably why the guys at Google decided to do a complete redesign for Angular 2. One of the shortcomings that particularly bothered me was the closed nature of the platform: AngularJS applications could not seamlessly use non-AngularJS components. For AngularJS to use a non-AngularJS component, it had to wrap the component with AngularJS code. This led to a sea of non-functional components whose only purpose was to wrap non-AngularJS components – a component wrapping a component.
         </p>
 
         <p>
-            In ag-Grid, ag-Grid did this wrapping code for you, thus the AngularJS application had no idea it was talking to a non-AngularJS component.
+            In ag-Grid, this wrapping code is done for you, thus the AngularJS application had no idea it was talking to a non-AngularJS component.
         </p>
 
         <p>
-            AngularJS 2 turns this problem right around. Rather than having a closed system for modularising AngularJS applications, AngularJS 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS will be able to directly use, without any wrapper coding, any component written as a Web Component. That is easy to understand, when I first heard it I understood technically what it meant, but it took me some time to really appreciate the implications of what it meant.
+            AngularJS 2 turns this problem right around. Rather than having a closed system for modularising AngularJS applications,
+            AngularJS 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS will be able to
+            directly use, without any wrapper coding, any component written as a Web Component.
+            That is easy to understand - when I first heard it I understood technically what it meant - but it took me some time to really appreciate the implications of what it meant.
         </p>
 
         <p>
-            Having spent a considerable time considering the above, along with developing ag-Grid out to be supportive of Web Components and AngularJS 2, I have come to the following logical conclusions:
+            Having spent a considerable time considering the above I have come to the following logical conclusions:
         </p>
 
         <ul>
@@ -72,14 +75,14 @@ include('../mediaHeader.php');
             So in the future, when AngularJS 2 is out, it will bring more choice. Component developers will
             have the choice to provide Web Components that work with AngularJS as well as with other platforms.
             AngularJS developers will have wider choice when selecting components for their application, not
-            been restricted with ‘only AngularJS’ components. The binding between application technology choice
+            being restricted with ‘only AngularJS’ components. The binding between application technology choice
             and component technology choice will dissolve. The AngularJS 1.x components that came into existence
             as a result of it's dependency shortcoming will disappear.
         </p>
 
         <p>
             So where does this leave components like ag-Grid? ag-Grid has worked with AngularJS 1.x and native
-            Javascript since version 1. Now in version 2 it has extended to AngularJS 2 and Web Components
+            Javascript since version 1. Version 2 has extended to AngularJS 2 and Web Components
             (these are two separate things, one depends on AngularJS 2, one depends on Web Components, however
             an AngularJS 2 application can talk to both). The positioning of ag-Grid, to support this new technology
             choice, was evolutionary. Google and the Web Components community laid the breadcrumbs. Now that ag-Grid
@@ -87,11 +90,14 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            I guess I've thrown some breadcrumbs too with the anticipation of what sticks.
+            I guess I've thrown some breadcrumbs too with the anticipation of seeing what sticks.
         </p>
 
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+
+        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
+
         <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
 
             <p>

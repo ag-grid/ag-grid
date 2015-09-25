@@ -27,7 +27,7 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
         <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
@@ -48,7 +48,55 @@ include 'documentation_header.php';
             about the story of ag-Grid, Angular 2 and Web Components, and also the future of ag-Grid.
         </div>
     </div>
+</div>-->
+
+<div style="overflow: hidden; border: 1px solid darkgrey; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; padding-right: 15px;">
+        <a href="https://www.reddit.com/r/angularjs/comments/3mbed0/embracing_the_future_with_angularjs_20_web/">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHIAAACgCAMAAADn9chrAAAAt1BMVEX///8AAAD/RQAmJiajo6Py8vLs7Oze3t51dXUNDQ37+/u9vb3p6en29vbk5OTv7+/Q0NCQkJBsbGw6OjqwsLBPT09ISEgdHR2bm5vFxcUyMjJmZmbY2Nh9fX1VVVUtLS3/OwBeXl4VFRWIiIj/LgD/7elBQUH/9PL/XD7/gWv/n5P/Tin/19D/iXb+ysT/vrb/Uh//c1n/r6X/YUr/Qxj/qZj/ak3/mob/aFT/VjX9iX3/FwD/4dpFdG9mAAAKn0lEQVR4nL1cbYOaOBAWQUQQBEHeFBSwbPeu27v2rr1rt///d91mEiBAgomy93xyNWSSybxn2MXi/bC1slD199pp5nl3zs5k/mBWqkJQrOekeIqUaO8lY6qOr1CwZiTZ7ET1rN5WThulB202iitq1uhgBFub/FDCV3WmeQf8MZmLpKYM4GcgLR78EcCYdQgLmomieURbMfwB3SJGbFX1ZpjR0X8YWzRXvNBPQZGWww277TA9ffvzyBZsWVhoagd/PlmZSlNMqXHA/+0sJAs0FfW3bWVFs1taRoEbsyjnDjHM639nOm7sj1RxNplNODPZPoukOx4oDySJvs34IRzs3qXO/DGgiQzWD8fBGVdIZ3YzUDxx2WX15efEXZss0NrPzLWvfFr5T0jKlDlcmH14myhj/xaAnhhIFW0tQp/zGSgu1iNVoFBg5TwXIf5Q6pyBUvAGMtIDWN8O5TxOGq3/wP3VziiK53mM3am84R6SZqP1TE4EJCSa5tcu8IxKW8/jQhaYr+FckwnBHHqL90cwm9kUBjLpB5ZJfzfsNhCC/D8w7Z2+3YLhTlar2aSRg5WrVdkx99OIaLgfFkY2CJpnw8mKQ4WPch8ks1hRAt3N6miCHkGaa+t55CkwBMg1yL2HmZwY/SnV3Kg8LUgS13WTxNLit7Ot+0MiTUZbzb782cGBOi2/iBNHH3POXG3XQRaeqXUZg62aHLm2PON4NLwuRgzSbpZ9cLqhDtskpsd3RBM878iXO5R3i0H0upyqzkTDllWwb586wkN63M2b9Rge9HKY1Fq4DUujo7sSJIjXrjV73VSrhZXS85aU36yUAdrFSokCQeua/dG8VTOGEKiNKjMoKVD8e33TuifnZyOrDCLWezwAB4CpCxGpbjX5aRRLcXRAtJX12gLR2Ll4XuCtAx+7DILsOXswQrKIAekkFSfzTkOiZeEWL8afITMjStB5OI2w1kGraWPDHU6E97OY6CQaMBBxO3LwSTa5jJ4OBj0Gve7v08WniYSryRcgK1bK2Uo0CxOLbntsuYIyMJ/aFfaIszrcrCdDSIL8BfUNFqmZ64p4n0T8IXyhSMLfG3ZG//Thw9P01CZvBNAksSAm2WYWWHSY6cOnl79+//HvPxNEn779++P3j8+fGD/ZeSeRSFZLOFEwQ8B1VoZqvrxelm+4XL/yKH694BGvz4xl7YB7ICF7kFXkXdIdMUIhI3Z5+n5dElx/Y1P81o64fGTQBHYWbx9WKahMQqQYNslSj+fLssX1M4vip2s34vKFMaAgiqBhGiZYOB1KXqyixa/XJYUfrNjgIz3ilXGeDp5cB1NqEkdyMBqTO8TLhZ7wwtjm5/6In4xJEAs3Sd3Ip5k3foaVLT71trC8ME7ztx7JJes0ofADkUcObNIbkqzqxodln+TzeMhzn+TyA2Oa1vMTf+Fii5+y3MeQ5Mt9JEnwFrWGxoVFMItBTz/mYCz2IcqZNm18l/VTVnwYfCAVtmPvK55SvinJlZ7vO2vIF5rm9RdzmsNwT7sJp/VC0byyjGjPFFwZ8oVQDNXe4Wklws9mxsvrH+wRn18vLUVOHmEQmydG0vz2N7Lal8tHprlD+PTXFY24Xv7hZS4jklvKjTLw6+uX5Z/Pf0w4L/Pzy5/L79/Y54iwH4oP1I1mKbfzgMSn6n3D9c4zwayVYS0s5fiRubBWRwYVRVr1O9ZwkJcelDWtdz5MJD11/ytH5Vq8WcCKq4aXKfMCHMkwQG5CoHcBGPV8GMrZSIqjB5LYKcRsHbR48dbjgHySdWpnvgN7w+omA/gjDjxDA6epcJ5L2soCD3vuekF22BcqUDI5MGni85/IAtcoTPSZz8KJcdzUCuJM5mbwTZ0ac+yTGUO+zySJox6eLuDaSMH6ySIxocdgXuJNBKVwFzeIenoP499Zi21oKmXoWa67Briu5YVtLY5FEc9YTFhvXHXKWYw/9ercmzIqy17nScjKvvF89WQJCY9hG3ht2JdBgVl7M3GhQL2hX4SmxyqSm+6RSdU/uizOubgEk98sk5FDq9lViq0b5xuKoZtNHrvMOU1SiS0ELtodUkPNuHVR0zkliWUlycnhyoVFEh/OXfUANiltbuK7K4cuSSBV4QaqRiPO1V33Hm5Bnj9IlAJXbandkK2u7VrBjiR7xDo19GPxm1092Tc9P1ElH71ZXc27qESqbHaQddX77L5KoNVWERBZLeGX9lduUNEtTdXdgmeuDfo2Q/XzLHDXzna3shFWK91xTla8D1Pa9vnaQ/GMxrpii9L6kOf5IazPjF+VwyPxMKlU56J3eyFxY8e7W3uaOyhtsTtVub/hkkJMD/eo1bDh7Z2F6/a6CuvXyrXiYtRsh1BnQUIEtF3WXcz12il7S7Yd1wpiD6AF1qlvYAr2Q2LAXIWAWqL0DU1a4LRknsLAMUuGgqVUQsnQQg82WIT09ugeIF94y7SRx2a2vXFgwXhosRL0Wy1AdPYmrFqm3QWRTHWSEkixdgvWy8YyxO9cGgNFdChbhsiOGZ7yUDW6gZyYTG+Z+6YlJdrdXlZqlWZzKNO9kYz0sI6ITq5LuSeDdomFLEm1eRKiGXGXibiC7y/wvdg9JEHLhNNyHXEH1yomGgqZcFqSttRqIVnCRjNUhnWwaWzPrdQgPWN3XDIASok/1opcbQYuzrAbgFsD0R6BotOMB3ZJX1PeBNXDK32WA5KC3V1gX0k1QVZiO/HByxV8ljoPeb2MOpKjQjMfcB6E5KhYfAOnxvossLEUtM80SWkbqxAbK0eSZuw9nkQlcZAEY2nxuctfkigilBA96uZGNiqA8SRYl1AS2hSgVZ8l2oxiiisypoAyeLQ4iIASN6mXANwucFlTqi2CtmUAS56wWdfL9hRo6RVB2YqBKWe4qDcoQgkZWNDnB45E/LanC0QkLZ7eeVqDxIgyi8UWACJ+4edACkAtIdySMZVd/T3opFfwOayWkPPLpF9t6IyjJmHFRDqyR2Fd2xYijrh5RJeRAgixUBCxk08QFiaUfTJqFhFsyfpWkYyxa0CSPcyrqaoxDRJh2VC1OEtSbFLaownyI1iLw5bSxRWgO2pNpFTgSYgeckEH0i76YLFAMJQF67h5gCJVEhH00kk7Xsb59NG2nN54VYWg7cDNHrhiNjVSMhNyJqQoFD7YIEkayUWiPHyZlM3RkRkL+gQkbpt5XkRYi9k8WyaiuwHw77cN0En4zAXAvC8fYdY7e5uY20lAziVZ0JoAMu3qDaeJhGeWN/OcxMvVCHzRDQ+GhmzUKD1q7iOvk7q9CvekAFGvNyi1dy/Rbf99xknbvovEx/KRjGrpEyeVDcce7nhfor18Lqq4OoLX5ceI+L8T+JnnZc3FlS9N84QfrBq/l0+aILrzwrQKeFT2vwXgpvlDp/94H5xrHnDmVEyP34i5p+qc0xRg2pwpteCaS5qR7q2zHwP6oMveVya3Xr4GBvStqzvY920k40mIOxwbBNzRO5weVW/YPSMcQG4xdJEBU+PWuD1kOBgtmtPpzwa7foJD27xnWvA6xvvRz2M+3SRZB9oQ+JY5irWYQCOX88ZoaDzu9ZsGFcI+ApkwyLo9nQCk3vl2JN5/5EMuv0wO6hjRptxEqlpuKMDf8PVotMHZ5H/D4pj71RY4ogAAAABJRU5ErkJggg=="/>
+        </a>
+    </div>
+    <div style="margin-left: 20px;">
+        <a href="https://www.reddit.com/r/angularjs/comments/3mbed0/embracing_the_future_with_angularjs_20_web/">
+            <div style="font-size: 20px; color: #167ac6;">
+                Embracing the Future with AngularJS 2.0, Web Components and ag-Grid
+            </div>
+        </a>
+        <div style="color: #767676">
+            by Niall Crosby
+        </div>
+        <div style="color: #767676; padding-top: 20px;">
+            This article explains the positioning of Web Components, AngularJS 2 and ag-Grid.
+        </div>
+        <a style="color: #767676; display: inline-block; padding-top: 20px; font-weight: bold;"  href="https://www.reddit.com/r/angularjs/comments/3mbed0/embracing_the_future_with_angularjs_20_web/">
+            Please take the time to up-vote this article on Reddit, help grow the community.
+        </a>
+    </div>
 </div>
+
+<!--<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="display: inline-block; width: 100%;">
+        <div style="float: left;">
+            <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
+                <h4>Embracing the Future with AngularJS 2.0, Web Components and ag-Grid</h4>
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            25st October 2015
+        </div>
+    </div>
+    <div style="color: #767676">
+        The first release of ag-Grid (www.ag-grid.com) broke the 'usual thinking'
+        in the world of AngularJS. It provided a high performance grid to the AngularJS
+        community, but it didn't use AngularJS underneath the hood. Instead it used
+        AngularJS where appropriate, and then native Javascript and DOM manipulation
+        at all other times. A wolf-fast grid in AngularJS clothing! . . .
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">Click for full article</a>
+    </div>
+</div>-->
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
