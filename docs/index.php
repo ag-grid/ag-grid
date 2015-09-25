@@ -2,9 +2,9 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid Grid - A Data Grid for AngularJS</title>
-        <meta name="description" content="A high performance and feature rich data grid for AngularJS. This grid is faster than ui-grid and ng-grid.">
-        <meta name="keywords" content="angularjs angular grid table ui-grid ng-grid"/>
+        <title>ag-Grid - Javascript / Web Components / AngularJS</title>
+        <meta name="description" content="The best Javascript grid with support for Native Javascript, Web Components and AngularJS. Feature rich. Blazing fast..">
+        <meta name="keywords" content="javascript angularjs angular grid table ui-grid ng-grid web components"/>
         <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -84,7 +84,7 @@
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                            <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>

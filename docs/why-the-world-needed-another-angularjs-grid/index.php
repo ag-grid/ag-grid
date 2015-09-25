@@ -38,7 +38,7 @@
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                            <a class="top-button-selected" href="/media.php"> <i class="fa fa-road"></i> Media</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
@@ -255,16 +255,21 @@
                     About Me
                 </p>
                 <p>
-                    I have been writing software for 20 years. Starting with Assembly, C++ and MFC,
+                    I have been writing software all my life! Starting with Assembly, C++ and MFC,
                     moving onto full stack Java / JSP / GWT and now focusing on full stack
                     Java / Javascript / AngularJS.
                 </p>
                 <p>
-                    Currently I work in London contracting in the financial industry.
+                    Consultant working in the financial industry, specialising in web based reporting applications.
                 </p>
 
                 <div>
-                    <a href="http://uk.linkedin.com/in/niallcrosby">Find me on<br/><img src="/images/linked-in.png"/></a>
+                    <br/>
+                    <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
+                    <br/>
+                    <br/>
+                    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
                 </div>
 
             </div>

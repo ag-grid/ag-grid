@@ -41,7 +41,7 @@
                             <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/why-the-world-needed-another-angularjs-grid/"> <i class="fa fa-road"></i> Story</a>
+                            <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>

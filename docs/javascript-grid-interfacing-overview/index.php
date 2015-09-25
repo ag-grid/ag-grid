@@ -39,7 +39,7 @@ include '../documentation_header.php';
         <img src="/images/javascript.png" height="50"/>
         <img src="/images/angularjs.png" height="50px"/>
         <img src="/images/angular2.png" height="50px"/>
-        <img src="/images/webcomponents.png" height="50px"/>
+        <img src="/images/webComponents.png" height="50px"/>
         Grid Options
     </h2>
 
@@ -180,7 +180,7 @@ gridOptions.api.addEventListener('rowClicked', myOnRowClicked);
     <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
 
     <h2>
-        <img src="/images/webcomponents.png" height="50px"/>
+        <img src="/images/webComponents.png" height="50px"/>
         Web Components
     </h2>
 
