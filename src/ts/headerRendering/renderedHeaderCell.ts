@@ -67,6 +67,11 @@ module ag.grid {
             }
         }
 
+        private addAttributes(): void {
+            this.eHeaderCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
+            this.eHeaderCell.setAttribute("colId", this.column.colId);
+        }
+
         private addClasses(): void {
             _.addCssClass(this.eHeaderCell, 'ag-header-cell');
             if (this.gridOptionsWrapper.isGroupHeaders()) {
@@ -136,6 +141,7 @@ module ag.grid {
 
             this.createScope();
             this.addClasses();
+            this.addAttributes();
             this.addHeaderClassesFromCollDef();
 
             // add tooltip if exists

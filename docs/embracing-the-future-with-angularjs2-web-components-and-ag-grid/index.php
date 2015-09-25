@@ -17,7 +17,7 @@ include('../mediaHeader.php');
     <div class="col-md-9">
 
         <p>
-            The first release of ag-Grid (www.ag-grid.com) broke the ‘usual thinking’ in for AngularJS developers. It provided a high performance grid to the AngularJS community, but it didn’t use AngularJS underneath the hood. Instead it used AngularJS where appropriate, and then native Javascript and DOM manipulation at all other times. A wolf-fast grid in AngularJS clothing! This approach was novel, building a bridge between native Javascript and AngularJS without the client AngularJS application realising it was using a non-AngularJS component.
+            The first release of ag-Grid (www.ag-grid.com) broke the ‘usual thinking’ for AngularJS developers. It provided a high performance grid to the AngularJS community, but it didn’t use AngularJS underneath the hood. Instead it used AngularJS where appropriate, and then native Javascript and DOM manipulation at all other times. A wolf-fast grid in AngularJS clothing! This approach was novel, building a bridge between native Javascript and AngularJS without the client AngularJS application realising it was using a non-AngularJS component.
         </p>
 
         <p>
@@ -54,7 +54,7 @@ include('../mediaHeader.php');
                 This is what's called a framework-agnostic model for Web Components.
             </li>
             <li>
-                The sea of non-functional wrapper components for AngularJS 1.x will have no role in the new AngularJS 2.x & Web Components world and will be washed away.
+                The sea of non-functional wrapper components for AngularJS 1.x will have no role in the new AngularJS 2 & Web Components world and will be washed away.
             </li>
             <li>
                 Some reusable components will be better suited to AngularJS 2 over Web Components. Components that solve business functions to be reused within an organisation probably fit here.
@@ -90,7 +90,7 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            I guess I've thrown some breadcrumbs too with the anticipation of seeing what sticks.
+            I guess ag-Grid has thrown some breadcrumbs too, by supporting the multiple choices, with the anticipation of seeing what sticks.
         </p>
 
     </div>
