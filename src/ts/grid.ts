@@ -48,6 +48,7 @@ module ag.grid {
         private eRootPanel: any;
         private toolPanelShowing: boolean;
         private doingPagination: boolean;
+        private usingInMemoryModel: boolean;
         private rowModel: any;
 
         constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
@@ -186,6 +187,7 @@ module ag.grid {
             }
 
             this.rowModel = rowModel;
+            this.usingInMemoryModel = true;
             this.selectionController = selectionController;
             this.columnController = columnController;
             this.inMemoryRowController = inMemoryRowController;
@@ -278,6 +280,10 @@ module ag.grid {
             return this.toolPanelShowing;
         }
 
+        public isUsingInMemoryModel(): boolean {
+            return this.usingInMemoryModel;
+        }
+
         public setDatasource(datasource?: any) {
             // if datasource provided, then set it
             if (datasource) {
@@ -294,16 +300,19 @@ module ag.grid {
                 this.paginationController.setDatasource(null);
                 this.virtualPageRowController.setDatasource(datasourceToUse);
                 this.rowModel = this.virtualPageRowController.getModel();
+                this.usingInMemoryModel = false;
                 showPagingPanel = false;
             } else if (this.doingPagination) {
                 this.paginationController.setDatasource(datasourceToUse);
                 this.virtualPageRowController.setDatasource(null);
                 this.rowModel = this.inMemoryRowController.getModel();
+                this.usingInMemoryModel = true;
                 showPagingPanel = true;
             } else {
                 this.paginationController.setDatasource(null);
                 this.virtualPageRowController.setDatasource(null);
                 this.rowModel = this.inMemoryRowController.getModel();
+                this.usingInMemoryModel = true;
                 showPagingPanel = false;
             }
 

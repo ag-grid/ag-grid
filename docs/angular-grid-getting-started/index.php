@@ -50,7 +50,7 @@ include '../documentation_header.php';
     <h3>Loading in Examples</h3>
 
     <p>
-        In all he examples in this online documentation, the resources are loaded with an additional parameter <i>"ignore=notused"</i>.
+        In all the examples in this online documentation, the resources are loaded with an additional parameter <i>"ignore=notused"</i>.
         <b>You do not need to include this extra parameter</b>. It's purpose is as a dummy parameter, which the documentation
         changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.
         <br/>

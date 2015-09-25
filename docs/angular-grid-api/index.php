@@ -307,7 +307,14 @@ include '../documentation_header.php';
             <td>Similar to forEachNode, except skips any filtered out data and each the callback
                 is called in the order the rows are displayed in the grid.</td>
         </tr>
-
+        <tr>
+            <th>exportDataAsCsv(params)</th>
+            <td>Does a CSV export of the grid's data.</td>
+        </tr>
+        <tr>
+            <th>getDataAsCsv(params)</th>
+            <td>Similar to exportDataAsCsv, except returns result as a string rather than export it.</td>
+        </tr>
     </table>
 
 </div>

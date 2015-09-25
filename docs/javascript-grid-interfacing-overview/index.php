@@ -56,7 +56,7 @@ include '../documentation_header.php';
         The example below shows the different type of items on the gridOptions.
     </p>
     <pre><code>var gridOptions = {
-    // PROPERTIES - object properties, myRowData and myColDefs is created somewhere in your application
+    // PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application
     rowData: myRowData,
     colDef: myColDefs,
 
@@ -91,8 +91,8 @@ gridOptions.columnApi.sizeColumnsToFit();
         In addition to adding event listeners directly onto the gridOptions, it is possible
         to register for events, similar to registering for events on native DOM elements.
         This means there are two ways to listen for events, which again aligns with how DOM elements work.
-        The first is to put an <i>onXXX()</i> method (where XXX = the event name) in
-        the example above, the second is to register for the event in the following example:
+        The first is to put an <i>onXXX()</i> method (where XXX = the event name) like in
+        the example above, the second is to register for the event like in the following example:
     </p>
 
     <pre><code>// create handler function
@@ -104,10 +104,10 @@ function myRowClickedHandler(event) {
 gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 </code></pre>
 
-    <h3>Default Boolean Values</h3>
+    <h3>Default Boolean Properties</h3>
 
     <p>
-        Where the value is a boolean (true or false), then false (or leave blank) is the default value.
+        Where the property is a boolean (true or false), then false (or leave blank) is the default value.
         For this reason, on / off items are presented in such was as the most common usage (which will
         be the default) is false, eg suppressCellSelection is worded as such as most people will want cell
         selection to be turned on.
@@ -158,7 +158,8 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     // give an AngularJS ID to the grid
     #myGrid
 
-    // these are boolean values, which if included without a value, default to Yes
+    // these are boolean values, which if included without a value, default to true
+    // (which is different to leaving them out, in which case the default is false)
     enable-sorting
     enable-filter
 
@@ -279,7 +280,7 @@ myGrid.showToolPanel = true;
     <h2>Next Steps...</h2>
 
     <p>
-        And that's it doc, now you know how to interface with the grid. Go now and find out about all
+        And that's it Doc, now you know how to interface with the grid. Go now and find out about all
         the great attributes, properties, callbacks and events you can use. Interact
         well. Be safe. Don't do drugs.
     </p>

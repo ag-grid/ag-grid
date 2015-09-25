@@ -59,7 +59,7 @@ include '../documentation_header.php';
     <h2>Advanced AngularJS 1.x Example</h2>
 
     <p>
-        This below example has much more details. The mechanism for setting up the grid
+        The below example has much more details. The mechanism for setting up the grid
         is the same as above. Don't worry about the finer details for now, how all the
         different options are configured is explained in the relevant parts of the documentation.
     </p>

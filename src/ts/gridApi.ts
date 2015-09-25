@@ -1,10 +1,13 @@
 /// <reference path="grid.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
 /// <reference path="headerRendering/headerRenderer.ts" />
+/// <reference path="csvCreator.ts" />
 
 module ag.grid {
 
     export class GridApi {
+
+        private csvCreator: CsvCreator;
 
         constructor(private grid: Grid,
                     private rowRenderer: RowRenderer,
@@ -18,11 +21,20 @@ module ag.grid {
                     private valueService: ValueService,
                     private masterSlaveService: MasterSlaveService,
                     private eventService: EventService) {
+            this.csvCreator = new CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
         }
 
         /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
         public __getMasterSlaveService(): MasterSlaveService {
             return this.masterSlaveService;
+        }
+
+        public getDataAsCsv(params?: CsvExportParams): string {
+            return this.csvCreator.getDataAsCsv(params);
+        }
+
+        public exportDataAsCsv(params?: CsvExportParams): void {
+            this.csvCreator.exportDataAsCsv(params)
         }
 
         public setDatasource(datasource:any) {

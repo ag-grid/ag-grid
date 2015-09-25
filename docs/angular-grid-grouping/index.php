@@ -330,7 +330,7 @@ colDef.onCellValueChanged = function() {
     <p>
         It is possible to override the rendering of the group row using <i>groupRowRenderer</i> and
         <i>groupRowInnerRenderer</i>. Use groupRowRenderer to take full control of the row rendering,
-        and provide a cellRenderer exactly how you would provide on for custom rendering of cells
+        and provide a cellRenderer exactly how you would provide one for custom rendering of cells
         for non-groups.
     </p>
     <p>
@@ -342,7 +342,7 @@ gridOptions.groupUseEntireRow = true;
 
 // option 2 - this does the exact same as the above, except we configure
 // it explicitly rather than letting the grid choose the defaults.
-// we tell the grid what renderer to use (the build in renderer) and we
+// we tell the grid what renderer to use (the built in renderer) and we
 // configure the default renderer with our own inner renderer
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer: {

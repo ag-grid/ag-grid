@@ -298,6 +298,12 @@
                     <a class="sidebarLink" href="/angular-grid-tool-panel/index.php">Tool Panel</a>
                 <?php } ?>
 
+                <?php if ($key == "Data Export") { ?>
+                    <span class="sidebarLinkSelected">Data Export</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="/angular-grid-export/index.php">Data Export</a>
+                <?php } ?>
+
                 <h4>
                     Paging
                 </h4>
