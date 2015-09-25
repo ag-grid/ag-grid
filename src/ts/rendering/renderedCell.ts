@@ -79,6 +79,10 @@ module ag.grid {
             this.setupComponents();
         }
 
+        public getColumn(): Column {
+            return this.column;
+        }
+
         private getValue(): any {
             return this.valueService.getValue(this.column.colDef, this.data, this.node);
         }

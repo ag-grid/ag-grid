@@ -75,29 +75,6 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<!--<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-    <div style="display: inline-block; width: 100%;">
-        <div style="float: left;">
-            <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
-                <h4>Embracing the Future with AngularJS 2.0, Web Components and ag-Grid</h4>
-            </a>
-        </div>
-        <div style="float: right;  color: #767676;">
-            25st October 2015
-        </div>
-    </div>
-    <div style="color: #767676">
-        The first release of ag-Grid (www.ag-grid.com) broke the 'usual thinking'
-        in the world of AngularJS. It provided a high performance grid to the AngularJS
-        community, but it didn't use AngularJS underneath the hood. Instead it used
-        AngularJS where appropriate, and then native Javascript and DOM manipulation
-        at all other times. A wolf-fast grid in AngularJS clothing! . . .
-    </div>
-    <div style="padding-top: 10px;">
-        <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">Click for full article</a>
-    </div>
-</div>-->
-
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
 
@@ -112,6 +89,20 @@ include 'documentation_header.php';
     <p style="font-size: 40px">
         <b>Major Release: </b> Announcing <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> v2.0
     </p>
+
+    <!--
+    <li>
+      Editing can be started using 'singleClick' if you set property <i>singleClickEdit=true<i/>
+    </li>
+    <li>
+      Previously 'Enter' started editing. Now 'Backspace' and 'Delete' also start editing, but clear
+      the field first.
+    </li>
+    <li>
+      When editing, hitting 'Escape' cancels the edit, and puts back in the old value.
+    </li>
+
+    -->
 
     <p>
         The first ag-Grid production release supporting

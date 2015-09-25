@@ -74,6 +74,18 @@ module ag.grid {
             this.deselectAll();
         }
 
+        public refreshRows(rowNodes: RowNode[]): void {
+            this.rowRenderer.refreshRows(rowNodes);
+        }
+
+        public refreshCells(rowNodes: RowNode[], colIds: string[]): void {
+            this.rowRenderer.refreshCells(rowNodes, colIds);
+        }
+
+        public rowDataChanged(rows:any) {
+            this.rowRenderer.rowDataChanged(rows);
+        }
+
         public refreshView() {
             this.rowRenderer.refreshView();
         }
@@ -124,10 +136,6 @@ module ag.grid {
 
         public addVirtualRowListener(rowIndex:any, callback:any) {
             this.grid.addVirtualRowListener(rowIndex, callback);
-        }
-
-        public rowDataChanged(rows:any) {
-            this.rowRenderer.rowDataChanged(rows);
         }
 
         public setQuickFilter(newFilter:any) {

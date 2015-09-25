@@ -188,6 +188,10 @@ module ag.grid {
             return rows.indexOf(this.node.data) >= 0;
         }
 
+        public isNodeInList(nodes: RowNode[]): boolean {
+            return nodes.indexOf(this.node) >= 0;
+        }
+
         public isGroup(): boolean {
             return this.node.group === true;
         }
@@ -327,6 +331,20 @@ module ag.grid {
 
         public getRowIndex(): any {
             return this.rowIndex;
+        }
+
+        public refreshCells(colIds: string[]): void {
+            if (!colIds) {
+                return;
+            }
+            var columnsToRefresh = this.columnController.getColumns(colIds);
+
+            _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+                var colForCel = renderedCell.getColumn();
+                if (columnsToRefresh.indexOf(colForCel)>=0) {
+                    renderedCell.refreshCell();
+                }
+            });
         }
 
         private addDynamicClasses() {

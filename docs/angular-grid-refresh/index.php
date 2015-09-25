@@ -36,6 +36,30 @@ include '../documentation_header.php';
         is not dependent on AngularJS, to allow the grid to work in other frameworks.
     </note>
 
+    <h3>Refreshing Everything, Specific Rows or Specific Cells</h3>
+
+    <p>
+        To refresh the grid, you can choose between the following options:
+    <ul>
+        <li><b>refreshView()</b>: Rips out every virtual row and draws it again.</li>
+        <li><b>refreshRows(rowNodes)</b>: Rips out the virtual rows showing representing the provided
+        list of row nodes and then redraws them.</li>
+        <li><b>refreshCells(rowNodes, colIds)</b>: Gets the individual cells for the provided rowNodes
+        to refresh, the row itself and all other cells stay intact.</li>
+    </ul>
+    </p>
+
+    The grid below shows the above three options in action. The grid's columns 'Make' and 'Model'
+    have cellRenderers that also display the timestamp the cell was rendered, so you can see when
+    the cell is rendered again. Notice the following:
+    <ul>
+        <li>Refresh All -> All cells get refreshed.</li>
+        <li>Double Jillian -> Jillian's rows get completely refreshed.</li>
+        <li>Double Niall -> The 'Price' column only in Niall's rows get refreshed.</li>
+    </ul>
+
+    <show-example example="example3"></show-example>
+
     <h3>Volatile Cells</h3>
 
     <p>

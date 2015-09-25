@@ -376,6 +376,19 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
         }
 
+        public getColumns(keys: any[]): Column[] {
+            var foundColumns: Column[] = [];
+            if (keys) {
+                keys.forEach( (key: any) => {
+                    var column = this.getColumn(key);
+                    if (column) {
+                        foundColumns.push(column);
+                    }
+                });
+            }
+            return foundColumns;
+        }
+
         public getColumn(key: any): Column {
             if (!key) {return null;}
 
