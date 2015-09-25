@@ -62,6 +62,7 @@ gridsModule.controller('mainController', function($scope) {
     var angularGrid = {
         //rowsBuffer: 1,
         columnDefs: [],
+        //singleClickEdit: true,
         rowData: null,
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
         groupHeaders: true,

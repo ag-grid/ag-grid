@@ -25,6 +25,7 @@ module ag.grid {
         enableServerSideFilter?: boolean;
         colWidth?: number;
         suppressMenuHide?: boolean;
+        singleClickEdit?: boolean;
         debug?: boolean;
         icons?: any; // should be typed
         angularCompileRows?: boolean;

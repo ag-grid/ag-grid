@@ -20,7 +20,8 @@ module ag.grid {
             'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
             'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
-            'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag'
+            'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
+            'singleClickEdit'
         ];
 
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];

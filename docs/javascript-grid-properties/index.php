@@ -197,6 +197,10 @@ include '../documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
+            <th>singleClickEdit</th>
+            <td>Set to true to allow editable cells to start editing with a single click.</td>
+        </tr>
+        <tr>
             <th>suppressHorizontalScroll</th>
             <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
                 and will scroll with a master grid.</td>

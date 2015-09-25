@@ -17,6 +17,8 @@ module ag.grid {
 
         static KEY_TAB = 9;
         static KEY_ENTER = 13;
+        static KEY_BACKSPACE = 8;
+        static KEY_DELETE = 46;
         static KEY_ESCAPE = 27;
         static KEY_SPACE = 32;
         static KEY_DOWN = 40;

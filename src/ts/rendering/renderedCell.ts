@@ -141,7 +141,7 @@ module ag.grid {
         }
 
         // called by rowRenderer when user navigates via tab key
-        public startEditing() {
+        public startEditing(key?: number) {
             var that = this;
             this.editingCell = true;
             _.removeAllChildren(this.vGridCell.getElement());
@@ -149,8 +149,9 @@ module ag.grid {
             eInput.type = 'text';
             _.addCssClass(eInput, 'ag-cell-edit-input');
 
+            var startWithOldValue = key !== Constants.KEY_BACKSPACE && key !== Constants.KEY_DELETE;
             var value = this.getValue();
-            if (value !== null && value !== undefined) {
+            if (startWithOldValue && value !== null && value !== undefined) {
                 eInput.value = value;
             }
 
@@ -169,9 +170,17 @@ module ag.grid {
             //stop editing if enter pressed
             eInput.addEventListener('keypress', (event: any) => {
                 var key = event.which || event.keyCode;
-                // 13 is enter
-                if (key == Constants.KEY_ENTER) {
+                if (key === Constants.KEY_ENTER) {
                     this.stopEditing(eInput, blurListener);
+                    this.focusCell(true);
+                }
+            });
+
+            //stop editing if enter pressed
+            eInput.addEventListener('keydown', (event: any) => {
+                var key = event.which || event.keyCode;
+                if (key === Constants.KEY_ESCAPE) {
+                    this.stopEditing(eInput, blurListener, true);
                     this.focusCell(true);
                 }
             });
@@ -193,7 +202,7 @@ module ag.grid {
             this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.index, this.column.colDef, forceBrowserFocus);
         }
 
-        private stopEditing(eInput: any, blurListener: any) {
+        private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
             this.editingCell = false;
             var newValue = eInput.value;
             var colDef = this.column.colDef;
@@ -202,31 +211,33 @@ module ag.grid {
             //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
             eInput.removeEventListener('blur', blurListener);
 
-            var paramsForCallbacks = {
-                node: this.node,
-                data: this.node.data,
-                oldValue: this.node.data[colDef.field],
-                newValue: newValue,
-                rowIndex: this.rowIndex,
-                colDef: colDef,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
+            if (!reset) {
+                var paramsForCallbacks = {
+                    node: this.node,
+                    data: this.node.data,
+                    oldValue: this.node.data[colDef.field],
+                    newValue: newValue,
+                    rowIndex: this.rowIndex,
+                    colDef: colDef,
+                    api: this.gridOptionsWrapper.getApi(),
+                    context: this.gridOptionsWrapper.getContext()
+                };
 
-            if (colDef.newValueHandler) {
-                colDef.newValueHandler(paramsForCallbacks);
-            } else {
-                this.node.data[colDef.field] = newValue;
+                if (colDef.newValueHandler) {
+                    colDef.newValueHandler(paramsForCallbacks);
+                } else {
+                    this.node.data[colDef.field] = newValue;
+                }
+
+                // at this point, the value has been updated
+                this.value = this.getValue();
+
+                paramsForCallbacks.newValue = this.value;
+                if (typeof colDef.onCellValueChanged === 'function') {
+                    colDef.onCellValueChanged(paramsForCallbacks);
+                }
+                this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
             }
-
-            // at this point, the value has been updated
-            this.value = this.getValue();
-
-            paramsForCallbacks.newValue = this.value;
-            if (typeof colDef.onCellValueChanged === 'function') {
-                colDef.onCellValueChanged(paramsForCallbacks);
-            }
-            this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
 
             _.removeAllChildren(this.vGridCell.getElement());
             if (this.checkboxSelection) {
@@ -235,38 +246,41 @@ module ag.grid {
             this.refreshCell();
         }
 
+        public createParams(): any {
+            var params = {
+                node: this.node,
+                data: this.node.data,
+                value: this.value,
+                rowIndex: this.rowIndex,
+                colDef: this.column.colDef,
+                $scope: this.scope,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            return params;
+        }
+
+        public createEvent(event: any, eventSource: any): any {
+            var agEvent = this.createParams();
+            agEvent.event = event;
+            agEvent.eventSource = eventSource;
+            return agEvent;
+        }
+
         private addCellDoubleClickedHandler() {
             var that = this;
             var colDef = this.column.colDef;
             this.vGridCell.addEventListener('dblclick', function (event: any) {
-                var paramsForGrid = {
-                    node: that.node,
-                    data: that.node.data,
-                    value: that.value,
-                    rowIndex: that.rowIndex,
-                    colDef: colDef,
-                    event: event,
-                    eventSource: this,
-                    context: that.gridOptionsWrapper.getContext(),
-                    api: that.gridOptionsWrapper.getApi()
-                };
-                that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
+                // always dispatch event to eventService
+                var agEvent: any = that.createEvent(event, this);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
 
-                if (colDef.onCellDoubleClicked) {
-                    var paramsForColDef = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    colDef.onCellDoubleClicked(paramsForColDef);
+                // check if colDef also wants to handle event
+                if (typeof colDef.onCellDoubleClicked === 'function') {
+                    colDef.onCellDoubleClicked(agEvent);
                 }
-                if (that.isCellEditable()) {
+
+                if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
                     that.startEditing();
                 }
             });
@@ -276,32 +290,11 @@ module ag.grid {
             var that = this;
             var colDef = this.column.colDef;
             this.vGridCell.addEventListener('contextmenu', function (event: any) {
-                var paramsForGrid = {
-                    node: that.node,
-                    data: that.node.data,
-                    value: that.value,
-                    rowIndex: that.rowIndex,
-                    colDef: colDef,
-                    event: event,
-                    eventSource: this,
-                    context: that.gridOptionsWrapper.getContext(),
-                    api: that.gridOptionsWrapper.getApi()
-                };
-                that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
+                var agEvent: any = that.createEvent(event, this);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
 
                 if (colDef.onCellContextMenu) {
-                    var paramsForColDef = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    colDef.onCellContextMenu(paramsForColDef);
+                    colDef.onCellContextMenu(agEvent);
                 }
             });
         }
@@ -324,20 +317,8 @@ module ag.grid {
 
             // if function, then call the function to find out
             if (typeof colDef.editable === 'function') {
-
-                var params = {
-                    value: this.value,
-                    data: this.node.data,
-                    node: this.node,
-                    colDef: colDef,
-                    column: this.column,
-                    $scope: this.scope,
-                    context: this.gridOptionsWrapper.getContext(),
-                    api: this.gridOptionsWrapper.getApi()
-                };
-
+                var params = this.createParams();
                 var editableFunc = <Function>colDef.editable;
-
                 return editableFunc(params);
             }
 
@@ -357,31 +338,14 @@ module ag.grid {
                 if (!that.node.floating) {
                     that.focusCell(false);
                 }
-                var paramsForGrid = {
-                    node: that.node,
-                    data: that.node.data,
-                    value: that.value,
-                    rowIndex: that.rowIndex,
-                    colDef: colDef,
-                    event: event,
-                    eventSource: this,
-                    context: that.gridOptionsWrapper.getContext(),
-                    api: that.gridOptionsWrapper.getApi()
-                };
-                that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, paramsForGrid);
+                var agEvent = that.createEvent(event, this);
+                that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
                 if (colDef.onCellClicked) {
-                    var paramsForColDef = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    colDef.onCellClicked(paramsForColDef);
+                    colDef.onCellClicked(agEvent);
+                }
+
+                if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
+                    that.startEditing();
                 }
             });
         }
@@ -508,14 +472,16 @@ module ag.grid {
                 if (startNavigation) {
                     event.preventDefault();
                     that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                    return;
                 }
 
-                var startEdit = key === Constants.KEY_ENTER;
+                var startEdit = that.isKeycodeForStartEditing(key);
                 if (startEdit && that.isCellEditable()) {
-                    that.startEditing();
+                    that.startEditing(key);
                     // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
                     // press, and stops editing immediately, hence giving he user experience that nothing happened
                     event.preventDefault();
+                    return;
                 }
 
                 var selectRow = key === Constants.KEY_SPACE;
@@ -527,8 +493,13 @@ module ag.grid {
                         that.selectionController.selectNode(that.node, true);
                     }
                     event.preventDefault();
+                    return;
                 }
             });
+        }
+
+        private isKeycodeForStartEditing(key: number): boolean {
+            return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
         }
 
         public createSelectionCheckbox() {
