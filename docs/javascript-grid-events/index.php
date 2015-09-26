@@ -37,7 +37,7 @@ include '../documentation_header.php';
     </p>
 
     <h4>
-        <img src="/images/webcomponents.png" height="20px"/>
+        <img src="/images/webComponents.png" height="20px"/>
         Web Components
     </h4>
     <p>
