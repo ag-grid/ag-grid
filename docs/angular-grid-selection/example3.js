@@ -24,12 +24,12 @@ module.controller("exampleCtrl", function($scope, $http) {
         onSelectionChanged: selectionChangedFunc
     };
 
-    function rowSelectedFunc(row) {
-        window.alert("row " + row.athlete + " selected");
+    function rowSelectedFunc(event) {
+        window.alert("row " + event.node.data.athlete + " selected");
     }
 
-    function selectionChangedFunc() {
-        window.alert('selection changed, ' + $scope.gridOptions.selectedRows.length + ' rows selected');
+    function selectionChangedFunc(event) {
+        window.alert('selection changed, ' + event.selectedRows.length + ' rows selected');
     }
 
     $http.get("../olympicWinners.json")

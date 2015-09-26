@@ -101,7 +101,18 @@ include 'documentation_header.php';
     <li>
       When editing, hitting 'Escape' cancels the edit, and puts back in the old value.
     </li>
-
+    <li>
+      Export to CSV
+    </li>
+    <li>
+      Refreshing of individual rows and cells via the two methods
+    </li>
+    <li>
+      New filter APIs:
+      public isAnyFilterPresent()
+      isAdvancedFilterPresent()
+      isQuickFilterPresent()
+    </li>
     -->
 
     <p>
