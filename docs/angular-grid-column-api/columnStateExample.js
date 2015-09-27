@@ -23,8 +23,10 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableColResize: true,
         showToolPanel: true,
         onReady: function() {
-            $scope.gridOptions.columnApi.addChangeListener( function(event) {
-                console.log('Got column event: ' + event);
+            $scope.gridOptions.api.addGlobalListener(function(type, event) {
+                if (type.indexOf('column') >= 0) {
+                    console.log('Got column event: ' + event);
+                }
             });
         }
     };

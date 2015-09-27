@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascrip, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.0.1
+ * @version v2.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,6 +101,16 @@ var ag;
                     var value = object[key];
                     callback(key, value);
                 }
+            };
+            Utils.cloneObject = function (object) {
+                var copy = {};
+                var keys = Object.keys(object);
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    var value = object[key];
+                    copy[key] = value;
+                }
+                return copy;
             };
             Utils.map = function (array, callback) {
                 var result = [];
@@ -451,6 +461,8 @@ var ag;
             Constants.MAX = 'max';
             Constants.KEY_TAB = 9;
             Constants.KEY_ENTER = 13;
+            Constants.KEY_BACKSPACE = 8;
+            Constants.KEY_DELETE = 46;
             Constants.KEY_ESCAPE = 27;
             Constants.KEY_SPACE = 32;
             Constants.KEY_DOWN = 40;
@@ -665,6 +677,7 @@ var ag;
             GridOptionsWrapper.prototype.getHeaderCellRenderer = function () { return this.gridOptions.headerCellRenderer; };
             GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
             GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
+            GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
             GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
             GridOptionsWrapper.prototype.getGroupKeys = function () { return this.gridOptions.groupKeys; };
             GridOptionsWrapper.prototype.getGroupAggFunction = function () { return this.gridOptions.groupAggFunction; };
@@ -1372,6 +1385,19 @@ var ag;
                 var event = new grid.ColumnChangeEvent(grid.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
                 this.eventService.dispatchEvent(grid.Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
             };
+            ColumnController.prototype.getColumns = function (keys) {
+                var _this = this;
+                var foundColumns = [];
+                if (keys) {
+                    keys.forEach(function (key) {
+                        var column = _this.getColumn(key);
+                        if (column) {
+                            foundColumns.push(column);
+                        }
+                    });
+                }
+                return foundColumns;
+            };
             ColumnController.prototype.getColumn = function (key) {
                 if (!key) {
                     return null;
@@ -1749,6 +1775,125 @@ var ag;
             return ColumnController;
         })();
         grid.ColumnController = ColumnController;
+    })(grid = ag.grid || (ag.grid = {}));
+})(ag || (ag = {}));
+var ag;
+(function (ag) {
+    var grid;
+    (function (grid_1) {
+        var LINE_SEPERATOR = '\r\n';
+        var CsvCreator = (function () {
+            function CsvCreator(rowController, columnController, grid, valueService) {
+                this.rowController = rowController;
+                this.columnController = columnController;
+                this.grid = grid;
+                this.valueService = valueService;
+            }
+            CsvCreator.prototype.exportDataAsCsv = function (params) {
+                var csvString = this.getDataAsCsv(params);
+                var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
+                var fileName = fileNamePresent ? params.fileName : 'export.csv';
+                // Internet Explorer
+                if (window.navigator.msSaveOrOpenBlob) {
+                    var fileData = [csvString];
+                    var blobObject = new Blob(fileData);
+                    window.navigator.msSaveOrOpenBlob(blobObject, fileName);
+                }
+                else {
+                    // Chrome
+                    var url = "data:text/plain;charset=utf-8," + encodeURIComponent(csvString);
+                    var downloadLink = document.createElement("a");
+                    downloadLink.href = url;
+                    downloadLink.download = fileName;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                }
+            };
+            CsvCreator.prototype.getDataAsCsv = function (params) {
+                var _this = this;
+                if (!this.grid.isUsingInMemoryModel()) {
+                    console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
+                    return '';
+                }
+                var result = '';
+                var skipGroups = params && params.skipGroups;
+                var skipHeader = params && params.skipHeader;
+                var skipFooters = params && params.skipFooters;
+                var columnsToExport = this.columnController.getDisplayedColumns();
+                if (!columnsToExport || columnsToExport.length === 0) {
+                    return '';
+                }
+                // first pass, put in the header names of the cols
+                if (!skipHeader) {
+                    columnsToExport.forEach(function (column, index) {
+                        var nameForCol = _this.columnController.getDisplayNameForCol(column);
+                        if (nameForCol === null || nameForCol === undefined) {
+                            nameForCol = '';
+                        }
+                        if (index != 0) {
+                            result += ',';
+                        }
+                        result += '"' + _this.escape(nameForCol) + '"';
+                    });
+                    result += LINE_SEPERATOR;
+                }
+                this.rowController.forEachNodeAfterFilterAndSort(function (node) {
+                    if (skipGroups && node.group) {
+                        return;
+                    }
+                    if (skipFooters && node.footer) {
+                        return;
+                    }
+                    columnsToExport.forEach(function (column, index) {
+                        var valueForCell;
+                        if (node.group && index === 0) {
+                            valueForCell = _this.createValueForGroupNode(node);
+                        }
+                        else {
+                            valueForCell = _this.valueService.getValue(column.colDef, node.data, node);
+                        }
+                        if (valueForCell === null || valueForCell === undefined) {
+                            valueForCell = '';
+                        }
+                        if (index != 0) {
+                            result += ',';
+                        }
+                        result += '"' + _this.escape(valueForCell) + '"';
+                    });
+                    result += LINE_SEPERATOR;
+                });
+                return result;
+            };
+            CsvCreator.prototype.createValueForGroupNode = function (node) {
+                var keys = [node.key];
+                while (node.parent) {
+                    node = node.parent;
+                    keys.push(node.key);
+                }
+                return keys.reverse().join(' -> ');
+            };
+            // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
+            CsvCreator.prototype.escape = function (value) {
+                if (value === null || value === undefined) {
+                    return '';
+                }
+                var stringValue;
+                if (typeof value === 'string') {
+                    stringValue = value;
+                }
+                else if (typeof value.toString === 'function') {
+                    stringValue = value.toString();
+                }
+                else {
+                    console.warn('known value type during csv conversio');
+                    stringValue = '';
+                }
+                return stringValue.replace("\"", "\"\"");
+            };
+            return CsvCreator;
+        })();
+        grid_1.CsvCreator = CsvCreator;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 var ag;
@@ -2864,8 +3009,8 @@ var ag;
 var ag;
 (function (ag) {
     var grid;
-    (function (grid_1) {
-        var _ = grid_1.Utils;
+    (function (grid_2) {
+        var _ = grid_2.Utils;
         var FilterManager = (function () {
             function FilterManager() {
             }
@@ -3155,13 +3300,13 @@ var ag;
                     filterWrapper.filter = new colDef.filter();
                 }
                 else if (colDef.filter === 'text') {
-                    filterWrapper.filter = new grid_1.TextFilter();
+                    filterWrapper.filter = new grid_2.TextFilter();
                 }
                 else if (colDef.filter === 'number') {
-                    filterWrapper.filter = new grid_1.NumberFilter();
+                    filterWrapper.filter = new grid_2.NumberFilter();
                 }
                 else {
-                    filterWrapper.filter = new grid_1.SetFilter();
+                    filterWrapper.filter = new grid_2.SetFilter();
                 }
                 var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
                 var filterModifiedCallback = this.grid.onFilterModified.bind(this.grid);
@@ -3228,7 +3373,7 @@ var ag;
             };
             return FilterManager;
         })();
-        grid_1.FilterManager = FilterManager;
+        grid_2.FilterManager = FilterManager;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 var ag;
@@ -3683,6 +3828,9 @@ var ag;
                 this.value = this.getValue();
                 this.setupComponents();
             }
+            RenderedCell.prototype.getColumn = function () {
+                return this.column;
+            };
             RenderedCell.prototype.getValue = function () {
                 return this.valueService.getValue(this.column.colDef, this.data, this.node);
             };
@@ -3734,7 +3882,7 @@ var ag;
                 }
             };
             // called by rowRenderer when user navigates via tab key
-            RenderedCell.prototype.startEditing = function () {
+            RenderedCell.prototype.startEditing = function (key) {
                 var _this = this;
                 var that = this;
                 this.editingCell = true;
@@ -3742,8 +3890,9 @@ var ag;
                 var eInput = document.createElement('input');
                 eInput.type = 'text';
                 _.addCssClass(eInput, 'ag-cell-edit-input');
+                var startWithOldValue = key !== grid.Constants.KEY_BACKSPACE && key !== grid.Constants.KEY_DELETE;
                 var value = this.getValue();
-                if (value !== null && value !== undefined) {
+                if (startWithOldValue && value !== null && value !== undefined) {
                     eInput.value = value;
                 }
                 eInput.style.width = (this.column.actualWidth - 14) + 'px';
@@ -3758,9 +3907,16 @@ var ag;
                 //stop editing if enter pressed
                 eInput.addEventListener('keypress', function (event) {
                     var key = event.which || event.keyCode;
-                    // 13 is enter
-                    if (key == grid.Constants.KEY_ENTER) {
+                    if (key === grid.Constants.KEY_ENTER) {
                         _this.stopEditing(eInput, blurListener);
+                        _this.focusCell(true);
+                    }
+                });
+                //stop editing if enter pressed
+                eInput.addEventListener('keydown', function (event) {
+                    var key = event.which || event.keyCode;
+                    if (key === grid.Constants.KEY_ESCAPE) {
+                        _this.stopEditing(eInput, blurListener, true);
                         _this.focusCell(true);
                     }
                 });
@@ -3779,73 +3935,76 @@ var ag;
             RenderedCell.prototype.focusCell = function (forceBrowserFocus) {
                 this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.index, this.column.colDef, forceBrowserFocus);
             };
-            RenderedCell.prototype.stopEditing = function (eInput, blurListener) {
+            RenderedCell.prototype.stopEditing = function (eInput, blurListener, reset) {
+                if (reset === void 0) { reset = false; }
                 this.editingCell = false;
                 var newValue = eInput.value;
                 var colDef = this.column.colDef;
                 //If we don't remove the blur listener first, we get:
                 //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
                 eInput.removeEventListener('blur', blurListener);
-                var paramsForCallbacks = {
-                    node: this.node,
-                    data: this.node.data,
-                    oldValue: this.node.data[colDef.field],
-                    newValue: newValue,
-                    rowIndex: this.rowIndex,
-                    colDef: colDef,
-                    api: this.gridOptionsWrapper.getApi(),
-                    context: this.gridOptionsWrapper.getContext()
-                };
-                if (colDef.newValueHandler) {
-                    colDef.newValueHandler(paramsForCallbacks);
+                if (!reset) {
+                    var paramsForCallbacks = {
+                        node: this.node,
+                        data: this.node.data,
+                        oldValue: this.node.data[colDef.field],
+                        newValue: newValue,
+                        rowIndex: this.rowIndex,
+                        colDef: colDef,
+                        api: this.gridOptionsWrapper.getApi(),
+                        context: this.gridOptionsWrapper.getContext()
+                    };
+                    if (colDef.newValueHandler) {
+                        colDef.newValueHandler(paramsForCallbacks);
+                    }
+                    else {
+                        this.node.data[colDef.field] = newValue;
+                    }
+                    // at this point, the value has been updated
+                    this.value = this.getValue();
+                    paramsForCallbacks.newValue = this.value;
+                    if (typeof colDef.onCellValueChanged === 'function') {
+                        colDef.onCellValueChanged(paramsForCallbacks);
+                    }
+                    this.eventService.dispatchEvent(grid.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
                 }
-                else {
-                    this.node.data[colDef.field] = newValue;
-                }
-                // at this point, the value has been updated
-                this.value = this.getValue();
-                paramsForCallbacks.newValue = this.value;
-                if (typeof colDef.onCellValueChanged === 'function') {
-                    colDef.onCellValueChanged(paramsForCallbacks);
-                }
-                this.eventService.dispatchEvent(grid.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
                 _.removeAllChildren(this.vGridCell.getElement());
                 if (this.checkboxSelection) {
                     this.vGridCell.appendChild(this.vCellWrapper.getElement());
                 }
                 this.refreshCell();
             };
+            RenderedCell.prototype.createParams = function () {
+                var params = {
+                    node: this.node,
+                    data: this.node.data,
+                    value: this.value,
+                    rowIndex: this.rowIndex,
+                    colDef: this.column.colDef,
+                    $scope: this.scope,
+                    context: this.gridOptionsWrapper.getContext(),
+                    api: this.gridOptionsWrapper.getApi()
+                };
+                return params;
+            };
+            RenderedCell.prototype.createEvent = function (event, eventSource) {
+                var agEvent = this.createParams();
+                agEvent.event = event;
+                agEvent.eventSource = eventSource;
+                return agEvent;
+            };
             RenderedCell.prototype.addCellDoubleClickedHandler = function () {
                 var that = this;
                 var colDef = this.column.colDef;
                 this.vGridCell.addEventListener('dblclick', function (event) {
-                    var paramsForGrid = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_DOUBLE_CLICKED, paramsForGrid);
-                    if (colDef.onCellDoubleClicked) {
-                        var paramsForColDef = {
-                            node: that.node,
-                            data: that.node.data,
-                            value: that.value,
-                            rowIndex: that.rowIndex,
-                            colDef: colDef,
-                            event: event,
-                            eventSource: this,
-                            context: that.gridOptionsWrapper.getContext(),
-                            api: that.gridOptionsWrapper.getApi()
-                        };
-                        colDef.onCellDoubleClicked(paramsForColDef);
+                    // always dispatch event to eventService
+                    var agEvent = that.createEvent(event, this);
+                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+                    // check if colDef also wants to handle event
+                    if (typeof colDef.onCellDoubleClicked === 'function') {
+                        colDef.onCellDoubleClicked(agEvent);
                     }
-                    if (that.isCellEditable()) {
+                    if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
                         that.startEditing();
                     }
                 });
@@ -3854,31 +4013,10 @@ var ag;
                 var that = this;
                 var colDef = this.column.colDef;
                 this.vGridCell.addEventListener('contextmenu', function (event) {
-                    var paramsForGrid = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_CONTEXT_MENU, paramsForGrid);
+                    var agEvent = that.createEvent(event, this);
+                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_CONTEXT_MENU, agEvent);
                     if (colDef.onCellContextMenu) {
-                        var paramsForColDef = {
-                            node: that.node,
-                            data: that.node.data,
-                            value: that.value,
-                            rowIndex: that.rowIndex,
-                            colDef: colDef,
-                            event: event,
-                            eventSource: this,
-                            context: that.gridOptionsWrapper.getContext(),
-                            api: that.gridOptionsWrapper.getApi()
-                        };
-                        colDef.onCellContextMenu(paramsForColDef);
+                        colDef.onCellContextMenu(agEvent);
                     }
                 });
             };
@@ -3897,16 +4035,7 @@ var ag;
                 }
                 // if function, then call the function to find out
                 if (typeof colDef.editable === 'function') {
-                    var params = {
-                        value: this.value,
-                        data: this.node.data,
-                        node: this.node,
-                        colDef: colDef,
-                        column: this.column,
-                        $scope: this.scope,
-                        context: this.gridOptionsWrapper.getContext(),
-                        api: this.gridOptionsWrapper.getApi()
-                    };
+                    var params = this.createParams();
                     var editableFunc = colDef.editable;
                     return editableFunc(params);
                 }
@@ -3925,31 +4054,13 @@ var ag;
                     if (!that.node.floating) {
                         that.focusCell(false);
                     }
-                    var paramsForGrid = {
-                        node: that.node,
-                        data: that.node.data,
-                        value: that.value,
-                        rowIndex: that.rowIndex,
-                        colDef: colDef,
-                        event: event,
-                        eventSource: this,
-                        context: that.gridOptionsWrapper.getContext(),
-                        api: that.gridOptionsWrapper.getApi()
-                    };
-                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_CLICKED, paramsForGrid);
+                    var agEvent = that.createEvent(event, this);
+                    that.eventService.dispatchEvent(grid.Events.EVENT_CELL_CLICKED, agEvent);
                     if (colDef.onCellClicked) {
-                        var paramsForColDef = {
-                            node: that.node,
-                            data: that.node.data,
-                            value: that.value,
-                            rowIndex: that.rowIndex,
-                            colDef: colDef,
-                            event: event,
-                            eventSource: this,
-                            context: that.gridOptionsWrapper.getContext(),
-                            api: that.gridOptionsWrapper.getApi()
-                        };
-                        colDef.onCellClicked(paramsForColDef);
+                        colDef.onCellClicked(agEvent);
+                    }
+                    if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
+                        that.startEditing();
                     }
                 });
             };
@@ -4070,13 +4181,15 @@ var ag;
                     if (startNavigation) {
                         event.preventDefault();
                         that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                        return;
                     }
-                    var startEdit = key === grid.Constants.KEY_ENTER;
+                    var startEdit = that.isKeycodeForStartEditing(key);
                     if (startEdit && that.isCellEditable()) {
-                        that.startEditing();
+                        that.startEditing(key);
                         // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
                         // press, and stops editing immediately, hence giving he user experience that nothing happened
                         event.preventDefault();
+                        return;
                     }
                     var selectRow = key === grid.Constants.KEY_SPACE;
                     if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
@@ -4088,8 +4201,12 @@ var ag;
                             that.selectionController.selectNode(that.node, true);
                         }
                         event.preventDefault();
+                        return;
                     }
                 });
+            };
+            RenderedCell.prototype.isKeycodeForStartEditing = function (key) {
+                return key === grid.Constants.KEY_ENTER || key === grid.Constants.KEY_BACKSPACE || key === grid.Constants.KEY_DELETE;
             };
             RenderedCell.prototype.createSelectionCheckbox = function () {
                 this.eCheckbox = document.createElement('input');
@@ -4370,6 +4487,9 @@ var ag;
             RenderedRow.prototype.isDataInList = function (rows) {
                 return rows.indexOf(this.node.data) >= 0;
             };
+            RenderedRow.prototype.isNodeInList = function (nodes) {
+                return nodes.indexOf(this.node) >= 0;
+            };
             RenderedRow.prototype.isGroup = function () {
                 return this.node.group === true;
             };
@@ -4494,6 +4614,18 @@ var ag;
             };
             RenderedRow.prototype.getRowIndex = function () {
                 return this.rowIndex;
+            };
+            RenderedRow.prototype.refreshCells = function (colIds) {
+                if (!colIds) {
+                    return;
+                }
+                var columnsToRefresh = this.columnController.getColumns(colIds);
+                _.iterateObject(this.renderedCells, function (key, renderedCell) {
+                    var colForCel = renderedCell.getColumn();
+                    if (columnsToRefresh.indexOf(colForCel) >= 0) {
+                        renderedCell.refreshCell();
+                    }
+                });
             };
             RenderedRow.prototype.addDynamicClasses = function () {
                 var classes = [];
@@ -4695,7 +4827,7 @@ var ag;
         var svgFactory = grid.SvgFactory.getInstance();
         var utils = grid.Utils;
         var constants = grid.Constants;
-        function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory) {
+        function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService) {
             return function groupCellRenderer(params) {
                 var eGroupCell = document.createElement('span');
                 var node = params.node;
@@ -4723,7 +4855,9 @@ var ag;
                 // only do this if an indent - as this overwrites the padding that
                 // the theme set, which will make things look 'not aligned' for the
                 // first group level.
-                if (node.footer || node.level > 0) {
+                var suppressPadding = params.colDef && params.colDef.cellRenderer
+                    && params.colDef.cellRenderer.suppressPadding;
+                if (!suppressPadding && (node.footer || node.level > 0)) {
                     var paddingFactor;
                     if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.padding >= 0) {
                         paddingFactor = params.colDef.cellRenderer.padding;
@@ -4799,8 +4933,27 @@ var ag;
             }
             // creates cell with 'Total {{key}}' for a group
             function createFooterCell(eGroupCell, params) {
-                var textToDisplay = "Total " + getGroupName(params);
-                var eText = document.createTextNode(textToDisplay);
+                var footerValue;
+                var groupName = getGroupName(params);
+                if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.footerValueGetter) {
+                    var footerValueGetter = params.colDef.cellRenderer.footerValueGetter;
+                    // params is same as we were given, except we set the value as the item to display
+                    var paramsClone = utils.cloneObject(params);
+                    paramsClone.value = groupName;
+                    if (typeof footerValueGetter === 'function') {
+                        footerValue = footerValueGetter(paramsClone);
+                    }
+                    else if (typeof footerValueGetter === 'string') {
+                        footerValue = expressionService.evaluate(footerValueGetter, paramsClone);
+                    }
+                    else {
+                        console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
+                    }
+                }
+                else {
+                    footerValue = 'Total ' + groupName;
+                }
+                var eText = document.createTextNode(footerValue);
                 eGroupCell.appendChild(eText);
             }
             function getGroupName(params) {
@@ -4877,7 +5030,7 @@ var ag;
                 this.findAllElements(gridPanel);
                 this.eventService = eventService;
                 this.cellRendererMap = {
-                    'group': grid.groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory),
+                    'group': grid.groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
                     'default': function (params) {
                         return params.value;
                     }
@@ -4967,6 +5120,37 @@ var ag;
             RowRenderer.prototype.softRefreshView = function () {
                 _.iterateObject(this.renderedRows, function (key, renderedRow) {
                     renderedRow.softRefresh();
+                });
+            };
+            RowRenderer.prototype.refreshRows = function (rowNodes) {
+                if (!rowNodes || rowNodes.length == 0) {
+                    return;
+                }
+                // we only need to be worried about rendered rows, as this method is
+                // called to whats rendered. if the row isn't rendered, we don't care
+                var indexesToRemove = [];
+                _.iterateObject(this.renderedRows, function (key, renderedRow) {
+                    var rowNode = renderedRow.getRowNode();
+                    if (rowNodes.indexOf(rowNode) >= 0) {
+                        indexesToRemove.push(key);
+                    }
+                });
+                // remove the rows
+                this.removeVirtualRow(indexesToRemove);
+                // add draw them again
+                this.drawVirtualRows();
+            };
+            RowRenderer.prototype.refreshCells = function (rowNodes, colIds) {
+                if (!rowNodes || rowNodes.length == 0) {
+                    return;
+                }
+                // we only need to be worried about rendered rows, as this method is
+                // called to whats rendered. if the row isn't rendered, we don't care
+                _.iterateObject(this.renderedRows, function (key, renderedRow) {
+                    var rowNode = renderedRow.getRowNode();
+                    if (rowNodes.indexOf(rowNode) >= 0) {
+                        renderedRow.refreshCells(colIds);
+                    }
                 });
             };
             RowRenderer.prototype.rowDataChanged = function (rows) {
@@ -5788,6 +5972,10 @@ var ag;
                     this.childScope.colDefWrapper = this.column;
                 }
             };
+            RenderedHeaderCell.prototype.addAttributes = function () {
+                this.eHeaderCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
+                this.eHeaderCell.setAttribute("colId", this.column.colId);
+            };
             RenderedHeaderCell.prototype.addClasses = function () {
                 _.addCssClass(this.eHeaderCell, 'ag-header-cell');
                 if (this.gridOptionsWrapper.isGroupHeaders()) {
@@ -5848,6 +6036,7 @@ var ag;
                 this.eHeaderCell = document.createElement("div");
                 this.createScope();
                 this.addClasses();
+                this.addAttributes();
                 this.addHeaderClassesFromCollDef();
                 // add tooltip if exists
                 if (this.column.colDef.headerTooltip) {
@@ -8817,10 +9006,11 @@ var ag;
 /// <reference path="grid.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
 /// <reference path="headerRendering/headerRenderer.ts" />
+/// <reference path="csvCreator.ts" />
 var ag;
 (function (ag) {
     var grid;
-    (function (grid_2) {
+    (function (grid_3) {
         var GridApi = (function () {
             function GridApi(grid, rowRenderer, headerRenderer, filterManager, columnController, inMemoryRowController, selectionController, gridOptionsWrapper, gridPanel, valueService, masterSlaveService, eventService) {
                 this.grid = grid;
@@ -8835,10 +9025,17 @@ var ag;
                 this.valueService = valueService;
                 this.masterSlaveService = masterSlaveService;
                 this.eventService = eventService;
+                this.csvCreator = new grid_3.CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
             }
             /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
             GridApi.prototype.__getMasterSlaveService = function () {
                 return this.masterSlaveService;
+            };
+            GridApi.prototype.getDataAsCsv = function (params) {
+                return this.csvCreator.getDataAsCsv(params);
+            };
+            GridApi.prototype.exportDataAsCsv = function (params) {
+                this.csvCreator.exportDataAsCsv(params);
             };
             GridApi.prototype.setDatasource = function (datasource) {
                 this.grid.setDatasource(datasource);
@@ -8879,6 +9076,15 @@ var ag;
                 console.error("unselectAll deprecated, call deselectAll instead");
                 this.deselectAll();
             };
+            GridApi.prototype.refreshRows = function (rowNodes) {
+                this.rowRenderer.refreshRows(rowNodes);
+            };
+            GridApi.prototype.refreshCells = function (rowNodes, colIds) {
+                this.rowRenderer.refreshCells(rowNodes, colIds);
+            };
+            GridApi.prototype.rowDataChanged = function (rows) {
+                this.rowRenderer.rowDataChanged(rows);
+            };
             GridApi.prototype.refreshView = function () {
                 this.rowRenderer.refreshView();
             };
@@ -8893,25 +9099,31 @@ var ag;
                 this.headerRenderer.refreshHeader();
                 this.headerRenderer.updateFilterIcons();
             };
+            GridApi.prototype.isAnyFilterPresent = function () {
+                return this.filterManager.isAnyFilterPresent();
+            };
+            GridApi.prototype.isAdvancedFilterPresent = function () {
+                return this.filterManager.isAdvancedFilterPresent();
+            };
+            GridApi.prototype.isQuickFilterPresent = function () {
+                return this.filterManager.isQuickFilterPresent();
+            };
             GridApi.prototype.getModel = function () {
                 return this.grid.getRowModel();
             };
             GridApi.prototype.onGroupExpandedOrCollapsed = function (refreshFromIndex) {
-                this.grid.updateModelAndRefresh(grid_2.Constants.STEP_MAP, refreshFromIndex);
+                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP, refreshFromIndex);
             };
             GridApi.prototype.expandAll = function () {
                 this.inMemoryRowController.expandOrCollapseAll(true, null);
-                this.grid.updateModelAndRefresh(grid_2.Constants.STEP_MAP);
+                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP);
             };
             GridApi.prototype.collapseAll = function () {
                 this.inMemoryRowController.expandOrCollapseAll(false, null);
-                this.grid.updateModelAndRefresh(grid_2.Constants.STEP_MAP);
+                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP);
             };
             GridApi.prototype.addVirtualRowListener = function (rowIndex, callback) {
                 this.grid.addVirtualRowListener(rowIndex, callback);
-            };
-            GridApi.prototype.rowDataChanged = function (rows) {
-                this.rowRenderer.rowDataChanged(rows);
             };
             GridApi.prototype.setQuickFilter = function (newFilter) {
                 this.grid.onQuickFilterChanged(newFilter);
@@ -9084,7 +9296,7 @@ var ag;
             };
             return GridApi;
         })();
-        grid_2.GridApi = GridApi;
+        grid_3.GridApi = GridApi;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 /// <reference path="gridOptionsWrapper.ts" />
@@ -9298,6 +9510,7 @@ var ag;
                     paginationGui = paginationController.getGui();
                 }
                 this.rowModel = rowModel;
+                this.usingInMemoryModel = true;
                 this.selectionController = selectionController;
                 this.columnController = columnController;
                 this.inMemoryRowController = inMemoryRowController;
@@ -9377,6 +9590,9 @@ var ag;
             Grid.prototype.isToolPanelShowing = function () {
                 return this.toolPanelShowing;
             };
+            Grid.prototype.isUsingInMemoryModel = function () {
+                return this.usingInMemoryModel;
+            };
             Grid.prototype.setDatasource = function (datasource) {
                 // if datasource provided, then set it
                 if (datasource) {
@@ -9392,18 +9608,21 @@ var ag;
                     this.paginationController.setDatasource(null);
                     this.virtualPageRowController.setDatasource(datasourceToUse);
                     this.rowModel = this.virtualPageRowController.getModel();
+                    this.usingInMemoryModel = false;
                     showPagingPanel = false;
                 }
                 else if (this.doingPagination) {
                     this.paginationController.setDatasource(datasourceToUse);
                     this.virtualPageRowController.setDatasource(null);
                     this.rowModel = this.inMemoryRowController.getModel();
+                    this.usingInMemoryModel = true;
                     showPagingPanel = true;
                 }
                 else {
                     this.paginationController.setDatasource(null);
                     this.virtualPageRowController.setDatasource(null);
                     this.rowModel = this.inMemoryRowController.getModel();
+                    this.usingInMemoryModel = true;
                     showPagingPanel = false;
                 }
                 this.selectionController.setRowModel(this.rowModel);
@@ -9828,7 +10047,8 @@ var ag;
                 'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
                 'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupHidePivotColumns',
                 'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
-                'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag'
+                'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
+                'singleClickEdit'
             ];
             ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount', 'headerHeight'];
             ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders', 'showToolPanel'];

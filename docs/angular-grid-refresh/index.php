@@ -89,12 +89,18 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h3>Cell Refresh</h3>
+    <h3>Cell Refresh from Inside</h3>
 
     <p>
-        You can request a cell to be refreshed by calling the <i>params.refreshCell()</i> function
+        You can request a cell to be refreshed from within by calling the <i>params.refreshCell()</i> function
         passed to the cell renderer. This is handy if the cell wants to refresh itself and / or get the cell
         style rules reapplied.
+    </p>
+
+    <p>
+        This can be handy if the cell gets itself into a state it wants to get out for. For example, you could have
+        your own custom editing, and when the data has finished editing, you cal 'refreshCell()' will is a handy
+        way to get the grid to rip the cell out and put it back again to the fresh 'non-editing' state.
     </p>
 
     <h3>Refresh Headers and Footers</h3>

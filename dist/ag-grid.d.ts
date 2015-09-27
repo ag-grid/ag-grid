@@ -29,6 +29,7 @@ declare module ag.grid {
         private static isSafari;
         private static isIE;
         static iterateObject(object: any, callback: (key: string, value: any) => void): void;
+        static cloneObject(object: any): any;
         static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];
         static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
         static filter<T>(array: T[], callback: (item: T) => boolean): T[];
@@ -94,6 +95,8 @@ declare module ag.grid {
         static MAX: string;
         static KEY_TAB: number;
         static KEY_ENTER: number;
+        static KEY_BACKSPACE: number;
+        static KEY_DELETE: number;
         static KEY_ESCAPE: number;
         static KEY_SPACE: number;
         static KEY_DOWN: number;
@@ -176,6 +179,7 @@ declare module ag.grid {
         getHeaderCellRenderer(): any;
         getApi(): GridApi;
         isEnableColResize(): boolean;
+        isSingleClickEdit(): boolean;
         getGroupDefaultExpanded(): any;
         getGroupKeys(): string[];
         getGroupAggFunction(): (nodes: any[]) => any;
@@ -376,6 +380,7 @@ declare module ag.grid {
         isPinning(): boolean;
         getState(): [any];
         setState(columnState: any): void;
+        getColumns(keys: any[]): Column[];
         getColumn(key: any): Column;
         getDisplayNameForCol(column: any): string;
         getColumnGroup(name: string): ColumnGroup;
@@ -396,6 +401,25 @@ declare module ag.grid {
         private createDummyColumn(field);
         private calculateColInitialWidth(colDef);
         private getTotalColWidth(includePinned);
+    }
+}
+declare module ag.grid {
+    interface CsvExportParams {
+        skipHeader?: boolean;
+        skipFooters?: boolean;
+        skipGroups?: boolean;
+        fileName?: string;
+    }
+    class CsvCreator {
+        private rowController;
+        private columnController;
+        private grid;
+        private valueService;
+        constructor(rowController: InMemoryRowController, columnController: ColumnController, grid: Grid, valueService: ValueService);
+        exportDataAsCsv(params?: CsvExportParams): void;
+        getDataAsCsv(params?: CsvExportParams): string;
+        private createValueForGroupNode(node);
+        private escape(value);
     }
 }
 declare module ag.grid {
@@ -745,13 +769,13 @@ declare module ag.grid {
         private setModelOnFilterWrapper(filter, newModel);
         getFilterModel(): any;
         setRowModel(rowModel: any): void;
-        private isAdvancedFilterPresent();
+        isAdvancedFilterPresent(): boolean;
         isAnyFilterPresent(): boolean;
         isFilterPresentForCol(colId: any): any;
         private doesFilterPass(node, filterToSkip?);
         setQuickFilter(newFilter: any): boolean;
         onFilterChanged(): void;
-        private isQuickFilterPresent();
+        isQuickFilterPresent(): boolean;
         doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
         doesRowPassFilter(node: any, filterToSkip?: any): boolean;
         private aggregateRowForQuickFilter(node);
@@ -866,13 +890,16 @@ declare module ag.grid {
         constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer, gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService, selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController, templateService: TemplateService, cellRendererMap: {
             [key: string]: any;
         }, node: any, rowIndex: number, scope: any, columnController: ColumnController, valueService: ValueService, eventService: EventService);
+        getColumn(): Column;
         private getValue();
         getVGridCell(): ag.vdom.VHtmlElement;
         private getDataForRow();
         private setupComponents();
-        startEditing(): void;
+        startEditing(key?: number): void;
         focusCell(forceBrowserFocus: boolean): void;
-        private stopEditing(eInput, blurListener);
+        private stopEditing(eInput, blurListener, reset?);
+        createParams(): any;
+        createEvent(event: any, eventSource: any): any;
         private addCellDoubleClickedHandler();
         private addCellContextMenuHandler();
         isCellEditable(): any;
@@ -882,6 +909,7 @@ declare module ag.grid {
         private addClassesFromCollDef();
         private addClassesFromRules();
         private addCellNavigationHandler();
+        private isKeycodeForStartEditing(key);
         createSelectionCheckbox(): void;
         setSelected(state: boolean): void;
         private createParentOfValue();
@@ -926,6 +954,7 @@ declare module ag.grid {
         destroy(): void;
         private destroyScope();
         isDataInList(rows: any[]): boolean;
+        isNodeInList(nodes: RowNode[]): boolean;
         isGroup(): boolean;
         private drawNormalRow();
         private bindVirtualElement(vElement);
@@ -937,6 +966,7 @@ declare module ag.grid {
         private createRowContainer();
         getRowNode(): any;
         getRowIndex(): any;
+        refreshCells(colIds: string[]): void;
         private addDynamicClasses();
     }
 }
@@ -957,7 +987,7 @@ declare module ag.grid {
     }
 }
 declare module ag.grid {
-    function groupCellRendererFactory(gridOptionsWrapper: any, selectionRendererFactory: any): (params: any) => HTMLSpanElement;
+    function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper, selectionRendererFactory: SelectionRendererFactory, expressionService: ExpressionService): (params: any) => HTMLSpanElement;
 }
 declare module ag.grid {
     class RowRenderer {
@@ -1000,6 +1030,8 @@ declare module ag.grid {
         private refreshFloatingRows(renderedRows, rowData, pinnedContainer, bodyContainer, isTop);
         refreshView(refreshFromIndex?: any): void;
         softRefreshView(): void;
+        refreshRows(rowNodes: RowNode[]): void;
+        refreshCells(rowNodes: RowNode[], colIds: string[]): void;
         rowDataChanged(rows: any): void;
         private refreshAllVirtualRows(fromIndex);
         refreshGroupRows(): void;
@@ -1096,6 +1128,7 @@ declare module ag.grid {
         getGui(): HTMLElement;
         destroy(): void;
         private createScope();
+        private addAttributes();
         private addClasses();
         private addMenu();
         private addSortIcons(headerCellLabel);
@@ -1591,6 +1624,7 @@ declare module ag.grid {
         enableServerSideFilter?: boolean;
         colWidth?: number;
         suppressMenuHide?: boolean;
+        singleClickEdit?: boolean;
         debug?: boolean;
         icons?: any;
         angularCompileRows?: boolean;
@@ -1669,9 +1703,12 @@ declare module ag.grid {
         private valueService;
         private masterSlaveService;
         private eventService;
+        private csvCreator;
         constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveService: MasterSlaveService, eventService: EventService);
         /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
         __getMasterSlaveService(): MasterSlaveService;
+        getDataAsCsv(params?: CsvExportParams): string;
+        exportDataAsCsv(params?: CsvExportParams): void;
         setDatasource(datasource: any): void;
         onNewDatasource(): void;
         setRowData(rowData: any): void;
@@ -1682,16 +1719,21 @@ declare module ag.grid {
         onNewCols(): void;
         setColumnDefs(colDefs: ColDef[]): void;
         unselectAll(): void;
+        refreshRows(rowNodes: RowNode[]): void;
+        refreshCells(rowNodes: RowNode[], colIds: string[]): void;
+        rowDataChanged(rows: any): void;
         refreshView(): void;
         softRefreshView(): void;
         refreshGroupRows(): void;
         refreshHeader(): void;
+        isAnyFilterPresent(): boolean;
+        isAdvancedFilterPresent(): boolean;
+        isQuickFilterPresent(): boolean;
         getModel(): any;
         onGroupExpandedOrCollapsed(refreshFromIndex: any): void;
         expandAll(): void;
         collapseAll(): void;
         addVirtualRowListener(rowIndex: any, callback: any): void;
-        rowDataChanged(rows: any): void;
         setQuickFilter(newFilter: any): void;
         selectIndex(index: any, tryMulti: any, suppressEvents: any): void;
         deselectIndex(index: any): void;
@@ -1778,6 +1820,7 @@ declare module ag.grid {
         private eRootPanel;
         private toolPanelShowing;
         private doingPagination;
+        private usingInMemoryModel;
         private rowModel;
         constructor(eGridDiv: any, gridOptions: any, globalEventListener?: Function, $scope?: any, $compile?: any, quickFilterOnScope?: any);
         getRowModel(): any;
@@ -1789,6 +1832,7 @@ declare module ag.grid {
         private onIndividualColumnResized(column);
         showToolPanel(show: any): void;
         isToolPanelShowing(): boolean;
+        isUsingInMemoryModel(): boolean;
         setDatasource(datasource?: any): void;
         private refreshHeaderAndBody();
         setFinished(): void;

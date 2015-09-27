@@ -24,7 +24,7 @@ include '../documentation_header.php';
         <li><b>Events</b>: Events are for handling changes from the grid. These are analogous
         to events in the DOM.</li>
         <li><b>Callbacks</b>: Functions that you provide that the grid calls, as a way of
-        modifying behaviour of the grid. This is the grid asking the application a questions
+        modifying behaviour of the grid. This is the grid asking the application a question
         such as 'what color should this cell be', it is not a means to pass state into or
         out of the grid.</li>
         <li><b>API</b>: API into the grid, to provide features that are not representable

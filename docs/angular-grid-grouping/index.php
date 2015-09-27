@@ -304,7 +304,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     <p>
         The footer by default will display the word 'Total' followed by the group key. If this is not what you
         want, then use the <i>footerValueGetter</i> option. The following shows two snippets for achieving
-        the same, one using a function, one using an expression. The example below uses the experssion.
+        the same, one using a function, one using an expression.
     </p>
     <pre><code>// use a function to return a footer value
 cellRenderer: {
