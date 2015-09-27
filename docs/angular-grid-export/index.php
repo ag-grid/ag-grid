@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Data Export</h2>
 
     <p>
-        The data can be exported to CSV with on API call. You have two options, let the grid to the export if the
+        The data can be exported to CSV with an API call. You have two options, let the grid do the export if the
         browser is modern and it is allowed, or you get the grid to return you the CSV string and your application
         is responsible for the export (some older browsers will require you to send the data to the server and do
         an old school 'file download' from the server).
@@ -43,9 +43,9 @@ include '../documentation_header.php';
         <li>The sort order is maintained in the export.</li>
         <li>The order of the columns is maintained in the export.</li>
         <li>Only visible columns are export.</li>
-        <li>Value getters are export with their values (the 'Group' col uses a value getter to take the first letter of the country name)</li>
-        <li>Aggregated values are export.</li>
-        <li>For groups, the first cell will always have the group key.</li>
+        <li>Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name)</li>
+        <li>Aggregated values are exported.</li>
+        <li>For groups, the first exported value (column) will always have the group key.</li>
     </ul>
 
     <show-example example="exampleExport"></show-example>

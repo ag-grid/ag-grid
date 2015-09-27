@@ -60,6 +60,8 @@ include 'documentation_header.php';
 
     <p>
         This weeks release sees the following features added:
+    <ul>
+
         <li>
             <b>Improved Editing</b>
             <ul>
@@ -70,10 +72,11 @@ include 'documentation_header.php';
             </ul>
         </li>
     <li><b>Export to Csv</b>: New feature, read about it <a href="angular-grid-export/">here</a></li>
-    <li><b>New Refresh APIs</b>: Target individual cells or rows for refresh, read about it <a href="angular-grid-refresh/">here</a></li>
+    <li><b>New Refresh APIs</b>: Target individual cells or rows for refresh with api methods <i>refreshRows()</i> and <i>refreshCells()</i>, read about it <a href="angular-grid-refresh/">here</a></li>
     <li><b>New Filter APIs</b>: To help with your filtering you now have API methods
         <i>isAnyFilterPresent(), isAdvancedFilterPresent() and isQuickFilterPresent()</i></li>
     <li><b>Configurable Footer</b>: Now you can have something else rather than 'Total' in the footer.</li>
+    </ul>
     </p>
 
     <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
