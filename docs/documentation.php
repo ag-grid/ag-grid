@@ -27,29 +27,6 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 240px;">
-        <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
-            <img src="images/angularAir.png"/>
-        </a>
-    </div>
-    <div style="float: left; width: 450px;">
-        <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
-            <div style="font-size: 20px; color: #167ac6;">
-                Angular Air Episode 32: ag-Grid
-            </div>
-        </a>
-        <div style="color: #767676">
-            by Angular Air
-        </div>
-        <div style="color: #767676">
-            Niall Crosby discusses ag-Grid with the Angular Air team. Hear Niall speak openly
-            about the story of ag-Grid, Angular 2 and Web Components, and also the future of ag-Grid.
-        </div>
-    </div>
-</div>-->
-
 <div style="overflow: hidden; border: 1px solid darkgrey; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; padding-right: 15px;">
@@ -77,6 +54,35 @@ include 'documentation_header.php';
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
+    <p>
+        <b>27th Aug 2015 - Release of ag-Grid v2.1.0 <!--- Over 800 stars on Github and counting!!--></b>
+    </p>
+
+    <p>
+        This weeks release sees the following features added:
+        <li>
+            <b>Improved Editing</b>
+            <ul>
+                <li>Editing can be started by single click if you set property <i>singleClickEdit=true<i/></li>
+                <li>Editing can be started by hitting Delete or Backspace (previously only Enter did this).
+                Both Delete and Backspace will wipe the cells contents.</li>
+                <li>When editing, hitting Escape key will cancel the editing and revert the old value.</li>
+            </ul>
+        </li>
+    <li><b>Export to Csv</b>: New feature, read about it <a href="angular-grid-export/">here</a></li>
+    <li><b>New Refresh APIs</b>: Target individual cells or rows for refresh, read about it <a href="angular-grid-refresh/">here</a></li>
+    <li><b>New Filter APIs</b>: To help with your filtering you now have API methods
+        <i>isAnyFilterPresent(), isAdvancedFilterPresent() and isQuickFilterPresent()</i></li>
+    <li><b>Configurable Footer</b>: Now you can have something else rather than 'Total' in the footer.</li>
+    </p>
+
+    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+</div>
+
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
+     xmlns="http://www.w3.org/1999/html">
 
     <p>
         <b>23th Aug 2015 <!--- Over 800 stars on Github and counting!!--></b>
@@ -89,34 +95,6 @@ include 'documentation_header.php';
     <p style="font-size: 40px">
         <b>Major Release: </b> Announcing <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span> v2.0
     </p>
-
-    <!--
-    <li>
-      Editing can be started using 'singleClick' if you set property <i>singleClickEdit=true<i/>
-    </li>
-    <li>
-      Previously 'Enter' started editing. Now 'Backspace' and 'Delete' also start editing, but clear
-      the field first.
-    </li>
-    <li>
-      When editing, hitting 'Escape' cancels the edit, and puts back in the old value.
-    </li>
-    <li>
-      Export to CSV
-    </li>
-    <li>
-      Refreshing of individual rows and cells via the two methods
-    </li>
-    <li>
-      New filter APIs:
-      public isAnyFilterPresent()
-      isAdvancedFilterPresent()
-      isQuickFilterPresent()
-    </li>
-    <li>
-      configurable footer text, when aggregating and showing footers.
-    </li>
-    -->
 
     <p>
         The first ag-Grid production release supporting
@@ -144,23 +122,6 @@ include 'documentation_header.php';
         To migrate from ag-Grid 1.x to 2.0, please follow this <a href="upgrading_to_2.x/index.php">migration guide</a>.
     </p>
 
-    <p>&nbsp;</p>
-
-    <p>
-        <b>Next Week</b>
-    </p>
-    <p>
-        I need to sleep. I need to sleep.
-    </p>
-
-<!--    <p>
-        <b>Angular Air</b>
-    </p>
-    <p>
-        On Tuesday 15th September I will be on <a href="http://angular-air.com/">Angular Air</a> talking about
-        my work with ag-Grid.
-    </p>
--->
     <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
@@ -310,6 +271,12 @@ include 'documentation_header.php';
     <h3>
         News
     </h3>
+
+    <hr/>
+
+    <p>
+        <b>23rd Sep</b> ag-Grid 2.0 released - AngularJS 2 and Web Components supported
+    </p>
 
     <hr/>
 
