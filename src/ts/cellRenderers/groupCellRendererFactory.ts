@@ -8,7 +8,9 @@ module ag.grid {
     var utils = Utils;
     var constants = Constants;
 
-    export function groupCellRendererFactory(gridOptionsWrapper: any, selectionRendererFactory: any) {
+    export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
+                                    selectionRendererFactory: SelectionRendererFactory,
+                                    expressionService: ExpressionService) {
 
         return function groupCellRenderer(params: any) {
 
@@ -126,8 +128,25 @@ module ag.grid {
 
         // creates cell with 'Total {{key}}' for a group
         function createFooterCell(eGroupCell: any, params: any) {
-            var textToDisplay = "Total " + getGroupName(params);
-            var eText = document.createTextNode(textToDisplay);
+            var footerValue: string;
+            var groupName = getGroupName(params);
+            if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.footerValueGetter) {
+                var footerValueGetter = params.colDef.cellRenderer.footerValueGetter;
+                // params is same as we were given, except we set the value as the item to display
+                var paramsClone: any = utils.cloneObject(params);
+                paramsClone.value = groupName;
+                if (typeof footerValueGetter === 'function') {
+                    footerValue = footerValueGetter(paramsClone);
+                } else if (typeof footerValueGetter === 'string') {
+                    footerValue = expressionService.evaluate(footerValueGetter, paramsClone);
+                } else {
+                    console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
+                }
+            } else {
+                footerValue = 'Total ' + groupName;
+            }
+
+            var eText = document.createTextNode(footerValue);
             eGroupCell.appendChild(eText);
         }
 

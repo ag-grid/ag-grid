@@ -21,11 +21,13 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupUseEntireRow: false,
         groupKeys: ['country'],
         groupAggFields: ['gold','silver','bronze','total'],
+        groupIncludeFooter: true,
         groupColumnDef: {headerName: "Athlete",
             field: "athlete",
             width: 200,
             cellRenderer: {
                 renderer: 'group',
+                footerValueGetter: '"Total (" + x + ")"',
                 padding: 5
             }}
         };

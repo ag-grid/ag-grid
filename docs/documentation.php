@@ -113,6 +113,9 @@ include 'documentation_header.php';
       isAdvancedFilterPresent()
       isQuickFilterPresent()
     </li>
+    <li>
+      configurable footer text, when aggregating and showing footers.
+    </li>
     -->
 
     <p>

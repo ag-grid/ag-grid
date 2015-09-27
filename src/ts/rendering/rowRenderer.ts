@@ -62,7 +62,7 @@ module ag.grid {
             this.eventService = eventService;
 
             this.cellRendererMap = {
-                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory),
+                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
                 'default': function(params: any) {
                     return params.value;
                 }

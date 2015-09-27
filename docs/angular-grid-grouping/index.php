@@ -198,7 +198,8 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         suppressCount: false,
         checkbox: true,
         padding: 10,
-        innerRenderer: myInnerRenderer
+        innerRenderer: myInnerRenderer,
+        footerValueGetter: myFooterValueGetter
 }</pre>
 
     <p>
@@ -213,6 +214,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         <li><b>padding:</b> A positive number. The amount of padding, in pixels, to indent each group.</li>
         <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
         <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
+        <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
     </ul>
     </p>
 
@@ -300,8 +302,21 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         when the group is collapsed.
     </p>
     <p>
-        The footer will display the word 'Total' followed by the group key.
+        The footer by default will display the word 'Total' followed by the group key. If this is not what you
+        want, then use the <i>footerValueGetter</i> option. The following shows two snippets for achieving
+        the same, one using a function, one using an expression. The example below uses the experssion.
     </p>
+    <pre><code>// use a function to return a footer value
+cellRenderer: {
+    renderer: 'group',
+    footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
+}}
+
+// use an expression to return a footer value. this gives the same result as above
+    cellRenderer: {
+    renderer: 'group',
+    footerValueGetter: '"Total (" + x + ")"'
+}}</code></pre>
     <p>
         When showing the groups in one column, the aggregation data is displayed
         in the group header when collapsed, and only in the footer when expanded (ie it moves from the header

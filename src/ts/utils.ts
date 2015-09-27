@@ -20,6 +20,17 @@ module ag.grid {
             }
         }
 
+        static cloneObject(object: any): any {
+            var copy = <any>{};
+            var keys = Object.keys(object);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var value = object[key];
+                copy[key] = value;
+            }
+            return copy;
+        }
+
         static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult) {
             var result: TResult[] = [];
             for (var i = 0; i < array.length; i++) {
