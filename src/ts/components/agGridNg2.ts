@@ -6,6 +6,9 @@
 
 module ag.grid {
 
+    // lets load angular 2 if we can find it
+    var _ng: any;
+
     // we are not using annotations on purpose, as if we do, then there is a runtime dependency
     // on the annotation, which would break this code if angular 2 was not included, which is bad,
     // as angular 2 is optional for ag-grid
@@ -22,32 +25,32 @@ module ag.grid {
         private columnApi: ColumnApi;
 
         // core grid events
-        public modelUpdated = new ng.EventEmitter();
-        public cellClicked = new ng.EventEmitter();
-        public cellDoubleClicked = new ng.EventEmitter();
-        public cellContextMenu = new ng.EventEmitter();
-        public cellValueChanged = new ng.EventEmitter();
-        public cellFocused = new ng.EventEmitter();
-        public rowSelected = new ng.EventEmitter();
-        public selectionChanged = new ng.EventEmitter();
-        public beforeFilterChanged = new ng.EventEmitter();
-        public afterFilterChanged = new ng.EventEmitter();
-        public filterModified = new ng.EventEmitter();
-        public beforeSortChanged = new ng.EventEmitter();
-        public afterSortChanged = new ng.EventEmitter();
-        public virtualRowRemoved = new ng.EventEmitter();
-        public rowClicked = new ng.EventEmitter();
-        public ready = new ng.EventEmitter();
+        public modelUpdated = new _ng.EventEmitter();
+        public cellClicked = new _ng.EventEmitter();
+        public cellDoubleClicked = new _ng.EventEmitter();
+        public cellContextMenu = new _ng.EventEmitter();
+        public cellValueChanged = new _ng.EventEmitter();
+        public cellFocused = new _ng.EventEmitter();
+        public rowSelected = new _ng.EventEmitter();
+        public selectionChanged = new _ng.EventEmitter();
+        public beforeFilterChanged = new _ng.EventEmitter();
+        public afterFilterChanged = new _ng.EventEmitter();
+        public filterModified = new _ng.EventEmitter();
+        public beforeSortChanged = new _ng.EventEmitter();
+        public afterSortChanged = new _ng.EventEmitter();
+        public virtualRowRemoved = new _ng.EventEmitter();
+        public rowClicked = new _ng.EventEmitter();
+        public ready = new _ng.EventEmitter();
 
         // column grid events
-        public columnEverythingChanged = new ng.EventEmitter();
-        public columnPivotChanged = new ng.EventEmitter();
-        public columnValueChanged = new ng.EventEmitter();
-        public columnMoved = new ng.EventEmitter();
-        public columnVisible = new ng.EventEmitter();
-        public columnGroupOpened = new ng.EventEmitter();
-        public columnResized = new ng.EventEmitter();
-        public columnPinnedCountChanged = new ng.EventEmitter();
+        public columnEverythingChanged = new _ng.EventEmitter();
+        public columnPivotChanged = new _ng.EventEmitter();
+        public columnValueChanged = new _ng.EventEmitter();
+        public columnMoved = new _ng.EventEmitter();
+        public columnVisible = new _ng.EventEmitter();
+        public columnGroupOpened = new _ng.EventEmitter();
+        public columnResized = new _ng.EventEmitter();
+        public columnPinnedCountChanged = new _ng.EventEmitter();
 
         // properties
         public virtualPaging: boolean;
@@ -168,12 +171,21 @@ module ag.grid {
         }
     }
 
-    // provide a reference to angular
-    var ng = (<any> window).ng;
     // check for angular and component, as if angular 1, we will find angular but the wrong version
-    if (ng && ng.Component) {
+    if ((<any> window).ng && (<any> window).ng.Component) {
+        _ng = (<any> window).ng;
+        initAngular2();
+        // check if we are using SystemX
+    } else if ((<any>window).System && (<any>window).System.import) {
+        (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
+            _ng = ngFromSystemX;
+            initAngular2();
+        });
+    }
+
+    function initAngular2() {
         (<any>AgGridNg2).annotations = [
-            new ng.Component({
+            new _ng.Component({
                 selector: 'ag-grid-ng2',
                 events: [
                     // core grid events
@@ -194,15 +206,14 @@ module ag.grid {
                     .concat(ComponentUtil.CALLBACKS)
                 ,
                 compileChildren: false, // no angular on the inside thanks
-                lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]
+                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange]
             }),
-        new ng.View({
+            new _ng.View({
                 template: '',
                 // tell angular we don't want view encapsulation, we don't want a shadow root
-                encapsulation: ng.ViewEncapsulation.None
+                encapsulation: _ng.ViewEncapsulation.None
             })
         ];
-        (<any>AgGridNg2).parameters = [[ng.ElementRef]];
+        (<any>AgGridNg2).parameters = [[_ng.ElementRef]];
     }
-
 }

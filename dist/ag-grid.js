@@ -1,6 +1,6 @@
 /**
- * ag-grid - Advanced Javascript Datagrid. Supports raw Javascrip, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.1.0
+ * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
+ * @version v2.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10077,6 +10077,8 @@ var ag;
 (function (ag) {
     var grid;
     (function (grid) {
+        // lets load angular 2 if we can find it
+        var _ng;
         // we are not using annotations on purpose, as if we do, then there is a runtime dependency
         // on the annotation, which would break this code if angular 2 was not included, which is bad,
         // as angular 2 is optional for ag-grid
@@ -10085,31 +10087,31 @@ var ag;
                 this.elementDef = elementDef;
                 this._initialised = false;
                 // core grid events
-                this.modelUpdated = new ng.EventEmitter();
-                this.cellClicked = new ng.EventEmitter();
-                this.cellDoubleClicked = new ng.EventEmitter();
-                this.cellContextMenu = new ng.EventEmitter();
-                this.cellValueChanged = new ng.EventEmitter();
-                this.cellFocused = new ng.EventEmitter();
-                this.rowSelected = new ng.EventEmitter();
-                this.selectionChanged = new ng.EventEmitter();
-                this.beforeFilterChanged = new ng.EventEmitter();
-                this.afterFilterChanged = new ng.EventEmitter();
-                this.filterModified = new ng.EventEmitter();
-                this.beforeSortChanged = new ng.EventEmitter();
-                this.afterSortChanged = new ng.EventEmitter();
-                this.virtualRowRemoved = new ng.EventEmitter();
-                this.rowClicked = new ng.EventEmitter();
-                this.ready = new ng.EventEmitter();
+                this.modelUpdated = new _ng.EventEmitter();
+                this.cellClicked = new _ng.EventEmitter();
+                this.cellDoubleClicked = new _ng.EventEmitter();
+                this.cellContextMenu = new _ng.EventEmitter();
+                this.cellValueChanged = new _ng.EventEmitter();
+                this.cellFocused = new _ng.EventEmitter();
+                this.rowSelected = new _ng.EventEmitter();
+                this.selectionChanged = new _ng.EventEmitter();
+                this.beforeFilterChanged = new _ng.EventEmitter();
+                this.afterFilterChanged = new _ng.EventEmitter();
+                this.filterModified = new _ng.EventEmitter();
+                this.beforeSortChanged = new _ng.EventEmitter();
+                this.afterSortChanged = new _ng.EventEmitter();
+                this.virtualRowRemoved = new _ng.EventEmitter();
+                this.rowClicked = new _ng.EventEmitter();
+                this.ready = new _ng.EventEmitter();
                 // column grid events
-                this.columnEverythingChanged = new ng.EventEmitter();
-                this.columnPivotChanged = new ng.EventEmitter();
-                this.columnValueChanged = new ng.EventEmitter();
-                this.columnMoved = new ng.EventEmitter();
-                this.columnVisible = new ng.EventEmitter();
-                this.columnGroupOpened = new ng.EventEmitter();
-                this.columnResized = new ng.EventEmitter();
-                this.columnPinnedCountChanged = new ng.EventEmitter();
+                this.columnEverythingChanged = new _ng.EventEmitter();
+                this.columnPivotChanged = new _ng.EventEmitter();
+                this.columnValueChanged = new _ng.EventEmitter();
+                this.columnMoved = new _ng.EventEmitter();
+                this.columnVisible = new _ng.EventEmitter();
+                this.columnGroupOpened = new _ng.EventEmitter();
+                this.columnResized = new _ng.EventEmitter();
+                this.columnPinnedCountChanged = new _ng.EventEmitter();
             }
             // this gets called after the directive is initialised
             AgGridNg2.prototype.onInit = function () {
@@ -10208,12 +10210,20 @@ var ag;
             return AgGridNg2;
         })();
         grid.AgGridNg2 = AgGridNg2;
-        // provide a reference to angular
-        var ng = window.ng;
         // check for angular and component, as if angular 1, we will find angular but the wrong version
-        if (ng && ng.Component) {
+        if (window.ng && window.ng.Component) {
+            _ng = window.ng;
+            initAngular2();
+        }
+        else if (window.System && window.System.import) {
+            window.System.import('angular2/angular2').then(function (ngFromSystemX) {
+                _ng = ngFromSystemX;
+                initAngular2();
+            });
+        }
+        function initAngular2() {
             AgGridNg2.annotations = [
-                new ng.Component({
+                new _ng.Component({
                     selector: 'ag-grid-ng2',
                     events: [
                         // core grid events
@@ -10233,15 +10243,15 @@ var ag;
                         .concat(grid.ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
                         .concat(grid.ComponentUtil.CALLBACKS),
                     compileChildren: false,
-                    lifecycle: [ng.LifecycleEvent.onInit, ng.LifecycleEvent.onChange]
+                    lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange]
                 }),
-                new ng.View({
+                new _ng.View({
                     template: '',
                     // tell angular we don't want view encapsulation, we don't want a shadow root
-                    encapsulation: ng.ViewEncapsulation.None
+                    encapsulation: _ng.ViewEncapsulation.None
                 })
             ];
-            AgGridNg2.parameters = [[ng.ElementRef]];
+            AgGridNg2.parameters = [[_ng.ElementRef]];
         }
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
