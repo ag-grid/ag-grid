@@ -146,7 +146,7 @@ module ag.grid {
             this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
 
             // show the summary panel, when first shown, this is blank
-            this.ePageRowSummaryPanel.style.visibility = null;
+            this.ePageRowSummaryPanel.style.visibility = "";
         }
 
         loadPage() {
