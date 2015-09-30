@@ -409,8 +409,8 @@ module awk.grid {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-            this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
-            var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui, true);
+            //this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
+            var hidePopup = this.popupService.addAsModalPopup(eventSource, filterWrapper.gui, true);
 
             if (filterWrapper.filter.afterGuiAttached) {
                 var params = {

@@ -12,17 +12,17 @@ module awk.grid {
             this.ePopupParent = ePopupParent;
         }
 
-        public positionPopup(eventSource: any, ePopup: any, minWidth: any) {
+        private positionPopup(eventSource: any, ePopup: any) {
             var sourceRect = eventSource.getBoundingClientRect();
             var parentRect = this.ePopupParent.getBoundingClientRect();
 
             var x = sourceRect.left - parentRect.left;
             var y = sourceRect.top - parentRect.top + sourceRect.height;
 
-            // if popup is overflowing to the right, move it left
-            if (minWidth > 0) {
+            var popupWidth = ePopup.getBoundingClientRect().width;
+            if (popupWidth > 0) {
                 var widthOfParent = parentRect.right - parentRect.left;
-                var maxX = widthOfParent - minWidth;
+                var maxX = widthOfParent - popupWidth;
                 if (x > maxX) { // move position left, back into view
                     x = maxX;
                 }
@@ -38,7 +38,7 @@ module awk.grid {
         //adds an element to a div, but also listens to background checking for clicks,
         //so that when the background is clicked, the child is removed again, giving
         //a model look to popups.
-        public addAsModalPopup(eChild: any, closeOnEsc: boolean) {
+        public addAsModalPopup(eventSource: any, eChild: any, closeOnEsc: boolean) {
             var eBody = document.body;
             if (!eBody) {
                 console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -51,13 +51,14 @@ module awk.grid {
             }
 
             this.ePopupParent.appendChild(eChild);
+            this.positionPopup(eventSource, eChild);
 
             var that = this;
 
             // if we add these listeners now, then the current mouse
             // click will be included, which we don't want
-            setTimeout(function() {
-                if(closeOnEsc) {
+            setTimeout(function () {
+                if (closeOnEsc) {
                     eBody.addEventListener('keydown', hidePopupOnEsc);
                 }
                 eBody.addEventListener('click', hidePopup);
@@ -68,7 +69,7 @@ module awk.grid {
 
             function hidePopupOnEsc(event: any) {
                 var key = event.which || event.keyCode;
-                if(key === grid.Constants.KEY_ESCAPE) {
+                if (key === grid.Constants.KEY_ESCAPE) {
                     hidePopup(null);
                 }
             }
