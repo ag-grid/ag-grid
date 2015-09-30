@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.1.1
+ * @version v2.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7514,7 +7514,7 @@ var ag;
                 this.lbFirstRowOnPage.innerHTML = (startRow).toLocaleString();
                 this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
                 // show the summary panel, when first shown, this is blank
-                this.ePageRowSummaryPanel.style.visibility = null;
+                this.ePageRowSummaryPanel.style.visibility = "";
             };
             PaginationController.prototype.loadPage = function () {
                 this.enableOrDisableButtons();

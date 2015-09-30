@@ -237,6 +237,17 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>getFilterModel()</th>
+            <td>Gets the current state of all the advanced filters. Used for saving filter state.
+            </td>
+        </tr>
+        <tr>
+            <th>setFilterModel(model)</th>
+            <td>Sets the state of all the advanced filters. Provide it with what you get from getFilterModel()
+                to restore filter state.
+            </td>
+        </tr>
+        <tr>
             <th>onFilterChanged()</th>
             <td>Informs the grid that a filter has changed. This is typically called after a filter
                 change through one of the filter APIs.
