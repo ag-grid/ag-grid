@@ -1,12 +1,13 @@
 module ag.grid {
 
-    var LINE_SEPERATOR = '\r\n';
+    var LINE_SEPARATOR = '\r\n';
 
     export interface CsvExportParams {
         skipHeader?: boolean;
         skipFooters?: boolean;
         skipGroups?: boolean;
         fileName?: string;
+		forceCommaSeparator?: boolean;
     }
 
     export class CsvCreator {
@@ -19,7 +20,8 @@ module ag.grid {
         }
 
         public exportDataAsCsv(params?: CsvExportParams): void {
-            var csvString = this.getDataAsCsv(params);
+			var forceComma = params && params.forceCommaSeparator;
+            var csvString = (forceComma ? "sep=,\n" : "") + this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
             // Internet Explorer
@@ -69,7 +71,7 @@ module ag.grid {
                     }
                     result += '"' + this.escape(nameForCol) + '"';
                 });
-                result += LINE_SEPERATOR;
+                result += LINE_SEPARATOR;
             }
 
             this.rowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
@@ -93,7 +95,7 @@ module ag.grid {
                     result += '"' + this.escape(valueForCell) + '"';
                 });
 
-                result += LINE_SEPERATOR;
+                result += LINE_SEPARATOR;
             });
 
             return result;
