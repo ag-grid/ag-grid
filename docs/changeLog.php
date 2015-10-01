@@ -8,9 +8,8 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>
-        Change Log
-    </h3>
+    <h5>2.1.3</h5>
+    <li>Added header to Typescript definitions file and included in Definatly Typed</li>
 
     <hr/>
 

@@ -22,6 +22,12 @@ var headerTemplate = ['/**',
     ' */',
     ''].join('\n');
 
+var dtsHeaderTemplate =
+    '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
+    '// Project: <%= pkg.homepage %>\n' +
+    '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n' +
+    '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
+
 gulp.task('default', ['stylus', 'tsd', 'debug-build', 'watch']);
 gulp.task('release', ['stylus', 'tsd', 'ts-release']);
 
@@ -98,7 +104,9 @@ function tsReleaseTask() {
         }));
 
     return merge([
-        tsResult.dts.pipe(gulp.dest('dist')),
+        tsResult.dts
+            .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
+            .pipe(gulp.dest('dist')),
         tsResult.js
             .pipe(rename('ag-grid.js'))
             .pipe(header(headerTemplate, { pkg : pkg }))
