@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.1.2
+ * @version v2.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7415,14 +7415,14 @@ var ag;
             '<span id="recordCount"></span>' +
             '</span>' +
             '<span class="ag-paging-page-summary-panel">' +
-            '<button class="ag-paging-button" id="btFirst">[FIRST]</button>' +
-            '<button class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>' +
+            '<button type="button" class="ag-paging-button" id="btFirst">[FIRST]</button>' +
+            '<button type="button" class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>' +
             '[PAGE] ' +
             '<span id="current"></span>' +
             ' [OF] ' +
             '<span id="total"></span>' +
-            '<button class="ag-paging-button" id="btNext">[NEXT]</button>' +
-            '<button class="ag-paging-button" id="btLast">[LAST]</button>' +
+            '<button type="button" class="ag-paging-button" id="btNext">[NEXT]</button>' +
+            '<button type="button" class="ag-paging-button" id="btLast">[LAST]</button>' +
             '</span>' +
             '</div>';
         var PaginationController = (function () {
@@ -8357,7 +8357,6 @@ var ag;
 (function (ag) {
     var grid;
     (function (grid) {
-        //var template = require('./agList.html');
         var utils = grid.Utils;
         var dragAndDropService = grid.DragAndDropService.getInstance();
         var template = '<div class="ag-list-selection">' +

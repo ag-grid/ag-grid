@@ -1,3 +1,7 @@
+// Type definitions for ag-grid v2.1.3
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
 declare module ag.grid {
     class ColumnChangeEvent {
         private type;
@@ -1460,7 +1464,6 @@ declare module ag.grid {
         addDropTarget(eDropTarget: any, dropTargetCallback: any): void;
     }
 }
-declare function require(name: string): any;
 declare module ag.grid {
     class AgList {
         private eGui;

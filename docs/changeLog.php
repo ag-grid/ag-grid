@@ -9,7 +9,8 @@ include 'documentation_header.php';
 <div style="padding: 20px;">
 
     <h5>2.1.3</h5>
-    <li>Added header to Typescript definitions file and included in Definatly Typed</li>
+    <li>Minor - Added header to Typescript definitions file and included in Definitely Typed</li>
+    <li>Minor - Removed unused 'require' from agList - was conflicting when require defined elsewhere</li>
 
     <hr/>
 
