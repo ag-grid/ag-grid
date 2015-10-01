@@ -2,11 +2,8 @@
 /// <reference path="../dragAndDrop/dragAndDropService" />
 /// <amd-dependency path="text!agList.html"/>
 
-declare function require(name: string): any;
-
 module ag.grid {
 
-    //var template = require('./agList.html');
     var utils = Utils;
     var dragAndDropService = DragAndDropService.getInstance();
     var template =
