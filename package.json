@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
   "main": "dist/ag-grid.min.js",
   "scripts": {
