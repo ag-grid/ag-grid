@@ -136,6 +136,10 @@ module ag.grid {
             ComponentUtil.processOnChange(changes, this.gridOptions, this);
         }
 
+        public onDestroy(): void {
+            this.api.destroy();
+        }
+
         private globalEventListener(eventType: string, event: any): void {
             var emitter: any;
             switch (eventType) {
@@ -206,7 +210,7 @@ module ag.grid {
                     .concat(ComponentUtil.CALLBACKS)
                 ,
                 compileChildren: false, // no angular on the inside thanks
-                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange]
+                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange, _ng.LifecycleEvent.onDestroy]
             }),
             new _ng.View({
                 template: '',

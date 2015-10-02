@@ -21,6 +21,11 @@
             <button (click)="agGrid.columnApi.hideColumn('country', false)">Show Country Column</button>
         </span>
     </div>
+    <div style="clear: both;"/>
+    <div style="float: right;">
+        <button [disabled]="!showGrid" type="checkbox" (click)="showGrid=false">Dispose Grid</button>
+        <button [disabled]="showGrid" type="checkbox" (click)="showGrid=true">Bring Grid Back</button>
+    </div>
     <div style="padding: 4px;" class="toolbar">
         <label>
             <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
@@ -28,8 +33,9 @@
         </label>
         <button (click)="createRowData()">Refresh Data</button>
     </div>
+    <div style="clear: both;"/>
 
-    <ag-grid-ng2 #ag-grid style="width: 100%; height: 350px;" class="ag-fresh"
+    <ag-grid-ng2 *ng-if="showGrid" #ag-grid style="width: 100%; height: 350px;" class="ag-fresh"
 
                  [grid-options]="gridOptions"
                  [column-defs]="columnDefs"
@@ -72,5 +78,6 @@
                  (column-group-opened)="onColumnEvent($event)"
                  (column-resized)="onColumnEvent($event)"
                  (column-pinned-count-changed)="onColumnEvent($event)"
-    />
+            />
+
 </div>

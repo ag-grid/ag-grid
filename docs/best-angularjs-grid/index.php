@@ -80,7 +80,7 @@ include '../documentation_header.php';
         within the documentation.
     </p>
 
-    <pre><code>$scope.gridOptions.api.setRows(newRows)</code></pre>
+    <pre><code>$scope.gridOptions.api.setRowData(newRows)</code></pre>
 
     <show-example example="example2"></show-example>
 

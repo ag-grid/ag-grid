@@ -51,7 +51,7 @@ declare var module: any;
         var grid = new ag.grid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
-            grid.setFinished();
+            grid.destroy();
         });
     }
 

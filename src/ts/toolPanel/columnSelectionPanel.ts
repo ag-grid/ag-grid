@@ -16,11 +16,14 @@ module ag.grid {
         private cColumnList: any;
         layout: any;
         private eRootPanel: any;
+        private dragAndDropService: DragAndDropService;
 
-        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService) {
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService, dragAndDropService: DragAndDropService) {
+            this.dragAndDropService = dragAndDropService;
             this.gridOptionsWrapper = gridOptionsWrapper;
-            this.setupComponents();
             this.columnController = columnController;
+
+            this.setupComponents();
 
             eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.columnsChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.columnsChanged.bind(this));
@@ -73,7 +76,7 @@ module ag.grid {
 
         private setupComponents() {
 
-            this.cColumnList = new AgList();
+            this.cColumnList = new AgList(this.dragAndDropService);
             this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
             this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));

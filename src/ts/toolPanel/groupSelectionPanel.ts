@@ -11,14 +11,17 @@ module ag.grid {
 
     export class GroupSelectionPanel {
 
-        gridOptionsWrapper: any;
-        columnController: ColumnController;
-        inMemoryRowController: any;
-        cColumnList: any;
-        layout: any;
+        private gridOptionsWrapper: any;
+        private columnController: ColumnController;
+        private inMemoryRowController: any;
+        private cColumnList: any;
+        public layout: any; // need to change this to private
+        private dragAndDropService: DragAndDropService;
 
         constructor(columnController: ColumnController, inMemoryRowController: any,
-                    gridOptionsWrapper: GridOptionsWrapper, eventService: EventService) {
+                    gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
+                    dragAndDropService: DragAndDropService) {
+            this.dragAndDropService = dragAndDropService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
             this.columnController = columnController;
@@ -64,7 +67,7 @@ module ag.grid {
             var columnsLocalText = localeTextFunc('pivotedColumns', 'Pivoted Columns');
             var pivotedColumnsEmptyMessage = localeTextFunc('pivotedColumnsEmptyMessage', 'Drag columns from above to pivot');
 
-            this.cColumnList = new AgList();
+            this.cColumnList = new AgList(this.dragAndDropService);
             this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
             this.cColumnList.addBeforeDropListener(this.onBeforeDrop.bind(this));
             this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));

@@ -365,5 +365,9 @@ module ag.grid {
         public refreshPivot(): void {
             this.grid.refreshPivot();
         }
+
+        public destroy(): void {
+            this.grid.destroy();
+        }
     }
 }

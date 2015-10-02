@@ -8,6 +8,7 @@ var SampleAppComponent = function() {
     this.gridOptions = {};
     this.columnDefs = columnDefs;
     this.createRowData();
+    this.showGrid = true;
 };
 
 SampleAppComponent.prototype.createRowData = function() {
@@ -130,7 +131,7 @@ SampleAppComponent.annotations = [
         selector: 'sample-app'
     }),
     new ng.View({
-        directives: [ag.grid.AgGridNg2],
+        directives: [ag.grid.AgGridNg2, ng.NgIf],
         // put padding into the buttons
         styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         templateUrl: 'sampleAppComponent.html'

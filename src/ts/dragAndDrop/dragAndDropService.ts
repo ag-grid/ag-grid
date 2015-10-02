@@ -2,39 +2,39 @@
 
 module ag.grid {
 
-    var utils = Utils;
+    var _ = Utils;
 
     export class DragAndDropService {
 
-        static theInstance: DragAndDropService;
-
-        static getInstance(): DragAndDropService {
-            if (!this.theInstance) {
-                this.theInstance = new DragAndDropService();
-            }
-            return this.theInstance;
-        }
-
-        dragItem: any;
+        private dragItem: any;
+        private mouseUpEventListener: EventListener;
 
         constructor() {
             // need to clean this up, add to 'finished' logic in grid
-            document.addEventListener('mouseup', this.stopDragging.bind(this));
+            var that = this;
+            this.mouseUpEventListener = function listener() {
+                that.stopDragging();
+            };
+            document.addEventListener('mouseup', this.mouseUpEventListener);
         }
 
-        stopDragging() {
+        public destroy(): void {
+            document.removeEventListener('mouseup', this.mouseUpEventListener);
+        }
+
+        private stopDragging() {
             if (this.dragItem) {
                 this.setDragCssClasses(this.dragItem.eDragSource, false);
                 this.dragItem = null;
             }
         }
 
-        setDragCssClasses(eListItem: any, dragging: any) {
-            utils.addOrRemoveCssClass(eListItem, 'ag-dragging', dragging);
-            utils.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
+        private setDragCssClasses(eListItem: any, dragging: any) {
+            _.addOrRemoveCssClass(eListItem, 'ag-dragging', dragging);
+            _.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
         }
 
-        addDragSource(eDragSource: any, dragSourceCallback: any) {
+        public addDragSource(eDragSource: any, dragSourceCallback: any) {
 
             this.setDragCssClasses(eDragSource, false);
 
@@ -42,7 +42,7 @@ module ag.grid {
                 this.onMouseDownDragSource.bind(this, eDragSource, dragSourceCallback));
         }
 
-        onMouseDownDragSource(eDragSource: any, dragSourceCallback: any) {
+        private onMouseDownDragSource(eDragSource: any, dragSourceCallback: any) {
             if (this.dragItem) {
                 this.stopDragging();
             }
@@ -63,7 +63,7 @@ module ag.grid {
             this.setDragCssClasses(this.dragItem.eDragSource, true);
         }
 
-        addDropTarget(eDropTarget: any, dropTargetCallback: any) {
+        public addDropTarget(eDropTarget: any, dropTargetCallback: any) {
             var mouseIn = false;
             var acceptDrag = false;
             var that = this;

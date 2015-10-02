@@ -18,9 +18,12 @@ module ag.grid {
         private cColumnList: any;
         private layout: any;
         private popupService: PopupService;
+        private dragAndDropService: DragAndDropService;
 
         constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper,
-                    popupService: PopupService, eventService: EventService) {
+                    popupService: PopupService, eventService: EventService,
+                    dragAndDropService: DragAndDropService) {
+            this.dragAndDropService = dragAndDropService;
             this.popupService = popupService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.setupComponents();
@@ -57,7 +60,7 @@ module ag.grid {
                 that.columnController.removeValueColumn(column);
             });
 
-            var agValueType = new AgDropdownList(this.popupService);
+            var agValueType = new AgDropdownList(this.popupService, this.dragAndDropService);
             agValueType.setModel([constants.SUM, constants.MIN, constants.MAX]);
             agValueType.setSelected(column.aggFunc);
             agValueType.setWidth(45);
@@ -81,7 +84,7 @@ module ag.grid {
             var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
             var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to create values');
 
-            this.cColumnList = new AgList();
+            this.cColumnList = new AgList(this.dragAndDropService);
             this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));
             this.cColumnList.setEmptyMessage(emptyMessage);
             this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
