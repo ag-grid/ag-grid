@@ -335,7 +335,8 @@ columnDefinition = {
     <h3>Custom Filter Example</h3>
 
     <p>
-        The example below shows a custom filter on the Athlete column.
+        The example below shows two custom filters. The first is on the Athlete column and is implemented
+        using AngularJS. The second is on the Year column and is implemented using native Javascript.
     </p>
 
     <show-example example="example2"></show-example>

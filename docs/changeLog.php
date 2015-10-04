@@ -11,9 +11,12 @@ include 'documentation_header.php';
     <h5>2.2.0</h5>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
     Javascript (AngularJS lifecycle manages this for you).</li>
-    <li>Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
+    <li>Major - Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
     'dragging' events is the final one.</li>
-    <li>New event: rowDeselected</li>
+    <li>Major - New event: rowDeselected.</li>
+    <li>Major - Now have 'customHeader' and 'customFooter' for export to csv.</li>
+    <li>Minor - Now filters are positioned relative to their actual size instead of assuming each filter
+                is 200px wide. Now wide filters don't fall off the edge of the grid.</li>
 
     <h5>2.1.3</h5>
     <li>Minor - Added header to Typescript definitions file and included in Definitely Typed</li>

@@ -76,7 +76,7 @@ module ag.grid {
 
         onClick() {
             var agListGui = this.agList.getGui();
-            this.popupService.positionPopup(this.eGui, agListGui, -1);
+            this.popupService.positionPopup(this.eGui, agListGui, false);
             this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
         }
 

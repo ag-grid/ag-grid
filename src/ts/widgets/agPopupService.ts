@@ -13,7 +13,7 @@ module ag.grid {
             this.ePopupParent = ePopupParent;
         }
 
-        public positionPopup(eventSource: any, ePopup: any, minWidth: any) {
+        public positionPopup(eventSource: any, ePopup: any, keepWithinBounds: boolean) {
             var sourceRect = eventSource.getBoundingClientRect();
             var parentRect = this.ePopupParent.getBoundingClientRect();
 
@@ -21,7 +21,14 @@ module ag.grid {
             var y = sourceRect.top - parentRect.top + sourceRect.height;
 
             // if popup is overflowing to the right, move it left
-            if (minWidth > 0) {
+            if (keepWithinBounds) {
+                var minWidth: number;
+                if (ePopup.clientWidth>0) {
+                    minWidth = ePopup.clientWidth;
+                } else {
+                    minWidth = 200;
+                }
+
                 var widthOfParent = parentRect.right - parentRect.left;
                 var maxX = widthOfParent - minWidth;
                 if (x > maxX) { // move position left, back into view

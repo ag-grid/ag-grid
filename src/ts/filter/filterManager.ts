@@ -411,8 +411,10 @@ module ag.grid {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-            this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
+            // need to show filter before positioning, as only after filter
+            // is visible can we find out what the width of it is
             var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui, true);
+            this.popupService.positionPopup(eventSource, filterWrapper.gui, true);
 
             if (filterWrapper.filter.afterGuiAttached) {
                 var params = {
