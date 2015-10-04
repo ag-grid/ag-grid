@@ -383,7 +383,7 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>changeLog.php">Change Log</a>
                     <?php } ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>/archive/">Old Documentation</a>
+                    <a class="sidebarLink" href="archive/">Archive Docs</a>
                 <?php } ?>
 
                 <h4>
