@@ -2,9 +2,9 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid - Javascript / Web Components / AngularJS</title>
-        <meta name="description" content="The best Javascript grid with support for Native Javascript, Web Components and AngularJS. Feature rich. Blazing fast..">
-        <meta name="keywords" content="javascript angularjs angular grid table ui-grid ng-grid web components"/>
+        <title>Best Angular Gird / Best Javascript Grid / Best Web Components Grid / Best AngularJS Grid</title>
+        <meta name="description" content="The best Javascript grid with support for Native Javascript, Web Components and AngularJS. Feature rich. Blazing fast.">
+        <meta name="keywords" content="javascript angularjs angular grid web components"/>
         <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 

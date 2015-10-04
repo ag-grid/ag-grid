@@ -234,7 +234,7 @@ include 'documentation_header.php';
 
         <div style="display: inline-block; vertical-align: top; width: 25%;">
             Say You Use <br/>
-                <a href="http://ngmodules.org/modules/angular-grid" style="color: black; border: 1px solid darkgrey; background-color: lightgrey; padding: 2px;">
+                <a href="http://ngmodules.org/modules/ag-Grid" style="color: black; border: 1px solid darkgrey; background-color: lightgrey; padding: 2px;">
                     A<span style="color: darkred">ng</span>ular Modules
                 </a>
         </div>

@@ -8,18 +8,23 @@ module ag.grid {
 
         private dragItem: any;
         private mouseUpEventListener: EventListener;
+        private logger: Logger;
 
-        constructor() {
+        public init(loggerFactory: LoggerFactory) {
+            this.logger = loggerFactory.create('DragAndDropService');
+
             // need to clean this up, add to 'finished' logic in grid
             var that = this;
             this.mouseUpEventListener = function listener() {
                 that.stopDragging();
             };
             document.addEventListener('mouseup', this.mouseUpEventListener);
+            this.logger.log('initialised');
         }
 
         public destroy(): void {
             document.removeEventListener('mouseup', this.mouseUpEventListener);
+            this.logger.log('destroyed');
         }
 
         private stopDragging() {

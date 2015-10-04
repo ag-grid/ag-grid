@@ -190,6 +190,14 @@ SampleAppComponent.annotations = [
         fine in these browsers using AngularJS 1.x.
     </note>
 
+    <h2>Destroy</h2>
+
+    <p>
+        You do not need to manually clean up the grid. The grid ties in with the AngularJS 2 lifecycle
+        and releases all resources when the directive is destroyed. The example above demonstrates this
+        by taking the element out of the DOM via *ng-if (which, unlike *ng-show, destroys the directives).
+    </p>
+
     <h2>Next Steps...</h2>
 
     <p>

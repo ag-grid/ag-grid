@@ -23,7 +23,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableColResize: true,
         enableSorting: true,
         enableFilter: true,
-        rowStyle: function(params) {
+        getRowStyle: function(params) {
             if (params.node.floating) {
                 return {'font-weight': 'bold'}
             }
@@ -50,7 +50,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            $scope.gridOptions.api.setRows(res.data);
+            $scope.gridOptions.api.setRowData(res.data);
             // initilise the floating rows
             $scope.onFloatingTopCount();
             $scope.onFloatingBottomCount();

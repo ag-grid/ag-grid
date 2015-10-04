@@ -23,9 +23,8 @@
     <script src="webComponentDataGrid.js"></script>
 
     <style>
-        .toolbar button {
-            margin: 2px; padding: 0px;
-        }
+        .toolbar button { margin: 2px; padding: 0px; }
+        button:disabled { color: #a0a0a0; }
     </style>
 </head>
 
@@ -52,6 +51,9 @@
                 <button onclick="document.querySelector('#myGrid').columnApi.hideColumn('country', false)">Show Country Column</button>
             </span>
         </div>
+        <div style="float: right;" class="toolbar">
+            <button id="btDestroyGrid">Destroy Grid</button>
+        </div>
         <div style="padding: 4px;" class="toolbar">
             <label>
                 <input type="checkbox" onchange="document.querySelector('#myGrid').showToolPanel=this.checked"/>
@@ -60,6 +62,7 @@
             <button id="btRefreshDataViaApi">Refresh Data via API</button>
             <button id="btRefreshDataViaElement">Refresh Data via Element</button>
         </div>
+        <div style="clear: both;"/>
 
         <!-- Putting the width and height on a wrapped element, as couldn't get web component to accept css -->
         <div style="height: 350px; width: 800px;">

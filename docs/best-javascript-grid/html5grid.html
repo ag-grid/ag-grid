@@ -21,12 +21,18 @@
 
 </head>
 
+<style>
+    button:disabled { color: #a0a0a0; }
+</style>
+
 <body>
 
     <div style="width: 800px;">
         <div style="padding: 4px">
             <div style="float: right;">
                 <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+                <button type="checkbox" id="btDestroyGrid">Destroy Grid</button>
+                <button type="checkbox" id="btBringGridBack">Create Grid</button>
             </div>
             <div style="padding: 4px;">
                 <b>Employees Skills and Contact Details</b> <span id="rowCount"/>

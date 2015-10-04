@@ -23,8 +23,8 @@
     </div>
     <div style="clear: both;"/>
     <div style="float: right;">
-        <button [disabled]="!showGrid" type="checkbox" (click)="showGrid=false">Dispose Grid</button>
-        <button [disabled]="showGrid" type="checkbox" (click)="showGrid=true">Bring Grid Back</button>
+        <button [disabled]="!showGrid" (click)="showGrid=false">Destroy Grid</button>
+        <button [disabled]="showGrid" (click)="showGrid=true">Create Grid</button>
     </div>
     <div style="padding: 4px;" class="toolbar">
         <label>
@@ -49,6 +49,7 @@
                  suppress-row-click-selection
                  tool-panel-suppress-pivot
                  tool-panel-suppress-values
+                 debug
                  row-height="22"
                  row-selection="multiple"
                  pinned-column-count="3"

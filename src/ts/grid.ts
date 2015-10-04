@@ -56,6 +56,7 @@ module ag.grid {
 
         private windowResizeListener: EventListener;
         private eUserProvidedDiv: HTMLElement;
+        private logger: Logger;
 
         constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
@@ -101,6 +102,8 @@ module ag.grid {
             // if ready function provided, use it
             var readyParams = {api: gridOptions.api};
             this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
+
+            this.logger.log('initialised');
         }
 
         private addWindowResizeListener(): void {
@@ -156,6 +159,10 @@ module ag.grid {
             // initialise all the beans
             gridOptionsWrapper.init(this.gridOptions, eventService);
             loggerFactory.init(gridOptionsWrapper);
+            this.logger = loggerFactory.create('Grid');
+            this.logger.log('initialising');
+
+            dragAndDropService.init(loggerFactory);
             gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
             templateService.init($scope);
             expressionService.init(loggerFactory);
@@ -240,6 +247,7 @@ module ag.grid {
             this.showToolPanel(gridOptionsWrapper.isShowToolPanel());
 
             eUserProvidedDiv.appendChild(this.eRootPanel.getGui());
+            this.logger.log('grid DOM added');
 
             eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
@@ -363,11 +371,13 @@ module ag.grid {
         public destroy() {
             if (this.windowResizeListener) {
                 window.removeEventListener('resize', this.windowResizeListener);
+                this.logger.log('Removing windowResizeListener');
             }
             this.finished = true;
             this.dragAndDropService.destroy();
 
             this.eUserProvidedDiv.removeChild(this.eRootPanel.getGui());
+            this.logger.log('Grid DOM removed');
         }
 
         public onQuickFilterChanged(newFilter: any) {

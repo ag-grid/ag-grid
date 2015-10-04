@@ -84,6 +84,13 @@ include '../documentation_header.php';
 
     <show-example example="example2"></show-example>
 
+    <h2>Destroy</h2>
+
+    <p>
+        You do not need to manually clean up the grid. The grid ties in with the AngularJS 1 lifecycle
+        and releases all resources when the directive is destroyed.
+    </p>
+
     <h2>Next Steps...</h2>
 
     <p>

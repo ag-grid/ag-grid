@@ -26,7 +26,7 @@ module ag.grid {
 
         public log(message: string) {
             if (this.logging) {
-                console.log(this.name + " " + message);
+                console.log('ag-Grid.' + this.name + ': ' + message);
             }
         }
 
