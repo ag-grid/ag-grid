@@ -21,8 +21,13 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowSelection: 'multiple',
         rowData: null,
         onRowSelected: rowSelectedFunc,
+        onRowDeselected: rowDeselectedFunc,
         onSelectionChanged: selectionChangedFunc
     };
+
+    function rowDeselectedFunc(event) {
+        window.alert("row " + event.node.data.athlete + " de-selected");
+    }
 
     function rowSelectedFunc(event) {
         window.alert("row " + event.node.data.athlete + " selected");

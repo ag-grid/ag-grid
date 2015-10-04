@@ -110,6 +110,7 @@ include '../documentation_header.php';
     <p>
         There are two callbacks with regards selection:<br/>
         onRowSelected(row): Gets called when a row is selected and passes the selected row.<br/>
+        onRowDeselected(row): Gets called when a row is de-selected and passes the selected row.<br/>
         onSelectionChanged(): Gets called when a row is selected or deselected.<br/>
     </p>
 

@@ -8,7 +8,7 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h5>2.2.0</h5>
+    <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
     Javascript (AngularJS lifecycle manages this for you).</li>
     <li>Major - Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
@@ -19,7 +19,7 @@ include 'documentation_header.php';
                 is 200px wide. Now wide filters don't fall off the edge of the grid.</li>
     <li>Minor - Bug fix #459 - getTopLevelNodes was called for not reason during filter initialisation which resulted in 'undefined' error for server side filtering</li>
 
-    <h5>2.1.3</h5>
+    <h3>Version 2.1.3</h3>
     <li>Minor - Added header to Typescript definitions file and included in Definitely Typed</li>
     <li>Minor - Removed unused 'require' from agList - was conflicting when require defined elsewhere</li>
 

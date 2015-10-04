@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.1.3
+// Type definitions for ag-grid v2.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -10,9 +10,11 @@ declare module ag.grid {
         private fromIndex;
         private toIndex;
         private pinnedColumnCount;
+        private finished;
         constructor(type: string);
         toString(): string;
         withColumn(column: Column): ColumnChangeEvent;
+        withFinished(finished: boolean): ColumnChangeEvent;
         withColumnGroup(columnGroup: ColumnGroup): ColumnChangeEvent;
         withFromIndex(fromIndex: number): ColumnChangeEvent;
         withPinnedColumnCount(pinnedColumnCount: number): ColumnChangeEvent;
@@ -26,6 +28,7 @@ declare module ag.grid {
         isPivotChanged(): boolean;
         isValueChanged(): boolean;
         isIndividualColumnResized(): boolean;
+        isFinished(): boolean;
     }
 }
 declare module ag.grid {
@@ -268,6 +271,7 @@ declare module ag.grid {
         static EVENT_CELL_VALUE_CHANGED: string;
         static EVENT_CELL_FOCUSED: string;
         static EVENT_ROW_SELECTED: string;
+        static EVENT_ROW_DESELECTED: string;
         static EVENT_SELECTION_CHANGED: string;
         static EVENT_BEFORE_FILTER_CHANGED: string;
         static EVENT_AFTER_FILTER_CHANGED: string;
@@ -276,6 +280,7 @@ declare module ag.grid {
         static EVENT_AFTER_SORT_CHANGED: string;
         static EVENT_VIRTUAL_ROW_REMOVED: string;
         static EVENT_ROW_CLICKED: string;
+        static EVENT_ROW_DOUBLE_CLICKED: string;
         static EVENT_READY: string;
     }
 }
@@ -283,6 +288,8 @@ declare module ag.grid {
     class EventService {
         private allListeners;
         private globalListeners;
+        private logger;
+        init(loggerFactory: LoggerFactory): void;
         private getListenerList(eventType);
         addEventListener(eventType: string, listener: Function): void;
         addGlobalListener(listener: Function): void;
@@ -331,7 +338,7 @@ declare module ag.grid {
         moveColumn(fromIndex: number, toIndex: number): void;
         movePivotColumn(fromIndex: number, toIndex: number): void;
         setColumnAggFunction(column: Column, aggFunc: string): void;
-        setColumnWidth(column: Column, newWidth: number): void;
+        setColumnWidth(column: Column, newWidth: number, finished?: boolean): void;
         removeValueColumn(column: Column): void;
         addValueColumn(column: Column): void;
         removePivotColumn(column: Column): void;
@@ -368,7 +375,7 @@ declare module ag.grid {
         addValueColumn(column: Column): void;
         removeValueColumn(column: Column): void;
         private doesColumnExistInGrid(column);
-        setColumnWidth(column: Column, newWidth: number): void;
+        setColumnWidth(column: Column, newWidth: number, finished: boolean): void;
         private updateGroupWidthsAfterColumnResize(column);
         setColumnAggFunction(column: Column, aggFunc: string): void;
         movePivotColumn(fromIndex: number, toIndex: number): void;
@@ -413,6 +420,8 @@ declare module ag.grid {
         skipFooters?: boolean;
         skipGroups?: boolean;
         fileName?: string;
+        customHeader?: string;
+        customFooter?: string;
     }
     class CsvCreator {
         private rowController;
@@ -701,7 +710,7 @@ declare module ag.grid {
     class PopupService {
         private ePopupParent;
         init(ePopupParent: any): void;
-        positionPopup(eventSource: any, ePopup: any, minWidth: any): void;
+        positionPopup(eventSource: any, ePopup: any, keepWithinBounds: boolean): void;
         addAsModalPopup(eChild: any, closeOnEsc: boolean): (event: any) => void;
     }
 }
@@ -783,7 +792,6 @@ declare module ag.grid {
         doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
         doesRowPassFilter(node: any, filterToSkip?: any): boolean;
         private aggregateRowForQuickFilter(node);
-        refreshDisplayedValues(): void;
         onNewRowsLoaded(): void;
         private createValueGetter(column);
         getFilterApi(column: Column): any;
@@ -902,8 +910,8 @@ declare module ag.grid {
         startEditing(key?: number): void;
         focusCell(forceBrowserFocus: boolean): void;
         private stopEditing(eInput, blurListener, reset?);
-        createParams(): any;
-        createEvent(event: any, eventSource: any): any;
+        private createParams();
+        private createEvent(event, eventSource);
         private addCellDoubleClickedHandler();
         private addCellContextMenuHandler();
         isCellEditable(): any;
@@ -967,6 +975,8 @@ declare module ag.grid {
         setMainRowWidth(width: number): void;
         private createChildScopeOrNull(data);
         private addDynamicStyles();
+        private createParams();
+        private createEvent(event, eventSource);
         private createRowContainer();
         getRowNode(): any;
         getRowIndex(): any;
@@ -1079,15 +1089,15 @@ declare module ag.grid {
         selectAll(): void;
         selectNode(node: any, tryMulti: any, suppressEvents?: any): void;
         private recursivelySelectAllChildren(node, suppressEvents?);
-        private recursivelyDeselectAllChildren(node);
+        private recursivelyDeselectAllChildren(node, suppressEvents);
         private doWorkOfSelectNode(node, suppressEvents);
         private addCssClassForNode_andInformVirtualRowListener(node);
-        private doWorkOfDeselectAllNodes(nodeToKeepSelected?);
-        private deselectRealNode(node);
+        private doWorkOfDeselectAllNodes(nodeToKeepSelected, suppressEvents);
+        private deselectRealNode(node, suppressEvents);
         private removeCssClassForNode(node);
-        deselectIndex(rowIndex: any): void;
-        deselectNode(node: any): void;
-        selectIndex(index: any, tryMulti: any, suppressEvents?: any): void;
+        deselectIndex(rowIndex: any, suppressEvents?: boolean): void;
+        deselectNode(node: any, suppressEvents?: boolean): void;
+        selectIndex(index: any, tryMulti: boolean, suppressEvents?: boolean): void;
         private syncSelectedRowsAndCallListener(suppressEvents?);
         private recursivelyCheckIfSelected(node);
         isNodeSelected(node: any): boolean;
@@ -1104,10 +1114,10 @@ declare module ag.grid {
         refreshFilterIcon(): void;
         refreshSortIcon(): void;
         onDragStart(): void;
-        onDragging(dragChange: number): void;
+        onDragging(dragChange: number, finished: boolean): void;
         onIndividualColumnResized(column: Column): void;
         addDragHandler(eDraggableElement: any): void;
-        stopDragging(listenersToRemove: any): void;
+        stopDragging(listenersToRemove: any, dragChange: number): void;
     }
 }
 declare module ag.grid {
@@ -1143,7 +1153,7 @@ declare module ag.grid {
         private getNextSortDirection();
         private addSortHandling(headerCellLabel);
         onDragStart(): void;
-        onDragging(dragChange: number): void;
+        onDragging(dragChange: number, finished: boolean): void;
         onIndividualColumnResized(column: Column): void;
         private addHeaderClassesFromCollDef();
     }
@@ -1175,7 +1185,7 @@ declare module ag.grid {
         private setWidthOfGroupHeaderCell();
         private addGroupExpandIcon(eGroupCellLabel);
         onDragStart(): void;
-        onDragging(dragChange: any): void;
+        onDragging(dragChange: any, finished: boolean): void;
     }
 }
 declare module ag.grid {
@@ -1367,7 +1377,7 @@ declare module ag.grid {
         private id;
         private childPanels;
         private centerHeightLastTime;
-        private sizeChangeListners;
+        private sizeChangeListeners;
         constructor(params: any);
         addSizeChangeListener(listener: Function): void;
         fireSizeChanged(): void;
@@ -1453,14 +1463,15 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class DragAndDropService {
-        static theInstance: DragAndDropService;
-        static getInstance(): DragAndDropService;
-        dragItem: any;
-        constructor();
-        stopDragging(): void;
-        setDragCssClasses(eListItem: any, dragging: any): void;
+        private dragItem;
+        private mouseUpEventListener;
+        private logger;
+        init(loggerFactory: LoggerFactory): void;
+        destroy(): void;
+        private stopDragging();
+        private setDragCssClasses(eListItem, dragging);
         addDragSource(eDragSource: any, dragSourceCallback: any): void;
-        onMouseDownDragSource(eDragSource: any, dragSourceCallback: any): void;
+        private onMouseDownDragSource(eDragSource, dragSourceCallback);
         addDropTarget(eDropTarget: any, dropTargetCallback: any): void;
     }
 }
@@ -1479,7 +1490,8 @@ declare module ag.grid {
         private model;
         private cellRenderer;
         private readOnly;
-        constructor();
+        private dragAndDropService;
+        constructor(dragAndDropService: DragAndDropService);
         setReadOnly(readOnly: boolean): void;
         setEmptyMessage(emptyMessage: any): void;
         getUniqueId(): any;
@@ -1522,7 +1534,8 @@ declare module ag.grid {
         private cColumnList;
         layout: any;
         private eRootPanel;
-        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService);
+        private dragAndDropService;
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService, dragAndDropService: DragAndDropService);
         private columnsChanged();
         getDragSource(): any;
         private columnCellRenderer(params);
@@ -1533,12 +1546,13 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class GroupSelectionPanel {
-        gridOptionsWrapper: any;
-        columnController: ColumnController;
-        inMemoryRowController: any;
-        cColumnList: any;
+        private gridOptionsWrapper;
+        private columnController;
+        private inMemoryRowController;
+        private cColumnList;
         layout: any;
-        constructor(columnController: ColumnController, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService);
+        private dragAndDropService;
+        constructor(columnController: ColumnController, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService, dragAndDropService: DragAndDropService);
         private columnsChanged();
         addDragSource(dragSource: any): void;
         private columnCellRenderer(params);
@@ -1557,11 +1571,11 @@ declare module ag.grid {
         private selectedItem;
         private cellRenderer;
         private popupService;
-        constructor(popupService: PopupService);
+        constructor(popupService: PopupService, dragAndDropService: DragAndDropService);
         setWidth(width: any): void;
         addItemSelectedListener(listener: any): void;
         fireItemSelected(item: any): void;
-        setupComponents(): void;
+        setupComponents(dragAndDropService: DragAndDropService): void;
         itemSelected(item: any): void;
         onClick(): void;
         getGui(): any;
@@ -1578,7 +1592,8 @@ declare module ag.grid {
         private cColumnList;
         private layout;
         private popupService;
-        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService, eventService: EventService);
+        private dragAndDropService;
+        constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService, eventService: EventService, dragAndDropService: DragAndDropService);
         getLayout(): any;
         private columnsChanged();
         addDragSource(dragSource: any): void;
@@ -1602,7 +1617,7 @@ declare module ag.grid {
     class ToolPanel {
         layout: any;
         constructor();
-        init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService, eventService: EventService): void;
+        init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper, popupService: PopupService, eventService: EventService, dragAndDropService: DragAndDropService): void;
     }
 }
 declare module ag.grid {
@@ -1680,6 +1695,7 @@ declare module ag.grid {
         onCellValueChanged?(params: any): void;
         onCellFocused?(params: any): void;
         onRowSelected?(params: any): void;
+        onRowDeselected?(params: any): void;
         onSelectionChanged?(): void;
         onBeforeFilterChanged?(): void;
         onAfterFilterChanged?(): void;
@@ -1688,6 +1704,7 @@ declare module ag.grid {
         onAfterSortChanged?(): void;
         onVirtualRowRemoved?(params: any): void;
         onRowClicked?(params: any): void;
+        onRowDoubleClicked?(params: any): void;
         api?: GridApi;
         columnApi?: ColumnApi;
     }
@@ -1739,8 +1756,8 @@ declare module ag.grid {
         addVirtualRowListener(rowIndex: any, callback: any): void;
         setQuickFilter(newFilter: any): void;
         selectIndex(index: any, tryMulti: any, suppressEvents: any): void;
-        deselectIndex(index: any): void;
-        selectNode(node: any, tryMulti: any, suppressEvents: any): void;
+        deselectIndex(index: number, suppressEvents?: boolean): void;
+        selectNode(node: any, tryMulti?: boolean, suppressEvents?: boolean): void;
         deselectNode(node: any): void;
         selectAll(): void;
         deselectAll(): void;
@@ -1787,6 +1804,7 @@ declare module ag.grid {
         removeEventListener(eventType: string, listener: Function): void;
         removeGlobalListener(listener: Function): void;
         refreshPivot(): void;
+        destroy(): void;
     }
 }
 declare module ag.grid {
@@ -1818,6 +1836,7 @@ declare module ag.grid {
         private valueService;
         private masterSlaveService;
         private eventService;
+        private dragAndDropService;
         private toolPanel;
         private gridPanel;
         private eRootPanel;
@@ -1825,7 +1844,11 @@ declare module ag.grid {
         private doingPagination;
         private usingInMemoryModel;
         private rowModel;
+        private windowResizeListener;
+        private eUserProvidedDiv;
+        private logger;
         constructor(eGridDiv: any, gridOptions: any, globalEventListener?: Function, $scope?: any, $compile?: any, quickFilterOnScope?: any);
+        private addWindowResizeListener();
         getRowModel(): any;
         private periodicallyDoLayout();
         private setupComponents($scope, $compile, eUserProvidedDiv, globalEventListener);
@@ -1838,11 +1861,11 @@ declare module ag.grid {
         isUsingInMemoryModel(): boolean;
         setDatasource(datasource?: any): void;
         private refreshHeaderAndBody();
-        setFinished(): void;
+        destroy(): void;
         onQuickFilterChanged(newFilter: any): void;
         onFilterModified(): void;
         onFilterChanged(): void;
-        onRowClicked(event: any, rowIndex: any, node: any): void;
+        onRowClicked(multiSelectKeyPressed: boolean, rowIndex: number, node: RowNode): void;
         showLoadingPanel(show: any): void;
         private setupColumns();
         updateModelAndRefresh(step: any, refreshFromIndex?: any): void;
@@ -1901,6 +1924,7 @@ declare module ag.grid {
         afterSortChanged: any;
         virtualRowRemoved: any;
         rowClicked: any;
+        rowDoubleClicked: any;
         ready: any;
         columnEverythingChanged: any;
         columnPivotChanged: any;
@@ -1970,6 +1994,7 @@ declare module ag.grid {
         constructor(elementDef: any);
         onInit(): void;
         onChange(changes: any): void;
+        onDestroy(): void;
         private globalEventListener(eventType, event);
     }
 }

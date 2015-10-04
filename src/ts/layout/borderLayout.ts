@@ -29,7 +29,7 @@ module ag.grid {
         private childPanels: any;
         private centerHeightLastTime: any;
 
-        private sizeChangeListners = <any>[];
+        private sizeChangeListeners = <any>[];
 
         constructor(params:any) {
 
@@ -93,11 +93,11 @@ module ag.grid {
         }
 
         public addSizeChangeListener(listener: Function): void {
-            this.sizeChangeListners.push(listener);
+            this.sizeChangeListeners.push(listener);
         }
 
         public fireSizeChanged(): void {
-            this.sizeChangeListners.forEach( function(listener: Function) {
+            this.sizeChangeListeners.forEach( function(listener: Function) {
                 listener();
             });
         }

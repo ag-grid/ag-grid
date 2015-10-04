@@ -378,11 +378,12 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($version=='latest') { ?>
-                <?php if ($key == "Change Log") { ?>
-                    <span class="sidebarLinkSelected">Change Log</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>changeLog.php">Change Log</a>
-                <?php } ?>
+                    <?php if ($key == "Change Log") { ?>
+                        <span class="sidebarLinkSelected">Change Log</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>changeLog.php">Change Log</a>
+                    <?php } ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>/archive/">Old Documentation</a>
                 <?php } ?>
 
                 <h4>
