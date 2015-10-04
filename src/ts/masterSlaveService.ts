@@ -120,7 +120,7 @@ module ag.grid {
                         break;
                     case Events.EVENT_COLUMN_RESIZED:
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
-                        this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth);
+                        this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth, event.isFinished());
                         break;
                     case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED:
                         this.logger.log('onColumnEvent-> processing '+event);

@@ -163,6 +163,7 @@ module ag.grid {
             this.logger.log('initialising');
 
             dragAndDropService.init(loggerFactory);
+            eventService.init(loggerFactory);
             gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
             templateService.init($scope);
             expressionService.init(loggerFactory);

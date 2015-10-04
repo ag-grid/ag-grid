@@ -324,9 +324,9 @@ module ag.grid {
             this.startWidth = this.column.actualWidth;
         }
 
-        public onDragging(dragChange: number): void {
+        public onDragging(dragChange: number, finished: boolean): void {
             var newWidth = this.startWidth + dragChange;
-            this.columnController.setColumnWidth(this.column, newWidth);
+            this.columnController.setColumnWidth(this.column, newWidth, finished);
         }
 
         public onIndividualColumnResized(column: Column) {

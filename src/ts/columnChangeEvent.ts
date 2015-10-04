@@ -10,6 +10,7 @@ module ag.grid {
         private fromIndex: number;
         private toIndex: number;
         private pinnedColumnCount: number;
+        private finished: boolean;
 
         constructor(type: string) {
             this.type = type;
@@ -22,12 +23,18 @@ module ag.grid {
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
             if (this.pinnedColumnCount) { result += ', pinnedColumnCount: ' + this.pinnedColumnCount; }
+            if (typeof this.finished == 'boolean') { result += ', finished: ' + this.finished; }
             result += '}';
             return result;
         }
 
         public withColumn(column: Column): ColumnChangeEvent {
             this.column = column;
+            return this;
+        }
+
+        public withFinished(finished: boolean): ColumnChangeEvent {
+            this.finished = finished;
             return this;
         }
 
@@ -85,6 +92,10 @@ module ag.grid {
 
         public isIndividualColumnResized(): boolean {
             return this.type === Events.EVENT_COLUMN_RESIZED && this.column !== undefined && this.column !== null;
+        }
+
+        public isFinished(): boolean {
+            return this.finished;
         }
 
     }
