@@ -69,6 +69,10 @@ include '../documentation_header.php';
             <td>Row is clicked.</td>
         </tr>
         <tr>
+            <th>rowDoubleClicked</th>
+            <td>Row is double clicked.</td>
+        </tr>
+        <tr>
             <th>cellClicked</th>
             <td>Cell is clicked.</td>
         </tr>
