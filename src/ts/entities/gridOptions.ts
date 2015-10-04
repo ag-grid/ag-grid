@@ -89,6 +89,7 @@ module ag.grid {
         onCellValueChanged?(params: any): void;
         onCellFocused?(params: any): void;
         onRowSelected?(params: any): void;
+        onRowDeselected?(params: any): void;
         onSelectionChanged?(): void;
         onBeforeFilterChanged?(): void;
         onAfterFilterChanged?(): void;

@@ -13,6 +13,7 @@ include 'documentation_header.php';
     Javascript (AngularJS lifecycle manages this for you).</li>
     <li>Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
     'dragging' events is the final one.</li>
+    <li>New event: rowDeselected</li>
 
     <h5>2.1.3</h5>
     <li>Minor - Added header to Typescript definitions file and included in Definitely Typed</li>
