@@ -136,7 +136,7 @@ module ag.grid {
                 stringValue = '';
             }
 
-            return stringValue.replace("\"", "\"\"");
+            return stringValue.replace(/"/g, "\"\"");
         }
 
     }
