@@ -17,6 +17,7 @@ include 'documentation_header.php';
     <li>Major - Now have 'customHeader' and 'customFooter' for export to csv.</li>
     <li>Minor - Now filters are positioned relative to their actual size instead of assuming each filter
                 is 200px wide. Now wide filters don't fall off the edge of the grid.</li>
+    <li>Minor - Bug fix #459 - getTopLevelNodes was called for not reason during filter initialisation which resulted in 'undefined' error for server side filtering</li>
 
     <h5>2.1.3</h5>
     <li>Minor - Added header to Typescript definitions file and included in Definitely Typed</li>

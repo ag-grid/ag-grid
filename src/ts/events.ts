@@ -42,6 +42,7 @@ module ag.grid {
         public static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
         public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
         public static EVENT_ROW_CLICKED = 'rowClicked';
+        public static EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
         public static EVENT_READY = 'ready';
     }
 

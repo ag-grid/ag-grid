@@ -407,15 +407,7 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
         }
 
-        public onRowClicked(event: any, rowIndex: any, node: any) {
-
-            var params = {
-                node: node,
-                data: node.data,
-                event: event,
-                rowIndex: rowIndex
-            };
-            this.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, params)
+        public onRowClicked(multiSelectKeyPressed: boolean, rowIndex: number, node: RowNode) {
 
             // we do not allow selecting groups by clicking (as the click here expands the group)
             // so return if it's a group row
@@ -442,18 +434,14 @@ module ag.grid {
                 return;
             }
 
-            // ctrlKey for windows, metaKey for Apple
-            var ctrlKeyPressed = event.ctrlKey || event.metaKey;
-
-            var doDeselect = ctrlKeyPressed
+            var doDeselect = multiSelectKeyPressed
                 && selectionController.isNodeSelected(node)
                 && gridOptionsWrapper.isRowDeselection();
 
             if (doDeselect) {
                 selectionController.deselectNode(node);
             } else {
-                var tryMulti = ctrlKeyPressed;
-                selectionController.selectNode(node, tryMulti);
+                selectionController.selectNode(node, multiSelectKeyPressed);
             }
         }
 
