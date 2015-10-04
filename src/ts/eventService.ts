@@ -49,6 +49,7 @@ module ag.grid {
             if (!event) {
                 event = {};
             }
+            //this.logger.log('dispatching: ' + event);
             var listenerList = this.getListenerList(eventType);
             listenerList.forEach( (listener)=> {
                 listener(event);

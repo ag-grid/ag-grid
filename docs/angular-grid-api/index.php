@@ -80,7 +80,7 @@ include '../documentation_header.php';
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
         </tr>
         <tr>
-            <th>deselectIndex(index)<br/>deselectNode(node)</th>
+            <th>deselectIndex(index, suppressEvents)<br/>deselectNode(node, suppressEvents)</th>
             <td>Deselects the row node at the given index / node.</td>
         </tr>
         <tr>

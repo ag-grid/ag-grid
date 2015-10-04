@@ -61,6 +61,10 @@ include '../documentation_header.php';
             <td>Row is selected.</td>
         </tr>
         <tr>
+            <th>rowDeselected</th>
+            <td>Row is de-selected.</td>
+        </tr>
+        <tr>
             <th>rowClicked</th>
             <td>Row is clicked.</td>
         </tr>

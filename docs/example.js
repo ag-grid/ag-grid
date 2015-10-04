@@ -102,6 +102,7 @@ gridsModule.controller('mainController', function($scope) {
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         onRowSelected: rowSelected, //callback when row selected
+        onRowDeselected: rowDeselected, //callback when row selected
         onSelectionChanged: selectionChanged, //callback when selection changed,
         icons: {
             //menu: '<i class="fa fa-bars"/>',
@@ -424,6 +425,15 @@ gridsModule.controller('mainController', function($scope) {
         if (gridOptions.rowData.length <= 100) {
             var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
             console.log("Callback rowSelected: " + valueToPrint);
+        }
+    }
+
+    function rowDeselected(event) {
+        // this clogs the console, when to many rows displayed, and use selected 'select all'.
+        // so check 'not to many rows'
+        if (gridOptions.rowData.length <= 100) {
+            var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
+            console.log("Callback rowDeselected: " + valueToPrint);
         }
     }
 

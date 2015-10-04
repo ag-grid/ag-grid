@@ -33,6 +33,7 @@ module ag.grid {
         public static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
         public static EVENT_CELL_FOCUSED = 'cellFocused';
         public static EVENT_ROW_SELECTED = 'rowSelected';
+        public static EVENT_ROW_DESELECTED = 'rowDeselected';
         public static EVENT_SELECTION_CHANGED = 'selectionChanged';
         public static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
         public static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
