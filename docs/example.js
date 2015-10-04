@@ -479,16 +479,18 @@ PersonFilter.prototype.init = function (params) {
 };
 
 PersonFilter.prototype.getGui = function () {
-    return '<div style="padding: 4px; width: 200px;">' +
-        '<div style="font-weight: bold;">Example Custom Filter</div>' +
-        '<div><input style="margin: 4px 0px 4px 0px;" type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
-        '<div>This filter does partial word search, the following all bring back the name Sophie Beckham:</div>' +
-        '<div>=> "sophie"</div>' +
-        '<div>=> "beckham"</div>' +
-        '<div>=> "sophie beckham"</div>' +
-        '<div>=> "beckham sophie"</div>' +
-        '<div>=> "beck so"</div>' +
-        '</div>';
+    return '<div>' +
+     '  <div style="font-weight: bold; background-color: #bbb; text-align: center;">Example Custom Filter</div>' +
+     '  <div style="margin: 4px;"><input type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
+     '  <div style="display: inline-block; width: 200px; padding: 4px; margin: 4px; border: 1px solid #888; background-color: #fffff0;">' +
+     '    This filter does partial word search, the following all bring back the name Sophie Beckham: <br/>' +
+     '    => "sophie"<br/>' +
+     '    => "beckham"<br/>' +
+     '    => "sophie beckham"<br/>' +
+     '    => "beckham sophie"<br/>' +
+     '    => "beck so"<br/>' +
+     '  </div>' +
+     '</div>';
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {
