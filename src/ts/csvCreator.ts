@@ -7,7 +7,8 @@ module ag.grid {
         skipFooters?: boolean;
         skipGroups?: boolean;
         fileName?: string;
-		forceCommaSeparator?: boolean;
+        customHeader?: string;
+        customFooter?: string;
     }
 
     export class CsvCreator {
@@ -20,8 +21,7 @@ module ag.grid {
         }
 
         public exportDataAsCsv(params?: CsvExportParams): void {
-			var forceComma = params && params.forceCommaSeparator;
-            var csvString = (forceComma ? "sep=,\n" : "") + this.getDataAsCsv(params);
+            var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
             // Internet Explorer
@@ -53,10 +53,16 @@ module ag.grid {
             var skipGroups = params && params.skipGroups;
             var skipHeader = params && params.skipHeader;
             var skipFooters = params && params.skipFooters;
+            var includeCustomHeader = params && params.customHeader;
+            var includeCustomFooter = params && params.customFooter;
 
             var columnsToExport = this.columnController.getDisplayedColumns();
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
+            }
+
+            if (includeCustomHeader) {
+                result += params.customHeader;
             }
 
             // first pass, put in the header names of the cols
@@ -97,6 +103,10 @@ module ag.grid {
 
                 result += LINE_SEPARATOR;
             });
+
+            if (includeCustomFooter) {
+                result += params.customFooter;
+            }
 
             return result;
         }
