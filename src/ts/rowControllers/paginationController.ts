@@ -27,28 +27,28 @@ module ag.grid {
 
     export class PaginationController {
 
-        eGui: any;
-        btNext: any;
-        btPrevious: any;
-        btFirst: any;
-        btLast: any;
-        lbCurrent: any;
-        lbTotal: any;
+        private eGui: any;
+        private btNext: any;
+        private btPrevious: any;
+        private btFirst: any;
+        private btLast: any;
+        private lbCurrent: any;
+        private lbTotal: any;
 
-        lbRecordCount: any;
-        lbFirstRowOnPage: any;
-        lbLastRowOnPage: any;
-        ePageRowSummaryPanel: any;
+        private lbRecordCount: any;
+        private lbFirstRowOnPage: any;
+        private lbLastRowOnPage: any;
+        private ePageRowSummaryPanel: any;
 
-        angularGrid: any;
-        callVersion: any;
-        gridOptionsWrapper: any;
-        datasource: any;
-        pageSize: any;
-        rowCount: any;
-        foundMaxRow: any;
-        totalPages: any;
-        currentPage: any;
+        private angularGrid: Grid;
+        private callVersion: number;
+        private gridOptionsWrapper: GridOptionsWrapper;
+        private datasource: any;
+        private pageSize: number;
+        private rowCount: number;
+        private foundMaxRow: boolean;
+        private totalPages: number;
+        private currentPage: number;
 
         init(angularGrid: any, gridOptionsWrapper: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -111,7 +111,7 @@ module ag.grid {
 
         pageLoaded(rows: any, lastRowIndex: any) {
             var firstId = this.currentPage * this.pageSize;
-            this.angularGrid.setRows(rows, firstId);
+            this.angularGrid.setRowData(rows, firstId);
             // see if we hit the last row
             if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
                 this.foundMaxRow = true;
@@ -159,7 +159,7 @@ module ag.grid {
             this.callVersion++;
             var callVersionCopy = this.callVersion;
             var that = this;
-            this.angularGrid.showLoadingPanel(true);
+            this.angularGrid.showLoadingOverlay();
 
             var sortModel: any;
             if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
@@ -203,7 +203,7 @@ module ag.grid {
                 // set in an empty set of rows, this will at
                 // least get rid of the loading panel, and
                 // stop blocking things
-                that.angularGrid.setRows([]);
+                that.angularGrid.setRowData([]);
             }
         }
 

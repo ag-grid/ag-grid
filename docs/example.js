@@ -1,4 +1,4 @@
-var gridsModule = angular.module("testAngularGrid", ["agGrid"]);
+var gridsModule = angular.module("agGridApp", ["agGrid"]);
 
 gridsModule.controller('mainController', function($scope) {
 
@@ -147,7 +147,11 @@ gridsModule.controller('mainController', function($scope) {
             console.log('Callback onReady: api = ' + event.api);
         }
     };
-    $scope.angularGrid = gridOptions;
+    $scope.gridOptions = gridOptions;
+
+    $scope.onPush = function() {
+        $scope.gridOptions.api.showNoRowsOverlay();
+    };
 
     var firstColumn = {
         headerName: "Name",
@@ -240,7 +244,7 @@ gridsModule.controller('mainController', function($scope) {
     gridOptions.rowData = createData();
 
     //setInterval(function() {
-    //    $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
+    //    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
     //}, 1000);
 
     $scope.jumpToCol = function() {

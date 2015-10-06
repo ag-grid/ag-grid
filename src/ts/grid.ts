@@ -87,7 +87,9 @@ module ag.grid {
 
             // if no data provided initially, and not doing infinite scrolling, show the loading panel
             var showLoading = !this.gridOptionsWrapper.getRowData() && !this.gridOptionsWrapper.isVirtualPaging();
-            this.showLoadingPanel(showLoading);
+            if (showLoading) {
+                this.showLoadingOverlay();
+            }
 
             // if datasource provided, use it
             if (this.gridOptionsWrapper.getDatasource()) {
@@ -445,8 +447,16 @@ module ag.grid {
             }
         }
 
-        public showLoadingPanel(show: any) {
-            this.gridPanel.showLoading(show);
+        public showLoadingOverlay(): void {
+            this.gridPanel.showLoadingOverlay();
+        }
+
+        public showNoRowsOverlay(): void {
+            this.gridPanel.showNoRowsOverlay();
+        }
+
+        public hideOverlay(): void {
+            this.gridPanel.hideOverlay();
         }
 
         private setupColumns() {
@@ -463,16 +473,21 @@ module ag.grid {
             this.rowRenderer.refreshView(refreshFromIndex);
         }
 
-        public setRows(rows?: any, firstId?: any) {
+        public setRowData(rows?: any, firstId?: any) {
             if (rows) {
                 this.gridOptions.rowData = rows;
             }
-            this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData(), firstId);
+            var rowData = this.gridOptionsWrapper.getRowData();
+            this.inMemoryRowController.setAllRows(rowData, firstId);
             this.selectionController.deselectAll();
             this.filterManager.onNewRowsLoaded();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
             this.headerRenderer.updateFilterIcons();
-            this.showLoadingPanel(false);
+            if (rowData && rowData.length > 0) {
+                this.hideOverlay();
+            } else {
+                this.showNoRowsOverlay();
+            }
         }
 
         public ensureNodeVisible(comparator: any) {
