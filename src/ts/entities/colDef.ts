@@ -69,6 +69,9 @@ module ag.grid {
         /** Set to true to render a selection checkbox in the column. */
         checkboxSelection?: boolean;
 
+        /** Function callback which will populate the id attribute of all checkboxes */
+        checkboxSelectionIdGetter?: Function;
+
         /** Set to true if no menu should be shown for this column header. */
         suppressMenu?: boolean;
 
