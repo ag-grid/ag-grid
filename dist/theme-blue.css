@@ -87,10 +87,10 @@
 .ag-blue .ag-row-even {
   background-color: #fff;
 }
-.ag-blue .ag-loading-panel {
+.ag-blue .ag-overlay-loading-wrapper {
   background-color: rgba(255,255,255,0.5);
 }
-.ag-blue .ag-loading-center {
+.ag-blue .ag-overlay-loading-center {
   background-color: #fff;
   border: 1px solid #a9a9a9;
   -webkit-border-radius: 10px;
