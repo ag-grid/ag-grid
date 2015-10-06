@@ -149,10 +149,6 @@ gridsModule.controller('mainController', function($scope) {
     };
     $scope.gridOptions = gridOptions;
 
-    $scope.onPush = function() {
-        $scope.gridOptions.api.showNoRowsOverlay();
-    };
-
     var firstColumn = {
         headerName: "Name",
         field: "name",

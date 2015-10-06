@@ -142,7 +142,7 @@ columnDefinition = {
     </p>
 
     <p>
-        The example also demonstrates using the ag-header-cell-filtered class, which is applied to the header
+        The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
         cell when the header is filtered. By default, no style is applied to this class, the example shows
         applying a different color background to this style.
     </p>

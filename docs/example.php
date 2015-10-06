@@ -71,7 +71,6 @@
 
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
-                <button ng-click="onPush()">Push</button>
                 Rows:
                 <select ng-model="rowCount" ng-change="onRowCountChanged()">
                     <option value="10">10</option>
