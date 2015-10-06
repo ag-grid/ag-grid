@@ -234,6 +234,13 @@ module ag.grid {
                 var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
                 var displayStyle = filterPresent ? 'inline' : 'none';
                 this.eFilterIcon.style.display = displayStyle;
+                //Checking as shown http://jsperf.com/check-or-not-to-check
+                if (filterPresent && !this.eHeaderCell.classList.contains("ag-header-cell-filtered")) {
+                    this.eHeaderCell.classList.add("ag-header-cell-filtered");
+                }
+                if (!filterPresent && this.eHeaderCell.classList.contains("ag-header-cell-filtered")) {
+                    this.eHeaderCell.classList.remove("ag-header-cell-filtered");
+                }
             }
         }
 
