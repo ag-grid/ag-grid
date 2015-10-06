@@ -2,13 +2,9 @@
 /// <reference path="../dragAndDrop/dragAndDropService" />
 /// <amd-dependency path="text!agList.html"/>
 
-declare function require(name: string): any;
-
 module ag.grid {
 
-    //var template = require('./agList.html');
     var utils = Utils;
-    var dragAndDropService = DragAndDropService.getInstance();
     var template =
         '<div class="ag-list-selection">'+
             '<div>'+
@@ -35,7 +31,10 @@ module ag.grid {
         private cellRenderer: any;
         private readOnly = false;
 
-        constructor() {
+        private dragAndDropService: DragAndDropService;
+
+        constructor(dragAndDropService: DragAndDropService) {
+            this.dragAndDropService = dragAndDropService;
             this.setupComponents();
             this.uniqueId = 'CheckboxSelection-' + Math.random();
             this.modelChangedListeners = [];
@@ -176,7 +175,7 @@ module ag.grid {
         }
 
         private setupAsDropTarget() {
-            dragAndDropService.addDropTarget(this.eGui, {
+            this.dragAndDropService.addDropTarget(this.eGui, {
                 acceptDrag: this.externalAcceptDrag.bind(this),
                 drop: this.externalDrop.bind(this),
                 noDrop: this.externalNoDrop.bind(this)
@@ -217,7 +216,7 @@ module ag.grid {
 
         private addDragAndDropToListItem(eListItem: any, item: any) {
             var that = this;
-            dragAndDropService.addDragSource(eListItem, {
+            this.dragAndDropService.addDragSource(eListItem, {
                 getData: function () {
                     return item;
                 },
@@ -225,7 +224,7 @@ module ag.grid {
                     return that.uniqueId;
                 }
             });
-            dragAndDropService.addDropTarget(eListItem, {
+            this.dragAndDropService.addDropTarget(eListItem, {
                 acceptDrag: function (dragItem: any) {
                     return that.internalAcceptDrag(item, dragItem, eListItem);
                 },

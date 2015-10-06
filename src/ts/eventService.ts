@@ -10,6 +10,12 @@ module ag.grid {
 
         private globalListeners: Function[] = [];
 
+        private logger: Logger;
+
+        public init(loggerFactory: LoggerFactory) {
+            this.logger = loggerFactory.create('EventService');
+        }
+
         private getListenerList(eventType: string): Function[] {
             var listenerList = this.allListeners[eventType];
             if (!listenerList) {
@@ -43,6 +49,7 @@ module ag.grid {
             if (!event) {
                 event = {};
             }
+            //this.logger.log('dispatching: ' + event);
             var listenerList = this.getListenerList(eventType);
             listenerList.forEach( (listener)=> {
                 listener(event);

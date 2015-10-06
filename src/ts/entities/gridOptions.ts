@@ -89,6 +89,7 @@ module ag.grid {
         onCellValueChanged?(params: any): void;
         onCellFocused?(params: any): void;
         onRowSelected?(params: any): void;
+        onRowDeselected?(params: any): void;
         onSelectionChanged?(): void;
         onBeforeFilterChanged?(): void;
         onAfterFilterChanged?(): void;
@@ -97,6 +98,7 @@ module ag.grid {
         onAfterSortChanged?(): void;
         onVirtualRowRemoved?(params: any): void;
         onRowClicked?(params: any): void;
+        onRowDoubleClicked?(params: any): void;
 
         // apis, set by the grid on init
         api?: GridApi; // change to typed

@@ -25,7 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         groupKeys: ['country','year'],
         groupAggFunction: groupAggFunction,
         groupSuppressAutoColumn: true,
-        rowStyle: rowStyleFunc
+        getRowStyle: rowStyleFunc
     };
 
     function ageRenderer(params) {

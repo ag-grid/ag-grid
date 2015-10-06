@@ -335,7 +335,8 @@ columnDefinition = {
     <h3>Custom Filter Example</h3>
 
     <p>
-        The example below shows a custom filter on the Athlete column.
+        The example below shows two custom filters. The first is on the Athlete column and is implemented
+        using AngularJS. The second is on the Year column and is implemented using native Javascript.
     </p>
 
     <show-example example="example2"></show-example>
@@ -345,11 +346,11 @@ columnDefinition = {
     <p>
         It is possible to set filters via the API. You do this by first getting an API to the filter
         in question (ie for a particular column) and then making calls on the filter API. Getting
-        the API is done via the gridOptions api method getFilterApiForColDef(colDef).
+        the API is done via the gridOptions api method getFilterApi(colDef).
     </p>
     <p>
         Each column has it's own private filter and associated API. So if you want to change filters
-        on more than one column, you have to call getFilterApiForColDef(colDef) for each column.
+        on more than one column, you have to call getFilterApi(colDef) for each column.
     </p>
     <p>
         Each filter type has it's own API. So if it's a set filter, the filter API is specific

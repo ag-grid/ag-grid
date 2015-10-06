@@ -377,6 +377,15 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-for-print/index.php">For Print</a>
                 <?php } ?>
 
+                <?php if ($version=='latest') { ?>
+                    <?php if ($key == "Change Log") { ?>
+                        <span class="sidebarLinkSelected">Change Log</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>changeLog.php">Change Log</a>
+                    <?php } ?>
+                    <a class="sidebarLink" href="archive/">Archive Docs</a>
+                <?php } ?>
+
                 <h4>
                     Examples
                 </h4>

@@ -117,7 +117,9 @@ module ag.grid {
             this.findElements();
 
             this.layout = new BorderLayout({
-                overlay: _.loadTemplate(this.createTemplate()),
+                overlays: {
+                    loading: _.loadTemplate(this.createOverlayTemplate())
+                },
                 center: this.eRoot,
                 dontFill: this.forPrint,
                 name: 'eGridPanel'
@@ -148,7 +150,7 @@ module ag.grid {
             return this.eFloatingBottomContainer;
         }
 
-        private createTemplate(): string {
+        private createOverlayTemplate(): string {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             return loadingHtml.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'))
         }
@@ -240,7 +242,11 @@ module ag.grid {
         }
 
         public showLoading(loading: any) {
-            this.layout.setOverlayVisible(loading);
+            if (loading) {
+                this.layout.showOverlay('loading');
+            } else {
+                this.layout.hideOverlay();
+            }
         }
 
         public getWidthForSizeColsToFit() {

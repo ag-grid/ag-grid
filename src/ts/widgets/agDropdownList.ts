@@ -19,9 +19,9 @@ module ag.grid {
         private cellRenderer: any;
         private popupService: PopupService;
 
-        constructor(popupService: PopupService) {
+        constructor(popupService: PopupService, dragAndDropService: DragAndDropService) {
             this.popupService = popupService;
-            this.setupComponents();
+            this.setupComponents(dragAndDropService);
             this.itemSelectedListeners = [];
         }
 
@@ -40,11 +40,11 @@ module ag.grid {
             }
         }
 
-        setupComponents() {
+        setupComponents(dragAndDropService: DragAndDropService) {
             this.eGui = document.createElement('span');
             this.eValue = document.createElement('span');
             this.eGui.appendChild(this.eValue);
-            this.agList = new AgList();
+            this.agList = new AgList(dragAndDropService);
 
             this.eValue.addEventListener('click', this.onClick.bind(this));
             this.agList.addItemSelectedListener(this.itemSelected.bind(this));
@@ -76,7 +76,7 @@ module ag.grid {
 
         onClick() {
             var agListGui = this.agList.getGui();
-            this.popupService.positionPopup(this.eGui, agListGui, -1);
+            this.popupService.positionPopup(this.eGui, agListGui, false);
             this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
         }
 

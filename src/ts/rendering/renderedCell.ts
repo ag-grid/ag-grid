@@ -250,7 +250,7 @@ module ag.grid {
             this.refreshCell();
         }
 
-        public createParams(): any {
+        private createParams(): any {
             var params = {
                 node: this.node,
                 data: this.node.data,
@@ -264,7 +264,7 @@ module ag.grid {
             return params;
         }
 
-        public createEvent(event: any, eventSource: any): any {
+        private createEvent(event: any, eventSource: any): any {
             var agEvent = this.createParams();
             agEvent.event = event;
             agEvent.eventSource = eventSource;

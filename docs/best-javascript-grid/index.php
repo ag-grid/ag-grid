@@ -48,6 +48,13 @@ include '../documentation_header.php';
 
     <show-example example="html5grid"></show-example>
 
+    <h2>Destroy</h2>
+
+    <p>
+        To get the grid to release resources, call api.destroy(). If you do not do this, old grids will hang around
+        and add to a memory leak problem in your application.
+    </p>
+
     <h2>Next Steps...</h2>
 
     <p>

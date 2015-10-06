@@ -32,6 +32,13 @@ module.controller("exampleCtrl", function($scope, $http) {
             fileName: $scope.fileName
         };
 
+        if ($scope.customHeader) {
+            params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
+        }
+        if ($scope.customFooter) {
+            params.customFooter = '[[[ This ia s sample custom footer - maybe a summary line here?? ]]]\n';
+        }
+
         $scope.gridOptions.api.exportDataAsCsv(params);
     };
 

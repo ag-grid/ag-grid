@@ -80,7 +80,7 @@ include '../documentation_header.php';
                 is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
         </tr>
         <tr>
-            <th>deselectIndex(index)<br/>deselectNode(node)</th>
+            <th>deselectIndex(index, suppressEvents)<br/>deselectNode(node, suppressEvents)</th>
             <td>Deselects the row node at the given index / node.</td>
         </tr>
         <tr>
@@ -237,6 +237,17 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>getFilterModel()</th>
+            <td>Gets the current state of all the advanced filters. Used for saving filter state.
+            </td>
+        </tr>
+        <tr>
+            <th>setFilterModel(model)</th>
+            <td>Sets the state of all the advanced filters. Provide it with what you get from getFilterModel()
+                to restore filter state.
+            </td>
+        </tr>
+        <tr>
             <th>onFilterChanged()</th>
             <td>Informs the grid that a filter has changed. This is typically called after a filter
                 change through one of the filter APIs.
@@ -314,6 +325,13 @@ include '../documentation_header.php';
         <tr>
             <th>getDataAsCsv(params)</th>
             <td>Similar to exportDataAsCsv, except returns result as a string rather than export it.</td>
+        </tr>
+        <tr>
+            <th>destroy()</th>
+            <td>Gets the grid to destroy and release resources. If you are using Angular (version 1 or 2)
+            you do not need to call this, as the grid links in with the AngularJS lifecycle. However if you
+            are using Web Components or native Javascript, you do need to call this, to avoid a memory
+            leak in your application.</td>
         </tr>
     </table>
 

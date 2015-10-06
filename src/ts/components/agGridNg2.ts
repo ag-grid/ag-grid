@@ -40,6 +40,7 @@ module ag.grid {
         public afterSortChanged = new _ng.EventEmitter();
         public virtualRowRemoved = new _ng.EventEmitter();
         public rowClicked = new _ng.EventEmitter();
+        public rowDoubleClicked = new _ng.EventEmitter();
         public ready = new _ng.EventEmitter();
 
         // column grid events
@@ -136,6 +137,10 @@ module ag.grid {
             ComponentUtil.processOnChange(changes, this.gridOptions, this);
         }
 
+        public onDestroy(): void {
+            this.api.destroy();
+        }
+
         private globalEventListener(eventType: string, event: any): void {
             var emitter: any;
             switch (eventType) {
@@ -162,6 +167,7 @@ module ag.grid {
                 case Events.EVENT_FILTER_MODIFIED: emitter = this.filterModified; break;
                 case Events.EVENT_VIRTUAL_ROW_REMOVED: emitter = this.virtualRowRemoved; break;
                 case Events.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
+                case Events.EVENT_ROW_DOUBLE_CLICKED: emitter = this.rowDoubleClicked; break;
                 case Events.EVENT_READY: emitter = this.ready; break;
                 default:
                     console.log('ag-Grid: AgGridNg2 - unknown event type: ' + eventType);
@@ -192,7 +198,7 @@ module ag.grid {
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
                     'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                    'rowClicked','ready',
+                    'rowClicked', 'rowDoubleClicked', 'ready',
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
@@ -206,7 +212,7 @@ module ag.grid {
                     .concat(ComponentUtil.CALLBACKS)
                 ,
                 compileChildren: false, // no angular on the inside thanks
-                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange]
+                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange, _ng.LifecycleEvent.onDestroy]
             }),
             new _ng.View({
                 template: '',

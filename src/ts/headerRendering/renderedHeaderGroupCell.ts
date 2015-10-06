@@ -158,7 +158,7 @@ module ag.grid {
             this.minWidth = this.columnGroup.getMinimumWidth();
         }
 
-        public onDragging(dragChange: any): void {
+        public onDragging(dragChange: any, finished: boolean): void {
 
             var newWidth = this.groupWidthStart + dragChange;
             if (newWidth < this.minWidth) {
@@ -191,16 +191,8 @@ module ag.grid {
                     // if last col, give it the remaining pixels
                     newChildSize = pixelsToDistribute;
                 }
-                this.columnController.setColumnWidth(column, newChildSize);
-                //this.children[index].adjustColumnWidth(newChildSize);
+                this.columnController.setColumnWidth(column, newChildSize, finished);
             });
-
-            // should not be calling these here, should do something else
-            //if (this.columnGroup.pinned) {
-            //    this.angularGrid.updatePinnedColContainerWidthAfterColResize();
-            //} else {
-            //    this.angularGrid.updateBodyContainerWidthAfterColResize();
-            //}
         }
 
     }

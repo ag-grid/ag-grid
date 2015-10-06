@@ -59,7 +59,8 @@ gridsModule.controller('mainController', function($scope) {
     $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
 
-    var angularGrid = {
+    var gridOptions = {
+        debug: true,
         //rowsBuffer: 1,
         columnDefs: [],
         //singleClickEdit: true,
@@ -101,6 +102,7 @@ gridsModule.controller('mainController', function($scope) {
         //headerCellRenderer: headerCellRenderer_text,
         //headerCellRenderer: headerCellRenderer_dom,
         onRowSelected: rowSelected, //callback when row selected
+        onRowDeselected: rowDeselected, //callback when row selected
         onSelectionChanged: selectionChanged, //callback when selection changed,
         icons: {
             //menu: '<i class="fa fa-bars"/>',
@@ -121,7 +123,10 @@ gridsModule.controller('mainController', function($scope) {
 
         // callback when row clicked
         onRowClicked: function(params) {
-            console.log("Callback onRowClicked: " + params.data + " - " + params.event);
+            console.log("Callback onRowClicked: " + params.data.name + " - " + params.event);
+        },
+        onRowDoubleClicked: function(params) {
+            console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
         },
         // callback when cell clicked
         onCellClicked: function(params) {
@@ -142,7 +147,7 @@ gridsModule.controller('mainController', function($scope) {
             console.log('Callback onReady: api = ' + event.api);
         }
     };
-    $scope.angularGrid = angularGrid;
+    $scope.angularGrid = gridOptions;
 
     var firstColumn = {
         headerName: "Name",
@@ -231,8 +236,8 @@ gridsModule.controller('mainController', function($scope) {
             cellStyle: {"text-align": "right"}})
     });
 
-    angularGrid.columnDefs = createCols();
-    angularGrid.rowData = createData();
+    gridOptions.columnDefs = createCols();
+    gridOptions.rowData = createData();
 
     //setInterval(function() {
     //    $scope.angularGrid.api.ensureIndexVisible(Math.random() * 100000);
@@ -241,38 +246,38 @@ gridsModule.controller('mainController', function($scope) {
     $scope.jumpToCol = function() {
         var index = Number($scope.jumpToColText);
         if (typeof index === 'number' && !isNaN(index)) {
-            angularGrid.api.ensureColIndexVisible(index);
+            gridOptions.api.ensureColIndexVisible(index);
         }
     };
 
     $scope.jumpToRow = function() {
         var index = Number($scope.jumpToRowText);
         if (typeof index === 'number' && !isNaN(index)) {
-            angularGrid.api.ensureIndexVisible(index);
+            gridOptions.api.ensureIndexVisible(index);
         }
     };
 
     $scope.onRowCountChanged = function() {
-        angularGrid.api.showLoading(true);
+        gridOptions.api.showLoading(true);
         // put into a timeout, so browser gets a chance to update the loading panel
         setTimeout( function () {
             var data = createData();
-            angularGrid.api.setRowData(data);
+            gridOptions.api.setRowData(data);
         }, 0);
     };
 
     $scope.onPinnedColCountChanged = function() {
         var newCount = Number($scope.pinnedColumnCount);
-        angularGrid.columnApi.setPinnedColumnCount(newCount);
+        gridOptions.columnApi.setPinnedColumnCount(newCount);
     };
 
     $scope.onColCountChanged = function() {
-        angularGrid.api.showLoading(true);
+        gridOptions.api.showLoading(true);
         setTimeout( function () {
             var colDefs = createCols();
             var data = createData();
-            angularGrid.api.setColumnDefs(colDefs);
-            angularGrid.api.setRowData(data);
+            gridOptions.api.setColumnDefs(colDefs);
+            gridOptions.api.setRowData(data);
         });
     };
 
@@ -282,38 +287,38 @@ gridsModule.controller('mainController', function($scope) {
                 //firstColumn.checkboxSelection = true;
                 //groupColumn.cellRenderer.checkbox = true;
                 firstColumn.cellRenderer.checkbox = true;
-                angularGrid.rowSelection = 'multiple';
-                angularGrid.suppressRowClickSelection = true;
+                gridOptions.rowSelection = 'multiple';
+                gridOptions.suppressRowClickSelection = true;
                 break;
             case 'single' :
                 //firstColumn.checkboxSelection = false;
                 //groupColumn.cellRenderer.checkbox = false;
                 firstColumn.cellRenderer.checkbox = false;
-                angularGrid.rowSelection = 'single';
-                angularGrid.suppressRowClickSelection = false;
+                gridOptions.rowSelection = 'single';
+                gridOptions.suppressRowClickSelection = false;
                 break;
             case 'multiple' :
                 //firstColumn.checkboxSelection = false;
                 //groupColumn.cellRenderer.checkbox = false;
                 firstColumn.cellRenderer.checkbox = false;
-                angularGrid.rowSelection = 'multiple';
-                angularGrid.suppressRowClickSelection = false;
+                gridOptions.rowSelection = 'multiple';
+                gridOptions.suppressRowClickSelection = false;
                 break;
             default :
                 // turn selection off
                 //firstColumn.checkboxSelection = false;
                 //groupColumn.cellRenderer.checkbox = false;
                 firstColumn.cellRenderer.checkbox = false;
-                angularGrid.rowSelection = null;
-                angularGrid.suppressRowClickSelection = false;
+                gridOptions.rowSelection = null;
+                gridOptions.suppressRowClickSelection = false;
                 break;
         }
-        angularGrid.api.deselectAll();
+        gridOptions.api.deselectAll();
     };
 
     $scope.onGroupHeaders = function() {
         var groupHeaders = $scope.groupHeaders === 'true';
-        angularGrid.api.setGroupHeaders(groupHeaders);
+        gridOptions.api.setGroupHeaders(groupHeaders);
     };
 
     $scope.onSize = function() {
@@ -325,7 +330,7 @@ gridsModule.controller('mainController', function($scope) {
             $scope.height = '600px';
         }
         setTimeout( function() {
-            angularGrid.api.doLayout();
+            gridOptions.api.doLayout();
         }, 0);
     };
 
@@ -335,22 +340,22 @@ gridsModule.controller('mainController', function($scope) {
         if ($scope.groupBy!=="") {
             groupBy = $scope.groupBy.split(",");
         }
-        angularGrid.groupKeys = groupBy;
+        gridOptions.groupKeys = groupBy;
 
         // setup type
         var groupUseEntireRow = $scope.groupType==='row' || $scope.groupType==='rowWithFooter';
-        angularGrid.groupUseEntireRow = groupUseEntireRow;
+        gridOptions.groupUseEntireRow = groupUseEntireRow;
 
         // use footer or not
         var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
-        angularGrid.groupIncludeFooter = useFooter;
+        gridOptions.groupIncludeFooter = useFooter;
 
-        angularGrid.api.refreshPivot();
+        gridOptions.api.refreshPivot();
     };
 
     $scope.toggleToolPanel = function() {
-        var showing = angularGrid.api.isToolPanelShowing();
-        angularGrid.api.showToolPanel(!showing);
+        var showing = gridOptions.api.isToolPanelShowing();
+        gridOptions.api.showToolPanel(!showing);
     };
 
     function createCols() {
@@ -420,9 +425,18 @@ gridsModule.controller('mainController', function($scope) {
     function rowSelected(event) {
         // this clogs the console, when to many rows displayed, and use selected 'select all'.
         // so check 'not to many rows'
-        if (angularGrid.rowData.length <= 100) {
+        if (gridOptions.rowData.length <= 100) {
             var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
             console.log("Callback rowSelected: " + valueToPrint);
+        }
+    }
+
+    function rowDeselected(event) {
+        // this clogs the console, when to many rows displayed, and use selected 'select all'.
+        // so check 'not to many rows'
+        if (gridOptions.rowData.length <= 100) {
+            var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
+            console.log("Callback rowDeselected: " + valueToPrint);
         }
     }
 
@@ -468,16 +482,18 @@ PersonFilter.prototype.init = function (params) {
 };
 
 PersonFilter.prototype.getGui = function () {
-    return '<div style="padding: 4px; width: 200px;">' +
-        '<div style="font-weight: bold;">Example Custom Filter</div>' +
-        '<div><input style="margin: 4px 0px 4px 0px;" type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
-        '<div>This filter does partial word search, the following all bring back the name Sophie Beckham:</div>' +
-        '<div>=> "sophie"</div>' +
-        '<div>=> "beckham"</div>' +
-        '<div>=> "sophie beckham"</div>' +
-        '<div>=> "beckham sophie"</div>' +
-        '<div>=> "beck so"</div>' +
-        '</div>';
+    return '<div>' +
+     '  <div style="font-weight: bold; background-color: #bbb; text-align: center;">Example Custom Filter</div>' +
+     '  <div style="margin: 4px;"><input type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
+     '  <div style="display: inline-block; width: 200px; padding: 4px; margin: 4px; border: 1px solid #888; background-color: #fffff0;">' +
+     '    This filter does partial word search, the following all bring back the name Sophie Beckham: <br/>' +
+     '    => "sophie"<br/>' +
+     '    => "beckham"<br/>' +
+     '    => "sophie beckham"<br/>' +
+     '    => "beckham sophie"<br/>' +
+     '    => "beck so"<br/>' +
+     '  </div>' +
+     '</div>';
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {

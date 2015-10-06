@@ -21,6 +21,8 @@
 /// <reference path="masterSlaveService.ts" />
 /// <reference path="logger.ts" />
 /// <reference path="eventService.ts" />
+/// <reference path="dragAndDrop/dragAndDropService.ts" />
+
 
 module ag.grid {
 
@@ -43,6 +45,7 @@ module ag.grid {
         private valueService: ValueService;
         private masterSlaveService: MasterSlaveService;
         private eventService: EventService;
+        private dragAndDropService: DragAndDropService;
         private toolPanel: any;
         private gridPanel: GridPanel;
         private eRootPanel: any;
@@ -51,11 +54,15 @@ module ag.grid {
         private usingInMemoryModel: boolean;
         private rowModel: any;
 
+        private windowResizeListener: EventListener;
+        private eUserProvidedDiv: HTMLElement;
+        private logger: Logger;
+
         constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
             this.gridOptions = gridOptions;
-
             this.setupComponents($scope, $compile, eGridDiv, globalEventListener);
+
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
                 this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService);
@@ -70,9 +77,8 @@ module ag.grid {
                 });
             }
 
-            var forPrint = this.gridOptionsWrapper.isForPrint();
-            if (!forPrint) {
-                window.addEventListener('resize', this.doLayout.bind(this));
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.addWindowResizeListener();
             }
 
             this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData());
@@ -96,6 +102,20 @@ module ag.grid {
             // if ready function provided, use it
             var readyParams = {api: gridOptions.api};
             this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
+
+            this.logger.log('initialised');
+        }
+
+        private addWindowResizeListener(): void {
+            var that = this;
+            // putting this into a function, so when we remove the function,
+            // we are sure we are removing the exact same function (i'm not
+            // sure what 'bind' does to the function reference, if it's safe
+            // the result from 'bind').
+            this.windowResizeListener = function resizeListener() {
+                that.doLayout();
+            };
+            window.addEventListener('resize', this.windowResizeListener);
         }
 
         public getRowModel(): any {
@@ -112,7 +132,8 @@ module ag.grid {
             }
         }
 
-        private setupComponents($scope: any, $compile: any, eUserProvidedDiv: any, globalEventListener: Function) {
+        private setupComponents($scope: any, $compile: any, eUserProvidedDiv: HTMLElement, globalEventListener: Function) {
+            this.eUserProvidedDiv = eUserProvidedDiv;
 
             // create all the beans
             var eventService = new EventService();
@@ -133,10 +154,16 @@ module ag.grid {
             var groupCreator = new GroupCreator();
             var masterSlaveService = new MasterSlaveService();
             var loggerFactory = new LoggerFactory();
+            var dragAndDropService = new DragAndDropService();
 
             // initialise all the beans
             gridOptionsWrapper.init(this.gridOptions, eventService);
             loggerFactory.init(gridOptionsWrapper);
+            this.logger = loggerFactory.create('Grid');
+            this.logger.log('initialising');
+
+            dragAndDropService.init(loggerFactory);
+            eventService.init(loggerFactory);
             gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
             templateService.init($scope);
             expressionService.init(loggerFactory);
@@ -166,7 +193,8 @@ module ag.grid {
             if (!gridOptionsWrapper.isForPrint()) {
                 toolPanel = new ToolPanel();
                 toolPanelLayout = toolPanel.layout;
-                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper, popupService, eventService);
+                toolPanel.init(columnController, inMemoryRowController, gridOptionsWrapper,
+                    popupService, eventService, dragAndDropService);
             }
 
             // this is a child bean, get a reference and pass it on
@@ -202,6 +230,7 @@ module ag.grid {
             this.masterSlaveService = masterSlaveService;
             this.eventService = eventService;
             this.gridOptionsWrapper = gridOptionsWrapper;
+            this.dragAndDropService = dragAndDropService;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.getLayout(),
@@ -219,6 +248,7 @@ module ag.grid {
             this.showToolPanel(gridOptionsWrapper.isShowToolPanel());
 
             eUserProvidedDiv.appendChild(this.eRootPanel.getGui());
+            this.logger.log('grid DOM added');
 
             eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
@@ -339,9 +369,16 @@ module ag.grid {
             this.rowRenderer.refreshView();
         }
 
-        public setFinished() {
-            window.removeEventListener('resize', this.doLayout);
+        public destroy() {
+            if (this.windowResizeListener) {
+                window.removeEventListener('resize', this.windowResizeListener);
+                this.logger.log('Removing windowResizeListener');
+            }
             this.finished = true;
+            this.dragAndDropService.destroy();
+
+            this.eUserProvidedDiv.removeChild(this.eRootPanel.getGui());
+            this.logger.log('Grid DOM removed');
         }
 
         public onQuickFilterChanged(newFilter: any) {
@@ -370,15 +407,7 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
         }
 
-        public onRowClicked(event: any, rowIndex: any, node: any) {
-
-            var params = {
-                node: node,
-                data: node.data,
-                event: event,
-                rowIndex: rowIndex
-            };
-            this.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, params)
+        public onRowClicked(multiSelectKeyPressed: boolean, rowIndex: number, node: RowNode) {
 
             // we do not allow selecting groups by clicking (as the click here expands the group)
             // so return if it's a group row
@@ -405,18 +434,14 @@ module ag.grid {
                 return;
             }
 
-            // ctrlKey for windows, metaKey for Apple
-            var ctrlKeyPressed = event.ctrlKey || event.metaKey;
-
-            var doDeselect = ctrlKeyPressed
+            var doDeselect = multiSelectKeyPressed
                 && selectionController.isNodeSelected(node)
                 && gridOptionsWrapper.isRowDeselection();
 
             if (doDeselect) {
                 selectionController.deselectNode(node);
             } else {
-                var tryMulti = ctrlKeyPressed;
-                selectionController.selectNode(node, tryMulti);
+                selectionController.selectNode(node, multiSelectKeyPressed);
             }
         }
 

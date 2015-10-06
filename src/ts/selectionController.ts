@@ -166,7 +166,7 @@ module ag.grid {
 
             // see if rows to be deselected
             if (!multiSelect) {
-                atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes();
+                atLeastOneItemUnselected = this.doWorkOfDeselectAllNodes(null, suppressEvents);
             }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren() && nodeToSelect.group) {
@@ -203,14 +203,14 @@ module ag.grid {
             return atLeastOne;
         }
 
-        private recursivelyDeselectAllChildren(node: any) {
+        private recursivelyDeselectAllChildren(node: RowNode, suppressEvents: boolean) {
             if (node.children) {
                 for (var i = 0; i < node.children.length; i++) {
                     var child = node.children[i];
                     if (child.group) {
-                        this.recursivelyDeselectAllChildren(child);
+                        this.recursivelyDeselectAllChildren(child, suppressEvents);
                     } else {
-                        this.deselectRealNode(child);
+                        this.deselectRealNode(child, suppressEvents);
                     }
                 }
             }
@@ -261,7 +261,7 @@ module ag.grid {
         // 1 - un-selects a node
         // 2 - updates the UI
         // 3 - calls callbacks
-        private doWorkOfDeselectAllNodes(nodeToKeepSelected?: any) {
+        private doWorkOfDeselectAllNodes(nodeToKeepSelected: RowNode, suppressEvents: boolean) {
             // not doing multi-select, so deselect everything other than the 'just selected' row
             var atLeastOneSelectionChange: any;
             var selectedNodeKeys = Object.keys(this.selectedNodesById);
@@ -272,14 +272,14 @@ module ag.grid {
                 if (nodeToDeselect === nodeToKeepSelected) {
                     continue;
                 } else {
-                    this.deselectRealNode(nodeToDeselect);
+                    this.deselectRealNode(nodeToDeselect, suppressEvents);
                     atLeastOneSelectionChange = true;
                 }
             }
             return atLeastOneSelectionChange;
         }
 
-        private deselectRealNode(node: any) {
+        private deselectRealNode(node: any, suppressEvents: boolean) {
             // deselect the css
             this.removeCssClassForNode(node);
 
@@ -290,6 +290,11 @@ module ag.grid {
 
             // remove the row
             delete this.selectedNodesById[node.id];
+
+            if (!suppressEvents) {
+                var event: any = {node: node};
+                this.eventService.dispatchEvent(Events.EVENT_ROW_DESELECTED, event)
+            }
         }
 
         private removeCssClassForNode(node: any) {
@@ -304,19 +309,19 @@ module ag.grid {
         }
 
         // used by selectionRendererFactory
-        public deselectIndex(rowIndex: any) {
+        public deselectIndex(rowIndex: any, suppressEvents: boolean = false) {
             var node = this.rowModel.getVirtualRow(rowIndex);
-            this.deselectNode(node);
+            this.deselectNode(node, suppressEvents);
         }
 
         // used by api
-        public deselectNode(node: any) {
+        public deselectNode(node: any, suppressEvents: boolean = false) {
             if (node) {
                 if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
                     // want to deselect children, not this node, so recursively deselect
-                    this.recursivelyDeselectAllChildren(node);
+                    this.recursivelyDeselectAllChildren(node, suppressEvents);
                 } else {
-                    this.deselectRealNode(node);
+                    this.deselectRealNode(node, suppressEvents);
                 }
             }
             this.syncSelectedRowsAndCallListener();
@@ -324,7 +329,7 @@ module ag.grid {
         }
 
         // used by selectionRendererFactory & api
-        public selectIndex(index: any, tryMulti: any, suppressEvents?: any) {
+        public selectIndex(index: any, tryMulti: boolean, suppressEvents: boolean = false) {
             var node = this.rowModel.getVirtualRow(index);
             this.selectNode(node, tryMulti, suppressEvents);
         }

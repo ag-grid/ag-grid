@@ -2,9 +2,9 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid - Javascript / Web Components / AngularJS</title>
-        <meta name="description" content="The best Javascript grid with support for Native Javascript, Web Components and AngularJS. Feature rich. Blazing fast..">
-        <meta name="keywords" content="javascript angularjs angular grid table ui-grid ng-grid web components"/>
+        <title>Best Angular Gird / Best Javascript Grid / Best Web Components Grid / Best AngularJS Grid</title>
+        <meta name="description" content="The best Javascript data grid that works as Native Javascript Grid, Web Components Grid and AngularJS Grid. Feature rich. Blazing fast.">
+        <meta name="keywords" content="javascript angularjs angular data grid web components"/>
         <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -183,8 +183,19 @@
         </div>
 
         <div class="container">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-3" style="text-align: center;">
+                    <h4>Javascript Grid</h4>
+                </div>
+                <div class="col-md-6" style="text-align: center;">
+                    <h4>Angular Grid</h4>
+                </div>
+                <div class="col-md-3" style="text-align: center;">
+                    <h4>Web Component Grid</h4>
+                </div>
+            </div>
 
-            <div class="row" style="margin-top: 50px;">
+            <div class="row" style="margin-top: 20px;">
                 <style>
                     .usage-footer {
                         padding: 20px;
@@ -196,7 +207,7 @@
                             <img style="height: 100px;" src="images/javascript_large.png"/>
                         </div>
                         <div class="usage-footer">
-                            <b>Pure Javascript</b>
+                            <h4>Pure Javascipt</h4>
                         </div>
                     </a>
                 </div>
@@ -206,7 +217,7 @@
                             <img style="height: 100px;" src="images/angularjs_large.png"/>
                         </div>
                         <div class="usage-footer">
-                            <b>AngularJS 1.x</b>
+                            <h4>AngularJS 1.x</h4>
                         </div>
                     </a>
                 </div>
@@ -216,7 +227,7 @@
                             <img style="height: 100px;" src="images/angular2_large.png"/>
                         </div>
                         <div class="usage-footer">
-                            <b>AngularJS 2</b>
+                            <h4>AngularJS 2</h4>
                         </div>
                     </a>
                 </div>
@@ -226,7 +237,7 @@
                             <img style="height: 100px;" src="images/webComponents_large.png"/>
                         </div>
                         <div class="usage-footer">
-                            <b>Web Component</b>
+                            <h4>Web Component</h4>
                         </div>
                     </a>
                 </div>
@@ -443,18 +454,18 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="minimised/ag-grid.min.js?ignore=notused10"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused10">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused10">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused10">
+<script src="minimised/ag-grid.min.js?ignore=notused11"></script>
+<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused11">
+<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused11">
+<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused11">
 
-<link href="example-file-browser/fileBrowser.css?ignore=notused10" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused10" rel="stylesheet">
-<link href="example-account-report/account.css?ignore=notused10" rel="stylesheet">
+<link href="example-file-browser/fileBrowser.css?ignore=notused11" rel="stylesheet">
+<link href="best-angularjs-grid/basic.css?ignore=notused11" rel="stylesheet">
+<link href="example-account-report/account.css?ignore=notused11" rel="stylesheet">
 
-<script src="best-angularjs-grid/basic.js?ignore=notused10"></script>
-<script src="minimised/account.js?ignore=notused10"></script>
-<script src="minimised/fileBrowser.js?ignore=notused10"></script>
+<script src="best-angularjs-grid/basic.js?ignore=notused11"></script>
+<script src="minimised/account.js?ignore=notused11"></script>
+<script src="minimised/fileBrowser.js?ignore=notused11"></script>
 <script src="minimised/index-script.js"></script>
 
 <?php include_once("analytics.php"); ?>

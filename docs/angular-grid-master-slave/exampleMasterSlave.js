@@ -52,8 +52,8 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            gridOptionsTop.api.setRows(res.data);
-            gridOptionsBottom.api.setRows(res.data);
+            gridOptionsTop.api.setRowData(res.data);
+            gridOptionsBottom.api.setRowData(res.data);
         });
 
     $scope.onCbAthlete = function() {

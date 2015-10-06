@@ -158,11 +158,11 @@ module ag.grid {
             this.selectionController.selectIndex(index, tryMulti, suppressEvents);
         }
 
-        public deselectIndex(index:any) {
-            this.selectionController.deselectIndex(index);
+        public deselectIndex(index: number, suppressEvents: boolean = false) {
+            this.selectionController.deselectIndex(index, suppressEvents);
         }
 
-        public selectNode(node:any, tryMulti:any, suppressEvents:any) {
+        public selectNode(node:any, tryMulti: boolean = false, suppressEvents: boolean = false) {
             this.selectionController.selectNode(node, tryMulti, suppressEvents);
         }
 
@@ -364,6 +364,10 @@ module ag.grid {
 
         public refreshPivot(): void {
             this.grid.refreshPivot();
+        }
+
+        public destroy(): void {
+            this.grid.destroy();
         }
     }
 }

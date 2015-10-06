@@ -31,7 +31,7 @@ module ag.grid {
         public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
         public movePivotColumn(fromIndex: number, toIndex: number): void { this._columnController.movePivotColumn(fromIndex, toIndex); }
         public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
-        public setColumnWidth(column: Column, newWidth: number): void { this._columnController.setColumnWidth(column, newWidth); }
+        public setColumnWidth(column: Column, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(column, newWidth, finished); }
         public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
@@ -183,7 +183,7 @@ module ag.grid {
             return columnInAllColumns || columnInVisibleColumns;
         }
 
-        public setColumnWidth(column: Column, newWidth: number): void {
+        public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
             if (!this.doesColumnExistInGrid(column)) {
                 console.warn('column does not exist');
                 return;
@@ -198,13 +198,17 @@ module ag.grid {
             }
 
             // check for change first, to avoid unnecessary firing of events
-            if (column.actualWidth !== newWidth) {
+            // however we always fire 'finished' events. this is important
+            // when groups are resized, as if the group is changing slowly,
+            // eg 1 pixel at a time, then each change will fire change events
+            // in all the columns in the group, but only one with get the pixel.
+            if (finished || column.actualWidth !== newWidth) {
                 column.actualWidth = newWidth;
 
                 // if part of a group, update the groups width
                 this.updateGroupWidthsAfterColumnResize(column);
 
-                var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column);
+                var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
                 this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
             }
         }

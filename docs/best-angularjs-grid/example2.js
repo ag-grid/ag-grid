@@ -22,6 +22,6 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            $scope.gridOptions.api.setRows(res.data);
+            $scope.gridOptions.api.setRowData(res.data);
         });
 });

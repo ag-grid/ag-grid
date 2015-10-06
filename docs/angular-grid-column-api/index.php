@@ -177,8 +177,11 @@ include '../documentation_header.php';
             <td>Sets the agg function for a column. Set to one of [min,max,sum].</td>
         </tr>
         <tr>
-            <th>setColumnWidth(column, newWidth)</th>
-            <td>Sets the column width.</td>
+            <th>setColumnWidth(column, newWidth, finished=true)</th>
+            <td>Sets the column width. The finished flag gets included in the resulting event and not used internally
+                by the grid. The finished flag is intended for dragging, where a dragging action will produce many
+                'columnWidth' events, so the consumer of events knows when it receives the last event in a stream.
+                The finished parameter is optional, it defaults to 'true'.</td>
         </tr>
         <tr>
             <th>addValueColumn(column)</th>

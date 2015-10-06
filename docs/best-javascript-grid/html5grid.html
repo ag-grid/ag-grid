@@ -12,14 +12,18 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused10"></script>
-    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused10">
-    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused10">
+    <script src="../dist/ag-grid.js?ignore=notused11"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused11">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused11">
 
     <script src="/best-javascript-grid/html5grid.js"></script>
     <link href="/best-javascript-grid/html5grid.css" rel="stylesheet">
 
 </head>
+
+<style>
+    button:disabled { color: #a0a0a0; }
+</style>
 
 <body>
 
@@ -27,6 +31,8 @@
         <div style="padding: 4px">
             <div style="float: right;">
                 <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+                <button type="checkbox" id="btDestroyGrid">Destroy Grid</button>
+                <button type="checkbox" id="btBringGridBack">Create Grid</button>
             </div>
             <div style="padding: 4px;">
                 <b>Employees Skills and Contact Details</b> <span id="rowCount"/>

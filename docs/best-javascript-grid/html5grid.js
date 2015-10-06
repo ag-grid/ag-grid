@@ -128,15 +128,37 @@
         groupHeaders: true,
         rowHeight: 22,
         pinnedColumnCount: 3,
-        modelUpdated: modelUpdated
+        modelUpdated: modelUpdated,
+        debug: true
     };
+
+    var btBringGridBack;
+    var btDestroyGrid;
 
     // wait for the document to be loaded, otherwise
     // Angular Grid will not find the div in the document.
     document.addEventListener("DOMContentLoaded", function() {
-        window.agGridGlobalFunc('#myGrid', gridOptions);
+        btBringGridBack = document.querySelector('#btBringGridBack');
+        btDestroyGrid = document.querySelector('#btDestroyGrid');
+
+        btBringGridBack.addEventListener('click', onBtBringGridBack);
+        btDestroyGrid.addEventListener('click', onBtDestroyGrid);
+
         addQuickFilterListener();
+        onBtBringGridBack();
     });
+
+    function onBtBringGridBack() {
+        window.agGridGlobalFunc('#myGrid', gridOptions);
+        btBringGridBack.disabled = true;
+        btDestroyGrid.disabled = false;
+    }
+
+    function onBtDestroyGrid() {
+        btBringGridBack.disabled = false;
+        btDestroyGrid.disabled = true;
+        gridOptions.api.destroy();
+    }
 
     function addQuickFilterListener() {
         var eInput = document.querySelector('#quickFilterInput');

@@ -160,6 +160,16 @@ include '../documentation_header.php';
             <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
         </tr>
         <tr>
+            <th>rowClass</th>
+            <td>The class to give a particular row. Provide either a string (class name) or array of string (array
+                of class names). If you want a different class per row, then use the callback getRowClass(params) instead.</td>
+        </tr>
+        <tr>
+            <th>rowStyle</th>
+            <td>The style for a particular row. Provide an array of CSS key / value pairs eg {color: 'red'}.
+            If you a different style per row, then use the callback getRowStyle(params) instead.</td>
+        </tr>
+        <tr>
             <th>rowsAlreadyGrouped</th>
             <td>Set to true if data provided to the grid is already in node structure (this is for passing
                 already aggregated data to the grid).</td>

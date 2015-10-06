@@ -7,7 +7,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter},
         {headerName: "Age", field: "age", width: 90, filter: 'number'},
         {headerName: "Country", field: "country", width: 120},
-        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Year", field: "year", width: 90, filter: YearFilter},
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Sport", field: "sport", width: 110},
         {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
@@ -71,6 +71,49 @@ module.controller("exampleCtrl", function($scope, $http) {
     PersonFilter.prototype.isFilterActive = function () {
         var value = this.$scope.filterText;
         return value !== null && value !== undefined && value !== '';
+    };
+
+    function YearFilter() {
+    }
+
+    YearFilter.prototype.init = function (params) {
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML =
+            '<div style="display: inline-block; width: 400px;">' +
+            '<div style="padding: 10px; background-color: #d3d3d3; text-align: center;">' +
+            'This is a very wide filter' +
+            '</div>'+
+            '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">'+
+            '  <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All'+
+            '</label>'+
+            '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">'+
+            '  <input type="radio" name="yearFilter" id="rbSince2010" filter-checkbox="true"/> Since 2010'+
+            '</label>' +
+            '</div>';
+        this.rbAllYears = this.eGui.querySelector('#rbAllYears');
+        this.rbSince2010 = this.eGui.querySelector('#rbSince2010');
+        this.rbAllYears.addEventListener('change', this.onRbChanged.bind(this));
+        this.rbSince2010.addEventListener('change', this.onRbChanged.bind(this));
+        this.filterActive = false;
+        this.filterChangedCallback = params.filterChangedCallback;
+        this.valueGetter = params.valueGetter;
+    };
+
+    YearFilter.prototype.onRbChanged = function () {
+        this.filterActive = this.rbSince2010.checked;
+        this.filterChangedCallback();
+    };
+
+    YearFilter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    YearFilter.prototype.doesFilterPass = function (params) {
+        return params.data.year >= 2010;
+    };
+
+    YearFilter.prototype.isFilterActive = function () {
+        return this.filterActive;
     };
 
 });

@@ -151,7 +151,16 @@
         addQuickFilterListener();
         addRefreshDataViaApi();
         addRefreshDataViaElement();
+        addDestroyListener();
     });
+
+    function addDestroyListener() {
+        var btDestroyGrid = document.querySelector('#btDestroyGrid');
+        btDestroyGrid.addEventListener('click', function() {
+            gridOptions.api.destroy();
+            btDestroyGrid.disabled = true;
+        });
+    }
 
     function addQuickFilterListener() {
         var eInput = document.querySelector('#quickFilterInput');

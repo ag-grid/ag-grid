@@ -315,11 +315,39 @@ module ag.grid {
             }
         }
 
+        private createParams(): any {
+            var params = {
+                node: this.node,
+                data: this.node.data,
+                rowIndex: this.rowIndex,
+                $scope: this.scope,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            return params;
+        }
+
+        private createEvent(event: any, eventSource: any): any {
+            var agEvent = this.createParams();
+            agEvent.event = event;
+            agEvent.eventSource = eventSource;
+            return agEvent;
+        }
+
         private createRowContainer() {
             var vRow = new ag.vdom.VHtmlElement('div');
             var that = this;
-            vRow.addEventListener("click", function (event) {
-                that.angularGrid.onRowClicked(event, Number(this.getAttribute("row")), that.node)
+            vRow.addEventListener("click", function (event: any) {
+                var agEvent = that.createEvent(event, this);
+                that.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
+
+                // ctrlKey for windows, metaKey for Apple
+                var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
+                that.angularGrid.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
+            });
+            vRow.addEventListener("dblclick", function (event: any) {
+                var agEvent = that.createEvent(event, this);
+                that.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
             });
 
             return vRow;

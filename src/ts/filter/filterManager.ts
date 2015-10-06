@@ -259,33 +259,6 @@ module ag.grid {
             node.quickFilterAggregateText = aggregatedText;
         }
 
-        public refreshDisplayedValues() {
-            if (!this.rowModel.getTopLevelNodes) {
-                console.error('ag-Grid: could not find getTopLevelNodes on rowModel. you cannot use setFilter when' +
-                    'doing virtualScrolling as the filter has no way of getting the full set of values to display. ' +
-                    'Either stop using this filter type, or provide the filter with a set of values (see the docs' +
-                    'on configuring the setFilter).')
-            }
-	    	var rows = this.rowModel.getTopLevelNodes();
-    		var colKeys = Object.keys(this.allFilters);
-
-            for (var i = 0, l = colKeys.length; i < l; i++) {
-                var colId = colKeys[i];
-                var filterWrapper = this.allFilters[colId];
-                // if no filter, always pass
-                if (filterWrapper === undefined || (typeof filterWrapper.filter.setFilteredDisplayValues !== 'function')) {
-                    continue;
-                }
-                var displayedFilterValues = new Array();
-                for (var j = 0; j < rows.length; j++) {
-                    if (this.doesFilterPass(rows[j], i)) {
-                        displayedFilterValues.push(rows[j])
-                    }
-                }
-                filterWrapper.filter.setFilteredDisplayValues(displayedFilterValues)
-            }
-        }
-
         public onNewRowsLoaded() {
             var that = this;
             Object.keys(this.allFilters).forEach(function (field) {
@@ -318,7 +291,6 @@ module ag.grid {
             if (!filterWrapper) {
                 filterWrapper = this.createFilterWrapper(column);
                 this.allFilters[column.colId] = filterWrapper;
-                this.refreshDisplayedValues();
             }
 
             return filterWrapper;
@@ -411,8 +383,10 @@ module ag.grid {
 
             var filterWrapper = this.getOrCreateFilterWrapper(column);
 
-            this.popupService.positionPopup(eventSource, filterWrapper.gui, 200);
+            // need to show filter before positioning, as only after filter
+            // is visible can we find out what the width of it is
             var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui, true);
+            this.popupService.positionPopup(eventSource, filterWrapper.gui, true);
 
             if (filterWrapper.filter.afterGuiAttached) {
                 var params = {

@@ -29,9 +29,10 @@ module ag.grid {
         private childPanels: any;
         private centerHeightLastTime: any;
 
-        private sizeChangeListners = <any>[];
+        private sizeChangeListeners = <any>[];
+        private overlays: any;
 
-        constructor(params:any) {
+        constructor(params: any) {
 
             this.isLayoutPanel = true;
 
@@ -89,15 +90,16 @@ module ag.grid {
                 this.setupPanels(params);
             }
 
-            this.setOverlayVisible(false);
+            this.overlays = params.overlays;
+            this.setupOverlays();
         }
 
         public addSizeChangeListener(listener: Function): void {
-            this.sizeChangeListners.push(listener);
+            this.sizeChangeListeners.push(listener);
         }
 
         public fireSizeChanged(): void {
-            this.sizeChangeListners.forEach( function(listener: Function) {
+            this.sizeChangeListeners.forEach( function(listener: Function) {
                 listener();
             });
         }
@@ -116,8 +118,6 @@ module ag.grid {
             this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
             this.eWestChildLayout = this.setupPanel(params.west, this.eWestWrapper);
             this.eCenterChildLayout = this.setupPanel(params.center, this.eCenterWrapper);
-
-            this.setupPanel(params.overlay, this.eOverlayWrapper);
         }
 
         private setupPanel(content: any, ePanel: any) {
@@ -256,11 +256,33 @@ module ag.grid {
             this.doLayout();
         }
 
-        public setOverlayVisible(visible: any) {
-            if (this.eOverlayWrapper) {
-                this.eOverlayWrapper.style.display = visible ? '' : 'none';
+        private setupOverlays(): void {
+            // if no overlays, just remove the panel
+            if (!this.overlays) {
+                this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
+                return;
             }
-            this.doLayout();
+
+            this.hideOverlay();
+            //
+            //this.setOverlayVisible(false);
+        }
+
+        public hideOverlay() {
+            _.removeAllChildren(this.eOverlayWrapper);
+            this.eOverlayWrapper.style.display = 'none';
+        }
+
+        public showOverlay(key: string) {
+            var overlay = this.overlays ? this.overlays[key] : null;
+            if (overlay) {
+                _.removeAllChildren(this.eOverlayWrapper);
+                this.eOverlayWrapper.style.display = '';
+                this.eOverlayWrapper.appendChild(overlay);
+            } else {
+                console.log('ag-Grid: unknown overlay');
+                this.hideOverlay();
+            }
         }
 
         public setSouthVisible(visible: any) {
