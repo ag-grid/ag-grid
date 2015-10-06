@@ -141,6 +141,12 @@ columnDefinition = {
         Wednesday as an option.
     </p>
 
+    <p>
+        The example also demonstrates using the ag-header-cell-filtered class, which is applied to the header
+        cell when the header is filtered. By default, no style is applied to this class, the example shows
+        applying a different color background to this style.
+    </p>
+
     <show-example example="example1"></show-example>
 
     <h2>Apply Function</h2>

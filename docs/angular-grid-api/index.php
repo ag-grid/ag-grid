@@ -137,7 +137,11 @@ include '../documentation_header.php';
         <tr>
             <th>refreshGroupRows()</th>
             <td>Rip out and re-insert all visible header and footer rows only. Only need to call if update the aggregate data yourself,
-            as this gets called after <i>recomputeAggregates()</i> anyway.</td>
+                as this gets called after <i>recomputeAggregates()</i> anyway.</td>
+        </tr>
+        <tr>
+            <th>refreshPivot()</th>
+            <td>Gets the grid to recompute the pivot row groups.</td>
         </tr>
         <tr>
             <th>getModel()</th>

@@ -7,6 +7,11 @@
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused12">
     <script src="example1.js"></script>
 </head>
+<style>
+    .ag-header-cell-filtered {
+        background-color: #e5e5e5;
+    }
+</style>
 <body ng-app="example" ng-controller="exampleCtrl">
     <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
     <div ag-grid="gridOptions" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>

@@ -230,10 +230,13 @@ module ag.grid {
         }
 
         public refreshFilterIcon(): void {
-            if (this.eFilterIcon) {
-                var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
-                var displayStyle = filterPresent ? 'inline' : 'none';
-                this.eFilterIcon.style.display = displayStyle;
+            var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
+            if (filterPresent) {
+                _.addCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
+                this.eFilterIcon.style.display = 'inline';
+            } else {
+                _.removeCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
+                this.eFilterIcon.style.display = 'none';
             }
         }
 

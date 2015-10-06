@@ -29,6 +29,10 @@ include '../documentation_header.php';
         the SFX version of AngularJS 2.
     </p>
 
+    <p>
+        For notes on JSPM, see the secton on JSPM below.
+    </p>
+
     <h2>Simple AngularJS 2 Example</h2>
 
     <p>
@@ -197,6 +201,27 @@ SampleAppComponent.annotations = [
         and releases all resources when the directive is destroyed. The example above demonstrates this
         by taking the element out of the DOM via *ng-if (which, unlike *ng-show, destroys the directives).
     </p>
+
+    <h2>JSPM</h2>
+
+    <p>
+        To get one version of the grid to work with all technologies required one Javascript file
+        to work regardless of you using JSPM, CommonJS, Angular 1 or 2, or no Angular at all, had
+        one pitfall for me. That was JSPM loading of the Angular 2 library (as this will cause and
+        error if Angular 2 is not available, which will be the case if you are using Angular 1 or
+        no Angular at all). To get around this, you have to initialise the grid with Angular 2 if
+        using JSPM. This is done as follows:
+    </p>
+
+    <pre>ag.grid.initialiseAgGridWithAngular2(ng2)</pre>
+
+    <p>
+        Where ng2 is the Angular 2 library.
+    </p>
+
+    <pre>System.import('angular2/angular2').then( function(ng) {
+    initialiseAgGridWithAngular2(ng);
+});</pre>
 
     <h2>Next Steps...</h2>
 
