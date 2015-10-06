@@ -30,7 +30,7 @@ module ag.grid {
                 </div>
             </div>`;
 
-    var gridNoScrollsHtml =
+    var gridForPrintHtml =
             `<div>
                 <!-- header -->
                 <div class="ag-header-container"></div>
@@ -44,12 +44,13 @@ module ag.grid {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-    var loadingHtml =
-            '<div class="ag-loading-panel">'+
-                '<div class="ag-loading-wrapper">'+
-                    '<span class="ag-loading-center">[LOADING...]</span>'+
-                '</div>'+
-            '</div>';
+    var mainOverlayTemplate =
+        '<div class="ag-overlay-panel">'+
+            '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
+        '</div>';
+
+    var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+    var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
     var _ = Utils;
 
@@ -107,7 +108,7 @@ module ag.grid {
         private setupComponents() {
 
             if (this.forPrint) {
-                this.eRoot = <HTMLElement> _.loadTemplate(gridNoScrollsHtml);
+                this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
                 _.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
             } else {
                 this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
@@ -118,7 +119,8 @@ module ag.grid {
 
             this.layout = new BorderLayout({
                 overlays: {
-                    loading: _.loadTemplate(this.createOverlayTemplate())
+                    loading: _.loadTemplate(this.createLoadingOverlayTemplate()),
+                    noRows: _.loadTemplate(this.createNoRowsOverlayTemplate())
                 },
                 center: this.eRoot,
                 dontFill: this.forPrint,
@@ -150,9 +152,47 @@ module ag.grid {
             return this.eFloatingBottomContainer;
         }
 
-        private createOverlayTemplate(): string {
+        private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
+
+            var template = mainOverlayTemplate
+                .replace('[OVERLAY_NAME]', name);
+
+            if (userProvidedTemplate) {
+                template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
+            } else {
+                template = template.replace('[OVERLAY_TEMPLATE]', defaultTemplate);
+            }
+
+            return template;
+        }
+
+        private createLoadingOverlayTemplate(): string {
+
+            var userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
+
+            var templateNotLocalised = this.createOverlayTemplate(
+                'loading',
+                defaultLoadingOverlayTemplate,
+                userProvidedTemplate);
+
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            return loadingHtml.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'))
+            var templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+
+            return templateLocalised;
+        }
+
+        private createNoRowsOverlayTemplate(): string {
+            var userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
+
+            var templateNotLocalised = this.createOverlayTemplate(
+                'no-rows',
+                defaultNoRowsOverlayTemplate,
+                userProvidedTemplate);
+
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
+
+            return templateLocalised;
         }
 
         public ensureIndexVisible(index: any) {
@@ -241,12 +281,16 @@ module ag.grid {
             // otherwise, col is already in view, so do nothing
         }
 
-        public showLoading(loading: any) {
-            if (loading) {
-                this.layout.showOverlay('loading');
-            } else {
-                this.layout.hideOverlay();
-            }
+        public showLoadingOverlay(): void {
+            this.layout.showOverlay('loading');
+        }
+
+        public showNoRowsOverlay(): void {
+            this.layout.showOverlay('noRows');
+        }
+
+        public hideOverlay(): void {
+            this.layout.hideOverlay();
         }
 
         public getWidthForSizeColsToFit() {

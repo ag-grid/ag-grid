@@ -41,7 +41,7 @@
         </style>
     </head>
 
-    <body ng-app="testAngularGrid" ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
+    <body ng-app="agGridApp" ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
 
         <div style="position: absolute; top: 55px; left: 0px; padding: 0px 20px 20px 20px;">
 
@@ -71,6 +71,7 @@
 
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
+                <button ng-click="onPush()">Push</button>
                 Rows:
                 <select ng-model="rowCount" ng-change="onRowCountChanged()">
                     <option value="10">10</option>
@@ -129,7 +130,7 @@
 
             <div style="padding: 4px;">
 
-                <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
+                <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
 
                 Selection:
                 <select ng-model="rowSelection" ng-change="onSelectionChanged()" style="width: 100px;">
@@ -151,14 +152,14 @@
                     <option value="rowWithFooter">Row with Footer</option>
                 </select>
 
-                <button ng-click="angularGrid.api.expandAll()">Expand All</button>
-                <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
+                <button ng-click="gridOptions.api.expandAll()">Expand All</button>
+                <button ng-click="gridOptions.api.collapseAll()">Collapse All</button>
 
             </div>
         </div>
         <!-- The table div -->
         <div style="padding: 150px 20px 20px 20px; height: 100%; box-sizing: border-box;">
-            <div ag-grid="angularGrid" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
+            <div ag-grid="gridOptions" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
         </div>
     </body>
 

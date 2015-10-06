@@ -94,6 +94,8 @@ module ag.grid {
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
         public getRowHeight() { return this.rowHeight; }
+        public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
+        public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
 
         // properties
         public getHeaderHeight(): number {

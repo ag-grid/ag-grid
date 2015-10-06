@@ -6,7 +6,8 @@ module ag.grid {
             'sortingOrder',
             'icons','localeText','localeTextFunc',
             'groupColumnDef','context','rowStyle','rowClass','headerCellRenderer',
-            'groupDefaultExpanded','slaveGrids','rowSelection'
+            'groupDefaultExpanded','slaveGrids','rowSelection',
+            'overlayLoadingTemplate','overlayNoRowsTemplate'
         ];
 
         public static SIMPLE_NUMBER_PROPERTIES = [
@@ -101,7 +102,7 @@ module ag.grid {
             }
 
             if (changes.rowData) {
-                component.api.setRows(component.rowData);
+                component.api.setRowData(component.rowData);
             }
 
             if (changes.floatingTopRowData) {

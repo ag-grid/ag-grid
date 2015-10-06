@@ -8,6 +8,10 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 2.3.0</h3>
+    <li>Major - Introduced 'no rows' message for when grid is empty.</li>
+    <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
+
     <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
     Javascript (AngularJS lifecycle manages this for you).</li>

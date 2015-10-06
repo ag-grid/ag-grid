@@ -220,6 +220,14 @@ include '../documentation_header.php';
             <td>A list of grids to treat as slaves. If a grid is a slave, it's columns and horizontal scrolling
                 will try to mirror the columns of the master.</td>
         </tr>
+        <tr>
+            <th>overlayLoadingTemplate</th>
+            <td>Provide a template for 'loading' overlay if not happy with the provided.</td>
+        </tr>
+        <tr>
+            <th>overlayNoRowsTemplate</th>
+            <td>Provide a template for 'no rows' overlay if not happy with the provided.</td>
+        </tr>
 
     </table>
 
