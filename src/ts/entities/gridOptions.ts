@@ -81,6 +81,7 @@ module ag.grid {
         getRowClass?: any;
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
+        getBusinessKeyForNode?(node: RowNode): string;
 
         // events
         onReady?(api: any): void;

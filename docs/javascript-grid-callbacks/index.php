@@ -80,6 +80,13 @@ include '../documentation_header.php';
                 isScrollLag. This is a function, as it's expected your code will check the environment to decide
                 whether to use scroll lag or not.</td>
         </tr>
+        <tr>
+            <th>getBusinessKeyForNode(node)</th>
+            <td>Return a business key for the node. If implemented, then each row in the dom will have an attribute
+                <i>row-id='abc'</i> where abc is what you return as the business key. This is useful for automated
+            testing, as it provides a way for your tool to identify rules based on unique business keys.</td>
+        </tr>
+
 
     </table>
 

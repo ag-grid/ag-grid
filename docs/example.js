@@ -118,6 +118,9 @@ gridsModule.controller('mainController', function($scope) {
             headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
 
+        getBusinessKeyForNode: function(node) {
+            return node.data.name;
+        },
         // isScrollLag: function() { return false; },
         //suppressScrollLag: true,
 

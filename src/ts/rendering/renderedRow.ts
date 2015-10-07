@@ -106,6 +106,16 @@ module ag.grid {
                 this.vPinnedRow.setAttribute('row', rowStr);
             }
 
+            if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
+                var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
+                if (typeof businessKey === 'string' || typeof businessKey === 'number') {
+                    this.vBodyRow.setAttribute('row-id', businessKey);
+                    if (this.pinning) {
+                        this.vPinnedRow.setAttribute('row-id', businessKey);
+                    }
+                }
+            }
+
             // if showing scrolls, position on the container
             if (!this.gridOptionsWrapper.isForPrint()) {
                 this.vBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
