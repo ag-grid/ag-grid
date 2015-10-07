@@ -8,6 +8,8 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
+
     <h3>Version 2.3.0</h3>
     <li>Major - Introduced 'no rows' message for when grid is empty.</li>
     <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
