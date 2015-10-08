@@ -8,6 +8,15 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
+    <li>Major: Added getBusinessKeyForNode() method, to allow easily identifying of rows for automated testing.</li>
+
+    <h3>Version 2.3.0</h3>
+    <li>Major - Introduced 'no rows' message for when grid is empty.</li>
+    <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
+    <li>Major - Moved to AngularJS 2 alpha 38.</li>
+    <li>Major - Took out auto loading of AngularJS 2 module with JSPM.</li>
+
     <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
     Javascript (AngularJS lifecycle manages this for you).</li>

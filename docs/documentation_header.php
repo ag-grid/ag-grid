@@ -365,10 +365,10 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-icons/index.php">Icons</a>
                 <?php } ?>
 
-                <?php if ($key == "Loading Overlay") { ?>
-                    <span class="sidebarLinkSelected">Loading Overlay</span>
+                <?php if ($key == "Overlays") { ?>
+                    <span class="sidebarLinkSelected">Overlays</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-loading/index.php">Loading Overlay</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-overlays/index.php">Overlays</a>
                 <?php } ?>
 
                 <?php if ($key == "For Print") { ?>

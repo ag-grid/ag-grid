@@ -47,17 +47,17 @@ module ag.grid {
         }
 
         public setRowData(rowData:any) {
-            this.grid.setRows(rowData);
+            this.grid.setRowData(rowData);
         }
 
         public setRows(rows:any) {
             console.log('ag-Grid: setRows deprecated, please use setRowData()');
-            this.grid.setRows(rows);
+            this.grid.setRowData(rows);
         }
 
         public onNewRows() {
             console.log('ag-Grid: onNewRows deprecated, please use setRowData()');
-            this.grid.setRows();
+            this.grid.setRowData();
         }
 
         public setFloatingTopRowData(rows: any[]): void {
@@ -194,8 +194,25 @@ module ag.grid {
             this.columnController.sizeColumnsToFit(availableWidth);
         }
 
-        public showLoading(show:any) {
-            this.grid.showLoadingPanel(show);
+        public showLoadingOverlay(): void {
+            this.grid.showLoadingOverlay();
+        }
+
+        public showNoRowsOverlay(): void {
+            this.grid.showNoRowsOverlay();
+        }
+
+        public hideOverlay(): void {
+            this.grid.hideOverlay();
+        }
+
+        public showLoading(show: any) {
+            console.warn('ag-Grid: showLoading is deprecated, please use api.showLoadingOverlay() and api.hideOverlay() instead');
+            if (show) {
+                this.grid.showLoadingOverlay();
+            } else {
+                this.grid.hideOverlay();
+            }
         }
 
         public isNodeSelected(node:any) {

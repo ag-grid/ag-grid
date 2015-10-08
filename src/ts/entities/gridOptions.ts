@@ -54,6 +54,8 @@ module ag.grid {
         slaveGrids?: GridOptions[];
         rowSelection?: string;
         rowDeselection?: boolean;
+        overlayLoadingTemplate?: string;
+        overlayNoRowsTemplate?: string;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
@@ -79,6 +81,7 @@ module ag.grid {
         getRowClass?: any;
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
+        getBusinessKeyForNode?(node: RowNode): string;
 
         // events
         onReady?(api: any): void;

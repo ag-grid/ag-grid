@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.2.0
+ * @version v2.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -715,6 +715,8 @@ var ag;
             GridOptionsWrapper.prototype.getSlaveGrids = function () { return this.gridOptions.slaveGrids; };
             GridOptionsWrapper.prototype.getGroupRowRenderer = function () { return this.gridOptions.groupRowRenderer; };
             GridOptionsWrapper.prototype.getRowHeight = function () { return this.rowHeight; };
+            GridOptionsWrapper.prototype.getOverlayLoadingTemplate = function () { return this.gridOptions.overlayLoadingTemplate; };
+            GridOptionsWrapper.prototype.getOverlayNoRowsTemplate = function () { return this.gridOptions.overlayNoRowsTemplate; };
             // properties
             GridOptionsWrapper.prototype.getHeaderHeight = function () {
                 if (typeof this.headerHeight === 'number') {
@@ -7522,7 +7524,7 @@ var ag;
             };
             PaginationController.prototype.pageLoaded = function (rows, lastRowIndex) {
                 var firstId = this.currentPage * this.pageSize;
-                this.angularGrid.setRows(rows, firstId);
+                this.angularGrid.setRowData(rows, firstId);
                 // see if we hit the last row
                 if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
                     this.foundMaxRow = true;
@@ -7565,7 +7567,7 @@ var ag;
                 this.callVersion++;
                 var callVersionCopy = this.callVersion;
                 var that = this;
-                this.angularGrid.showLoadingPanel(true);
+                this.angularGrid.showLoadingOverlay();
                 var sortModel;
                 if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
                     sortModel = this.angularGrid.getSortModel();
@@ -7602,7 +7604,7 @@ var ag;
                     // set in an empty set of rows, this will at
                     // least get rid of the loading panel, and
                     // stop blocking things
-                    that.angularGrid.setRows([]);
+                    that.angularGrid.setRowData([]);
                 }
             };
             PaginationController.prototype.isCallDaemon = function (versionCopy) {
@@ -7745,7 +7747,8 @@ var ag;
                 if (params) {
                     this.setupPanels(params);
                 }
-                this.setOverlayVisible(false);
+                this.overlays = params.overlays;
+                this.setupOverlays();
             }
             BorderLayout.prototype.addSizeChangeListener = function (listener) {
                 this.sizeChangeListeners.push(listener);
@@ -7768,7 +7771,6 @@ var ag;
                 this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
                 this.eWestChildLayout = this.setupPanel(params.west, this.eWestWrapper);
                 this.eCenterChildLayout = this.setupPanel(params.center, this.eCenterWrapper);
-                this.setupPanel(params.overlay, this.eOverlayWrapper);
             };
             BorderLayout.prototype.setupPanel = function (content, ePanel) {
                 if (!ePanel) {
@@ -7890,11 +7892,31 @@ var ag;
                 }
                 this.doLayout();
             };
-            BorderLayout.prototype.setOverlayVisible = function (visible) {
-                if (this.eOverlayWrapper) {
-                    this.eOverlayWrapper.style.display = visible ? '' : 'none';
+            BorderLayout.prototype.setupOverlays = function () {
+                // if no overlays, just remove the panel
+                if (!this.overlays) {
+                    this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
+                    return;
                 }
-                this.doLayout();
+                this.hideOverlay();
+                //
+                //this.setOverlayVisible(false);
+            };
+            BorderLayout.prototype.hideOverlay = function () {
+                _.removeAllChildren(this.eOverlayWrapper);
+                this.eOverlayWrapper.style.display = 'none';
+            };
+            BorderLayout.prototype.showOverlay = function (key) {
+                var overlay = this.overlays ? this.overlays[key] : null;
+                if (overlay) {
+                    _.removeAllChildren(this.eOverlayWrapper);
+                    this.eOverlayWrapper.style.display = '';
+                    this.eOverlayWrapper.appendChild(overlay);
+                }
+                else {
+                    console.log('ag-Grid: unknown overlay');
+                    this.hideOverlay();
+                }
             };
             BorderLayout.prototype.setSouthVisible = function (visible) {
                 if (this.eSouthWrapper) {
@@ -7914,14 +7936,14 @@ var ag;
     var grid;
     (function (grid) {
         var gridHtml = "<div>\n                <!-- header -->\n                <div class=\"ag-header\">\n                    <div class=\"ag-pinned-header\"></div><div class=\"ag-header-viewport\"><div class=\"ag-header-container\"></div></div>\n                </div>\n                <!-- floating top -->\n                <div class=\"ag-floating-top\">\n                    <div class=\"ag-pinned-floating-top\"></div><div class=\"ag-floating-top-viewport\"><div class=\"ag-floating-top-container\"></div></div>\n                </div>\n                <!-- floating bottom -->\n                <div class=\"ag-floating-bottom\">\n                    <div class=\"ag-pinned-floating-bottom\"></div><div class=\"ag-floating-bottom-viewport\"><div class=\"ag-floating-bottom-container\"></div></div>\n                </div>\n                <!-- body -->\n                <div class=\"ag-body\">\n                    <div class=\"ag-pinned-cols-viewport\">\n                        <div class=\"ag-pinned-cols-container\"></div>\n                    </div>\n                    <div class=\"ag-body-viewport-wrapper\">\n                        <div class=\"ag-body-viewport\">\n                            <div class=\"ag-body-container\"></div>\n                        </div>\n                    </div>\n                </div>\n            </div>";
-        var gridNoScrollsHtml = "<div>\n                <!-- header -->\n                <div class=\"ag-header-container\"></div>\n                <!-- floating top -->\n                <div class=\"ag-floating-top-container\"></div>\n                <!-- body -->\n                <div class=\"ag-body-container\"></div>\n                <!-- floating bottom -->\n                <div class=\"ag-floating-bottom-container\"></div>\n            </div>";
+        var gridForPrintHtml = "<div>\n                <!-- header -->\n                <div class=\"ag-header-container\"></div>\n                <!-- floating top -->\n                <div class=\"ag-floating-top-container\"></div>\n                <!-- body -->\n                <div class=\"ag-body-container\"></div>\n                <!-- floating bottom -->\n                <div class=\"ag-floating-bottom-container\"></div>\n            </div>";
         // wrapping in outer div, and wrapper, is needed to center the loading icon
         // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-        var loadingHtml = '<div class="ag-loading-panel">' +
-            '<div class="ag-loading-wrapper">' +
-            '<span class="ag-loading-center">[LOADING...]</span>' +
-            '</div>' +
+        var mainOverlayTemplate = '<div class="ag-overlay-panel">' +
+            '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>' +
             '</div>';
+        var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+        var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
         var _ = grid.Utils;
         var GridPanel = (function () {
             function GridPanel() {
@@ -7943,7 +7965,7 @@ var ag;
             };
             GridPanel.prototype.setupComponents = function () {
                 if (this.forPrint) {
-                    this.eRoot = _.loadTemplate(gridNoScrollsHtml);
+                    this.eRoot = _.loadTemplate(gridForPrintHtml);
                     _.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
                 }
                 else {
@@ -7952,7 +7974,10 @@ var ag;
                 }
                 this.findElements();
                 this.layout = new grid.BorderLayout({
-                    overlay: _.loadTemplate(this.createTemplate()),
+                    overlays: {
+                        loading: _.loadTemplate(this.createLoadingOverlayTemplate()),
+                        noRows: _.loadTemplate(this.createNoRowsOverlayTemplate())
+                    },
                     center: this.eRoot,
                     dontFill: this.forPrint,
                     name: 'eGridPanel'
@@ -7975,9 +8000,30 @@ var ag;
             GridPanel.prototype.getFloatingBottomContainer = function () {
                 return this.eFloatingBottomContainer;
             };
-            GridPanel.prototype.createTemplate = function () {
+            GridPanel.prototype.createOverlayTemplate = function (name, defaultTemplate, userProvidedTemplate) {
+                var template = mainOverlayTemplate
+                    .replace('[OVERLAY_NAME]', name);
+                if (userProvidedTemplate) {
+                    template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
+                }
+                else {
+                    template = template.replace('[OVERLAY_TEMPLATE]', defaultTemplate);
+                }
+                return template;
+            };
+            GridPanel.prototype.createLoadingOverlayTemplate = function () {
+                var userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
+                var templateNotLocalised = this.createOverlayTemplate('loading', defaultLoadingOverlayTemplate, userProvidedTemplate);
                 var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                return loadingHtml.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+                var templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+                return templateLocalised;
+            };
+            GridPanel.prototype.createNoRowsOverlayTemplate = function () {
+                var userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
+                var templateNotLocalised = this.createOverlayTemplate('no-rows', defaultNoRowsOverlayTemplate, userProvidedTemplate);
+                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
+                return templateLocalised;
             };
             GridPanel.prototype.ensureIndexVisible = function (index) {
                 var lastRow = this.rowModel.getVirtualRowCount();
@@ -8052,8 +8098,14 @@ var ag;
                 }
                 // otherwise, col is already in view, so do nothing
             };
-            GridPanel.prototype.showLoading = function (loading) {
-                this.layout.setOverlayVisible(loading);
+            GridPanel.prototype.showLoadingOverlay = function () {
+                this.layout.showOverlay('loading');
+            };
+            GridPanel.prototype.showNoRowsOverlay = function () {
+                this.layout.showOverlay('noRows');
+            };
+            GridPanel.prototype.hideOverlay = function () {
+                this.layout.hideOverlay();
             };
             GridPanel.prototype.getWidthForSizeColsToFit = function () {
                 var availableWidth = this.eBody.clientWidth;
@@ -9094,15 +9146,15 @@ var ag;
                 this.grid.setDatasource();
             };
             GridApi.prototype.setRowData = function (rowData) {
-                this.grid.setRows(rowData);
+                this.grid.setRowData(rowData);
             };
             GridApi.prototype.setRows = function (rows) {
                 console.log('ag-Grid: setRows deprecated, please use setRowData()');
-                this.grid.setRows(rows);
+                this.grid.setRowData(rows);
             };
             GridApi.prototype.onNewRows = function () {
                 console.log('ag-Grid: onNewRows deprecated, please use setRowData()');
-                this.grid.setRows();
+                this.grid.setRowData();
             };
             GridApi.prototype.setFloatingTopRowData = function (rows) {
                 this.gridOptionsWrapper.setFloatingTopRowData(rows);
@@ -9212,8 +9264,23 @@ var ag;
                 var availableWidth = this.gridPanel.getWidthForSizeColsToFit();
                 this.columnController.sizeColumnsToFit(availableWidth);
             };
+            GridApi.prototype.showLoadingOverlay = function () {
+                this.grid.showLoadingOverlay();
+            };
+            GridApi.prototype.showNoRowsOverlay = function () {
+                this.grid.showNoRowsOverlay();
+            };
+            GridApi.prototype.hideOverlay = function () {
+                this.grid.hideOverlay();
+            };
             GridApi.prototype.showLoading = function (show) {
-                this.grid.showLoadingPanel(show);
+                console.warn('ag-Grid: showLoading is deprecated, please use api.showLoadingOverlay() and api.hideOverlay() instead');
+                if (show) {
+                    this.grid.showLoadingOverlay();
+                }
+                else {
+                    this.grid.hideOverlay();
+                }
             };
             GridApi.prototype.isNodeSelected = function (node) {
                 return this.selectionController.isNodeSelected(node);
@@ -9478,7 +9545,9 @@ var ag;
                 this.updateModelAndRefresh(grid.Constants.STEP_EVERYTHING);
                 // if no data provided initially, and not doing infinite scrolling, show the loading panel
                 var showLoading = !this.gridOptionsWrapper.getRowData() && !this.gridOptionsWrapper.isVirtualPaging();
-                this.showLoadingPanel(showLoading);
+                if (showLoading) {
+                    this.showLoadingOverlay();
+                }
                 // if datasource provided, use it
                 if (this.gridOptionsWrapper.getDatasource()) {
                     this.setDatasource();
@@ -9783,8 +9852,14 @@ var ag;
                     selectionController.selectNode(node, multiSelectKeyPressed);
                 }
             };
-            Grid.prototype.showLoadingPanel = function (show) {
-                this.gridPanel.showLoading(show);
+            Grid.prototype.showLoadingOverlay = function () {
+                this.gridPanel.showLoadingOverlay();
+            };
+            Grid.prototype.showNoRowsOverlay = function () {
+                this.gridPanel.showNoRowsOverlay();
+            };
+            Grid.prototype.hideOverlay = function () {
+                this.gridPanel.hideOverlay();
             };
             Grid.prototype.setupColumns = function () {
                 this.columnController.onColumnsChanged();
@@ -9798,16 +9873,22 @@ var ag;
                 this.inMemoryRowController.updateModel(step);
                 this.rowRenderer.refreshView(refreshFromIndex);
             };
-            Grid.prototype.setRows = function (rows, firstId) {
+            Grid.prototype.setRowData = function (rows, firstId) {
                 if (rows) {
                     this.gridOptions.rowData = rows;
                 }
-                this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData(), firstId);
+                var rowData = this.gridOptionsWrapper.getRowData();
+                this.inMemoryRowController.setAllRows(rowData, firstId);
                 this.selectionController.deselectAll();
                 this.filterManager.onNewRowsLoaded();
                 this.updateModelAndRefresh(grid.Constants.STEP_EVERYTHING);
                 this.headerRenderer.updateFilterIcons();
-                this.showLoadingPanel(false);
+                if (rowData && rowData.length > 0) {
+                    this.hideOverlay();
+                }
+                else {
+                    this.showNoRowsOverlay();
+                }
             };
             Grid.prototype.ensureNodeVisible = function (comparator) {
                 if (this.doingVirtualPaging) {
@@ -10040,7 +10121,7 @@ var ag;
                     component.api.setQuickFilter(component.quickFilterText);
                 }
                 if (changes.rowData) {
-                    component.api.setRows(component.rowData);
+                    component.api.setRowData(component.rowData);
                 }
                 if (changes.floatingTopRowData) {
                     component.api.setFloatingTopRowData(component.floatingTopRowData);
@@ -10106,7 +10187,8 @@ var ag;
                 'sortingOrder',
                 'icons', 'localeText', 'localeTextFunc',
                 'groupColumnDef', 'context', 'rowStyle', 'rowClass', 'headerCellRenderer',
-                'groupDefaultExpanded', 'slaveGrids', 'rowSelection'
+                'groupDefaultExpanded', 'slaveGrids', 'rowSelection',
+                'overlayLoadingTemplate', 'overlayNoRowsTemplate'
             ];
             ComponentUtil.SIMPLE_NUMBER_PROPERTIES = [
                 'rowHeight', 'rowBuffer', 'colWidth'
@@ -10195,7 +10277,7 @@ var ag;
                 this.columnApi = this.gridOptions.columnApi;
                 this._initialised = true;
             };
-            AgGridNg2.prototype.onChange = function (changes) {
+            AgGridNg2.prototype.onChanges = function (changes) {
                 grid.ComponentUtil.processOnChange(changes, this.gridOptions, this);
             };
             AgGridNg2.prototype.onDestroy = function () {
@@ -10290,16 +10372,11 @@ var ag;
         grid.AgGridNg2 = AgGridNg2;
         // check for angular and component, as if angular 1, we will find angular but the wrong version
         if (window.ng && window.ng.Component) {
-            _ng = window.ng;
-            initAngular2();
+            var ng = window.ng;
+            initialiseAgGridWithAngular2(ng);
         }
-        else if (window.System && window.System.import) {
-            window.System.import('angular2/angular2').then(function (ngFromSystemX) {
-                _ng = ngFromSystemX;
-                initAngular2();
-            });
-        }
-        function initAngular2() {
+        function initialiseAgGridWithAngular2(ng) {
+            _ng = ng;
             AgGridNg2.annotations = [
                 new _ng.Component({
                     selector: 'ag-grid-ng2',
@@ -10320,8 +10397,7 @@ var ag;
                         .concat(grid.ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
                         .concat(grid.ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
                         .concat(grid.ComponentUtil.CALLBACKS),
-                    compileChildren: false,
-                    lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange, _ng.LifecycleEvent.onDestroy]
+                    compileChildren: false // no angular on the inside thanks
                 }),
                 new _ng.View({
                     template: '',
@@ -10331,6 +10407,7 @@ var ag;
             ];
             AgGridNg2.parameters = [[_ng.ElementRef]];
         }
+        grid.initialiseAgGridWithAngular2 = initialiseAgGridWithAngular2;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 /// <reference path='componentUtil.ts'/>

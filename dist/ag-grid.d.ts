@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.2.0
+// Type definitions for ag-grid v2.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -214,6 +214,8 @@ declare module ag.grid {
         getSlaveGrids(): GridOptions[];
         getGroupRowRenderer(): Object | Function;
         getRowHeight(): number;
+        getOverlayLoadingTemplate(): string;
+        getOverlayNoRowsTemplate(): string;
         getHeaderHeight(): number;
         setHeaderHeight(headerHeight: number): void;
         isGroupHeaders(): boolean;
@@ -1316,26 +1318,26 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class PaginationController {
-        eGui: any;
-        btNext: any;
-        btPrevious: any;
-        btFirst: any;
-        btLast: any;
-        lbCurrent: any;
-        lbTotal: any;
-        lbRecordCount: any;
-        lbFirstRowOnPage: any;
-        lbLastRowOnPage: any;
-        ePageRowSummaryPanel: any;
-        angularGrid: any;
-        callVersion: any;
-        gridOptionsWrapper: any;
-        datasource: any;
-        pageSize: any;
-        rowCount: any;
-        foundMaxRow: any;
-        totalPages: any;
-        currentPage: any;
+        private eGui;
+        private btNext;
+        private btPrevious;
+        private btFirst;
+        private btLast;
+        private lbCurrent;
+        private lbTotal;
+        private lbRecordCount;
+        private lbFirstRowOnPage;
+        private lbLastRowOnPage;
+        private ePageRowSummaryPanel;
+        private angularGrid;
+        private callVersion;
+        private gridOptionsWrapper;
+        private datasource;
+        private pageSize;
+        private rowCount;
+        private foundMaxRow;
+        private totalPages;
+        private currentPage;
         init(angularGrid: any, gridOptionsWrapper: any): void;
         setDatasource(datasource: any): void;
         reset(): void;
@@ -1378,6 +1380,7 @@ declare module ag.grid {
         private childPanels;
         private centerHeightLastTime;
         private sizeChangeListeners;
+        private overlays;
         constructor(params: any);
         addSizeChangeListener(listener: Function): void;
         fireSizeChanged(): void;
@@ -1392,7 +1395,9 @@ declare module ag.grid {
         getCentreHeight(): number;
         private layoutWidth();
         setEastVisible(visible: any): void;
-        setOverlayVisible(visible: any): void;
+        private setupOverlays();
+        hideOverlay(): void;
+        showOverlay(key: string): void;
         setSouthVisible(visible: any): void;
     }
 }
@@ -1431,10 +1436,14 @@ declare module ag.grid {
         getFloatingTopContainer(): HTMLElement;
         getPinnedFloatingBottom(): HTMLElement;
         getFloatingBottomContainer(): HTMLElement;
-        private createTemplate();
+        private createOverlayTemplate(name, defaultTemplate, userProvidedTemplate);
+        private createLoadingOverlayTemplate();
+        private createNoRowsOverlayTemplate();
         ensureIndexVisible(index: any): void;
         ensureColIndexVisible(index: any): void;
-        showLoading(loading: any): void;
+        showLoadingOverlay(): void;
+        showNoRowsOverlay(): void;
+        hideOverlay(): void;
         getWidthForSizeColsToFit(): number;
         setRowModel(rowModel: any): void;
         getBodyContainer(): HTMLElement;
@@ -1667,6 +1676,8 @@ declare module ag.grid {
         slaveGrids?: GridOptions[];
         rowSelection?: string;
         rowDeselection?: boolean;
+        overlayLoadingTemplate?: string;
+        overlayNoRowsTemplate?: string;
         rowData?: any[];
         floatingTopRowData?: any[];
         floatingBottomRowData?: any[];
@@ -1763,6 +1774,9 @@ declare module ag.grid {
         deselectAll(): void;
         recomputeAggregates(): void;
         sizeColumnsToFit(): void;
+        showLoadingOverlay(): void;
+        showNoRowsOverlay(): void;
+        hideOverlay(): void;
         showLoading(show: any): void;
         isNodeSelected(node: any): boolean;
         getSelectedNodesById(): {
@@ -1866,10 +1880,12 @@ declare module ag.grid {
         onFilterModified(): void;
         onFilterChanged(): void;
         onRowClicked(multiSelectKeyPressed: boolean, rowIndex: number, node: RowNode): void;
-        showLoadingPanel(show: any): void;
+        showLoadingOverlay(): void;
+        showNoRowsOverlay(): void;
+        hideOverlay(): void;
         private setupColumns();
         updateModelAndRefresh(step: any, refreshFromIndex?: any): void;
-        setRows(rows?: any, firstId?: any): void;
+        setRowData(rows?: any, firstId?: any): void;
         ensureNodeVisible(comparator: any): void;
         getFilterModel(): any;
         setFocusedCell(rowIndex: any, colIndex: any): void;
@@ -1993,10 +2009,11 @@ declare module ag.grid {
         headerHeight: number;
         constructor(elementDef: any);
         onInit(): void;
-        onChange(changes: any): void;
+        onChanges(changes: any): void;
         onDestroy(): void;
         private globalEventListener(eventType, event);
     }
+    function initialiseAgGridWithAngular2(ng: any): void;
 }
 declare module ag.grid {
 }

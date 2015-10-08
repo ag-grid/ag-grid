@@ -32,6 +32,7 @@ module ag.grid {
         public cellValueChanged = new _ng.EventEmitter();
         public cellFocused = new _ng.EventEmitter();
         public rowSelected = new _ng.EventEmitter();
+        public rowDeselected = new _ng.EventEmitter();
         public selectionChanged = new _ng.EventEmitter();
         public beforeFilterChanged = new _ng.EventEmitter();
         public afterFilterChanged = new _ng.EventEmitter();
@@ -133,7 +134,7 @@ module ag.grid {
             this._initialised = true;
         }
 
-        public onChange(changes: any): void {
+        public onChanges(changes: any): void {
             ComponentUtil.processOnChange(changes, this.gridOptions, this);
         }
 
@@ -159,6 +160,7 @@ module ag.grid {
                 case Events.EVENT_CELL_VALUE_CHANGED: emitter = this.cellValueChanged; break;
                 case Events.EVENT_CELL_FOCUSED: emitter = this.cellFocused; break;
                 case Events.EVENT_ROW_SELECTED: emitter = this.rowSelected; break;
+                case Events.EVENT_ROW_DESELECTED: emitter = this.rowDeselected; break;
                 case Events.EVENT_SELECTION_CHANGED: emitter = this.selectionChanged; break;
                 case Events.EVENT_BEFORE_FILTER_CHANGED: emitter = this.beforeFilterChanged; break;
                 case Events.EVENT_AFTER_FILTER_CHANGED: emitter = this.afterFilterChanged; break;
@@ -179,24 +181,27 @@ module ag.grid {
 
     // check for angular and component, as if angular 1, we will find angular but the wrong version
     if ((<any> window).ng && (<any> window).ng.Component) {
-        _ng = (<any> window).ng;
-        initAngular2();
+        var ng = (<any> window).ng;
+        initialiseAgGridWithAngular2(ng);
         // check if we are using SystemX
-    } else if ((<any>window).System && (<any>window).System.import) {
-        (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
-            _ng = ngFromSystemX;
-            initAngular2();
-        });
+        // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
+        // as it was resulting in a failed 'Fetch' of the Angular2 system
+    //} else if ((<any>window).System && (<any>window).System.import) {
+    //    (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
+    //        var ng = ngFromSystemX;
+    //        initialiseAgGridWithAngular2(ng);
+    //    });
     }
 
-    function initAngular2() {
+    export function initialiseAgGridWithAngular2(ng: any) {
+        _ng = ng;
         (<any>AgGridNg2).annotations = [
             new _ng.Component({
                 selector: 'ag-grid-ng2',
                 events: [
                     // core grid events
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
-                    'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+                    'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
                     'rowClicked', 'rowDoubleClicked', 'ready',
                     // column events
@@ -211,8 +216,7 @@ module ag.grid {
                     .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
                     .concat(ComponentUtil.CALLBACKS)
                 ,
-                compileChildren: false, // no angular on the inside thanks
-                lifecycle: [_ng.LifecycleEvent.onInit, _ng.LifecycleEvent.onChange, _ng.LifecycleEvent.onDestroy]
+                compileChildren: false // no angular on the inside thanks
             }),
             new _ng.View({
                 template: '',

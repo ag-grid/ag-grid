@@ -2,8 +2,8 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>Best Angular Gird / Best Javascript Grid / Best Web Components Grid / Best AngularJS Grid</title>
-        <meta name="description" content="The best Javascript data grid that works as Native Javascript Grid, Web Components Grid and AngularJS Grid. Feature rich. Blazing fast.">
+        <title>Angular Grid and Native Javascript Grid</title>
+        <meta name="description" content="ag-Grid is one of the best Javascript data grids that works as Native Javascript Grid, Web Components Grid and AngularJS Grid. Feature rich. Blazing fast.">
         <meta name="keywords" content="javascript angularjs angular data grid web components"/>
         <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -454,18 +454,18 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="minimised/ag-grid.min.js?ignore=notused11"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused11">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused11">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused11">
+<script src="minimised/ag-grid.min.js?ignore=notused12"></script>
+<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused12">
+<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused12">
+<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused12">
 
-<link href="example-file-browser/fileBrowser.css?ignore=notused11" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused11" rel="stylesheet">
-<link href="example-account-report/account.css?ignore=notused11" rel="stylesheet">
+<link href="example-file-browser/fileBrowser.css?ignore=notused12" rel="stylesheet">
+<link href="best-angularjs-grid/basic.css?ignore=notused12" rel="stylesheet">
+<link href="example-account-report/account.css?ignore=notused12" rel="stylesheet">
 
-<script src="best-angularjs-grid/basic.js?ignore=notused11"></script>
-<script src="minimised/account.js?ignore=notused11"></script>
-<script src="minimised/fileBrowser.js?ignore=notused11"></script>
+<script src="best-angularjs-grid/basic.js?ignore=notused12"></script>
+<script src="minimised/account.js?ignore=notused12"></script>
+<script src="minimised/fileBrowser.js?ignore=notused12"></script>
 <script src="minimised/index-script.js"></script>
 
 <?php include_once("analytics.php"); ?>

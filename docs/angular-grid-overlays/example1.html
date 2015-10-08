@@ -8,6 +8,11 @@
     <script src="example1.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-    <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
+    <div style="margin-bottom: 4px;">
+        <button ng-click="onBtShowLoading()">Show Loading Overlay</button>
+        <button ng-click="onBtShowNoRows()">Show No Rows Overlay</button>
+        <button ng-click="onBtHide()">Hide Overlay</button>
+    </div>
+    <div ag-grid="gridOptions" style="height: 450px;" class="ag-fresh"></div>
 </body>
 </html>

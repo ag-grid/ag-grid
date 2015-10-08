@@ -63,10 +63,10 @@
 .ag-dark .ag-row-even {
   background-color: #403e3e;
 }
-.ag-dark .ag-loading-panel {
+.ag-dark .ag-overlay-loading-wrapper {
   background-color: rgba(255,255,255,0.5);
 }
-.ag-dark .ag-loading-center {
+.ag-dark .ag-overlay-loading-center {
   background-color: #fff;
   border: 1px solid #a9a9a9;
   -webkit-border-radius: 10px;

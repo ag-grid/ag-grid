@@ -83,10 +83,17 @@
 .ag-fresh .ag-floating-bottom .ag-row {
   background-color: #f0f0f0;
 }
-.ag-fresh .ag-loading-panel {
+.ag-fresh .ag-overlay-loading-wrapper {
   background-color: rgba(255,255,255,0.5);
 }
-.ag-fresh .ag-loading-center {
+.ag-fresh .ag-overlay-loading-center {
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  padding: 10px;
+}
+.ag-fresh .ag-overlay-no-rows-center {
   background-color: #fff;
   border: 1px solid #a9a9a9;
   -webkit-border-radius: 10px;

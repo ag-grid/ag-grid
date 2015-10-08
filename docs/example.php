@@ -21,11 +21,11 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-        <script src="./dist/ag-grid.js?ignore=notused11"></script>
-        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused11">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused11">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused11">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused11">
+        <script src="./dist/ag-grid.js?ignore=notused12"></script>
+        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused12">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused12">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused12">
+        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused12">
 
         <script src="example.js"></script>
 
@@ -41,7 +41,7 @@
         </style>
     </head>
 
-    <body ng-app="testAngularGrid" ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
+    <body ng-app="agGridApp" ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
 
         <div style="position: absolute; top: 55px; left: 0px; padding: 0px 20px 20px 20px;">
 
@@ -129,7 +129,7 @@
 
             <div style="padding: 4px;">
 
-                <input placeholder="Filter..." type="text" ng-model="angularGrid.quickFilterText"/>
+                <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
 
                 Selection:
                 <select ng-model="rowSelection" ng-change="onSelectionChanged()" style="width: 100px;">
@@ -151,14 +151,14 @@
                     <option value="rowWithFooter">Row with Footer</option>
                 </select>
 
-                <button ng-click="angularGrid.api.expandAll()">Expand All</button>
-                <button ng-click="angularGrid.api.collapseAll()">Collapse All</button>
+                <button ng-click="gridOptions.api.expandAll()">Expand All</button>
+                <button ng-click="gridOptions.api.collapseAll()">Collapse All</button>
 
             </div>
         </div>
         <!-- The table div -->
         <div style="padding: 150px 20px 20px 20px; height: 100%; box-sizing: border-box;">
-            <div ag-grid="angularGrid" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
+            <div ag-grid="gridOptions" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
         </div>
     </body>
 

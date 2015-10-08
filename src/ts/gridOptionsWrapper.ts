@@ -63,6 +63,7 @@ module ag.grid {
         public getRowClass() { return this.gridOptions.rowClass; }
         public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
         public getRowClassFunc() { return this.gridOptions.getRowClass; }
+        public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
         public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
         public getApi() { return this.gridOptions.api; }
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
@@ -94,6 +95,8 @@ module ag.grid {
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
         public getRowHeight() { return this.rowHeight; }
+        public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
+        public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
 
         // properties
         public getHeaderHeight(): number {

@@ -18,7 +18,23 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: null // set rowData to null or undefined to show loading panel by default
+        rowData: null, // set rowData to null or undefined to show loading panel by default
+        // custom loading template. the class ag-overlay-loading-center is part of the grid,
+        // it gives a white background and rounded border
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+        overlayNoRowsTemplate: '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">This is a custom \'no rows\' overlay</span>'
+    };
+
+    $scope.onBtShowLoading = function () {
+        $scope.gridOptions.api.showLoadingOverlay();
+    };
+
+    $scope.onBtShowNoRows = function () {
+        $scope.gridOptions.api.showNoRowsOverlay();
+    };
+
+    $scope.onBtHide = function () {
+        $scope.gridOptions.api.hideOverlay();
     };
 
     $http.get("../olympicWinners.json")
