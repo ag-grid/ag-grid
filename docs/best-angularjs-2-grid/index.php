@@ -213,14 +213,8 @@ SampleAppComponent.annotations = [
         using JSPM. This is done as follows:
     </p>
 
-    <pre>ag.grid.initialiseAgGridWithAngular2(ng2)</pre>
-
-    <p>
-        Where ng2 is the Angular 2 library.
-    </p>
-
-    <pre>System.import('angular2/angular2').then( function(ng) {
-    initialiseAgGridWithAngular2(ng);
+    <pre>System.import('angular2/angular2').then( function(ng2) {
+    ag.grid.initialiseAgGridWithAngular2(ng2);
 });</pre>
 
     <h2>Next Steps...</h2>

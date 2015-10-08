@@ -39,7 +39,7 @@ Asking Questions
 ==============
 
 Please do not use GitHub issues to ask questions. Ask questions on the
-[website forum](http://www.angulargrid.com/forum).
+[website forum](http://www.ag-grid.com/forum).
 
 
 Contributing
