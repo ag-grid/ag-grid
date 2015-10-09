@@ -3,9 +3,9 @@
 /// <reference path="components/agGridWebComponent.ts" />
 
 declare var exports: any;
-declare var module: any;
 
 (function() {
+    var module: any;
 
     // Establish the root object, `window` or `exports`
     var root = this;
