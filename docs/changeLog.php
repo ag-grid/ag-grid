@@ -17,6 +17,7 @@ include 'documentation_header.php';
     <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
     <li>Major - Moved to AngularJS 2 alpha 38.</li>
     <li>Major - Took out auto loading of AngularJS 2 module with JSPM.</li>
+    <li>Minor - Exposed global function for initialising Angular 1.x, to use if Angular not available on the global scope, eg using JSPM</li>
 
     <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
