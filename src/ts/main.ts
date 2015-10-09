@@ -1,9 +1,7 @@
 /// <reference path="grid.ts" />
 /// <reference path="components/agGridNg2.ts" />
 /// <reference path="components/agGridWebComponent.ts" />
-
-declare var exports: any;
-declare var module: any;
+/// <reference path="../../typings/tsd" />
 
 (function() {
 

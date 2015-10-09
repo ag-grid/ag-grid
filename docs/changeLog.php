@@ -10,6 +10,7 @@ include 'documentation_header.php';
 
     <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
     <li>Major: Added getBusinessKeyForNode() method, to allow easily identifying of rows for automated testing.</li>
+    <li>Minor: Removed declaration of 'module' and 'exports' in main.ts, so no longer clashes with node.ts typics.</li>
 
     <h3>Version 2.3.0</h3>
     <li>Major - Introduced 'no rows' message for when grid is empty.</li>
