@@ -359,7 +359,7 @@ module ag.grid {
                 if (typeof classToUse === 'string') {
                     _.addCssClass(this.eHeaderCell, classToUse);
                 } else if (Array.isArray(classToUse)) {
-                    classToUse.forEach(function (cssClassItem: any) {
+                    classToUse.forEach((cssClassItem: any): void => {
                         _.addCssClass(this.eHeaderCell, cssClassItem);
                     });
                 }
