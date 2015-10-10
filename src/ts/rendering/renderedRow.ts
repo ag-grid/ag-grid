@@ -271,7 +271,30 @@ module ag.grid {
                         cellRenderer: rowCellRenderer
                     }
                 };
-                eRow = this.cellRendererMap['group'](params);
+
+                // start duplicated code
+                var actualCellRenderer: Function;
+                if (typeof rowCellRenderer === 'object' && rowCellRenderer !== null) {
+                    var cellRendererObj = <{ renderer: string }> rowCellRenderer;
+                    actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
+                    if (!actualCellRenderer) {
+                        throw 'Cell renderer ' + rowCellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
+                    }
+                } else if (typeof rowCellRenderer === 'function') {
+                    actualCellRenderer = <Function>rowCellRenderer;
+                } else {
+                    throw 'Cell Renderer must be String or Function';
+                }
+                var resultFromRenderer = actualCellRenderer(params);
+                // end duplicated code
+
+                if (_.isNodeOrElement(resultFromRenderer)) {
+                    // a dom node or element was returned, so add child
+                    eRow = resultFromRenderer;
+                } else {
+                    // otherwise assume it was html, so just insert
+                    eRow = _.loadTemplate(resultFromRenderer);
+                }
             }
             if (this.node.footer) {
                 _.addCssClass(eRow, 'ag-footer-cell-entire-row');

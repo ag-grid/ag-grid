@@ -627,6 +627,7 @@ module ag.grid {
                 refreshCell: this.refreshCell.bind(this),
                 eGridCell: this.vGridCell
             };
+            // start duplicated code
             var actualCellRenderer: Function;
             if (typeof cellRenderer === 'object' && cellRenderer !== null) {
                 var cellRendererObj = <{ renderer: string }> cellRenderer;
@@ -640,6 +641,7 @@ module ag.grid {
                 throw 'Cell Renderer must be String or Function';
             }
             var resultFromRenderer = actualCellRenderer(rendererParams);
+            // end duplicated code
             if (_.isNodeOrElement(resultFromRenderer)) {
                 // a dom node or element was returned, so add child
                 this.vParentOfValue.appendChild(resultFromRenderer);
