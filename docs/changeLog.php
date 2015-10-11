@@ -8,6 +8,7 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 2.3.1</h3>
     <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
     <li>Major: Added getBusinessKeyForNode() method, to allow easily identifying of rows for automated testing.</li>
     <li>Minor: Removed declaration of 'module' and 'exports' in main.ts, so no longer clashes with node.ts typics.</li>

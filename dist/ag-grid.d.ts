@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.3.0
+// Type definitions for ag-grid v2.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -183,6 +183,7 @@ declare module ag.grid {
         getRowClass(): any;
         getRowStyleFunc(): any;
         getRowClassFunc(): any;
+        getBusinessKeyForNodeFunc(): (node: RowNode) => string;
         getHeaderCellRenderer(): any;
         getApi(): GridApi;
         isEnableColResize(): boolean;
@@ -1698,6 +1699,7 @@ declare module ag.grid {
         getRowClass?: any;
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
+        getBusinessKeyForNode?(node: RowNode): string;
         onReady?(api: any): void;
         onModelUpdated?(): void;
         onCellClicked?(params: any): void;
@@ -1932,6 +1934,7 @@ declare module ag.grid {
         cellValueChanged: any;
         cellFocused: any;
         rowSelected: any;
+        rowDeselected: any;
         selectionChanged: any;
         beforeFilterChanged: any;
         afterFilterChanged: any;
@@ -2016,9 +2019,10 @@ declare module ag.grid {
     function initialiseAgGridWithAngular2(ng: any): void;
 }
 declare module ag.grid {
+    function initialiseAgGridWithAngular1(angular: any): void;
 }
-declare var exports: any;
-declare var module: any;
+declare module ag.grid {
+}
 declare module ag.grid {
     interface Filter {
         getGui(): any;

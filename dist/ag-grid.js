@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.3.0
+ * @version v2.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -684,6 +684,7 @@ var ag;
             GridOptionsWrapper.prototype.getRowClass = function () { return this.gridOptions.rowClass; };
             GridOptionsWrapper.prototype.getRowStyleFunc = function () { return this.gridOptions.getRowStyle; };
             GridOptionsWrapper.prototype.getRowClassFunc = function () { return this.gridOptions.getRowClass; };
+            GridOptionsWrapper.prototype.getBusinessKeyForNodeFunc = function () { return this.gridOptions.getBusinessKeyForNode; };
             GridOptionsWrapper.prototype.getHeaderCellRenderer = function () { return this.gridOptions.headerCellRenderer; };
             GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
             GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
@@ -4334,6 +4335,7 @@ var ag;
                     refreshCell: this.refreshCell.bind(this),
                     eGridCell: this.vGridCell
                 };
+                // start duplicated code
                 var actualCellRenderer;
                 if (typeof cellRenderer === 'object' && cellRenderer !== null) {
                     var cellRendererObj = cellRenderer;
@@ -4349,6 +4351,7 @@ var ag;
                     throw 'Cell Renderer must be String or Function';
                 }
                 var resultFromRenderer = actualCellRenderer(rendererParams);
+                // end duplicated code
                 if (_.isNodeOrElement(resultFromRenderer)) {
                     // a dom node or element was returned, so add child
                     this.vParentOfValue.appendChild(resultFromRenderer);
@@ -4432,6 +4435,15 @@ var ag;
                 this.vBodyRow.setAttribute('row', rowStr);
                 if (this.pinning) {
                     this.vPinnedRow.setAttribute('row', rowStr);
+                }
+                if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
+                    var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
+                    if (typeof businessKey === 'string' || typeof businessKey === 'number') {
+                        this.vBodyRow.setAttribute('row-id', businessKey);
+                        if (this.pinning) {
+                            this.vPinnedRow.setAttribute('row-id', businessKey);
+                        }
+                    }
                 }
                 // if showing scrolls, position on the container
                 if (!this.gridOptionsWrapper.isForPrint()) {
@@ -4565,7 +4577,31 @@ var ag;
                             cellRenderer: rowCellRenderer
                         }
                     };
-                    eRow = this.cellRendererMap['group'](params);
+                    // start duplicated code
+                    var actualCellRenderer;
+                    if (typeof rowCellRenderer === 'object' && rowCellRenderer !== null) {
+                        var cellRendererObj = rowCellRenderer;
+                        actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
+                        if (!actualCellRenderer) {
+                            throw 'Cell renderer ' + rowCellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
+                        }
+                    }
+                    else if (typeof rowCellRenderer === 'function') {
+                        actualCellRenderer = rowCellRenderer;
+                    }
+                    else {
+                        throw 'Cell Renderer must be String or Function';
+                    }
+                    var resultFromRenderer = actualCellRenderer(params);
+                    // end duplicated code
+                    if (_.isNodeOrElement(resultFromRenderer)) {
+                        // a dom node or element was returned, so add child
+                        eRow = resultFromRenderer;
+                    }
+                    else {
+                        // otherwise assume it was html, so just insert
+                        eRow = _.loadTemplate(resultFromRenderer);
+                    }
                 }
                 if (this.node.footer) {
                     _.addCssClass(eRow, 'ag-footer-cell-entire-row');
@@ -6164,10 +6200,14 @@ var ag;
                 }
             };
             RenderedHeaderCell.prototype.refreshFilterIcon = function () {
-                if (this.eFilterIcon) {
-                    var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
-                    var displayStyle = filterPresent ? 'inline' : 'none';
-                    this.eFilterIcon.style.display = displayStyle;
+                var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
+                if (filterPresent) {
+                    _.addCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
+                    this.eFilterIcon.style.display = 'inline';
+                }
+                else {
+                    _.removeCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
+                    this.eFilterIcon.style.display = 'none';
                 }
             };
             RenderedHeaderCell.prototype.refreshSortIcon = function () {
@@ -6257,6 +6297,7 @@ var ag;
                 this.eHeaderCell.style.width = newWidthPx;
             };
             RenderedHeaderCell.prototype.addHeaderClassesFromCollDef = function () {
+                var _this = this;
                 if (this.column.colDef.headerClass) {
                     var classToUse;
                     if (typeof this.column.colDef.headerClass === 'function') {
@@ -6277,7 +6318,7 @@ var ag;
                     }
                     else if (Array.isArray(classToUse)) {
                         classToUse.forEach(function (cssClassItem) {
-                            _.addCssClass(this.eHeaderCell, cssClassItem);
+                            _.addCssClass(_this.eHeaderCell, cssClassItem);
                         });
                     }
                 }
@@ -10247,6 +10288,7 @@ var ag;
                 this.cellValueChanged = new _ng.EventEmitter();
                 this.cellFocused = new _ng.EventEmitter();
                 this.rowSelected = new _ng.EventEmitter();
+                this.rowDeselected = new _ng.EventEmitter();
                 this.selectionChanged = new _ng.EventEmitter();
                 this.beforeFilterChanged = new _ng.EventEmitter();
                 this.afterFilterChanged = new _ng.EventEmitter();
@@ -10331,6 +10373,9 @@ var ag;
                     case grid.Events.EVENT_ROW_SELECTED:
                         emitter = this.rowSelected;
                         break;
+                    case grid.Events.EVENT_ROW_DESELECTED:
+                        emitter = this.rowDeselected;
+                        break;
                     case grid.Events.EVENT_SELECTION_CHANGED:
                         emitter = this.selectionChanged;
                         break;
@@ -10380,16 +10425,16 @@ var ag;
             AgGridNg2.annotations = [
                 new _ng.Component({
                     selector: 'ag-grid-ng2',
-                    events: [
+                    outputs: [
                         // core grid events
                         'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
-                        'rowSelected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+                        'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                         'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
                         'rowClicked', 'rowDoubleClicked', 'ready',
                         // column events
                         'columnEverythingChanged', 'columnPivotChanged', 'columnValueChanged', 'columnMoved',
                         'columnVisible', 'columnGroupOpened', 'columnResized', 'columnPinnedCountChanged'],
-                    properties: ['gridOptions']
+                    inputs: ['gridOptions']
                         .concat(grid.ComponentUtil.SIMPLE_PROPERTIES)
                         .concat(grid.ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
                         .concat(grid.ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
@@ -10408,6 +10453,46 @@ var ag;
             AgGridNg2.parameters = [[_ng.ElementRef]];
         }
         grid.initialiseAgGridWithAngular2 = initialiseAgGridWithAngular2;
+    })(grid = ag.grid || (ag.grid = {}));
+})(ag || (ag = {}));
+var ag;
+(function (ag) {
+    var grid;
+    (function (grid_4) {
+        // provide a reference to angular
+        var angular = window.angular;
+        // if angular is present, register the directive - checking for 'module' and 'directive' also to make
+        // sure it's Angular 1 and not Angular 2
+        if (typeof angular !== 'undefined' && typeof angular.module !== 'undefined' && angular.directive !== 'undefined') {
+            initialiseAgGridWithAngular1(angular);
+        }
+        function initialiseAgGridWithAngular1(angular) {
+            var angularModule = angular.module("agGrid", []);
+            angularModule.directive("agGrid", function () {
+                return {
+                    restrict: "A",
+                    controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController],
+                    scope: true
+                };
+            });
+        }
+        grid_4.initialiseAgGridWithAngular1 = initialiseAgGridWithAngular1;
+        function AngularDirectiveController($element, $scope, $compile, $attrs) {
+            var gridOptions;
+            var quickFilterOnScope;
+            var keyOfGridInScope = $attrs.agGrid;
+            quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
+            gridOptions = $scope.$eval(keyOfGridInScope);
+            if (!gridOptions) {
+                console.warn("WARNING - grid options for ag-Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
+                return;
+            }
+            var eGridDiv = $element[0];
+            var grid = new ag.grid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
+            $scope.$on("$destroy", function () {
+                grid.destroy();
+            });
+        }
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 /// <reference path='componentUtil.ts'/>
@@ -10506,24 +10591,12 @@ var ag;
 })(ag || (ag = {}));
 /// <reference path="grid.ts" />
 /// <reference path="components/agGridNg2.ts" />
+/// <reference path="components/agGridNg1.ts" />
 /// <reference path="components/agGridWebComponent.ts" />
+/// <reference path="../../typings/tsd" />
 (function () {
     // Establish the root object, `window` or `exports`
     var root = this;
-    // provide a reference to angular
-    var angular = window.angular;
-    // if angular is present, register the directive - checking for 'module' and 'directive' also to make
-    // sure it's Angular 1 and not Angular 2
-    if (typeof angular !== 'undefined' && typeof angular.module !== 'undefined' && angular.directive !== 'undefined') {
-        var angularModule = angular.module("agGrid", []);
-        angularModule.directive("agGrid", function () {
-            return {
-                restrict: "A",
-                controller: ['$element', '$scope', '$compile', '$attrs', AngularDirectiveController],
-                scope: true
-            };
-        });
-    }
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = angularGridGlobalFunction;
@@ -10531,22 +10604,6 @@ var ag;
         exports.angularGrid = angularGridGlobalFunction;
     }
     root.agGridGlobalFunc = angularGridGlobalFunction;
-    function AngularDirectiveController($element, $scope, $compile, $attrs) {
-        var gridOptions;
-        var quickFilterOnScope;
-        var keyOfGridInScope = $attrs.agGrid;
-        quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
-        gridOptions = $scope.$eval(keyOfGridInScope);
-        if (!gridOptions) {
-            console.warn("WARNING - grid options for ag-Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
-            return;
-        }
-        var eGridDiv = $element[0];
-        var grid = new ag.grid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
-        $scope.$on("$destroy", function () {
-            grid.destroy();
-        });
-    }
     // Global Function - this function is used for creating a grid, outside of any AngularJS
     function angularGridGlobalFunction(element, gridOptions) {
         // see if element is a query selector, or a real element
