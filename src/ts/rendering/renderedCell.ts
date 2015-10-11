@@ -508,10 +508,19 @@ module ag.grid {
 
         public createSelectionCheckbox() {
 
+            var paramsForCallbacks = {
+                rowIndex: this.rowIndex,
+                node: this.node
+            };
+
             this.eCheckbox = document.createElement('input');
             this.eCheckbox.type = "checkbox";
             this.eCheckbox.name = "name";
             this.eCheckbox.className = 'ag-selection-checkbox';
+
+            if (this.column.colDef.checkboxSelectionIdGetter) {
+                this.eCheckbox.id = this.column.colDef.checkboxSelectionIdGetter(paramsForCallbacks)
+            }
 
             this.eCheckbox.addEventListener('click', function (event) {
                 event.stopPropagation();

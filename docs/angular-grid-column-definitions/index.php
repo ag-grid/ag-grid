@@ -110,6 +110,10 @@ include '../documentation_header.php';
             <td>Set to true to render a selection checkbox in the column.</td>
         </tr>
         <tr>
+            <th>checkboxSelectionIdGetter</th>
+            <td>Function callback, sets the id attribute of the rendered checkbox. Provides rowIndex, and the node in it's parameter.</td>
+        </tr>
+        <tr>
             <th>suppressMenu</th>
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>

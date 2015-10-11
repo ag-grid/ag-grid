@@ -116,6 +116,15 @@ include '../documentation_header.php';
 
     <show-example example="example3" example-height="450px"></show-example>
 
+    <h3>Selection Checkbox with custom id</h3>
+
+    <p>
+        Testing user interfaces could be simplified by e.g.: assigning custom, unique id-s for each selection checkbox.<br/>
+        The checkboxSelectionIdGetter attribute could be used to generate a custom id for the rendered checkbox.<br/>
+    </p>
+
+    <show-example example="example5" example-height="450px"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>
