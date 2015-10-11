@@ -198,7 +198,7 @@ module ag.grid {
         (<any>AgGridNg2).annotations = [
             new _ng.Component({
                 selector: 'ag-grid-ng2',
-                events: [
+                outputs: [
                     // core grid events
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
                     'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
@@ -207,7 +207,7 @@ module ag.grid {
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                properties: ['gridOptions']
+                inputs: ['gridOptions']
                     .concat(ComponentUtil.SIMPLE_PROPERTIES)
                     .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
                     .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
