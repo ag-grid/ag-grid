@@ -90,7 +90,7 @@ module ag.grid {
                     if (node.group && index === 0) {
                         valueForCell =  this.createValueForGroupNode(node);
                     } else {
-                        valueForCell =  this.valueService.getValue(column.colDef, node.data, node);
+                        valueForCell =  this.valueService.getValue(column.colDef, node.data, node, 'cvs');
                     }
                     if (valueForCell === null || valueForCell === undefined) {
                         valueForCell = '';
@@ -132,7 +132,7 @@ module ag.grid {
             } else if (typeof value.toString === 'function') {
                 stringValue = value.toString();
             } else {
-                console.warn('known value type during csv conversio');
+                console.warn('known value type during csv conversion');
                 stringValue = '';
             }
 

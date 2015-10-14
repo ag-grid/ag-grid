@@ -31,6 +31,7 @@ include '../documentation_header.php';
         <li><b>api</b>: The API for the grid.</li>
         <li><b>context</b>: The grid context.</li>
         <li><b>getValue()</b>: A function, give it a column field name, and it returns the value for that column. Useful for chaining value getters.</li>
+        <li><b>renderingContext</b>: Optional rendering context under which this value is requested. Useful for returning HTML for displaying online or plain text for exporting to CSV or others.</li>
         </ul>
     </p>
 
