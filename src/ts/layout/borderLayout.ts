@@ -46,7 +46,7 @@ module ag.grid {
                         '<div id="west" style="height: 100%; float: left;"></div>' +
                         '<div id="east" style="height: 100%; float: right;"></div>' +
                         '<div id="center" style="height: 100%;"></div>' +
-                        '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                        '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                         '</div>';
                 } else {
                     template =
@@ -58,7 +58,7 @@ module ag.grid {
                         '<div id="center" style="height: 100%;"></div>' +
                         '</div>' +
                         '<div id="south"></div>' +
-                        '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                        '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                         '</div>';
                 }
                 this.layoutActive = true;
@@ -72,7 +72,7 @@ module ag.grid {
                     '<div id="center"></div>' +
                     '</div>' +
                     '<div id="south"></div>' +
-                    '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                    '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                     '</div>';
                 this.layoutActive = false;
             }
