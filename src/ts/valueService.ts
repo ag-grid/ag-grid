@@ -16,7 +16,7 @@ module ag.grid {
             this.columnController = columnController;
         }
 
-        public getValue(colDef: ColDef, data: any, node: any):any {
+        public getValue(colDef: ColDef, data: any, node: any, renderingContext?: any):any {
 
             var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
             var field = colDef.field;
@@ -25,7 +25,7 @@ module ag.grid {
 
             // if there is a value getter, this gets precedence over a field
             if (colDef.valueGetter) {
-                result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
+                result = this.executeValueGetter(colDef.valueGetter, data, colDef, node, renderingContext);
             } else if (field && data) {
                 result = data[field];
             } else {
@@ -35,13 +35,13 @@ module ag.grid {
             // the result could be an expression itself, if we are allowing cell values to be expressions
             if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
                 var cellValueGetter = result.substring(1);
-                result = this.executeValueGetter(cellValueGetter, data, colDef, node);
+                result = this.executeValueGetter(cellValueGetter, data, colDef, node, renderingContext);
             }
 
             return result;
         }
 
-        private executeValueGetter(valueGetter: any, data: any, colDef: any, node: any): any {
+        private executeValueGetter(valueGetter: any, data: any, colDef: any, node: any, renderingContext?: any): any {
 
             var context = this.gridOptionsWrapper.getContext();
             var api = this.gridOptionsWrapper.getApi();
@@ -52,7 +52,8 @@ module ag.grid {
                 colDef: colDef,
                 api: api,
                 context: context,
-                getValue: this.getValueCallback.bind(this, data, node)
+                getValue: this.getValueCallback.bind(this, data, node),
+                renderingContext: renderingContext
             };
 
             if (typeof valueGetter === 'function') {

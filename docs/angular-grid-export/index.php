@@ -49,6 +49,7 @@ include '../documentation_header.php';
         <li>Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name)</li>
         <li>Aggregated values are exported.</li>
         <li>For groups, the first exported value (column) will always have the group key.</li>
+        <li>Rendering context for valueGetters will be 'csv'. Check <a href="../angular-grid-value-getters/index.php">value getters</a> section for more information.
     </ul>
 
     <show-example example="exampleExport"></show-example>
