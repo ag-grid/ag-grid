@@ -1,3 +1,5 @@
+/// <reference path="../grid.ts" />
+
 module ag.grid {
 
     export class ComponentUtil {

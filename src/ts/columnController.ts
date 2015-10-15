@@ -279,7 +279,7 @@ module ag.grid {
         }
 
         public setColumnVisible(column: Column, visible: boolean): void {
-            column.visible = visible;
+            column.visible = column.colDef.suppressInvisible || visible;
 
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withColumn(column);
@@ -344,7 +344,7 @@ module ag.grid {
                     return;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                oldColumn.visible = stateItem.hide ? false : true;
+                oldColumn.visible = stateItem.hide && !stateItem.suppressInvisible ? false : true;
                 // if width provided and valid, use it, otherwise stick with the old width
                 oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
                 // accept agg func only if valid

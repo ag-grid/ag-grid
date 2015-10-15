@@ -1,4 +1,5 @@
 /// <reference path="../utils.ts" />
+/// <reference path="filter.ts" />
 /// <reference path="setFilterModel.ts" />
 /// <reference path="setFilterParameters.ts" />
 

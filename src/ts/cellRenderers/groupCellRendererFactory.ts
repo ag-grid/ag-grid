@@ -1,6 +1,9 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
+/// <reference path="../gridOptionsWrapper.ts" />
+/// <reference path="../selectionRendererFactory.ts" />
+/// <reference path="../expressionService.ts" />
 
 module ag.grid {
 
