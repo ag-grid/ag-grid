@@ -26,11 +26,15 @@ module ag.grid {
         }
 
         createColumnShowingSvg() {
-            return createCircle(true);
+            return createCircle(1);
         }
 
         createColumnHiddenSvg() {
-            return createCircle(false);
+            return createCircle(0);
+        }
+        
+        createColumnNoHideSvg(){
+            return createCircle(-1);
         }
 
         createMenuSvg() {
@@ -119,10 +123,20 @@ module ag.grid {
         eCircle.setAttribute("r", "5");
         eCircle.setAttribute("stroke", "black");
         eCircle.setAttribute("stroke-width", "2");
-        if (fill) {
+        if (fill == 1) {
             eCircle.setAttribute("fill", "black");
+        } else if (fill == 0) {
+            eCircle.setAttribute("fill", "none");
         } else {
             eCircle.setAttribute("fill", "none");
+            var eLine = document.createElementNS(SVG_NS, "line");
+            eLine.setAttribute("x1", "0");
+            eLine.setAttribute("y1", "0");
+            eLine.setAttribute("x2", "10");
+            eLine.setAttribute("y2", "10");
+            eLine.setAttribute("stroke", "black");
+            eLine.setAttribute("stroke-width", "2");
+            eSvg.appendChild(eLine);
         }
         eSvg.appendChild(eCircle);
 

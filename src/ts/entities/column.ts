@@ -22,7 +22,7 @@ module ag.grid {
         constructor(colDef: ColDef, actualWidth: any) {
             this.colDef = colDef;
             this.actualWidth = actualWidth;
-            this.visible = !colDef.hide;
+            this.visible = !colDef.hide || colDef.suppressInvisible;
             this.sort = colDef.sort;
             this.sortedAt = colDef.sortedAt;
             // in the future, the colKey might be something other than the index

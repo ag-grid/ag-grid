@@ -48,17 +48,20 @@ module ag.grid {
             utils.addCssClass(eVisibleIcons, 'ag-visible-icons');
             var eShowing = utils.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
             var eHidden = utils.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
+            var eNoHide = utils.createIcon('columnNoHide', this.gridOptionsWrapper, column, svgFactory.createColumnNoHideSvg);
             eVisibleIcons.appendChild(eShowing);
             eVisibleIcons.appendChild(eHidden);
-            eShowing.style.display = column.visible ? '' : 'none';
-            eHidden.style.display = column.visible ? 'none' : '';
+            eVisibleIcons.appendChild(eNoHide);
+            eShowing.style.display = column.visible && !column.colDef.suppressInvisible ? '' : 'none';
+            eHidden.style.display = column.visible || column.colDef.suppressInvisible ? 'none' : '';
+            eNoHide.style.display = column.colDef.suppressInvisible ? '' : 'none';
             eResult.appendChild(eVisibleIcons);
 
             var eValue = document.createElement('span');
             eValue.innerHTML = colDisplayName;
             eResult.appendChild(eValue);
 
-            if (!column.visible) {
+            if (!column.visible && !column.colDef.suppressInvisible) {
                 utils.addCssClass(eResult, 'ag-column-not-visible');
             }
 
@@ -68,7 +71,9 @@ module ag.grid {
             var that = this;
 
             function showEventListener() {
-                that.columnController.setColumnVisible(column, !column.visible);
+                if (!column.colDef.suppressInvisible) {
+                    that.columnController.setColumnVisible(column, !column.visible);                    
+                }
             }
 
             return eResult;
