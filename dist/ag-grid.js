@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.3.1
+ * @version v2.3.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7746,7 +7746,7 @@ var ag;
                                 '<div id="west" style="height: 100%; float: left;"></div>' +
                                 '<div id="east" style="height: 100%; float: right;"></div>' +
                                 '<div id="center" style="height: 100%;"></div>' +
-                                '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                                '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                                 '</div>';
                     }
                     else {
@@ -7759,7 +7759,7 @@ var ag;
                                 '<div id="center" style="height: 100%;"></div>' +
                                 '</div>' +
                                 '<div id="south"></div>' +
-                                '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                                '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                                 '</div>';
                     }
                     this.layoutActive = true;
@@ -7774,7 +7774,7 @@ var ag;
                             '<div id="center"></div>' +
                             '</div>' +
                             '<div id="south"></div>' +
-                            '<div id="overlay" style="position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
+                            '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
                             '</div>';
                     this.layoutActive = false;
                 }
