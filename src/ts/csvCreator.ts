@@ -24,16 +24,16 @@ module ag.grid {
             var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
+            var blobObject = new Blob([csvString], {
+                type: "text/csv;charset=utf-8;"
+            });
             // Internet Explorer
             if (window.navigator.msSaveOrOpenBlob) {
-                var fileData = [csvString];
-                var blobObject = new Blob(fileData);
                 window.navigator.msSaveOrOpenBlob(blobObject, fileName);
             } else {
                 // Chrome
-                var url = "data:text/plain;charset=utf-8," + encodeURIComponent(csvString);
                 var downloadLink = document.createElement("a");
-                downloadLink.href = url;
+                downloadLink.href = window.URL.createObjectURL(blobObject);
                 (<any>downloadLink).download = fileName;
 
                 document.body.appendChild(downloadLink);
