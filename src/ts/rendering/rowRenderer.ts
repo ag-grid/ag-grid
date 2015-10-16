@@ -310,7 +310,7 @@ module ag.grid {
                 last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
 
                 //add in buffer
-                var buffer = this.gridOptionsWrapper.getRowBuffer() || Constants.ROW_BUFFER_SIZE;
+                var buffer = this.gridOptionsWrapper.getRowBuffer();
                 first = first - buffer;
                 last = last + buffer;
 

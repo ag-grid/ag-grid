@@ -82,7 +82,6 @@ module ag.grid {
         public isDebug() { return isTrue(this.gridOptions.debug); }
         public getColumnDefs() { return this.gridOptions.columnDefs; }
         public getDatasource() { return this.gridOptions.datasource; }
-        public getRowBuffer() { return this.gridOptions.rowBuffer; }
         public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
         public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
         public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
@@ -146,6 +145,17 @@ module ag.grid {
                 return 200;
             } else {
                 return this.gridOptions.colWidth;
+            }
+        }
+
+        public getRowBuffer() {
+            if (typeof this.gridOptions.rowBuffer === 'number') {
+                if (this.gridOptions.rowBuffer < 0) {
+                    console.warn('ag-Grid: rowBuffer should not be negative')
+                }
+                return this.gridOptions.rowBuffer;
+            } else {
+                return constants.ROW_BUFFER_SIZE;
             }
         }
 
