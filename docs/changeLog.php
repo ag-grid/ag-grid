@@ -8,6 +8,9 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 2.x.x</h3>
+    <li>Bug fix: Export to csv was not managing large exports.</li>
+
     <h3>Version 2.3.2</h3>
     <li>Bug fix: 'no rows' overlay was blocking column headers, so if showing, couldn't change filter.</li>
 

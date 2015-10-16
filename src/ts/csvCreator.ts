@@ -33,7 +33,7 @@ module ag.grid {
             } else {
                 // Chrome
                 var downloadLink = document.createElement("a");
-                downloadLink.href = window.URL.createObjectURL(blobObject);
+                downloadLink.href = (<any>window).URL.createObjectURL(blobObject);
                 (<any>downloadLink).download = fileName;
 
                 document.body.appendChild(downloadLink);
