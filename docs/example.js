@@ -61,7 +61,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var gridOptions = {
         debug: true,
-        //rowsBuffer: 1,
+        //rowBuffer: 1,
         columnDefs: [],
         //singleClickEdit: true,
         rowData: null,
