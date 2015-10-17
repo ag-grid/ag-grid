@@ -175,7 +175,7 @@ include '../documentation_header.php';
                 already aggregated data to the grid).</td>
         </tr>
         <tr>
-            <th>rowsBuffer</th>
+            <th>rowBuffer</th>
             <td>The number of rows rendered outside the scrollable viewable area the grid renders. Defaults to 20.
                 Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.</td>
         </tr>
