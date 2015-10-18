@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.3.2
+ * @version v2.3.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -703,7 +703,6 @@ var ag;
             GridOptionsWrapper.prototype.isDebug = function () { return isTrue(this.gridOptions.debug); };
             GridOptionsWrapper.prototype.getColumnDefs = function () { return this.gridOptions.columnDefs; };
             GridOptionsWrapper.prototype.getDatasource = function () { return this.gridOptions.datasource; };
-            GridOptionsWrapper.prototype.getRowBuffer = function () { return this.gridOptions.rowBuffer; };
             GridOptionsWrapper.prototype.isEnableSorting = function () { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
             GridOptionsWrapper.prototype.isEnableCellExpressions = function () { return isTrue(this.gridOptions.enableCellExpressions); };
             GridOptionsWrapper.prototype.isEnableServerSideSorting = function () { return isTrue(this.gridOptions.enableServerSideSorting); };
@@ -765,6 +764,17 @@ var ag;
                 }
                 else {
                     return this.gridOptions.colWidth;
+                }
+            };
+            GridOptionsWrapper.prototype.getRowBuffer = function () {
+                if (typeof this.gridOptions.rowBuffer === 'number') {
+                    if (this.gridOptions.rowBuffer < 0) {
+                        console.warn('ag-Grid: rowBuffer should not be negative');
+                    }
+                    return this.gridOptions.rowBuffer;
+                }
+                else {
+                    return constants.ROW_BUFFER_SIZE;
                 }
             };
             GridOptionsWrapper.prototype.checkForDeprecated = function () {
@@ -1819,17 +1829,17 @@ var ag;
                 var csvString = this.getDataAsCsv(params);
                 var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
                 var fileName = fileNamePresent ? params.fileName : 'export.csv';
+                var blobObject = new Blob([csvString], {
+                    type: "text/csv;charset=utf-8;"
+                });
                 // Internet Explorer
                 if (window.navigator.msSaveOrOpenBlob) {
-                    var fileData = [csvString];
-                    var blobObject = new Blob(fileData);
                     window.navigator.msSaveOrOpenBlob(blobObject, fileName);
                 }
                 else {
                     // Chrome
-                    var url = "data:text/plain;charset=utf-8," + encodeURIComponent(csvString);
                     var downloadLink = document.createElement("a");
-                    downloadLink.href = url;
+                    downloadLink.href = window.URL.createObjectURL(blobObject);
                     downloadLink.download = fileName;
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
@@ -5307,7 +5317,7 @@ var ag;
                     first = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
                     last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
                     //add in buffer
-                    var buffer = this.gridOptionsWrapper.getRowBuffer() || grid.Constants.ROW_BUFFER_SIZE;
+                    var buffer = this.gridOptionsWrapper.getRowBuffer();
                     first = first - buffer;
                     last = last + buffer;
                     // adjust, in case buffer extended actual size

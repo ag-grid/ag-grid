@@ -10,7 +10,7 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="./style.css">
+        <link rel="stylesheet" href="../style.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -21,13 +21,13 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-        <script src="./dist/ag-grid.js?ignore=notused14"></script>
-        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused14">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused14">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused14">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused14">
+        <script src="../dist/ag-grid.js?ignore=notused14"></script>
+        <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused14">
+        <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused14">
+        <link rel="stylesheet" type="text/css" href="../dist/theme-dark.css?ignore=notused14">
+        <link rel="stylesheet" type="text/css" href="../dist/theme-blue.css?ignore=notused14">
 
-        <script src="example.js"></script>
+        <script src="noScrollLag.js"></script>
 
         <style>
             label {
@@ -161,7 +161,5 @@
             <div ag-grid="gridOptions" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
         </div>
     </body>
-
-    <?php include_once("analytics.php"); ?>
 
 </html>

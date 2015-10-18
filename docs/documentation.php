@@ -6,7 +6,16 @@ $pageKeyboards = "ag-Grid AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px 5px 5px;">
+<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px 5px 5px;">-->
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 2px; margin: 5px 5px 5px;">
+    <div style="text-align: center; font-size: 40px; background-color: black;">
+        <span style="color: gainsboro">
+            Over 1,000 Github Stars
+        </span>
+        <img src="http://rs902.pbsrc.com/albums/ac225/Sharkmandude/fireworks3.gif~c200" style="width: 100px"/>
+    </div>
+    <div style="padding: 10px;">
+
     <div style="float: left;">
         <img src="images/star.png"/>
     </div>
@@ -25,6 +34,9 @@ include 'documentation_header.php';
             </span>
         on Github
     </div>
+
+    </div>
+
 </div>
 
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"

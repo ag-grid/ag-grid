@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.3.2
+// Type definitions for ag-grid v2.3.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -202,7 +202,6 @@ declare module ag.grid {
         isDebug(): boolean;
         getColumnDefs(): any[];
         getDatasource(): any;
-        getRowBuffer(): number;
         isEnableSorting(): boolean;
         isEnableCellExpressions(): boolean;
         isEnableServerSideSorting(): boolean;
@@ -229,6 +228,7 @@ declare module ag.grid {
         doesExternalFilterPass(node: RowNode): boolean;
         getGroupRowInnerRenderer(): (params: any) => void;
         getColWidth(): number;
+        getRowBuffer(): number;
         private checkForDeprecated();
         getPinnedColCount(): number;
         getLocaleTextFunc(): Function;

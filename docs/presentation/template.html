@@ -1,0 +1,94 @@
+
+<html>
+    <body>
+
+
+        <div class="form">
+            <div class="form-line">
+                <span class="form-label">Name</span>
+                <span class="form-value">{{name}}</span>
+            </div>
+            <div class="form-line">
+                <span class="form-label">Address</span>
+                <span class="form-value">{{address}}</span>
+            </div>
+        </div>
+
+
+        <p/>&nbsp;
+        <p/>&nbsp;
+        <p/>&nbsp;
+        <p/>&nbsp;
+
+        <style>
+            .form {
+                background-color: lightgrey;
+                display: inline-block;
+                padding: 10px;
+            }
+            .form-label {
+                width: 70px;
+                font-weight: bold;
+                display: inline-block;
+                padding: 5px;
+            }
+        </style>
+
+        <div class="form">
+            <div class="form-line">
+                <span class="form-label">Name</span>
+                <span class="form-value">Superman</span>
+            </div>
+            <div class="form-line">
+                <span class="form-label">Address</span>
+                <span class="form-value">Planet Krypton</span>
+            </div>
+        </div>
+
+
+        <script>
+
+            function controller($scope) {
+                $scope.name = 'Superman';
+                $scope.address = 'Planet Krypton';
+            }
+
+
+
+
+            var data = [
+                {name: 'Toyota'},
+                {name: 'Mercedes'},
+                {name: 'Porsche'}
+            ];
+
+
+    var bla_bla_bla;
+            var cols = [];
+
+        function gridEngine() {
+            data.forEach( function() {
+                // do stuff
+            });
+        }
+
+
+        data.forEach( function(data) {
+            cols.forEach( function(col) {
+                var e = document.createElement("div");
+                // setup
+                e.innerHTML = data[col.field];
+                e.addChild(bla_bla_bla);
+                e.addListener(bla_bla_bla);
+                // transform
+                e.style = bla_bla_bla;
+                e.class = bla_bla_bla;
+            });
+        });
+
+
+        </script>
+
+
+    </body>
+</html>
