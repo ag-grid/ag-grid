@@ -42,69 +42,21 @@ include 'documentation_header.php';
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
      xmlns="http://www.w3.org/1999/html">
 
-    <table>
-        <tr>
-            <td valign="top">
                 <p>
                     <b>
                         20th & 21st October
                     </b>
                 <p/>
+    <a href="http://angularconnect.com/"><img src="images/angularConnectBanner.png"/></a>
                 <p>
                     I'll be presenting at Angular Connect Lnodon 2015
                     giving a talk on building performant components for AngularJS.
                 </p>
-            </td>
-            <td>
-                <a href="http://angularconnect.com/"><img src="images/angularConnectBanner.png"/></a>
-            </td>
-        </tr>
-    </table>
-
-</div>
-
-
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
-     xmlns="http://www.w3.org/1999/html">
-    <p>
-        <b>11th Oct 2015 - Release of ag-Grid v2.3.1 <!--- Over 800 stars on Github and counting!!--></b>
-    </p>
-
-    <p>
-        This weeks release sees the following features added:
-    <ul>
-
-        <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
-        <li>Major: Added getBusinessKeyForNode() method, to allow easily identifying of rows for automated testing.</li>
-        <li>Minor: Removed declaration of 'module' and 'exports' in main.ts, so no longer clashes with node.ts typics.</li>
-        <li>Minor: Fixed headerClass, array of classes was not working</li>
-    </ul>
-    </p>
-
-    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
-</div>
-
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
-     xmlns="http://www.w3.org/1999/html">
-    <p>
-        <b>6th Sep 2015 - Release of ag-Grid v2.3.0 <!--- Over 800 stars on Github and counting!!--></b>
-    </p>
-
-    <p>
-        A midweek relesae, because my job needed something done!!
-    <ul>
-        <li>Major - Introduced 'no rows' message for when grid is empty.</li>
-        <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
-        <li>Major - Moved to AngularJS 2 alpha 38.</li>
-        <li>Major - Took out auto loading of AngularJS 2 module with JSPM (as some people were using ag-Grid with JSPM but not with Angular 2).</li>
-    </ul>
-
-    </p>
-
-    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ceolter</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                <p>
+                    Because of this, I will probably be a bit slow on the
+                    forum this week. Also no major release this weekend.
+                    I've been busy preparing for my Angular Connect presentation.
+                </p>
 
 </div>
 

@@ -8,8 +8,8 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 2.x.x</h3>
-    <li>Buf fix: Setting rowBuffer to zero did not work.</li>
+    <h3>Version 2.3.3</h3>
+    <li>Bug fix: Setting rowBuffer to zero did not work.</li>
     <li>Bug fix: Export to csv was not managing large exports.</li>
     <li>Minor: Moved Angular 2 examples to alpha 44.</li>
 
