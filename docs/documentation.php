@@ -10,7 +10,7 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 2px; margin: 5px 5px 5px;">
     <div style="text-align: center; font-size: 40px; background-color: black;">
         <span style="color: gainsboro">
-            Over 1,000 Github Stars
+            Keep the stars coming!!
         </span>
         <img src="http://rs902.pbsrc.com/albums/ac225/Sharkmandude/fireworks3.gif~c200" style="width: 100px"/>
     </div>
@@ -39,24 +39,30 @@ include 'documentation_header.php';
 
 </div>
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;"
-     xmlns="http://www.w3.org/1999/html">
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-                <p>
-                    <b>
-                        20th & 21st October
-                    </b>
-                <p/>
-    <a href="http://angularconnect.com/"><img src="images/angularConnectBanner.png"/></a>
-                <p>
-                    I'll be presenting at Angular Connect Lnodon 2015
-                    giving a talk on building performant components for AngularJS.
-                </p>
-                <p>
-                    Because of this, I will probably be a bit slow on the
-                    forum this week. Also no major release this weekend.
-                    I've been busy preparing for my Angular Connect presentation.
-                </p>
+    <div style="float: left; width: 240px;">
+        <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+            <img src="images/angularConnectTalk.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+                Building Performant components for AngularJS
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            21st October 2015
+        </div>
+    </div>
+    <div style="color: #767676">
+        Angular Connect
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Niall Crosby giving a talk on how he got ag-Grid to work fast. Please 'like' this
+        on YouTube, help promote :)
+    </div>
 
 </div>
 

@@ -7,6 +7,34 @@ $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 include('mediaHeader.php');
 ?>
 
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
+        <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+            <img src="images/angularConnectTalk.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+                Building Performant components for AngularJS
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            21st October 2015
+        </div>
+    </div>
+    <div style="color: #767676">
+        Angular Connect
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Niall Crosby giving a talk on how he got ag-Grid to work fast. This does not mean
+        ag-Grid only works with Angular, it's a framework agnostic grid, it works using
+        plain Javascript also.
+    </div>
+
+</div>
+
 <div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="display: inline-block; width: 100%;">
         <div style="float: left;">
