@@ -85,11 +85,7 @@ module ag.grid {
             this.setupColumns();
             this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
 
-            // if no data provided initially, and not doing infinite scrolling, show the loading panel
-            var showLoading = !this.gridOptionsWrapper.getRowData() && !this.gridOptionsWrapper.isVirtualPaging();
-            if (showLoading) {
-                this.showLoadingOverlay();
-            }
+            this.decideStartingOverlay();
 
             // if datasource provided, use it
             if (this.gridOptionsWrapper.getDatasource()) {
@@ -106,6 +102,21 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
 
             this.logger.log('initialised');
+        }
+
+        private decideStartingOverlay() {
+            // if not virtual paging, then we might need to show an overlay if no data
+            var notDoingVirtualPaging = !this.gridOptionsWrapper.isVirtualPaging();
+            if (notDoingVirtualPaging) {
+                var showLoading = !this.gridOptionsWrapper.getRowData();
+                var showNoData = this.gridOptionsWrapper.getRowData() && this.gridOptionsWrapper.getRowData().length == 0;
+                if (showLoading) {
+                    this.showLoadingOverlay();
+                }
+                if (showNoData) {
+                    this.showNoRowsOverlay();
+                }
+            }
         }
 
         private addWindowResizeListener(): void {
