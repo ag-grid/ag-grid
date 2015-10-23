@@ -1,8 +1,8 @@
 <?php
 $key = "Getting Started ng2";
-$pageTitle = "Angular JS 2 Grid";
-$pageDescription = "Angular JS 2 Grid";
-$pageKeyboards = "Angular JS 2 Grid";
+$pageTitle = "Best Angular 2 Grid";
+$pageDescription = "Shows and example of a data grid for using with Angular 2.";
+$pageKeyboards = "Angular 2 Grid";
 include '../documentation_header.php';
 ?>
 

@@ -52,7 +52,8 @@ module ag.grid {
             }
 
             // response success, so process it
-            this.templateCache[url] = httpResult.response;
+            // in IE9 the response is in - responseText
+            this.templateCache[url] = httpResult.response || httpResult.responseText;
 
             // inform all listeners that this is now in the cache
             var callbacks = this.waitingCallbacks[url];

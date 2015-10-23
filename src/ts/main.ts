@@ -25,7 +25,7 @@
         if (typeof element === 'string') {
             eGridDiv = document.querySelector(element);
             if (!eGridDiv) {
-                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, Angular Grid initialisation aborted.');
+                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, ag-Grid initialisation aborted.');
                 return;
             }
         } else {

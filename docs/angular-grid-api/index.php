@@ -331,6 +331,27 @@ include '../documentation_header.php';
             <td>Similar to exportDataAsCsv, except returns result as a string rather than export it.</td>
         </tr>
         <tr>
+            <th>addEventListener(eventType, listener)</th>
+            <td>Add an event listener for the said event type. Works similar to addEventListener for a browser DOM element.</td>
+        </tr>
+        <tr>
+            <th>addGlobalListener(listener)</th>
+            <td>Add an event listener for all event types coming from the grid.</td>
+        </tr>
+        <tr>
+            <th>removeEventListener(eventType, listener)</th>
+            <td>Remove an event listener.</td>
+        </tr>
+        <tr>
+            <th>removeGlobalListener(listener)</th>
+            <td>Remove a global event listener.</td>
+        </tr>
+        <tr>
+            <th>dispatchEvent(eventType, event)</th>
+            <td>Dispatch an event through the grid. Useful if you are doing a custom cellRenderer and want
+                to fire events such as 'cellValueChanged'.</td>
+        </tr>
+        <tr>
             <th>destroy()</th>
             <td>Gets the grid to destroy and release resources. If you are using Angular (version 1 or 2)
             you do not need to call this, as the grid links in with the AngularJS lifecycle. However if you

@@ -379,6 +379,10 @@ module ag.grid {
             this.eventService.removeGlobalListener(listener);
         }
 
+        public dispatchEvent(eventType: string, event?: any): void {
+            this.eventService.dispatchEvent(eventType, event);
+        }
+
         public refreshPivot(): void {
             this.grid.refreshPivot();
         }
