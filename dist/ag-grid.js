@@ -3449,7 +3449,8 @@ var ag;
                     return;
                 }
                 // response success, so process it
-                this.templateCache[url] = httpResult.response;
+                // in IE9 the response is under - responseText
+                this.templateCache[url] = httpResult.response || httpResult.responseText;
                 // inform all listeners that this is now in the cache
                 var callbacks = this.waitingCallbacks[url];
                 for (var i = 0; i < callbacks.length; i++) {
