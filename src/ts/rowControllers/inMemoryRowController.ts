@@ -8,6 +8,8 @@ module ag.grid {
     var _ = Utils;
     var constants = Constants;
 
+    enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
+
     export class InMemoryRowController {
 
         private gridOptionsWrapper: GridOptionsWrapper;
@@ -94,28 +96,43 @@ module ag.grid {
         }
 
         public forEachNode(callback: Function) {
-            this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback);
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback, RecursionType.Normal, 0);
         }
 
         public forEachNodeAfterFilter(callback: Function) {
-            this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback);
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback, RecursionType.AfterFilter, 0);
         }
 
         public forEachNodeAfterFilterAndSort(callback: Function) {
-            this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback);
+            this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
         }
 
         // iterates through each item in memory, and calls the callback function
-        private recursivelyWalkNodesAndCallback(list: any, callback: Function) {
-            if (list) {
-                for (var i = 0; i < list.length; i++) {
-                    var item = list[i];
-                    callback(item);
-                    if (item.group && item.children) {
-                        this.recursivelyWalkNodesAndCallback(item.children, callback);
+        // nodes - the rowNodes to traverse
+        // callback - the user provided callback
+        // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
+        // index - works similar to the index in forEach in javascripts array function
+        private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
+            if (nodes) {
+                for (var i = 0; i < nodes.length; i++) {
+                    var node = nodes[i];
+                    callback(node, index++);
+                    // go to the next level if it is a group
+                    if (node.group) {
+                        // depending on the recursion type, we pick a difference set of children
+                        var nodeChildren: RowNode[];
+                        switch (recursionType) {
+                            case RecursionType.Normal : nodeChildren = node.children; break;
+                            case RecursionType.AfterFilter : nodeChildren = node.childrenAfterFilter; break;
+                            case RecursionType.AfterFilterAndSort : nodeChildren = node.childrenAfterSort; break;
+                        }
+                        if (nodeChildren) {
+                            index = this.recursivelyWalkNodesAndCallback(node.children, callback, recursionType, index);
+                        }
                     }
                 }
             }
+            return index;
         }
 
         public updateModel(step: any) {

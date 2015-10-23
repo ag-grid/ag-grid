@@ -10,6 +10,7 @@ include 'documentation_header.php';
 
     <h3>Version ???</h3>
     <li>Bug fix: Template cache now working with IE9</li>
+    <li>Bug fix: forEachNodeAfterFilter and forEachNodeAfterFilterAndSort were not working propertly when grouping.</li>
 
     <h3>Version 2.3.3</h3>
     <li>Bug fix: Setting rowBuffer to zero did not work.</li>
