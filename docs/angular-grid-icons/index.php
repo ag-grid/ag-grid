@@ -49,7 +49,7 @@ gridOptions.icons = {
     groupExpanded: myGroupExpandedIcon,
     groupContracted: myGroupContractedIcon,
     headerGroupOpened: myGroupExpandedIcon,
-    headerGroupClosed: myGroupContractedIcon
+    headerGroupClosed: myGroupContractedIcon,
     columnVisible: myColumnVisibleIcon,
     columnHidden: myColumnHiddenIcon,
     columnRemoveFromGroup: myColumnRemoveFromGroupIcon
