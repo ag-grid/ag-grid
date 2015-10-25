@@ -10,7 +10,9 @@ include 'documentation_header.php';
 
     <h3>Version ???</h3>
     <li>Bug fix: Template cache now working with IE9</li>
-    <li>Bug fix: forEachNodeAfterFilter and forEachNodeAfterFilterAndSort were not working propertly when grouping.</li>
+    <li>Bug fix: forEachNodeAfterFilter and forEachNodeAfterFilterAndSort were not working properly when grouping.</li>
+    <li>Minor: Now set filter can take a comparator.</li>
+    <li>Bug fix: Was not possible to add event listeners or set attributes to virtual elements after binding. This is now possible.</li>
 
     <h3>Version 2.3.3</h3>
     <li>Bug fix: Setting rowBuffer to zero did not work.</li>

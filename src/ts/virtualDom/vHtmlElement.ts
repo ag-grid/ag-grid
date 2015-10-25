@@ -191,23 +191,25 @@ module ag.vdom {
 
         public setAttribute(key: string, value: string) {
             if (this.bound) {
-                console.error('cannot setAttribute to already bound VHTMLElement');
+                this.element.setAttribute(key, value);
+            } else {
+                if (!this.attributes) {
+                    this.attributes = {};
+                }
+                this.attributes[key] = value;
             }
-            if (!this.attributes) {
-                this.attributes = {};
-            }
-            this.attributes[key] = value;
         }
 
         public addEventListener(event: string, listener: EventListener) {
             if (this.bound) {
-                console.error('cannot addEventListener to already bound VHTMLElement');
+                this.element.addEventListener(event, listener);
+            } else {
+                if (!this.eventListeners) {
+                    this.eventListeners = [];
+                }
+                var entry = new VEventListener(event, listener);
+                this.eventListeners.push(entry);
             }
-            if (!this.eventListeners) {
-                this.eventListeners = [];
-            }
-            var entry = new VEventListener(event, listener);
-            this.eventListeners.push(entry);
         }
 
         public elementAttached(element: Element): void {
