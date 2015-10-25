@@ -1,7 +1,7 @@
 {
   "name": "ag-grid",
-  "version": "2.3.3",
-  "description": "Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "version": "2.3.4",
+  "description": "Advanced Framework Agnostic Javascript Datagrid.",
   "main": "dist/ag-grid.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

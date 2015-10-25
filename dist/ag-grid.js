@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
- * @version v2.3.3
+ * @version v2.3.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2439,12 +2439,7 @@ var ag;
                 else {
                     this.allUniqueValues = _.toStrings(this.getUniqueValues(false));
                 }
-                if (this.colDef.comparator) {
-                    this.allUniqueValues.sort(this.colDef.comparator);
-                }
-                else {
-                    this.allUniqueValues.sort(_.defaultComparator);
-                }
+                this.sortValues(this.allUniqueValues);
             };
             SetFilterModel.prototype.createAvailableUniqueValues = function () {
                 var dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;
@@ -2453,11 +2448,17 @@ var ag;
                     return;
                 }
                 this.availableUniqueValues = _.toStrings(this.getUniqueValues(true));
-                if (this.colDef.comparator) {
-                    this.availableUniqueValues.sort(this.colDef.comparator);
+                this.sortValues(this.availableUniqueValues);
+            };
+            SetFilterModel.prototype.sortValues = function (values) {
+                if (this.filterParams && this.filterParams.comparator) {
+                    values.sort(this.filterParams.comparator);
+                }
+                else if (this.colDef.comparator) {
+                    values.sort(this.colDef.comparator);
                 }
                 else {
-                    this.availableUniqueValues.sort(_.defaultComparator);
+                    values.sort(_.defaultComparator);
                 }
             };
             SetFilterModel.prototype.getUniqueValues = function (filterOutNotAvailable) {
@@ -3449,7 +3450,8 @@ var ag;
                     return;
                 }
                 // response success, so process it
-                this.templateCache[url] = httpResult.response;
+                // in IE9 the response is in - responseText
+                this.templateCache[url] = httpResult.response || httpResult.responseText;
                 // inform all listeners that this is now in the cache
                 var callbacks = this.waitingCallbacks[url];
                 for (var i = 0; i < callbacks.length; i++) {
@@ -3746,22 +3748,26 @@ var ag;
             };
             VHtmlElement.prototype.setAttribute = function (key, value) {
                 if (this.bound) {
-                    console.error('cannot setAttribute to already bound VHTMLElement');
+                    this.element.setAttribute(key, value);
                 }
-                if (!this.attributes) {
-                    this.attributes = {};
+                else {
+                    if (!this.attributes) {
+                        this.attributes = {};
+                    }
+                    this.attributes[key] = value;
                 }
-                this.attributes[key] = value;
             };
             VHtmlElement.prototype.addEventListener = function (event, listener) {
                 if (this.bound) {
-                    console.error('cannot addEventListener to already bound VHTMLElement');
+                    this.element.addEventListener(event, listener);
                 }
-                if (!this.eventListeners) {
-                    this.eventListeners = [];
+                else {
+                    if (!this.eventListeners) {
+                        this.eventListeners = [];
+                    }
+                    var entry = new VEventListener(event, listener);
+                    this.eventListeners.push(entry);
                 }
-                var entry = new VEventListener(event, listener);
-                this.eventListeners.push(entry);
             };
             VHtmlElement.prototype.elementAttached = function (element) {
                 _super.prototype.elementAttached.call(this, element);
@@ -6687,6 +6693,13 @@ var ag;
     (function (grid) {
         var _ = grid.Utils;
         var constants = grid.Constants;
+        var RecursionType;
+        (function (RecursionType) {
+            RecursionType[RecursionType["Normal"] = 0] = "Normal";
+            RecursionType[RecursionType["AfterFilter"] = 1] = "AfterFilter";
+            RecursionType[RecursionType["AfterFilterAndSort"] = 2] = "AfterFilterAndSort";
+        })(RecursionType || (RecursionType = {}));
+        ;
         var InMemoryRowController = (function () {
             function InMemoryRowController() {
                 this.createModel();
@@ -6748,25 +6761,46 @@ var ag;
                 this.forEachNode(callback);
             };
             InMemoryRowController.prototype.forEachNode = function (callback) {
-                this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback);
+                this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback, RecursionType.Normal, 0);
             };
             InMemoryRowController.prototype.forEachNodeAfterFilter = function (callback) {
-                this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback);
+                this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback, RecursionType.AfterFilter, 0);
             };
             InMemoryRowController.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-                this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback);
+                this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
             };
             // iterates through each item in memory, and calls the callback function
-            InMemoryRowController.prototype.recursivelyWalkNodesAndCallback = function (list, callback) {
-                if (list) {
-                    for (var i = 0; i < list.length; i++) {
-                        var item = list[i];
-                        callback(item);
-                        if (item.group && item.children) {
-                            this.recursivelyWalkNodesAndCallback(item.children, callback);
+            // nodes - the rowNodes to traverse
+            // callback - the user provided callback
+            // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
+            // index - works similar to the index in forEach in javascripts array function
+            InMemoryRowController.prototype.recursivelyWalkNodesAndCallback = function (nodes, callback, recursionType, index) {
+                if (nodes) {
+                    for (var i = 0; i < nodes.length; i++) {
+                        var node = nodes[i];
+                        callback(node, index++);
+                        // go to the next level if it is a group
+                        if (node.group) {
+                            // depending on the recursion type, we pick a difference set of children
+                            var nodeChildren;
+                            switch (recursionType) {
+                                case RecursionType.Normal:
+                                    nodeChildren = node.children;
+                                    break;
+                                case RecursionType.AfterFilter:
+                                    nodeChildren = node.childrenAfterFilter;
+                                    break;
+                                case RecursionType.AfterFilterAndSort:
+                                    nodeChildren = node.childrenAfterSort;
+                                    break;
+                            }
+                            if (nodeChildren) {
+                                index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
+                            }
                         }
                     }
                 }
+                return index;
             };
             InMemoryRowController.prototype.updateModel = function (step) {
                 var _this = this;
@@ -9461,6 +9495,9 @@ var ag;
             GridApi.prototype.removeGlobalListener = function (listener) {
                 this.eventService.removeGlobalListener(listener);
             };
+            GridApi.prototype.dispatchEvent = function (eventType, event) {
+                this.eventService.dispatchEvent(eventType, event);
+            };
             GridApi.prototype.refreshPivot = function () {
                 this.grid.refreshPivot();
             };
@@ -9594,11 +9631,7 @@ var ag;
                 this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData());
                 this.setupColumns();
                 this.updateModelAndRefresh(grid.Constants.STEP_EVERYTHING);
-                // if no data provided initially, and not doing infinite scrolling, show the loading panel
-                var showLoading = !this.gridOptionsWrapper.getRowData() && !this.gridOptionsWrapper.isVirtualPaging();
-                if (showLoading) {
-                    this.showLoadingOverlay();
-                }
+                this.decideStartingOverlay();
                 // if datasource provided, use it
                 if (this.gridOptionsWrapper.getDatasource()) {
                     this.setDatasource();
@@ -9611,6 +9644,20 @@ var ag;
                 this.eventService.dispatchEvent(grid.Events.EVENT_READY, readyParams);
                 this.logger.log('initialised');
             }
+            Grid.prototype.decideStartingOverlay = function () {
+                // if not virtual paging, then we might need to show an overlay if no data
+                var notDoingVirtualPaging = !this.gridOptionsWrapper.isVirtualPaging();
+                if (notDoingVirtualPaging) {
+                    var showLoading = !this.gridOptionsWrapper.getRowData();
+                    var showNoData = this.gridOptionsWrapper.getRowData() && this.gridOptionsWrapper.getRowData().length == 0;
+                    if (showLoading) {
+                        this.showLoadingOverlay();
+                    }
+                    if (showNoData) {
+                        this.showNoRowsOverlay();
+                    }
+                }
+            };
             Grid.prototype.addWindowResizeListener = function () {
                 var that = this;
                 // putting this into a function, so when we remove the function,
@@ -10621,7 +10668,7 @@ var ag;
         if (typeof element === 'string') {
             eGridDiv = document.querySelector(element);
             if (!eGridDiv) {
-                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, Angular Grid initialisation aborted.');
+                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, ag-Grid initialisation aborted.');
                 return;
             }
         }

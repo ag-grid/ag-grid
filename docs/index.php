@@ -152,6 +152,9 @@
                         <div style="font-size: 16px;">
                             Feature rich, high performance, no dependencies.
                         </div>
+                        <div>
+                            'ag' stands for <b>Ag</b>nostic - works with any framework
+                        </div>
 
 <!--
 
@@ -182,6 +185,17 @@
             </div>
         </div>
 
+<!--        <div class="container">
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-12" style="text-align: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="horizontal-rule">
+            <hr/>
+        </div>
+-->
         <div class="container">
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-3" style="text-align: center;">

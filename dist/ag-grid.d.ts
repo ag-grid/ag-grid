@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.3.3
+// Type definitions for ag-grid v2.3.4
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -561,7 +561,7 @@ declare module ag.grid {
         /** Name of function to use for aggregation. One of [sum,min,max]. */
         aggFunc?: string;
         /** Comparator function for custom sorting. */
-        comparator?: Function;
+        comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
         /** Set to true to render a selection checkbox in the column. */
         checkboxSelection?: boolean;
         /** Set to true if no menu should be shown for this column header. */
@@ -626,16 +626,17 @@ declare module ag.grid {
         refreshAfterAnyFilterChanged(): void;
         private createAllUniqueValues();
         private createAvailableUniqueValues();
+        private sortValues(values);
         private getUniqueValues(filterOutNotAvailable);
         setMiniFilter(newMiniFilter: any): boolean;
         getMiniFilter(): any;
         private processMiniFilter();
-        getDisplayedValueCount(): any;
+        getDisplayedValueCount(): number;
         getDisplayedValue(index: any): any;
         selectEverything(): void;
         isFilterActive(): boolean;
         selectNothing(): void;
-        getUniqueValueCount(): any;
+        getUniqueValueCount(): number;
         getUniqueValue(index: any): any;
         unselectValue(value: any): void;
         selectValue(value: any): void;
@@ -659,6 +660,8 @@ declare module ag.grid {
         newRowsAction?: string;
         /** If true, the filter will not remove items that are no longer availabe due to other filters. */
         suppressRemoveEntries?: boolean;
+        /** Comparator for sorting. If not provided, the colDef comparator is used. If colDef also not provided, the default (agGrid provided) comparator is used.*/
+        comparator?: (a: any, b: any) => number;
     }
 }
 declare module ag.grid {
@@ -1245,7 +1248,7 @@ declare module ag.grid {
         forEachNode(callback: Function): void;
         forEachNodeAfterFilter(callback: Function): void;
         forEachNodeAfterFilterAndSort(callback: Function): void;
-        private recursivelyWalkNodesAndCallback(list, callback);
+        private recursivelyWalkNodesAndCallback(nodes, callback, recursionType, index);
         updateModel(step: any): void;
         private defaultGroupAggFunctionFactory(valueColumns, valueKeys);
         doAggregate(): void;
@@ -1819,6 +1822,7 @@ declare module ag.grid {
         addGlobalListener(listener: Function): void;
         removeEventListener(eventType: string, listener: Function): void;
         removeGlobalListener(listener: Function): void;
+        dispatchEvent(eventType: string, event?: any): void;
         refreshPivot(): void;
         destroy(): void;
     }
@@ -1864,6 +1868,7 @@ declare module ag.grid {
         private eUserProvidedDiv;
         private logger;
         constructor(eGridDiv: any, gridOptions: any, globalEventListener?: Function, $scope?: any, $compile?: any, quickFilterOnScope?: any);
+        private decideStartingOverlay();
         private addWindowResizeListener();
         getRowModel(): any;
         private periodicallyDoLayout();

@@ -119,7 +119,7 @@ include('../mediaHeader.php');
             <p>
                 I have been writing software all my life! Starting with Assembly, C++ and MFC,
                 moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript / AngularJS.
+                Java / Javascript.
             </p>
             <p>
                 Consultant working in the financial industry, specialising in web based reporting applications.

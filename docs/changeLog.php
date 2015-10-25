@@ -8,7 +8,7 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version ???</h3>
+    <h3>Version 2.3.4</h3>
     <li>Bug fix: Template cache now working with IE9</li>
     <li>Bug fix: forEachNodeAfterFilter and forEachNodeAfterFilterAndSort were not working properly when grouping.</li>
     <li>Minor: Now set filter can take a comparator.</li>
