@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Embracing the Future with AngularJS 2.0, Web Components and ag-Grid";
-$pageDescription = "A discussion on how ag-Grid is positioning itself to take advantage of AngularJS 2.0 and Web Components.";
-$pageKeyboards = "web components angularjs 2 ag-grid grid";
+$pageTitle = "Stepping it Up, ag-Grid Focuses on Agnostic in 2016";
+$pageDescription = "2015 was a busy year for ag-Grid. This article discuses how things have gone and what 2016 holds in store for ag-Grid.";
+$pageKeyboards = "javscript ag-grid grid agnostic component";
 
 include('../mediaHeader.php');
 ?>
@@ -64,10 +64,10 @@ include('../mediaHeader.php');
             This has two advantages:
         <ul>
             <li>
-            Speed - although templates themselves are not necessarily that much slower, the added 'waffle' frameworks
+            <b>Speed</b> - although templates themselves are not necessarily that much slower, the added 'waffle' frameworks
             put in all add up to slowness.
             </li>
-            <li>Less code - in particular, no HTML and no bindings to worry about. Less code is easier to understand,
+            <li><b>Less code</b> - in particular, no HTML and no bindings to worry about. Less code is easier to understand,
             easier to test, easier to maintain.</li>
         </ul>
         </p>
@@ -123,19 +123,21 @@ include('../mediaHeader.php');
         <p>
             I want to make ag-Grid the best grid it can possibly be. Originally the plan was just to create a
             grid that matched my own requirements. However the community has encouraged me to want to provide
-            the best grid available for Javascript development. Next year plan to focus on the following:
+            the best grid available for Javascript development. Next year I plan to focus on the following:
             <ul>
-            <li>Complete Feature Gap: Some 'core' items still need to get done, such as dragging columns to
+            <li><b>Close any Feature Gap:</b> Some 'core' items still need to get done, such as dragging columns to
             reposition, adding / removing rows without a complete reload, having dynamic row height etc.
             I want to get ALL of these done in the first few months of next year so that the grid is not just
             feature rich (as it is now), but feature complete. There will be nothing any other grid has on
             ag-Grid.
             </li>
-            <li>Promote All Frameworks: The grid is agnostic. However I want to put work towards making it
+            <li><b>Promote All Frameworks:</b> The grid is agnostic. However I want to put work towards making it
             clear it works with React and anything else. If any 'glue' logic is required to make the grid
             work better with any framework then I will do this also. If any documentation is required to help
             use the grid in these new ways, I will try to provide that also.</li>
-            <li>Continue to support the grid where I can.</li>
+            <li><b>Support:</b> Continue to support the grid where I can.</li>
+            <li><b>Greatly Enhance:</b> Take ag-Grid to the next level. Once the core features are in, I'll then
+            work on it more, bringing the grid places where no grid has gone before.</li>
         </ul>
         </p>
 
@@ -151,7 +153,7 @@ include('../mediaHeader.php');
             So I'm considering the following items for making money:
         <ul>
             <li>
-                Paid support: Each day I'm now spending approx 2 hours helping people on the forum. This does
+                <b>Paid support:</b> Each day I'm now spending approx 2 hours helping people on the forum. This does
                 not include the time I spend implementing features that people influence me towards implementing.
                 I am considering a nominal fee for access to the forum - or to leave the
                 forum as it currently stands and create a new forum where I will frequent the new one, but leave
@@ -160,13 +162,13 @@ include('../mediaHeader.php');
                 that does take from my time.
             </li>
             <li>
-                Provide enterprise features: I will continue to give the grid away for free. However do you work
-                in an industry where 'just some extra non-core features would make a huge difference'?? If yes
+                <b>Enterprise Features:</b> I will continue to give the grid away for free. However do you work
+                in an industry where 'extra non-core features would make a huge difference'?? If yes
                 then please let me know. Maybe I can provide an enterprise version of the grid.
             </li>
             <li>
-                Get sponsored: This is a win win for everyone! If you would like to sponsor me, please get in
-                touch!
+                <b>Sponsorship:</b> If you are in a position to sponsor me, please get in touch and lets discuss
+                how this would work for both of us.
             </li>
         </ul>
         </p>
@@ -186,7 +188,7 @@ include('../mediaHeader.php');
         </p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/ag-grid-in-2016/" data-text="ag-Grid in 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -196,7 +198,7 @@ include('../mediaHeader.php');
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/ag-grid-in-2016/" data-text="ag-Grid in 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
