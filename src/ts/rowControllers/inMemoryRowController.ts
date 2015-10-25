@@ -127,7 +127,7 @@ module ag.grid {
                             case RecursionType.AfterFilterAndSort : nodeChildren = node.childrenAfterSort; break;
                         }
                         if (nodeChildren) {
-                            index = this.recursivelyWalkNodesAndCallback(node.children, callback, recursionType, index);
+                            index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
                         }
                     }
                 }

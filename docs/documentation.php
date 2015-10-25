@@ -41,28 +41,33 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-    <div style="float: left; width: 240px;">
-        <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
-            <img src="images/angularConnectTalk.png"/>
-        </a>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
+    <div style="overflow: auto">
+        <div style="float: left; width: 240px;">
             <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
-                Building Performant components for AngularJS
+                <img src="images/angularConnectTalk.png"/>
             </a>
         </div>
-        <div style="float: right;  color: #767676;">
-            21st October 2015
+        <div style="overflow: hidden;">
+            <div style="font-size: 20px; color: #167ac6; float: left;">
+                <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+                    Building Performant components for AngularJS
+                </a>
+            </div>
+            <div style="float: right;  color: #767676;">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.youtube.com/watch?v=gNhPeLCBbE0" data-text="How Niall Crosby got ag-Grid to go really fast!!" data-via="ceolter" data-size="large">Tweet</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
+        </div>
+        <div style="color: #767676">
+            Angular Connect
+        </div>
+        <div style="color: #767676; padding-top: 20px;">
+            Niall Crosby giving a talk on how he got ag-Grid to work fast. Please 'like' this
+            on YouTube, help promote :)
         </div>
     </div>
-    <div style="color: #767676">
-        Angular Connect
-    </div>
-    <div style="color: #767676; padding-top: 20px;">
-        Niall Crosby giving a talk on how he got ag-Grid to work fast. Please 'like' this
-        on YouTube, help promote :)
-    </div>
+
+    <div style="text-align: center; padding-top: 10px;">Note: ag-Grid is Framework Agnostic - the above video was at Angular Connect so comes with an Angular theme.</div>
 
 </div>
 
