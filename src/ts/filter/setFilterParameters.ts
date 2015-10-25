@@ -18,6 +18,9 @@ module ag.grid {
 
         /** If true, the filter will not remove items that are no longer availabe due to other filters. */
         suppressRemoveEntries ?: boolean;
+
+        /** Comparator for sorting. If not provided, the colDef comparator is used. If colDef also not provided, the default (agGrid provided) comparator is used.*/
+        comparator?: (a: any, b: any) => number;
     }
 
 }

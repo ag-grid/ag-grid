@@ -12,9 +12,9 @@ module ag.grid {
 
         private rowModel: any;
         private valueGetter: any;
-        private allUniqueValues: any; // all values in the table
-        private availableUniqueValues: any; // all values not filtered by other rows
-        private displayedValues: any; // all values we are rendering on screen (ie after mini filter)
+        private allUniqueValues: any[]; // all values in the table
+        private availableUniqueValues: any[]; // all values not filtered by other rows
+        private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
         private miniFilter: any;
         private selectedValuesCount: any;
         private selectedValuesMap: any;
@@ -83,11 +83,7 @@ module ag.grid {
                 this.allUniqueValues = _.toStrings(this.getUniqueValues(false));
             }
 
-            if (this.colDef.comparator) {
-                this.allUniqueValues.sort(this.colDef.comparator);
-            } else {
-                this.allUniqueValues.sort(_.defaultComparator);
-            }
+            this.sortValues(this.allUniqueValues);
         }
 
         private createAvailableUniqueValues() {
@@ -98,10 +94,16 @@ module ag.grid {
             }
 
             this.availableUniqueValues = _.toStrings(this.getUniqueValues(true));
-            if (this.colDef.comparator) {
-                this.availableUniqueValues.sort(this.colDef.comparator);
+            this.sortValues(this.availableUniqueValues);
+        }
+
+        private sortValues(values: any[]): void {
+            if (this.filterParams.comparator) {
+                values.sort(this.filterParams.comparator);
+            } else if (this.colDef.comparator) {
+                values.sort(this.colDef.comparator);
             } else {
-                this.availableUniqueValues.sort(_.defaultComparator);
+                values.sort(_.defaultComparator);
             }
         }
 

@@ -182,7 +182,11 @@ gridsModule.controller('mainController', function($scope) {
         firstColumn,
         {headerName: "Country", field: "country", headerGroup: 'Participant', width: 150, editable: true, cellRenderer: countryCellRenderer, filter: 'set',
             floatCell: true,
-            filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20, newRowsAction: 'keep'},
+            filterParams: {
+                cellRenderer: countryCellRenderer,
+                cellHeight: 20,
+                newRowsAction: 'keep'
+            },
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'

@@ -64,7 +64,7 @@ module ag.grid {
         aggFunc?: string;
 
         /** Comparator function for custom sorting. */
-        comparator?: Function;
+        comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
         /** Set to true to render a selection checkbox in the column. */
         checkboxSelection?: boolean;

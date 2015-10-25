@@ -106,9 +106,17 @@ columnDefinition = {
                 automatically as the selection changes.</li>
             <li><b>suppressRemoveEntries:</b> Set to true to stop the filter from removing values that are no
                 longer available (like what Excel does).</li>
+            <li><b>comparator(a,b):</b> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
+                also not provided, the default (agGrid provided) comparator is used.</li>
         </ul>
-
     </p>
+
+    <note>
+        The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for the colDef
+        is also provided the row data as additional parameters. This is because when sorting rows, row data exists. For example,
+        take 100 rows split across the colors {white,black}. The colDef comparator will be sorting 100 rows, however the
+        filter will be only sorting two values.
+    </note>
 
     <h4>Text and Number Filter Parameters</h4>
     <p>
