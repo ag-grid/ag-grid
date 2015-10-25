@@ -73,6 +73,19 @@ module.controller("exampleCtrl", function($scope, $http) {
         return value !== null && value !== undefined && value !== '';
     };
 
+    PersonFilter.prototype.getApi = function() {
+        var that = this;
+        return {
+            getModel: function() {
+                var model = {value: that.$scope.filterText.value};
+                return model;
+            },
+            setModel: function(model) {
+                that.$scope.filterText = model.value;
+            }
+        }
+    };
+
     function YearFilter() {
     }
 
@@ -116,4 +129,16 @@ module.controller("exampleCtrl", function($scope, $http) {
         return this.filterActive;
     };
 
+    YearFilter.prototype.getApi = function() {
+        var that = this;
+        return {
+            getModel: function() {
+                var model = {value: that.rbSince2010.checked};
+                return model;
+            },
+            setModel: function(model) {
+                that.rbSince2010.checked = model.value;
+            }
+        }
+    };
 });

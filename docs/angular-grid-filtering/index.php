@@ -116,6 +116,9 @@ columnDefinition = {
         is also provided the row data as additional parameters. This is because when sorting rows, row data exists. For example,
         take 100 rows split across the colors {white,black}. The colDef comparator will be sorting 100 rows, however the
         filter will be only sorting two values.
+        <br/>
+        If you are providing a comparator that depends on the row data, and you are using set filter, be sure to provide
+        the set filter with an alternative comparator that doesn't depend on the row data.
     </note>
 
     <h4>Text and Number Filter Parameters</h4>
@@ -324,22 +327,25 @@ columnDefinition = {
             <th>getApi</th>
             <td>Returns the API for the filter. Useful if you want your filter manipulated via an API.
             <pre>MyCustomFilter.prototype.getApi = function () {
-    // mandatory method - called by api.getFilterModel()
-    getModel: function() {
-        // return how you want your model to look when someone
-        // either calls getModel() directly on this filter,
-        // or somoen calles 'getFilterModel' on the main api
-        var model = {value: theFitler.value};
-    },
-    // mandatory method - called by api.setFilterModel(model)
-    setModel: function(model) {
-        // this will be passed the model that was returned in
-        // get model.
-        theFilter.value = model.value;
-    },
-    // then add as many of your own methods that you want,
-    // only you will be calling these.
+    return {
+        // called by api.getFilterModel() - if not implemented, then api.getFilterModel() will fail
+        getModel: function() {
+            // return how you want your model to look when someone
+            // either calls getModel() directly on this filter,
+            // or someone calls 'getFilterModel' on the main api
+            var model = {value: theFilter.value};
+            return model;
+        },
+        // called by api.setFilterModel(model) - if not implemented, then api.getFilterModel() will fail
+        setModel: function(model) {
+            // this will be passed the model that was returned in
+            // get model.
+            theFilter.value = model.value;
+        },
+        // then add as many of your own methods that you want,
+        // only you will be calling these.
         clearMyValues: function() {
+        }
     }
 }</pre>
             </td>

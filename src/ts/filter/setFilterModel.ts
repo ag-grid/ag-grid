@@ -98,7 +98,7 @@ module ag.grid {
         }
 
         private sortValues(values: any[]): void {
-            if (this.filterParams.comparator) {
+            if (this.filterParams && this.filterParams.comparator) {
                 values.sort(this.filterParams.comparator);
             } else if (this.colDef.comparator) {
                 values.sort(this.colDef.comparator);
