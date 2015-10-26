@@ -66,6 +66,10 @@ include '../documentation_header.php';
                 open, will stay.</td>
         </tr>
         <tr>
+            <th>sizeColumnsToFit()</th>
+            <td>Gets columns to adjust in size to fit the grid horizontally.</td>
+        </tr>
+        <tr>
             <th>selectAll()</th>
             <td>Select all rows (even rows that are not visible due to grouping being and their groups not expanded).</td>
         </tr>

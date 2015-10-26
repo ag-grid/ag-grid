@@ -20,14 +20,14 @@ include('../mediaHeader.php');
         <h3>The Road So Far</h3>
 
         <p>
-            23rd of December 2014. That's the date of the first ag-Grid commit to Github. Zoom forward 10 months and
-            off the back of the project I'm presenting at the Google conference
+            23rd of December 2014. That is the date of the first ag-Grid commit to Github. Ten months later and
+            I had the privilege of presenting my work at the Google conference
             <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">Angular Connect</a> in London
             to a room of hundreds of people and streamed live on Youtube. At the conference I was explaining how I
             made the grid super fast (which, btw, involved doing it all in Javascript and not using Angular).
         </p>
         <p>
-            ag-Grid is now one of he worlds leading data grids for modern Javascript applications.
+            ag-Grid is now one of the worlds leading data grids for modern Javascript applications.
             It was born from the Angular world (as I was building Angular applications at the time) but it is now firmly
             framework agnostic - it has no dependencies on any framework.
         </p>
@@ -37,9 +37,9 @@ include('../mediaHeader.php');
         <p>
             I am now sure, more than ever, that low level HTML components should not have
             dependencies on any framework. That means, a grid should not be implemented using Angular or React or
-            anything else. ag-Grid has demonstrated that a lightening fast grid is possible without the help of any
-            framework. If a framework was to be introduced, it would just be adding layers of abstraction around
-            the DOM and block the efficency of ag-Grid.
+            anything else. ag-Grid has demonstrated that a lightning fast grid is possible without the help of any
+            framework. If a framework was to be introduced, it would just add layers of abstraction around
+            the DOM and block the efficiency of ag-Grid.
         </p>
         <p>
             Frameworks should be used for applications and higher level components - typically components
@@ -102,7 +102,8 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            I'm not sure where this is going to lead going forward. But I thought I'd give it a shot.
+            I don't know where this plan leads but I thought "dammit, lets just do it" and see where it
+            takes me.
         </p>
 
         <p>
@@ -113,9 +114,9 @@ include('../mediaHeader.php');
         <h3>Taking a Holiday</h3>
 
         <p>
-            ag-Grid was built in my spare time. During the weekends and evenings of 2015 I must of spent in total
-            20 hours working on the grid each week. This has had it's toll. So for November and December 2015 I'm
-            visiting beautiful India and Myanmar. Next year I'll be returning with lots of energy and enthusiasm.
+            ag-Grid was built in my spare time. During the weekends and evenings of 2015 I must have spent in total
+            20 hours working on the grid each week. So for November and December 2015 I'm
+            visiting beautiful India and Myanmar. Next year I'll be returning with lots of energy and continued enthusiasm.
         </p>
 
         <h3>The Vision for 2016</h3>
@@ -131,7 +132,7 @@ include('../mediaHeader.php');
             feature rich (as it is now), but feature complete. There will be nothing any other grid has on
             ag-Grid.
             </li>
-            <li><b>Promote All Frameworks:</b> The grid is agnostic. However I want to put work towards making it
+            <li><b>Promote all Frameworks:</b> The grid is agnostic. However I want to put work towards making it
             clear it works with React and anything else. If any 'glue' logic is required to make the grid
             work better with any framework then I will do this also. If any documentation is required to help
             use the grid in these new ways, I will try to provide that also.</li>
@@ -145,9 +146,8 @@ include('../mediaHeader.php');
 
         <p>
             The problem with all the above is I now have no job! So that's where I need to make some hard decisions.
-            ag-Grid is open source, free to use, and I will never change that. If I changed my opinion on that,
-            I would feel like I've broken the trust of those who have used the grid to this point and helped
-            create the community which the grid currently enjoys.
+            ag-Grid is open source and free and I will never change that. Changing would break the trust of those
+            who have used the grid to this point and helped create the community which the grid currently enjoys.
         </p>
         <p>
             So I'm considering the following items for making money:
@@ -158,7 +158,7 @@ include('../mediaHeader.php');
                 I am considering a nominal fee for access to the forum - or to leave the
                 forum as it currently stands and create a new forum where I will frequent the new one, but leave
                 the old one should the community wish to help each other. It's fine allowing the whole
-                world download ag-Grid and use as that doesn't take my time. But if your asking me questions,
+                world download ag-Grid and use as that doesn't take my time. But if you're asking me questions,
                 that does take from my time.
             </li>
             <li>
@@ -167,7 +167,7 @@ include('../mediaHeader.php');
                 then please let me know. Maybe I can provide an enterprise version of the grid.
             </li>
             <li>
-                <b>Sponsorship:</b> If you are in a position to sponsor me, please get in touch and lets discuss
+                <b>Sponsorship:</b> If you are in a position to sponsor me, please get in touch and let's discuss
                 how this would work for both of us.
             </li>
         </ul>
