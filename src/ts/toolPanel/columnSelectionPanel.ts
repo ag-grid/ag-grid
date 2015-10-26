@@ -63,7 +63,7 @@ module ag.grid {
             eValue.innerHTML = colDisplayName;
             eResult.appendChild(eValue);
 
-           eLockIcon.style.display = column.colDef.pinned ? '' : 'none';
+            eLockIcon.style.display = column.colDef.pinned ? '' : 'none';
             eResult.appendChild(eLockIcon);
  
             if (!column.visible && !column.colDef.suppressInvisible) {

@@ -1,3 +1,6 @@
+/// <reference path="rowNode.ts" />
+/// <reference path="../filter/setFilterParameters.ts" />
+/// <reference path="../filter/textAndNumberFilterParameters.ts" />
 module ag.grid {
 
     export interface ColDef {
