@@ -3,6 +3,7 @@
 /// <reference path="../svgFactory.ts" />
 /// <reference path="../constants.ts" />
 /// <reference path="../layout/BorderLayout.ts" />
+/// <reference path="../columnController.ts" />
 
 module ag.grid {
 
@@ -31,7 +32,7 @@ module ag.grid {
         }
 
         private columnsChanged() {
-            this.cColumnList.setModel(this.columnController.getAllColumns());
+            this.cColumnList.setModel(this.columnController.getAllColumns(this.gridOptionsWrapper.isToolPanelSuppressPinnedColDefs()));
         }
 
         public getDragSource() {
@@ -45,6 +46,7 @@ module ag.grid {
             var eResult = document.createElement('span');
 
             var eVisibleIcons = document.createElement('span');
+            var eLockIcon = utils.createIcon('lockIcon', this.gridOptionsWrapper, column, svgFactory.createLockIconSvg);
             utils.addCssClass(eVisibleIcons, 'ag-visible-icons');
             var eShowing = utils.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
             var eHidden = utils.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
@@ -61,19 +63,22 @@ module ag.grid {
             eValue.innerHTML = colDisplayName;
             eResult.appendChild(eValue);
 
+           eLockIcon.style.display = column.colDef.pinned ? '' : 'none';
+           eResult.appendChild(eLockIcon)
+ 
             if (!column.visible && !column.colDef.suppressInvisible) {
                 utils.addCssClass(eResult, 'ag-column-not-visible');
             }
 
             // change visible if use clicks the visible icon, or if row is double clicked
-            eVisibleIcons.addEventListener('click', showEventListener);
+            if (!column.colDef.suppressInvisible) {
+                eVisibleIcons.addEventListener('click', showEventListener);
+            }
 
             var that = this;
 
             function showEventListener() {
-                if (!column.colDef.suppressInvisible) {
-                    that.columnController.setColumnVisible(column, !column.visible);                    
-                }
+                that.columnController.setColumnVisible(column, !column.visible);
             }
 
             return eResult;
@@ -100,7 +105,23 @@ module ag.grid {
         }
 
         private onItemMoved(fromIndex: number, toIndex: number) {
+            var lastPinnedColumnIndex = this.getLastPinnedColDefIndex();
+            if (this.gridOptionsWrapper.isToolPanelSuppressPinnedColDefs()) {
+                fromIndex = fromIndex + lastPinnedColumnIndex + 1;
+                toIndex = toIndex + lastPinnedColumnIndex + 1;
+            }
             this.columnController.moveColumn(fromIndex, toIndex);
+        }
+        
+        private getLastPinnedColDefIndex() {
+            var index = -1;
+            this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef: any) {
+               if (colDef.pinned === true || colDef.pinned === 'true') {
+                   index++;
+               }
+            });
+            
+            return index;
         }
 
         public getGui() {

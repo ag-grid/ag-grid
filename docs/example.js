@@ -91,6 +91,7 @@ gridsModule.controller('mainController', function($scope) {
         showToolPanel: false,
         //toolPanelSuppressPivot: true,
         //toolPanelSuppressValues: true,
+        toolPanelSuppressPinnedColDefs: true,
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
         //groupAggFields: ['bankBalance','totalWinnings'],
@@ -157,6 +158,7 @@ gridsModule.controller('mainController', function($scope) {
         field: "name",
         headerGroup: 'Participant',
         width: 200,
+        pinned: true,
         editable: true,
         filter: PersonFilter,
             cellRenderer: {

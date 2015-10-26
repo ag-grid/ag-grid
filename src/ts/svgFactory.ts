@@ -74,6 +74,10 @@ module ag.grid {
         createSmallArrowDownSvg() {
             return createPolygonSvg("0,0 3,6 6,0", 6);
         }
+        
+        createLockIconSvg() {
+            return createLock();
+        }
 
         // UnSort Icon SVG
         createArrowUpDownSvg() {
@@ -143,4 +147,40 @@ module ag.grid {
         return eSvg;
     }
 
+    function createLock() {
+        var eSvg = createIconSvg(15);
+        eSvg.setAttribute("viewBox", "0 0 50 80");
+        var eRectBody = document.createElementNS(SVG_NS, "rect");
+        eRectBody.setAttribute("x", "0");
+        eRectBody.setAttribute("y", "30");
+        eRectBody.setAttribute("rx", "5");
+        eRectBody.setAttribute("ry", "5");
+        eRectBody.setAttribute("height", "50");
+        eRectBody.setAttribute("width", "50");
+        eRectBody.setAttribute("stroke", "black");
+        eRectBody.setAttribute("fill", "black");
+        eSvg.appendChild(eRectBody);
+        var ePath = document.createElementNS(SVG_NS, "path");
+        ePath.setAttribute("stroke", "black");
+        ePath.setAttribute("fill", "black");
+        ePath.setAttribute("d", "M5,25 L15,25 L15,20 A10,8 0 0,1 35,20 L35,25 L45,25 L45,15 A10,8 0 0,0 5,15 L5,27 Z");
+        eSvg.appendChild(ePath);
+        var eCircleKey = document.createElementNS(SVG_NS, "circle");
+        eCircleKey.setAttribute("cx", "25");
+        eCircleKey.setAttribute("cy", "50");
+        eCircleKey.setAttribute("r", "10");
+        eCircleKey.setAttribute("stroke", "white");
+        eCircleKey.setAttribute("fill", "white");
+        eSvg.appendChild(eCircleKey);
+        var eRectKey = document.createElementNS(SVG_NS, "rect");
+        eRectKey.setAttribute("x", "20");
+        eRectKey.setAttribute("y", "55");
+        eRectKey.setAttribute("height", "15");
+        eRectKey.setAttribute("width", "10");
+        eRectKey.setAttribute("stroke", "white");
+        eRectKey.setAttribute("fill", "white");
+        eSvg.appendChild(eRectKey);
+
+        return eSvg;
+    }
 }
