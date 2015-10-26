@@ -64,7 +64,7 @@ module ag.grid {
             eResult.appendChild(eValue);
 
            eLockIcon.style.display = column.colDef.pinned ? '' : 'none';
-           eResult.appendChild(eLockIcon)
+            eResult.appendChild(eLockIcon);
  
             if (!column.visible && !column.colDef.suppressInvisible) {
                 utils.addCssClass(eResult, 'ag-column-not-visible');
@@ -72,13 +72,15 @@ module ag.grid {
 
             // change visible if use clicks the visible icon, or if row is double clicked
             if (!column.colDef.suppressInvisible) {
-                eVisibleIcons.addEventListener('click', showEventListener);
+            eVisibleIcons.addEventListener('click', showEventListener);
             }
 
             var that = this;
 
             function showEventListener() {
+                if (!column.colDef.suppressInvisible) {
                 that.columnController.setColumnVisible(column, !column.visible);
+            }
             }
 
             return eResult;
@@ -112,7 +114,7 @@ module ag.grid {
             }
             this.columnController.moveColumn(fromIndex, toIndex);
         }
-        
+
         private getLastPinnedColDefIndex() {
             var index = -1;
             this.gridOptionsWrapper.getColumnDefs().forEach(function(colDef: any) {
