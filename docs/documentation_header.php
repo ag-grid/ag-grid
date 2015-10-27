@@ -297,6 +297,12 @@ if (strcmp($version , 'latest') == 0) {
                     Working with Data
                 </h4>
 
+                <?php if ($key == "Row Model") { ?>
+                    <span class="sidebarLinkSelected">Row Model</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-model/index.php">Row Model</a>
+                <?php } ?>
+
                 <?php if ($key == "Floating") { ?>
                     <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>
