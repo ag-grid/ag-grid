@@ -42,6 +42,29 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
+        <a href="ag-grid-tutorials/">
+            <img src="images/movie.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="ag-grid-tutorials/">
+                New video tutorials
+            </a>
+        </div>
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        I've put up some video tutorials.
+        Please take a look and leave some feedback. I get the feeling a lot of people are getting the
+        basics of ag-Grid, but missing the value getters, context and expressions. So these videos try to explain
+        them.
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
         <a href="ag-grid-in-2016/">
             <img src="images/agGridDaily.png"/>
         </a>
