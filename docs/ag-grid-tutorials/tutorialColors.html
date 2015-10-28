@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+    <head lang="en">
+        <meta charset="UTF-8">
+
+        <script src="../dist/ag-grid.js"></script>
+        <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css">
+        <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css">
+
+        <script src="tutorialColors.js"></script>
+
+        <style>
+            .actual {
+                background-color: rgba(0,255,0,.1);
+            }
+            .budget {
+                background-color: rgba(255,0,0,.1);
+            }
+            .negative {
+                color: darkred;
+            }
+        </style>
+        
+    </head>
+
+    <body style="height: 100%; margin: 0px;">
+
+        <div style="height: 10%;">
+            <button id="btMonthDown">--</button>
+            <button id="btMonthUp">++</button>
+        </div>
+
+        <div id="myGrid" style="width: 100%; height: 90%;" class="ag-fresh"></div>
+
+    </body>
+</html>

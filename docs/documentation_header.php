@@ -414,6 +414,16 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>example-expressions-and-context/index.php">Expressions and Context</a>
                 <?php } ?>
 
+                <h4>
+                    Tutorials
+                </h4>
+
+                <?php if ($key == "Intermediate Tutorial") { ?>
+                    <span class="sidebarLinkSelected">Intermediate</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-tutorials/index.php">Intermediate</a>
+                <?php } ?>
+
             </div>
 
             <div class="col-sm-10 blog-main">
