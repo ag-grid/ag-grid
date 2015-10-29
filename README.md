@@ -26,9 +26,9 @@ To build:
 - `bower install`
 - `gulp` or `gulp release`
 
-Normal 'gulp' does not include minification or source maps, and starts a watch. This is for development.
+Default gulp task is for development. It includes source maps, does not include minification, and starts a watch.
 
-'gulp release' does minification and no source maps. This is for releasing.
+'release' gulp task does minification and no source maps. This is for releasing.
 
 If you are doing a Pull Request:
 - Make your code changes in `src/` files only, don't update dist files
