@@ -31,6 +31,9 @@ module ag.grid {
         angularCompileRows?: boolean;
         angularCompileFilters?: boolean;
         angularCompileHeaders?: boolean;
+        suppressLoadingOverlay?: boolean;
+        suppressNoRowsOverlay?: boolean;
+
         // just set once
         localeText?: any;
         localeTextFunc?: Function;

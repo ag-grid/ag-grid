@@ -282,11 +282,15 @@ module ag.grid {
         }
 
         public showLoadingOverlay(): void {
-            this.layout.showOverlay('loading');
+            if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+                this.layout.showOverlay('loading');
+            }
         }
 
         public showNoRowsOverlay(): void {
-            this.layout.showOverlay('noRows');
+            if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+                this.layout.showOverlay('noRows');
+            }
         }
 
         public hideOverlay(): void {

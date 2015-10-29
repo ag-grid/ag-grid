@@ -57,6 +57,9 @@ module ag.grid {
         public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
         public isForPrint() { return isTrue(this.gridOptions.forPrint); }
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
+        public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
+        public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }
+
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
         public getRowStyle() { return this.gridOptions.rowStyle; }

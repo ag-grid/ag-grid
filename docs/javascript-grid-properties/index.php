@@ -207,6 +207,14 @@ include '../documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
+            <th>suppressLoadingOverlay</th>
+            <td>Disables the 'loading' overlay.</td>
+        </tr>
+        <tr>
+            <th>suppressNoRowsOverlay</th>
+            <td>Disables the 'no rows' overlay.</td>
+        </tr>
+        <tr>
             <th>singleClickEdit</th>
             <td>Set to true to allow editable cells to start editing with a single click.</td>
         </tr>
