@@ -41,7 +41,7 @@ include '../documentation_header.php';
 
     <p>
         HTML Code:
-        <pre><code>&lt;ag-grid id="myGrid">&lt;/agile-grid></code></pre>
+        <pre><code>&lt;ag-grid id="myGrid">&lt;/ag-grid></code></pre>
         Javascript Code:<br/>
     <pre><code>var myGrid = document.querySelector('#myGrid');
 myGrid.setGridOptions(gridOptions);</code></pre>
