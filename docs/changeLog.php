@@ -8,7 +8,8 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <li>Overlays can now be disabled via new properties suppressLoadingOverlay and suppressNoRowsOverlay.</li>
+    <h3>Version 2.3.5</h3>
+    <li>Minor: Overlays can now be disabled via new properties suppressLoadingOverlay and suppressNoRowsOverlay.</li>
 
     <h3>Version 2.3.4</h3>
     <li>Bug fix: Template cache now working with IE9</li>

@@ -11,22 +11,38 @@ include '../documentation_header.php';
     <h2>Selection</h2>
 
     <p>
-        All the currently selected rows are stored on the grid options. Firstly in an array <b>selectedRows</b>
-        that stores the data. Secondly is <b>selectedNodesById</b> that is a map of node id's (node id's are
-        created by the grid) to selected nodes.
+        When you pass data to the grid, it wraps each data item in an node. This is explained
+        in the section <a href="../angular-grid-model/">Grid Model</a>. When you query for
+        the selected rows, there are two method types, ones that return nodes, and ones that
+        return data items. To get the selected nodes / rows from the grid, use the following
+        API methods:
+        <ul>
+            <li><b>api.getSelectedNodes()</b>: Returns an array of the selected nodes.</li>
+            <li><b>api.getSelectedNodesById()</b>: Returns a map of node id's (node id's are
+                created by the grid) to selected nodes.</li>
+            <li><b>api.getSelectedRows()</b>: Returns a list of selected rows data.</li>
+        </ul>
     </p>
 
     <p>
-        Use <b>selectedRows</b> to get list of the data items you provided, with the node information.
-        This was implemented to give a familiar feel to people using ui-grid.</p>
-
-    <p>
-        Use <b>selectedNodesById</b> if you want to work with the ag-grid nodes. This is preferred over
-        selectedRows, as it provide you with more information and maps better to the internal representation
-        of ag-grid.
+        Working with the ag-Grid nodes is preferred over the row data as it provide you with
+        more information and maps better to the internal representation of ag-grid.
     </p>
 
-    <h3>Single Row Selection</h3>
+    <p>The following properties are relevant to selection:</p>
+    <ul>
+        <li><b>rowSelection</b>: Type of row selection, set to either 'single' or 'multiple' to
+            enable selection.</li>
+        <li><b>rowDeselection</b>: Set to true or false. If true, then rows will be deselected if
+            you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
+            of nodes (ie once a node is selected, it remains selected until another row is selected
+            in it's place).</li>
+        <li><b>suppressRowClickSelection</b>: If true, rows won't be selected when clicked. Use, for
+            example, when you want checkbox selection, and don't want to also select when the row
+            is clicked.</li>
+    </ul>
+
+    <h3>Example - Single Row Selection</h3>
 
     <p>
         The example below shows single row selection.
@@ -34,7 +50,7 @@ include '../documentation_header.php';
 
     <show-example example="example1" example-height="450px"></show-example>
 
-    <h3>Multiple Row Selection</h3>
+    <h3>Example - Multiple Row Selection</h3>
 
     <p>
         The example below shows multi-row selection.
@@ -69,7 +85,7 @@ include '../documentation_header.php';
     <p>
         The example below shows checkbox selection with groups. Selecting the group has the
         effect of selecting the children. Likewise selecting all the children automatically
-        selects the group. The group itself will never appear in the <i>selectedRows</i>
+        selects the group. In this scenario the group itself will never appear in the <i>selectedRows</i>
         list.
     </p>
 
@@ -86,15 +102,22 @@ include '../documentation_header.php';
         as it's own entity.
     </p>
 
-    <h3>Click De-Selection</h3>
+    <h3>Selection Events</h3>
 
     <p>
-        Normal behaviour with the grid disallows deselection of nodes (ie once a node is selected,
-        it remains selected until another row is selected in it's place). To allow deselection,
-        set rowDeselection=true in the grid options.
+        There are three events with regards selection:<br/>
+        <ul>
+            <li><b>rowSelected / rowDeselected</b>: Gets called when a row is selected deselected.
+                The event contains the node in question.</li>
+            <li><b>selectionChanged</b>: Gets called when a row is selected or deselected.
+                The event contains selectedNodesById and selectedRows (as per the grid api
+                methods of similar name).</li>
+        </ul>
     </p>
 
-    <h3>Using <i>forEachNode</i></h3>
+    <show-example example="example3" example-height="450px"></show-example>
+
+    <h3>Deep Drive Example - Using <i>forEachNode</i></h3>
 
     <p>
         There is an api function <i>forEachNode</i>. This is useful for doing group selections
@@ -104,17 +127,6 @@ include '../documentation_header.php';
     </p>
 
     <show-example example="example4" example-height="450px"></show-example>
-
-    <h3>Selection Callbacks</h3>
-
-    <p>
-        There are two callbacks with regards selection:<br/>
-        onRowSelected(row): Gets called when a row is selected and passes the selected row.<br/>
-        onRowDeselected(row): Gets called when a row is de-selected and passes the selected row.<br/>
-        onSelectionChanged(): Gets called when a row is selected or deselected.<br/>
-    </p>
-
-    <show-example example="example3" example-height="450px"></show-example>
 
 </div>
 

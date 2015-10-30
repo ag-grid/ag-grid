@@ -177,6 +177,8 @@ declare module ag.grid {
         isGroupSuppressAutoColumn(): boolean;
         isForPrint(): boolean;
         isSuppressHorizontalScroll(): boolean;
+        isSuppressLoadingOverlay(): boolean;
+        isSuppressNoRowsOverlay(): boolean;
         isUnSortIcon(): boolean;
         isSuppressMenuHide(): boolean;
         getRowStyle(): any;
@@ -1661,6 +1663,8 @@ declare module ag.grid {
         angularCompileRows?: boolean;
         angularCompileFilters?: boolean;
         angularCompileHeaders?: boolean;
+        suppressLoadingOverlay?: boolean;
+        suppressNoRowsOverlay?: boolean;
         localeText?: any;
         localeTextFunc?: Function;
         suppressScrollLag?: boolean;

@@ -1,5 +1,5 @@
 /**
- * ag-grid - Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components
+ * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
  * @version v2.3.4
  * @link http://www.ag-grid.com/
  * @license MIT
@@ -678,6 +678,8 @@ var ag;
             GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function () { return isTrue(this.gridOptions.groupSuppressAutoColumn); };
             GridOptionsWrapper.prototype.isForPrint = function () { return isTrue(this.gridOptions.forPrint); };
             GridOptionsWrapper.prototype.isSuppressHorizontalScroll = function () { return isTrue(this.gridOptions.suppressHorizontalScroll); };
+            GridOptionsWrapper.prototype.isSuppressLoadingOverlay = function () { return isTrue(this.gridOptions.suppressLoadingOverlay); };
+            GridOptionsWrapper.prototype.isSuppressNoRowsOverlay = function () { return isTrue(this.gridOptions.suppressNoRowsOverlay); };
             GridOptionsWrapper.prototype.isUnSortIcon = function () { return isTrue(this.gridOptions.unSortIcon); };
             GridOptionsWrapper.prototype.isSuppressMenuHide = function () { return isTrue(this.gridOptions.suppressMenuHide); };
             GridOptionsWrapper.prototype.getRowStyle = function () { return this.gridOptions.rowStyle; };
@@ -8184,10 +8186,14 @@ var ag;
                 // otherwise, col is already in view, so do nothing
             };
             GridPanel.prototype.showLoadingOverlay = function () {
-                this.layout.showOverlay('loading');
+                if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+                    this.layout.showOverlay('loading');
+                }
             };
             GridPanel.prototype.showNoRowsOverlay = function () {
-                this.layout.showOverlay('noRows');
+                if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+                    this.layout.showOverlay('noRows');
+                }
             };
             GridPanel.prototype.hideOverlay = function () {
                 this.layout.hideOverlay();
@@ -10299,7 +10305,7 @@ var ag;
                 'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupHidePivotColumns',
                 'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
                 'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
-                'singleClickEdit'
+                'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay'
             ];
             ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount', 'headerHeight'];
             ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders', 'showToolPanel'];
