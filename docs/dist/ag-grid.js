@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
- * @version v2.3.4
+ * @version v2.3.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
