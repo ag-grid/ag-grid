@@ -174,7 +174,7 @@ include '../documentation_header.php';
         <ul>
             <li><b>id:</b> Unique ID for the node provided by and used internally by the grid.</li>
             <li><b>data:</b> The data as provided by the application</li>
-            <li><b>parent:</b> The parent node to this node, or empty if top level.</li>
+            <li><b>$parent:</b> The parent node to this node, or empty if top level.</li>
             <li><b>level:</b> How many levels this node is from the top.</li>
             <li><b>group:</b> True if this node is a group node (ie has children).</li>
             <li><b>firstChild:</b> True if this is the first child in this group</li>

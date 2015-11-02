@@ -532,7 +532,7 @@ module ag.grid {
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
                 if (parent) {
-                    node.parent = parent;
+                    node.$parent = parent;
                 }
                 node.level = level;
                 if (node.group && node.children) {
