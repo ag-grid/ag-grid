@@ -507,6 +507,8 @@ var ag;
                 else {
                     this.colId = '' + Column.colIdSequence++;
                 }
+                //RGN - new attributes
+                this.noHide = colDef.noHide;
             }
             Column.prototype.isGreaterThanMax = function (width) {
                 if (this.colDef.maxWidth >= constants.MIN_COL_WIDTH) {
@@ -719,6 +721,9 @@ var ag;
             GridOptionsWrapper.prototype.getRowHeight = function () { return this.rowHeight; };
             GridOptionsWrapper.prototype.getOverlayLoadingTemplate = function () { return this.gridOptions.overlayLoadingTemplate; };
             GridOptionsWrapper.prototype.getOverlayNoRowsTemplate = function () { return this.gridOptions.overlayNoRowsTemplate; };
+            //RGN bloquer la première colonne
+            GridOptionsWrapper.prototype.isFirstColumnLocked = function () { return this.gridOptions.firstColumnLocked; };
+            
             // properties
             GridOptionsWrapper.prototype.getHeaderHeight = function () {
                 if (typeof this.headerHeight === 'number') {
@@ -1296,6 +1301,13 @@ var ag;
                 this.eventService.dispatchEvent(grid.Events.EVENT_COLUMN_PIVOT_CHANGE, event);
             };
             ColumnController.prototype.moveColumn = function (fromIndex, toIndex) {
+
+                // RGN pas de déplacement de la 1ere colonne si firstColumnLocked
+                if (this.gridOptionsWrapper.isFirstColumnLocked() && fromIndex == 0)
+                	return;
+                if (this.gridOptionsWrapper.isFirstColumnLocked() && toIndex == 0)
+                	toIndex = 1;
+
                 var column = this.allColumns[fromIndex];
                 this.allColumns.splice(fromIndex, 1);
                 this.allColumns.splice(toIndex, 0, column);
@@ -1331,6 +1343,11 @@ var ag;
                 return this.allColumns;
             };
             ColumnController.prototype.setColumnVisible = function (column, visible) {
+            	
+            	//RGN Pas de Hide si colonne noHide.
+            	if (column.noHide)
+            		return;
+            	
                 column.visible = visible;
                 this.updateModel();
                 var event = new grid.ColumnChangeEvent(grid.Events.EVENT_COLUMN_VISIBLE).withColumn(column);
@@ -8812,15 +8829,35 @@ var ag;
                 var eResult = document.createElement('span');
                 var eVisibleIcons = document.createElement('span');
                 utils.addCssClass(eVisibleIcons, 'ag-visible-icons');
-                var eShowing = utils.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
-                var eHidden = utils.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
+                //var eShowing = utils.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
+                var eShowing = document.createElement('span');
+                eShowing.innerHTML = "<i class='fa fa-check-square-o'></i>";
+                eShowing.style.marginRight = '5px';
+                //var eHidden = utils.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
+                var eHidden = document.createElement('span');
+                eHidden.innerHTML = "<i class='fa fa-square-o'></i>";
+                eHidden.style.marginRight = '7px';
+                //RGN icon for locked column
+                var eLock = document.createElement('span');
+                eLock.innerHTML = "<i class='fa fa-lock'></i>";
+                eLock.style.color = 'grey';
+                eLock.style.marginRight = '5px';
+                var eHide = document.createElement('span');
+                eHide.innerHTML = "<i class='fa fa-check-square'></i>";
+                eHide.style.marginRight = '5px';
                 eVisibleIcons.appendChild(eShowing);
                 eVisibleIcons.appendChild(eHidden);
-                eShowing.style.display = column.visible ? '' : 'none';
-                eHidden.style.display = column.visible ? 'none' : '';
+                //RGN icon for locked column
+                eVisibleIcons.appendChild(eHide);
+                eVisibleIcons.appendChild(eLock);
+                eShowing.style.display = column.noHide ? 'none' : column.visible ? '' : 'none';
+                eHidden.style.display =  column.noHide ? 'none' : column.visible ? 'none' : '';
+                eLock.style.display = (column.index == 0 && this.gridOptionsWrapper.isFirstColumnLocked()) ? '' : 'none';
+                eHide.style.display = column.noHide ? '' : 'none';
                 eResult.appendChild(eVisibleIcons);
                 var eValue = document.createElement('span');
                 eValue.innerHTML = colDisplayName;
+                eValue.style.color = (column.index == 0 && this.gridOptionsWrapper.isFirstColumnLocked()) ? 'grey' : 'black';
                 eResult.appendChild(eValue);
                 if (!column.visible) {
                     utils.addCssClass(eResult, 'ag-column-not-visible');
@@ -10305,7 +10342,7 @@ var ag;
                 'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupHidePivotColumns',
                 'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
                 'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
-                'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay'
+                'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'firstColumnLocked'
             ];
             ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount', 'headerHeight'];
             ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders', 'showToolPanel'];
