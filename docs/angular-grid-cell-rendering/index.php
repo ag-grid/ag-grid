@@ -24,7 +24,7 @@ include '../documentation_header.php';
         You can use a cell renderer for the following reasons:
         <ul>
             <li>The data needs to be formatted before displaying.</li>
-            <li>The cell should be rendered using more complex HTML thanks just a string.</li>
+            <li>The cell should be rendered using more complex HTML than just a string.</li>
         </ul>
     </p>
 
