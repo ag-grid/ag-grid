@@ -133,6 +133,10 @@ var colDef = {
             <th>eGridCell</th>
             <td>A reference to the virtual cell (during the rendering process, virtual cells are used).</td>
         </tr>
+        <tr>
+            <th>node</th>
+            <td>The RowNode of the row beeing renderered.</td>
+        </tr>
     </table>
 
     <h4>Angular Compiling</h4>
