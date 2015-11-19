@@ -1,5 +1,6 @@
 /// <reference path="colDef.ts" />
 /// <reference path="rowNode.ts" />
+/// <reference path="../gridApi.ts" />
 
 module ag.grid {
 
