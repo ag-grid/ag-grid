@@ -17,6 +17,7 @@ module ag.grid {
         private groupHeaders: boolean;
         private headerHeight: number;
         private rowHeight: number;
+        private columnDefsDepth: number;
         private floatingTopRowData: any[];
         private floatingBottomRowData: any[];
 
@@ -30,6 +31,7 @@ module ag.grid {
             this.floatingBottomRowData = gridOptions.floatingBottomRowData;
 
             this.columns = this.getColumnsFromColumnDefs();
+            this.columnDefsDepth = this.getColumnDefsDepth();
 
             eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
@@ -244,6 +246,29 @@ module ag.grid {
                 columns = this.getColumnsFromSubHeaders(this.gridOptions.columnDefs);
             }
             return columns;
+        }
+
+        private updateColumnDefsDepth(colDefs: any[], depth: number): number {
+            var maxDepth = depth;
+            var itemDepth = 0;
+            for (var i = 0; i < colDefs.length; i++) {
+                var colDef = colDefs[i];
+                if (colDef.subHeaders) {
+                    itemDepth = this.updateColumnDefsDepth(colDef.subHeaders, depth + 1);
+                    if (itemDepth > maxDepth) {
+                        maxDepth = itemDepth;
+                    }
+                }
+            }
+            return maxDepth;
+        }
+
+        private getColumnDefsDepth() {
+            var depth = 1;
+            if (this.gridOptions.columnDefs) {
+                depth = this.updateColumnDefsDepth(this.gridOptions.columnDefs, depth);
+            }
+            return depth;
         }
     }
 }
