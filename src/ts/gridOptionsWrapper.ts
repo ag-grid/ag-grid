@@ -111,7 +111,7 @@ module ag.grid {
                 return this.headerHeight;
             } else {
                 // otherwise return 25 if no grouping, 50 if grouping
-                if (this.groupHeaders) {
+                if (this.isGroupHeaders()) {
                     return 50;
                 } else {
                     return 25;
@@ -120,7 +120,7 @@ module ag.grid {
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
 
-        public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
+        public isGroupHeaders(): boolean { return this.columnDefsDepth > 1; }
         public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
 
         public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
