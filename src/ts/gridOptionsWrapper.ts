@@ -13,6 +13,7 @@ module ag.grid {
 
         private gridOptions: GridOptions;
 
+        private columns: any[];
         private groupHeaders: boolean;
         private headerHeight: number;
         private rowHeight: number;
@@ -27,6 +28,8 @@ module ag.grid {
             this.rowHeight = gridOptions.rowHeight;
             this.floatingTopRowData = gridOptions.floatingTopRowData;
             this.floatingBottomRowData = gridOptions.floatingBottomRowData;
+
+            this.columns = this.getColumnsFromColumnDefs();
 
             eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
@@ -217,6 +220,30 @@ module ag.grid {
             } else {
                 return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
             }
+        }
+
+        private getColumnsFromSubHeaders(subHeaders: any): any[] {
+            var columns = <any> [];
+            for (var i = 0; i < subHeaders.length; i++) {
+                var colDef = subHeaders[i];
+                if (colDef.subHeaders) {
+                    var columnsFromSubHeaders = this.getColumnsFromSubHeaders(colDef.subHeaders);
+                    columnsFromSubHeaders.forEach(function (column: any) {
+                        columns.push(column);
+                    });
+                } else {
+                    columns.push(colDef);
+                }
+            }
+            return columns;
+        }
+
+        private getColumnsFromColumnDefs() {
+            var columns = <any> [];
+            if (this.gridOptions.columnDefs) {
+                columns = this.getColumnsFromSubHeaders(this.gridOptions.columnDefs);
+            }
+            return columns;
         }
     }
 }
