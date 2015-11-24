@@ -50,6 +50,7 @@ module ag.grid {
         private masterSlaveController: MasterSlaveService;
 
         private allColumns: Column[]; // every column available
+        private allColumnsInGroups: ColumnGroup[]; // allColumns in their groups
         private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
         private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
         private pivotColumns: Column[];
@@ -461,6 +462,7 @@ module ag.grid {
         public onColumnsChanged() {
             var columnDefs = this.gridOptionsWrapper.getColumnDefs();
             this.checkForDeprecatedItems(columnDefs);
+            this.createColumnsInGroups(columnDefs);
             this.createColumns(columnDefs);
             this.createPivotColumns();
             this.createValueColumns();
@@ -718,13 +720,70 @@ module ag.grid {
         }
 
         private createColumns(colDefs: any): void {
+            // skip if grouping by header, allColumns is updated in createColumnsInGroups
+            if (this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
             this.allColumns = [];
+
             if (colDefs) {
                 for (var i = 0; i < colDefs.length; i++) {
                     var colDef = colDefs[i];
                     var width = this.calculateColInitialWidth(colDef);
                     var column = new Column(colDef, width);
                     this.allColumns.push(column);
+                }
+            }
+        }
+
+        private addSubGroupsOrColumns(group: ColumnGroup, subGroups: any[]): void {
+            if (!subGroups) {
+                return;
+            }
+            for (var i = 0; i < subGroups.length; i++) {
+                var subGroup = subGroups[i];
+                if (subGroup.subHeaders) {
+                    /* @TODO: handle groups within groups
+
+                    var newGroup = new ColumnGroup(subGroup.pinned, subGroup.headerName);
+                    this.addSubGroupsOrColumns(newGroup, subGroup.subHeaders);
+                    group.addSubGroup(newGroup);
+                    */
+                } else {
+                    var width = this.calculateColInitialWidth(subGroup);
+                    var column = new Column(subGroup, width);
+                    group.addColumn(column);
+                    this.allColumns.push(column);
+                }
+            }
+        }
+
+        private createColumnsInGroups(colDefs: any): void {
+            if (!this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
+            this.allColumnsInGroups = [];
+            this.allColumns = [];
+
+            if (colDefs) {
+                for (var i = 0; i < colDefs.length; i++) {
+                    var colDef = colDefs[i];
+                    if (colDef.subHeaders) {
+                        /* this item is a header group */
+                        var group = new ColumnGroup(!!colDef.pinned, colDef.headerName);
+                        this.addSubGroupsOrColumns(group, colDef.subHeaders);
+                        this.allColumnsInGroups.push(group);
+                    } else {
+                        /* this item is just a column, create a group for it */
+                        var group = new ColumnGroup(!!colDef.pinned, undefined);
+                        var width = this.calculateColInitialWidth(colDef);
+                        var column = new Column(colDef, width);
+                        group.addColumn(column);
+                        this.allColumns.push(column);
+                        this.allColumnsInGroups.push(group);
+                    }
                 }
             }
         }
