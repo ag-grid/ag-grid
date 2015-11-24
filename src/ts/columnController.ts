@@ -523,7 +523,7 @@ module ag.grid {
         private updateModel() {
             this.updateVisibleColumns();
             this.updatePinnedColumns();
-            this.buildGroups();
+            this.updateVisibleColumnGroups();
             this.updateGroups();
             this.updateDisplayedColumns();
         }
@@ -622,41 +622,32 @@ module ag.grid {
             }
         }
 
-        private buildGroups() {
+        private isGroupVisible(columnGroup: ColumnGroup): boolean {
+            // @TODO: handle groups within groups
+            for (var i = 0; i < columnGroup.allColumns.length; i++) {
+                var column = columnGroup.allColumns[i];
+                if (this.visibleColumns.indexOf(column) > -1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private updateVisibleColumnGroups() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 this.columnGroups = null;
                 return;
             }
 
-            // split the columns into groups
-            var currentGroup = <any> null;
             this.columnGroups = [];
-            var that = this;
 
-            var lastColWasPinned = true;
-
-            this.visibleColumns.forEach(function (column: any) {
-                // do we need a new group, because we move from pinned to non-pinned columns?
-                var endOfPinnedHeader = lastColWasPinned && !column.pinned;
-                if (!column.pinned) {
-                    lastColWasPinned = false;
+            for (var i = 0; i < this.allColumnsInGroups.length; i++) {
+                var columnGroup = this.allColumnsInGroups[i];
+                if (this.isGroupVisible(columnGroup)) {
+                    this.columnGroups.push(columnGroup);
                 }
-                // do we need a new group, because the group names doesn't match from previous col?
-                var groupKeyMismatch = currentGroup && column.colDef.headerGroup !== currentGroup.name;
-                // we don't group columns where no group is specified
-                var colNotInGroup = currentGroup && !currentGroup.name;
-                // do we need a new group, because we are just starting
-                var processingFirstCol = currentGroup === null;
-                var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
-                // create new group, if it's needed
-                if (newGroupNeeded) {
-                    var pinned = column.pinned;
-                    currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
-                    that.columnGroups.push(currentGroup);
-                }
-                currentGroup.addColumn(column);
-            });
+            }
         }
 
         private updateGroups(): void {
