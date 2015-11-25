@@ -52,10 +52,6 @@ include '../documentation_header.php';
             <td>Array of Column Definitions..</td>
         </tr>
         <tr>
-            <th>groupHeaders</th>
-            <td>Whether to group the headers.</td>
-        </tr>
-        <tr>
             <th>headerHeight</th>
             <td>Height, in pixels, of the header row. If not grouping headers, default is 25. If grouping headers, default is 50.</td>
         </tr>

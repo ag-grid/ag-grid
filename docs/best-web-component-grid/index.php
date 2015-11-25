@@ -77,7 +77,7 @@ myGrid.setGridOptions(gridOptions);</code></pre>
             to 'true' IF the attribute is provided WITHOUT any value. If the attribute is not provided,
             it is taken as false. Attributes can be changed after the grid is initialised,
             and the grid will update if appropriate (eg open up your dev tools and
-            change the 'group-headers' and set it to 'false').
+            change the 'enable-sorting' and set it to 'false').
         </li>
         <li><b>Properties:</b> The more complex properties (eg row and column data)
             are attached directly to the grid DOM element.

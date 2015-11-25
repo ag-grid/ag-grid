@@ -13,17 +13,18 @@ module.controller("exampleCtrl", function($scope, $http) {
         // in the total col, we have a value getter, which usually means we don't need to provide a field
         // however the master/slave depends on the column id (which is derived from the field if provided) in
         // order ot match up the columns
-        {headerName: "Total", headerGroup: "Medals", headerGroupShow: 'closed', field: "total",
-            valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-        {headerName: "Gold", headerGroup: "Medals", headerGroupShow: 'open', field: "gold", width: 100},
-        {headerName: "Silver", headerGroup: "Medals", headerGroupShow: 'open', field: "silver", width: 100},
-        {headerName: "Bronze", headerGroup: "Medals", headerGroupShow: 'open', field: "bronze", width: 100}
+        {headerName: "Medals", subHeaders: [
+            {headerName: "Total", headerGroupShow: 'closed', field: "total",
+                valueGetter: "data.gold + data.silver + data.bronze", width: 200},
+            {headerName: "Gold", headerGroupShow: 'open', field: "gold", width: 100},
+            {headerName: "Silver", headerGroupShow: 'open', field: "silver", width: 100},
+            {headerName: "Bronze", headerGroupShow: 'open', field: "bronze", width: 100}
+        ]}
     ];
 
     // this is the grid options for the top grid
     var gridOptionsTop = {
         columnDefs: columnDefs,
-        groupHeaders: true,
         rowData: null,
         enableColResize: true,
         debug: true,
@@ -33,7 +34,6 @@ module.controller("exampleCtrl", function($scope, $http) {
     // this is the grid options for the bottom grid
     var gridOptionsBottom = {
         columnDefs: columnDefs,
-        groupHeaders: true,
         rowData: null,
         enableColResize: true,
         debug: true,

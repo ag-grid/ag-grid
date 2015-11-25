@@ -15,11 +15,6 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        To group headers, set the attribute 'groupHeaders' to 'true' in the grid options. Then provide
-        a group name for each of the column definitions.
-    </p>
-
-    <p>
         In the example below, three groups are created: Participant, Competition and Medals.
     </p>
 
