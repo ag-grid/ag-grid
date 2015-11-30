@@ -6,6 +6,8 @@ module ag.grid {
         name: any;
         allColumns: Column[] = [];
         displayedColumns: Column[] = [];
+        allSubGroups: ColumnGroup[] = [];
+        displayedSubGroups: ColumnGroup[] = [];
         expandable = false;
         expanded = false;
         actualWidth: number;
@@ -25,6 +27,10 @@ module ag.grid {
 
         public addColumn(column: any) {
             this.allColumns.push(column);
+        }
+
+        public addSubGroup(group: any) {
+            this.allSubGroups.push(group);
         }
 
         // need to check that this group has at least one col showing when both expanded and contracted.
@@ -89,6 +95,20 @@ module ag.grid {
                         // default is always show the column
                         this.displayedColumns.push(column);
                         break;
+                }
+            }
+        }
+
+        public calculateDisplayedSubGroups() {
+            // clear out last time we calculated
+            this.displayedSubGroups = [];
+            // and calculate again
+            for (var i = 0, j = this.allSubGroups.length; i < j; i++) {
+                var subGroup = this.allSubGroups[i];
+                subGroup.calculateDisplayedColumns();
+                subGroup.calculateDisplayedSubGroups();
+                if (subGroup.displayedColumns.length || subGroup.displayedSubGroups.length) {
+                    this.displayedSubGroups.push(subGroup);
                 }
             }
         }
