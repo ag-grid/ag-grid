@@ -22,6 +22,9 @@ module ag.grid {
             this.displayedColumns.forEach( (column: Column) => {
                 result += column.getMinimumWidth();
             });
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                result += columnGroup.getMinimumWidth();
+            });
             return result;
         }
 
@@ -63,6 +66,10 @@ module ag.grid {
             var actualWidth = 0;
             this.displayedColumns.forEach( (column: Column)=> {
                 actualWidth += column.actualWidth;
+            });
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                columnGroup.calculateActualWidth();
+                actualWidth += columnGroup.actualWidth;
             });
             this.actualWidth = actualWidth;
         }
@@ -115,8 +122,12 @@ module ag.grid {
 
         // should replace with utils method 'add all'
         public addToVisibleColumns(colsToAdd: any) {
-            for (var i = 0; i < this.displayedColumns.length; i++) {
-                var column = this.displayedColumns[i];
+            for (var i = 0; i < this.displayedSubGroups.length; i++) {
+                var subGroup = this.displayedSubGroups[i];
+                subGroup.addToVisibleColumns(colsToAdd);
+            }
+            for (var j = 0; j < this.displayedColumns.length; j++) {
+                var column = this.displayedColumns[j];
                 colsToAdd.push(column);
             }
         }
