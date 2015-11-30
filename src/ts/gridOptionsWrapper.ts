@@ -110,7 +110,7 @@ module ag.grid {
             } else {
                 // otherwise return 25 if no grouping, 50 if grouping
                 if (this.isGroupHeaders()) {
-                    return 50;
+                    return 25 * this.columnDefsDepth;
                 } else {
                     return 25;
                 }
