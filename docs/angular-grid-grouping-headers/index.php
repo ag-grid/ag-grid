@@ -15,6 +15,11 @@ include '../documentation_header.php';
     </p>
 
     <p>
+        To group headers, wrap the headers you want grouped with a new column definition that has
+        the attribute 'subHeaders' holding the header column definitions in an array.
+    </p>
+
+    <p>
         In the example below, three groups are created: Participant, Competition and Medals.
     </p>
 

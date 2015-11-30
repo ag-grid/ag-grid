@@ -143,6 +143,11 @@ include '../documentation_header.php';
             <td>Whether to show the column when the group is open / closed.</td>
         </tr>
         <tr>
+            <th>subHeaders</th>
+            <td>Array of column definitions. Enables header grouping by declaring this header as a group that
+                contains sub-headers.</td>
+        </tr>
+        <tr>
             <th>editable</th>
             <td>Set to true if this col is editable, otherwise false. Can also be a function
                 to have different rows editable.</td>
