@@ -782,12 +782,9 @@ module ag.grid {
             for (var i = 0; i < subGroups.length; i++) {
                 var subGroup = subGroups[i];
                 if (subGroup.subHeaders) {
-                    /* @TODO: handle groups within groups
-
-                    var newGroup = new ColumnGroup(subGroup.pinned, subGroup.headerName);
+                    var newGroup = new ColumnGroup(!!subGroup.pinned, subGroup.headerName);
                     this.addSubGroupsOrColumns(newGroup, subGroup.subHeaders);
                     group.addSubGroup(newGroup);
-                    */
                 } else {
                     var width = this.calculateColInitialWidth(subGroup);
                     var column = new Column(subGroup, width);
