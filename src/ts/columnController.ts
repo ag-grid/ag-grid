@@ -642,6 +642,14 @@ module ag.grid {
 
             this.columnGroups = [];
 
+            if (this.needAGroupColumn()) {
+                var groupColumn = this.createGroupColumn();
+                groupColumn.pinned = this.pinnedColumnCount > 0;
+                var group = new ColumnGroup(false, undefined);
+                group.addColumn(groupColumn);
+                this.columnGroups.push(group);
+            }
+
             for (var i = 0; i < this.allColumnsInGroups.length; i++) {
                 var columnGroup = this.allColumnsInGroups[i];
                 if (this.isGroupVisible(columnGroup)) {
