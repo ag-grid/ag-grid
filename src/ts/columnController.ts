@@ -692,31 +692,37 @@ module ag.grid {
             }
         }
 
-        private updateVisibleColumns(): void {
-            this.visibleColumns = [];
-
+        private needAGroupColumn(): boolean {
             // see if we need to insert the default grouping column
-            var needAGroupColumn = this.pivotColumns.length > 0
+            return this.pivotColumns.length > 0
                 && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
                 && !this.gridOptionsWrapper.isGroupUseEntireRow()
                 && !this.gridOptionsWrapper.isGroupSuppressRow();
+        }
 
+        private createGroupColumn(): Column {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-            if (needAGroupColumn) {
-                // if one provided by user, use it, otherwise create one
-                var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
-                if (!groupColDef) {
-                    groupColDef = {
-                        headerName: localeTextFunc('group', 'Group'),
-                        cellRenderer: {
-                            renderer: "group"
-                        }
-                    };
-                }
-                // no group column provided, need to create one here
-                var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
-                var groupColumn = new Column(groupColDef, groupColumnWidth);
+            // if one provided by user, use it, otherwise create one
+            var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
+            if (!groupColDef) {
+                groupColDef = {
+                    headerName: localeTextFunc('group', 'Group'),
+                    cellRenderer: {
+                        renderer: "group"
+                    }
+                };
+            }
+            // no group column provided, need to create one here
+            var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
+            return new Column(groupColDef, groupColumnWidth);
+        }
+
+        private updateVisibleColumns(): void {
+            this.visibleColumns = [];
+
+            if (this.needAGroupColumn()) {
+                var groupColumn = this.createGroupColumn();
                 this.visibleColumns.push(groupColumn);
             }
 
