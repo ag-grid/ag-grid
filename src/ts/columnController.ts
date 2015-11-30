@@ -623,10 +623,15 @@ module ag.grid {
         }
 
         private isGroupVisible(columnGroup: ColumnGroup): boolean {
-            // @TODO: handle groups within groups
             for (var i = 0; i < columnGroup.allColumns.length; i++) {
                 var column = columnGroup.allColumns[i];
                 if (this.visibleColumns.indexOf(column) > -1) {
+                    return true;
+                }
+            }
+            for (var j = 0; j < columnGroup.allSubGroups.length; j++) {
+                var subGroup = columnGroup.allSubGroups[j];
+                if (this.isGroupVisible(subGroup)) {
                     return true;
                 }
             }
