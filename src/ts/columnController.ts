@@ -523,7 +523,7 @@ module ag.grid {
         private updateModel() {
             this.updateVisibleColumns();
             this.updatePinnedColumns();
-            this.updateVisibleColumnGroups();
+            this.updateVisibleColumnGroupsAndPinning();
             this.updateGroups();
             this.updateDisplayedColumns();
         }
@@ -633,7 +633,7 @@ module ag.grid {
             return false;
         }
 
-        private updateVisibleColumnGroups() {
+        private updateVisibleColumnGroupsAndPinning() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 this.columnGroups = null;
@@ -645,7 +645,35 @@ module ag.grid {
             for (var i = 0; i < this.allColumnsInGroups.length; i++) {
                 var columnGroup = this.allColumnsInGroups[i];
                 if (this.isGroupVisible(columnGroup)) {
-                    this.columnGroups.push(columnGroup);
+                    var pinnedGroupCols = columnGroup.allColumns.filter(function(col) {
+                        return col.pinned;
+                    });
+
+                    if (pinnedGroupCols.length && pinnedGroupCols.length < columnGroup.allColumns.length) {
+                        // need to break this group to pin some of its columns
+                        var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                        pinnedGroupCols.forEach(function(col) {
+                            pinnedGroup.addColumn(col);
+                        });
+                        this.columnGroups.push(pinnedGroup);
+
+                        // this new group is the columns that aren't pinned
+                        var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
+                        for (var i = 0; i < columnGroup.allColumns.length; i++) {
+                            var col = columnGroup.allColumns[i];
+                            if (!col.pinned) {
+                                unpinnedGroup.addColumn(col);
+                            }
+                        }
+                        this.columnGroups.push(unpinnedGroup);
+                    } else if (pinnedGroupCols.length && pinnedGroupCols.length === columnGroup.allColumns.length) {
+                        // need to set this group as pinned
+                        columnGroup.pinned = true;
+                        this.columnGroups.push(columnGroup);
+                    } else {
+                        // can use this group as-is
+                        this.columnGroups.push(columnGroup);
+                    }
                 }
             }
         }
