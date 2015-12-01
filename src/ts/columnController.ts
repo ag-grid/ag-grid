@@ -701,6 +701,7 @@ module ag.grid {
                 var group = this.columnGroups[i];
                 group.calculateExpandable();
                 group.calculateDisplayedColumns();
+                group.calculateDisplayedSubGroups();
                 group.calculateActualWidth();
             }
         }
