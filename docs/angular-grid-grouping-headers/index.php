@@ -90,8 +90,16 @@ include '../documentation_header.php';
 
     <h4>Complex Grouping Example</h4>
 
-    Here is a more complex example, where there are groups that contain groups -- and those groups contain the actual
-    columns. Notice that there is a new achievements group that contains the sport column and the medals and competition groups.
+    <p>
+        Here is a more complex example, where there are groups that contain groups -- and those groups contain the actual
+        columns. Notice that there is a new achievements group that contains the sport column and the medals and competition groups.
+    </p>
+
+    <p>
+        Notice also that when the grouping definitions aren't perfectly balanced (for example the sport column is a direct child of achievements
+        and the different medals columns have a group between them and the achievements group), then individual column headers and even groups
+        will fill into the space above them.
+    </p>
 
     <show-example example="example2"></show-example>
 

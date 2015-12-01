@@ -778,17 +778,58 @@ module ag.grid {
             }
         }
 
-        private processColDef(colDef: any, parent: any): ColumnGroup {
+        private getDepthOfColDefItem(colDef: any, depth: number): number {
+            var maxDepth = depth;
+            if (colDef.subHeaders) {
+                colDef.subHeaders.forEach( (subHeaderColDef: any) => {
+                    var subHeaderDepth = this.getDepthOfColDefItem(subHeaderColDef, depth + 1);
+                    if (subHeaderDepth > maxDepth) {
+                        maxDepth = subHeaderDepth;
+                    }
+                });
+            }
+            return maxDepth;
+        }
+
+        private addGroupsToPadTargetDepth(group: ColumnGroup, numParents: number): ColumnGroup {
             var topLevelGroup: ColumnGroup = null;
+            var parent: ColumnGroup = null;
+            if (numParents > 0) {
+                parent = new ColumnGroup(group.pinned, undefined);
+                parent.addSubGroup(group);
+                topLevelGroup = this.addGroupsToPadTargetDepth(parent, numParents - 1);
+            }
+            return topLevelGroup || parent || group;
+        }
+
+        private processColDef(colDef: any, parent: any, targetDepth: number): ColumnGroup {
+            var topLevelGroup: ColumnGroup = null;
+
+            var depthOfColDef = this.getDepthOfColDefItem(colDef, 1);
 
             if (colDef.subHeaders) {
                 // this item is a header group
 
+                // by default targetDepth for children will just be targetDepth - 1
+                // since the children are one level closer to the bottom of the tree
+                var childrenTargetDepth = targetDepth - 1;
+
                 var group = new ColumnGroup(!!colDef.pinned, colDef.headerName);
-                topLevelGroup = group;
+                if (depthOfColDef < targetDepth) {
+                    var numPaddingGroups = targetDepth - depthOfColDef;
+
+                    // create groups above this item so that this item's depth matches the target depth
+                    topLevelGroup = this.addGroupsToPadTargetDepth(group, numPaddingGroups);
+
+                    // if padding was just added above this item, need to adjust targetDepth for children
+                    childrenTargetDepth = childrenTargetDepth - numPaddingGroups;
+
+                } else {
+                    topLevelGroup = group;
+                }
 
                 colDef.subHeaders.forEach( (subHeaderColDef: any) => {
-                    this.processColDef(subHeaderColDef, group);
+                    this.processColDef(subHeaderColDef, group, childrenTargetDepth);
                 });
 
                 if (parent) {
@@ -800,8 +841,21 @@ module ag.grid {
 
                 var width = this.calculateColInitialWidth(colDef);
                 var column = new Column(colDef, width);
+                if (depthOfColDef < targetDepth) {
+                    var group = new ColumnGroup(!!colDef.pinned, undefined);
+                    group.addColumn(column);
+                    // create groups above this item so that this item's depth matches the target depth
+                    // note: we pass targetDepth - depthOfColDef - 1 since here we're putting the column
+                    // into a group before we use this helper (which expects to get a group not a column)
+                    topLevelGroup = this.addGroupsToPadTargetDepth(group, targetDepth - depthOfColDef - 1);
+
+                }
                 if (parent) {
-                    parent.addColumn(column);
+                    if (topLevelGroup) {
+                        parent.addSubGroup(topLevelGroup);
+                    } else {
+                        parent.addColumn(column);
+                    }
                 }
                 this.allColumns.push(column);
 
@@ -819,9 +873,13 @@ module ag.grid {
             this.allColumns = [];
 
             if (colDefs) {
+                var maxColDefDepth = this.gridOptionsWrapper.getColumnDefsDepth();
                 for (var i = 0; i < colDefs.length; i++) {
                     var colDef = colDefs[i];
-                    var group = this.processColDef(colDef, null);
+                    // process column definitions, passing the maximum depth as a target
+                    // if a node is at the top level of the column definitions but does not match
+                    // the maximum depth we want to put empty groups above it to balance the tree
+                    var group = this.processColDef(colDef, null, maxColDefDepth);
                     if (group) {
                         this.allColumnsInGroups.push(group);
                     }

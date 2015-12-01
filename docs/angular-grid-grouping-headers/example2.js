@@ -4,17 +4,13 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: '', subHeaders: [
-            {headerName: 'Participant', subHeaders: [
-                {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-                {headerName: "Age", field: "age", width: 90, filter: 'number'},
-                {headerName: "Country", field: "country", width: 120}
-            ]}
+        {headerName: 'Participant', subHeaders: [
+            {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
+            {headerName: "Age", field: "age", width: 90, filter: 'number'},
+            {headerName: "Country", field: "country", width: 120}
         ]},
         {headerName: 'Achievements', subHeaders: [
-            {headerName: '', subHeaders: [
-                {headerName: "Sport", field: "sport", width: 110}
-            ]},
+            {headerName: "Sport", field: "sport", width: 110},
             {headerName: 'Medals', subHeaders: [
                 {headerName: "Total", headerGroupShow: 'closed', field: "total", width: 100, filter: 'number'},
                 {headerName: "Gold", headerGroupShow: 'open', field: "gold", width: 100, filter: 'number'},
