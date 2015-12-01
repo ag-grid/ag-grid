@@ -699,10 +699,7 @@ module ag.grid {
 
             for (var i = 0; i < this.columnGroups.length; i++) {
                 var group = this.columnGroups[i];
-                group.calculateExpandable();
-                group.calculateDisplayedColumns();
-                group.calculateDisplayedSubGroups();
-                group.calculateActualWidth();
+                group.update();
             }
         }
 

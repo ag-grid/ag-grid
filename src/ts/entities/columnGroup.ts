@@ -17,6 +17,16 @@ module ag.grid {
             this.name = name;
         }
 
+        public update(): void {
+            this.calculateExpandable();
+            this.calculateDisplayedColumns();
+            this.calculateDisplayedSubGroups();
+            this.calculateActualWidth();
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                columnGroup.update();
+            });
+        }
+
         public getMinimumWidth(): number {
             var result = 0;
             this.displayedColumns.forEach( (column: Column) => {
