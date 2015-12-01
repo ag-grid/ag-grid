@@ -735,9 +735,10 @@ module ag.grid {
             if (this.needAGroupColumn()) {
                 var groupColumn = this.createGroupColumn();
                 groupColumn.pinned = this.pinnedColumnCount > 0;
-                var group = new ColumnGroup(false, undefined);
+                var group = new ColumnGroup(groupColumn.pinned, undefined);
                 group.addColumn(groupColumn);
-                this.columnGroups.push(group);
+                var topLevelGroup = this.addGroupsToPadTargetDepth(group, this.gridOptionsWrapper.getColumnDefsDepth() - 2);
+                this.columnGroups.push(topLevelGroup);
             }
 
             for (var i = 0; i < this.allColumnsInGroups.length; i++) {
