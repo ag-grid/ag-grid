@@ -57,6 +57,8 @@ module ag.grid {
         private valueColumns: Column[];
         private columnGroups: ColumnGroup[];
 
+        private groupColumn: Column;
+
         private setupComplete = false;
         private valueService: ValueService;
         private pinnedColumnCount: number;
@@ -715,25 +717,30 @@ module ag.grid {
         private createGroupColumn(): Column {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-            // if one provided by user, use it, otherwise create one
-            var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
-            if (!groupColDef) {
-                groupColDef = {
-                    headerName: localeTextFunc('group', 'Group'),
-                    cellRenderer: {
-                        renderer: "group"
-                    }
-                };
+            if (!this.groupColumn) {
+                // if one provided by user, use it, otherwise create one
+                var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
+                if (!groupColDef) {
+                    groupColDef = {
+                        headerName: localeTextFunc('group', 'Group'),
+                        cellRenderer: {
+                            renderer: "group"
+                        }
+                    };
+                }
+                // no group column provided, need to create one here
+                var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
+                this.groupColumn = new Column(groupColDef, groupColumnWidth);
             }
-            // no group column provided, need to create one here
-            var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
-            return new Column(groupColDef, groupColumnWidth);
+
+            return this.groupColumn;
         }
 
         private updateVisibleColumns(): void {
             this.visibleColumns = [];
 
             if (this.needAGroupColumn()) {
+                this.groupColumn = null;
                 var groupColumn = this.createGroupColumn();
                 this.visibleColumns.push(groupColumn);
             }
