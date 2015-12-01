@@ -217,9 +217,7 @@ module ag.grid {
         private updateGroupWidthsAfterColumnResize(column: Column) {
             if (this.columnGroups) {
                 this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
-                    if (columnGroup.displayedColumns.indexOf(column) >= 0) {
-                        columnGroup.calculateActualWidth();
-                    }
+                    columnGroup.updateWidthAfterColumnResize(column);
                 });
             }
         }

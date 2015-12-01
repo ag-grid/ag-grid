@@ -22,6 +22,7 @@ module ag.grid {
 
         private groupWidthStart: number;
         private childrenWidthStarts: number[];
+        private widthOfSubHeaders: number;
         private minWidth: number;
         private parentScope: any;
         private filterManager: FilterManager;
@@ -182,7 +183,17 @@ module ag.grid {
             this.columnGroup.displayedColumns.forEach( (column: Column) => {
                 this.childrenWidthStarts.push(column.actualWidth);
             });
+            this.widthOfSubHeaders = 0;
+            this.columnGroup.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                this.widthOfSubHeaders += columnGroup.actualWidth;
+            });
             this.minWidth = this.columnGroup.getMinimumWidth();
+
+            // propagate to last sub-header to eventually result in column resize
+            var lastSubHeader = this.subHeaders[this.subHeaders.length - 1];
+            if (lastSubHeader) {
+                lastSubHeader.onDragStart();
+            }
         }
 
         public onDragging(dragChange: any, finished: boolean): void {
@@ -201,7 +212,7 @@ module ag.grid {
             var changeRatio = newWidth / this.groupWidthStart;
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
-            var pixelsToDistribute = newWidth;
+            var pixelsToDistribute = newWidth - this.widthOfSubHeaders;
             var displayedColumns = this.columnGroup.displayedColumns;
             displayedColumns.forEach( (column: Column, index: any) => {
                 var notLastCol = index !== (displayedColumns.length - 1);
@@ -220,6 +231,12 @@ module ag.grid {
                 }
                 this.columnController.setColumnWidth(column, newChildSize, finished);
             });
+
+            // propagate to last sub-header to eventually result in column resize
+            var lastSubHeader = this.subHeaders[this.subHeaders.length - 1];
+            if (lastSubHeader) {
+                lastSubHeader.onDragging(dragChange, false);
+            }
         }
 
     }

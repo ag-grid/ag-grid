@@ -131,6 +131,20 @@ module ag.grid {
                 colsToAdd.push(column);
             }
         }
+
+        public updateWidthAfterColumnResize(column: Column): boolean {
+            var recalculated = false;
+            var subGroupRecalculated = false;
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                var recalc = columnGroup.updateWidthAfterColumnResize(column);
+                subGroupRecalculated = subGroupRecalculated || recalc;
+            });
+            if (subGroupRecalculated || this.displayedColumns.indexOf(column) >= 0) {
+                this.calculateActualWidth();
+                recalculated = true;
+            }
+            return recalculated;
+        }
     }
 
 }
