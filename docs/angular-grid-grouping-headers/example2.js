@@ -24,10 +24,17 @@ module.controller("exampleCtrl", function($scope, $http) {
         ]}
     ];
 
+    $scope.pinnedColumnCount = 0;
+
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
         enableColResize: true
+    };
+
+    $scope.onPinnedColCountChanged = function() {
+        var newCount = Number($scope.pinnedColumnCount);
+        $scope.gridOptions.columnApi.setPinnedColumnCount(newCount);
     };
 
     $http.get("../olympicWinners.json")

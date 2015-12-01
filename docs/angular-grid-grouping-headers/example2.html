@@ -8,6 +8,18 @@
     <script src="example2.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-    <div ag-grid="gridOptions" style="height: 100%;" class="ag-fresh"></div>
+    <div style="padding: 4px;">
+        Pinned:
+        <select ng-model="pinnedColumnCount" ng-change="onPinnedColCountChanged()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+    </div>
+
+    <div ag-grid="gridOptions" style="height: 450px;" class="ag-fresh"></div>
 </body>
 </html>
