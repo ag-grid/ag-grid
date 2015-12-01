@@ -29,7 +29,9 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
-        enableColResize: true
+        enableColResize: true,
+        groupKeys: ['country'],
+        groupDefaultExpanded: true
     };
 
     $scope.onPinnedColCountChanged = function() {
