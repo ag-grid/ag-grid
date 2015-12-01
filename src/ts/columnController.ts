@@ -638,6 +638,91 @@ module ag.grid {
             return false;
         }
 
+        private splitColumnGroupForPinning(columnGroup: ColumnGroup, pinnedCols: Column[], unpinnedCols: Column[]): ColumnGroup[] {
+            var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+            pinnedCols.forEach(function(col) {
+                pinnedGroup.addColumn(col);
+            });
+            var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
+            unpinnedCols.forEach(function(col) {
+                unpinnedGroup.addColumn(col);
+            });
+            return [pinnedGroup, unpinnedGroup];
+        }
+
+        private checkForPinningInColumnGroup(columnGroup: ColumnGroup): ColumnGroup[] {
+            var resultGroups: ColumnGroup[] = [];
+            if (!this.isGroupVisible(columnGroup)) {
+                return resultGroups;
+            }
+            var pinnedGroupCols = columnGroup.allColumns.filter(function(col) {
+                return col.pinned;
+            });
+            var unpinnedGroupCols = columnGroup.allColumns.filter(function(col) {
+                return !col.pinned;
+            });
+            if (pinnedGroupCols.length && unpinnedGroupCols.length) {
+                // some of the columns in this group are pinned and some are not, so this group needs to split into
+                // two groups where one is pinned and one is not
+                resultGroups = this.splitColumnGroupForPinning(columnGroup, pinnedGroupCols, unpinnedGroupCols);
+            } else if (pinnedGroupCols.length) {
+                // this group has only pinned columns, so this group just needs to be pinned
+                var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                pinnedGroupCols.forEach(function(col) {
+                    pinnedGroup.addColumn(col);
+                });
+                resultGroups = [pinnedGroup];
+            } else if (unpinnedGroupCols.length) {
+                // this group has only unpinned columns, so do nothing
+                resultGroups = [columnGroup];
+            } else {
+                // this group has no columns... so check within sub-groups
+
+                var pinnedSubGroups: ColumnGroup[] = [];
+                var unpinnedSubGroups: ColumnGroup[] = [];
+                columnGroup.allSubGroups.forEach( (subGroup: ColumnGroup) => {
+                    var subGroupsAfterSplit = this.checkForPinningInColumnGroup(subGroup);
+                    if (subGroupsAfterSplit.length === 2) {
+                        pinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        unpinnedSubGroups.push(subGroupsAfterSplit[1]);
+                    } else if (subGroupsAfterSplit.length === 1) {
+                        if (subGroupsAfterSplit[0].pinned) {
+                            pinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        } else {
+                            unpinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        }
+                    }
+                });
+
+                if (pinnedSubGroups.length && unpinnedSubGroups.length) {
+                    // some of the sub-groups in this group are pinned and some are not,
+                    // so this group needs to split into two groups where one is pinned and one is not
+                    var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                    pinnedSubGroups.forEach(function(subGroup) {
+                        pinnedGroup.addSubGroup(subGroup);
+                    });
+                    var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
+                    unpinnedSubGroups.forEach(function(subGroup) {
+                        unpinnedGroup.addSubGroup(subGroup);
+                    });
+                    resultGroups = [pinnedGroup, unpinnedGroup];
+                } else if (pinnedSubGroups.length) {
+                    // this group has only pinned sub-groups, so this group just needs to be pinned
+                    var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                    pinnedSubGroups.forEach(function(subGroup) {
+                        pinnedGroup.addSubGroup(subGroup);
+                    });
+                    resultGroups = [pinnedGroup];
+                } else if (unpinnedSubGroups.length) {
+                    // this group has only unpinned sub-groups, so do nothing
+                    resultGroups = [columnGroup];
+                }
+
+            }
+
+            return resultGroups;
+        }
+
         private updateVisibleColumnGroupsAndPinning() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
@@ -657,37 +742,10 @@ module ag.grid {
 
             for (var i = 0; i < this.allColumnsInGroups.length; i++) {
                 var columnGroup = this.allColumnsInGroups[i];
-                if (this.isGroupVisible(columnGroup)) {
-                    var pinnedGroupCols = columnGroup.allColumns.filter(function(col) {
-                        return col.pinned;
-                    });
-
-                    if (pinnedGroupCols.length && pinnedGroupCols.length < columnGroup.allColumns.length) {
-                        // need to break this group to pin some of its columns
-                        var pinnedGroup = new ColumnGroup(true, columnGroup.name);
-                        pinnedGroupCols.forEach(function(col) {
-                            pinnedGroup.addColumn(col);
-                        });
-                        this.columnGroups.push(pinnedGroup);
-
-                        // this new group is the columns that aren't pinned
-                        var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
-                        for (var i = 0; i < columnGroup.allColumns.length; i++) {
-                            var col = columnGroup.allColumns[i];
-                            if (!col.pinned) {
-                                unpinnedGroup.addColumn(col);
-                            }
-                        }
-                        this.columnGroups.push(unpinnedGroup);
-                    } else if (pinnedGroupCols.length && pinnedGroupCols.length === columnGroup.allColumns.length) {
-                        // need to set this group as pinned
-                        columnGroup.pinned = true;
-                        this.columnGroups.push(columnGroup);
-                    } else {
-                        // can use this group as-is
-                        this.columnGroups.push(columnGroup);
-                    }
-                }
+                var columnGroupsAfterPinningCheck = this.checkForPinningInColumnGroup(columnGroup);
+                columnGroupsAfterPinningCheck.forEach( (newColumnGroup: ColumnGroup) => {
+                    this.columnGroups.push(newColumnGroup);
+                });
             }
         }
 
