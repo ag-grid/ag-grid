@@ -18,6 +18,7 @@ module ag.grid {
         private columnController: ColumnController;
 
         private children: RenderedHeaderCell[] = [];
+        private subHeaders: RenderedHeaderGroupCell[] = [];
 
         private groupWidthStart: number;
         private childrenWidthStarts: number[];
@@ -49,10 +50,16 @@ module ag.grid {
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
                 childElement.destroy();
             });
+            this.subHeaders.forEach( (childElement: RenderedHeaderGroupCell) => {
+                childElement.destroy();
+            });
         }
 
         public refreshFilterIcon(): void {
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
+                childElement.refreshFilterIcon();
+            });
+            this.subHeaders.forEach( (childElement: RenderedHeaderGroupCell) => {
                 childElement.refreshFilterIcon();
             });
         }
@@ -64,10 +71,13 @@ module ag.grid {
         }
 
         public onIndividualColumnResized(column: Column) {
-            if (!this.isColumnInOurDisplayedGroup(column)) {
+            if (!this.isColumnInOurDisplayedGroupOrSubGroups(column)) {
                 return;
             }
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
+                childElement.onIndividualColumnResized(column);
+            });
+            this.subHeaders.forEach( (childElement: RenderedHeaderGroupCell) => {
                 childElement.onIndividualColumnResized(column);
             });
             this.setWidthOfGroupHeaderCell();
@@ -113,6 +123,14 @@ module ag.grid {
             }
             this.eHeaderGroup.appendChild(this.eHeaderGroupCell);
 
+            this.columnGroup.displayedSubGroups.forEach((columnGroup: ColumnGroup) => {
+                var renderedHeaderGroupCell = new RenderedHeaderGroupCell(columnGroup, this.gridOptionsWrapper,
+                    this.columnController, this.getERoot(), this.angularGrid, this.parentScope,
+                    this.filterManager, this.$compile);
+                this.subHeaders.push(renderedHeaderGroupCell);
+                this.eHeaderGroup.appendChild(renderedHeaderGroupCell.getGui());
+            });
+
             this.columnGroup.displayedColumns.forEach( (column: Column) => {
                 var renderedHeaderCell = new RenderedHeaderCell(column, this, this.gridOptionsWrapper,
                     this.parentScope, this.filterManager, this.columnController, this.$compile,
@@ -124,8 +142,17 @@ module ag.grid {
             this.setWidthOfGroupHeaderCell();
         }
 
-        private isColumnInOurDisplayedGroup(column: Column): boolean {
-            return this.columnGroup.displayedColumns.indexOf(column) >= 0;
+        private isColumnInDisplayedSubGroup(column: Column, subGroup: ColumnGroup): boolean {
+            for (var i = 0; i < subGroup.displayedSubGroups.length; i++) {
+                if (this.isColumnInDisplayedSubGroup(column, subGroup.displayedSubGroups[i])) {
+                    return true;
+                }
+            }
+            return subGroup.displayedColumns.indexOf(column) >= 0;
+        }
+
+        private isColumnInOurDisplayedGroupOrSubGroups(column: Column): boolean {
+            return this.isColumnInDisplayedSubGroup(column, this.columnGroup);
         }
 
         private setWidthOfGroupHeaderCell() {
