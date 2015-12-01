@@ -778,23 +778,36 @@ module ag.grid {
             }
         }
 
-        private addSubGroupsOrColumns(group: ColumnGroup, subGroups: any[]): void {
-            if (!subGroups) {
-                return;
-            }
-            for (var i = 0; i < subGroups.length; i++) {
-                var subGroup = subGroups[i];
-                if (subGroup.subHeaders) {
-                    var newGroup = new ColumnGroup(!!subGroup.pinned, subGroup.headerName);
-                    this.addSubGroupsOrColumns(newGroup, subGroup.subHeaders);
-                    group.addSubGroup(newGroup);
-                } else {
-                    var width = this.calculateColInitialWidth(subGroup);
-                    var column = new Column(subGroup, width);
-                    group.addColumn(column);
-                    this.allColumns.push(column);
+        private processColDef(colDef: any, parent: any): ColumnGroup {
+            var topLevelGroup: ColumnGroup = null;
+
+            if (colDef.subHeaders) {
+                // this item is a header group
+
+                var group = new ColumnGroup(!!colDef.pinned, colDef.headerName);
+                topLevelGroup = group;
+
+                colDef.subHeaders.forEach( (subHeaderColDef: any) => {
+                    this.processColDef(subHeaderColDef, group);
+                });
+
+                if (parent) {
+                    parent.addSubGroup(topLevelGroup);
                 }
+
+            } else {
+                // this item is a column
+
+                var width = this.calculateColInitialWidth(colDef);
+                var column = new Column(colDef, width);
+                if (parent) {
+                    parent.addColumn(column);
+                }
+                this.allColumns.push(column);
+
             }
+
+            return topLevelGroup;
         }
 
         private createColumnsInGroups(colDefs: any): void {
@@ -808,18 +821,8 @@ module ag.grid {
             if (colDefs) {
                 for (var i = 0; i < colDefs.length; i++) {
                     var colDef = colDefs[i];
-                    if (colDef.subHeaders) {
-                        /* this item is a header group */
-                        var group = new ColumnGroup(!!colDef.pinned, colDef.headerName);
-                        this.addSubGroupsOrColumns(group, colDef.subHeaders);
-                        this.allColumnsInGroups.push(group);
-                    } else {
-                        /* this item is just a column, create a group for it */
-                        var group = new ColumnGroup(!!colDef.pinned, undefined);
-                        var width = this.calculateColInitialWidth(colDef);
-                        var column = new Column(colDef, width);
-                        group.addColumn(column);
-                        this.allColumns.push(column);
+                    var group = this.processColDef(colDef, null);
+                    if (group) {
                         this.allColumnsInGroups.push(group);
                     }
                 }
