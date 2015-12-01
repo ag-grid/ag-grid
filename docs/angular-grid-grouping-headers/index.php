@@ -88,6 +88,13 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
+    <h4>Complex Grouping Example</h4>
+
+    Here is a more complex example, where there are groups that contain groups -- and those groups contain the actual
+    columns. Notice that there is a new achievements group that contains the sport column and the medals and competition groups.
+
+    <show-example example="example2"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>
