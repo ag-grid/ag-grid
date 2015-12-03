@@ -262,9 +262,9 @@ module ag.grid {
         }
 
         private calculateColumnDefsDepth() {
-            var depth = 1;
+            var depth = 0;
             if (this.gridOptions.columnDefs) {
-                depth = this.updateColumnDefsDepth(this.gridOptions.columnDefs, depth);
+                depth = this.updateColumnDefsDepth(this.gridOptions.columnDefs, 1);
             }
             return depth;
         }
