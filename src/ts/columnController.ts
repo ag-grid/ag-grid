@@ -737,7 +737,10 @@ module ag.grid {
                 groupColumn.pinned = this.pinnedColumnCount > 0;
                 var group = new ColumnGroup(groupColumn.pinned, undefined);
                 group.addColumn(groupColumn);
-                var topLevelGroup = this.addGroupsToPadTargetDepth(group, this.gridOptionsWrapper.getColumnDefsDepth() - 2);
+                // the depth of the group column should match the max-depth of the headers
+                // first, need to subtract 2 for the header itself and the group it was just added to
+                var targetDepth = this.gridOptionsWrapper.getColumnDefsDepth() - 2;
+                var topLevelGroup = this.addGroupsToPadTargetDepth(group, targetDepth);
                 this.columnGroups.push(topLevelGroup);
             }
 
