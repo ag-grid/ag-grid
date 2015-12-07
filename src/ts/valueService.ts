@@ -27,7 +27,7 @@ module ag.grid {
             if (colDef.valueGetter) {
                 result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
             } else if (field && data) {
-                result = data[field];
+                result = eval("with (data) { (" + field + ")}");
             } else {
                 result = undefined;
             }
