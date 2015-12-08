@@ -6,14 +6,22 @@ fileBrowserModule.controller('accountController', function($scope) {
         {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Units", field: "amount1", headerGroup: 'Week 1', width: 70},
-        {headerName: "GBP", field: "gbp1", headerGroup: 'Week 1', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount2", headerGroup: 'Week 2', width: 70},
-        {headerName: "GBP", field: "gbp2", headerGroup: 'Week 2', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount3", headerGroup: 'Week 3', width: 70},
-        {headerName: "GBP", field: "gbp3", headerGroup: 'Week 3', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amountTotal", headerGroup: 'Period Total', width: 70},
-        {headerName: "GBP", field: "gbpTotal", headerGroup: 'Period Total', width: 70, cellRenderer: currencyRenderer}
+        {headerName: 'Week 1', subHeaders: [
+            {headerName: "Units", field: "amount1", width: 70},
+            {headerName: "GBP", field: "gbp1", width: 70, cellRenderer: currencyRenderer}
+        ]},
+        {headerName: 'Week 2', subHeaders: [
+            {headerName: "Units", field: "amount2", width: 70},
+            {headerName: "GBP", field: "gbp2", width: 70, cellRenderer: currencyRenderer}
+        ]},
+        {headerName: 'Week 3', subHeaders: [
+            {headerName: "Units", field: "amount3", width: 70},
+            {headerName: "GBP", field: "gbp3", width: 70, cellRenderer: currencyRenderer}
+        ]},
+        {headerName: 'Period Total', subHeaders: [
+            {headerName: "Units", field: "amountTotal", width: 70},
+            {headerName: "GBP", field: "gbpTotal", width: 70, cellRenderer: currencyRenderer}
+        ]}
     ];
 
     function currencyRenderer(params) {
@@ -29,7 +37,6 @@ fileBrowserModule.controller('accountController', function($scope) {
         rowData: createRowData(),
         rowSelection: 'single',
         groupKeys: ['category'],
-        groupHeaders: true,
         groupDefaultExpanded: true,
         groupIncludeFooter: true,
         groupAggFields: ['amount1','gbp1','amount2','gbp2','amount3','gbp3','amount4','gbp4'],

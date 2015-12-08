@@ -71,7 +71,6 @@ module ag.grid {
         datasource?: any; // should be typed
         pinnedColumnCount?: number;
         // in properties
-        groupHeaders?: boolean;
         headerHeight?: number;
 
         // callbacks

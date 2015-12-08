@@ -62,7 +62,6 @@ include '../documentation_header.php';
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
-    groupHeaders: false,
     rowHeight: 22,
     rowSelection: 'single',
 

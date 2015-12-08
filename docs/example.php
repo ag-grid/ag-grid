@@ -106,12 +106,6 @@
                     <option value="fixed">800x600</option>
                 </select>
 
-                Group Headers:
-                <select ng-model="groupHeaders" style="width: 60px;" ng-change="onGroupHeaders()">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-
                 Style:
                 <select ng-model="style" style="width: 90px;">
                     <option value="">-none-</option>

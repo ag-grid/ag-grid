@@ -116,7 +116,6 @@ module ag.grid {
         public pinnedColumnCount: number;
         public quickFilterText: string;
         // in properties
-        public groupHeaders: boolean;
         public headerHeight: number;
 
         constructor(private elementDef: any) {

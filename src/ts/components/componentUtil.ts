@@ -26,7 +26,7 @@ module ag.grid {
         ];
 
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];
-        public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders','showToolPanel'];
+        public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
             'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
             'groupAggFields','columnDefs','datasource','quickFilterText'];
@@ -127,10 +127,6 @@ module ag.grid {
 
             if (changes.pinnedColumnCount) {
                 component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
-            }
-
-            if (changes.groupHeaders) {
-                component.api.setGroupHeaders(component.groupHeaders);
             }
 
             if (changes.headerHeight) {
