@@ -53,7 +53,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>headerHeight</th>
-            <td>Height, in pixels, of the header row. If not grouping headers, default is 25. If grouping headers, default is 50.</td>
+            <td>Height, in pixels, of the header row. If not grouping headers, default is 25. If grouping headers, default is 25 per header row.</td>
         </tr>
         <tr>
             <th>rowData</th>
