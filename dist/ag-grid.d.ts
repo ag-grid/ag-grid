@@ -214,7 +214,7 @@ declare module ag.grid {
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
-        getGroupRowRenderer(): Object | Function;
+        getGroupRowRenderer(): Function | Object;
         getRowHeight(): number;
         getOverlayLoadingTemplate(): string;
         getOverlayNoRowsTemplate(): string;
