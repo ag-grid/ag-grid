@@ -2,10 +2,9 @@
   "name": "ag-grid-fhenus",
   "version": "2.3.6",
   "authors": [
-    "Niall Crosby <niall.crosby@gmail.com>"
 	"Rafael Ribeiro <fhenus@hotmail.com"
   ],
-  "description": "Fork of the original http://www.ag-grid.com/: Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "description": "Fork of the original http://www.ag-grid.com/ by Niall Crosby <niall.crosby@gmail.com>: Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
   "main": [
     "dist/ag-grid.js",
     "dist/ag-grid.css",
