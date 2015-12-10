@@ -27,7 +27,12 @@ module ag.grid {
             if (colDef.valueGetter) {
                 result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
             } else if (field && data) {
-                result = data[field];
+			
+				// Creates a value getter that can uses the field expression as the return value
+				colDef.valueGetter = new Function("data", "return data." + field + ";");
+                
+				result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
+				
             } else {
                 result = undefined;
             }
