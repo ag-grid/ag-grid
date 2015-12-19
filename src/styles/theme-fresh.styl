@@ -1,6 +1,6 @@
 @import 'nib'
 
-.ag-fresh 
+.ag-fresh
     .ag-root
         border: 1px solid grey;
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -20,7 +20,16 @@
         border-left: 1px solid transparent;
         border-bottom: 1px solid transparent;
 
+    .ag-pinned-right-header
+        .ag-header-cell:first-child
+            border-left: 1px solid grey;
+
+    .ag-pinned-right-cols-container
+        .ag-cell:first-child
+            border-left: 1px dotted grey;
+
     .ag-pinned-header
+    .ag-pinned-right-header
         background: linear-gradient(white, lightgrey);
         border-bottom: 1px solid grey;
 

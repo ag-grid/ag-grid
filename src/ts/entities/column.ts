@@ -13,6 +13,8 @@ module ag.grid {
         visible: any;
         colId: any;
         pinned: boolean;
+        pinnedLeft: boolean;
+        pinnedRight: boolean;
         index: number;
         aggFunc: string;
         pivotIndex: number;

@@ -35,6 +35,7 @@ module ag.grid {
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_RIGHT_COUNT_CHANGED, this.fireColumnEvent.bind(this));
         }
 
         // common logic across all the fire methods

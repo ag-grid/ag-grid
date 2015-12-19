@@ -3,6 +3,8 @@ module ag.grid {
     export class ColumnGroup {
 
         pinned: any;
+        pinnedLeft: any;
+        pinnedRight: any;
         name: any;
         allColumns: Column[] = [];
         displayedColumns: Column[] = [];
@@ -10,8 +12,10 @@ module ag.grid {
         expanded = false;
         actualWidth: number;
 
-        constructor(pinned: any, name: any) {
+        constructor(pinned: any, pinnedLeft: any, pinnedRight: any, name: any) {
             this.pinned = pinned;
+            this.pinnedLeft = pinnedLeft;
+            this.pinnedRight = pinnedRight;
             this.name = name;
         }
 

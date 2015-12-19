@@ -18,6 +18,7 @@ module ag.grid {
         private $scope: any;
         private $compile: any;
         private ePinnedHeader: HTMLElement;
+        private ePinnedRightHeader: HTMLElement;
         private eHeaderContainer: HTMLElement;
         private eRoot: HTMLElement;
 
@@ -36,6 +37,7 @@ module ag.grid {
 
         private findAllElements(gridPanel: GridPanel) {
             this.ePinnedHeader = gridPanel.getPinnedHeader();
+            this.ePinnedRightHeader = gridPanel.getPinnedRightHeader();
             this.eHeaderContainer = gridPanel.getHeaderContainer();
             this.eRoot = gridPanel.getRoot();
         }
@@ -56,26 +58,44 @@ module ag.grid {
             }
         }
 
+        private getColumnGroupContainer(columnGroup: ColumnGroup) {
+            if (columnGroup.pinnedLeft) {
+                return this.ePinnedHeader;
+            } else if (columnGroup.pinnedRight) {
+                return this.ePinnedRightHeader;
+            }
+            return this.eHeaderContainer;
+        }
+
         private insertHeadersWithGrouping() {
             var groups: ColumnGroup[] = this.columnController.getHeaderGroups();
-            groups.forEach( (columnGroup: ColumnGroup) => {
+            groups.forEach( (columnGroup: ColumnGroup, index: number) => {
                 var renderedHeaderGroup = new RenderedHeaderGroupCell(columnGroup, this.gridOptionsWrapper,
                     this.columnController, this.eRoot, this.angularGrid, this.$scope,
                     this.filterManager, this.$compile);
                 this.headerElements.push(renderedHeaderGroup);
-                var eContainerToAddTo = columnGroup.pinned ? this.ePinnedHeader : this.eHeaderContainer;
+                var eContainerToAddTo = this.getColumnGroupContainer(columnGroup);
                 eContainerToAddTo.appendChild(renderedHeaderGroup.getGui());
             });
         }
 
+        private getColumnContainer(column: Column) {
+            if (column.pinnedLeft) {
+                return this.ePinnedHeader;
+            } else if (column.pinnedRight) {
+                return this.ePinnedRightHeader;
+            }
+            return this.eHeaderContainer;
+        }
+
         private insertHeadersWithoutGrouping() {
-            this.columnController.getDisplayedColumns().forEach( (column: Column) => {
+            this.columnController.getDisplayedColumns().forEach( (column: Column, index: number) => {
                 // only include the first x cols
                 var renderedHeaderCell = new RenderedHeaderCell(column, null, this.gridOptionsWrapper,
                     this.$scope, this.filterManager, this.columnController, this.$compile,
                     this.angularGrid, this.eRoot);
                 this.headerElements.push(renderedHeaderCell);
-                var eContainerToAddTo = column.pinned ? this.ePinnedHeader : this.eHeaderContainer;
+                var eContainerToAddTo = this.getColumnContainer(column);
                 eContainerToAddTo.appendChild(renderedHeaderCell.getGui());
             });
         }

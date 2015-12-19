@@ -37,10 +37,13 @@ module ag.grid {
         private eBodyContainer: HTMLElement;
         private eBodyViewport: HTMLElement;
         private ePinnedColsContainer: HTMLElement;
+        private ePinnedRightColsContainer: HTMLElement;
         private eFloatingTopContainer: HTMLElement;
         private eFloatingTopPinnedContainer: HTMLElement;
+        private eFloatingTopPinnedRightContainer: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
         private eFloatingBottomPinnedContainer: HTMLElement;
+        private eFloatingBottomPinnedRightContainer: HTMLElement;
         private eParentsOfRows: HTMLElement[];
 
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
@@ -103,12 +106,14 @@ module ag.grid {
         private findAllElements(gridPanel: any) {
             this.eBodyContainer = gridPanel.getBodyContainer();
             this.ePinnedColsContainer = gridPanel.getPinnedColsContainer();
+            this.ePinnedRightColsContainer = gridPanel.getPinnedRightColsContainer();
 
             this.eFloatingTopContainer = gridPanel.getFloatingTopContainer();
             this.eFloatingTopPinnedContainer = gridPanel.getPinnedFloatingTop();
 
             this.eFloatingBottomContainer = gridPanel.getFloatingBottomContainer();
             this.eFloatingBottomPinnedContainer = gridPanel.getPinnedFloatingBottom();
+            this.eFloatingBottomPinnedRightContainer = gridPanel.getPinnedRightFloatingBottom();
 
             this.eBodyViewport = gridPanel.getBodyViewport();
             this.eParentsOfRows = gridPanel.getRowsParent();
@@ -124,18 +129,20 @@ module ag.grid {
                 this.renderedTopFloatingRows,
                 this.gridOptionsWrapper.getFloatingTopRowData(),
                 this.eFloatingTopPinnedContainer,
+                this.eFloatingTopPinnedRightContainer,
                 this.eFloatingTopContainer,
                 true);
             this.refreshFloatingRows(
                 this.renderedBottomFloatingRows,
                 this.gridOptionsWrapper.getFloatingBottomRowData(),
                 this.eFloatingBottomPinnedContainer,
+                this.eFloatingBottomPinnedRightContainer,
                 this.eFloatingBottomContainer,
                 false);
         }
 
         private refreshFloatingRows(renderedRows: RenderedRow[], rowData: any[],
-                                    pinnedContainer: HTMLElement, bodyContainer: HTMLElement,
+            pinnedContainer: HTMLElement, pinnedRightContainer: HTMLElement, bodyContainer: HTMLElement,
                                     isTop: boolean): void {
             renderedRows.forEach( (row: RenderedRow) => {
                 row.destroy();
@@ -163,7 +170,7 @@ module ag.grid {
                     var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
                         this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                         this.$compile, this.templateService, this.selectionController, this,
-                        bodyContainer, pinnedContainer, node, rowIndex, this.eventService);
+                        bodyContainer, pinnedContainer, pinnedRightContainer, node, rowIndex, this.eventService);
                     renderedRow.setMainRowWidth(mainRowWidth);
                     renderedRows.push(renderedRow);
                 })
@@ -386,7 +393,7 @@ module ag.grid {
             var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
                 this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
                 this.$compile, this.templateService, this.selectionController, this,
-                this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex, this.eventService);
+                this.eBodyContainer, this.ePinnedColsContainer, this.ePinnedRightColsContainer, node, rowIndex, this.eventService);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;

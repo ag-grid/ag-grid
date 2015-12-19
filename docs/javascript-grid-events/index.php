@@ -161,7 +161,10 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>columnPinnedCountChanged</th>
-            <td>The number of pinned columns has changed.</td>
+            <td>The number of columns pinned on the left hand side has changed.</td>
+        </tr>
+            <th>columnPinnedRightCountChanged</th>
+            <td>The number of columns pinned on the left hand side has changed.</td>
         </tr>
     </table>
 

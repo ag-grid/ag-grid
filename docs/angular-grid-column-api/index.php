@@ -125,7 +125,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>isPinning()</th>
-            <td>Returns true if pinning, otherwise false.</td>
+            <td>Returns true if pinning on the left hand side, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>isPinningRight()</th>
+            <td>Returns true if pinning on the right hand side, otherwise false.</td>
         </tr>
         <tr>
             <th>getVisibleColAfter(col)</th>
@@ -197,7 +201,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>setPinnedColumnCount(count)</th>
-            <td>Sets the number of pinned columns.</td>
+            <td>Sets the number of pinned columns on the left hand side.</td>
+        </tr>
+        <tr>
+            <th>setPinnedRightColumnCount(count)</th>
+            <td>Sets the number of pinned columns on the right hand side.</td>
         </tr>
         <tr>
             <th>getHeaderGroups()</th>

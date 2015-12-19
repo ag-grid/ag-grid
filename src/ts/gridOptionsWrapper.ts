@@ -188,6 +188,20 @@ module ag.grid {
             }
         }
 
+        public getPinnedRightColCount() {
+            // if not using scrolls, then pinned columns doesn't make
+            // sense, so always return 0
+            if (this.isForPrint()) {
+                return 0;
+            }
+            if (this.gridOptions.pinnedRightColumnCount) {
+                //in case user puts in a string, cast to number
+                return Number(this.gridOptions.pinnedRightColumnCount);
+            } else {
+                return 0;
+            }
+        }
+
         public getLocaleTextFunc() {
             if (this.gridOptions.localeTextFunc) {
                 return this.gridOptions.localeTextFunc;

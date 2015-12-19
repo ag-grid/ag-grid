@@ -21,6 +21,7 @@ module ag.grid {
         public setState(columnState: any): void { return this._columnController.setState(columnState); }
         public getState(): [any] { return this._columnController.getState(); }
         public isPinning(): boolean { return this._columnController.isPinning(); }
+        public isPinningRight(): boolean { return this._columnController.isPinningRight(); }
         public getVisibleColAfter(col: Column): Column { return this._columnController.getVisibleColAfter(col); }
         public getVisibleColBefore(col: Column): Column { return this._columnController.getVisibleColBefore(col); }
         public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
@@ -36,6 +37,7 @@ module ag.grid {
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
         public setPinnedColumnCount(count: number): void { this._columnController.setPinnedColumnCount(count); }
+        public setPinnedRightColumnCount(count: number): void { this._columnController.setPinnedRightColumnCount(count); }
         public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
         public getHeaderGroups(): ColumnGroup[] { return this._columnController.getHeaderGroups(); }
         public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
@@ -59,6 +61,7 @@ module ag.grid {
         private setupComplete = false;
         private valueService: ValueService;
         private pinnedColumnCount: number;
+        private pinnedRightColumnCount: number;
 
         private eventService: EventService;
 
@@ -78,9 +81,13 @@ module ag.grid {
             this.eventService = eventService;
 
             this.pinnedColumnCount = gridOptionsWrapper.getPinnedColCount();
+            this.pinnedRightColumnCount = gridOptionsWrapper.getPinnedRightColCount();
             // check for negative or non-number values
             if (!(this.pinnedColumnCount>0)) {
                 this.pinnedColumnCount = 0;
+            }
+            if (!(this.pinnedRightColumnCount > 0)) {
+                this.pinnedRightColumnCount = 0;
             }
         }
 
@@ -101,7 +108,13 @@ module ag.grid {
         // used by:
         // + angularGrid -> setting pinned body width
         public getPinnedContainerWidth() {
-            return this.getTotalColWidth(true);
+            return this.getTotalColWidth("pinnedLeft");
+        }
+
+        // used by:
+        // + angularGrid -> setting pinned body width
+        public getPinnedRightContainerWidth() {
+            return this.getTotalColWidth("pinnedRight");
         }
 
         public addPivotColumn(column: Column): void {
@@ -134,6 +147,21 @@ module ag.grid {
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, event);
+        }
+
+        public setPinnedRightColumnCount(count: number): void {
+            if (!(typeof count === 'number')) {
+                console.warn('ag-Grid: setPinnedRightColumnCount: count must be a number');
+                return;
+            }
+            if (count < 0) {
+                console.warn('ag-Grid: setPinnedRightColumnCount: count must be zero or greater');
+                return;
+            }
+            this.pinnedRightColumnCount = count;
+            this.updateModel();
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED_RIGHT_COUNT_CHANGED).withPinnedRightColumnCount(count);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED_RIGHT_COUNT_CHANGED, event);
         }
 
         public removePivotColumn(column: Column): void {
@@ -307,7 +335,11 @@ module ag.grid {
         }
 
         public isPinning(): boolean {
-            return this.visibleColumns && this.visibleColumns.length > 0 && this.visibleColumns[0].pinned;
+            return this.visibleColumns && this.visibleColumns.length > 0 && this.visibleColumns[0].pinnedLeft;
+        }
+
+        public isPinningRight(): boolean {
+            return this.visibleColumns && this.visibleColumns.length > 0 && this.visibleColumns[this.visibleColumns.length - 1].pinnedRight;
         }
 
         public getState(): [any] {
@@ -650,7 +682,9 @@ module ag.grid {
                 // create new group, if it's needed
                 if (newGroupNeeded) {
                     var pinned = column.pinned;
-                    currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
+                    var pinnedLeft = column.pinnedLeft;
+                    var pinnedRight = column.pinnedRight;
+                    currentGroup = new ColumnGroup(pinned, pinnedLeft, pinnedRight, column.colDef.headerGroup);
                     that.columnGroups.push(currentGroup);
                 }
                 currentGroup.addColumn(column);
@@ -714,6 +748,14 @@ module ag.grid {
             for (var i = 0; i < this.visibleColumns.length; i++) {
                 var pinned = i < this.pinnedColumnCount;
                 this.visibleColumns[i].pinned = pinned;
+                this.visibleColumns[i].pinnedLeft = pinned;
+            }
+            for (var i = this.visibleColumns.length - 1; i >= 0; i--) {
+                var pinned = i >= this.visibleColumns.length - this.pinnedRightColumnCount;
+                if (pinned) {
+                    this.visibleColumns[i].pinned = pinned;
+                    this.visibleColumns[i].pinnedRight = pinned;
+                }
             }
         }
 
@@ -782,13 +824,15 @@ module ag.grid {
             }
         }
 
-        // call with true (pinned), false (not-pinned) or undefined (all columns)
+        // call with "pinnedLeft" (pinnedLeft), "pinnedRight" (pinnedRight), false (not-pinned) or undefined (all columns)
         private getTotalColWidth(includePinned: any) {
             var widthSoFar = 0;
-            var pinedNotImportant = typeof includePinned !== 'boolean';
+            var includePinnedIsString = typeof includePinned === "string";
+            var pinedNotImportant = typeof includePinned !== 'boolean' && !includePinnedIsString;
 
             this.displayedColumns.forEach(function (column: any) {
-                var includeThisCol = pinedNotImportant || column.pinned === includePinned;
+                var isPinnedWithDirection = includePinnedIsString && column[includePinned] === true;
+                var includeThisCol = pinedNotImportant || column.pinned === includePinned || isPinnedWithDirection;
                 if (includeThisCol) {
                     widthSoFar += column.actualWidth;
                 }

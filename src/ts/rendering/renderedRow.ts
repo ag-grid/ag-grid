@@ -16,6 +16,7 @@ module ag.grid {
     export class RenderedRow {
 
         public vPinnedRow: any;
+        public vPinnedRightRow: any;
         public vBodyRow: any;
 
         private renderedCells: {[key: number]: RenderedCell} = {};
@@ -36,8 +37,10 @@ module ag.grid {
         private templateService: TemplateService;
         private selectionController: SelectionController;
         private pinning: boolean;
+        private pinningRight: boolean;
         private eBodyContainer: HTMLElement;
         private ePinnedContainer: HTMLElement;
+        private ePinnedRightContainer: HTMLElement;
         private valueService: ValueService;
         private eventService: EventService;
 
@@ -55,6 +58,7 @@ module ag.grid {
                     rowRenderer: RowRenderer,
                     eBodyContainer: HTMLElement,
                     ePinnedContainer: HTMLElement,
+                    ePinnedRightContainer: HTMLElement,
                     node: any,
                     rowIndex: number,
                     eventService: EventService) {
@@ -72,7 +76,9 @@ module ag.grid {
             this.rowRenderer = rowRenderer;
             this.eBodyContainer = eBodyContainer;
             this.ePinnedContainer = ePinnedContainer;
+            this.ePinnedRightContainer = ePinnedRightContainer;
             this.pinning = columnController.isPinning();
+            this.pinningRight = columnController.isPinningRight();
             this.eventService = eventService;
 
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
@@ -81,6 +87,9 @@ module ag.grid {
             this.vBodyRow = this.createRowContainer();
             if (this.pinning) {
                 this.vPinnedRow = this.createRowContainer();
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow = this.createRowContainer();
             }
 
             this.rowIndex = rowIndex;
@@ -105,6 +114,9 @@ module ag.grid {
             if (this.pinning) {
                 this.vPinnedRow.setAttribute('row', rowStr);
             }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.setAttribute('row', rowStr);
+            }
 
             if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
                 var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
@@ -112,6 +124,9 @@ module ag.grid {
                     this.vBodyRow.setAttribute('row-id', businessKey);
                     if (this.pinning) {
                         this.vPinnedRow.setAttribute('row-id', businessKey);
+                    }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.setAttribute('row-id', businessKey);
                     }
                 }
             }
@@ -122,10 +137,16 @@ module ag.grid {
                 if (this.pinning) {
                     this.vPinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
                 }
+                if (this.pinningRight) {
+                    this.vPinnedRightRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                }
             }
             this.vBodyRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
             if (this.pinning) {
                 this.vPinnedRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
             }
 
             // if group item, insert the first row
@@ -137,17 +158,26 @@ module ag.grid {
             if (this.pinning) {
                 this.bindVirtualElement(this.vPinnedRow);
             }
+            if (this.pinningRight) {
+                this.bindVirtualElement(this.vPinnedRightRow);
+            }
 
             if (this.scope) {
                 this.$compile(this.vBodyRow.getElement())(this.scope);
                 if (this.pinning) {
                     this.$compile(this.vPinnedRow.getElement())(this.scope);
                 }
+                if (this.pinningRight) {
+                    this.$compile(this.vPinnedRightRow.getElement())(this.scope);
+                }
             }
 
             this.eBodyContainer.appendChild(this.vBodyRow.getElement());
             if (this.pinning) {
                 this.ePinnedContainer.appendChild(this.vPinnedRow.getElement());
+            }
+            if (this.pinningRight) {
+                this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
             }
         }
 
@@ -183,6 +213,9 @@ module ag.grid {
 
             if (this.pinning) {
                 this.ePinnedContainer.removeChild(this.vPinnedRow.getElement());
+            }
+            if (this.pinningRight) {
+                this.ePinnedRightContainer.removeChild(this.vPinnedRightRow.getElement());
             }
             this.eBodyContainer.removeChild(this.vBodyRow.getElement());
         }
@@ -220,8 +253,10 @@ module ag.grid {
 
                 var vGridCell = renderedCell.getVGridCell();
 
-                if (column.pinned) {
+                if (column.pinnedLeft && this.vPinnedRow) {
                     this.vPinnedRow.appendChild(vGridCell);
+                } else if (column.pinnedRight && this.vPinnedRightRow) {
+                    this.vPinnedRightRow.appendChild(vGridCell);
                 } else {
                     this.vBodyRow.appendChild(vGridCell);
                 }
@@ -241,6 +276,10 @@ module ag.grid {
 
             if (this.pinning) {
                 this.vPinnedRow.appendChild(eGroupRow);
+                var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
+                this.vBodyRow.appendChild(eGroupRowPadding);
+            } else if (this.pinningRight) {
+                this.vPinnedRightRow.appendChild(eGroupRow);
                 var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
                 this.vBodyRow.appendChild(eGroupRowPadding);
             } else {
@@ -329,6 +368,9 @@ module ag.grid {
                     if (this.pinning) {
                         this.vPinnedRow.addStyles(rowStyle);
                     }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.addStyles(rowStyle);
+                    }
                 }
             }
             var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
@@ -344,6 +386,9 @@ module ag.grid {
                 this.vBodyRow.addStyles(cssToUseFromFunc);
                 if (this.pinning) {
                     this.vPinnedRow.addStyles(cssToUseFromFunc);
+                }
+                if (this.pinningRight) {
+                    this.vPinnedRightRow.addStyles(cssToUseFromFunc);
                 }
             }
         }
@@ -483,6 +528,9 @@ module ag.grid {
             this.vBodyRow.addClasses(classes);
             if (this.pinning) {
                 this.vPinnedRow.addClasses(classes);
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.addClasses(classes);
             }
         }
     }
