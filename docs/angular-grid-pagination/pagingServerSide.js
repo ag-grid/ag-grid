@@ -85,6 +85,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                         lastRow = dataAfterSortingAndFiltering.length;
                     }
                     params.successCallback(rowsThisPage, lastRow);
+                    params.rowData = rowsThisPage;
                 }, 500);
             }
         };
