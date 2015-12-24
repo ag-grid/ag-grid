@@ -44,6 +44,7 @@ module ag.grid {
 
         public refreshHeader() {
             utils.removeAllChildren(this.ePinnedHeader);
+            utils.removeAllChildren(this.ePinnedRightHeader);
             utils.removeAllChildren(this.eHeaderContainer);
 
             this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
