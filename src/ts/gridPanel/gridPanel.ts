@@ -8,14 +8,17 @@ module ag.grid {
                 <!-- header -->
                 <div class="ag-header">
                     <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
+                    <div class="ag-pinned-right-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
                 </div>
                 <!-- floating top -->
                 <div class="ag-floating-top">
                     <div class="ag-pinned-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
+                    <div class="ag-pinned-right-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
                 </div>
                 <!-- floating bottom -->
                 <div class="ag-floating-bottom">
                     <div class="ag-pinned-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
+                    <div class="ag-pinned-right-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
                 </div>
                 <!-- body -->
                 <div class="ag-body">
@@ -26,6 +29,9 @@ module ag.grid {
                         <div class="ag-body-viewport">
                             <div class="ag-body-container"></div>
                         </div>
+                    </div>
+                    <div class="ag-pinned-right-cols-viewport">
+                        <div class="ag-pinned-right-cols-container"></div>
                     </div>
                 </div>
             </div>`;
@@ -73,19 +79,24 @@ module ag.grid {
         private eBody: HTMLElement;
         private eBodyContainer: HTMLElement;
         private ePinnedColsContainer: HTMLElement;
+        private ePinnedRightColsContainer: HTMLElement;
         private eHeaderContainer: HTMLElement;
         private ePinnedHeader: HTMLElement;
+        private ePinnedRightHeader: HTMLElement;
         private eHeader: HTMLElement;
         private eParentsOfRows: HTMLElement[];
         private eBodyViewportWrapper: HTMLElement;
         private ePinnedColsViewport: HTMLElement;
+        private ePinnedRightColsViewport: HTMLElement;
 
         private eFloatingTop: HTMLElement;
         private ePinnedFloatingTop: HTMLElement;
+        private ePinnedRightFloatingTop: HTMLElement;
         private eFloatingTopContainer: HTMLElement;
 
         private eFloatingBottom: HTMLElement;
         private ePinnedFloatingBottom: HTMLElement;
+        private ePinnedRightFloatingBottom: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
 
         public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService) {
@@ -146,6 +157,10 @@ module ag.grid {
 
         public getPinnedFloatingBottom(): HTMLElement {
             return this.ePinnedFloatingBottom;
+        }
+
+        public getPinnedRightFloatingBottom(): HTMLElement {
+            return this.ePinnedRightFloatingBottom;
         }
 
         public getFloatingBottomContainer(): HTMLElement {
@@ -322,6 +337,10 @@ module ag.grid {
             return this.ePinnedColsContainer;
         }
 
+        public getPinnedRightColsContainer() {
+            return this.ePinnedRightColsContainer;
+        }
+
         public getHeaderContainer() {
             return this.eHeaderContainer;
         }
@@ -332,6 +351,10 @@ module ag.grid {
 
         public getPinnedHeader() {
             return this.ePinnedHeader;
+        }
+
+        public getPinnedRightHeader() {
+            return this.ePinnedRightHeader;
         }
 
         public getRowsParent(): HTMLElement[] {
@@ -357,16 +380,21 @@ module ag.grid {
                 this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
                 this.ePinnedColsContainer = this.queryHtmlElement('.ag-pinned-cols-container');
                 this.ePinnedColsViewport = this.queryHtmlElement('.ag-pinned-cols-viewport');
+                this.ePinnedRightColsContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
+                this.ePinnedRightColsViewport = this.queryHtmlElement('.ag-pinned-right-cols-viewport');
                 this.ePinnedHeader = this.queryHtmlElement('.ag-pinned-header');
+                this.ePinnedRightHeader = this.queryHtmlElement('.ag-pinned-right-header');
                 this.eHeader = this.queryHtmlElement('.ag-header');
                 this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
 
                 this.eFloatingTop = this.queryHtmlElement('.ag-floating-top');
                 this.ePinnedFloatingTop = this.queryHtmlElement('.ag-pinned-floating-top');
+                this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-floating-top');
                 this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
 
                 this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
                 this.ePinnedFloatingBottom = this.queryHtmlElement('.ag-pinned-floating-bottom');
+                this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
                 this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
@@ -374,8 +402,10 @@ module ag.grid {
 
                 // IE9, Chrome, Safari, Opera
                 this.ePinnedColsViewport.addEventListener('mousewheel', this.mouseWheelListener.bind(this));
+                this.ePinnedRightColsViewport.addEventListener('mousewheel', this.mouseWheelListener.bind(this));
                 // Firefox
                 this.ePinnedColsViewport.addEventListener('DOMMouseScroll', this.mouseWheelListener.bind(this));
+                this.ePinnedRightColsViewport.addEventListener('DOMMouseScroll', this.mouseWheelListener.bind(this));
             }
         }
 
@@ -422,7 +452,14 @@ module ag.grid {
             this.ePinnedFloatingBottom.style.width = pinnedColWidth;
             this.ePinnedFloatingTop.style.width = pinnedColWidth;
 
+            var pinnedRightColWidth = this.columnModel.getPinnedRightContainerWidth() + 'px';
+            this.ePinnedRightColsContainer.style.width = pinnedRightColWidth;
+            this.ePinnedRightColsViewport.style.top = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+            this.ePinnedRightFloatingBottom.style.width = pinnedRightColWidth;
+            this.ePinnedRightFloatingTop.style.width = pinnedRightColWidth;
+
             this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
+            this.eBodyViewportWrapper.style.marginRight = pinnedRightColWidth;
         }
 
         public showPinnedColContainersIfNeeded() {
@@ -432,6 +469,7 @@ module ag.grid {
             }
 
             var showingPinnedCols = this.columnModel.isPinning();
+            var showingPinnedRightCols = this.columnModel.isPinningRight();
 
             //some browsers had layout issues with the blank divs, so if blank,
             //we don't display them
@@ -441,6 +479,13 @@ module ag.grid {
             } else {
                 this.ePinnedHeader.style.display = 'none';
                 this.ePinnedColsViewport.style.display = 'none';
+            }
+            if (showingPinnedRightCols) {
+                this.ePinnedRightHeader.style.display = 'inline-block';
+                this.ePinnedRightColsViewport.style.display = 'inline';
+            } else {
+                this.ePinnedRightHeader.style.display = 'none';
+                this.ePinnedRightColsViewport.style.display = 'none';
             }
         }
 
@@ -581,6 +626,7 @@ module ag.grid {
         private scrollPinned(bodyTopPosition: any) {
             // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
             this.ePinnedColsContainer.style.top = -bodyTopPosition + 'px';
+            this.ePinnedRightColsContainer.style.top = -bodyTopPosition + 'px';
         }
     }
 }

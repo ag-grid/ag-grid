@@ -236,7 +236,7 @@ module ag.grid {
             return this.centerHeightLastTime;
         }
 
-        private layoutWidth() {
+        public getCenterWidth() {
             var totalWidth = _.offsetWidth(this.eGui);
             var eastWidth = _.offsetWidth(this.eEastWrapper);
             var westWidth = _.offsetWidth(this.eWestWrapper);
@@ -246,6 +246,11 @@ module ag.grid {
                 centerWidth = 0;
             }
 
+            return centerWidth;
+        }
+
+        private layoutWidth() {
+            var centerWidth = this.getCenterWidth();
             this.eCenterWrapper.style.width = centerWidth + 'px';
         }
 

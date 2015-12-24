@@ -70,6 +70,7 @@ module ag.grid {
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
         pinnedColumnCount?: number;
+        pinnedRightColumnCount?: number;
         // in properties
         groupHeaders?: boolean;
         headerHeight?: number;

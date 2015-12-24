@@ -53,6 +53,7 @@ module ag.grid {
         public columnGroupOpened = new _ng.EventEmitter();
         public columnResized = new _ng.EventEmitter();
         public columnPinnedCountChanged = new _ng.EventEmitter();
+        public columnPinnedRightCountChanged = new _ng.EventEmitter();
 
         // properties
         public virtualPaging: boolean;
@@ -114,6 +115,7 @@ module ag.grid {
         public columnDefs: any[]; // change to typed
         public datasource: any; // should be typed
         public pinnedColumnCount: number;
+        public pinnedRightColumnCount: number;
         public quickFilterText: string;
         // in properties
         public groupHeaders: boolean;
@@ -149,6 +151,7 @@ module ag.grid {
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
                 case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
+                case Events.EVENT_COLUMN_PINNED_RIGHT_COUNT_CHANGED: emitter = this.columnPinnedRightCountChanged; break;
                 case Events.EVENT_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
                 case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
                 case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
@@ -206,7 +209,7 @@ module ag.grid {
                     'rowClicked', 'rowDoubleClicked', 'ready',
                     // column events
                     'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
-                    'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
+                    'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged', 'columnPinnedRightCountChanged'],
                 inputs: ['gridOptions']
                     .concat(ComponentUtil.SIMPLE_PROPERTIES)
                     .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)

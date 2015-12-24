@@ -82,7 +82,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>pinnedColumnCount</th>
-            <td>Number of columns to pin. Default is 0.</td>
+            <td>Number of columns to pin on the left hand side. Default is 0.</td>
+        </tr>
+        <tr>
+            <th>pinnedRightColumnCount</th>
+            <td>Number of columns to pin on the right hand side. Default is 0.</td>
         </tr>
         <tr>
             <th>rowHeight</th>

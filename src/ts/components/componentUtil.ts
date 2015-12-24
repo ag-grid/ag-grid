@@ -25,7 +25,7 @@ module ag.grid {
             'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay'
         ];
 
-        public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];
+        public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount', 'pinnedRightColumnCount', 'headerHeight'];
         public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders','showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
             'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
@@ -125,8 +125,8 @@ module ag.grid {
                 component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
             }
 
-            if (changes.pinnedColumnCount) {
-                component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
+            if (changes.pinnedRightColumnCount) {
+                component.columnApi.setPinnedRightColumnCount(component.pinnedRightColumnCount);
             }
 
             if (changes.groupHeaders) {
