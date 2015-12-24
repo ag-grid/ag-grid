@@ -44,11 +44,7 @@ module ag.grid {
         }
 
         public getMinimumWidth(): number {
-            if (this.colDef.minWidth > constants.MIN_COL_WIDTH) {
-                return this.colDef.minWidth;
-            } else {
-                return constants.MIN_COL_WIDTH;
-            }
+            return Math.max(this.colDef.minWidth, constants.MIN_COL_WIDTH);
         }
 
         public setMinimum(): void {
