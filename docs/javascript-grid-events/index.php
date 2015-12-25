@@ -136,6 +136,10 @@ include '../documentation_header.php';
             <td>Shotgun - gets called when new columns are set, so everything has changed.</td>
         </tr>
         <tr>
+            <th>columnBeforeResize</th>
+            <td>Fired before column suppose to be resized. Cancelable using <code>event.preventDefault()</code>.</td>
+        </tr>
+        <tr>
             <th>columnResized</th>
             <td>A column was resized.</td>
         </tr>

@@ -184,6 +184,13 @@ module ag.grid {
         }
 
         public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_BEFORE_RESIZE).withColumn(column).withNewWidth(newWidth).withFinished(finished);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_BEFORE_RESIZE, event);
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
             if (!this.doesColumnExistInGrid(column)) {
                 console.warn('column does not exist');
                 return;
@@ -208,7 +215,7 @@ module ag.grid {
                 // if part of a group, update the groups width
                 this.updateGroupWidthsAfterColumnResize(column);
 
-                var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
+                event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
                 this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
             }
         }
