@@ -25,34 +25,34 @@ module ag.grid {
         private columnApi: ColumnApi;
 
         // core grid events
-        public modelUpdated = new _ng.EventEmitter();
-        public cellClicked = new _ng.EventEmitter();
-        public cellDoubleClicked = new _ng.EventEmitter();
-        public cellContextMenu = new _ng.EventEmitter();
-        public cellValueChanged = new _ng.EventEmitter();
-        public cellFocused = new _ng.EventEmitter();
-        public rowSelected = new _ng.EventEmitter();
-        public rowDeselected = new _ng.EventEmitter();
-        public selectionChanged = new _ng.EventEmitter();
-        public beforeFilterChanged = new _ng.EventEmitter();
-        public afterFilterChanged = new _ng.EventEmitter();
-        public filterModified = new _ng.EventEmitter();
-        public beforeSortChanged = new _ng.EventEmitter();
-        public afterSortChanged = new _ng.EventEmitter();
-        public virtualRowRemoved = new _ng.EventEmitter();
-        public rowClicked = new _ng.EventEmitter();
-        public rowDoubleClicked = new _ng.EventEmitter();
-        public ready = new _ng.EventEmitter();
+        public modelUpdated = this.newEventEmitter();
+        public cellClicked = this.newEventEmitter();
+        public cellDoubleClicked = this.newEventEmitter();
+        public cellContextMenu = this.newEventEmitter();
+        public cellValueChanged = this.newEventEmitter();
+        public cellFocused = this.newEventEmitter();
+        public rowSelected = this.newEventEmitter();
+        public rowDeselected = this.newEventEmitter();
+        public selectionChanged = this.newEventEmitter();
+        public beforeFilterChanged = this.newEventEmitter();
+        public afterFilterChanged = this.newEventEmitter();
+        public filterModified = this.newEventEmitter();
+        public beforeSortChanged = this.newEventEmitter();
+        public afterSortChanged = this.newEventEmitter();
+        public virtualRowRemoved = this.newEventEmitter();
+        public rowClicked = this.newEventEmitter();
+        public rowDoubleClicked = this.newEventEmitter();
+        public ready = this.newEventEmitter();
 
         // column grid events
-        public columnEverythingChanged = new _ng.EventEmitter();
-        public columnPivotChanged = new _ng.EventEmitter();
-        public columnValueChanged = new _ng.EventEmitter();
-        public columnMoved = new _ng.EventEmitter();
-        public columnVisible = new _ng.EventEmitter();
-        public columnGroupOpened = new _ng.EventEmitter();
-        public columnResized = new _ng.EventEmitter();
-        public columnPinnedCountChanged = new _ng.EventEmitter();
+        public columnEverythingChanged = this.newEventEmitter();
+        public columnPivotChanged = this.newEventEmitter();
+        public columnValueChanged = this.newEventEmitter();
+        public columnMoved = this.newEventEmitter();
+        public columnVisible = this.newEventEmitter();
+        public columnGroupOpened = this.newEventEmitter();
+        public columnResized = this.newEventEmitter();
+        public columnPinnedCountChanged = this.newEventEmitter();
 
         // properties
         public virtualPaging: boolean;
@@ -122,8 +122,13 @@ module ag.grid {
         constructor(private elementDef: any) {
         }
 
-        // this gets called after the directive is initialised
+        // backword compatibility with angular2 alpha
         public onInit(): void {
+            this.ngOnInit();
+        }
+
+        // this gets called after the directive is initialised
+        public ngOnInit(): void {
             this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
             var nativeElement = this.elementDef.nativeElement;
             var globalEventLister = this.globalEventListener.bind(this);
@@ -134,11 +139,21 @@ module ag.grid {
             this._initialised = true;
         }
 
+        // backword compatibility with angular2 alpha
         public onChanges(changes: any): void {
+            this.ngOnChanges(changes);
+        }
+
+        public ngOnChanges(changes: any): void {
             ComponentUtil.processOnChange(changes, this.gridOptions, this);
         }
 
+        // backword compatibility with angular2 alpha
         public onDestroy(): void {
+            this.ngOnDestroy();
+        }
+
+        public ngOnDestroy(): void {
             this.api.destroy();
         }
 
@@ -177,12 +192,22 @@ module ag.grid {
             }
             emitter.next(event);
         }
+
+        private newEventEmitter (): any {
+            if( !!_ng.core ) {
+                // after angular2 beta
+                return new _ng.core.EventEmitter();
+            } else {
+                // backword compatibillity with angular2 alpha
+                return new _ng.EventEmitter();
+            }
+        }
     }
 
     // check for angular and component, as if angular 1, we will find angular but the wrong version
     if ((<any> window).ng && (<any> window).ng.Component) {
         var ng = (<any> window).ng;
-        initialiseAgGridWithAngular2(ng);
+        initialiseAgGridWithAngular2alpha(ng);
         // check if we are using SystemX
         // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
         // as it was resulting in a failed 'Fetch' of the Angular2 system
@@ -192,8 +217,14 @@ module ag.grid {
     //        initialiseAgGridWithAngular2(ng);
     //    });
     }
+    // if ng.core.Component exists it should be after angular2@2.0.0-beta.0
+    else if ((<any> window).ng && (<any> window).ng.core.Component) {
+        var ng = (<any> window).ng;
+        initialiseAgGridWithAngular2(ng);
+    }
 
-    export function initialiseAgGridWithAngular2(ng: any) {
+    // for backword compatibility
+    export function initialiseAgGridWithAngular2alpha(ng: any) {
         _ng = ng;
         (<any>AgGridNg2).annotations = [
             new _ng.Component({
@@ -225,5 +256,46 @@ module ag.grid {
             })
         ];
         (<any>AgGridNg2).parameters = [[_ng.ElementRef]];
+    }
+
+    export function initialiseAgGridWithAngular2(ng: any) {
+
+        if( !ng.core ) {
+            // backword compatibility with angular2 alpha
+            initialiseAgGridWithAngular2alpha(ng);
+            return;
+        }
+
+        _ng = ng;
+        (<any>AgGridNg2).annotations = [
+            new _ng.core.Component({
+                selector: 'ag-grid-ng2',
+                outputs: [
+                    // core grid events
+                    'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
+                    'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+                    'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
+                    'rowClicked', 'rowDoubleClicked', 'ready',
+                    // column events
+                    'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
+                    'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
+                inputs: ['gridOptions']
+                    .concat(ComponentUtil.SIMPLE_PROPERTIES)
+                    .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
+                    .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
+                    .concat(ComponentUtil.CALLBACKS)
+                ,
+                compileChildren: false // no angular on the inside thanks
+            }),
+            new _ng.core.View({
+                template: '',
+                // tell angular we don't want view encapsulation, we don't want a shadow root
+                encapsulation: _ng.core.ViewEncapsulation.None
+            })
+        ];
+        (<any>AgGridNg2).parameters = [[_ng.core.ElementRef]];
     }
 }
