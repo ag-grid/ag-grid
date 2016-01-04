@@ -15,29 +15,30 @@ include '../documentation_header.php';
     <p>
         ag-Grid's integration is been developed against beta versions of AngularJS 2.
         Until the final version is released, ag-Grid's integration with AngularJS 2
-        is also liable to change.
+        is also liable to change. The examples below work with Angular version 2.0.0-beta.0.
+        At the time of writing, that was the latest version.
     </p>
 
     <h4>Self Extracting AngularJS 2</h4>
 
     <p>
         AngularJS 2 was written for TypeScript and ECMA 6 module loading.
-        However this is not mandatory, you can use the SFX (self extracting)
+        However this is not mandatory, you can use the UMD
         version of AngularJS if you don't want to use ECMA 6 module loading
         and / or TypeScript. For simplicity, and to minimise the barrier
         to entry, the examples in this documentation use Javascript and
-        the SFX version of AngularJS 2.
+        the UMD version of AngularJS 2.
     </p>
 
     <p>
-        For notes on JSPM, see the secton on JSPM below.
+        For notes on JSPM, see the section on JSPM below.
     </p>
 
     <h2>Simple AngularJS 2 Example</h2>
 
     <p>
         Below shows a step by step guide on setting up ag-Grid with an AngularJS 2 application
-        using Javascript and SFX.
+        using Javascript.
     </p>
 
     <h4>Include Dependencies</h4>
@@ -46,8 +47,10 @@ include '../documentation_header.php';
         Include the dependencies for the application in the <i>head</i> section of your html.
     </p>
 
-    <pre>&lt;!-- This is the SFX version of AngularJS 2.0 -->
-&lt;script src="http://code.angularjs.org/2.0.0-alpha.35/angular2.sfx.dev.js">&lt;/script>
+    <pre>&lt;!-- This is the UMD version of AngularJS 2.0 -->
+&lt;script src="http://code.angularjs.org/2.0.0-beta.0/Rx.umd.js">&lt;/script>
+&lt;script src="http://code.angularjs.org/2.0.0-beta.0/angular2-polyfills.js">&lt;/script>
+&lt;script src="http://code.angularjs.org/2.0.0-beta.0/angular2-all.umd.js">&lt;/script>
 
 &lt;!-- include ag-Grid javascript file -->
 &lt;script src="../dist/ag-grid.js">&lt;/script>
@@ -74,7 +77,7 @@ include '../documentation_header.php';
     <pre>&lt;simple-ng2-grid/></pre>
 
     <p>
-        Then in your Javascript, you need to define your component. Doing this use AngularJS SFX
+        Then in your Javascript, you need to define your component. Doing this use AngularJS UMD
         and Javascript (not Typescript) is done as follows:
     </p>
 
@@ -83,15 +86,15 @@ var SampleAppComponent = function() {}
 
 // add AngularJS 2 annotations to the function
 SampleAppComponent.annotations = [
-    new ng.Component({
+    new ng.core.Component({
         // tell AngularJS to match the &lt;simple-ng2-grid> tag
         selector: 'simple-ng2-grid'
     }),
-    new ng.View({
+    new ng.core.View({
         // tell AngularJS that the SimpleAppComponent directive
         // uses the ag-Grid directive
         directives: [ag.grid.AgGridNg2],
-        // the template for our
+        // the template for our component
         template: templateForSampleAppComponent
     })
 ];
@@ -111,15 +114,15 @@ SampleAppComponent.annotations = [
     class="ag-fresh"
     // give some size to the grid
     style="height: 100%;"
-    // use AngularJS 2 properties for column-defs and row-data
-    [column-defs]="columnDefs"
-    [row-data]="rowData"
+    // use AngularJS 2 properties for columnDefs and rowData
+    [columnDefs]="columnDefs"
+    [rowData]="rowData"
 /></pre>
 
     <p>
-        The example shows us of AngularJS property bindings. The grid has full support for
+        The example shows use of AngularJS property bindings. The grid has full support for
         AngularJS property bindings, events and attributes. The simple example doesn't show
-        it all. See the complex example below for a more meat.
+        it all. See the complex example below for more meat.
     </p>
 
     <h4>Simple App Bootstrap</h4>
@@ -129,7 +132,7 @@ SampleAppComponent.annotations = [
     </p>
 
     <pre>document.addEventListener('DOMContentLoaded', function () {
-    ng.bootstrap(SampleAppComponent);
+    ng.platform.browser.bootstrap(SampleAppComponent);
 });
 </pre>
 
@@ -138,13 +141,13 @@ SampleAppComponent.annotations = [
     <h2>Complex AngularJS 2 Example</h2>
 
     <p>
-        Ok I'm ready, lets do it, lets go crazy and get more of AngularJS 2 involved!!
+        Now we are ready to get more of AngularJS 2 involved!
         The example below demonstrates the following:
     </p>
 
     <ul>
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            Angular 2 event bindings eg <i>(model-updated)="onModelUpdated()"</i>.
+            Angular 2 event bindings eg <i>(modelUpdated)="onModelUpdated()"</i>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
@@ -155,12 +158,12 @@ SampleAppComponent.annotations = [
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>row-height="22"</i>. Notice that boolean attributes are defaulted
+            eg <i>rowHeight="22"</i>. Notice that boolean attributes are defaulted
             to 'true' IF they attribute is provided WITHOUT any value. If the attribute
             is not provided, it is taken as false.
         </li>
         <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <i>#ag-grid</i>. This in turn turns into a variable
+            by marking it with <i>#agGrid</i>. This in turn turns into a variable
             which can be used to access the grid's controller. The buttons
             Grid API and Column API buttons use this variable to access the grids
             API (the API's are attributes on the controller).
@@ -187,11 +190,10 @@ SampleAppComponent.annotations = [
     <show-example example="exampleNg2" extra-pages="sampleAppComponent.html"></show-example>
 
     <note>
-        I tested the above examples to work on my Windows 8 machine with latest Chrome, Internet Explorer
-        and Firefox. It didn't work on Safari on Windows 8 with an ng2 error. Also I tried with my flatmates
-        new Windows 10 and Slate browser, and ng2 failed there also. I'm not worried about it as I'm
-        assuming these are AngularJS issues that will be fixed in their final release as ag-Grid works
-        fine in these browsers using AngularJS 1.x.
+        I tested the above examples to work on my Windows 8 machine with latest Chrome, Microsoft Edge
+        and Firefox. It didn't work on Safari or Internet Explorer with an ng2 error. I'm not worried about
+        it as I'm assuming these are AngularJS issues that will be fixed in their final release as ag-Grid works
+        fine in these browsers without using Angular.
     </note>
 
     <h2>Destroy</h2>
@@ -199,7 +201,7 @@ SampleAppComponent.annotations = [
     <p>
         You do not need to manually clean up the grid. The grid ties in with the AngularJS 2 lifecycle
         and releases all resources when the directive is destroyed. The example above demonstrates this
-        by taking the element out of the DOM via *ng-if (which, unlike *ng-show, destroys the directives).
+        by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
     </p>
 
     <h2>JSPM</h2>
