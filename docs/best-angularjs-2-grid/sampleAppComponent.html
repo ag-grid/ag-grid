@@ -1,4 +1,5 @@
 <div style="width: 800px;">
+
     <div style="padding: 4px;">
         <div style="float: right;">
             <input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
@@ -6,13 +7,13 @@
             <button [disabled]="showGrid" (click)="showGrid=true">Create Grid</button>
         </div>
         <div>
-            <b>Employees Skills and Contact Details</b> 
+            <b>Employees Skills and Contact Details</b>
             {{rowCount}}
-            </div>
         </div>
-    <div style="clear: both;"/>
+    </div>
+    <div style="clear: both;"></div>
 
-    <div *ng-if="showGrid">
+    <div *ngIf="showGrid">
 
         <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use
              that marker inside the same ng-if as the grid -->
@@ -29,7 +30,7 @@
                 <button (click)="agGrid.columnApi.hideColumn('country', false)">Show Country Column</button>
             </span>
         </div>
-        <div style="clear: both;"/>
+        <div style="clear: both;"></div>
         <div style="padding: 4px;" class="toolbar">
             <label>
                 <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
@@ -37,52 +38,52 @@
             </label>
             <button (click)="createRowData()">Refresh Data</button>
         </div>
-        <div style="clear: both;"/>
+        <div style="clear: both;"></div>
 
-        <ag-grid-ng2 #ag-grid style="width: 100%; height: 350px;" class="ag-fresh"
+        <ag-grid-ng2 #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
 
-                 [grid-options]="gridOptions"
-                 [column-defs]="columnDefs"
-                 [show-tool-panel]="showToolPanel"
-                 [row-data]="rowData"
+                     [gridOptions]="gridOptions"
+                     [columnDefs]="columnDefs"
+                     [showToolPanel]="showToolPanel"
+                     [rowData]="rowData"
 
-                 enable-col-resize
-                 enable-sorting
-                 enable-filter
-                 suppress-row-click-selection
-                 tool-panel-suppress-pivot
-                 tool-panel-suppress-values
-                 debug
-                 row-height="22"
-                 row-selection="multiple"
-                 pinned-column-count="3"
+                     enableColResize
+                     enableSorting
+                     enableFilter
+                     suppressRowClickSelection
+                     toolPanelSuppressPivot
+                     toolPanelSuppressValues
+                     debug
+                     rowHeight="22"
+                     rowSelection="multiple"
+                     pinnedColumnCount="3"
 
-                 (model-updated)="onModelUpdated()"
-                 (cell-clicked)="onCellClicked($event)"
-                 (cell-double-clicked)="onCellDoubleClicked($event)"
-                 (cell-context-menu)="onCellContextMenu($event)"
-                 (cell-value-changed)="onCellValueChanged($event)"
-                 (cell-focused)="onCellFocused($event)"
-                 (row-selected)="onRowSelected($event)"
-                 (selection-changed)="onSelectionChanged()"
-                 (before-filter-changed)="onBeforeFilterChanged()"
-                 (after-filter-changed)="onAfterFilterChanged()"
-                 (filter-modified)="onFilterModified()"
-                 (before-sort-changed)="onBeforeSortChanged()"
-                 (after-sort-changed)="onAfterSortChanged()"
-                 (virtual-row-removed)="onVirtualRowRemoved($event)"
-                 (row-clicked)="onRowClicked($event)"
-                 (ready)="onReady($event)"
+                     (modelUpdated)="onModelUpdated()"
+                     (cellClicked)="onCellClicked($event)"
+                     (cellDoubleClicked)="onCellDoubleClicked($event)"
+                     (cellContextMenu)="onCellContextMenu($event)"
+                     (cellValueChanged)="onCellValueChanged($event)"
+                     (cellFocused)="onCellFocused($event)"
+                     (rowSelected)="onRowSelected($event)"
+                     (selectionChanged)="onSelectionChanged()"
+                     (beforeFilterChanged)="onBeforeFilterChanged()"
+                     (afterFilterChanged)="onAfterFilterChanged()"
+                     (filterModified)="onFilterModified()"
+                     (beforeSortChanged)="onBeforeSortChanged()"
+                     (afterSortChanged)="onAfterSortChanged()"
+                     (virtualRowRemoved)="onVirtualRowRemoved($event)"
+                     (rowClicked)="onRowClicked($event)"
+                     (ready)="onReady($event)"
 
-                 (column-everything-changed)="onColumnEvent($event)"
-                 (column-pivot-changed)="onColumnEvent($event)"
-                 (column-value-changed)="onColumnEvent($event)"
-                 (column-moved)="onColumnEvent($event)"
-                 (column-visible)="onColumnEvent($event)"
-                 (column-group-opened)="onColumnEvent($event)"
-                 (column-resized)="onColumnEvent($event)"
-                 (column-pinned-count-changed)="onColumnEvent($event)"
-            />
+                     (columnEverythingChanged)="onColumnEvent($event)"
+                     (columnPivotChanged)="onColumnEvent($event)"
+                     (columnValueChanged)="onColumnEvent($event)"
+                     (columnMoved)="onColumnEvent($event)"
+                     (columnVisible)="onColumnEvent($event)"
+                     (columnGroupOpened)="onColumnEvent($event)"
+                     (columnResized)="onColumnEvent($event)"
+                     (columnPinnedCountChanged)="onColumnEvent($event)">
+        </ag-grid-ng2>
     </div>
 
 </div>

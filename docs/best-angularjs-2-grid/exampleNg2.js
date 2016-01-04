@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    ng.bootstrap(SampleAppComponent);
+    ng.platform.browser.bootstrap(SampleAppComponent);
 });
 
 var SampleAppComponent = function() {
@@ -127,11 +127,11 @@ SampleAppComponent.prototype.onColumnEvent = function($event) {
 };
 
 SampleAppComponent.annotations = [
-    new ng.Component({
+    new ng.core.Component({
         selector: 'sample-app'
     }),
-    new ng.View({
-        directives: [ag.grid.AgGridNg2, ng.NgIf],
+    new ng.core.View({
+        directives: [ag.grid.AgGridNg2],
         // put padding into the buttons
         styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         templateUrl: 'sampleAppComponent.html'
