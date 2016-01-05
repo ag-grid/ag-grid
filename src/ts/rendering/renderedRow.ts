@@ -435,9 +435,9 @@ module ag.grid {
                     classes.push("ag-row-footer");
                 }
             } else {
-                // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-                if (this.node.parent) {
-                    classes.push("ag-row-level-" + (this.node.parent.level + 1));
+                // if a leaf, and a $parent exists, put a level of the $parent, else put level of 0 for top level item
+                if (this.node.$parent) {
+                    classes.push("ag-row-level-" + (this.node.$parent.level + 1));
                 } else {
                     classes.push("ag-row-level-0");
                 }

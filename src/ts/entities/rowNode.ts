@@ -7,7 +7,7 @@ module ag.grid {
         /** The user provided data */
         data?: any;
         /** The parent node to this node, or empty if top level */
-        parent?: RowNode;
+        $parent?: RowNode;
         /** How many levels this node is from the top */
         level?: number;
         /** True if this node is a group node (ie has children) */

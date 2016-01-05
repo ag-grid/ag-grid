@@ -57,8 +57,8 @@ module ag.grid {
                             key: groupKey,
                             expanded: this.isExpanded(expandByDefault, currentLevel),
                             children: [],
-                            // for top most level, parent is null
-                            parent: currentGroup === topMostGroup ? null : currentGroup,
+                            // for top most level, $parent is null
+                            $parent: currentGroup === topMostGroup ? null : currentGroup,
                             allChildrenCount: 0,
                             level: currentGroup.level + 1,
                             _childrenMap: {} //this is a temporary map, we remove at the end of this method
@@ -71,7 +71,7 @@ module ag.grid {
                     nextGroup.allChildrenCount++;
 
                     if (currentLevel == levelToInsertChild) {
-                        node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                        node.$parent = nextGroup === topMostGroup ? null : nextGroup;
                         nextGroup.children.push(node);
                     } else {
                         currentGroup = nextGroup;

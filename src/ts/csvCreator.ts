@@ -113,8 +113,8 @@ module ag.grid {
 
         private createValueForGroupNode(node: RowNode): string {
             var keys = [node.key];
-            while (node.parent) {
-                node = node.parent;
+            while (node.$parent) {
+                node = node.$parent;
                 keys.push(node.key);
             }
             return keys.reverse().join(' -> ');

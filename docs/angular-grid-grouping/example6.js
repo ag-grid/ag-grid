@@ -4,17 +4,17 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var classRules = {
-        // .parent because we target the 2nd group of 2
-        'background-odd': function(params) { return params.node.parent.childIndex % 2 === 0; },
-        'background-even': function(params) { return params.node.parent.childIndex % 2 !== 0; },
+        // .$parent because we target the 2nd group of 2
+        'background-odd': function(params) { return params.node.$parent.childIndex % 2 === 0; },
+        'background-even': function(params) { return params.node.$parent.childIndex % 2 !== 0; },
         // we target the last row of the 2nd group
-        'border': function(params) { return params.node.parent.lastChild && params.node.lastChild; }
+        'border': function(params) { return params.node.$parent.lastChild && params.node.lastChild; }
     };
 
     var columnDefs = [
         {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, cellStyle: function(params) {
             // color red for the first group
-            if (params.node.parent.parent.firstChild) {
+            if (params.node.$parent.$parent.firstChild) {
                 return {color: "red"};
             }
         }},
