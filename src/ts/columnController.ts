@@ -21,8 +21,8 @@ module ag.grid {
         public setState(columnState: any): void { return this._columnController.setState(columnState); }
         public getState(): [any] { return this._columnController.getState(); }
         public isPinning(): boolean { return this._columnController.isPinning(); }
-        public getVisibleColAfter(col: Column): Column { return this._columnController.getVisibleColAfter(col); }
-        public getVisibleColBefore(col: Column): Column { return this._columnController.getVisibleColBefore(col); }
+        public getDisplayedColAfter(col: Column): Column { return this._columnController.getDisplayedColAfter(col); }
+        public getDisplayedColBefore(col: Column): Column { return this._columnController.getDisplayedColBefore(col); }
         public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedColumns(): Column[] { return this._columnController.getDisplayedColumns(); }
@@ -52,9 +52,12 @@ module ag.grid {
         private allColumns: Column[]; // every column available
         private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
         private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
+
         private pivotColumns: Column[];
         private valueColumns: Column[];
         private columnGroups: ColumnGroup[];
+
+        private groupAutoColumn: Column;
 
         private setupComplete = false;
         private valueService: ValueService;
@@ -174,13 +177,10 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
         }
 
-        // returns true if the col is either in all columns or visible columns.
-        // we need to check visible columns because the grouping column could come
-        // from the gridOptions, so that's a special case
         private doesColumnExistInGrid(column: Column): boolean {
             var columnInAllColumns = this.allColumns.indexOf(column) >= 0;
-            var columnInVisibleColumns = this.visibleColumns.indexOf(column) >= 0;
-            return columnInAllColumns || columnInVisibleColumns;
+            var columnIsGroupAutoColumn = column === this.groupAutoColumn;
+            return columnInAllColumns || columnIsGroupAutoColumn;
         }
 
         public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
@@ -286,10 +286,10 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_VISIBLE, event);
         }
 
-        public getVisibleColBefore(col: any): Column {
-            var oldIndex = this.visibleColumns.indexOf(col);
+        public getDisplayedColBefore(col: any): Column {
+            var oldIndex = this.displayedColumns.indexOf(col);
             if (oldIndex > 0) {
-                return this.visibleColumns[oldIndex - 1];
+                return this.displayedColumns[oldIndex - 1];
             } else {
                 return null;
             }
@@ -297,17 +297,17 @@ module ag.grid {
 
         // used by:
         // + rowRenderer -> for navigation
-        public getVisibleColAfter(col: Column): Column {
-            var oldIndex = this.visibleColumns.indexOf(col);
-            if (oldIndex < (this.visibleColumns.length - 1)) {
-                return this.visibleColumns[oldIndex + 1];
+        public getDisplayedColAfter(col: Column): Column {
+            var oldIndex = this.displayedColumns.indexOf(col);
+            if (oldIndex < (this.displayedColumns.length - 1)) {
+                return this.displayedColumns[oldIndex + 1];
             } else {
                 return null;
             }
         }
 
         public isPinning(): boolean {
-            return this.visibleColumns && this.visibleColumns.length > 0 && this.visibleColumns[0].pinned;
+            return this.displayedColumns && this.displayedColumns.length > 0 && this.displayedColumns[0].pinned;
         }
 
         public getState(): [any] {
@@ -396,24 +396,23 @@ module ag.grid {
         public getColumn(key: any): Column {
             if (!key) {return null;}
 
-            // need both allColumns and visibleColumns, in case the
-            // grouping column that came from the grid options
-            var listsToCheck = [this.allColumns, this.visibleColumns];
-
-            for (var j = 0; j<listsToCheck.length; j++) {
-                var list = listsToCheck[j];
-                if (!list) {
-                    continue;
-                }
-                for (var i = 0; i < list.length; i++) {
-                    var colDefMatches = list[i].colDef === key;
-                    var idMatches = list[i].colId === key;
-                    if (colDefMatches || idMatches) {
-                        return list[i];
-                    }
+            for (var i = 0; i < this.allColumns.length; i++) {
+                if (colMatches(this.allColumns[i])) {
+                    return this.allColumns[i];
                 }
             }
 
+            if (colMatches(this.groupAutoColumn)) {
+                return this.groupAutoColumn;
+            }
+
+            function colMatches(column: Column): boolean {
+                var colDefMatches = this.allColumns[i].colDef === key;
+                var idMatches = this.allColumns[i].colId === key;
+                return colDefMatches || idMatches;
+            }
+
+            return null;
         }
 
         public getDisplayNameForCol(column: any): string {
@@ -489,8 +488,7 @@ module ag.grid {
         // called by headerRenderer - when a header is opened or closed
         public columnGroupOpened(group: ColumnGroup, newValue: boolean): void {
             group.expanded = newValue;
-            this.updateGroups();
-            this.updateDisplayedColumns();
+            this.updateGroupsAndDisplayedColumns();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(group);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
         }
@@ -519,9 +517,16 @@ module ag.grid {
         }
 
         private updateModel() {
+            // following 3 methods are only called form here
+            this.createGroupAutoColumn();
             this.updateVisibleColumns();
             this.updatePinnedColumns();
             this.buildGroups();
+            // this is also called when a group is opened or closed
+            this.updateGroupsAndDisplayedColumns();
+        }
+
+        private updateGroupsAndDisplayedColumns() {
             this.updateGroups();
             this.updateDisplayedColumns();
         }
@@ -671,8 +676,7 @@ module ag.grid {
             }
         }
 
-        private updateVisibleColumns(): void {
-            this.visibleColumns = [];
+        private createGroupAutoColumn(): void {
 
             // see if we need to insert the default grouping column
             var needAGroupColumn = this.pivotColumns.length > 0
@@ -680,23 +684,30 @@ module ag.grid {
                 && !this.gridOptionsWrapper.isGroupUseEntireRow()
                 && !this.gridOptionsWrapper.isGroupSuppressRow();
 
-            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
             if (needAGroupColumn) {
                 // if one provided by user, use it, otherwise create one
                 var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
                 if (!groupColDef) {
+                    var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
                     groupColDef = {
                         headerName: localeTextFunc('group', 'Group'),
                         cellRenderer: {
-                            renderer: "group"
+                            renderer: 'group'
                         }
                     };
                 }
-                // no group column provided, need to create one here
                 var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
-                var groupColumn = new Column(groupColDef, groupColumnWidth);
-                this.visibleColumns.push(groupColumn);
+                this.groupAutoColumn = new Column(groupColDef, groupColumnWidth);
+            } else {
+                this.groupAutoColumn = null;
+            }
+        }
+
+        private updateVisibleColumns(): void {
+            this.visibleColumns = [];
+
+            if (this.groupAutoColumn) {
+                this.visibleColumns.push(this.groupAutoColumn);
             }
 
             for (var i = 0; i < this.allColumns.length; i++) {

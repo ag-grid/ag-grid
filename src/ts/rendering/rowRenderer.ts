@@ -462,7 +462,7 @@ module ag.grid {
                     nextColumnToFocus = lastColumn;
                     break;
                 case Constants.KEY_RIGHT :
-                    var colToRight = this.columnModel.getVisibleColAfter(lastColumn);
+                    var colToRight = this.columnModel.getDisplayedColAfter(lastColumn);
                     // if already on right, do nothing
                     if (!colToRight) {
                         return null;
@@ -471,7 +471,7 @@ module ag.grid {
                     nextColumnToFocus = colToRight;
                     break;
                 case Constants.KEY_LEFT :
-                    var colToLeft = this.columnModel.getVisibleColBefore(lastColumn);
+                    var colToLeft = this.columnModel.getDisplayedColBefore(lastColumn);
                     // if already on left, do nothing
                     if (!colToLeft) {
                         return null;
