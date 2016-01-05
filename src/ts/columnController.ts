@@ -50,7 +50,6 @@ module ag.grid {
         private masterSlaveController: MasterSlaveService;
 
         private allColumns: Column[]; // every column available
-        private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
         private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
 
         private pivotColumns: Column[];
@@ -407,8 +406,8 @@ module ag.grid {
             }
 
             function colMatches(column: Column): boolean {
-                var colDefMatches = this.allColumns[i].colDef === key;
-                var idMatches = this.allColumns[i].colId === key;
+                var colDefMatches = column.colDef === key;
+                var idMatches = column.colId === key;
                 return colDefMatches || idMatches;
             }
 
@@ -519,23 +518,28 @@ module ag.grid {
         private updateModel() {
             // following 3 methods are only called form here
             this.createGroupAutoColumn();
-            this.updateVisibleColumns();
-            this.updatePinnedColumns();
-            this.buildGroups();
-            // this is also called when a group is opened or closed
-            this.updateGroupsAndDisplayedColumns();
+            var visibleColumns = this.updateVisibleColumns();
+            this.updatePinnedColumns(visibleColumns);
+
+            if (!this.gridOptionsWrapper.isGroupHeaders()) {
+                this.displayedColumns = visibleColumns;
+            } else {
+                // only called from here
+                this.buildGroups(visibleColumns);
+                // this is also called when a group is opened or closed
+                this.updateGroupsAndDisplayedColumns();
+            }
         }
 
         private updateGroupsAndDisplayedColumns() {
             this.updateGroups();
-            this.updateDisplayedColumns();
+            this.updateDisplayedColumnsFromGroups();
         }
 
-        private updateDisplayedColumns() {
+        private updateDisplayedColumnsFromGroups() {
 
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 // if not grouping by headers, then pull visible cols
-                this.displayedColumns = this.visibleColumns;
             } else {
                 // if grouping, then only show col as per group rules
                 this.displayedColumns = [];
@@ -625,7 +629,7 @@ module ag.grid {
             }
         }
 
-        private buildGroups() {
+        private buildGroups(visibleColumns: Column[]) {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 this.columnGroups = null;
@@ -639,7 +643,7 @@ module ag.grid {
 
             var lastColWasPinned = true;
 
-            this.visibleColumns.forEach(function (column: any) {
+            visibleColumns.forEach(function (column: any) {
                 // do we need a new group, because we move from pinned to non-pinned columns?
                 var endOfPinnedHeader = lastColWasPinned && !column.pinned;
                 if (!column.pinned) {
@@ -703,11 +707,11 @@ module ag.grid {
             }
         }
 
-        private updateVisibleColumns(): void {
-            this.visibleColumns = [];
+        private updateVisibleColumns(): Column[] {
+            var visibleColumns: Column[] = [];
 
             if (this.groupAutoColumn) {
-                this.visibleColumns.push(this.groupAutoColumn);
+                visibleColumns.push(this.groupAutoColumn);
             }
 
             for (var i = 0; i < this.allColumns.length; i++) {
@@ -715,16 +719,18 @@ module ag.grid {
                 var hideBecauseOfPivot = this.pivotColumns.indexOf(column) >= 0
                     && this.gridOptionsWrapper.isGroupHidePivotColumns();
                 if (column.visible && !hideBecauseOfPivot) {
-                    column.index = this.visibleColumns.length;
-                    this.visibleColumns.push(this.allColumns[i]);
+                    column.index = visibleColumns.length;
+                    visibleColumns.push(this.allColumns[i]);
                 }
             }
+
+            return visibleColumns;
         }
 
-        private updatePinnedColumns(): void {
-            for (var i = 0; i < this.visibleColumns.length; i++) {
+        private updatePinnedColumns(visibleColumns: Column[]): void {
+            for (var i = 0; i < visibleColumns.length; i++) {
                 var pinned = i < this.pinnedColumnCount;
-                this.visibleColumns[i].pinned = pinned;
+                visibleColumns[i].pinned = pinned;
             }
         }
 
