@@ -69,6 +69,9 @@ module ag.grid {
             this.children.forEach( (childElement: RenderedHeaderElement)=> {
                 childElement.refreshSortIcon();
             });
+            this.subHeaders.forEach( (childElement: RenderedHeaderGroupCell) => {
+                childElement.refreshSortIcon();
+            });
         }
 
         public onIndividualColumnResized(column: Column) {
