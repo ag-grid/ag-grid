@@ -8,6 +8,9 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 2.3.6</h3>
+    <li>Major: Got grid working with latest Angular JS 2 Beta 0.</li>
+
     <h3>Version 2.3.5</h3>
     <li>Minor: Overlays can now be disabled via new properties suppressLoadingOverlay and suppressNoRowsOverlay.</li>
 
