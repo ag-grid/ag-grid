@@ -56,8 +56,8 @@ include 'documentation_header.php';
     <div style="color: #767676; padding-top: 20px;">
         My 9 week holiday was great. I spent the last two months travelling India, Myanmar and Ireland (where I am from!).
         I am now back in London and am unemployed. Finally I can get some decent 'grid time'.
-        So in the coming weeks you can expect me to get back to weekly release cycles with lots of new features as
-        I remove the feature gap.
+        So in the coming weeks you can expect weekly release with lots of new features
+        morphing ag-Grid into the best Javascript grid in the world.
     </div>
 
 
