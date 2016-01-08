@@ -41,12 +41,30 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-    <b>ag-Grid 2.3.7 Released</b>
+    <p>
+        <b>ag-Grid 2.3.7 Released</b>
+    </p>
 
-    <p/>
+    <p>
+        This is a minor release. Grid now works with latest Angular 2 Beta 0. This beta version of
+        Angular 2 had breaking changes. Hopefully no more surprises from the Angular team!!!
+    </p>
 
-    This is a minor release. Grid now works with latest Angular 2 Beta 0. This beta version of
-    Angular 2 had breaking changes. Hopefully no more surprises from the Angular team!!!
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <p>
+        Thank you Mohan for your thumbs up. Great other people understand where I am
+        going with framework agnostic. If things don't work out for you in React,
+        you can always try things out in Angular 2 or something else!!!
+    </p>
+
+    <img src="images/quote.jpg" style="padding-top: 10px; padding-bottom: 10px;"/>
+
+    <p>
+        This was left on <a href="ag-grid-in-2016"> ag-Grid in 2016</a>.
+    </p>
 
 </div>
 
