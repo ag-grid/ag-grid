@@ -348,6 +348,7 @@ module ag.grid {
                     hide: !column.visible,
                     aggFunc: column.aggFunc ? column.aggFunc : null,
                     width: column.actualWidth,
+                    pinned: column.pinned,
                     pivotIndex: pivotIndex >= 0 ? pivotIndex : null
                 };
                 result.push(resultItem);
@@ -370,6 +371,8 @@ module ag.grid {
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                 oldColumn.visible = stateItem.hide ? false : true;
+                // checks for 'true', otherwise false
+                oldColumn.pinned = stateItem.pinned === true;
                 // if width provided and valid, use it, otherwise stick with the old width
                 oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
                 // accept agg func only if valid
@@ -392,6 +395,7 @@ module ag.grid {
             _.forEach(oldColumnList, function (oldColumn: any) {
                 oldColumn.visible = false;
                 oldColumn.aggFunc = null;
+                oldColumn.pinned = false;
                 that.allColumns.push(oldColumn);
             });
 

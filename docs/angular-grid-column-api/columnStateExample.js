@@ -60,4 +60,12 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.showMedals = function(show) {
         $scope.gridOptions.columnApi.hideColumns(['gold','silver','bronze'], !show);
     };
+
+    $scope.pinAthlete = function(pin) {
+        $scope.gridOptions.columnApi.setColumnPinned('athlete', pin);
+    };
+
+    $scope.pinAge = function(pin) {
+        $scope.gridOptions.columnApi.setColumnPinned('age', pin);
+    };
 });

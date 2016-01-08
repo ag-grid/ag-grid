@@ -25,7 +25,7 @@ module ag.grid {
             this.visible = !colDef.hide;
             this.sort = colDef.sort;
             this.sortedAt = colDef.sortedAt;
-            this.pinned = colDef.pinned;
+            this.pinned = colDef.pinned === true;
             // in the future, the colKey might be something other than the index
             if (colDef.colId) {
                 this.colId = colDef.colId;

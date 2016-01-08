@@ -10,20 +10,26 @@
 <body ng-app="example" ng-controller="exampleCtrl">
 
 <div>
-    <span style="padding-bottom: 4px; display: inline-block;">
-        Show / Hide Columns:
+    <div style="padding-bottom: 4px;">
+        Column Visible:
         <button ng-click="showAthlete(true)">Show Athlete</button>
         <button ng-click="showAthlete(false)">Hide Athlete</button>
         <button ng-click="showMedals(true)">Show All Medals</button>
         <button ng-click="showMedals(false)">Hide All Medals</button>
-    </span>
-    <br/>
-    <span style="padding-bottom: 4px; display: inline-block;">
+    </div>
+    <div style="padding-bottom: 4px;">
+        Column Pinned:
+        <button ng-click="pinAthlete(true)">Pin Athlete</button>
+        <button ng-click="pinAthlete(false)">Unpin Athlete</button>
+        <button ng-click="pinAge(true)">Pin Age</button>
+        <button ng-click="pinAge(false)">Unpin Age</button>
+    </div>
+    <div style="padding-bottom: 4px;">
         Get / Set State:
         <button ng-click="printState()">Print Col State</button>
         <button ng-click="saveState()">Save Col State</button>
         <button ng-click="restoreState()">Restore Col State</button>
-    </span>
+    </div>
 </div>
 
 <div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
