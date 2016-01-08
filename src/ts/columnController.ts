@@ -51,6 +51,7 @@ module ag.grid {
 
         private allColumns: Column[]; // every column available
         private allColumnsInGroups: ColumnGroup[]; // allColumns in their groups
+        private visibleColumnsInGroups: ColumnGroup[]; // visible columns in their groups
         private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
         private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
         private pivotColumns: Column[];
@@ -523,6 +524,7 @@ module ag.grid {
         private updateModel() {
             this.updateVisibleColumns();
             this.updatePinnedColumns();
+            this.updateVisibleColumnsInGroups();
             this.updateVisibleColumnGroupsAndPinning();
             this.updateGroups();
             this.updateDisplayedColumns();
@@ -723,6 +725,36 @@ module ag.grid {
             return resultGroups;
         }
 
+        private copyGroupWithOnlyVisibleColumns(columnGroup: ColumnGroup) : ColumnGroup {
+            var newGroup = new ColumnGroup(columnGroup.pinned, columnGroup.name);
+            columnGroup.allColumns.forEach( (column: Column) => {
+                if (column.visible) {
+                    newGroup.allColumns.push(column);
+                }
+            });
+            columnGroup.allSubGroups.forEach( (subGroup: ColumnGroup) => {
+                newGroup.allSubGroups.push(this.copyGroupWithOnlyVisibleColumns(subGroup));
+            });
+            return newGroup;
+        }
+
+        private updateVisibleColumnsInGroups() {
+            // if not grouping by headers, do nothing
+            if (!this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
+            this.visibleColumnsInGroups = [];
+
+            this.allColumnsInGroups.forEach( (columnGroup: ColumnGroup) => {
+                if (this.isGroupVisible(columnGroup)) {
+                    var newGroup = this.copyGroupWithOnlyVisibleColumns(columnGroup);
+                    newGroup.update();
+                    this.visibleColumnsInGroups.push(newGroup);
+                }
+            });
+        }
+
         private updateVisibleColumnGroupsAndPinning() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
@@ -744,8 +776,8 @@ module ag.grid {
                 this.columnGroups.push(topLevelGroup);
             }
 
-            for (var i = 0; i < this.allColumnsInGroups.length; i++) {
-                var columnGroup = this.allColumnsInGroups[i];
+            for (var i = 0; i < this.visibleColumnsInGroups.length; i++) {
+                var columnGroup = this.visibleColumnsInGroups[i];
                 var columnGroupsAfterPinningCheck = this.checkForPinningInColumnGroup(columnGroup);
                 columnGroupsAfterPinningCheck.forEach( (newColumnGroup: ColumnGroup) => {
                     this.columnGroups.push(newColumnGroup);
