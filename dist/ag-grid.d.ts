@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.3.6
+// Type definitions for ag-grid v2.3.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped

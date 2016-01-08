@@ -8,7 +8,7 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 2.3.6</h3>
+    <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>
 
     <h3>Version 2.3.5</h3>

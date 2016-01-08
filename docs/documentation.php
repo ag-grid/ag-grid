@@ -41,7 +41,7 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-    <b>ag-Grid 2.3.6 Released</b>
+    <b>ag-Grid 2.3.7 Released</b>
 
     <p/>
 
