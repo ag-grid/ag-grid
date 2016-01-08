@@ -159,6 +159,9 @@ module ag.grid {
 
         private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {
 
+            // make closure of variable, so is available for methods below
+            var _valueService = this.valueService;
+
             return function groupAggFunction(rows: any) {
 
                 var result = <any>{};
@@ -167,7 +170,7 @@ module ag.grid {
                     for (var i = 0; i < valueKeys.length; i++) {
                         var valueKey = valueKeys[i];
                         // at this point, if no values were numbers, the result is null (not zero)
-                        result[valueKey] = aggregateColumn(rows, constants.SUM, valueKey);
+                        result[valueKey] = aggregateColumn(rows, constants.SUM, valueKey, null);
                     }
                 }
 
@@ -175,19 +178,33 @@ module ag.grid {
                     for (var j = 0; j < valueColumns.length; j++) {
                         var valueColumn = valueColumns[j];
                         var colKey = valueColumn.colDef.field;
+                        if (!colKey) {
+                            console.log('ag-Grid: you need to provide a field for all value columns so that ' +
+                                'the grid knows what field to store the result in. so even if using a valueGetter, ' +
+                                'the result will not be stored in a value getter.');
+                        }
                         // at this point, if no values were numbers, the result is null (not zero)
-                        result[colKey] = aggregateColumn(rows, valueColumn.aggFunc, colKey);
+                        result[colKey] = aggregateColumn(rows, valueColumn.aggFunc, colKey, valueColumn.colDef);
                     }
                 }
 
                 return result;
             };
 
-            function aggregateColumn(rows: RowNode[], aggFunc: string, colKey: string) {
+            // if colDef is passed in, we are working off a column value, if it is not passed in, we are
+            // working off colKeys passed in to the gridOptions
+            function aggregateColumn(rowNodes: RowNode[], aggFunc: string, colKey: string, colDef: ColDef) {
                 var resultForColumn: any = null;
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    var thisColumnValue = row.data[colKey];
+                for (var i = 0; i < rowNodes.length; i++) {
+                    var rowNode = rowNodes[i];
+                    // if the row is a group, then it will only have an agg result value,
+                    // which means valueGetter is never used.
+                    var thisColumnValue: any;
+                    if (colDef && !rowNode.group) {
+                        thisColumnValue = _valueService.getValue(colDef, rowNode.data, rowNode);
+                    } else {
+                        thisColumnValue = rowNode.data[colKey];
+                    }
                     // only include if the value is a number
                     if (typeof thisColumnValue === 'number') {
 
