@@ -270,6 +270,7 @@ module ag.grid {
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
         }
 
         private onColumnChanged(event: ColumnChangeEvent): void {

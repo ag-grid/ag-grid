@@ -23,7 +23,9 @@ module ag.grid {
         public isPinning(): boolean { return this._columnController.isPinning(); }
         public getDisplayedColAfter(col: Column): Column { return this._columnController.getDisplayedColAfter(col); }
         public getDisplayedColBefore(col: Column): Column { return this._columnController.getDisplayedColBefore(col); }
-        public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
+        public setColumnVisible(key: Column|ColDef|String, visible: boolean): void { this._columnController.setColumnVisible(key, visible); }
+        public setColumnPinned(key: Column|ColDef|String, visible: boolean): void { this._columnController.setColumnPinned(key, visible); }
+
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
         public getDisplayedCenterColumns(): Column[] { return this._columnController.getDisplayedCenterColumns(); }
@@ -285,12 +287,26 @@ module ag.grid {
             return this.allColumns;
         }
 
-        public setColumnVisible(column: Column, visible: boolean): void {
+        public setColumnVisible(key: Column|ColDef|String, visible: boolean): void {
+            var column = this.getColumn(key);
+            if (!column) {return;}
+
             column.visible = visible;
 
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withColumn(column);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_VISIBLE, event);
+        }
+
+        public setColumnPinned(key: Column|ColDef|String, pinned: boolean): void {
+            var column = this.getColumn(key);
+            if (!column) {return;}
+
+            column.pinned = pinned;
+
+            this.updateModel();
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withColumn(column);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED, event);
         }
 
         public getDisplayedColBefore(col: any): Column {
@@ -416,10 +432,13 @@ module ag.grid {
             }
 
             function colMatches(column: Column): boolean {
+                var columnMatches = column === key;
                 var colDefMatches = column.colDef === key;
                 var idMatches = column.colId === key;
-                return colDefMatches || idMatches;
+                return columnMatches || colDefMatches || idMatches;
             }
+
+            console.log('could not find column for key ' + key);
 
             return null;
         }

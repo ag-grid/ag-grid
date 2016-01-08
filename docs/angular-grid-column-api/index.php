@@ -138,8 +138,12 @@ include '../documentation_header.php';
             <td>Same as getVisibleColAfter except gives col to the left.</td>
         </tr>
         <tr>
-            <th>setColumnVisible(column, visible)</th>
-            <td>Sets the visibility of a column.</td>
+            <th>setColumnVisible(key, visible)</th>
+            <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
+        </tr>
+        <tr>
+            <th>setColumnPinned(key, pinned)</th>
+            <td>Sets the column pinned / unpinned. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
             <th>getAllColumns()</th>

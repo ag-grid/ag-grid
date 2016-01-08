@@ -17,6 +17,9 @@ module ag.grid {
         /** One or more columns was shown / hidden */
         public static EVENT_COLUMN_VISIBLE = 'columnVisible';
 
+        /** One or more columns was pinned / unpinned*/
+        public static EVENT_COLUMN_PINNED = 'columnPinned';
+
         /** A column group was opened / closed */
         public static EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
 

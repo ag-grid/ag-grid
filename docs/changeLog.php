@@ -8,6 +8,11 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 3.0.0</h3>
+    <li>Major: New Column API method setColumnPinned().</li>
+    <li>Major: Event EVENT_COLUMN_PINNED_COUNT_CHANGED removed.</li>
+    <li>Major: Event EVENT_COLUMN_PINNED added.</li>
+
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>
 

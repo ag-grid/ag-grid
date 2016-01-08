@@ -26,8 +26,16 @@ module.controller("exampleCtrl", function($scope, $http) {
             $scope.gridOptions.api.setRowData(res.data);
         });
 
-    $scope.onPinningChanged = function() {
-        console.log('hop hop hop');
+    $scope.onCbAthlete = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('athlete', $scope.cbAthlete);
+    };
+
+    $scope.onCbAge = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('age', $scope.cbAge);
+    };
+
+    $scope.onCbCountry = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('country', $scope.cbCountry);
     };
 
     $scope.cbAthlete = true;

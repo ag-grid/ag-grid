@@ -16,9 +16,11 @@ include '../documentation_header.php';
         is consuming the event is called the slave.
     </p>
 
-    <note>
-        Using Master / Slave you can put a footer into your grid.
-    </note>
+    <p>
+        Using master / slave, you can have two grids have synced columns, such that column changes in
+        one grid will be reflected in another grid. This is useful if you have two grids, one above the other,
+        and you want the two of them to remain synced with regards their columns.
+    </p>
 
     <h4>Configuration</h4>
 
@@ -43,6 +45,7 @@ gridOptionsMaster = {
         <li>Column Moved</li>
         <li>Column Group Opened / Closed</li>
         <li>Column Resized</li>
+        <li>Column Pinned</li>
     </ul>
     </p>
 

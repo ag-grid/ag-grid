@@ -32,6 +32,7 @@ module ag.grid {
 
             eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
         }
@@ -112,6 +113,10 @@ module ag.grid {
                     case Events.EVENT_COLUMN_VISIBLE:
                         this.logger.log('onColumnEvent-> processing '+event+' visible = '+ masterColumn.visible);
                         this.columnController.setColumnVisible(slaveColumn, masterColumn.visible);
+                        break;
+                    case Events.EVENT_COLUMN_PINNED:
+                        this.logger.log('onColumnEvent-> processing '+event+' pinned = '+ masterColumn.pinned);
+                        this.columnController.setColumnPinned(slaveColumn, masterColumn.pinned);
                         break;
                     case Events.EVENT_COLUMN_GROUP_OPENED:
                         this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.expanded);
