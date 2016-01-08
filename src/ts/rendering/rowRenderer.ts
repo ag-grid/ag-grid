@@ -144,7 +144,7 @@ module ag.grid {
             renderedRows.length = 0;
 
             // if no cols, don't draw row - can we get rid of this???
-            var columns = this.columnModel.getDisplayedColumns();
+            var columns = this.columnModel.getAllDisplayedColumns();
             if (!columns || columns.length == 0) {
                 return;
             }
@@ -377,7 +377,7 @@ module ag.grid {
         }
 
         private insertRow(node: any, rowIndex: any, mainRowWidth: any) {
-            var columns = this.columnModel.getDisplayedColumns();
+            var columns = this.columnModel.getAllDisplayedColumns();
             // if no cols, don't draw row
             if (!columns || columns.length == 0) {
                 return;
@@ -526,7 +526,7 @@ module ag.grid {
         // called via API
         public setFocusedCell(rowIndex: any, colIndex: any) {
             var renderedRow = this.renderedRows[rowIndex];
-            var column = this.columnModel.getDisplayedColumns()[colIndex];
+            var column = this.columnModel.getAllDisplayedColumns()[colIndex];
             if (renderedRow && column) {
                 var eCell = renderedRow.getCellForCol(column);
                 this.focusCell(eCell, rowIndex, colIndex, column.colDef, true);
@@ -540,7 +540,7 @@ module ag.grid {
             var lastRowToCheck = this.lastVirtualRenderedRow;
             var currentRowIndex = rowIndex;
 
-            var visibleColumns = this.columnModel.getDisplayedColumns();
+            var visibleColumns = this.columnModel.getAllDisplayedColumns();
             var currentCol = column;
 
             while (true) {

@@ -148,7 +148,6 @@ module ag.grid {
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
-                case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
                 case Events.EVENT_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
                 case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
                 case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;

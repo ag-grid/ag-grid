@@ -57,25 +57,31 @@ module ag.grid {
         }
 
         private insertHeadersWithGrouping() {
-            var groups: ColumnGroup[] = this.columnController.getHeaderGroups();
+            this.putGroupIntoContainer(this.columnController.getLeftHeaderGroups(), this.ePinnedHeader);
+            this.putGroupIntoContainer(this.columnController.getCenterHeaderGroups(), this.eHeaderContainer);
+        }
+
+        private putGroupIntoContainer(groups: ColumnGroup[], eContainerToAddTo: HTMLElement): void {
             groups.forEach( (columnGroup: ColumnGroup) => {
                 var renderedHeaderGroup = new RenderedHeaderGroupCell(columnGroup, this.gridOptionsWrapper,
                     this.columnController, this.eRoot, this.angularGrid, this.$scope,
                     this.filterManager, this.$compile);
                 this.headerElements.push(renderedHeaderGroup);
-                var eContainerToAddTo = columnGroup.pinned ? this.ePinnedHeader : this.eHeaderContainer;
                 eContainerToAddTo.appendChild(renderedHeaderGroup.getGui());
             });
         }
 
         private insertHeadersWithoutGrouping() {
-            this.columnController.getDisplayedColumns().forEach( (column: Column) => {
-                // only include the first x cols
+            this.putColumnsIntoContainer(this.columnController.getDisplayedLeftColumns(), this.ePinnedHeader);
+            this.putColumnsIntoContainer(this.columnController.getDisplayedCenterColumns(), this.eHeaderContainer);
+        }
+
+        private putColumnsIntoContainer(columns: Column[], eContainerToAddTo: HTMLElement): void {
+            columns.forEach( (column: Column) => {
                 var renderedHeaderCell = new RenderedHeaderCell(column, null, this.gridOptionsWrapper,
                     this.$scope, this.filterManager, this.columnController, this.$compile,
                     this.angularGrid, this.eRoot);
                 this.headerElements.push(renderedHeaderCell);
-                var eContainerToAddTo = column.pinned ? this.ePinnedHeader : this.eHeaderContainer;
                 eContainerToAddTo.appendChild(renderedHeaderCell.getGui());
             });
         }

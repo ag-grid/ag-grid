@@ -8,6 +8,17 @@
     <script src="example1.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-    <div ag-grid="gridOptions" style="height: 100%;" class="ag-fresh"></div>
+
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <label>
+            <input ng-model="cbAthlete" type="checkbox" ng-change="onPinningChanged()"/> Athlete
+        </label>
+        <label>
+            <input ng-model="cbAge" type="checkbox" ng-change="onPinningChanged()"/> Age
+        </label>
+    </span>
+    <br/>
+
+    <div ag-grid="gridOptions" style="height: 450px;" class="ag-fresh"></div>
 </body>
 </html>

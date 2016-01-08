@@ -229,30 +229,27 @@ module ag.grid {
         }
 
         public ensureColIndexVisible(index: any) {
-            if (typeof index !== 'number') {
-                console.warn('col index must be a number: ' + index);
+            var leftColumns = this.columnModel.getDisplayedLeftColumns();
+            var centerColumns = this.columnModel.getDisplayedCenterColumns();
+
+            var minAllowedIndex = leftColumns.length;
+            var maxAllowedIndex = minAllowedIndex + centerColumns.length - 1;
+
+            var indexIsInRange = index >= minAllowedIndex && index <= maxAllowedIndex;
+            if (!indexIsInRange) {
+                console.warn('index is not in range, should be between '
+                    + minAllowedIndex + ' and ' + maxAllowedIndex);
+                console.warn('Remember it makes no sense to scroll to a pinned column');
                 return;
             }
 
-            var columns = this.columnModel.getDisplayedColumns();
-            if (typeof index !== 'number' || index < 0 || index >= columns.length) {
-                console.warn('invalid col index for ensureColIndexVisible: ' + index
-                    + ', should be between 0 and ' + (columns.length - 1));
-                return;
-            }
-
-            var column = columns[index];
-            var pinnedColCount = this.gridOptionsWrapper.getPinnedColCount();
-            if (index < pinnedColCount) {
-                console.warn('invalid col index for ensureColIndexVisible: ' + index
-                    + ', scrolling to a pinned col makes no sense');
-                return;
-            }
+            var centerIndex = index - leftColumns.length;
+            var column = centerColumns[centerIndex];
 
             // sum up all col width to the let to get the start pixel
             var colLeftPixel = 0;
-            for (var i = pinnedColCount; i < index; i++) {
-                colLeftPixel += columns[i].actualWidth;
+            for (var i = 0; i < centerIndex; i++) {
+                colLeftPixel += centerColumns[i].actualWidth;
             }
 
             var colRightPixel = colLeftPixel + column.actualWidth;

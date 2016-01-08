@@ -245,9 +245,9 @@ var IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
 var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
 var columnDefs = [
-    {headerName: 'Selected', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true },
-    {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150, editable: true},
-    {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
+    {headerName: 'Selected', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true, pinned: true },
+    {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150, editable: true, pinned: true},
+    {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer, pinned: true,
         filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
     {headerName: "Skills", width: 125, headerGroup: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
     {headerName: "Proficiency", field: "proficiency", headerGroup: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
