@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v2.3.5
+// Type definitions for ag-grid v2.3.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -214,7 +214,7 @@ declare module ag.grid {
         getIsScrollLag(): () => boolean;
         getSortingOrder(): string[];
         getSlaveGrids(): GridOptions[];
-        getGroupRowRenderer(): Object | Function;
+        getGroupRowRenderer(): Function | Object;
         getRowHeight(): number;
         getOverlayLoadingTemplate(): string;
         getOverlayNoRowsTemplate(): string;
@@ -2020,9 +2020,9 @@ declare module ag.grid {
         groupHeaders: boolean;
         headerHeight: number;
         constructor(elementDef: any);
-        onInit(): void;
-        onChanges(changes: any): void;
-        onDestroy(): void;
+        ngOnInit(): void;
+        ngOnChanges(changes: any): void;
+        ngOnDestroy(): void;
         private globalEventListener(eventType, event);
     }
     function initialiseAgGridWithAngular2(ng: any): void;

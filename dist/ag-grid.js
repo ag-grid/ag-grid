@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
- * @version v2.3.5
+ * @version v2.3.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3574,8 +3574,7 @@ var ag;
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var ag;
 (function (ag) {
@@ -10344,36 +10343,36 @@ var ag;
                 this.elementDef = elementDef;
                 this._initialised = false;
                 // core grid events
-                this.modelUpdated = new _ng.EventEmitter();
-                this.cellClicked = new _ng.EventEmitter();
-                this.cellDoubleClicked = new _ng.EventEmitter();
-                this.cellContextMenu = new _ng.EventEmitter();
-                this.cellValueChanged = new _ng.EventEmitter();
-                this.cellFocused = new _ng.EventEmitter();
-                this.rowSelected = new _ng.EventEmitter();
-                this.rowDeselected = new _ng.EventEmitter();
-                this.selectionChanged = new _ng.EventEmitter();
-                this.beforeFilterChanged = new _ng.EventEmitter();
-                this.afterFilterChanged = new _ng.EventEmitter();
-                this.filterModified = new _ng.EventEmitter();
-                this.beforeSortChanged = new _ng.EventEmitter();
-                this.afterSortChanged = new _ng.EventEmitter();
-                this.virtualRowRemoved = new _ng.EventEmitter();
-                this.rowClicked = new _ng.EventEmitter();
-                this.rowDoubleClicked = new _ng.EventEmitter();
-                this.ready = new _ng.EventEmitter();
+                this.modelUpdated = new _ng.core.EventEmitter();
+                this.cellClicked = new _ng.core.EventEmitter();
+                this.cellDoubleClicked = new _ng.core.EventEmitter();
+                this.cellContextMenu = new _ng.core.EventEmitter();
+                this.cellValueChanged = new _ng.core.EventEmitter();
+                this.cellFocused = new _ng.core.EventEmitter();
+                this.rowSelected = new _ng.core.EventEmitter();
+                this.rowDeselected = new _ng.core.EventEmitter();
+                this.selectionChanged = new _ng.core.EventEmitter();
+                this.beforeFilterChanged = new _ng.core.EventEmitter();
+                this.afterFilterChanged = new _ng.core.EventEmitter();
+                this.filterModified = new _ng.core.EventEmitter();
+                this.beforeSortChanged = new _ng.core.EventEmitter();
+                this.afterSortChanged = new _ng.core.EventEmitter();
+                this.virtualRowRemoved = new _ng.core.EventEmitter();
+                this.rowClicked = new _ng.core.EventEmitter();
+                this.rowDoubleClicked = new _ng.core.EventEmitter();
+                this.ready = new _ng.core.EventEmitter();
                 // column grid events
-                this.columnEverythingChanged = new _ng.EventEmitter();
-                this.columnPivotChanged = new _ng.EventEmitter();
-                this.columnValueChanged = new _ng.EventEmitter();
-                this.columnMoved = new _ng.EventEmitter();
-                this.columnVisible = new _ng.EventEmitter();
-                this.columnGroupOpened = new _ng.EventEmitter();
-                this.columnResized = new _ng.EventEmitter();
-                this.columnPinnedCountChanged = new _ng.EventEmitter();
+                this.columnEverythingChanged = new _ng.core.EventEmitter();
+                this.columnPivotChanged = new _ng.core.EventEmitter();
+                this.columnValueChanged = new _ng.core.EventEmitter();
+                this.columnMoved = new _ng.core.EventEmitter();
+                this.columnVisible = new _ng.core.EventEmitter();
+                this.columnGroupOpened = new _ng.core.EventEmitter();
+                this.columnResized = new _ng.core.EventEmitter();
+                this.columnPinnedCountChanged = new _ng.core.EventEmitter();
             }
             // this gets called after the directive is initialised
-            AgGridNg2.prototype.onInit = function () {
+            AgGridNg2.prototype.ngOnInit = function () {
                 this.gridOptions = grid.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
                 var nativeElement = this.elementDef.nativeElement;
                 var globalEventLister = this.globalEventListener.bind(this);
@@ -10382,10 +10381,10 @@ var ag;
                 this.columnApi = this.gridOptions.columnApi;
                 this._initialised = true;
             };
-            AgGridNg2.prototype.onChanges = function (changes) {
+            AgGridNg2.prototype.ngOnChanges = function (changes) {
                 grid.ComponentUtil.processOnChange(changes, this.gridOptions, this);
             };
-            AgGridNg2.prototype.onDestroy = function () {
+            AgGridNg2.prototype.ngOnDestroy = function () {
                 this.api.destroy();
             };
             AgGridNg2.prototype.globalEventListener = function (eventType, event) {
@@ -10479,14 +10478,14 @@ var ag;
         })();
         grid.AgGridNg2 = AgGridNg2;
         // check for angular and component, as if angular 1, we will find angular but the wrong version
-        if (window.ng && window.ng.Component) {
+        if (window.ng && window.ng.core && window.ng.core.Component) {
             var ng = window.ng;
             initialiseAgGridWithAngular2(ng);
         }
         function initialiseAgGridWithAngular2(ng) {
             _ng = ng;
             AgGridNg2.annotations = [
-                new _ng.Component({
+                new _ng.core.Component({
                     selector: 'ag-grid-ng2',
                     outputs: [
                         // core grid events
@@ -10507,13 +10506,13 @@ var ag;
                         .concat(grid.ComponentUtil.CALLBACKS),
                     compileChildren: false // no angular on the inside thanks
                 }),
-                new _ng.View({
+                new _ng.core.View({
                     template: '',
                     // tell angular we don't want view encapsulation, we don't want a shadow root
-                    encapsulation: _ng.ViewEncapsulation.None
+                    encapsulation: _ng.core.ViewEncapsulation.None
                 })
             ];
-            AgGridNg2.parameters = [[_ng.ElementRef]];
+            AgGridNg2.parameters = [[_ng.core.ElementRef]];
         }
         grid.initialiseAgGridWithAngular2 = initialiseAgGridWithAngular2;
     })(grid = ag.grid || (ag.grid = {}));

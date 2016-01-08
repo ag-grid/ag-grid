@@ -41,6 +41,17 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
+    <b>ag-Grid 2.3.6 Released</b>
+
+    <p/>
+
+    This is a minor release. Grid now works with latest Angular 2 Beta 0. This beta version of
+    Angular 2 had breaking changes. Hopefully no more surprises from the Angular team!!!
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
     <div style="float: left; width: 250px;">
         <img style="width: 240px;" src="https://images.rapgenius.com/f0ee868d0cca75ec68f62d2b9bf57b16.748x431x1.png"/>
     </div>
