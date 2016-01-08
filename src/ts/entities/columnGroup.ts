@@ -6,6 +6,8 @@ module ag.grid {
         name: any;
         allColumns: Column[] = [];
         displayedColumns: Column[] = [];
+        allSubGroups: ColumnGroup[] = [];
+        displayedSubGroups: ColumnGroup[] = [];
         expandable = false;
         expanded = false;
         actualWidth: number;
@@ -15,16 +17,33 @@ module ag.grid {
             this.name = name;
         }
 
+        public update(): void {
+            this.calculateExpandable();
+            this.calculateDisplayedColumns();
+            this.calculateDisplayedSubGroups();
+            this.calculateActualWidth();
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                columnGroup.update();
+            });
+        }
+
         public getMinimumWidth(): number {
             var result = 0;
             this.displayedColumns.forEach( (column: Column) => {
                 result += column.getMinimumWidth();
+            });
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                result += columnGroup.getMinimumWidth();
             });
             return result;
         }
 
         public addColumn(column: any) {
             this.allColumns.push(column);
+        }
+
+        public addSubGroup(group: any) {
+            this.allSubGroups.push(group);
         }
 
         // need to check that this group has at least one col showing when both expanded and contracted.
@@ -57,6 +76,10 @@ module ag.grid {
             var actualWidth = 0;
             this.displayedColumns.forEach( (column: Column)=> {
                 actualWidth += column.actualWidth;
+            });
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                columnGroup.calculateActualWidth();
+                actualWidth += columnGroup.actualWidth;
             });
             this.actualWidth = actualWidth;
         }
@@ -93,12 +116,44 @@ module ag.grid {
             }
         }
 
+        public calculateDisplayedSubGroups() {
+            // clear out last time we calculated
+            this.displayedSubGroups = [];
+            // and calculate again
+            for (var i = 0, j = this.allSubGroups.length; i < j; i++) {
+                var subGroup = this.allSubGroups[i];
+                subGroup.calculateDisplayedColumns();
+                subGroup.calculateDisplayedSubGroups();
+                if (subGroup.displayedColumns.length || subGroup.displayedSubGroups.length) {
+                    this.displayedSubGroups.push(subGroup);
+                }
+            }
+        }
+
         // should replace with utils method 'add all'
         public addToVisibleColumns(colsToAdd: any) {
-            for (var i = 0; i < this.displayedColumns.length; i++) {
-                var column = this.displayedColumns[i];
+            for (var i = 0; i < this.displayedSubGroups.length; i++) {
+                var subGroup = this.displayedSubGroups[i];
+                subGroup.addToVisibleColumns(colsToAdd);
+            }
+            for (var j = 0; j < this.displayedColumns.length; j++) {
+                var column = this.displayedColumns[j];
                 colsToAdd.push(column);
             }
+        }
+
+        public updateWidthAfterColumnResize(column: Column): boolean {
+            var recalculated = false;
+            var subGroupRecalculated = false;
+            this.displayedSubGroups.forEach( (columnGroup: ColumnGroup) => {
+                var recalc = columnGroup.updateWidthAfterColumnResize(column);
+                subGroupRecalculated = subGroupRecalculated || recalc;
+            });
+            if (subGroupRecalculated || this.displayedColumns.indexOf(column) >= 0) {
+                this.calculateActualWidth();
+                recalculated = true;
+            }
+            return recalculated;
         }
     }
 

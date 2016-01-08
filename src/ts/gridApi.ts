@@ -320,13 +320,6 @@ module ag.grid {
             this.gridPanel.onBodyHeightChange();
         }
 
-        public setGroupHeaders(groupHeaders: boolean) {
-            this.gridOptionsWrapper.setGroupHeaders(groupHeaders);
-            this.columnController.onColumnsChanged();
-            // if using the default height, then this is impacted by the header count
-            this.gridPanel.onBodyHeightChange();
-        }
-
         public showToolPanel(show:any) {
             this.grid.showToolPanel(show);
         }

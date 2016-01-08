@@ -13,9 +13,10 @@ module ag.grid {
 
         private gridOptions: GridOptions;
 
-        private groupHeaders: boolean;
+        private columns: any[];
         private headerHeight: number;
         private rowHeight: number;
+        private columnDefsDepth: number;
         private floatingTopRowData: any[];
         private floatingBottomRowData: any[];
 
@@ -23,10 +24,12 @@ module ag.grid {
             this.gridOptions = gridOptions;
 
             this.headerHeight = gridOptions.headerHeight;
-            this.groupHeaders = gridOptions.groupHeaders;
             this.rowHeight = gridOptions.rowHeight;
             this.floatingTopRowData = gridOptions.floatingTopRowData;
             this.floatingBottomRowData = gridOptions.floatingBottomRowData;
+
+            this.columns = this.getColumnsFromColumnDefs();
+            this.columnDefsDepth = this.calculateColumnDefsDepth();
 
             eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
@@ -106,8 +109,8 @@ module ag.grid {
                 return this.headerHeight;
             } else {
                 // otherwise return 25 if no grouping, 50 if grouping
-                if (this.groupHeaders) {
-                    return 50;
+                if (this.isGroupHeaders()) {
+                    return 25 * this.columnDefsDepth;
                 } else {
                     return 25;
                 }
@@ -115,8 +118,8 @@ module ag.grid {
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
 
-        public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
-        public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
+        public getColumnDefsDepth(): number { return this.columnDefsDepth; }
+        public isGroupHeaders(): boolean { return this.columnDefsDepth > 1; }
 
         public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
         public setFloatingTopRowData(rows: any[]): void { this.floatingTopRowData = rows; }
@@ -217,6 +220,53 @@ module ag.grid {
             } else {
                 return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
             }
+        }
+
+        private getColumnsFromSubHeaders(subHeaders: any): any[] {
+            var columns = <any> [];
+            for (var i = 0; i < subHeaders.length; i++) {
+                var colDef = subHeaders[i];
+                if (colDef.subHeaders) {
+                    var columnsFromSubHeaders = this.getColumnsFromSubHeaders(colDef.subHeaders);
+                    columnsFromSubHeaders.forEach(function (column: any) {
+                        columns.push(column);
+                    });
+                } else {
+                    columns.push(colDef);
+                }
+            }
+            return columns;
+        }
+
+        private getColumnsFromColumnDefs() {
+            var columns = <any> [];
+            if (this.gridOptions.columnDefs) {
+                columns = this.getColumnsFromSubHeaders(this.gridOptions.columnDefs);
+            }
+            return columns;
+        }
+
+        private updateColumnDefsDepth(colDefs: any[], depth: number): number {
+            var maxDepth = depth;
+            var itemDepth = 0;
+            for (var i = 0; i < colDefs.length; i++) {
+                var colDef = colDefs[i];
+                if (colDef.subHeaders) {
+                    itemDepth = this.updateColumnDefsDepth(colDef.subHeaders, depth + 1);
+                    if (itemDepth > maxDepth) {
+                        maxDepth = itemDepth;
+                    }
+                }
+            }
+            return maxDepth;
+        }
+
+        private calculateColumnDefsDepth() {
+            var depth = 0;
+            if (this.gridOptions.columnDefs) {
+                depth = this.updateColumnDefsDepth(this.gridOptions.columnDefs, 1);
+            }
+            return depth;
         }
     }
 }

@@ -139,12 +139,13 @@ include '../documentation_header.php';
             <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
         </tr>
         <tr>
-            <th>headerGroup</th>
-            <td>If grouping columns, the group this column belongs to.</td>
-        </tr>
-        <tr>
             <th>headerGroupShow</th>
             <td>Whether to show the column when the group is open / closed.</td>
+        </tr>
+        <tr>
+            <th>subHeaders</th>
+            <td>Array of column definitions. Enables header grouping by declaring this header as a group that
+                contains sub-headers.</td>
         </tr>
         <tr>
             <th>editable</th>

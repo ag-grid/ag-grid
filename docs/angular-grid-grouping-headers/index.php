@@ -15,8 +15,8 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        To group headers, set the attribute 'groupHeaders' to 'true' in the grid options. Then provide
-        a group name for each of the column definitions.
+        To group headers, wrap the headers you want grouped with a new column definition that has
+        the attribute 'subHeaders' holding the header column definitions in an array.
     </p>
 
     <p>
@@ -87,6 +87,21 @@ include '../documentation_header.php';
     for opening / closing groups.
 
     <show-example example="example1"></show-example>
+
+    <h4>Complex Grouping Example</h4>
+
+    <p>
+        Here is a more complex example, where there are groups that contain groups -- and those groups contain the actual
+        columns. Notice that there is a new achievements group that contains the sport column and the medals and competition groups.
+    </p>
+
+    <p>
+        Notice also that when the grouping definitions aren't perfectly balanced (for example the sport column is a direct child of achievements
+        and the different medals columns have a group between them and the achievements group), then individual column headers and even groups
+        will fill into the space above them.
+    </p>
+
+    <show-example example="example2"></show-example>
 
 </div>
 

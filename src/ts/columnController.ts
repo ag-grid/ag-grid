@@ -50,11 +50,15 @@ module ag.grid {
         private masterSlaveController: MasterSlaveService;
 
         private allColumns: Column[]; // every column available
+        private allColumnsInGroups: ColumnGroup[]; // allColumns in their groups
+        private visibleColumnsInGroups: ColumnGroup[]; // visible columns in their groups
         private visibleColumns: Column[]; // allColumns we want to show, regardless of groups
         private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
         private pivotColumns: Column[];
         private valueColumns: Column[];
         private columnGroups: ColumnGroup[];
+
+        private groupColumn: Column;
 
         private setupComplete = false;
         private valueService: ValueService;
@@ -216,9 +220,7 @@ module ag.grid {
         private updateGroupWidthsAfterColumnResize(column: Column) {
             if (this.columnGroups) {
                 this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
-                    if (columnGroup.displayedColumns.indexOf(column) >= 0) {
-                        columnGroup.calculateActualWidth();
-                    }
+                    columnGroup.updateWidthAfterColumnResize(column);
                 });
             }
         }
@@ -461,6 +463,7 @@ module ag.grid {
         public onColumnsChanged() {
             var columnDefs = this.gridOptionsWrapper.getColumnDefs();
             this.checkForDeprecatedItems(columnDefs);
+            this.createColumnsInGroups(columnDefs);
             this.createColumns(columnDefs);
             this.createPivotColumns();
             this.createValueColumns();
@@ -521,7 +524,8 @@ module ag.grid {
         private updateModel() {
             this.updateVisibleColumns();
             this.updatePinnedColumns();
-            this.buildGroups();
+            this.updateVisibleColumnsInGroups();
+            this.updateVisibleColumnGroupsAndPinning();
             this.updateGroups();
             this.updateDisplayedColumns();
         }
@@ -620,41 +624,165 @@ module ag.grid {
             }
         }
 
-        private buildGroups() {
+        private isGroupVisible(columnGroup: ColumnGroup): boolean {
+            for (var i = 0; i < columnGroup.allColumns.length; i++) {
+                var column = columnGroup.allColumns[i];
+                if (this.visibleColumns.indexOf(column) > -1) {
+                    return true;
+                }
+            }
+            for (var j = 0; j < columnGroup.allSubGroups.length; j++) {
+                var subGroup = columnGroup.allSubGroups[j];
+                if (this.isGroupVisible(subGroup)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private splitColumnGroupForPinning(columnGroup: ColumnGroup, pinnedCols: Column[], unpinnedCols: Column[]): ColumnGroup[] {
+            var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+            pinnedCols.forEach(function(col) {
+                pinnedGroup.addColumn(col);
+            });
+            var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
+            unpinnedCols.forEach(function(col) {
+                unpinnedGroup.addColumn(col);
+            });
+            return [pinnedGroup, unpinnedGroup];
+        }
+
+        private checkForPinningInColumnGroup(columnGroup: ColumnGroup): ColumnGroup[] {
+            var resultGroups: ColumnGroup[] = [];
+            if (!this.isGroupVisible(columnGroup)) {
+                return resultGroups;
+            }
+            var pinnedGroupCols = columnGroup.allColumns.filter(function(col) {
+                return col.pinned;
+            });
+            var unpinnedGroupCols = columnGroup.allColumns.filter(function(col) {
+                return !col.pinned;
+            });
+            if (pinnedGroupCols.length && unpinnedGroupCols.length) {
+                // some of the columns in this group are pinned and some are not, so this group needs to split into
+                // two groups where one is pinned and one is not
+                resultGroups = this.splitColumnGroupForPinning(columnGroup, pinnedGroupCols, unpinnedGroupCols);
+            } else if (pinnedGroupCols.length) {
+                // this group has only pinned columns, so this group just needs to be pinned
+                var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                pinnedGroupCols.forEach(function(col) {
+                    pinnedGroup.addColumn(col);
+                });
+                resultGroups = [pinnedGroup];
+            } else if (unpinnedGroupCols.length) {
+                // this group has only unpinned columns, so do nothing
+                resultGroups = [columnGroup];
+            } else {
+                // this group has no columns... so check within sub-groups
+
+                var pinnedSubGroups: ColumnGroup[] = [];
+                var unpinnedSubGroups: ColumnGroup[] = [];
+                columnGroup.allSubGroups.forEach( (subGroup: ColumnGroup) => {
+                    var subGroupsAfterSplit = this.checkForPinningInColumnGroup(subGroup);
+                    if (subGroupsAfterSplit.length === 2) {
+                        pinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        unpinnedSubGroups.push(subGroupsAfterSplit[1]);
+                    } else if (subGroupsAfterSplit.length === 1) {
+                        if (subGroupsAfterSplit[0].pinned) {
+                            pinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        } else {
+                            unpinnedSubGroups.push(subGroupsAfterSplit[0]);
+                        }
+                    }
+                });
+
+                if (pinnedSubGroups.length && unpinnedSubGroups.length) {
+                    // some of the sub-groups in this group are pinned and some are not,
+                    // so this group needs to split into two groups where one is pinned and one is not
+                    var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                    pinnedSubGroups.forEach(function(subGroup) {
+                        pinnedGroup.addSubGroup(subGroup);
+                    });
+                    var unpinnedGroup = new ColumnGroup(false, columnGroup.name);
+                    unpinnedSubGroups.forEach(function(subGroup) {
+                        unpinnedGroup.addSubGroup(subGroup);
+                    });
+                    resultGroups = [pinnedGroup, unpinnedGroup];
+                } else if (pinnedSubGroups.length) {
+                    // this group has only pinned sub-groups, so this group just needs to be pinned
+                    var pinnedGroup = new ColumnGroup(true, columnGroup.name);
+                    pinnedSubGroups.forEach(function(subGroup) {
+                        pinnedGroup.addSubGroup(subGroup);
+                    });
+                    resultGroups = [pinnedGroup];
+                } else if (unpinnedSubGroups.length) {
+                    // this group has only unpinned sub-groups, so do nothing
+                    resultGroups = [columnGroup];
+                }
+
+            }
+
+            return resultGroups;
+        }
+
+        private copyGroupWithOnlyVisibleColumns(columnGroup: ColumnGroup) : ColumnGroup {
+            var newGroup = new ColumnGroup(columnGroup.pinned, columnGroup.name);
+            columnGroup.allColumns.forEach( (column: Column) => {
+                if (column.visible) {
+                    newGroup.allColumns.push(column);
+                }
+            });
+            columnGroup.allSubGroups.forEach( (subGroup: ColumnGroup) => {
+                newGroup.allSubGroups.push(this.copyGroupWithOnlyVisibleColumns(subGroup));
+            });
+            return newGroup;
+        }
+
+        private updateVisibleColumnsInGroups() {
+            // if not grouping by headers, do nothing
+            if (!this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
+            this.visibleColumnsInGroups = [];
+
+            this.allColumnsInGroups.forEach( (columnGroup: ColumnGroup) => {
+                if (this.isGroupVisible(columnGroup)) {
+                    var newGroup = this.copyGroupWithOnlyVisibleColumns(columnGroup);
+                    newGroup.update();
+                    this.visibleColumnsInGroups.push(newGroup);
+                }
+            });
+        }
+
+        private updateVisibleColumnGroupsAndPinning() {
             // if not grouping by headers, do nothing
             if (!this.gridOptionsWrapper.isGroupHeaders()) {
                 this.columnGroups = null;
                 return;
             }
 
-            // split the columns into groups
-            var currentGroup = <any> null;
             this.columnGroups = [];
-            var that = this;
 
-            var lastColWasPinned = true;
+            if (this.needAGroupColumn()) {
+                var groupColumn = this.createGroupColumn();
+                groupColumn.pinned = this.pinnedColumnCount > 0;
+                var group = new ColumnGroup(groupColumn.pinned, undefined);
+                group.addColumn(groupColumn);
+                // the depth of the group column should match the max-depth of the headers
+                // first, need to subtract 2 for the header itself and the group it was just added to
+                var targetDepth = this.gridOptionsWrapper.getColumnDefsDepth() - 2;
+                var topLevelGroup = this.addGroupsToPadTargetDepth(group, targetDepth);
+                this.columnGroups.push(topLevelGroup);
+            }
 
-            this.visibleColumns.forEach(function (column: any) {
-                // do we need a new group, because we move from pinned to non-pinned columns?
-                var endOfPinnedHeader = lastColWasPinned && !column.pinned;
-                if (!column.pinned) {
-                    lastColWasPinned = false;
-                }
-                // do we need a new group, because the group names doesn't match from previous col?
-                var groupKeyMismatch = currentGroup && column.colDef.headerGroup !== currentGroup.name;
-                // we don't group columns where no group is specified
-                var colNotInGroup = currentGroup && !currentGroup.name;
-                // do we need a new group, because we are just starting
-                var processingFirstCol = currentGroup === null;
-                var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
-                // create new group, if it's needed
-                if (newGroupNeeded) {
-                    var pinned = column.pinned;
-                    currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
-                    that.columnGroups.push(currentGroup);
-                }
-                currentGroup.addColumn(column);
-            });
+            for (var i = 0; i < this.visibleColumnsInGroups.length; i++) {
+                var columnGroup = this.visibleColumnsInGroups[i];
+                var columnGroupsAfterPinningCheck = this.checkForPinningInColumnGroup(columnGroup);
+                columnGroupsAfterPinningCheck.forEach( (newColumnGroup: ColumnGroup) => {
+                    this.columnGroups.push(newColumnGroup);
+                });
+            }
         }
 
         private updateGroups(): void {
@@ -665,24 +793,22 @@ module ag.grid {
 
             for (var i = 0; i < this.columnGroups.length; i++) {
                 var group = this.columnGroups[i];
-                group.calculateExpandable();
-                group.calculateDisplayedColumns();
-                group.calculateActualWidth();
+                group.update();
             }
         }
 
-        private updateVisibleColumns(): void {
-            this.visibleColumns = [];
-
+        private needAGroupColumn(): boolean {
             // see if we need to insert the default grouping column
-            var needAGroupColumn = this.pivotColumns.length > 0
+            return this.pivotColumns.length > 0
                 && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
                 && !this.gridOptionsWrapper.isGroupUseEntireRow()
                 && !this.gridOptionsWrapper.isGroupSuppressRow();
+        }
 
+        private createGroupColumn(): Column {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-            if (needAGroupColumn) {
+            if (!this.groupColumn) {
                 // if one provided by user, use it, otherwise create one
                 var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
                 if (!groupColDef) {
@@ -695,7 +821,18 @@ module ag.grid {
                 }
                 // no group column provided, need to create one here
                 var groupColumnWidth = this.calculateColInitialWidth(groupColDef);
-                var groupColumn = new Column(groupColDef, groupColumnWidth);
+                this.groupColumn = new Column(groupColDef, groupColumnWidth);
+            }
+
+            return this.groupColumn;
+        }
+
+        private updateVisibleColumns(): void {
+            this.visibleColumns = [];
+
+            if (this.needAGroupColumn()) {
+                this.groupColumn = null;
+                var groupColumn = this.createGroupColumn();
                 this.visibleColumns.push(groupColumn);
             }
 
@@ -718,13 +855,128 @@ module ag.grid {
         }
 
         private createColumns(colDefs: any): void {
+            // skip if grouping by header, allColumns is updated in createColumnsInGroups
+            if (this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
             this.allColumns = [];
+
             if (colDefs) {
                 for (var i = 0; i < colDefs.length; i++) {
                     var colDef = colDefs[i];
                     var width = this.calculateColInitialWidth(colDef);
                     var column = new Column(colDef, width);
                     this.allColumns.push(column);
+                }
+            }
+        }
+
+        private getDepthOfColDefItem(colDef: any, depth: number): number {
+            var maxDepth = depth;
+            if (colDef.subHeaders) {
+                colDef.subHeaders.forEach( (subHeaderColDef: any) => {
+                    var subHeaderDepth = this.getDepthOfColDefItem(subHeaderColDef, depth + 1);
+                    if (subHeaderDepth > maxDepth) {
+                        maxDepth = subHeaderDepth;
+                    }
+                });
+            }
+            return maxDepth;
+        }
+
+        private addGroupsToPadTargetDepth(group: ColumnGroup, numParents: number): ColumnGroup {
+            var topLevelGroup: ColumnGroup = null;
+            var parent: ColumnGroup = null;
+            if (numParents > 0) {
+                parent = new ColumnGroup(group.pinned, undefined);
+                parent.addSubGroup(group);
+                topLevelGroup = this.addGroupsToPadTargetDepth(parent, numParents - 1);
+            }
+            return topLevelGroup || parent || group;
+        }
+
+        private processColDef(colDef: any, parent: any, targetDepth: number): ColumnGroup {
+            var topLevelGroup: ColumnGroup = null;
+
+            var depthOfColDef = this.getDepthOfColDefItem(colDef, 1);
+
+            if (colDef.subHeaders) {
+                // this item is a header group
+
+                // by default targetDepth for children will just be targetDepth - 1
+                // since the children are one level closer to the bottom of the tree
+                var childrenTargetDepth = targetDepth - 1;
+
+                var group = new ColumnGroup(!!colDef.pinned, colDef.headerName);
+                if (depthOfColDef < targetDepth) {
+                    var numPaddingGroups = targetDepth - depthOfColDef;
+
+                    // create groups above this item so that this item's depth matches the target depth
+                    topLevelGroup = this.addGroupsToPadTargetDepth(group, numPaddingGroups);
+
+                    // if padding was just added above this item, need to adjust targetDepth for children
+                    childrenTargetDepth = childrenTargetDepth - numPaddingGroups;
+
+                } else {
+                    topLevelGroup = group;
+                }
+
+                colDef.subHeaders.forEach( (subHeaderColDef: any) => {
+                    this.processColDef(subHeaderColDef, group, childrenTargetDepth);
+                });
+
+                if (parent) {
+                    parent.addSubGroup(topLevelGroup);
+                }
+
+            } else {
+                // this item is a column
+
+                var width = this.calculateColInitialWidth(colDef);
+                var column = new Column(colDef, width);
+                if (depthOfColDef < targetDepth) {
+                    var group = new ColumnGroup(!!colDef.pinned, undefined);
+                    group.addColumn(column);
+                    // create groups above this item so that this item's depth matches the target depth
+                    // note: we pass targetDepth - depthOfColDef - 1 since here we're putting the column
+                    // into a group before we use this helper (which expects to get a group not a column)
+                    topLevelGroup = this.addGroupsToPadTargetDepth(group, targetDepth - depthOfColDef - 1);
+
+                }
+                if (parent) {
+                    if (topLevelGroup) {
+                        parent.addSubGroup(topLevelGroup);
+                    } else {
+                        parent.addColumn(column);
+                    }
+                }
+                this.allColumns.push(column);
+
+            }
+
+            return topLevelGroup;
+        }
+
+        private createColumnsInGroups(colDefs: any): void {
+            if (!this.gridOptionsWrapper.isGroupHeaders()) {
+                return;
+            }
+
+            this.allColumnsInGroups = [];
+            this.allColumns = [];
+
+            if (colDefs) {
+                var maxColDefDepth = this.gridOptionsWrapper.getColumnDefsDepth();
+                for (var i = 0; i < colDefs.length; i++) {
+                    var colDef = colDefs[i];
+                    // process column definitions, passing the maximum depth as a target
+                    // if a node is at the top level of the column definitions but does not match
+                    // the maximum depth we want to put empty groups above it to balance the tree
+                    var group = this.processColDef(colDef, null, maxColDefDepth);
+                    if (group) {
+                        this.allColumnsInGroups.push(group);
+                    }
                 }
             }
         }
