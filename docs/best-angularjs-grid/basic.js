@@ -109,9 +109,9 @@ fileBrowserModule.controller('basicController', function($scope) {
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
-        {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150},
-        {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
+        {headerName: '', width: 30, pinned: true, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
+        {headerName: "Name", field: "name", pinned: true, headerGroup: 'Employee', width: 150},
+        {headerName: "Country", field: "country", pinned: true, headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
         {headerName: "Skills", width: 125, headerGroup: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
         {headerName: "Proficiency", field: "proficiency", headerGroup: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
@@ -129,7 +129,6 @@ fileBrowserModule.controller('basicController', function($scope) {
         enableFilter: true,
         groupHeaders: true,
         rowHeight: 22,
-        pinnedColumnCount: 3,
         onModelUpdated: onModelUpdated,
         suppressRowClickSelection: true
     };

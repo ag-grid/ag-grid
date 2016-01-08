@@ -4,8 +4,8 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90},
+        {headerName: "Athlete", field: "athlete", width: 150, pinned: true},
+        {headerName: "Age", field: "age", width: 90, pinned: true},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
@@ -18,12 +18,19 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: null,
-        pinnedColumnCount: 2
+        rowData: null
     };
 
     $http.get("../olympicWinners.json")
         .then(function(res){
             $scope.gridOptions.api.setRowData(res.data);
         });
+
+    $scope.onPinningChanged = function() {
+        console.log('hop hop hop');
+    };
+
+    $scope.cbAthlete = true;
+    $scope.cbAge = true;
+
 });

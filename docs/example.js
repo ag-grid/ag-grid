@@ -47,7 +47,6 @@ gridsModule.controller('mainController', function($scope) {
 
     $scope.colCount = 20;
     $scope.rowCount = 100;
-    $scope.pinnedColumnCount = 0;
 
     $scope.size = 'fill'; // model for size select
     $scope.width = '100%'; // the div gets it's width and height from here
@@ -76,7 +75,6 @@ gridsModule.controller('mainController', function($scope) {
         groupIncludeFooter: false,
         groupHidePivotColumns: true,
         //unSortIcon: true,
-        pinnedColumnCount: 0, //and integer, zero or more, default is 0
         //rowHeight: 30, // defaults to 25, can be any integer
         enableColResize: true, //one of [true, false]
         enableSorting: true, //one of [true, false]
@@ -271,11 +269,6 @@ gridsModule.controller('mainController', function($scope) {
             var data = createData();
             gridOptions.api.setRowData(data);
         }, 0);
-    };
-
-    $scope.onPinnedColCountChanged = function() {
-        var newCount = Number($scope.pinnedColumnCount);
-        gridOptions.columnApi.setPinnedColumnCount(newCount);
     };
 
     $scope.onColCountChanged = function() {

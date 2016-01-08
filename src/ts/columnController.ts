@@ -25,7 +25,8 @@ module ag.grid {
         public getDisplayedColBefore(col: Column): Column { return this._columnController.getDisplayedColBefore(col); }
         public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
-        public getDisplayedColumns(): Column[] { return this._columnController.getDisplayedColumns(); }
+        public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
+        public getDisplayedCenterColumns(): Column[] { return this._columnController.getDisplayedCenterColumns(); }
         public getPivotedColumns(): Column[] { return this._columnController.getPivotedColumns(); }
         public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
         public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
@@ -35,9 +36,9 @@ module ag.grid {
         public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
-        public setPinnedColumnCount(count: number): void { this._columnController.setPinnedColumnCount(count); }
         public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
-        public getHeaderGroups(): ColumnGroup[] { return this._columnController.getHeaderGroups(); }
+        public getLeftHeaderGroups(): ColumnGroup[] { return this._columnController.getLeftHeaderGroups(); }
+        public getCenterHeaderGroups(): ColumnGroup[] { return this._columnController.getCenterHeaderGroups(); }
         public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
     }
 
@@ -49,18 +50,25 @@ module ag.grid {
         private expressionService: ExpressionService;
         private masterSlaveController: MasterSlaveService;
 
+        // these are every single column, regardless of whether they are shown on
+        // screen or not (cols can be missing if visible=false or the group they are
+        // in is closed)
         private allColumns: Column[]; // every column available
-        private displayedColumns: Column[]; // columns actually showing (removes columns not visible due closed groups)
+
+        // these are the columns actually on the screen. used by the renderers
+        private displayedLeftColumns: Column[];
+        private displayedCenterColumns: Column[];
+
+        private leftColumnGroups: ColumnGroup[];
+        private centerColumnGroups: ColumnGroup[];
 
         private pivotColumns: Column[];
         private valueColumns: Column[];
-        private columnGroups: ColumnGroup[];
 
         private groupAutoColumn: Column;
 
         private setupComplete = false;
         private valueService: ValueService;
-        private pinnedColumnCount: number;
 
         private eventService: EventService;
 
@@ -78,11 +86,13 @@ module ag.grid {
             this.valueService = valueService;
             this.masterSlaveController = masterSlaveController;
             this.eventService = eventService;
+        }
 
-            this.pinnedColumnCount = gridOptionsWrapper.getPinnedColCount();
-            // check for negative or non-number values
-            if (!(this.pinnedColumnCount>0)) {
-                this.pinnedColumnCount = 0;
+        private getAllColumnGroups(): ColumnGroup[] {
+            if (this.leftColumnGroups && this.centerColumnGroups) {
+                return this.leftColumnGroups.concat(this.centerColumnGroups);
+            } else {
+                return null;
             }
         }
 
@@ -94,16 +104,24 @@ module ag.grid {
             return this.setupComplete;
         }
 
-        // used by:
         // + headerRenderer -> setting pinned body width
-        public getHeaderGroups(): ColumnGroup[] {
-            return this.columnGroups;
+        public getLeftHeaderGroups(): ColumnGroup[] {
+            return this.leftColumnGroups;
+        }
+        // + headerRenderer -> setting pinned body width
+        public getCenterHeaderGroups(): ColumnGroup[] {
+            return this.centerColumnGroups;
+        }
+
+        // + csvCreator
+        public getAllDisplayedColumns(): Column[] {
+            return this.displayedLeftColumns.concat(this.displayedCenterColumns);
         }
 
         // used by:
         // + angularGrid -> setting pinned body width
         public getPinnedContainerWidth() {
-            return this.getTotalColWidth(true);
+            return this.getWithOfColsInList(this.displayedLeftColumns);
         }
 
         public addPivotColumn(column: Column): void {
@@ -121,21 +139,6 @@ module ag.grid {
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
-        }
-
-        public setPinnedColumnCount(count: number): void {
-            if (!(typeof count === 'number')) {
-                console.warn('ag-Grid: setPinnedColumnCount: count must be a number');
-                return;
-            }
-            if (count < 0) {
-                console.warn('ag-Grid: setPinnedColumnCount: count must be zero or greater');
-                return;
-            }
-            this.pinnedColumnCount = count;
-            this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, event);
         }
 
         public removePivotColumn(column: Column): void {
@@ -213,8 +216,9 @@ module ag.grid {
         }
 
         private updateGroupWidthsAfterColumnResize(column: Column) {
-            if (this.columnGroups) {
-                this.columnGroups.forEach( (columnGroup: ColumnGroup) => {
+            var allColumnGroups = this.getAllColumnGroups();
+            if (allColumnGroups) {
+                allColumnGroups.forEach( (columnGroup: ColumnGroup) => {
                     if (columnGroup.displayedColumns.indexOf(column) >= 0) {
                         columnGroup.calculateActualWidth();
                     }
@@ -251,7 +255,8 @@ module ag.grid {
         // + angularGrid -> for setting body width
         // + rowController -> setting main row widths (when inserting and resizing)
         public getBodyContainerWidth(): number {
-            return this.getTotalColWidth(false);
+            var result = this.getWithOfColsInList(this.displayedCenterColumns);
+            return result;
         }
 
         // + rowController
@@ -264,10 +269,13 @@ module ag.grid {
             return this.pivotColumns;
         }
 
-        // + rowController -> while inserting rows, and when tabbing through cells (need to change this)
-        // need a newMethod - get next col index
-        public getDisplayedColumns(): Column[] {
-            return this.displayedColumns;
+        // + rowController -> while inserting rows
+        public getDisplayedCenterColumns(): Column[] {
+            return this.displayedCenterColumns;
+        }
+        // + rowController -> while inserting rows
+        public getDisplayedLeftColumns(): Column[] {
+            return this.displayedLeftColumns;
         }
 
         // used by:
@@ -286,9 +294,10 @@ module ag.grid {
         }
 
         public getDisplayedColBefore(col: any): Column {
-            var oldIndex = this.displayedColumns.indexOf(col);
+            var allDisplayedColumns = this.getAllDisplayedColumns();
+            var oldIndex = allDisplayedColumns.indexOf(col);
             if (oldIndex > 0) {
-                return this.displayedColumns[oldIndex - 1];
+                return allDisplayedColumns[oldIndex - 1];
             } else {
                 return null;
             }
@@ -297,16 +306,17 @@ module ag.grid {
         // used by:
         // + rowRenderer -> for navigation
         public getDisplayedColAfter(col: Column): Column {
-            var oldIndex = this.displayedColumns.indexOf(col);
-            if (oldIndex < (this.displayedColumns.length - 1)) {
-                return this.displayedColumns[oldIndex + 1];
+            var allDisplayedColumns = this.getAllDisplayedColumns();
+            var oldIndex = allDisplayedColumns.indexOf(col);
+            if (oldIndex < (allDisplayedColumns.length - 1)) {
+                return allDisplayedColumns[oldIndex + 1];
             } else {
                 return null;
             }
         }
 
         public isPinning(): boolean {
-            return this.displayedColumns && this.displayedColumns.length > 0 && this.displayedColumns[0].pinned;
+            return this.displayedLeftColumns.length > 0;
         }
 
         public getState(): [any] {
@@ -446,10 +456,11 @@ module ag.grid {
 
         public getColumnGroup(name: string): ColumnGroup {
             if (!name) {return null;}
-            if (this.columnGroups) {
-                for (var i = 0; i<this.columnGroups.length; i++) {
-                    if (this.columnGroups[i].name === name) {
-                        return this.columnGroups[i];
+            var allColumnGroups = this.getAllColumnGroups();
+            if (allColumnGroups) {
+                for (var i = 0; i<allColumnGroups.length; i++) {
+                    if (allColumnGroups[i].name === name) {
+                        return allColumnGroups[i];
                     }
                 }
             }
@@ -515,19 +526,34 @@ module ag.grid {
             }
         }
 
+        private updateDisplayedColumnsWithoutGroups(visibleColumns: Column[]) {
+            this.displayedCenterColumns = [];
+            this.displayedLeftColumns = [];
+            this.leftColumnGroups = null;
+            this.centerColumnGroups = null;
+
+            visibleColumns.forEach( (column: Column)=> {
+                if (!column.visible) { return; }
+                if (column.pinned) {
+                    this.displayedLeftColumns.push(column);
+                } else {
+                    this.displayedCenterColumns.push(column);
+                }
+            });
+        }
+
         private updateModel() {
-            // following 3 methods are only called form here
+            // following 3 methods are only called from here
             this.createGroupAutoColumn();
             var visibleColumns = this.updateVisibleColumns();
-            this.updatePinnedColumns(visibleColumns);
 
-            if (!this.gridOptionsWrapper.isGroupHeaders()) {
-                this.displayedColumns = visibleColumns;
-            } else {
+            if (this.gridOptionsWrapper.isGroupHeaders()) {
                 // only called from here
-                this.buildGroups(visibleColumns);
+                this.buildAllGroups(visibleColumns);
                 // this is also called when a group is opened or closed
                 this.updateGroupsAndDisplayedColumns();
+            } else {
+                this.updateDisplayedColumnsWithoutGroups(visibleColumns);
             }
         }
 
@@ -537,31 +563,32 @@ module ag.grid {
         }
 
         private updateDisplayedColumnsFromGroups() {
+            // if grouping, then only show col as per group rules
+            this.displayedCenterColumns = [];
+            this.displayedLeftColumns = [];
 
-            if (!this.gridOptionsWrapper.isGroupHeaders()) {
-                // if not grouping by headers, then pull visible cols
-            } else {
-                // if grouping, then only show col as per group rules
-                this.displayedColumns = [];
-                for (var i = 0; i < this.columnGroups.length; i++) {
-                    var group = this.columnGroups[i];
-                    group.addToVisibleColumns(this.displayedColumns);
-                }
-            }
+            this.leftColumnGroups.forEach( (leftColumnGroup) => {
+                leftColumnGroup.addToVisibleColumns(this.displayedLeftColumns);
+            });
 
+            this.centerColumnGroups.forEach( (centerColumnGroup) => {
+                centerColumnGroup.addToVisibleColumns(this.displayedCenterColumns);
+            });
         }
 
         // called from api
         public sizeColumnsToFit(gridWidth: any): void {
             // avoid divide by zero
-            if (gridWidth <= 0 || this.displayedColumns.length === 0) {
+            var allDisplayedColumns = this.getAllDisplayedColumns();
+
+            if (gridWidth <= 0 || allDisplayedColumns.length === 0) {
                 return;
             }
 
-            var colsToNotSpread = _.filter(this.displayedColumns, (column: Column): boolean => {
+            var colsToNotSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
                 return column.colDef.suppressSizeToFit === true;
             });
-            var colsToSpread = _.filter(this.displayedColumns, (column: Column): boolean => {
+            var colsToSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
                 return column.colDef.suppressSizeToFit !== true;
             });
 
@@ -629,38 +656,38 @@ module ag.grid {
             }
         }
 
-        private buildGroups(visibleColumns: Column[]) {
-            // if not grouping by headers, do nothing
-            if (!this.gridOptionsWrapper.isGroupHeaders()) {
-                this.columnGroups = null;
-                return;
-            }
+        private buildAllGroups(visibleColumns: Column[]) {
+            this.leftColumnGroups = [];
+            this.centerColumnGroups = [];
 
+            var leftVisibleColumns = _.filter(visibleColumns, (column)=> {
+                return column.pinned;
+            });
+
+            var centerVisibleColumns = _.filter(visibleColumns, (column)=> {
+                return !column.pinned;
+            });
+
+            this.buildGroups(leftVisibleColumns, this.leftColumnGroups, true);
+            this.buildGroups(centerVisibleColumns, this.centerColumnGroups, false);
+        }
+
+        private buildGroups(visibleColumns: Column[], columnGroups: ColumnGroup[], pinned: boolean) {
             // split the columns into groups
             var currentGroup = <any> null;
-            this.columnGroups = [];
-            var that = this;
 
-            var lastColWasPinned = true;
-
-            visibleColumns.forEach(function (column: any) {
-                // do we need a new group, because we move from pinned to non-pinned columns?
-                var endOfPinnedHeader = lastColWasPinned && !column.pinned;
-                if (!column.pinned) {
-                    lastColWasPinned = false;
-                }
+            visibleColumns.forEach( (column: any) => {
                 // do we need a new group, because the group names doesn't match from previous col?
                 var groupKeyMismatch = currentGroup && column.colDef.headerGroup !== currentGroup.name;
                 // we don't group columns where no group is specified
                 var colNotInGroup = currentGroup && !currentGroup.name;
                 // do we need a new group, because we are just starting
                 var processingFirstCol = currentGroup === null;
-                var newGroupNeeded = processingFirstCol || endOfPinnedHeader || groupKeyMismatch || colNotInGroup;
+                var newGroupNeeded = processingFirstCol || groupKeyMismatch || colNotInGroup;
                 // create new group, if it's needed
                 if (newGroupNeeded) {
-                    var pinned = column.pinned;
                     currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
-                    that.columnGroups.push(currentGroup);
+                    columnGroups.push(currentGroup);
                 }
                 currentGroup.addColumn(column);
             });
@@ -672,8 +699,10 @@ module ag.grid {
                 return;
             }
 
-            for (var i = 0; i < this.columnGroups.length; i++) {
-                var group = this.columnGroups[i];
+            var allColumnGroups = this.getAllColumnGroups();
+
+            for (var i = 0; i < allColumnGroups.length; i++) {
+                var group = allColumnGroups[i];
                 group.calculateExpandable();
                 group.calculateDisplayedColumns();
                 group.calculateActualWidth();
@@ -727,12 +756,12 @@ module ag.grid {
             return visibleColumns;
         }
 
-        private updatePinnedColumns(visibleColumns: Column[]): void {
-            for (var i = 0; i < visibleColumns.length; i++) {
-                var pinned = i < this.pinnedColumnCount;
-                visibleColumns[i].pinned = pinned;
-            }
-        }
+        //private updatePinnedColumns(visibleColumns: Column[]): void {
+        //    for (var i = 0; i < visibleColumns.length; i++) {
+        //        var pinned = i < this.pinnedColumnCount;
+        //        visibleColumns[i].pinned = pinned;
+        //    }
+        //}
 
         private createColumns(colDefs: any): void {
             this.allColumns = [];
@@ -799,19 +828,12 @@ module ag.grid {
             }
         }
 
-        // call with true (pinned), false (not-pinned) or undefined (all columns)
-        private getTotalColWidth(includePinned: any) {
-            var widthSoFar = 0;
-            var pinedNotImportant = typeof includePinned !== 'boolean';
-
-            this.displayedColumns.forEach(function (column: any) {
-                var includeThisCol = pinedNotImportant || column.pinned === includePinned;
-                if (includeThisCol) {
-                    widthSoFar += column.actualWidth;
-                }
-            });
-
-            return widthSoFar;
+        private getWithOfColsInList(columnList: Column[]) {
+            var result = 0;
+            for (var i = 0; i<columnList.length; i++) {
+                result += columnList[i].actualWidth;
+            }
+            return result;
         }
     }
 

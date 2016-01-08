@@ -11,13 +11,14 @@ include '../documentation_header.php';
     <h2>Pinning</h2>
 
     <p>
-        Enter the number of columns you wish to pin in the Grid Options pinnedColumnCount attribute.
-        The pinned columns are always the columns on the left hand side.
+        You can pin columns by setting the pinned attribute on the column definition.
     </p>
-    <pre><code>gridOptions.pinnedColumnCount = count;</code></pre>
-
-    <p>To change the number of pinned columns after grid creation, call:</p>
-    <pre><code>gridOptions.columnApi.setPinnedColumnCount(newCount);</code></pre>
+    <pre><code>colDef = {
+    headerName: "Athlete",
+    field: "athlete",
+    width: 150,
+    pinned: true
+}</code></pre>
 
     <p>Below shows an example with 2 pinned columns.</p>
 

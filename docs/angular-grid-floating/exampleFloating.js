@@ -4,12 +4,12 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150,
+        {headerName: "Athlete", field: "athlete", width: 150, pinned: true,
             // for athlete only, have the floating header italics
             floatingCellRenderer: function(params) {
                 return '<i>'+params.value+'</i>'
             }},
-        {headerName: "Age", field: "age", width: 90},
+        {headerName: "Age", field: "age", width: 90, pinned: true},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
@@ -19,7 +19,6 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
-        pinnedColumnCount: 2,
         enableColResize: true,
         enableSorting: true,
         enableFilter: true,

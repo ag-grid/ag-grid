@@ -34,7 +34,6 @@ module ag.grid {
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.fireColumnEvent.bind(this));
         }
 
         // common logic across all the fire methods
@@ -121,10 +120,6 @@ module ag.grid {
                     case Events.EVENT_COLUMN_RESIZED:
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
                         this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth, event.isFinished());
-                        break;
-                    case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED:
-                        this.logger.log('onColumnEvent-> processing '+event);
-                        this.columnController.setPinnedColumnCount(event.getPinnedColumnCount());
                         break;
                 }
 

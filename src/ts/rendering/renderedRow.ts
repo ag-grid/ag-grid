@@ -207,7 +207,7 @@ module ag.grid {
         }
 
         private drawNormalRow() {
-            var columns = this.columnController.getDisplayedColumns();
+            var columns = this.columnController.getAllDisplayedColumns();
             for (var i = 0; i<columns.length; i++) {
                 var column = columns[i];
                 var firstCol = i === 0;

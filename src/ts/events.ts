@@ -23,9 +23,6 @@ module ag.grid {
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static EVENT_COLUMN_RESIZED = 'columnResized';
 
-        /** One or more columns was resized. If just one, the column in the event is set. */
-        public static EVENT_COLUMN_PINNED_COUNT_CHANGED = 'columnPinnedCountChanged';
-
         public static EVENT_MODEL_UPDATED = 'modelUpdated';
         public static EVENT_CELL_CLICKED = 'cellClicked';
         public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';

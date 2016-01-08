@@ -56,7 +56,7 @@ module ag.grid {
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
 
-            var columnsToExport = this.columnController.getDisplayedColumns();
+            var columnsToExport = this.columnController.getAllDisplayedColumns();
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
             }

@@ -27,6 +27,9 @@ module ag.grid {
          *  however we want all default values to be false and we want columns to be visible by default. */
         hide?: boolean;
 
+        /** Whether this column is pinned or not. */
+        pinned?: boolean;
+
         /** Tooltip for the column header */
         headerTooltip?: string;
 

@@ -107,9 +107,12 @@
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true},
-        {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150},
-        {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
+        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true,
+            suppressMenu: true, pinned: true},
+        {headerName: "Name", field: "name", headerGroup: 'Employee',
+            width: 150, pinned: true},
+        {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150,
+            cellRenderer: countryCellRenderer, pinned: true,
             filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
         {headerName: "Skills", width: 125, headerGroup: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
         {headerName: "Proficiency", field: "proficiency", headerGroup: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
@@ -127,7 +130,6 @@
         enableFilter: true,
         groupHeaders: true,
         rowHeight: 22,
-        pinnedColumnCount: 3,
         modelUpdated: modelUpdated,
         debug: true
     };

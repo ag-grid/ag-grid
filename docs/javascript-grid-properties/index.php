@@ -81,10 +81,6 @@ include '../documentation_header.php';
                 hold down ctrl + click the row.</td>
         </tr>
         <tr>
-            <th>pinnedColumnCount</th>
-            <td>Number of columns to pin. Default is 0.</td>
-        </tr>
-        <tr>
             <th>rowHeight</th>
             <td>Height of rows, in pixels. Default is 25 pixels.</td>
         </tr>

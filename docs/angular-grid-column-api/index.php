@@ -196,10 +196,6 @@ include '../documentation_header.php';
             <td>Returns the value columns. Value columns are used for row aggregation.</td>
         </tr>
         <tr>
-            <th>setPinnedColumnCount(count)</th>
-            <td>Sets the number of pinned columns.</td>
-        </tr>
-        <tr>
             <th>getHeaderGroups()</th>
             <td>Returns all the header groups.</td>
         </tr>
