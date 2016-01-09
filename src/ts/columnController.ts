@@ -24,7 +24,7 @@ module ag.grid {
         public getVisibleColAfter(col: Column): Column { return this._columnController.getVisibleColAfter(col); }
         public getVisibleColBefore(col: Column): Column { return this._columnController.getVisibleColBefore(col); }
         public setColumnVisible(column: Column, visible: boolean): void { this._columnController.setColumnVisible(column, visible); }
-        public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
+        public getAllColumns(hidePinned?: boolean): Column[] { return this._columnController.getAllColumns(hidePinned); }
         public getDisplayedColumns(): Column[] { return this._columnController.getDisplayedColumns(); }
         public getPivotedColumns(): Column[] { return this._columnController.getPivotedColumns(); }
         public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
@@ -59,6 +59,7 @@ module ag.grid {
         private setupComplete = false;
         private valueService: ValueService;
         private pinnedColumnCount: number;
+        private pinnedColDefCount: number;
 
         private eventService: EventService;
 
@@ -76,13 +77,26 @@ module ag.grid {
             this.valueService = valueService;
             this.masterSlaveController = masterSlaveController;
             this.eventService = eventService;
+            this.pinnedColDefCount = 0;
 
             this.pinnedColumnCount = gridOptionsWrapper.getPinnedColCount();
             // check for negative or non-number values
             if (!(this.pinnedColumnCount>0)) {
                 this.pinnedColumnCount = 0;
             }
-        }
+            
+            var pinnedColumnCount = this.pinnedColumnCount;
+            var pinnedColDefCount = this.pinnedColDefCount;
+            var columnDefs = this.gridOptionsWrapper.getColumnDefs();
+            columnDefs.forEach(function(colDef: any){
+                if (colDef.pinned == true) {
+                    pinnedColumnCount++;
+                    pinnedColDefCount++;
+                }
+            });
+            this.pinnedColDefCount = pinnedColDefCount;
+            this.pinnedColumnCount = pinnedColumnCount;
+         }
 
         public getColumnApi(): ColumnApi {
             return new ColumnApi(this);
@@ -130,7 +144,8 @@ module ag.grid {
                 console.warn('ag-Grid: setPinnedColumnCount: count must be zero or greater');
                 return;
             }
-            this.pinnedColumnCount = count;
+            this.pinnedColumnCount = this.pinnedColDefCount + count;
+            
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED).withPinnedColumnCount(count);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, event);
@@ -238,14 +253,31 @@ module ag.grid {
         }
 
         public moveColumn(fromIndex: number, toIndex: number): void {
+            var lastPinnedColumnIndex = this.getLastNonMoveableColumnIndex();
             var column = this.allColumns[fromIndex];
-            this.allColumns.splice(fromIndex, 1);
-            this.allColumns.splice(toIndex, 0, column);
-            this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
-                .withFromIndex(fromIndex)
-                .withToIndex(toIndex);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
+            if (!column.colDef.pinned) {
+                if (toIndex <= lastPinnedColumnIndex) {
+                    toIndex = lastPinnedColumnIndex + 1;
+                }
+                this.allColumns.splice(fromIndex, 1);
+                this.allColumns.splice(toIndex, 0, column);
+                this.updateModel();
+                var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
+                    .withFromIndex(fromIndex)
+                    .withToIndex(toIndex);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
+            }   
+        }
+        
+        // gets the index of the last column that cannot be moved.
+        private getLastNonMoveableColumnIndex(): number {
+            var index = -1;
+            this.allColumns.forEach(function(column: Column){
+                if(column.colDef.pinned) {
+                    index++;
+                }
+            });
+            return index;
         }
 
         // used by:
@@ -274,12 +306,22 @@ module ag.grid {
         // used by:
         // + inMemoryRowController -> sorting, building quick filter text
         // + headerRenderer -> sorting (clearing icon)
-        public getAllColumns(): Column[] {
+        public getAllColumns(hidePinned?: boolean): Column[] {
+            var columns: Column[] = [];
+            if (hidePinned) {
+                this.allColumns.forEach(function(column: Column){
+                   if (!column.colDef.pinned) {
+                       columns.push(column);
+                   }
+                });
+
+                return columns;
+            }
             return this.allColumns;
         }
 
         public setColumnVisible(column: Column, visible: boolean): void {
-            column.visible = visible;
+            column.visible = column.colDef.suppressInvisible || visible;
 
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withColumn(column);
@@ -344,7 +386,7 @@ module ag.grid {
                     return;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                oldColumn.visible = stateItem.hide ? false : true;
+                oldColumn.visible = stateItem.hide && !stateItem.suppressInvisible ? false : true;
                 // if width provided and valid, use it, otherwise stick with the old width
                 oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
                 // accept agg func only if valid
@@ -383,10 +425,20 @@ module ag.grid {
         public getColumns(keys: any[]): Column[] {
             var foundColumns: Column[] = [];
             if (keys) {
+                var pinnedIndex = 0;
                 keys.forEach( (key: any) => {
                     var column = this.getColumn(key);
                     if (column) {
-                        foundColumns.push(column);
+                        if (column.colDef.pinned) {
+                            var pinnedColumn: Column[] = [];
+                            pinnedColumn.push(column);
+                            this.pinnedColumnCount++;
+                            foundColumns.splice(pinnedIndex, 0, column);
+                            pinnedIndex++;
+                        }
+                        else {
+                            foundColumns.push(column);
+                        }
                     }
                 });
             }
@@ -720,11 +772,16 @@ module ag.grid {
         private createColumns(colDefs: any): void {
             this.allColumns = [];
             if (colDefs) {
+                var pinnedIndex = 0;
                 for (var i = 0; i < colDefs.length; i++) {
                     var colDef = colDefs[i];
                     var width = this.calculateColInitialWidth(colDef);
                     var column = new Column(colDef, width);
-                    this.allColumns.push(column);
+                    if (colDef.pinned) {
+                        this.allColumns.splice(pinnedIndex++, 0, column);
+                    } else {
+                        this.allColumns.push(column);
+                    }
                 }
             }
         }

@@ -46,6 +46,7 @@ module ag.grid {
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
         public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
+        public isToolPanelSuppressPinnedColDefs() { return isTrue(this.gridOptions.toolPanelSuppressPinnedColDefs); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
         public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }

@@ -1,5 +1,6 @@
 /// <reference path="../utils.ts" />
 /// <reference path="textAndNumberFilterParameters.ts" />
+/// <reference path="filter.ts" />
 
 module ag.grid {
 

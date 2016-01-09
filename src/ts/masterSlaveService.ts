@@ -3,6 +3,7 @@
 /// <reference path="logger.ts" />
 /// <reference path="events.ts" />
 /// <reference path="eventService.ts" />
+/// <reference path="grid.ts" />
 
 module ag.grid {
 

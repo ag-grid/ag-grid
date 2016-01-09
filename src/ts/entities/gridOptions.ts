@@ -1,4 +1,6 @@
 /// <reference path="colDef.ts" />
+/// <reference path="rowNode.ts" />
+/// <reference path="../gridApi.ts" />
 
 module ag.grid {
 
@@ -8,6 +10,7 @@ module ag.grid {
         virtualPaging?: boolean;
         toolPanelSuppressPivot?: boolean;
         toolPanelSuppressValues?: boolean;
+        toolPanelSuppressPinnedColDefs?: boolean;
         rowsAlreadyGrouped?: boolean;
         suppressRowClickSelection?: boolean;
         suppressCellSelection?: boolean;

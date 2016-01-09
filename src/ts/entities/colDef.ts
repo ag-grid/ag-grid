@@ -1,3 +1,6 @@
+/// <reference path="rowNode.ts" />
+/// <reference path="../filter/setFilterParameters.ts" />
+/// <reference path="../filter/textAndNumberFilterParameters.ts" />
 module ag.grid {
 
     export interface ColDef {
@@ -83,6 +86,12 @@ module ag.grid {
 
         /** Set to true if you do not want this column to be resizable by dragging it's edge. */
         suppressResize?: boolean;
+        
+        /** Set to true if you do not want this column to be able to be hidden */
+        suppressInvisible?: boolean;
+        
+        /** Set to true if you want to pin this column specifically */
+        pinned?: boolean;
 
         /** If grouping columns, the group this column belongs to. */
         headerGroup?: string;

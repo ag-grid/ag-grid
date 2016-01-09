@@ -48,6 +48,11 @@ include '../documentation_header.php';
     <p>
         To hide a column using the tool panel, click the icon beside the columns name.
     </p>
+    
+    <p>
+        Columns can be prevented from being hidden by setting the column definition's suppressInvisible property to true. This will override the hide property.
+        Columns that have the suppressInvisible will still display in the toolbar list but will have an icon indicating that their visibility is locked.
+    </p>
 
     <h4>Reorder Columns</h4>
     <p>

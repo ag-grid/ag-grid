@@ -1,4 +1,5 @@
 /// <reference path="../constants.ts" />
+/// <reference path="../entities/colDef.ts" />
 
 module ag.grid {
 
@@ -22,7 +23,8 @@ module ag.grid {
         constructor(colDef: ColDef, actualWidth: any) {
             this.colDef = colDef;
             this.actualWidth = actualWidth;
-            this.visible = !colDef.hide;
+            this.visible = !colDef.hide || colDef.suppressInvisible;
+            this.pinned = colDef.pinned;
             this.sort = colDef.sort;
             this.sortedAt = colDef.sortedAt;
             // in the future, the colKey might be something other than the index

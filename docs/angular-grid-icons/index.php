@@ -52,6 +52,8 @@ gridOptions.icons = {
     headerGroupClosed: myGroupContractedIcon,
     columnVisible: myColumnVisibleIcon,
     columnHidden: myColumnHiddenIcon,
+    columnNoHide: myColumnNoHideIcon,
+    lockIcon: myLockIcon,
     columnRemoveFromGroup: myColumnRemoveFromGroupIcon
 }
 </pre>
