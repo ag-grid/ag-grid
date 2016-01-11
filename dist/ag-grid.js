@@ -690,6 +690,7 @@ var ag;
             GridOptionsWrapper.prototype.getHeaderCellRenderer = function () { return this.gridOptions.headerCellRenderer; };
             GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
             GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
+            GridOptionsWrapper.prototype.isEnableColSizeFit = function () { return isTrue(this.gridOptions.enableColSizeFit); };
             GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
             GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
             GridOptionsWrapper.prototype.getGroupKeys = function () { return this.gridOptions.groupKeys; };
@@ -7970,7 +7971,14 @@ var ag;
                 if (centerWidth < 0) {
                     centerWidth = 0;
                 }
-                this.eCenterWrapper.style.width = centerWidth + 'px';
+                if (this.centerWidthLastTime !== centerWidth) {
+                    this.eCenterWrapper.style.width = centerWidth + 'px';
+                    this.centerWidthLastTime = centerWidth;
+                    return true; // return true because there was a change
+                }
+                else {
+                    return false;
+                }
             };
             BorderLayout.prototype.setEastVisible = function (visible) {
                 if (this.eEastWrapper) {
@@ -10152,6 +10160,10 @@ var ag;
                 // need to do layout first, as drawVirtualRows and setPinnedColHeight
                 // need to know the result of the resizing of the panels.
                 var sizeChanged = this.eRootPanel.doLayout();
+                // automatic call sizeColumnsToFit, if the parameter is set to true enableColSizeFit
+                if (sizeChanged && this.gridOptionsWrapper.isEnableColSizeFit()) {
+                    this.gridOptions.api.sizeColumnsToFit();
+                }
                 // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
                 if (sizeChanged) {
                     this.rowRenderer.drawVirtualRows();

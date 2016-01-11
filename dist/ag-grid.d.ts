@@ -189,6 +189,7 @@ declare module ag.grid {
         getHeaderCellRenderer(): any;
         getApi(): GridApi;
         isEnableColResize(): boolean;
+        isEnableColSizeFit(): boolean;
         isSingleClickEdit(): boolean;
         getGroupDefaultExpanded(): any;
         getGroupKeys(): string[];
@@ -1385,6 +1386,7 @@ declare module ag.grid {
         private id;
         private childPanels;
         private centerHeightLastTime;
+        private centerWidthLastTime;
         private sizeChangeListeners;
         private overlays;
         constructor(params: any);
@@ -1650,6 +1652,7 @@ declare module ag.grid {
         rowHeight?: number;
         rowBuffer?: number;
         enableColResize?: boolean;
+        enableColSizeFit?: boolean;
         enableCellExpressions?: boolean;
         enableSorting?: boolean;
         enableServerSideSorting?: boolean;

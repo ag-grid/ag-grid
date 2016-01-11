@@ -28,6 +28,7 @@ module ag.grid {
         private id: any;
         private childPanels: any;
         private centerHeightLastTime: any;
+        private centerWidthLastTime: any;
 
         private sizeChangeListeners = <any>[];
         private overlays: any;
@@ -246,7 +247,13 @@ module ag.grid {
                 centerWidth = 0;
             }
 
-            this.eCenterWrapper.style.width = centerWidth + 'px';
+            if (this.centerWidthLastTime !== centerWidth) {
+                this.eCenterWrapper.style.width = centerWidth + 'px';
+                this.centerWidthLastTime = centerWidth;
+                return true; // return true because there was a change
+            } else {
+                return false;
+            }
         }
 
         public setEastVisible(visible: any) {
