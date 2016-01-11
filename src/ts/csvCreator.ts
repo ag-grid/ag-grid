@@ -55,8 +55,15 @@ module ag.grid {
             var skipFooters = params && params.skipFooters;
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
+            var allColumns = params && params.allColumns;
 
-            var columnsToExport = this.columnController.getDisplayedColumns();
+            var columnsToExport;
+            if (allColumns)
+              columnsToExport = this.columnController.getAllColumns();
+            } else {
+              columnsToExport = this.columnController.getDisplayedColumns();
+            }
+
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
             }
