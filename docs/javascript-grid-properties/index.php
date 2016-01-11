@@ -93,6 +93,10 @@ include '../documentation_header.php';
             <td>Set to true or false.</td>
         </tr>
         <tr>
+            <th>enableColSizeFit</th>
+            <td>Gets columns to adjust in size to fit the grid horizontally when resize.</td>
+        </tr>
+        <tr>
             <th>enableSorting, enableServerSideSorting</th>
             <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
                 sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks
