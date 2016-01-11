@@ -162,6 +162,21 @@ module ag.grid {
             var headerCellLabel = document.createElement("div");
             headerCellLabel.className = "ag-header-cell-label";
 
+            var sourceColumn;
+
+            if (this.gridOptionsWrapper.isEnableColReorderInline()) {
+                headerCellLabel.setAttribute('draggable', 'true');
+                headerCellLabel.addEventListener('dragstart', ev => sourceColumn = this.column);
+
+                headerCellLabel.addEventListener('drop', ev => {
+                    ev.preventDefault();
+
+                    this.columnController.moveColumn(sourceColumn.index, this.column.index);
+                });
+
+                headerCellLabel.addEventListener('dragover', ev => ev.preventDefault());
+            }
+
             // add in sort icons
             this.addSortIcons(headerCellLabel);
 
@@ -336,8 +351,8 @@ module ag.grid {
             if (this.column !== column) {
                 return;
             }
-            var newWidthPx = column.actualWidth + "px";
-            this.eHeaderCell.style.width = newWidthPx;
+
+            this.eHeaderCell.style.width = column.actualWidth + "px";
         }
 
         private addHeaderClassesFromCollDef() {

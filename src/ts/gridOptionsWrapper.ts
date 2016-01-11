@@ -70,6 +70,7 @@ module ag.grid {
         public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
         public getApi() { return this.gridOptions.api; }
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
+        public isEnableColReorderInline() { return isTrue(this.gridOptions.enableColReorderInline); }
         public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
         public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
         public getGroupKeys() { return this.gridOptions.groupKeys; }
