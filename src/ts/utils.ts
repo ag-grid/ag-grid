@@ -8,8 +8,10 @@ module ag.grid {
 
         // taken from:
         // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-        private static isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
-        private static isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
+        // both of these variables are lazy loaded, as otherwise they try and get initialised when we are loading
+        // unit tests and we don't have references to window or document in the unit tests
+        private static isSafari: boolean;
+        private static isIE: boolean;
 
         static iterateObject(object: any, callback: (key:string, value: any) => void) {
             var keys = Object.keys(object);
@@ -379,10 +381,16 @@ module ag.grid {
         }
 
         static isBrowserIE(): boolean {
+            if (this.isIE===undefined) {
+                this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
+            }
             return this.isIE;
         }
 
         static isBrowserSafari(): boolean {
+            if (this.isSafari===undefined) {
+                this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
+            }
             return this.isSafari;
         }
 

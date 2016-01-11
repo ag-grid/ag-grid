@@ -9,7 +9,6 @@ module ag.grid {
         private columnGroup: ColumnGroup;
         private fromIndex: number;
         private toIndex: number;
-        private pinnedColumnCount: number;
         private finished: boolean;
 
         constructor(type: string) {
@@ -22,7 +21,6 @@ module ag.grid {
             if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.name; }
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
-            if (this.pinnedColumnCount) { result += ', pinnedColumnCount: ' + this.pinnedColumnCount; }
             if (typeof this.finished == 'boolean') { result += ', finished: ' + this.finished; }
             result += '}';
             return result;
@@ -48,11 +46,6 @@ module ag.grid {
             return this;
         }
 
-        public withPinnedColumnCount(pinnedColumnCount: number): ColumnChangeEvent {
-            this.pinnedColumnCount = pinnedColumnCount;
-            return this;
-        }
-
         public withToIndex(toIndex: number): ColumnChangeEvent {
             this.toIndex = toIndex;
             return this;
@@ -64,10 +57,6 @@ module ag.grid {
 
         public getToIndex(): number  {
             return this.toIndex;
-        }
-
-        public getPinnedColumnCount(): number  {
-            return this.pinnedColumnCount;
         }
 
         public getType(): string {

@@ -179,17 +179,19 @@ module ag.grid {
     }
 
     // check for angular and component, as if angular 1, we will find angular but the wrong version
-    if ((<any> window).ng && (<any> window).ng.core && (<any> window).ng.core.Component) {
-        var ng = (<any> window).ng;
-        initialiseAgGridWithAngular2(ng);
-        // check if we are using SystemX
-        // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
-        // as it was resulting in a failed 'Fetch' of the Angular2 system
-    //} else if ((<any>window).System && (<any>window).System.import) {
-    //    (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
-    //        var ng = ngFromSystemX;
-    //        initialiseAgGridWithAngular2(ng);
-    //    });
+    if (typeof (window) !== 'undefined') { // this check was needed for unit tests, otherwise window undefined error below
+        if (window && (<any> window).ng && (<any> window).ng.core && (<any> window).ng.core.Component) {
+            var ng = (<any> window).ng;
+            initialiseAgGridWithAngular2(ng);
+            // check if we are using SystemX
+            // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
+            // as it was resulting in a failed 'Fetch' of the Angular2 system
+        //} else if ((<any>window).System && (<any>window).System.import) {
+        //    (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
+        //        var ng = ngFromSystemX;
+        //        initialiseAgGridWithAngular2(ng);
+        //    });
+        }
     }
 
     export function initialiseAgGridWithAngular2(ng: any) {

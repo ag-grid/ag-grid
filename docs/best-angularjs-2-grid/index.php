@@ -34,6 +34,13 @@ include '../documentation_header.php';
         For notes on JSPM, see the section on JSPM below.
     </p>
 
+    <p>
+        For a full working example using Typescript, please see
+        <a href="https://github.com/helix46/ag-grid-angular2-beta-ts">
+        https://github.com/helix46/ag-grid-angular2-beta-ts</a>,
+        kindly provided by helix46.
+    </p>
+
     <h2>Simple AngularJS 2 Example</h2>
 
     <p>
