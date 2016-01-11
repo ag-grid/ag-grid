@@ -18,6 +18,7 @@ module ag.grid {
         rowHeight?: number;
         rowBuffer?: number;
         enableColResize?: boolean;
+        enableColReorderInline?: boolean;
         enableCellExpressions?: boolean;
         enableSorting?: boolean;
         enableServerSideSorting?: boolean;
