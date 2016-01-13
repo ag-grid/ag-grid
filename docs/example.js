@@ -45,7 +45,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-    $scope.colCount = 20;
+    $scope.colCount = 22;
     $scope.rowCount = 100;
 
     $scope.size = 'fill'; // model for size select
@@ -55,7 +55,6 @@ gridsModule.controller('mainController', function($scope) {
     $scope.style = 'ag-fresh';
     $scope.groupBy = '';
     $scope.groupType = 'col';
-    $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
 
     var gridOptions = {
@@ -65,7 +64,6 @@ gridsModule.controller('mainController', function($scope) {
         //singleClickEdit: true,
         rowData: null,
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
-        groupHeaders: true,
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
         groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
@@ -153,7 +151,6 @@ gridsModule.controller('mainController', function($scope) {
     var firstColumn = {
         headerName: "Name",
         field: "name",
-        headerGroup: 'Participant',
         width: 200,
         editable: true,
         filter: PersonFilter,
@@ -177,57 +174,80 @@ gridsModule.controller('mainController', function($scope) {
 
     var defaultCols = [
         //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-        firstColumn,
-        {headerName: "Country", field: "country", headerGroup: 'Participant', width: 150, editable: true, cellRenderer: countryCellRenderer, filter: 'set',
-            floatCell: true,
-            filterParams: {
-                cellRenderer: countryCellRenderer,
-                cellHeight: 20,
-                newRowsAction: 'keep'
-            },
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Participant
+            headerName: 'Participant',
+            children: [
+                firstColumn,
+                {headerName: "Country", field: "country", width: 150, editable: true,
+                    cellRenderer: countryCellRenderer, filter: 'set',
+                    floatCell: true,
+                    filterParams: {
+                        cellRenderer: countryCellRenderer,
+                        cellHeight: 20,
+                        newRowsAction: 'keep'
+                    },
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                },
+                {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+                    cellRenderer: languageCellRenderer,
+                    headerTooltip: "Example tooltip for Language",
+                    filterParams: {newRowsAction: 'keep'},
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                }
+            ]
         },
-        {headerName: "Language", field: "language", headerGroup: 'Participant', width: 150, editable: true, filter: 'set', cellRenderer: languageCellRenderer,
-            headerTooltip: "Example tooltip for Language",
-            filterParams: {newRowsAction: 'keep'},
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Game of Choice'
+            headerName: 'Game of Choice',
+            children: [
+                {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                    cellClass: function() { return 'alphabet'; },
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                },
+                {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                    cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                    floatCell: true,
+                    filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
+            ]
         },
-        {headerName: "Game of Choice", field: "game", headerGroup: 'Game', width: 180, editable: true, filter: 'set', cellClass: function() { return 'alphabet'; },
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Performance'
+            headerName: 'Performance',
+            children: [
+                {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+                    filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+                    filterParams: {cellRenderer: currencyRenderer},
+                    aggFunc: 'sum',
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                    }
+                },
+                {headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                    cellRenderer: function() { return 'Abra...'; } },
+                {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
+                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                    cellRenderer: function() { return '...cadabra!'; } },
+            ]
         },
-        {headerName: "Bought", field: "bought", filter: 'set', headerGroup: 'Game', editable: true, width: 100,
-            cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-            floatCell: true,
-            filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
-        {headerName: "Bank Balance", field: "bankBalance", headerGroup: 'Performance', width: 150, editable: true, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            filterParams: {cellRenderer: currencyRenderer},
-            aggFunc: 'sum',
-            icons: {
-                sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-            }
-        },
-        {headerName: "Extra Info 1", headerGroupShow: 'open', headerGroup: 'Performance', width: 150, editable: false,
-            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-            cellRenderer: function() { return 'Abra...'; } },
-        {headerName: "Extra Info 2", headerGroupShow: 'open', headerGroup: 'Performance', width: 150, editable: false,
-            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-            cellRenderer: function() { return '...cadabra!'; } },
         {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
             floatCell: true,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
-        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: true, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            aggFunc: 'sum',
+        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+            editable: true, newValueHandler: numberNewValueHandler, width: 150,
+            cellRenderer: currencyRenderer, cellStyle: currencyCssFunc, aggFunc: 'sum',
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -235,9 +255,17 @@ gridsModule.controller('mainController', function($scope) {
         }
     ];
     //put in the month cols
+    var monthGroup = {
+        headerName: 'Performance',
+        children: []
+    };
+    defaultCols.push(monthGroup);
     months.forEach(function(month, index) {
-        defaultCols.push({headerName: month, headerGroup: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: true,
-            newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
+        monthGroup.children.push({
+            headerName: month, field: month.toLocaleLowerCase(),
+            width: 100, filter: 'number', editable: true,
+            newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
+            filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})
     });
 
@@ -316,11 +344,6 @@ gridsModule.controller('mainController', function($scope) {
         gridOptions.api.deselectAll();
     };
 
-    $scope.onGroupHeaders = function() {
-        var groupHeaders = $scope.groupHeaders === 'true';
-        gridOptions.api.setGroupHeaders(groupHeaders);
-    };
-
     $scope.onSize = function() {
         if ($scope.size === 'fill') {
             $scope.width = '100%';
@@ -364,7 +387,8 @@ gridsModule.controller('mainController', function($scope) {
         // start with a copy of the default cols
         var columns = defaultCols.slice(0, colCount);
 
-        for (var col = defaultCols.length; col<colCount; col++) {
+        // there are 22 cols by default
+        for (var col = 22; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
             var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
             columns.push(colDef);

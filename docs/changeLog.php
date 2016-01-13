@@ -15,6 +15,8 @@ include 'documentation_header.php';
     <li>Major: Column getState() and setState() now include pinned state.</li>
     <li>Minor: Header Height is now height per row, so if 25, and three column groups, total header height is 3x25 = 75</li>
     <li>Minor: colDef.headerGroupShow is now called colDef.columnGroupShow</li>
+    <li>Minor: gridOptions.groupHeaders is no longer a property, such is derived from the column definitions. api.setGroupHeaders() is also gone.</li>
+    <li>Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
 
     <li>Minor: Styling - </li>
 

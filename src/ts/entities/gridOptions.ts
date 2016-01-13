@@ -70,7 +70,6 @@ module ag.grid {
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
         // in properties
-        groupHeaders?: boolean;
         headerHeight?: number;
 
         // callbacks

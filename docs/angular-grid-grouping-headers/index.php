@@ -14,6 +14,7 @@ include '../documentation_header.php';
         Grouping headers allows you to put headers on top of headers, to group the headers.
     </p>
 
+    <h1>This is now wrong, groupHeaders is no longer a property</h1>
     <p>
         To group headers, set the attribute 'groupHeaders' to 'true' in the grid options. Then provide
         a group name for each of the column definitions.

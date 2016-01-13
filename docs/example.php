@@ -83,9 +83,7 @@
                 </select>
                 Cols:
                 <select ng-model="colCount" ng-change="onColCountChanged()">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
+                    <option value="22">22</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
@@ -94,12 +92,6 @@
                 <select ng-model="size" ng-change="onSize()">
                     <option value="fill">Fill Page</option>
                     <option value="fixed">800x600</option>
-                </select>
-
-                Group Headers:
-                <select ng-model="groupHeaders" style="width: 60px;" ng-change="onGroupHeaders()">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
                 </select>
 
                 Style:
