@@ -13,6 +13,10 @@ include 'documentation_header.php';
     <li>Major: Event EVENT_COLUMN_PINNED_COUNT_CHANGED removed.</li>
     <li>Major: Event EVENT_COLUMN_PINNED added.</li>
     <li>Major: Column getState() and setState() now include pinned state.</li>
+    <li>Minor: Header Height is now height per row, so if 25, and three column groups, total header height is 3x25 = 75</li>
+    <li>Minor: colDef.headerGroupShow is now called colDef.columnGroupShow</li>
+
+    <li>Minor: Styling - </li>
 
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>

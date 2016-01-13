@@ -1,6 +1,19 @@
 module ag.grid {
 
-    export interface ColDef {
+    /** AbstractColDef can be a group or a column definition */
+    export interface AbstractColDef {
+        /** The name to render in the column header */
+        headerName?: string;
+        /** Whether to show the column when the group is open / closed. */
+        columnGroupShow?: string;
+    }
+
+    export interface ColGroupDef extends AbstractColDef {
+        /** Columns in this group*/
+        children: AbstractColDef[];
+    }
+
+    export interface ColDef extends AbstractColDef {
         /** If sorting by default, set it here. Set to 'asc' or 'desc' */
         sort?: string;
 
@@ -10,11 +23,8 @@ module ag.grid {
         /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
         sortingOrder?: string[];
 
-        /** The name to render in the column header */
-        headerName: string;
-
         /** The field of the row to get the cells data from */
-        field: string;
+        field?: string;
 
         /** Expression or function to get the cells value. */
         headerValueGetter?: string | Function;
@@ -86,12 +96,6 @@ module ag.grid {
 
         /** Set to true if you do not want this column to be resizable by dragging it's edge. */
         suppressResize?: boolean;
-
-        /** If grouping columns, the group this column belongs to. */
-        headerGroup?: string;
-
-        /** Whether to show the column when the group is open / closed. */
-        headerGroupShow?: string;
 
         /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
         editable?: boolean | (Function);

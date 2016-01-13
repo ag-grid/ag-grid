@@ -1,15 +1,17 @@
 /// <reference path="../constants.ts" />
+/// <reference path="columnGroup.ts" />
 
 module ag.grid {
 
     var constants = Constants;
 
-    export class Column {
+    export class Column extends AbstractColumn {
 
         static colIdSequence = 0;
 
+        private actualWidth: any;
+
         colDef: ColDef;
-        actualWidth: any;
         visible: any;
         colId: any;
         pinned: boolean;
@@ -20,7 +22,9 @@ module ag.grid {
         sortedAt: number;
 
         constructor(colDef: ColDef, actualWidth: any) {
+            super();
             this.colDef = colDef;
+            this.abstractColDef = colDef;
             this.actualWidth = actualWidth;
             this.visible = !colDef.hide;
             this.sort = colDef.sort;
@@ -34,6 +38,14 @@ module ag.grid {
             } else {
                 this.colId = '' + Column.colIdSequence++;
             }
+        }
+
+        public getActualWidth(): number {
+            return this.actualWidth;
+        }
+
+        public setActualWidth(actualWidth: number): void {
+            this.actualWidth = actualWidth;
         }
 
         public isGreaterThanMax(width: number): boolean {

@@ -1,6 +1,6 @@
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="expressionService.ts" />
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
 
 module ag.grid {
 

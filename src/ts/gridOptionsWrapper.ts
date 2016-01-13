@@ -105,12 +105,7 @@ module ag.grid {
             if (typeof this.headerHeight === 'number') {
                 return this.headerHeight;
             } else {
-                // otherwise return 25 if no grouping, 50 if grouping
-                if (this.groupHeaders) {
-                    return 50;
-                } else {
-                    return 25;
-                }
+                return 25;
             }
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }

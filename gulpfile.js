@@ -36,7 +36,8 @@ gulp.task('release', ['stylus', 'tsd', 'ts-release-build']);
 // Build
 gulp.task('debug-build', ['stylus', 'ts-dev-build']);
 gulp.task('stylus', stylusTask);
-gulp.task('unit-tests', ['ts-dev-build'], tsTestTask);
+//gulp.task('unit-tests', ['ts-dev-build'], tsTestTask);
+gulp.task('unit-tests', ['ts-dev-build']);
 gulp.task('ts-dev-build', tsDebugTask);
 gulp.task('ts-release-build', tsReleaseTask);
 
@@ -69,7 +70,7 @@ gulp.task('es6', function (callback) {
 });
 
 function tsTestTask() {
-    return gulp.src('./spec/*.js')
+    return gulp.src('./spec/**/*.js')
         .pipe(jasmine({
             verbose: false
         }));
@@ -164,8 +165,6 @@ function stylusTask() {
 }
 
 function watchTask() {
-    //gulp.watch('./src/ts/**/*', ['unit-tests']);
-    //gulp.watch('./spec/**/*', ['unit-tests']);
     gulp.watch(['./src/ts/**/*','./spec/**/*'], ['unit-tests']);
     gulp.watch('./src/styles/**/*', ['stylus']);
 }

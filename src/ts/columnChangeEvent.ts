@@ -18,7 +18,7 @@ module ag.grid {
         public toString(): string {
             var result = 'ColumnChangeEvent {type: ' + this.type;
             if (this.column) { result += ', column: ' + this.column.colId; }
-            if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.name; }
+            if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.colGroupDef ? this.columnGroup.colGroupDef.headerName : '(not defined]'; }
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
             if (typeof this.finished == 'boolean') { result += ', finished: ' + this.finished; }

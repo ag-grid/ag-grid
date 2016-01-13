@@ -78,7 +78,7 @@ module ag.grid {
         }
 
         public onIndividualColumnResized(column: Column) {
-            var newWidthPx = column.actualWidth + "px";
+            var newWidthPx = column.getActualWidth() + "px";
             var selectorForAllColsInCell = ".cell-col-" + column.index;
             this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
                 var cellsForThisCol: NodeList = rowContainer.querySelectorAll(selectorForAllColsInCell);

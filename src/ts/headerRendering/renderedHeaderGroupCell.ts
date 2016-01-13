@@ -10,18 +10,14 @@ module ag.grid {
 
     export class RenderedHeaderGroupCell extends RenderedHeaderElement {
 
-        private eHeaderGroup: HTMLElement;
         private eHeaderGroupCell: HTMLElement;
         private eHeaderCellResize: HTMLElement;
         private columnGroup: ColumnGroup;
         private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
 
-        private children: RenderedHeaderCell[] = [];
-
         private groupWidthStart: number;
         private childrenWidthStarts: number[];
-        private minWidth: number;
         private parentScope: any;
         private filterManager: FilterManager;
         private $compile: any;
@@ -42,51 +38,31 @@ module ag.grid {
         }
 
         public getGui(): HTMLElement {
-            return this.eHeaderGroup;
-        }
-
-        public destroy(): void {
-            this.children.forEach( (childElement: RenderedHeaderElement)=> {
-                childElement.destroy();
-            });
-        }
-
-        public refreshFilterIcon(): void {
-            this.children.forEach( (childElement: RenderedHeaderElement)=> {
-                childElement.refreshFilterIcon();
-            });
-        }
-
-        public refreshSortIcon(): void {
-            this.children.forEach( (childElement: RenderedHeaderElement)=> {
-                childElement.refreshSortIcon();
-            });
+            return this.eHeaderGroupCell;
         }
 
         public onIndividualColumnResized(column: Column) {
-            if (!this.isColumnInOurDisplayedGroup(column)) {
-                return;
+            if (this.columnGroup.isChildInThisGroupDeepSearch(column)) {
+                this.setWidthOfGroupHeaderCell();
             }
-            this.children.forEach( (childElement: RenderedHeaderElement)=> {
-                childElement.onIndividualColumnResized(column);
-            });
-            this.setWidthOfGroupHeaderCell();
+            //this.children.forEach( (childElement: RenderedHeaderElement)=> {
+            //    childElement.onIndividualColumnResized(column);
+            //});
         }
 
         private setupComponents() {
-            this.eHeaderGroup = document.createElement('div');
-            this.eHeaderGroup.className = 'ag-header-group';
 
             this.eHeaderGroupCell = document.createElement('div');
             var classNames = ['ag-header-group-cell'];
             // having different classes below allows the style to not have a bottom border
             // on the group header, if no group is specified
-            if (this.columnGroup.name) {
+            if (this.columnGroup.colGroupDef) {
                 classNames.push('ag-header-group-cell-with-group');
             } else {
                 classNames.push('ag-header-group-cell-no-group');
             }
             this.eHeaderGroupCell.className = classNames.join(' ');
+            this.eHeaderGroupCell.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
 
             if (this.gridOptionsWrapper.isEnableColResize()) {
                 this.eHeaderCellResize = document.createElement("div");
@@ -96,7 +72,7 @@ module ag.grid {
             }
 
             // no renderer, default text render
-            var groupName = this.columnGroup.name;
+            var groupName = this.columnGroup.colGroupDef ? this.columnGroup.colGroupDef.headerName : null;
             if (groupName && groupName !== '') {
                 var eGroupCellLabel = document.createElement("div");
                 eGroupCellLabel.className = 'ag-header-group-cell-label';
@@ -111,25 +87,25 @@ module ag.grid {
                     this.addGroupExpandIcon(eGroupCellLabel);
                 }
             }
-            this.eHeaderGroup.appendChild(this.eHeaderGroupCell);
+            //this.eHeaderGroup.appendChild(this.eHeaderGroupCell);
 
-            this.columnGroup.displayedColumns.forEach( (column: Column) => {
-                var renderedHeaderCell = new RenderedHeaderCell(column, this, this.gridOptionsWrapper,
-                    this.parentScope, this.filterManager, this.columnController, this.$compile,
-                    this.angularGrid, this.getERoot());
-                this.children.push(renderedHeaderCell);
-                this.eHeaderGroup.appendChild(renderedHeaderCell.getGui());
-            });
+            //this.columnGroup.displayedColumns.forEach( (column: Column) => {
+            //    var renderedHeaderCell = new RenderedHeaderCell(column, this, this.gridOptionsWrapper,
+            //        this.parentScope, this.filterManager, this.columnController, this.$compile,
+            //        this.angularGrid, this.getERoot());
+            //    this.children.push(renderedHeaderCell);
+            //    this.eHeaderGroup.appendChild(renderedHeaderCell.getGui());
+            //});
 
             this.setWidthOfGroupHeaderCell();
         }
 
-        private isColumnInOurDisplayedGroup(column: Column): boolean {
-            return this.columnGroup.displayedColumns.indexOf(column) >= 0;
-        }
+        //private isColumnInOurDisplayedGroup(column: Column): boolean {
+        //    return this.columnGroup.displayedColumns.indexOf(column) >= 0;
+        //}
 
         private setWidthOfGroupHeaderCell() {
-            this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.actualWidth);
+            this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.getActualWidth());
         }
 
         private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
@@ -150,19 +126,19 @@ module ag.grid {
         }
 
         public onDragStart(): void {
-            this.groupWidthStart = this.columnGroup.actualWidth;
+            this.groupWidthStart = this.columnGroup.getActualWidth();
             this.childrenWidthStarts = [];
-            this.columnGroup.displayedColumns.forEach( (column: Column) => {
-                this.childrenWidthStarts.push(column.actualWidth);
+            this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column) => {
+                this.childrenWidthStarts.push(column.getActualWidth());
             });
-            this.minWidth = this.columnGroup.getMinimumWidth();
         }
 
         public onDragging(dragChange: any, finished: boolean): void {
 
             var newWidth = this.groupWidthStart + dragChange;
-            if (newWidth < this.minWidth) {
-                newWidth = this.minWidth;
+            var minWidth = this.columnGroup.getMinimumWidth();
+            if (newWidth < minWidth) {
+                newWidth = minWidth;
             }
 
             // set the new width to the group header
@@ -175,7 +151,7 @@ module ag.grid {
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
             var pixelsToDistribute = newWidth;
-            var displayedColumns = this.columnGroup.displayedColumns;
+            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
             displayedColumns.forEach( (column: Column, index: any) => {
                 var notLastCol = index !== (displayedColumns.length - 1);
                 var newChildSize: any;
@@ -183,8 +159,8 @@ module ag.grid {
                     // if not the last col, calculate the column width as normal
                     var startChildSize = this.childrenWidthStarts[index];
                     newChildSize = startChildSize * changeRatio;
-                    if (newChildSize < constants.MIN_COL_WIDTH) {
-                        newChildSize = constants.MIN_COL_WIDTH;
+                    if (newChildSize < column.getMinimumWidth()) {
+                        newChildSize = column.getMinimumWidth();
                     }
                     pixelsToDistribute -= newChildSize;
                 } else {

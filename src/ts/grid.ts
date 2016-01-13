@@ -2,7 +2,8 @@
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="utils.ts" />
 /// <reference path="filter/filterManager.ts" />
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
+/// <reference path="columnController/balancedColumnTreeBuilder.ts" />
 /// <reference path="selectionController.ts" />
 /// <reference path="selectionRendererFactory.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
@@ -21,6 +22,7 @@
 /// <reference path="masterSlaveService.ts" />
 /// <reference path="logger.ts" />
 /// <reference path="eventService.ts" />
+/// <reference path="columnController/columnUtils.ts" />
 /// <reference path="dragAndDrop/dragAndDropService.ts" />
 
 
@@ -149,6 +151,8 @@ module ag.grid {
             this.eUserProvidedDiv = eUserProvidedDiv;
 
             // create all the beans
+            var balancedColumnTreeBuilder = new BalancedColumnTreeBuilder();
+            var displayedGroupCreator = new DisplayedGroupCreator();
             var eventService = new EventService();
             var gridOptionsWrapper = new GridOptionsWrapper();
             var selectionController = new SelectionController();
@@ -168,6 +172,7 @@ module ag.grid {
             var masterSlaveService = new MasterSlaveService();
             var loggerFactory = new LoggerFactory();
             var dragAndDropService = new DragAndDropService();
+            var columnUtils = new ColumnUtils();
 
             // initialise all the beans
             gridOptionsWrapper.init(this.gridOptions, eventService);
@@ -175,6 +180,7 @@ module ag.grid {
             this.logger = loggerFactory.create('Grid');
             this.logger.log('initialising');
 
+            columnUtils.init(gridOptionsWrapper);
             dragAndDropService.init(loggerFactory);
             eventService.init(loggerFactory);
             gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
@@ -184,8 +190,10 @@ module ag.grid {
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
+            balancedColumnTreeBuilder.init(gridOptionsWrapper, loggerFactory, columnUtils);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
-                expressionService, valueService, masterSlaveService, eventService);
+                expressionService, valueService, masterSlaveService, eventService,
+                balancedColumnTreeBuilder, displayedGroupCreator, columnUtils);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService, eventService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
@@ -473,6 +481,7 @@ module ag.grid {
         private setupColumns() {
             this.columnController.onColumnsChanged();
             this.gridPanel.showPinnedColContainersIfNeeded();
+            this.gridPanel.onBodyHeightChange();
         }
 
         // rowsToRefresh is at what index to start refreshing the rows. the assumption is

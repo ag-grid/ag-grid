@@ -1,30 +1,93 @@
+/// <reference path="./abstractColumn.ts"/>
+
 module ag.grid {
 
-    export class ColumnGroup {
+    export class ColumnGroup extends AbstractColumn {
+
+        private displayedChildren: AbstractColumn[] = [];
+        private children: AbstractColumn[];
 
         pinned: any;
-        name: any;
-        allColumns: Column[] = [];
-        displayedColumns: Column[] = [];
         expandable = false;
         expanded = false;
-        actualWidth: number;
+        colGroupDef: ColGroupDef;
 
-        constructor(pinned: any, name: any) {
+        constructor(pinned: any, colGroupDef: ColGroupDef) {
+            super();
             this.pinned = pinned;
-            this.name = name;
+            this.colGroupDef = colGroupDef;
+            this.abstractColDef = colGroupDef;
+        }
+
+        public isChildInThisGroupDeepSearch(wantedChild: AbstractColumn): boolean {
+            var result = false;
+
+            this.children.forEach( (foundChild: AbstractColumn) => {
+                if (wantedChild === foundChild) {
+                    result = true;
+                }
+                if (foundChild instanceof ColumnGroup) {
+                    if ((<ColumnGroup>foundChild).isChildInThisGroupDeepSearch(wantedChild)) {
+                        result = true;
+                    }
+                }
+            });
+
+            return result;
+        }
+
+        public getActualWidth(): number {
+            var groupActualWidth = 0;
+            if (this.displayedChildren) {
+                this.displayedChildren.forEach( (child: AbstractColumn)=> {
+                    groupActualWidth += child.getActualWidth();
+                });
+            }
+            return groupActualWidth;
         }
 
         public getMinimumWidth(): number {
             var result = 0;
-            this.displayedColumns.forEach( (column: Column) => {
-                result += column.getMinimumWidth();
+            this.displayedChildren.forEach( (abstractColumn: AbstractColumn) => {
+                result += abstractColumn.getMinimumWidth();
             });
             return result;
         }
 
-        public addColumn(column: any) {
-            this.allColumns.push(column);
+        public addChild(child: AbstractColumn): void {
+            if (!this.children) {
+                this.children = [];
+            }
+            this.children.push(child);
+            this.calculateExpandable();
+        }
+
+        public getDisplayedChildren(): AbstractColumn[] {
+            return this.displayedChildren;
+        }
+
+        public getDisplayedLeafColumns(): Column[] {
+            var result: Column[] = [];
+            this.addDisplayedLeafColumns(result);
+            return result;
+        }
+
+        private addDisplayedLeafColumns(leafColumns: Column[]): void {
+            this.displayedChildren.forEach( (abstractColumn: AbstractColumn) => {
+                if (abstractColumn instanceof Column) {
+                    leafColumns.push(<Column>abstractColumn);
+                } else if (abstractColumn instanceof ColumnGroup) {
+                    (<ColumnGroup>abstractColumn).addDisplayedLeafColumns(leafColumns);
+                }
+            });
+        }
+
+        //public setChildren(children: AbstractColumn[]): void {
+        //    this.children = children;
+        //}
+
+        public getChildren(): AbstractColumn[] {
+            return this.children;
         }
 
         // need to check that this group has at least one col showing when both expanded and contracted.
@@ -36,12 +99,14 @@ module ag.grid {
             var atLeastOneShowingWhenClosed = false;
             // want to make sure the group has something to show / hide
             var atLeastOneChangeable = false;
-            for (var i = 0, j = this.allColumns.length; i < j; i++) {
-                var column = this.allColumns[i];
-                if (column.colDef.headerGroupShow === 'open') {
+            for (var i = 0, j = this.children.length; i < j; i++) {
+                var abstractColumn = this.children[i];
+                // if the abstractColumn is a grid generated group, there will be no colDef
+                var headerGroupShow = abstractColumn.abstractColDef ? abstractColumn.abstractColDef.columnGroupShow : null;
+                if (headerGroupShow === 'open') {
                     atLeastOneShowingWhenOpen = true;
                     atLeastOneChangeable = true;
-                } else if (column.colDef.headerGroupShow === 'closed') {
+                } else if (headerGroupShow === 'closed') {
                     atLeastOneShowingWhenClosed = true;
                     atLeastOneChangeable = true;
                 } else {
@@ -53,53 +118,46 @@ module ag.grid {
             this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
         }
 
-        public calculateActualWidth(): void {
-            var actualWidth = 0;
-            this.displayedColumns.forEach( (column: Column)=> {
-                actualWidth += column.actualWidth;
-            });
-            this.actualWidth = actualWidth;
-        }
-
         public calculateDisplayedColumns() {
             // clear out last time we calculated
-            this.displayedColumns = [];
+            this.displayedChildren = [];
             // it not expandable, everything is visible
             if (!this.expandable) {
-                this.displayedColumns = this.allColumns;
+                this.displayedChildren = this.children;
                 return;
             }
             // and calculate again
-            for (var i = 0, j = this.allColumns.length; i < j; i++) {
-                var column = this.allColumns[i];
-                switch (column.colDef.headerGroupShow) {
+            for (var i = 0, j = this.children.length; i < j; i++) {
+                var abstractColumn = this.children[i];
+                var headerGroupShow = abstractColumn.abstractColDef ? abstractColumn.abstractColDef.columnGroupShow : null;
+                switch (headerGroupShow) {
                     case 'open':
                         // when set to open, only show col if group is open
                         if (this.expanded) {
-                            this.displayedColumns.push(column);
+                            this.displayedChildren.push(abstractColumn);
                         }
                         break;
                     case 'closed':
                         // when set to open, only show col if group is open
                         if (!this.expanded) {
-                            this.displayedColumns.push(column);
+                            this.displayedChildren.push(abstractColumn);
                         }
                         break;
                     default:
                         // default is always show the column
-                        this.displayedColumns.push(column);
+                        this.displayedChildren.push(abstractColumn);
                         break;
                 }
             }
         }
 
         // should replace with utils method 'add all'
-        public addToVisibleColumns(colsToAdd: any) {
-            for (var i = 0; i < this.displayedColumns.length; i++) {
-                var column = this.displayedColumns[i];
-                colsToAdd.push(column);
-            }
-        }
+        //public addToDisplayedColumns(colsToAdd: any) {
+        //    for (var i = 0; i < this.displayedChildren.length; i++) {
+        //        var column = this.displayedChildren[i];
+        //        colsToAdd.push(column);
+        //    }
+        //}
     }
 
 }

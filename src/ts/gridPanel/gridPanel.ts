@@ -98,7 +98,6 @@ module ag.grid {
             this.columnModel = columnModel;
             this.rowRenderer = rowRenderer;
             this.masterSlaveService = masterSlaveService;
-            this.sizeHeaderAndBody();
         }
 
         public getLayout(): BorderLayout {
@@ -249,10 +248,10 @@ module ag.grid {
             // sum up all col width to the let to get the start pixel
             var colLeftPixel = 0;
             for (var i = 0; i < centerIndex; i++) {
-                colLeftPixel += centerColumns[i].actualWidth;
+                colLeftPixel += centerColumns[i].getActualWidth();
             }
 
-            var colRightPixel = colLeftPixel + column.actualWidth;
+            var colRightPixel = colLeftPixel + column.getActualWidth();
 
             var viewportLeftPixel = this.eBodyViewport.scrollLeft;
             var viewportWidth = this.eBodyViewport.offsetWidth;
@@ -460,7 +459,9 @@ module ag.grid {
             }
 
             var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-            this.eHeader.style['height'] = headerHeight + 'px';
+            var numberOfRowsInHeader = this.columnModel.getHeaderRowCount();
+            var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
+            this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
             var floatingTopCount = 0;
             if (this.gridOptionsWrapper.getFloatingTopRowData()) {
@@ -475,17 +476,17 @@ module ag.grid {
 
             // padding top covers the header and the floating rows on top
             var floatingTopHeight = floatingTopCount * rowHeight;
-            var paddingTop = headerHeight + floatingTopHeight;
+            var paddingTop = totalHeaderHeight + floatingTopHeight;
             // bottom is just the bottom floating rows
             var floatingBottomHeight = floatingBottomCount * rowHeight;
             var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
-            var heightOfCentreRows = heightOfContainer - headerHeight - floatingBottomHeight - floatingTopHeight;
+            var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
             this.eBody.style.paddingTop = paddingTop + 'px';
             this.eBody.style.paddingBottom = floatingBottomHeight + 'px';
 
-            this.eFloatingTop.style.top = headerHeight + 'px';
+            this.eFloatingTop.style.top = totalHeaderHeight + 'px';
             this.eFloatingTop.style.height = floatingTopHeight + 'px';
             this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
             this.eFloatingBottom.style.top = floatingBottomTop + 'px';

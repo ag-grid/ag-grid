@@ -1,4 +1,4 @@
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="logger.ts" />
 /// <reference path="events.ts" />
@@ -101,7 +101,8 @@ module ag.grid {
                 var masterColumnGroup = event.getColumnGroup();
                 var slaveColumnGroup: ColumnGroup;
                 if (masterColumnGroup) {
-                    slaveColumnGroup = this.columnController.getColumnGroup(masterColumnGroup.name);
+                    console.error('not implemented');
+                    //slaveColumnGroup = this.columnController.getColumnGroup(masterColumnGroup.name);
                 }
                 if (masterColumnGroup && !slaveColumnGroup) { return; }
 
@@ -123,8 +124,8 @@ module ag.grid {
                         this.columnController.columnGroupOpened(slaveColumnGroup, masterColumnGroup.expanded);
                         break;
                     case Events.EVENT_COLUMN_RESIZED:
-                        this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
-                        this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth, event.isFinished());
+                        this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());
+                        this.columnController.setColumnWidth(slaveColumn, masterColumn.getActualWidth(), event.isFinished());
                         break;
                 }
 

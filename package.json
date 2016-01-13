@@ -33,6 +33,7 @@
     "gulp-sourcemaps": "1.5.2",
     "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
+    "json-stable-stringify": "1.0.0",
     "jasmine-core": "2.4.1",
     "gulp-jasmine": "2.2.1",
     "nib": "^1.1.0",

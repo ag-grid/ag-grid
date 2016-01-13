@@ -1,4 +1,4 @@
-/// <reference path='../columnController.ts' />
+/// <reference path='../columnController/columnController.ts' />
 /// <reference path='../utils.ts' />
 /// <reference path="../gridOptionsWrapper.ts" />
 /// <reference path="../expressionService.ts" />
@@ -132,7 +132,7 @@ module ag.grid {
                 this.addCellNavigationHandler();
             }
 
-            this.vGridCell.addStyles({width: this.column.actualWidth + "px"});
+            this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
 
             this.createParentOfValue();
 
@@ -159,7 +159,7 @@ module ag.grid {
                 eInput.value = value;
             }
 
-            eInput.style.width = (this.column.actualWidth - 14) + 'px';
+            eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
             this.vGridCell.appendChild(eInput);
             eInput.focus();
             eInput.select();

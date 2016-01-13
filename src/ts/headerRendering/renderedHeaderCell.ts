@@ -1,7 +1,7 @@
 /// <reference path='../utils.ts' />
 /// <reference path='../filter/filterManager.ts' />
 /// <reference path='../gridOptionsWrapper.ts' />
-/// <reference path='../columnController.ts' />
+/// <reference path='../columnController/columnController.ts' />
 /// <reference path='renderedHeaderElement.ts' />
 
 module ag.grid {
@@ -192,7 +192,7 @@ module ag.grid {
             }
 
             this.eHeaderCell.appendChild(headerCellLabel);
-            this.eHeaderCell.style.width = _.formatWidth(this.column.actualWidth);
+            this.eHeaderCell.style.width = _.formatWidth(this.column.getActualWidth());
 
             this.refreshFilterIcon();
             this.refreshSortIcon();
@@ -324,7 +324,7 @@ module ag.grid {
         }
 
         public onDragStart(): void {
-            this.startWidth = this.column.actualWidth;
+            this.startWidth = this.column.getActualWidth();
         }
 
         public onDragging(dragChange: number, finished: boolean): void {
@@ -336,7 +336,7 @@ module ag.grid {
             if (this.column !== column) {
                 return;
             }
-            var newWidthPx = column.actualWidth + "px";
+            var newWidthPx = column.getActualWidth() + "px";
             this.eHeaderCell.style.width = newWidthPx;
         }
 
