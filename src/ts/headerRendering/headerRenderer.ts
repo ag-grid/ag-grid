@@ -53,7 +53,7 @@ module ag.grid {
             this.insertHeaderRowsIntoContainer(this.columnController.getCenterHeaderGroups(), this.eHeaderContainer);
         }
 
-        private addTreeNodesAtDept(cellTree: AbstractColumn[], dept: number, result: AbstractColumn[]): void {
+        private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
             cellTree.forEach( (abstractColumn) => {
                 if (dept===0) {
                     result.push(abstractColumn);
@@ -68,13 +68,13 @@ module ag.grid {
             });
         }
 
-        private insertHeaderRowsIntoContainer(cellTree: AbstractColumn[], eContainerToAddTo: HTMLElement): void {
+        private insertHeaderRowsIntoContainer(cellTree: ColumnGroupChild[], eContainerToAddTo: HTMLElement): void {
 
             // if we are displaying header groups, then we have many rows here.
             // go through each row of the header, one by one.
             for (var dept = 0; ; dept++) {
 
-                var nodesAtDept: AbstractColumn[] = [];
+                var nodesAtDept: ColumnGroupChild[] = [];
                 this.addTreeNodesAtDept(cellTree, dept, nodesAtDept);
 
                 // we want to break the for loop when we get to an empty set of cells,
@@ -87,8 +87,8 @@ module ag.grid {
                 eRow.className = 'ag-header-row';
                 eRow.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
 
-                nodesAtDept.forEach( (abstractColumn: AbstractColumn) => {
-                    var renderedHeaderElement = this.createHeaderElement(abstractColumn);
+                nodesAtDept.forEach( (child: ColumnGroupChild) => {
+                    var renderedHeaderElement = this.createHeaderElement(child);
                     this.headerElements.push(renderedHeaderElement);
                     eRow.appendChild(renderedHeaderElement.getGui());
                 });
@@ -97,32 +97,17 @@ module ag.grid {
             }
         }
 
-        private createHeaderElement(abstractColumn: AbstractColumn): RenderedHeaderElement {
-            if (abstractColumn instanceof ColumnGroup) {
-                return new RenderedHeaderGroupCell(<ColumnGroup> abstractColumn, this.gridOptionsWrapper,
+        private createHeaderElement(columnGroupChild: ColumnGroupChild): RenderedHeaderElement {
+            if (columnGroupChild instanceof ColumnGroup) {
+                return new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.gridOptionsWrapper,
                     this.columnController, this.eRoot, this.angularGrid, this.$scope,
                     this.filterManager, this.$compile);
             } else {
-                return new RenderedHeaderCell(<Column> abstractColumn, null, this.gridOptionsWrapper,
+                return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
                     this.$scope, this.filterManager, this.columnController, this.$compile,
                     this.angularGrid, this.eRoot);
             }
         }
-
-        //private insertHeadersWithoutGrouping() {
-        //    this.putColumnsIntoContainer(this.columnController.getDisplayedLeftColumns(), this.ePinnedHeader);
-        //    this.putColumnsIntoContainer(this.columnController.getDisplayedCenterColumns(), this.eHeaderContainer);
-        //}
-
-/*        private putColumnsIntoContainer(columns: Column[], eContainerToAddTo: HTMLElement): void {
-            columns.forEach( (column: Column) => {
-                var renderedHeaderCell = new RenderedHeaderCell(column, null, this.gridOptionsWrapper,
-                    this.$scope, this.filterManager, this.columnController, this.$compile,
-                    this.angularGrid, this.eRoot);
-                this.headerElements.push(renderedHeaderCell);
-                eContainerToAddTo.appendChild(renderedHeaderCell.getGui());
-            });
-        }*/
 
         public updateSortIcons() {
             this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {

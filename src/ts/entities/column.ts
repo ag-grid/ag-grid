@@ -5,7 +5,7 @@ module ag.grid {
 
     var constants = Constants;
 
-    export class Column extends AbstractColumn {
+    export class Column implements ColumnGroupChild {
 
         static colIdSequence = 0;
 
@@ -22,9 +22,7 @@ module ag.grid {
         sortedAt: number;
 
         constructor(colDef: ColDef, actualWidth: any) {
-            super();
             this.colDef = colDef;
-            this.abstractColDef = colDef;
             this.actualWidth = actualWidth;
             this.visible = !colDef.hide;
             this.sort = colDef.sort;
@@ -38,6 +36,10 @@ module ag.grid {
             } else {
                 this.colId = '' + Column.colIdSequence++;
             }
+        }
+
+        public getDefinition(): AbstractColDef {
+            return this.colDef;
         }
 
         public getActualWidth(): number {

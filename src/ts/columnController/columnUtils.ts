@@ -29,30 +29,30 @@ module ag.grid {
             }
         }
 
-        public deptFirstAllColumnTreeSearch(tree: AbstractColumn[], callback: (treeNode: AbstractColumn)=>void ): void {
+        public deptFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
 
             if (!tree) { return; }
 
-            tree.forEach( (abstractColumn: AbstractColumn) => {
-                if (abstractColumn instanceof ColumnGroup) {
-                    this.deptFirstAllColumnTreeSearch((<ColumnGroup>abstractColumn).getChildren(), callback);
-                } else if (abstractColumn instanceof OriginalColumnGroup) {
-                    this.deptFirstAllColumnTreeSearch((<OriginalColumnGroup>abstractColumn).getChildren(), callback);
+            tree.forEach( (child: ColumnGroupChild) => {
+                if (child instanceof ColumnGroup) {
+                    this.deptFirstAllColumnTreeSearch((<ColumnGroup>child).getChildren(), callback);
+                } else if (child instanceof OriginalColumnGroup) {
+                    this.deptFirstAllColumnTreeSearch((<OriginalColumnGroup>child).getChildren(), callback);
                 }
-                callback(abstractColumn);
+                callback(child);
             });
 
         }
 
-        public deptFirstDisplayedColumnTreeSearch(tree: AbstractColumn[], callback: (treeNode: AbstractColumn)=>void ): void {
+        public deptFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
 
             if (!tree) { return; }
 
-            tree.forEach( (abstractColumn: AbstractColumn) => {
-                if (abstractColumn instanceof ColumnGroup) {
-                    this.deptFirstDisplayedColumnTreeSearch((<ColumnGroup>abstractColumn).getDisplayedChildren(), callback);
+            tree.forEach( (child: ColumnGroupChild) => {
+                if (child instanceof ColumnGroup) {
+                    this.deptFirstDisplayedColumnTreeSearch((<ColumnGroup>child).getDisplayedChildren(), callback);
                 }
-                callback(abstractColumn);
+                callback(child);
             });
 
         }

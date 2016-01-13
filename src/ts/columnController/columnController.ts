@@ -41,8 +41,8 @@ module ag.grid {
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
         public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
-        public getLeftHeaderGroups(): AbstractColumn[] { return this._columnController.getLeftHeaderGroups(); }
-        public getCenterHeaderGroups(): AbstractColumn[] { return this._columnController.getCenterHeaderGroups(); }
+        public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
+        public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
         public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
     }
 
@@ -60,16 +60,16 @@ module ag.grid {
         // order or state of the columns and groups change. it will only change if the client
         // provides a new set of column definitions. otherwise this tree is used to build up
         // the groups for displaying.
-        private originalBalancedTree: AbstractColumn[];
+        private originalBalancedTree: ColumnGroupChild[];
         // these are every single column, regardless of whether they are shown on
         // screen or not (cols can be missing if visible=false or the group they are
         // in is closed). basically it's the leaf level nodes of the tree above (originalBalancedTree)
         private allColumns: Column[]; // every column available
 
-        // these are the column actually shown on the screen. used by the header renderer,
+        // these are the columns actually shown on the screen. used by the header renderer,
         // as header needs to know about column groups and the tree structure.
-        private displayedLeftColumnTree: AbstractColumn[];
-        private displayedCentreColumnTree: AbstractColumn[];
+        private displayedLeftColumnTree: ColumnGroupChild[];
+        private displayedCentreColumnTree: ColumnGroupChild[];
 
         // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
         // displayed trees, however it also takes into account if the groups are open or not.
@@ -128,7 +128,7 @@ module ag.grid {
             }
         }
 
-        private getAllColumnGroups(): AbstractColumn[] {
+        private getAllColumnGroups(): ColumnGroupChild[] {
             if (this.displayedLeftColumnTree && this.displayedCentreColumnTree) {
                 return this.displayedLeftColumnTree.concat(this.displayedCentreColumnTree);
             } else {
@@ -150,11 +150,11 @@ module ag.grid {
         }
 
         // + headerRenderer -> setting pinned body width
-        public getLeftHeaderGroups(): AbstractColumn[] {
+        public getLeftHeaderGroups(): ColumnGroupChild[] {
             return this.displayedLeftColumnTree;
         }
         // + headerRenderer -> setting pinned body width
-        public getCenterHeaderGroups(): AbstractColumn[] {
+        public getCenterHeaderGroups(): ColumnGroupChild[] {
             return this.displayedCentreColumnTree;
         }
 
@@ -579,22 +579,6 @@ module ag.grid {
             }
         }
 
-        //private updateDisplayedColumnsWithoutGroups(visibleColumns: Column[]) {
-        //    this.displayedCenterColumns = [];
-        //    this.displayedLeftColumns = [];
-        //    this.leftColumnGroups = null;
-        //    this.centerColumnGroups = null;
-        //
-        //    visibleColumns.forEach( (column: Column)=> {
-        //        if (!column.visible) { return; }
-        //        if (column.pinned) {
-        //            this.displayedLeftColumns.push(column);
-        //        } else {
-        //            this.displayedCenterColumns.push(column);
-        //        }
-        //    });
-        //}
-
         private updateModel() {
             // following 3 methods are only called from here
             this.createGroupAutoColumn();
@@ -604,17 +588,6 @@ module ag.grid {
             this.buildAllGroups(visibleColumns);
             // this is also called when a group is opened or closed
             this.updateGroupsAndDisplayedColumns();
-
-/*
-            if (this.gridOptionsWrapper.isGroupHeaders()) {
-                // only called from here
-                this.buildAllGroups(visibleColumns);
-                // this is also called when a group is opened or closed
-                this.updateGroupsAndDisplayedColumns();
-            } else {
-                this.updateDisplayedColumnsWithoutGroups(visibleColumns);
-            }
-*/
         }
 
         private updateGroupsAndDisplayedColumns() {
@@ -627,15 +600,15 @@ module ag.grid {
             this.displayedLeftColumns = [];
             this.displayedCenterColumns = [];
 
-            this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedLeftColumnTree, (abstractColumn: AbstractColumn)=> {
-                if (abstractColumn instanceof Column) {
-                    this.displayedLeftColumns.push(abstractColumn);
+            this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedLeftColumnTree, (child: ColumnGroupChild)=> {
+                if (child instanceof Column) {
+                    this.displayedLeftColumns.push(child);
                 }
             });
 
-            this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedCentreColumnTree, (abstractColumn: AbstractColumn)=> {
-                if (abstractColumn instanceof Column) {
-                    this.displayedCenterColumns.push(abstractColumn);
+            this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedCentreColumnTree, (child: ColumnGroupChild)=> {
+                if (child instanceof Column) {
+                    this.displayedCenterColumns.push(child);
                 }
             });
         }
@@ -756,9 +729,9 @@ module ag.grid {
 
         private updateGroups(): void {
             var allGroups = this.getAllColumnGroups();
-            this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (abstractColumn: AbstractColumn)=> {
-                if (abstractColumn instanceof ColumnGroup) {
-                    var group = <ColumnGroup> abstractColumn;
+            this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
+                if (child instanceof ColumnGroup) {
+                    var group = <ColumnGroup> child;
                     group.calculateDisplayedColumns();
                 }
             });
@@ -810,13 +783,6 @@ module ag.grid {
 
             return visibleColumns;
         }
-
-        //private updatePinnedColumns(visibleColumns: Column[]): void {
-        //    for (var i = 0; i < visibleColumns.length; i++) {
-        //        var pinned = i < this.pinnedColumnCount;
-        //        visibleColumns[i].pinned = pinned;
-        //    }
-        //}
 
         private createPivotColumns(): void {
             this.pivotColumns = [];

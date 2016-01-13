@@ -34,20 +34,20 @@ module ag.grid {
             };
         }
 
-        private balanceColumnTree(unbalancedTree: AbstractColumn[], currentDept: number, columnDept: number): AbstractColumn[] {
+        private balanceColumnTree(unbalancedTree: ColumnGroupChild[], currentDept: number, columnDept: number): ColumnGroupChild[] {
 
-            var result: AbstractColumn[] = [];
+            var result: ColumnGroupChild[] = [];
 
             // go through each child, for groups, recurse a level deeper,
             // for columns we need to pad
-            unbalancedTree.forEach( (abstractColumn: AbstractColumn)=> {
-                if (abstractColumn instanceof OriginalColumnGroup) {
-                    var originalGroup = <OriginalColumnGroup> abstractColumn;
+            unbalancedTree.forEach( (child: ColumnGroupChild)=> {
+                if (child instanceof OriginalColumnGroup) {
+                    var originalGroup = <OriginalColumnGroup> child;
                     var newChildren = this.balanceColumnTree(originalGroup.getChildren(), currentDept + 1, columnDept);
                     originalGroup.setChildren(newChildren);
                     result.push(originalGroup);
                 } else {
-                    var newChild = abstractColumn;
+                    var newChild = child;
                     for (var i = columnDept-1; i>=currentDept; i--) {
                         var paddedGroup = new OriginalColumnGroup(null);
                         paddedGroup.setChildren([newChild]);
@@ -60,7 +60,7 @@ module ag.grid {
             return result;
         }
 
-        private findMaxDept(treeChildren: AbstractColumn[], dept: number): number {
+        private findMaxDept(treeChildren: ColumnGroupChild[], dept: number): number {
             var maxDeptThisLevel = dept;
             for (var i = 0; i<treeChildren.length; i++) {
                 var abstractColumn = treeChildren[i];
@@ -75,22 +75,9 @@ module ag.grid {
             return maxDeptThisLevel;
         }
 
-        //private setOriginalParents(children: AbstractColumn[], originalParent: ColumnGroup): void {
-        //    children.forEach( (childColumn: AbstractColumn) => {
-        //        childColumn.originalParent = originalParent;
-        //        if (childColumn instanceof ColumnGroup) {
-        //            var childColumnGroup = <ColumnGroup>childColumn;
-        //            var childColumnGroupChildren = childColumnGroup.getChildren();
-        //            if (childColumnGroupChildren) {
-        //                this.setOriginalParents(childColumnGroupChildren, childColumnGroup);
-        //            }
-        //        }
-        //    });
-        //}
+        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number): ColumnGroupChild[] {
 
-        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number): AbstractColumn[] {
-
-            var result: AbstractColumn[] = [];
+            var result: ColumnGroupChild[] = [];
 
             abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
                 this.checkForDeprecatedItems(abstractColDef);

@@ -9,9 +9,9 @@ module ag.grid {
     export class DisplayedGroupCreator {
 
         public createDisplayedGroups(sortedVisibleColumns: Column[],
-                                     balancedColumnTree: AbstractColumn[]): AbstractColumn[] {
+                                     balancedColumnTree: ColumnGroupChild[]): ColumnGroupChild[] {
 
-            var result: AbstractColumn[] = [];
+            var result: ColumnGroupChild[] = [];
 
             var previousRealPath: ColumnGroup[];
             var previousOriginalPath: OriginalColumnGroup[];
@@ -59,7 +59,7 @@ module ag.grid {
             return result;
         }
 
-        private getOriginalPathForColumn(balancedColumnTree: AbstractColumn[], column: Column): OriginalColumnGroup[] {
+        private getOriginalPathForColumn(balancedColumnTree: ColumnGroupChild[], column: Column): OriginalColumnGroup[] {
 
             var result: OriginalColumnGroup[] = [];
             var found = false;
@@ -73,7 +73,7 @@ module ag.grid {
                 return null;
             }
 
-            function recursePath(balancedColumnTree: AbstractColumn[], dept: number): void {
+            function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
 
                 for (var i = 0; i<balancedColumnTree.length; i++) {
                     if (found) {

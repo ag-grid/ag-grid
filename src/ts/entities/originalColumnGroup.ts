@@ -2,22 +2,14 @@
 
 module ag.grid {
 
-    export class OriginalColumnGroup extends AbstractColumn {
+    export class OriginalColumnGroup extends ColumnGroupChild {
 
         private colGroupDef: ColGroupDef;
-        private children: AbstractColumn[];
+        private children: ColumnGroupChild[];
 
         constructor(colGroupDef: ColGroupDef) {
-            super();
             this.colGroupDef = colGroupDef;
         }
-
-        //public addChild(child: AbstractColumn): void {
-        //    if (!this.children) {
-        //        this.children = [];
-        //    }
-        //    this.children.push(child);
-        //}
 
         public getActualWidth(): number {
             throw 'method should not be called';
@@ -27,11 +19,15 @@ module ag.grid {
             throw 'method should not be called';
         }
 
-        public setChildren(children: AbstractColumn[]): void {
+        public getDefinition(): AbstractColDef {
+            throw 'method should not be called';
+        }
+
+        public setChildren(children: ColumnGroupChild[]): void {
             this.children = children;
         }
 
-        public getChildren(): AbstractColumn[] {
+        public getChildren(): ColumnGroupChild[] {
             return this.children;
         }
 

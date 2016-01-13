@@ -303,7 +303,8 @@ include '../documentation_header.php';
         <tr>
             <th>setHeaderHeight(value)</th>
             <td>To set the header height (in pixels) after the grid has initialised. Set to null or undefined
-                to use the default.</td>
+                to use the default of 25px. If havling multiple rows in the header, due to column grouping,
+                this will be the height of each row.</td>
         </tr>
         <tr>
             <th>forEachNode(callback)</th>
