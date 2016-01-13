@@ -21,7 +21,8 @@ module ag.grid {
 
         public createBalancedColumnGroups(abstractColDefs: AbstractColDef[]): any {
             // create am unbalanced tree that maps the provided definitions
-            var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0);
+            var takenColumnIds: String[] = [];
+            var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, takenColumnIds);
             var treeDept = this.findMaxDept(unbalancedTree, 0);
             this.logger.log('Number of levels for grouped columns is ' + treeDept);
             var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept);
@@ -34,13 +35,13 @@ module ag.grid {
             };
         }
 
-        private balanceColumnTree(unbalancedTree: ColumnGroupChild[], currentDept: number, columnDept: number): ColumnGroupChild[] {
+        private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number, columnDept: number): OriginalColumnGroupChild[] {
 
-            var result: ColumnGroupChild[] = [];
+            var result: OriginalColumnGroupChild[] = [];
 
             // go through each child, for groups, recurse a level deeper,
             // for columns we need to pad
-            unbalancedTree.forEach( (child: ColumnGroupChild)=> {
+            unbalancedTree.forEach( (child: OriginalColumnGroupChild)=> {
                 if (child instanceof OriginalColumnGroup) {
                     var originalGroup = <OriginalColumnGroup> child;
                     var newChildren = this.balanceColumnTree(originalGroup.getChildren(), currentDept + 1, columnDept);
@@ -60,7 +61,7 @@ module ag.grid {
             return result;
         }
 
-        private findMaxDept(treeChildren: ColumnGroupChild[], dept: number): number {
+        private findMaxDept(treeChildren: OriginalColumnGroupChild[], dept: number): number {
             var maxDeptThisLevel = dept;
             for (var i = 0; i<treeChildren.length; i++) {
                 var abstractColumn = treeChildren[i];
@@ -75,22 +76,24 @@ module ag.grid {
             return maxDeptThisLevel;
         }
 
-        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number): ColumnGroupChild[] {
+        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number, takenColumnIds: String[]): OriginalColumnGroupChild[] {
 
-            var result: ColumnGroupChild[] = [];
+            var result: OriginalColumnGroupChild[] = [];
 
             abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
                 this.checkForDeprecatedItems(abstractColDef);
                 if (this.isColumnGroup(abstractColDef)) {
                     var groupColDef = <ColGroupDef> abstractColDef;
                     var originalGroup = new OriginalColumnGroup(groupColDef);
-                    var children = this.recursivelyCreateColumns(groupColDef.children, level + 1);
+                    var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, takenColumnIds);
                     originalGroup.setChildren(children);
                     result.push(originalGroup);
                 } else {
                     var colDef = <ColDef> abstractColDef;
                     var width = this.columnUtils.calculateColInitialWidth(colDef);
-                    var column = new Column(colDef, width);
+                    var colId = this.columnUtils.getUniqueColumnIdFromTaken(takenColumnIds, colDef.colId, colDef.field);
+                    takenColumnIds.push(colId);
+                    var column = new Column(colDef, width, colId);
                     result.push(column);
                 }
             });

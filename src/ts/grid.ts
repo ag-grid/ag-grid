@@ -594,8 +594,8 @@ module ag.grid {
                     for (var j = 0; j < sortModel.length; j++) {
                         var sortModelEntry = sortModel[j];
                         if (typeof sortModelEntry.colId === 'string'
-                            && typeof column.colId === 'string'
-                            && sortModelEntry.colId === column.colId) {
+                            && typeof column.getColId() === 'string'
+                            && sortModelEntry.colId === column.getColId()) {
                             sortForCol = sortModelEntry.sort;
                             sortedAt = j;
                         }

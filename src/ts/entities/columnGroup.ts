@@ -1,13 +1,15 @@
-/// <reference path="./abstractColumn.ts"/>
+/// <reference path="./columnGroupChild.ts"/>
 
 module ag.grid {
 
-    export class ColumnGroup extends ColumnGroupChild {
+    export class ColumnGroup implements ColumnGroupChild {
 
         // all the children of this group, regardless of whether they are opened or closed
         private children: ColumnGroupChild[];
         // depends on the open/closed state of the group, only displaying columns are stored here
         private displayedChildren: ColumnGroupChild[] = [];
+
+        private colId: string;
 
         pinned: any;
         expandable = false;
@@ -17,6 +19,10 @@ module ag.grid {
         constructor(pinned: any, colGroupDef: ColGroupDef) {
             this.pinned = pinned;
             this.colGroupDef = colGroupDef;
+        }
+
+        public getColId(): string {
+            return this.colId;
         }
 
         public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {

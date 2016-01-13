@@ -52,7 +52,7 @@ module ag.grid {
                     if (!nextGroup) {
                         nextGroup = {
                             group: true,
-                            field: groupColumn.colId,
+                            field: groupColumn.colDef.field,
                             id: index--,
                             key: groupKey,
                             expanded: this.isExpanded(expandByDefault, currentLevel),

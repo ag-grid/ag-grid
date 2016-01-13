@@ -5,15 +5,13 @@ module ag.grid {
 
     var constants = Constants;
 
-    export class Column implements ColumnGroupChild {
-
-        static colIdSequence = 0;
+    export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         private actualWidth: any;
+        private colId: any;
 
         colDef: ColDef;
         visible: any;
-        colId: any;
         pinned: boolean;
         index: number;
         aggFunc: string;
@@ -21,21 +19,18 @@ module ag.grid {
         sort: string;
         sortedAt: number;
 
-        constructor(colDef: ColDef, actualWidth: any) {
+        constructor(colDef: ColDef, actualWidth: any, colId: String) {
             this.colDef = colDef;
             this.actualWidth = actualWidth;
             this.visible = !colDef.hide;
             this.sort = colDef.sort;
             this.sortedAt = colDef.sortedAt;
             this.pinned = colDef.pinned === true;
-            // in the future, the colKey might be something other than the index
-            if (colDef.colId) {
-                this.colId = colDef.colId;
-            } else if (colDef.field) {
-                this.colId = colDef.field;
-            } else {
-                this.colId = '' + Column.colIdSequence++;
-            }
+            this.colId = colId;
+        }
+
+        public getColId(): string {
+            return this.colId;
         }
 
         public getDefinition(): AbstractColDef {

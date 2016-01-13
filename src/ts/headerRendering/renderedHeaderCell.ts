@@ -69,7 +69,7 @@ module ag.grid {
 
         private addAttributes(): void {
             this.eHeaderCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
-            this.eHeaderCell.setAttribute("colId", this.column.colId);
+            this.eHeaderCell.setAttribute("colId", this.column.getColId());
         }
 
         private addClasses(): void {
@@ -225,7 +225,7 @@ module ag.grid {
         }
 
         public refreshFilterIcon(): void {
-            var filterPresent = this.filterManager.isFilterPresentForCol(this.column.colId);
+            var filterPresent = this.filterManager.isFilterPresentForCol(this.column.getColId());
             if (filterPresent) {
                 _.addCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
                 this.eFilterIcon.style.display = 'inline';

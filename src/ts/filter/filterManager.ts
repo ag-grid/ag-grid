@@ -286,11 +286,11 @@ module ag.grid {
         }
 
         private getOrCreateFilterWrapper(column: Column) {
-            var filterWrapper = this.allFilters[column.colId];
+            var filterWrapper = this.allFilters[column.getColId()];
 
             if (!filterWrapper) {
                 filterWrapper = this.createFilterWrapper(column);
-                this.allFilters[column.colId] = filterWrapper;
+                this.allFilters[column.getColId()] = filterWrapper;
             }
 
             return filterWrapper;

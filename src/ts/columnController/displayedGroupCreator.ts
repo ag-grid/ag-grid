@@ -73,7 +73,7 @@ module ag.grid {
                 return null;
             }
 
-            function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
+            function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
 
                 for (var i = 0; i<balancedColumnTree.length; i++) {
                     if (found) {

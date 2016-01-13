@@ -29,6 +29,51 @@ module ag.grid {
             }
         }
 
+        public getUniqueColumnIdFromTree(allColumnsAndGroups: ColumnGroupChild[], colId: string, colField: string): String {
+            var taken = this.getAllColumnIds(allColumnsAndGroups);
+            return this.getUniqueColumnIdFromTaken(taken, colId, colField);
+        }
+
+        // this method returns a unique id to use for the column. it checks the existing columns, and if the requested
+        // id is already taken, it will start appending numbers until it gets a unique id.
+        // eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
+        // if no field or id provided in the col, it will try the ids of natural numbers
+        public getUniqueColumnIdFromTaken(takenColumnIds: String[], colId: string, colField: string): String {
+
+            var count = 0;
+            while (true) {
+
+                var idToTry: string;
+                if (colId) {
+                    idToTry = colId;
+                    if (count!==0) {
+                        idToTry += '_' + count;
+                    }
+                } else if (colField) {
+                    idToTry = colField;
+                    if (count!==0) {
+                        idToTry += '_' + count;
+                    }
+                } else {
+                    idToTry = '' + count;
+                }
+
+                if (takenColumnIds.indexOf(idToTry) < 0) {
+                    return idToTry;
+                }
+
+                count++;
+            }
+        }
+
+        private getAllColumnIds(tree: ColumnGroupChild[]): String[] {
+            var result: String[] = [];
+            this.deptFirstAllColumnTreeSearch( tree, (child: ColumnGroupChild) => {
+                result.push(child.getColId());
+            });
+            return result;
+        }
+
         public deptFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
 
             if (!tree) { return; }
@@ -36,8 +81,6 @@ module ag.grid {
             tree.forEach( (child: ColumnGroupChild) => {
                 if (child instanceof ColumnGroup) {
                     this.deptFirstAllColumnTreeSearch((<ColumnGroup>child).getChildren(), callback);
-                } else if (child instanceof OriginalColumnGroup) {
-                    this.deptFirstAllColumnTreeSearch((<OriginalColumnGroup>child).getChildren(), callback);
                 }
                 callback(child);
             });

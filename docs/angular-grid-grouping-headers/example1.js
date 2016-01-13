@@ -65,8 +65,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         {
             headerName: "Group 1",
             children: [
-                {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-                {headerName: "Age", field: "age", width: 90, filter: 'number'},
+                {headerName: "Athlete", pinned: true, field: "athlete", width: 150, filter: 'text'},
+                {headerName: "Age", pinned: true, field: "age", width: 90, filter: 'number'},
                 {headerName: "Country", field: "country", width: 120}
             ]
         },
@@ -95,7 +95,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         },
         {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
         {headerName: "Age", field: "age", width: 90, filter: 'number'},
-        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Country", pinned: true, field: "country", width: 120},
         {headerName: "Sport", field: "sport", width: 110},
         {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'number'},
         {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100, filter: 'number'},
@@ -123,6 +123,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         groupHeaders: true,
+        enableSorting: true,
+        enableFilter: true,
         enableColResize: true
     };
 

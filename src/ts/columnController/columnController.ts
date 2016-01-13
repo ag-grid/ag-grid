@@ -385,7 +385,7 @@ module ag.grid {
                 var column = this.allColumns[i];
                 var pivotIndex = this.pivotColumns.indexOf(column);
                 var resultItem = {
-                    colId: column.colId,
+                    colId: column.getColId(),
                     hide: !column.visible,
                     aggFunc: column.aggFunc ? column.aggFunc : null,
                     width: column.getActualWidth(),
@@ -479,7 +479,7 @@ module ag.grid {
             function colMatches(column: Column): boolean {
                 var columnMatches = column === key;
                 var colDefMatches = column.colDef === key;
-                var idMatches = column.colId === key;
+                var idMatches = column.getColId() === key;
                 return columnMatches || colDefMatches || idMatches;
             }
 
@@ -560,7 +560,7 @@ module ag.grid {
         public hideColumns(colIds: any, hide: any) {
             var updatedCols: Column[] = [];
             this.allColumns.forEach( (column: Column) => {
-                var idThisCol = column.colId;
+                var idThisCol = column.getColId();
                 var hideThisCol = colIds.indexOf(idThisCol) >= 0;
                 var newVisible = !hide;
                 if (hideThisCol && column.visible !== newVisible) {
@@ -758,7 +758,8 @@ module ag.grid {
                     };
                 }
                 var groupColumnWidth = this.columnUtils.calculateColInitialWidth(groupColDef);
-                this.groupAutoColumn = new Column(groupColDef, groupColumnWidth);
+                var colId = this.columnUtils.getUniqueColumnIdFromTree(this.getAllColumns(), 'AutoColumn', null);
+                this.groupAutoColumn = new Column(groupColDef, groupColumnWidth, colId);
             } else {
                 this.groupAutoColumn = null;
             }
@@ -820,7 +821,7 @@ module ag.grid {
                 hide: false
             };
             var width = this.gridOptionsWrapper.getColWidth();
-            var column = new Column(colDef, width);
+            var column = new Column(colDef, width, field);
             return column;
         }
 

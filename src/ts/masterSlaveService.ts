@@ -91,7 +91,7 @@ module ag.grid {
                 var masterColumn = event.getColumn();
                 var slaveColumn: Column;
                 if (masterColumn) {
-                    slaveColumn = this.columnController.getColumn(masterColumn.colId);
+                    slaveColumn = this.columnController.getColumn(masterColumn.getColId());
                 }
                 // if event was with respect to a master column, that is not present in this
                 // grid, then we ignore the event
