@@ -17,7 +17,7 @@ module ag.grid {
         public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
         public hideColumns(colIds: any, hide: any): void { this._columnController.hideColumns(colIds, hide); }
         public columnGroupOpened(group: ColumnGroup, newValue: boolean): void { this._columnController.columnGroupOpened(group, newValue); }
-        public getColumnGroup(name: string): ColumnGroup { return this._columnController.getColumnGroup(name); }
+        public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
         public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
         public setState(columnState: any): void { return this._columnController.setState(columnState); }
@@ -109,20 +109,18 @@ module ag.grid {
             this.columnUtils = columnUtils;
         }
 
-        private getColumnsFromTree(rootColumns: AbstractColDef[]): Column[] {
+        private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
             var result: Column[] = [];
             recursiveFindColumns(rootColumns);
             return result;
 
-            function recursiveFindColumns(abstractColumns: AbstractColDef[]): void {
-                for (var i = 0; i<abstractColumns.length; i++) {
-                    var abstractColumn = abstractColumns[i];
-                    if (abstractColumn instanceof Column) {
-                        result.push(<Column>abstractColumn);
-                    } else if (abstractColumn instanceof ColumnGroup) {
-                        recursiveFindColumns((<ColumnGroup>abstractColumn).getChildren());
-                    } else {
-                        recursiveFindColumns((<OriginalColumnGroup>abstractColumn).getChildren());
+            function recursiveFindColumns(childColumns: OriginalColumnGroupChild[]): void {
+                for (var i = 0; i<childColumns.length; i++) {
+                    var child = childColumns[i];
+                    if (child instanceof Column) {
+                        result.push(<Column>child);
+                    } else if (child instanceof OriginalColumnGroup) {
+                        recursiveFindColumns((<OriginalColumnGroup>child).getChildren());
                     }
                 }
             }
@@ -518,17 +516,31 @@ module ag.grid {
             }
         }
 
-        public getColumnGroup(name: string): ColumnGroup {
-            if (!name) {return null;}
+        // returns the group with matching colId and instanceId. If instanceId is missing,
+        // matches only on the colId.
+        public getColumnGroup(colId: string, instanceId?: number): ColumnGroup {
+            if (!colId) {return null;}
+
             var allColumnGroups = this.getAllColumnGroups();
-            if (allColumnGroups) {
-                for (var i = 0; i<allColumnGroups.length; i++) {
-                    console.error('not implemented');
-                    //if (allColumnGroups[i].name === name) {
-                    //    return allColumnGroups[i];
-                    //}
+            var checkInstanceId = typeof instanceId === 'number';
+            var result: ColumnGroup = null;
+
+            this.columnUtils.deptFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild)=> {
+                if (child instanceof ColumnGroup) {
+                    var columnGroup = <ColumnGroup> child;
+                    var matched: boolean;
+                    if (checkInstanceId) {
+                        matched = colId === columnGroup.getColId() && instanceId === columnGroup.getInstanceId();
+                    } else {
+                        matched = colId === columnGroup.getColId();
+                    }
+                    if (matched) {
+                        result = columnGroup;
+                    }
                 }
-            }
+            });
+
+            return result;
         }
 
         // called by angularGrid
@@ -706,27 +718,6 @@ module ag.grid {
             this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.originalBalancedTree);
         }
 
-        private buildGroups(visibleColumns: Column[], columnGroups: ColumnGroup[], pinned: boolean) {
-            // split the columns into groups
-            var currentGroup = <any> null;
-
-            visibleColumns.forEach( (column: any) => {
-                // do we need a new group, because the group names doesn't match from previous col?
-                var groupKeyMismatch = currentGroup && column.colDef.headerGroup !== currentGroup.name;
-                // we don't group columns where no group is specified
-                var colNotInGroup = currentGroup && !currentGroup.name;
-                // do we need a new group, because we are just starting
-                var processingFirstCol = currentGroup === null;
-                var newGroupNeeded = processingFirstCol || groupKeyMismatch || colNotInGroup;
-                // create new group, if it's needed
-                if (newGroupNeeded) {
-                    currentGroup = new ColumnGroup(pinned, column.colDef.headerGroup);
-                    columnGroups.push(currentGroup);
-                }
-                currentGroup.addColumn(column);
-            });
-        }
-
         private updateGroups(): void {
             var allGroups = this.getAllColumnGroups();
             this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
@@ -758,7 +749,7 @@ module ag.grid {
                     };
                 }
                 var groupColumnWidth = this.columnUtils.calculateColInitialWidth(groupColDef);
-                var colId = this.columnUtils.getUniqueColumnIdFromTree(this.getAllColumns(), 'AutoColumn', null);
+                var colId = 'ag-Grid-AutoColumn';
                 this.groupAutoColumn = new Column(groupColDef, groupColumnWidth, colId);
             } else {
                 this.groupAutoColumn = null;
@@ -815,14 +806,15 @@ module ag.grid {
         }
 
         private createDummyColumn(field: any): Column {
-            var colDef = {
-                field: field,
-                headerName: field,
-                hide: false
-            };
-            var width = this.gridOptionsWrapper.getColWidth();
-            var column = new Column(colDef, width, field);
-            return column;
+            throw 'no longer allowing this';
+            //var colDef = {
+            //    field: field,
+            //    headerName: field,
+            //    hide: false
+            //};
+            //var width = this.gridOptionsWrapper.getColWidth();
+            //var column = new Column(colDef, width, field);
+            //return column;
         }
 
         private getWithOfColsInList(columnList: Column[]) {

@@ -5,6 +5,12 @@ module ag.grid {
 
     var constants = Constants;
 
+    // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
+    // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
+    // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
+    // appear as a child of either the original tree or the displayed tree. However the relevant group classes
+    // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
+    // can only appear in OriginalColumn tree).
     export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         private actualWidth: any;

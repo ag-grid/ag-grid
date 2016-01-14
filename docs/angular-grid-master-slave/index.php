@@ -96,6 +96,18 @@ gridOptionsMaster = {
 
     <show-example example="exampleFloatingFooter"></show-example>
 
+    <h4>Split Column Groups</h4>
+
+    <p>
+        It is possible that you have column groups that are split because of pinning or the
+        order of the columns. The grid below has only two groups that are split, displayed
+        as many split groups. The master/slave also works here in that a change to a split
+        group will only impact the correct split group in the other grid (eg opening up
+        'Group 1' will only open up for corresponding 'Group 1' in the other grid).
+    </p>
+
+    <show-example example="exampleMasterSlaveGroups"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

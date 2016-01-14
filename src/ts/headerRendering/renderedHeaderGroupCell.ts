@@ -45,9 +45,6 @@ module ag.grid {
             if (this.columnGroup.isChildInThisGroupDeepSearch(column)) {
                 this.setWidthOfGroupHeaderCell();
             }
-            //this.children.forEach( (childElement: RenderedHeaderElement)=> {
-            //    childElement.onIndividualColumnResized(column);
-            //});
         }
 
         private setupComponents() {

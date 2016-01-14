@@ -101,8 +101,9 @@ module ag.grid {
                 var masterColumnGroup = event.getColumnGroup();
                 var slaveColumnGroup: ColumnGroup;
                 if (masterColumnGroup) {
-                    console.error('not implemented');
-                    //slaveColumnGroup = this.columnController.getColumnGroup(masterColumnGroup.name);
+                    var colId = masterColumnGroup.getColId();
+                    var instanceId = masterColumnGroup.getInstanceId();
+                    slaveColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
                 }
                 if (masterColumnGroup && !slaveColumnGroup) { return; }
 

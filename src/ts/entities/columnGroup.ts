@@ -11,18 +11,26 @@ module ag.grid {
 
         private colId: string;
 
+        private instanceId: number;
+
         pinned: any;
         expandable = false;
         expanded = false;
         colGroupDef: ColGroupDef;
 
-        constructor(pinned: any, colGroupDef: ColGroupDef) {
+        constructor(pinned: any, colGroupDef: ColGroupDef, colId: string, instanceId: number) {
             this.pinned = pinned;
             this.colGroupDef = colGroupDef;
+            this.colId = colId;
+            this.instanceId = instanceId;
         }
 
         public getColId(): string {
             return this.colId;
+        }
+
+        public getInstanceId(): number {
+            return this.instanceId;
         }
 
         public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
@@ -156,6 +164,7 @@ module ag.grid {
                 }
             }
         }
+
     }
 
 }

@@ -2,6 +2,7 @@
 /// <reference path='../entities/column.ts'/>
 /// <reference path='../entities/originalColumnGroup.ts'/>
 /// <reference path='../logger.ts'/>
+/// <reference path='columnKeyCreator.ts'/>
 
 module ag.grid {
 
@@ -12,7 +13,8 @@ module ag.grid {
         private logger: Logger;
         private columnUtils: ColumnUtils;
 
-        public init(gridOptionsWrapper: GridOptionsWrapper, loggerFactory: LoggerFactory, columnUtils: ColumnUtils) {
+        public init(gridOptionsWrapper: GridOptionsWrapper, loggerFactory: LoggerFactory,
+                    columnUtils: ColumnUtils) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnUtils = columnUtils;
 
@@ -20,14 +22,16 @@ module ag.grid {
         }
 
         public createBalancedColumnGroups(abstractColDefs: AbstractColDef[]): any {
+            // column key creator dishes out unique column id's in a deterministic way,
+            // so if we have two grids (that cold be master/slave) with same column definitions,
+            // then this ensures the two grids use identical id's.
+            var columnKeyCreator = new ColumnKeyCreator();
+
             // create am unbalanced tree that maps the provided definitions
-            var takenColumnIds: String[] = [];
-            var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, takenColumnIds);
+            var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator);
             var treeDept = this.findMaxDept(unbalancedTree, 0);
             this.logger.log('Number of levels for grouped columns is ' + treeDept);
-            var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept);
-
-            //this.setOriginalParents(balancedTree, null);
+            var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
             return {
                 balancedTree: balancedTree,
@@ -35,7 +39,8 @@ module ag.grid {
             };
         }
 
-        private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number, columnDept: number): OriginalColumnGroupChild[] {
+        private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number,
+                                  columnDept: number, columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
             var result: OriginalColumnGroupChild[] = [];
 
@@ -44,13 +49,15 @@ module ag.grid {
             unbalancedTree.forEach( (child: OriginalColumnGroupChild)=> {
                 if (child instanceof OriginalColumnGroup) {
                     var originalGroup = <OriginalColumnGroup> child;
-                    var newChildren = this.balanceColumnTree(originalGroup.getChildren(), currentDept + 1, columnDept);
+                    var newChildren = this.balanceColumnTree(
+                        originalGroup.getChildren(), currentDept + 1, columnDept, columnKeyCreator);
                     originalGroup.setChildren(newChildren);
                     result.push(originalGroup);
                 } else {
                     var newChild = child;
                     for (var i = columnDept-1; i>=currentDept; i--) {
-                        var paddedGroup = new OriginalColumnGroup(null);
+                        var newColId = columnKeyCreator.getUniqueKey(null, null);
+                        var paddedGroup = new OriginalColumnGroup(null, newColId);
                         paddedGroup.setChildren([newChild]);
                         newChild = paddedGroup;
                     }
@@ -76,7 +83,8 @@ module ag.grid {
             return maxDeptThisLevel;
         }
 
-        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number, takenColumnIds: String[]): OriginalColumnGroupChild[] {
+        private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number,
+                                         columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
             var result: OriginalColumnGroupChild[] = [];
 
@@ -84,15 +92,15 @@ module ag.grid {
                 this.checkForDeprecatedItems(abstractColDef);
                 if (this.isColumnGroup(abstractColDef)) {
                     var groupColDef = <ColGroupDef> abstractColDef;
-                    var originalGroup = new OriginalColumnGroup(groupColDef);
-                    var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, takenColumnIds);
+                    var colId = columnKeyCreator.getUniqueKey(groupColDef.colId, null);
+                    var originalGroup = new OriginalColumnGroup(groupColDef, colId);
+                    var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator);
                     originalGroup.setChildren(children);
                     result.push(originalGroup);
                 } else {
                     var colDef = <ColDef> abstractColDef;
                     var width = this.columnUtils.calculateColInitialWidth(colDef);
-                    var colId = this.columnUtils.getUniqueColumnIdFromTaken(takenColumnIds, colDef.colId, colDef.field);
-                    takenColumnIds.push(colId);
+                    var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
                     var column = new Column(colDef, width, colId);
                     result.push(column);
                 }

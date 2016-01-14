@@ -6,6 +6,10 @@ module ag.grid {
         headerName?: string;
         /** Whether to show the column when the group is open / closed. */
         columnGroupShow?: string;
+        /** The unique ID to give the column or group. This is optional. If missing, the ID will default to the field
+         *  (if a column, not for groups). If both field and colId are missing, a unique ID will be generated.
+         *  This ID is used to identify the column in the API for sorting, filtering etc. */
+        colId?: string;
     }
 
     export interface ColGroupDef extends AbstractColDef {
@@ -28,10 +32,6 @@ module ag.grid {
 
         /** Expression or function to get the cells value. */
         headerValueGetter?: string | Function;
-
-        /** The unique ID to give the column. This is optional. If missing, the ID will default to the field. If both field and colId are missing, a unique ID will be generated.
-         *  This ID is used to identify the column in the API for sorting, filtering etc. */
-        colId?: string;
 
         /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
          *  however we want all default values to be false and we want columns to be visible by default. */
