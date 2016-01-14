@@ -125,7 +125,15 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>isPinning()</th>
-            <td>Returns true if pinning, otherwise false.</td>
+            <td>Returns true if pinning left or right, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>isPinningLeft()</th>
+            <td>Returns true if pinning left, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>isPinningRight()</th>
+            <td>Returns true if pinning right, otherwise false.</td>
         </tr>
         <tr>
             <th>getVisibleColAfter(col)</th>

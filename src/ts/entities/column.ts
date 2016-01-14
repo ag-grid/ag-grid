@@ -13,12 +13,15 @@ module ag.grid {
     // can only appear in OriginalColumn tree).
     export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
+        public static PINNED_RIGHT = 'right';
+        public static PINNED_LEFT = 'left';
+
         private actualWidth: any;
         private colId: any;
 
         colDef: ColDef;
         visible: any;
-        pinned: boolean;
+        pinned: string;
         index: number;
         aggFunc: string;
         pivotIndex: number;
@@ -31,8 +34,12 @@ module ag.grid {
             this.visible = !colDef.hide;
             this.sort = colDef.sort;
             this.sortedAt = colDef.sortedAt;
-            this.pinned = colDef.pinned === true;
             this.colId = colId;
+            if (colDef.pinned === true || colDef.pinned === 'left') {
+                this.pinned = 'left';
+            } else if (colDef.pinned === 'right') {
+                this.pinned = 'right';
+            }
         }
 
         public getColId(): string {

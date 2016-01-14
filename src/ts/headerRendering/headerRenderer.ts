@@ -17,8 +17,10 @@ module ag.grid {
         private filterManager: FilterManager;
         private $scope: any;
         private $compile: any;
-        private ePinnedHeader: HTMLElement;
+        private ePinnedLeftHeader: HTMLElement;
+        private ePinnedRightHeader: HTMLElement;
         private eHeaderContainer: HTMLElement;
+        private eHeaderViewport: HTMLElement;
         private eRoot: HTMLElement;
 
         private headerElements: RenderedHeaderElement[] = [];
@@ -35,13 +37,16 @@ module ag.grid {
         }
 
         private findAllElements(gridPanel: GridPanel) {
-            this.ePinnedHeader = gridPanel.getPinnedHeader();
+            this.ePinnedLeftHeader = gridPanel.getPinnedLeftHeader();
+            this.ePinnedRightHeader = gridPanel.getPinnedRightHeader();
             this.eHeaderContainer = gridPanel.getHeaderContainer();
+            this.eHeaderViewport = gridPanel.getHeaderViewport();
             this.eRoot = gridPanel.getRoot();
         }
 
         public refreshHeader() {
-            utils.removeAllChildren(this.ePinnedHeader);
+            utils.removeAllChildren(this.ePinnedLeftHeader);
+            utils.removeAllChildren(this.ePinnedRightHeader);
             utils.removeAllChildren(this.eHeaderContainer);
 
             this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
@@ -49,7 +54,8 @@ module ag.grid {
             });
             this.headerElements = [];
 
-            this.insertHeaderRowsIntoContainer(this.columnController.getLeftHeaderGroups(), this.ePinnedHeader);
+            this.insertHeaderRowsIntoContainer(this.columnController.getLeftHeaderGroups(), this.ePinnedLeftHeader);
+            this.insertHeaderRowsIntoContainer(this.columnController.getRightHeaderGroups(), this.ePinnedRightHeader);
             this.insertHeaderRowsIntoContainer(this.columnController.getCenterHeaderGroups(), this.eHeaderContainer);
         }
 
@@ -66,6 +72,19 @@ module ag.grid {
                     // will be an empty list.
                 }
             });
+        }
+
+        public setPinnedColContainerWidth() {
+            if (this.gridOptionsWrapper.isForPrint()) {
+                // pinned col doesn't exist when doing forPrint
+                return;
+            }
+
+            var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth() + 'px';
+            this.eHeaderViewport.style.marginLeft = pinnedLeftWidth;
+
+            var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
+            this.eHeaderViewport.style.marginRight = pinnedRightWidth;
         }
 
         private insertHeaderRowsIntoContainer(cellTree: ColumnGroupChild[], eContainerToAddTo: HTMLElement): void {

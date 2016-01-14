@@ -17,6 +17,7 @@ include 'documentation_header.php';
     <li>Minor: colDef.headerGroupShow is now called colDef.columnGroupShow</li>
     <li>Minor: gridOptions.groupHeaders is no longer a property, such is derived from the column definitions. api.setGroupHeaders() is also gone.</li>
     <li>Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
+    <li>Major: Pinning left and right</li>
 
     <li>Minor: Styling - </li>
 

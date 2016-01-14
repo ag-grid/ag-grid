@@ -41,7 +41,7 @@ module ag.grid {
         hide?: boolean;
 
         /** Whether this column is pinned or not. */
-        pinned?: boolean;
+        pinned?: boolean | string;
 
         /** Tooltip for the column header */
         headerTooltip?: string;

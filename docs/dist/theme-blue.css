@@ -14,22 +14,24 @@
   background: #fff;
   border: 2px solid #217346;
 }
+.ag-blue .ag-pinned-right-cols-container {
+  border-left: 1px dotted #9bc2e6;
+}
 .ag-blue .ag-cell-no-focus {
   border-right: 1px dotted #9bc2e6;
   border-top: 2px solid transparent;
   border-left: 2px solid transparent;
   border-bottom: 1px solid #9bc2e6;
 }
-.ag-blue .ag-pinned-header {
-  background-color: #5b9bd5;
-  border-bottom: 1px solid #9bc2e6;
-}
-.ag-blue .ag-header-container {
+.ag-blue .ag-header {
   background-color: #5b9bd5;
   border-bottom: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-cell {
   border-right: 1px solid #9bc2e6;
+}
+.ag-blue .ag-pinned-right-header {
+  border-left: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-group-cell {
   border-right: 1px solid #9bc2e6;

@@ -23,7 +23,7 @@ module ag.grid {
         private column: Column;
         private gridOptionsWrapper: GridOptionsWrapper;
         private parentScope: any;
-        private childScope: any; //todo: destroy this
+        private childScope: any;
         private filterManager: FilterManager;
         private columnController: ColumnController;
         private $compile: any;

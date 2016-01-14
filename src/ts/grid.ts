@@ -142,6 +142,7 @@ module ag.grid {
                 var that = this;
                 setTimeout(function () {
                     that.doLayout();
+                    that.gridPanel.periodicallyCheck();
                     that.periodicallyDoLayout();
                 }, 500);
             }
@@ -183,7 +184,7 @@ module ag.grid {
             columnUtils.init(gridOptionsWrapper);
             dragAndDropService.init(loggerFactory);
             eventService.init(loggerFactory);
-            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
+            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory);
             templateService.init($scope);
             expressionService.init(loggerFactory);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer, eventService);
@@ -385,6 +386,7 @@ module ag.grid {
             this.headerRenderer.refreshHeader();
             this.headerRenderer.updateFilterIcons();
             this.headerRenderer.updateSortIcons();
+            this.headerRenderer.setPinnedColContainerWidth();
             this.gridPanel.setBodyContainerWidth();
             this.gridPanel.setPinnedColContainerWidth();
             this.rowRenderer.refreshView();
@@ -677,6 +679,7 @@ module ag.grid {
 
         public updatePinnedColContainerWidthAfterColResize() {
             this.gridPanel.setPinnedColContainerWidth();
+            this.headerRenderer.setPinnedColContainerWidth();
         }
 
         public doLayout() {

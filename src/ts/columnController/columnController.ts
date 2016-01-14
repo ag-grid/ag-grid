@@ -22,11 +22,13 @@ module ag.grid {
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
         public setState(columnState: any): void { return this._columnController.setState(columnState); }
         public getState(): [any] { return this._columnController.getState(); }
-        public isPinning(): boolean { return this._columnController.isPinning(); }
+        public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
+        public isPinningLeft(): boolean { return this._columnController.isPinningLeft(); }
+        public isPinningRight(): boolean { return this._columnController.isPinningRight(); }
         public getDisplayedColAfter(col: Column): Column { return this._columnController.getDisplayedColAfter(col); }
         public getDisplayedColBefore(col: Column): Column { return this._columnController.getDisplayedColBefore(col); }
         public setColumnVisible(key: Column|ColDef|String, visible: boolean): void { this._columnController.setColumnVisible(key, visible); }
-        public setColumnPinned(key: Column|ColDef|String, visible: boolean): void { this._columnController.setColumnPinned(key, visible); }
+        public setColumnPinned(key: Column|ColDef|String, pinned: string): void { this._columnController.setColumnPinned(key, pinned); }
 
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
@@ -69,11 +71,13 @@ module ag.grid {
         // these are the columns actually shown on the screen. used by the header renderer,
         // as header needs to know about column groups and the tree structure.
         private displayedLeftColumnTree: ColumnGroupChild[];
+        private displayedRightColumnTree: ColumnGroupChild[];
         private displayedCentreColumnTree: ColumnGroupChild[];
 
         // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
         // displayed trees, however it also takes into account if the groups are open or not.
         private displayedLeftColumns: Column[];
+        private displayedRightColumns: Column[];
         private displayedCenterColumns: Column[];
 
         private headerRowCount = 0;
@@ -127,8 +131,10 @@ module ag.grid {
         }
 
         private getAllColumnGroups(): ColumnGroupChild[] {
-            if (this.displayedLeftColumnTree && this.displayedCentreColumnTree) {
-                return this.displayedLeftColumnTree.concat(this.displayedCentreColumnTree);
+            if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
+                return this.displayedLeftColumnTree
+                    .concat(this.displayedCentreColumnTree)
+                    .concat(this.displayedRightColumnTree);
             } else {
                 return null;
             }
@@ -152,19 +158,30 @@ module ag.grid {
             return this.displayedLeftColumnTree;
         }
         // + headerRenderer -> setting pinned body width
+        public getRightHeaderGroups(): ColumnGroupChild[] {
+            return this.displayedRightColumnTree;
+        }
+        // + headerRenderer -> setting pinned body width
         public getCenterHeaderGroups(): ColumnGroupChild[] {
             return this.displayedCentreColumnTree;
         }
 
         // + csvCreator
         public getAllDisplayedColumns(): Column[] {
-            return this.displayedLeftColumns.concat(this.displayedCenterColumns);
+            // order we add the arrays together is important, so the result
+            // has the columns left to right, as they appear on the screen.
+            return this.displayedLeftColumns
+                .concat(this.displayedCenterColumns)
+                .concat(this.displayedRightColumns);
         }
 
         // used by:
         // + angularGrid -> setting pinned body width
-        public getPinnedContainerWidth() {
+        public getPinnedLeftContainerWidth() {
             return this.getWithOfColsInList(this.displayedLeftColumns);
+        }
+        public getPinnedRightContainerWidth() {
+            return this.getWithOfColsInList(this.displayedRightColumns);
         }
 
         public addPivotColumn(column: Column): void {
@@ -337,11 +354,17 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_VISIBLE, event);
         }
 
-        public setColumnPinned(key: Column|ColDef|String, pinned: boolean): void {
+        public setColumnPinned(key: Column|ColDef|String, pinned: string|boolean): void {
             var column = this.getColumn(key);
             if (!column) {return;}
 
-            column.pinned = pinned;
+            if (pinned === true || pinned === Column.PINNED_LEFT) {
+                column.pinned = Column.PINNED_LEFT;
+            } else if (pinned === Column.PINNED_RIGHT) {
+                column.pinned = Column.PINNED_RIGHT;
+            } else {
+                column.pinned = null;
+            }
 
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withColumn(column);
@@ -370,8 +393,12 @@ module ag.grid {
             }
         }
 
-        public isPinning(): boolean {
+        public isPinningLeft(): boolean {
             return this.displayedLeftColumns.length > 0;
+        }
+
+        public isPinningRight(): boolean {
+            return this.displayedRightColumns.length > 0;
         }
 
         public getState(): [any] {
@@ -610,11 +637,18 @@ module ag.grid {
         private updateDisplayedColumnsFromGroups() {
             // if grouping, then only show col as per group rules
             this.displayedLeftColumns = [];
+            this.displayedRightColumns = [];
             this.displayedCenterColumns = [];
 
             this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedLeftColumnTree, (child: ColumnGroupChild)=> {
                 if (child instanceof Column) {
                     this.displayedLeftColumns.push(child);
+                }
+            });
+
+            this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedRightColumnTree, (child: ColumnGroupChild)=> {
+                if (child instanceof Column) {
+                    this.displayedRightColumns.push(child);
                 }
             });
 
@@ -707,14 +741,19 @@ module ag.grid {
 
         private buildAllGroups(visibleColumns: Column[]) {
             var leftVisibleColumns = _.filter(visibleColumns, (column)=> {
-                return column.pinned;
+                return column.pinned === 'left';
+            });
+
+            var rightVisibleColumns = _.filter(visibleColumns, (column)=> {
+                return column.pinned === 'right';
             });
 
             var centerVisibleColumns = _.filter(visibleColumns, (column)=> {
-                return !column.pinned;
+                return column.pinned !== 'left' && column.pinned !== 'right';
             });
 
             this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, this.originalBalancedTree);
+            this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.originalBalancedTree);
             this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.originalBalancedTree);
         }
 

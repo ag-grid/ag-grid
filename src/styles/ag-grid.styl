@@ -39,7 +39,15 @@ ag-grid-ng2
     overflow: hidden
     width: 100%
 
-.ag-pinned-header
+.ag-pinned-left-header
+    float: left
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
+
+.ag-pinned-right-header
+    float: right
     box-sizing: border-box
     display: inline-block
     overflow: hidden
@@ -47,7 +55,6 @@ ag-grid-ng2
 
 .ag-header-viewport
     box-sizing: border-box
-    display: inline-block
     overflow: hidden
     height: 100%
 
@@ -116,7 +123,14 @@ ag-grid-ng2
     box-sizing: border-box
     overflow: hidden
 
-.ag-pinned-floating-top
+.ag-pinned-left-floating-top
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
+    position: relative
+
+.ag-pinned-right-floating-top
     box-sizing: border-box
     display: inline-block
     overflow: hidden
@@ -143,7 +157,14 @@ ag-grid-ng2
     box-sizing: border-box
     overflow: hidden
 
-.ag-pinned-floating-bottom
+.ag-pinned-left-floating-bottom
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
+    position: relative
+
+.ag-pinned-right-floating-bottom
     box-sizing: border-box
     display: inline-block
     overflow: hidden
@@ -162,12 +183,20 @@ ag-grid-ng2
     white-space: nowrap
     //height: 100%
 
-.ag-pinned-cols-viewport
+.ag-pinned-left-cols-viewport
     float: left
-    position: absolute
     overflow: hidden
 
-.ag-pinned-cols-container
+.ag-pinned-left-cols-container
+    display: inline-block
+    position: relative
+
+.ag-pinned-right-cols-viewport
+    float: right
+    overflow-x: hidden;
+    overflow-y: auto;
+
+.ag-pinned-right-cols-container
     display: inline-block
     position: relative
 
@@ -175,7 +204,8 @@ ag-grid-ng2
     height: 100%
 
 .ag-body-viewport
-    overflow: auto
+    overflow-x: auto;
+    overflow-y: auto; // if we are pinning to the right, overflow y will be hidden
     height: 100%
 
 .ag-scrolls .ag-body-container

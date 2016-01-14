@@ -3,24 +3,29 @@
 
 module ag.grid {
 
+    // the long lines below are on purpose, otherwise there is while space between some of the dives that
+    // we do not want to have, and this white space ends up as gaps in some of the browsers
     var gridHtml =
             `<div>
                 <!-- header -->
                 <div class="ag-header">
-                    <div class="ag-pinned-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
+                    <div class="ag-pinned-left-header"></div><div class="ag-pinned-right-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
                 </div>
                 <!-- floating top -->
                 <div class="ag-floating-top">
-                    <div class="ag-pinned-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
+                    <div class="ag-pinned-left-floating-top"></div><div class="ag-pinned-right-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
                 </div>
                 <!-- floating bottom -->
                 <div class="ag-floating-bottom">
-                    <div class="ag-pinned-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
+                    <div class="ag-pinned-left-floating-bottom"></div><div class="ag-pinned-right-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
                 </div>
                 <!-- body -->
                 <div class="ag-body">
-                    <div class="ag-pinned-cols-viewport">
-                        <div class="ag-pinned-cols-container"></div>
+                    <div class="ag-pinned-left-cols-viewport">
+                        <div class="ag-pinned-left-cols-container"></div>
+                    </div>
+                    <div class="ag-pinned-right-cols-viewport">
+                        <div class="ag-pinned-right-cols-container"></div>
                     </div>
                     <div class="ag-body-viewport-wrapper">
                         <div class="ag-body-viewport">
@@ -63,6 +68,7 @@ module ag.grid {
         private rowModel: any;
 
         private layout: BorderLayout;
+        private logger: Logger;
 
         private forPrint: boolean;
         private scrollWidth: number;
@@ -72,23 +78,33 @@ module ag.grid {
         private eRoot: HTMLElement;
         private eBody: HTMLElement;
         private eBodyContainer: HTMLElement;
-        private ePinnedColsContainer: HTMLElement;
+        private ePinnedLeftColsContainer: HTMLElement;
+        private ePinnedRightColsContainer: HTMLElement;
         private eHeaderContainer: HTMLElement;
-        private ePinnedHeader: HTMLElement;
+        private ePinnedLeftHeader: HTMLElement;
+        private ePinnedRightHeader: HTMLElement;
         private eHeader: HTMLElement;
         private eParentsOfRows: HTMLElement[];
         private eBodyViewportWrapper: HTMLElement;
-        private ePinnedColsViewport: HTMLElement;
+        private ePinnedLeftColsViewport: HTMLElement;
+        private ePinnedRightColsViewport: HTMLElement;
+        private eHeaderViewport: HTMLElement;
 
         private eFloatingTop: HTMLElement;
-        private ePinnedFloatingTop: HTMLElement;
+        private ePinnedLeftFloatingTop: HTMLElement;
+        private ePinnedRightFloatingTop: HTMLElement;
         private eFloatingTopContainer: HTMLElement;
 
         private eFloatingBottom: HTMLElement;
-        private ePinnedFloatingBottom: HTMLElement;
+        private ePinnedLeftFloatingBottom: HTMLElement;
+        private ePinnedRightFloatingBottom: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
 
-        public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService) {
+        private lastLeftPosition = -1;
+        private lastTopPosition = -1;
+
+        public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnController, rowRenderer: RowRenderer,
+                    masterSlaveService: MasterSlaveService, loggerFactory: LoggerFactory) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
             this.forPrint = this.gridOptionsWrapper.isForPrint();
@@ -98,6 +114,7 @@ module ag.grid {
             this.columnModel = columnModel;
             this.rowRenderer = rowRenderer;
             this.masterSlaveService = masterSlaveService;
+            this.logger = loggerFactory.create('GridPanel');
         }
 
         public getLayout(): BorderLayout {
@@ -135,16 +152,24 @@ module ag.grid {
             }
         }
 
-        public getPinnedFloatingTop(): HTMLElement {
-            return this.ePinnedFloatingTop;
+        public getPinnedLeftFloatingTop(): HTMLElement {
+            return this.ePinnedLeftFloatingTop;
+        }
+
+        public getPinnedRightFloatingTop(): HTMLElement {
+            return this.ePinnedRightFloatingTop;
         }
 
         public getFloatingTopContainer(): HTMLElement {
             return this.eFloatingTopContainer;
         }
 
-        public getPinnedFloatingBottom(): HTMLElement {
-            return this.ePinnedFloatingBottom;
+        public getPinnedLeftFloatingBottom(): HTMLElement {
+            return this.ePinnedLeftFloatingBottom;
+        }
+
+        public getPinnedRightFloatingBottom(): HTMLElement {
+            return this.ePinnedRightFloatingBottom;
         }
 
         public getFloatingBottomContainer(): HTMLElement {
@@ -195,6 +220,7 @@ module ag.grid {
         }
 
         public ensureIndexVisible(index: any) {
+            this.logger.log('ensureIndexVisible: ' + index);
             var lastRow = this.rowModel.getVirtualRowCount();
             if (typeof index !== 'number' || index < 0 || index >= lastRow) {
                 console.warn('invalid row index for ensureIndexVisible: ' + index);
@@ -216,15 +242,28 @@ module ag.grid {
             var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
             var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
 
+            var eViewportToScroll = this.columnModel.isPinningRight() ? this.ePinnedRightColsViewport : this.eBodyViewport;
             if (viewportScrolledPastRow) {
                 // if row is before, scroll up with row at top
-                this.eBodyViewport.scrollTop = rowTopPixel;
+                eViewportToScroll.scrollTop = rowTopPixel;
             } else if (viewportScrolledBeforeRow) {
                 // if row is below, scroll down with row at bottom
                 var newScrollPosition = rowBottomPixel - viewportHeight;
-                this.eBodyViewport.scrollTop = newScrollPosition;
+                eViewportToScroll.scrollTop = newScrollPosition;
             }
             // otherwise, row is already in view, so do nothing
+        }
+
+        // gets called every 500 ms. we use this to set padding on right pinned column
+        public periodicallyCheck(): void {
+            if (this.columnModel.isPinningRight()) {
+                var bodyHorizontalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+                if (bodyHorizontalScrollShowing) {
+                    this.ePinnedRightColsContainer.style.marginBottom = this.scrollWidth + 'px';
+                } else {
+                    this.ePinnedRightColsContainer.style.marginBottom = '';
+                }
+            }
         }
 
         public ensureColIndexVisible(index: any) {
@@ -314,8 +353,12 @@ module ag.grid {
             return this.eBodyViewport;
         }
 
-        public getPinnedColsContainer() {
-            return this.ePinnedColsContainer;
+        public getPinnedLeftColsContainer() {
+            return this.ePinnedLeftColsContainer;
+        }
+
+        public getPinnedRightColsContainer() {
+            return this.ePinnedRightColsContainer;
         }
 
         public getHeaderContainer() {
@@ -326,8 +369,12 @@ module ag.grid {
             return this.eRoot;
         }
 
-        public getPinnedHeader() {
-            return this.ePinnedHeader;
+        public getPinnedLeftHeader() {
+            return this.ePinnedLeftHeader;
+        }
+
+        public getPinnedRightHeader() {
+            return this.ePinnedRightHeader;
         }
 
         public getRowsParent(): HTMLElement[] {
@@ -351,31 +398,62 @@ module ag.grid {
                 this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
                 this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
                 this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
-                this.ePinnedColsContainer = this.queryHtmlElement('.ag-pinned-cols-container');
-                this.ePinnedColsViewport = this.queryHtmlElement('.ag-pinned-cols-viewport');
-                this.ePinnedHeader = this.queryHtmlElement('.ag-pinned-header');
+                this.ePinnedLeftColsContainer = this.queryHtmlElement('.ag-pinned-left-cols-container');
+                this.ePinnedRightColsContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
+                this.ePinnedLeftColsViewport = this.queryHtmlElement('.ag-pinned-left-cols-viewport');
+                this.ePinnedRightColsViewport = this.queryHtmlElement('.ag-pinned-right-cols-viewport');
+                this.ePinnedLeftHeader = this.queryHtmlElement('.ag-pinned-left-header');
+                this.ePinnedRightHeader = this.queryHtmlElement('.ag-pinned-right-header');
                 this.eHeader = this.queryHtmlElement('.ag-header');
                 this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
+                this.eHeaderViewport = this.queryHtmlElement('.ag-header-viewport');
 
                 this.eFloatingTop = this.queryHtmlElement('.ag-floating-top');
-                this.ePinnedFloatingTop = this.queryHtmlElement('.ag-pinned-floating-top');
+                this.ePinnedLeftFloatingTop = this.queryHtmlElement('.ag-pinned-left-floating-top');
+                this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
                 this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
 
                 this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
-                this.ePinnedFloatingBottom = this.queryHtmlElement('.ag-pinned-floating-bottom');
+                this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
+                this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
                 this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 
                 // for scrolls, all rows live in eBody (containing pinned and normal body)
                 this.eParentsOfRows = [this.eBody, this.eFloatingTop, this.eFloatingBottom];
 
                 // IE9, Chrome, Safari, Opera
-                this.ePinnedColsViewport.addEventListener('mousewheel', this.mouseWheelListener.bind(this));
+                this.ePinnedLeftColsViewport.addEventListener('mousewheel', this.pinnedLeftMouseWheelListener.bind(this));
+                this.eBodyViewport.addEventListener('mousewheel', this.centerMouseWheelListener.bind(this));
                 // Firefox
-                this.ePinnedColsViewport.addEventListener('DOMMouseScroll', this.mouseWheelListener.bind(this));
+                this.ePinnedLeftColsViewport.addEventListener('DOMMouseScroll', this.pinnedLeftMouseWheelListener.bind(this));
+                this.eBodyViewport.addEventListener('DOMMouseScroll', this.centerMouseWheelListener.bind(this));
             }
         }
 
-        private mouseWheelListener(event: any): boolean {
+        public getHeaderViewport(): HTMLElement {
+            return this.eHeaderViewport;
+        }
+
+        private centerMouseWheelListener(event: any): boolean {
+            // we are only interested in mimicking the mouse wheel if we are pinning on the right,
+            // as if we are not pinning on the right, then we have scrollbars in the center body, and
+            // as such we just use the default browser wheel behaviour.
+            if (this.columnModel.isPinningRight()) {
+                return this.generalMouseWheelListener(event, this.ePinnedRightColsViewport);
+            }
+        }
+
+        private pinnedLeftMouseWheelListener(event: any): boolean {
+            var targetPanel: HTMLElement;
+            if (this.columnModel.isPinningRight()) {
+                targetPanel = this.ePinnedRightColsViewport;
+            } else {
+                targetPanel = this.eBodyViewport;
+            }
+            return this.generalMouseWheelListener(event, targetPanel);
+        }
+
+        private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
             var delta: number;
             if (event.deltaY && event.deltaX != 0) {
                 // tested on chrome
@@ -392,7 +470,7 @@ module ag.grid {
             }
 
             var newTopPosition = this.eBodyViewport.scrollTop + delta;
-            this.eBodyViewport.scrollTop = newTopPosition;
+            targetPanel.scrollTop = newTopPosition;
 
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
             event.preventDefault();
@@ -413,12 +491,18 @@ module ag.grid {
                 // pinned col doesn't exist when doing forPrint
                 return;
             }
-            var pinnedColWidth = this.columnModel.getPinnedContainerWidth() + 'px';
-            this.ePinnedColsContainer.style.width = pinnedColWidth;
-            this.ePinnedFloatingBottom.style.width = pinnedColWidth;
-            this.ePinnedFloatingTop.style.width = pinnedColWidth;
 
-            this.eBodyViewportWrapper.style.marginLeft = pinnedColWidth;
+            var pinnedLeftWidth = this.columnModel.getPinnedLeftContainerWidth() + 'px';
+            this.ePinnedLeftColsContainer.style.width = pinnedLeftWidth;
+            this.ePinnedLeftFloatingBottom.style.width = pinnedLeftWidth;
+            this.ePinnedLeftFloatingTop.style.width = pinnedLeftWidth;
+            this.eBodyViewportWrapper.style.marginLeft = pinnedLeftWidth;
+
+            var pinnedRightWidth = this.columnModel.getPinnedRightContainerWidth() + 'px';
+            this.ePinnedRightColsContainer.style.width = pinnedRightWidth;
+            this.ePinnedRightFloatingBottom.style.width = pinnedRightWidth;
+            this.ePinnedRightFloatingTop.style.width = pinnedRightWidth;
+            this.eBodyViewportWrapper.style.marginRight = pinnedRightWidth;
         }
 
         public showPinnedColContainersIfNeeded() {
@@ -427,16 +511,24 @@ module ag.grid {
                 return;
             }
 
-            var showingPinnedCols = this.columnModel.isPinning();
-
             //some browsers had layout issues with the blank divs, so if blank,
             //we don't display them
-            if (showingPinnedCols) {
-                this.ePinnedHeader.style.display = 'inline-block';
-                this.ePinnedColsViewport.style.display = 'inline';
+            if (this.columnModel.isPinningLeft()) {
+                this.ePinnedLeftHeader.style.display = 'inline-block';
+                this.ePinnedLeftColsViewport.style.display = 'inline';
             } else {
-                this.ePinnedHeader.style.display = 'none';
-                this.ePinnedColsViewport.style.display = 'none';
+                this.ePinnedLeftHeader.style.display = 'none';
+                this.ePinnedLeftColsViewport.style.display = 'none';
+            }
+
+            if (this.columnModel.isPinningRight()) {
+                this.ePinnedRightHeader.style.display = 'inline-block';
+                this.ePinnedRightColsViewport.style.display = 'inline';
+                this.eBodyViewport.style.overflowY = 'hidden';
+            } else {
+                this.ePinnedRightHeader.style.display = 'none';
+                this.ePinnedRightColsViewport.style.display = 'none';
+                this.eBodyViewport.style.overflowY = 'auto';
             }
         }
 
@@ -491,7 +583,8 @@ module ag.grid {
             this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
             this.eFloatingBottom.style.top = floatingBottomTop + 'px';
 
-            this.ePinnedColsViewport.style.height = heightOfCentreRows + 'px';
+            this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
+            this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
         }
 
         private sizeHeaderAndBodyForPrint(): void {
@@ -509,35 +602,48 @@ module ag.grid {
                 return;
             }
 
-            var lastLeftPosition = -1;
-            var lastTopPosition = -1;
-
             this.eBodyViewport.addEventListener('scroll', () => {
-                var newLeftPosition = this.eBodyViewport.scrollLeft;
-                var newTopPosition = this.eBodyViewport.scrollTop;
 
-                if (newLeftPosition !== lastLeftPosition) {
-                    lastLeftPosition = newLeftPosition;
-                    this.scrollHeader(newLeftPosition);
+                // we are always interested in horizontal scrolls of the body
+                var newLeftPosition = this.eBodyViewport.scrollLeft;
+                if (newLeftPosition !== this.lastLeftPosition) {
+                    this.logger.log('eBodyViewport-scrollHandler: newLeftPosition = ' + newLeftPosition);
+                    this.lastLeftPosition = newLeftPosition;
+                    this.horizontallyScrollHeaderCenterAndFloatingCenter(newLeftPosition);
+                    this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
                 }
 
-                if (newTopPosition !== lastTopPosition) {
-                    lastTopPosition = newTopPosition;
-                    this.scrollPinned(newTopPosition);
+                // if we are pinning to the right, then it's the right pinned container
+                // that has the scroll.
+                if (!this.columnModel.isPinningRight()) {
+                    var newTopPosition = this.eBodyViewport.scrollTop;
+                    this.logger.log('eBodyViewport-scrollHandler: newTopPosition = ' + newTopPosition);
+                    if (newTopPosition !== this.lastTopPosition) {
+                        this.lastTopPosition = newTopPosition;
+                        this.verticallyScrollLeftPinned(newTopPosition);
+                        this.requestDrawVirtualRows();
+                    }
+                }
+            });
+
+            this.ePinnedRightColsViewport.addEventListener('scroll', () => {
+                var newTopPosition = this.ePinnedRightColsViewport.scrollTop;
+                this.logger.log('ePinnedRightViewport-scrollHandler: newTopPosition = ' + newTopPosition);
+                if (newTopPosition !== this.lastTopPosition) {
+                    this.lastTopPosition = newTopPosition;
+                    this.verticallyScrollLeftPinned(newTopPosition);
+                    this.verticallyScrollBody(newTopPosition);
                     this.requestDrawVirtualRows();
                 }
-
-                this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             });
 
-            this.ePinnedColsViewport.addEventListener('scroll', () => {
-                // this means the pinned panel was moved, which can only
-                // happen when the user is navigating in the pinned container
-                // as the pinned col should never scroll. so we rollback
-                // the scroll on the pinned.
-                this.ePinnedColsViewport.scrollTop = 0;
+            // this means the pinned panel was moved, which can only
+            // happen when the user is navigating in the pinned container
+            // as the pinned col should never scroll. so we rollback
+            // the scroll on the pinned.
+            this.ePinnedLeftColsViewport.addEventListener('scroll', () => {
+                this.ePinnedLeftColsViewport.scrollTop = 0;
             });
-
         }
 
         private requestDrawVirtualRows() {
@@ -569,16 +675,23 @@ module ag.grid {
             }
         }
 
-        private scrollHeader(bodyLeftPosition: any) {
+        private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any) {
+            this.logger.log('horizontallyScrollHeaderCenterAndFloatingCenter(' + bodyLeftPosition + ')');
             // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
             this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
             this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
             this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
         }
 
-        private scrollPinned(bodyTopPosition: any) {
+        private verticallyScrollLeftPinned(bodyTopPosition: any) {
+            this.logger.log('verticallyScrollLeftPinned(' + bodyTopPosition + ')');
             // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
-            this.ePinnedColsContainer.style.top = -bodyTopPosition + 'px';
+            this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
+        }
+
+        private verticallyScrollBody(position: any) {
+            this.logger.log('verticallyScrollBody(' + position + ')');
+            this.eBodyViewport.scrollTop = position;
         }
     }
 }

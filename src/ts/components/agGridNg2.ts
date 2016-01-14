@@ -1,9 +1,5 @@
 /// <reference path='componentUtil.ts'/>
 
-// todo:
-// + need to hook into destroy callback
-// + how can we make this element extend div?
-
 module ag.grid {
 
     // lets load angular 2 if we can find it

@@ -32,15 +32,19 @@ module ag.grid {
         private renderedBottomFloatingRows: RenderedRow[] = [];
 
         private eAllBodyContainers: HTMLElement[];
-        private eAllPinnedContainers: HTMLElement[];
+        private eAllPinnedLeftContainers: HTMLElement[];
+        private eAllPinnedRightContainers: HTMLElement[];
 
         private eBodyContainer: HTMLElement;
         private eBodyViewport: HTMLElement;
-        private ePinnedColsContainer: HTMLElement;
+        private ePinnedLeftColsContainer: HTMLElement;
+        private ePinnedRightColsContainer: HTMLElement;
         private eFloatingTopContainer: HTMLElement;
-        private eFloatingTopPinnedContainer: HTMLElement;
+        private eFloatingTopPinnedLeftContainer: HTMLElement;
+        private eFloatingTopPinnedRightContainer: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
-        private eFloatingBottomPinnedContainer: HTMLElement;
+        private eFloatingBottomPinnedLeftContainer: HTMLElement;
+        private eFloatingBottomPinnedRightContainer: HTMLElement;
         private eParentsOfRows: HTMLElement[];
 
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
@@ -102,41 +106,52 @@ module ag.grid {
 
         private findAllElements(gridPanel: any) {
             this.eBodyContainer = gridPanel.getBodyContainer();
-            this.ePinnedColsContainer = gridPanel.getPinnedColsContainer();
+            this.ePinnedLeftColsContainer = gridPanel.getPinnedLeftColsContainer();
+            this.ePinnedRightColsContainer = gridPanel.getPinnedRightColsContainer();
 
             this.eFloatingTopContainer = gridPanel.getFloatingTopContainer();
-            this.eFloatingTopPinnedContainer = gridPanel.getPinnedFloatingTop();
+            this.eFloatingTopPinnedLeftContainer = gridPanel.getPinnedLeftFloatingTop();
+            this.eFloatingTopPinnedRightContainer = gridPanel.getPinnedRightFloatingTop();
 
             this.eFloatingBottomContainer = gridPanel.getFloatingBottomContainer();
-            this.eFloatingBottomPinnedContainer = gridPanel.getPinnedFloatingBottom();
+            this.eFloatingBottomPinnedLeftContainer = gridPanel.getPinnedLeftFloatingBottom();
+            this.eFloatingBottomPinnedRightContainer = gridPanel.getPinnedRightFloatingBottom();
 
             this.eBodyViewport = gridPanel.getBodyViewport();
             this.eParentsOfRows = gridPanel.getRowsParent();
 
             this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
                 this.eFloatingTopContainer];
-            this.eAllPinnedContainers = [this.ePinnedColsContainer, this.eFloatingBottomPinnedContainer,
-                this.eFloatingTopPinnedContainer];
+            this.eAllPinnedLeftContainers = [
+                this.ePinnedLeftColsContainer,
+                this.eFloatingBottomPinnedLeftContainer,
+                this.eFloatingTopPinnedLeftContainer];
+            this.eAllPinnedRightContainers = [
+                this.ePinnedRightColsContainer,
+                this.eFloatingBottomPinnedRightContainer,
+                this.eFloatingTopPinnedRightContainer];
         }
 
         public refreshAllFloatingRows(): void {
             this.refreshFloatingRows(
                 this.renderedTopFloatingRows,
                 this.gridOptionsWrapper.getFloatingTopRowData(),
-                this.eFloatingTopPinnedContainer,
+                this.eFloatingTopPinnedLeftContainer,
+                this.eFloatingTopPinnedRightContainer,
                 this.eFloatingTopContainer,
                 true);
             this.refreshFloatingRows(
                 this.renderedBottomFloatingRows,
                 this.gridOptionsWrapper.getFloatingBottomRowData(),
-                this.eFloatingBottomPinnedContainer,
+                this.eFloatingBottomPinnedLeftContainer,
+                this.eFloatingBottomPinnedRightContainer,
                 this.eFloatingBottomContainer,
                 false);
         }
 
         private refreshFloatingRows(renderedRows: RenderedRow[], rowData: any[],
-                                    pinnedContainer: HTMLElement, bodyContainer: HTMLElement,
-                                    isTop: boolean): void {
+                                    pinnedLeftContainer: HTMLElement, pinnedRightContainer: HTMLElement,
+                                    bodyContainer: HTMLElement, isTop: boolean): void {
             renderedRows.forEach( (row: RenderedRow) => {
                 row.destroy();
             });
@@ -160,10 +175,11 @@ module ag.grid {
                         floatingTop: isTop,
                         floatingBottom: !isTop
                     };
-                    var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
-                        this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
-                        this.$compile, this.templateService, this.selectionController, this,
-                        bodyContainer, pinnedContainer, node, rowIndex, this.eventService);
+                    var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
+                        this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+                        this.selectionRendererFactory, this.$compile, this.templateService,
+                        this.selectionController, this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
+                        node, rowIndex, this.eventService);
                     renderedRow.setMainRowWidth(mainRowWidth);
                     renderedRows.push(renderedRow);
                 })
@@ -175,7 +191,8 @@ module ag.grid {
                 var rowCount = this.rowModel.getVirtualRowCount();
                 var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
                 this.eBodyContainer.style.height = containerHeight + "px";
-                this.ePinnedColsContainer.style.height = containerHeight + "px";
+                this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
+                this.ePinnedRightColsContainer.style.height = containerHeight + "px";
             }
 
             this.refreshAllVirtualRows(refreshFromIndex);
@@ -383,10 +400,11 @@ module ag.grid {
                 return;
             }
 
-            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
-                this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
-                this.$compile, this.templateService, this.selectionController, this,
-                this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex, this.eventService);
+            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
+                this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+                this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController,
+                this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
+                node, rowIndex, this.eventService);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;
