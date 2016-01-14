@@ -530,9 +530,9 @@ module ag.grid {
                     var columnGroup = <ColumnGroup> child;
                     var matched: boolean;
                     if (checkInstanceId) {
-                        matched = colId === columnGroup.getColId() && instanceId === columnGroup.getInstanceId();
+                        matched = colId === columnGroup.getGroupId() && instanceId === columnGroup.getInstanceId();
                     } else {
-                        matched = colId === columnGroup.getColId();
+                        matched = colId === columnGroup.getGroupId();
                     }
                     if (matched) {
                         result = columnGroup;

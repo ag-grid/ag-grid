@@ -101,7 +101,7 @@ module ag.grid {
                 var masterColumnGroup = event.getColumnGroup();
                 var slaveColumnGroup: ColumnGroup;
                 if (masterColumnGroup) {
-                    var colId = masterColumnGroup.getColId();
+                    var colId = masterColumnGroup.getGroupId();
                     var instanceId = masterColumnGroup.getInstanceId();
                     slaveColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
                 }

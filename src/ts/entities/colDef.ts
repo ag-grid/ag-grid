@@ -6,18 +6,21 @@ module ag.grid {
         headerName?: string;
         /** Whether to show the column when the group is open / closed. */
         columnGroupShow?: string;
-        /** The unique ID to give the column or group. This is optional. If missing, the ID will default to the field
-         *  (if a column, not for groups). If both field and colId are missing, a unique ID will be generated.
-         *  This ID is used to identify the column in the API for sorting, filtering etc. */
-        colId?: string;
     }
 
     export interface ColGroupDef extends AbstractColDef {
         /** Columns in this group*/
         children: AbstractColDef[];
+        /** Group ID */
+        groupId?: string;
     }
 
     export interface ColDef extends AbstractColDef {
+        /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
+         *  If both field and colId are missing, a unique ID will be generated.
+         *  This ID is used to identify the column in the API for sorting, filtering etc. */
+        colId?: string;
+
         /** If sorting by default, set it here. Set to 'asc' or 'desc' */
         sort?: string;
 

@@ -9,7 +9,7 @@ module ag.grid {
         // depends on the open/closed state of the group, only displaying columns are stored here
         private displayedChildren: ColumnGroupChild[] = [];
 
-        private colId: string;
+        private groupId: string;
 
         private instanceId: number;
 
@@ -18,15 +18,15 @@ module ag.grid {
         expanded = false;
         colGroupDef: ColGroupDef;
 
-        constructor(pinned: any, colGroupDef: ColGroupDef, colId: string, instanceId: number) {
+        constructor(pinned: any, colGroupDef: ColGroupDef, groupId: string, instanceId: number) {
             this.pinned = pinned;
             this.colGroupDef = colGroupDef;
-            this.colId = colId;
+            this.groupId = groupId;
             this.instanceId = instanceId;
         }
 
-        public getColId(): string {
-            return this.colId;
+        public getGroupId(): string {
+            return this.groupId;
         }
 
         public getInstanceId(): number {
