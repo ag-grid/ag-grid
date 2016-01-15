@@ -95,9 +95,9 @@ module ag.grid {
         private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
             var eGroupIcon: any;
             if (this.columnGroup.expanded) {
-                eGroupIcon = _.createIcon('headerGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+                eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
             } else {
-                eGroupIcon = _.createIcon('headerGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+                eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
             }
             eGroupIcon.className = 'ag-header-expand-icon';
             eGroupCellLabel.appendChild(eGroupIcon);

@@ -110,8 +110,8 @@ gridsModule.controller('mainController', function($scope) {
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>',
-            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
 
         getBusinessKeyForNode: function(node) {
@@ -256,7 +256,7 @@ gridsModule.controller('mainController', function($scope) {
     ];
     //put in the month cols
     var monthGroup = {
-        headerName: 'Performance',
+        headerName: 'Monthly Breakdown',
         children: []
     };
     defaultCols.push(monthGroup);
@@ -264,6 +264,10 @@ gridsModule.controller('mainController', function($scope) {
         monthGroup.children.push({
             headerName: month, field: month.toLocaleLowerCase(),
             width: 100, filter: 'number', editable: true,
+            cellClassRules: {
+                'good-score': 'x > 50000',
+                'bad-score': 'x < 10000'
+            },
             newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
             filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})
@@ -668,21 +672,19 @@ function ratingRendererGeneral(value, forFilter)  {
     return result;
 }
 
+var currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 2
+});
+
 function currencyRenderer(params)  {
     if (params.value===null || params.value===undefined) {
         return null;
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-
-        var valueInPence = Math.floor(params.value * 100);
-
-        var pence = valueInPence % 100;
-        var pounds = Math.floor(valueInPence / 100);
-
-        var penceStr = (pence <= 9) ? ('0' + pence) : '' + pence;
-
-        return '&pound; ' + pounds + "." + penceStr;
+        return currencyFormatter.format(params.value);
     }
 }
 

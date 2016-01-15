@@ -38,6 +38,17 @@
                 background-color: darkblue;
                 color: lightblue;
             }
+
+            .good-score {
+                background-color: lightgreen;
+                /*color: lightblue;*/
+            }
+
+            .bad-score {
+                background-color: lightcoral;
+                /*color: lightblue;*/
+            }
+
         </style>
     </head>
 

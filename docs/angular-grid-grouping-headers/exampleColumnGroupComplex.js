@@ -78,8 +78,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         enableFilter: true,
         enableColResize: true,
         icons: {
-            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         }
     };
 

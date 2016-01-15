@@ -73,8 +73,8 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>',
-            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
         groupAggFunction: groupAggFunction
     };
