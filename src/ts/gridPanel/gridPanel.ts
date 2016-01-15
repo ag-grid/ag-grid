@@ -259,6 +259,14 @@ module ag.grid {
             return result;
         }
 
+        public isVerticalScrollShowing(): boolean {
+            if (this.columnModel.isPinningRight()) {
+                return this.ePinnedRightColsViewport.clientHeight < this.ePinnedRightColsViewport.scrollHeight
+            } else {
+                return this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight
+            }
+        }
+
         // gets called every 500 ms. we use this to set padding on right pinned column
         public periodicallyCheck(): void {
             if (this.columnModel.isPinningRight()) {
@@ -338,10 +346,12 @@ module ag.grid {
         }
 
         public getWidthForSizeColsToFit() {
-            var leftWidth = this.ePinnedLeftColsViewport.scrollWidth;
-            var centerWidth = this.eBodyViewport.scrollWidth;
-            var rightWidth = this.ePinnedRightColsViewport.scrollWidth;
-            return leftWidth + centerWidth + rightWidth;
+            var availableWidth = this.eBody.clientWidth;
+            var scrollShowing = this.isVerticalScrollShowing();
+            if (scrollShowing) {
+                availableWidth -= this.scrollWidth;
+            }
+            return availableWidth;
         }
 
         public setRowModel(rowModel: any) {
