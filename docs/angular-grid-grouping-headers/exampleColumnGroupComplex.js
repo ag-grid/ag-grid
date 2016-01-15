@@ -88,7 +88,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         var groupNames = ['GroupA','GroupB','GroupC','GroupD','GroupE','GroupF','GroupG'];
 
         groupNames.forEach( function(groupId) {
-            columnApi.columnGroupOpened(groupId, expand);
+            columnApi.setColumnGroupOpened(groupId, expand);
         });
     };
 

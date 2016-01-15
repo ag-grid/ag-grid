@@ -83,10 +83,23 @@ module ag.grid {
             });
         }
 
+        public getColumnIds(event: ColumnChangeEvent): string[] {
+            var result: string[] = [];
+            if (event.getColumn()) {
+                result.push(event.getColumn().getColId());
+            }
+            if (event.getColumns()) {
+                event.getColumns().forEach( (column: Column) => {
+                    result.push(column.getColId());
+                });
+            }
+            return result;
+        }
+
         public onColumnEvent(event: ColumnChangeEvent): void {
             this.onEvent(() => {
 
-                // the column in the even is from the master grid. need to
+                // the column in the event is from the master grid. need to
                 // look up the equivalent from this (slave) grid
                 var masterColumn = event.getColumn();
                 var slaveColumn: Column;
@@ -107,18 +120,22 @@ module ag.grid {
                 }
                 if (masterColumnGroup && !slaveColumnGroup) { return; }
 
+                // in time, all the methods below should use the column ids, it's a more generic way
+                // of handling columns, and also allows for single or multi column events
+                var columnIds = this.getColumnIds(event);
+
                 switch (event.getType()) {
                     case Events.EVENT_COLUMN_MOVED:
                         this.logger.log('onColumnEvent-> processing '+event+' fromIndex = '+ event.getFromIndex() + ', toIndex = ' + event.getToIndex());
                         this.columnController.moveColumn(event.getFromIndex(), event.getToIndex());
                         break;
                     case Events.EVENT_COLUMN_VISIBLE:
-                        this.logger.log('onColumnEvent-> processing '+event+' visible = '+ masterColumn.visible);
-                        this.columnController.setColumnVisible(slaveColumn, masterColumn.visible);
+                        this.logger.log('onColumnEvent-> processing '+event+' visible = '+ event.isVisible());
+                        this.columnController.setColumnsVisible(columnIds, event.isVisible());
                         break;
                     case Events.EVENT_COLUMN_PINNED:
-                        this.logger.log('onColumnEvent-> processing '+event+' pinned = '+ masterColumn.pinned);
-                        this.columnController.setColumnPinned(slaveColumn, masterColumn.pinned);
+                        this.logger.log('onColumnEvent-> processing '+event+' pinned = '+ event.getPinned());
+                        this.columnController.setColumnsPinned(columnIds, event.getPinned());
                         break;
                     case Events.EVENT_COLUMN_GROUP_OPENED:
                         this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.expanded);

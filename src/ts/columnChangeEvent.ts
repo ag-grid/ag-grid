@@ -5,11 +5,16 @@ module ag.grid {
     export class ColumnChangeEvent {
 
         private type: string;
+        // set if event impacts one column
         private column: Column;
+        // se if event impacts multiple columns
+        private columns: Column[];
         private columnGroup: ColumnGroup;
         private fromIndex: number;
         private toIndex: number;
         private finished: boolean;
+        private visible: boolean;
+        private pinned: string;
 
         constructor(type: string) {
             this.type = type;
@@ -26,8 +31,31 @@ module ag.grid {
             return result;
         }
 
+        public withPinned(pinned: string): ColumnChangeEvent {
+            this.pinned = pinned;
+            return this;
+        }
+
+        public withVisible(visible: boolean): ColumnChangeEvent {
+            this.visible = visible;
+            return this;
+        }
+
+        public isVisible(): boolean {
+            return this.visible;
+        }
+
+        public getPinned(): string {
+            return this.pinned;
+        }
+
         public withColumn(column: Column): ColumnChangeEvent {
             this.column = column;
+            return this;
+        }
+
+        public withColumns(columns: Column[]): ColumnChangeEvent {
+            this.columns = columns;
             return this;
         }
 
@@ -65,6 +93,10 @@ module ag.grid {
 
         public getColumn(): Column {
             return this.column;
+        }
+
+        public getColumns(): Column[] {
+            return this.columns;
         }
 
         public getColumnGroup(): ColumnGroup {

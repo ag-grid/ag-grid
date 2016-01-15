@@ -16,14 +16,13 @@ module ag.grid {
         }
 
         public createDisplayedGroups(sortedVisibleColumns: Column[],
-                                     balancedColumnTree: ColumnGroupChild[]): ColumnGroupChild[] {
+                                     balancedColumnTree: ColumnGroupChild[],
+                                     groupInstanceIdCreator: GroupInstanceIdCreator): ColumnGroupChild[] {
 
             var result: ColumnGroupChild[] = [];
 
             var previousRealPath: ColumnGroup[];
             var previousOriginalPath: OriginalColumnGroup[];
-
-            var groupInstanceIdCreator = new GroupInstanceIdCreator();
 
             // go through each column, then do a bottom up comparison to the previous column, and start
             // to share groups if they converge at any point.

@@ -88,15 +88,6 @@ include '../documentation_header.php';
             this method and passes in the grid width.</td>
         </tr>
         <tr>
-            <th>hideColumn(colId, hide)</th>
-            <td>To show / hide a specific column, where colId = the id of the
-                column you want to show / hide and hide = true to hide, false to show</td>
-        </tr>
-        <tr>
-            <th>hideColumns(colIds, hide)</th>
-            <td>To show / hide a list of columns.</td>
-        </tr>
-        <tr>
             <th>setColumnGroupOpened(group, newValue)</th>
             <td>Call this if  you want to open or close a column group.</td>
         </tr>
@@ -150,8 +141,16 @@ include '../documentation_header.php';
             <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
+            <th>setColumnVisible(key, visible)</th>
+            <td>Same as setColumnVisible, but provide a list of column keys.</td>
+        </tr>
+        <tr>
             <th>setColumnPinned(key, pinned)</th>
             <td>Sets the column pinned / unpinned. Key can be the column id, field, ColDef object or Column object.</td>
+        </tr>
+        <tr>
+            <th>setColumnsPinned(key, pinned)</th>
+            <td>Same as setColumnPinned, but provide a list of column keys.</td>
         </tr>
         <tr>
             <th>getAllColumns()</th>

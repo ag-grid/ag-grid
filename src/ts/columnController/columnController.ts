@@ -15,8 +15,7 @@ module ag.grid {
     export class ColumnApi {
         constructor(private _columnController: ColumnController) {}
         public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
-        public hideColumns(colIds: any, hide: any): void { this._columnController.hideColumns(colIds, hide); }
-        public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean): void { this._columnController.setColumnGroupOpened(group, newValue); }
+        public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean, instanceId?: number): void { this._columnController.setColumnGroupOpened(group, newValue, instanceId); }
         public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
         public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
@@ -28,7 +27,9 @@ module ag.grid {
         public getDisplayedColAfter(col: Column): Column { return this._columnController.getDisplayedColAfter(col); }
         public getDisplayedColBefore(col: Column): Column { return this._columnController.getDisplayedColBefore(col); }
         public setColumnVisible(key: Column|ColDef|String, visible: boolean): void { this._columnController.setColumnVisible(key, visible); }
+        public setColumnsVisible(keys: (Column|ColDef|String)[], visible: boolean): void { this._columnController.setColumnsVisible(keys, visible); }
         public setColumnPinned(key: Column|ColDef|String, pinned: string): void { this._columnController.setColumnPinned(key, pinned); }
+        public setColumnsPinned(keys: (Column|ColDef|String)[], pinned: string): void { this._columnController.setColumnsPinned(keys, pinned); }
 
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
@@ -45,12 +46,19 @@ module ag.grid {
         public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
         public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
         public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
-        public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
 
         public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void {
-            console.error('ag-Grid: columnGroupOpened no longers exists, use setColumnGroupOpened');
+            console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
+            this.setColumnGroupOpened(group, newValue);
         }
-
+        public hideColumns(colIds: any, hide: any): void {
+            console.error('ag-Grid: hideColumns is deprecated, use setColumnsVisible');
+            this._columnController.setColumnsVisible(colIds, !hide);
+        }
+        public hideColumn(colId: any, hide: any): void {
+            console.error('ag-Grid: hideColumn is deprecated, use setColumnVisible');
+            this._columnController.setColumnVisible(colId, !hide);
+        }
     }
 
     export class ColumnController {
@@ -345,31 +353,67 @@ module ag.grid {
         }
 
         public setColumnVisible(key: Column|ColDef|String, visible: boolean): void {
-            var column = this.getColumn(key);
-            if (!column) {return;}
+            this.setColumnsVisible([key], visible);
+        }
 
-            column.visible = visible;
-
-            this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withColumn(column);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VISIBLE, event);
+        public setColumnsVisible(keys: (Column|ColDef|String)[], visible: boolean): void {
+            this.actionOnColumns(keys, (column: Column)=> {
+                column.visible = visible;
+            }, ()=> {
+                return new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withVisible(visible);
+            });
         }
 
         public setColumnPinned(key: Column|ColDef|String, pinned: string|boolean): void {
-            var column = this.getColumn(key);
-            if (!column) {return;}
+            this.setColumnsPinned([key], pinned);
+        }
 
+        public setColumnsPinned(keys: (Column|ColDef|String)[], pinned: string|boolean): void {
+            var actualPinned: string;
             if (pinned === true || pinned === Column.PINNED_LEFT) {
-                column.pinned = Column.PINNED_LEFT;
+                actualPinned = Column.PINNED_LEFT;
             } else if (pinned === Column.PINNED_RIGHT) {
-                column.pinned = Column.PINNED_RIGHT;
+                actualPinned = Column.PINNED_RIGHT;
             } else {
-                column.pinned = null;
+                actualPinned = null;
             }
 
+            this.actionOnColumns(keys, (column: Column)=> {
+                column.pinned = actualPinned;
+            }, ()=> {
+                return new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withPinned(actualPinned);
+            });
+        }
+
+        // does an action on a set of columns. provides common functionality for looking up the
+        // columns based on key, getting a list of effected columns, and then updated the event
+        // with either one column (if it was just one col) or a list of columns
+        private actionOnColumns(keys: (Column|ColDef|String)[],
+                                action: (column:Column)=>void,
+                                createEvent: ()=>ColumnChangeEvent): void {
+
+            if (!keys || keys.length===0) { return; }
+
+            var updatedColumns: Column[] = [];
+
+            keys.forEach( (key: Column|ColDef|String)=> {
+                var column = this.getColumn(key);
+                if (!column) {return;}
+                action(column);
+                updatedColumns.push(column);
+            });
+
+            if (updatedColumns.length===0) {return;}
+
             this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withColumn(column);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PINNED, event);
+            var event = createEvent();
+
+            event.withColumns(updatedColumns);
+            if (updatedColumns.length===1) {
+                event.withColumn(updatedColumns[0]);
+            }
+
+            this.eventService.dispatchEvent(event.getType(), event);
         }
 
         public getDisplayedColBefore(col: any): Column {
@@ -594,37 +638,14 @@ module ag.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        public setColumnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean): void {
-            var groupToUse: ColumnGroup = this.getColumnGroup(passedGroup);
+        public setColumnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean, instanceId?:number): void {
+            var groupToUse: ColumnGroup = this.getColumnGroup(passedGroup, instanceId);
             if (!groupToUse) { return; }
             this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
             groupToUse.expanded = newValue;
             this.updateGroupsAndDisplayedColumns();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
-        }
-
-        // called from API
-        public hideColumns(colIds: any, hide: any) {
-            var updatedCols: Column[] = [];
-            this.allColumns.forEach( (column: Column) => {
-                var idThisCol = column.getColId();
-                var hideThisCol = colIds.indexOf(idThisCol) >= 0;
-                var newVisible = !hide;
-                if (hideThisCol && column.visible !== newVisible) {
-                    column.visible = newVisible;
-                    updatedCols.push(column);
-                }
-            });
-
-            if (updatedCols.length>0) {
-                this.updateModel();
-                updatedCols.forEach( (column: Column) => {
-                    var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE)
-                        .withColumn(column);
-                    this.eventService.dispatchEvent(Events.EVENT_COLUMN_VISIBLE, event);
-                });
-            }
         }
 
         private updateModel() {
@@ -759,9 +780,13 @@ module ag.grid {
                 return column.pinned !== 'left' && column.pinned !== 'right';
             });
 
-            this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, this.originalBalancedTree);
-            this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.originalBalancedTree);
-            this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.originalBalancedTree);
+            var groupInstanceIdCreator = new GroupInstanceIdCreator();
+            this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
+                leftVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
+            this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
+                rightVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
+            this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(
+                centerVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
         }
 
         private updateGroups(): void {

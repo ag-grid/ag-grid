@@ -328,26 +328,6 @@ module ag.grid {
             return this.grid.isToolPanelShowing();
         }
 
-        public hideColumn(colId:any, hide:any) {
-            console.warn('ag-Grid: hideColumn deprecated - use hideColumn on columnApi instead eg api.columnApi.hideColumn()');
-            this.columnController.hideColumns([colId], hide);
-        }
-
-        public hideColumns(colIds:any, hide:any) {
-            console.warn('ag-Grid: hideColumns deprecated - use hideColumns on columnApi instead eg api.columnApi.hideColumns()');
-            this.columnController.hideColumns(colIds, hide);
-        }
-
-        public getColumnState() {
-            console.warn('ag-Grid: getColumnState deprecated - use getColumnState on columnApi instead eg api.columnApi.getState()');
-            return this.columnController.getState();
-        }
-
-        public setColumnState(state:any) {
-            console.warn('ag-Grid: setColumnState deprecated - use setColumnState on columnApi instead eg api.columnApi.setState()');
-            this.columnController.setState(state);
-        }
-
         public doLayout() {
             this.grid.doLayout();
         }

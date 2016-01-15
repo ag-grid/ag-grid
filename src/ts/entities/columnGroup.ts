@@ -13,13 +13,13 @@ module ag.grid {
 
         private instanceId: number;
 
-        pinned: any;
+        //pinned: any;
         expandable = false;
         expanded = false;
         colGroupDef: ColGroupDef;
 
         constructor(pinned: any, colGroupDef: ColGroupDef, groupId: string, instanceId: number) {
-            this.pinned = pinned;
+            //this.pinned = pinned;
             this.colGroupDef = colGroupDef;
             this.groupId = groupId;
             this.instanceId = instanceId;

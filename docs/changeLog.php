@@ -20,6 +20,8 @@ include 'documentation_header.php';
     <li>Major: Pinning left and right</li>
     <li>Minor: Icons {headerGroupOpened, headerGroupClosed} now called {columnGroupOpened, columnGroupClosed}</li>
     <li>Minor: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
+    <li>Minor: setColumnVisible(column) and setColumnsVisible(listOfColumns)</li>
+    <li>Minor: setColumnPinned(column) and setColumnsPinned(listOfColumns)</li>
 
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>

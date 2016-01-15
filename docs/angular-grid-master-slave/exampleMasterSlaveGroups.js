@@ -6,6 +6,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     var columnDefs = [
         {
             headerName: "Group 1",
+            groupId: "Group1",
             children: [
                 {headerName: "AAA", field: "athlete", pinned: true, width: 100},
                 {headerName: "BBB", field: "age", pinned: true, columnGroupShow: 'open', width: 100},
@@ -19,6 +20,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         },
         {
             headerName: "Group 2",
+            groupId: "Group2",
             children: [
                 {headerName: "AAA", field: "athlete", pinned: true, width: 100},
                 {headerName: "BBB", field: "age", pinned: true, columnGroupShow: 'open', width: 100},
@@ -66,7 +68,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         .then(function(res){
             gridOptionsTop.api.setRowData(res.data);
             gridOptionsBottom.api.setRowData(res.data);
-            //gridOptionsTop.api.sizeColumnsToFit();
+            gridOptionsTop.api.sizeColumnsToFit();
 
             // mix up some columns
             gridOptionsTop.columnApi.moveColumn(11,4);

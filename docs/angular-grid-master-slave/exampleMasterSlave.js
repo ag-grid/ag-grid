@@ -63,16 +63,16 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.onCbAthlete = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('athlete', !$scope.cbAthlete);
+        gridOptionsTop.columnApi.setColumnVisible('athlete', $scope.cbAthlete);
     };
 
     $scope.onCbAge = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('age', !$scope.cbAge);
+        gridOptionsTop.columnApi.setColumnVisible('age', $scope.cbAge);
     };
 
     $scope.onCbCountry = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('country', !$scope.cbCountry);
+        gridOptionsTop.columnApi.setColumnVisible('country', $scope.cbCountry);
     };
 });
