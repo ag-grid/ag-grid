@@ -18,6 +18,8 @@ include 'documentation_header.php';
     <li>Minor: gridOptions.groupHeaders is no longer a property, such is derived from the column definitions. api.setGroupHeaders() is also gone.</li>
     <li>Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
     <li>Major: Pinning left and right</li>
+    <li>Minor: Icons {headerGroupOpened, headerGroupClosed} now called {columnGroupOpened, columnGroupClosed}</li>
+    <li>Minor: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
 
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>

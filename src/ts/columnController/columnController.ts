@@ -16,7 +16,7 @@ module ag.grid {
         constructor(private _columnController: ColumnController) {}
         public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
         public hideColumns(colIds: any, hide: any): void { this._columnController.hideColumns(colIds, hide); }
-        public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void { this._columnController.columnGroupOpened(group, newValue); }
+        public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean): void { this._columnController.setColumnGroupOpened(group, newValue); }
         public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
         public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
@@ -46,6 +46,11 @@ module ag.grid {
         public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
         public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
         public hideColumn(colId: any, hide: any): void { this._columnController.hideColumns([colId], hide); }
+
+        public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void {
+            console.error('ag-Grid: columnGroupOpened no longers exists, use setColumnGroupOpened');
+        }
+
     }
 
     export class ColumnController {
@@ -589,7 +594,7 @@ module ag.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        public columnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean): void {
+        public setColumnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean): void {
             var groupToUse: ColumnGroup = this.getColumnGroup(passedGroup);
             if (!groupToUse) { return; }
             this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');

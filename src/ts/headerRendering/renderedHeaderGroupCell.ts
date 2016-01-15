@@ -105,7 +105,7 @@ module ag.grid {
             var that = this;
             eGroupIcon.onclick = function() {
                 var newExpandedValue = !that.columnGroup.expanded;
-                that.columnController.columnGroupOpened(that.columnGroup, newExpandedValue);
+                that.columnController.setColumnGroupOpened(that.columnGroup, newExpandedValue);
             };
         }
 

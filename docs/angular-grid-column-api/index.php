@@ -97,7 +97,7 @@ include '../documentation_header.php';
             <td>To show / hide a list of columns.</td>
         </tr>
         <tr>
-            <th>columnGroupOpened(group, newValue)</th>
+            <th>setColumnGroupOpened(group, newValue)</th>
             <td>Call this if  you want to open or close a column group.</td>
         </tr>
         <tr>
