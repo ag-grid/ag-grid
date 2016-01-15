@@ -16,7 +16,7 @@ module ag.grid {
         constructor(private _columnController: ColumnController) {}
         public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
         public hideColumns(colIds: any, hide: any): void { this._columnController.hideColumns(colIds, hide); }
-        public columnGroupOpened(group: ColumnGroup, newValue: boolean): void { this._columnController.columnGroupOpened(group, newValue); }
+        public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void { this._columnController.columnGroupOpened(group, newValue); }
         public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
         public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
@@ -93,6 +93,8 @@ module ag.grid {
         private eventService: EventService;
         private columnUtils: ColumnUtils;
 
+        private logger: Logger;
+
         constructor() {
         }
 
@@ -100,7 +102,8 @@ module ag.grid {
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     valueService: ValueService, masterSlaveController: MasterSlaveService,
                     eventService: EventService, balancedColumnTreeBuilder: BalancedColumnTreeBuilder,
-                    displayedGroupCreator: DisplayedGroupCreator, columnUtils: ColumnUtils) {
+                    displayedGroupCreator: DisplayedGroupCreator, columnUtils: ColumnUtils,
+                    loggerFactory: LoggerFactory) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.selectionRendererFactory = selectionRendererFactory;
@@ -111,6 +114,7 @@ module ag.grid {
             this.balancedColumnTreeBuilder = balancedColumnTreeBuilder;
             this.displayedGroupCreator = displayedGroupCreator;
             this.columnUtils = columnUtils;
+            this.logger = loggerFactory.create('ColumnController');
         }
 
         private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
@@ -245,6 +249,10 @@ module ag.grid {
             return columnInAllColumns || columnIsGroupAutoColumn;
         }
 
+        public getFirstRightPinnedColIndex(): number {
+            return this.displayedLeftColumns.length + this.displayedCenterColumns.length;
+        }
+
         public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
             if (!this.doesColumnExistInGrid(column)) {
                 console.warn('column does not exist');
@@ -269,18 +277,6 @@ module ag.grid {
 
                 var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
                 this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
-            }
-        }
-
-        private updateGroupWidthsAfterColumnResize(column: Column) {
-            console.error('dont call this method, trying to delete it');
-            var allColumnGroups = this.getAllColumnGroups();
-            if (allColumnGroups) {
-                allColumnGroups.forEach( (columnGroup: ColumnGroup) => {
-                    if (columnGroup.getDisplayedChildren().indexOf(column) >= 0) {
-                        //columnGroup.calculateActualWidth();
-                    }
-                });
             }
         }
 
@@ -545,8 +541,13 @@ module ag.grid {
 
         // returns the group with matching colId and instanceId. If instanceId is missing,
         // matches only on the colId.
-        public getColumnGroup(colId: string, instanceId?: number): ColumnGroup {
+        public getColumnGroup(colId: string|ColumnGroup, instanceId?: number): ColumnGroup {
+
             if (!colId) {return null;}
+
+            if (colId instanceof ColumnGroup) {
+                return colId;
+            }
 
             var allColumnGroups = this.getAllColumnGroups();
             var checkInstanceId = typeof instanceId === 'number';
@@ -588,10 +589,13 @@ module ag.grid {
         }
 
         // called by headerRenderer - when a header is opened or closed
-        public columnGroupOpened(group: ColumnGroup, newValue: boolean): void {
-            group.expanded = newValue;
+        public columnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean): void {
+            var groupToUse: ColumnGroup = this.getColumnGroup(passedGroup);
+            if (!groupToUse) { return; }
+            this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
+            groupToUse.expanded = newValue;
             this.updateGroupsAndDisplayedColumns();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(group);
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
         }
 
@@ -686,7 +690,6 @@ module ag.grid {
                     // no width, set everything to minimum
                     colsToSpread.forEach( (column: Column) => {
                         column.setMinimum();
-                        this.updateGroupWidthsAfterColumnResize(column);
                     });
                 } else {
                     var scale = availablePixels / getTotalWidth(colsToSpread);
@@ -714,7 +717,6 @@ module ag.grid {
                                 column.setActualWidth(newWidth);
                             }
                         }
-                        this.updateGroupWidthsAfterColumnResize(column);
                     }
                 }
             }

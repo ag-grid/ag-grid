@@ -89,6 +89,10 @@ include '../documentation_header.php';
 
     <show-example example="example1"></show-example>
 
+    <h4>Advanced Grouping Example</h4>
+
+    <show-example example="exampleColumnGroupComplex"></show-example>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

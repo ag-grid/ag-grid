@@ -73,7 +73,6 @@ module ag.grid {
                 this.children = [];
             }
             this.children.push(child);
-            this.calculateExpandable();
         }
 
         public getDisplayedChildren(): ColumnGroupChild[] {
@@ -104,6 +103,18 @@ module ag.grid {
             return this.children;
         }
 
+        public getColumnGroupShow(): string {
+            if (this.colGroupDef) {
+                return this.colGroupDef.columnGroupShow;
+            } else {
+                // if there is no col def, then this must be a padding
+                // group, which means we exactly only child. we then
+                // take the value from the child and push it up, making
+                // this group 'invisible'.
+                return this.children[0].getColumnGroupShow();
+            }
+        }
+
         // need to check that this group has at least one col showing when both expanded and contracted.
         // if not, then we don't allow expanding and contracting on this group
         public calculateExpandable() {
@@ -116,7 +127,7 @@ module ag.grid {
             for (var i = 0, j = this.children.length; i < j; i++) {
                 var abstractColumn = this.children[i];
                 // if the abstractColumn is a grid generated group, there will be no colDef
-                var headerGroupShow = abstractColumn.getDefinition() ? abstractColumn.getDefinition().columnGroupShow : null;
+                var headerGroupShow = abstractColumn.getColumnGroupShow();
                 if (headerGroupShow === 'open') {
                     atLeastOneShowingWhenOpen = true;
                     atLeastOneChangeable = true;
@@ -143,7 +154,7 @@ module ag.grid {
             // and calculate again
             for (var i = 0, j = this.children.length; i < j; i++) {
                 var abstractColumn = this.children[i];
-                var headerGroupShow = abstractColumn.getDefinition() ? abstractColumn.getDefinition().columnGroupShow : null;
+                var headerGroupShow = abstractColumn.getColumnGroupShow();
                 switch (headerGroupShow) {
                     case 'open':
                         // when set to open, only show col if group is open

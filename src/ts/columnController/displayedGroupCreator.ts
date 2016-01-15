@@ -9,6 +9,12 @@ module ag.grid {
     // takes in a list of columns, as specified by the column definitions, and returns column groups
     export class DisplayedGroupCreator {
 
+        private columnUtils: ColumnUtils;
+
+        public init(columnUtils: ColumnUtils): void {
+            this.columnUtils = columnUtils;
+        }
+
         public createDisplayedGroups(sortedVisibleColumns: Column[],
                                      balancedColumnTree: ColumnGroupChild[]): ColumnGroupChild[] {
 
@@ -59,6 +65,12 @@ module ag.grid {
 
                 previousRealPath = currentRealPath;
                 previousOriginalPath = currentOriginalPath;
+            });
+
+            this.columnUtils.deptFirstAllColumnTreeSearch(result, (child: ColumnGroupChild)=> {
+                if (child instanceof ColumnGroup) {
+                    (<ColumnGroup>child).calculateExpandable();
+                }
             });
 
             return result;

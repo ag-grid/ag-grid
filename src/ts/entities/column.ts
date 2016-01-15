@@ -42,6 +42,10 @@ module ag.grid {
             }
         }
 
+        public getColumnGroupShow(): string {
+            return this.colDef.columnGroupShow;
+        }
+
         public getColId(): string {
             return this.colId;
         }

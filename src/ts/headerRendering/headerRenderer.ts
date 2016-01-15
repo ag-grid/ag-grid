@@ -104,6 +104,7 @@ module ag.grid {
 
                 var eRow: HTMLElement = document.createElement('div');
                 eRow.className = 'ag-header-row';
+                eRow.style.top = (dept * this.gridOptionsWrapper.getHeaderHeight()) + 'px';
                 eRow.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
 
                 nodesAtDept.forEach( (child: ColumnGroupChild) => {

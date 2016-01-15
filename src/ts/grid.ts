@@ -192,9 +192,11 @@ module ag.grid {
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
             balancedColumnTreeBuilder.init(gridOptionsWrapper, loggerFactory, columnUtils);
+            displayedGroupCreator.init(columnUtils);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
                 expressionService, valueService, masterSlaveService, eventService,
-                balancedColumnTreeBuilder, displayedGroupCreator, columnUtils);
+                balancedColumnTreeBuilder, displayedGroupCreator, columnUtils,
+                loggerFactory);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService, eventService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,

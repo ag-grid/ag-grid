@@ -243,11 +243,12 @@ module ag.grid {
 
         private drawNormalRow() {
             var columns = this.columnController.getAllDisplayedColumns();
+            var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
             for (var i = 0; i<columns.length; i++) {
                 var column = columns[i];
-                var firstCol = i === 0;
+                var firstRightPinnedCol = i === firstRightPinnedColIndex;
 
-                var renderedCell = new RenderedCell(firstCol, column,
+                var renderedCell = new RenderedCell(firstRightPinnedCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
                     this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnController,

@@ -29,7 +29,7 @@ module ag.grid {
         private editingCell: boolean;
 
         private scope: any;
-        private isFirstColumn: boolean = false;
+        private firstRightPinnedColumn: boolean;
 
         private gridOptionsWrapper: GridOptionsWrapper;
         private expressionService: ExpressionService;
@@ -47,14 +47,14 @@ module ag.grid {
         private value: any;
         private checkboxSelection: boolean;
 
-        constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
+        constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
                     node: any, rowIndex: number, scope: any, columnController: ColumnController,
                     valueService: ValueService, eventService: EventService) {
 
-            this.isFirstColumn = isFirstColumn;
+            this.firstRightPinnedColumn = firstRightPinnedCol;
             this.column = column;
             this.rowRenderer = rowRenderer;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -661,6 +661,10 @@ module ag.grid {
             }
             if (this.node.group && !this.node.footer) {
                 this.vGridCell.addClass('ag-group-cell');
+            }
+
+            if (this.firstRightPinnedColumn) {
+                this.vGridCell.addClass('ag-cell-first-right-pinned');
             }
         }
 

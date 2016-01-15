@@ -6,5 +6,6 @@ module ag.grid {
         getActualWidth(): number;
         getMinimumWidth(): number;
         getDefinition(): AbstractColDef;
+        getColumnGroupShow(): string;
     }
 }

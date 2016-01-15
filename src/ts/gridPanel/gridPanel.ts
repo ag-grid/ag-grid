@@ -233,7 +233,7 @@ module ag.grid {
 
             var viewportTopPixel = this.eBodyViewport.scrollTop;
             var viewportHeight = this.eBodyViewport.offsetHeight;
-            var scrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+            var scrollShowing = this.isHorizontalScrollShowing();
             if (scrollShowing) {
                 viewportHeight -= this.scrollWidth;
             }
@@ -252,6 +252,11 @@ module ag.grid {
                 eViewportToScroll.scrollTop = newScrollPosition;
             }
             // otherwise, row is already in view, so do nothing
+        }
+
+        public isHorizontalScrollShowing(): boolean {
+            var result = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+            return result;
         }
 
         // gets called every 500 ms. we use this to set padding on right pinned column
@@ -333,12 +338,10 @@ module ag.grid {
         }
 
         public getWidthForSizeColsToFit() {
-            var availableWidth = this.eBody.clientWidth;
-            var scrollShowing = this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight;
-            if (scrollShowing) {
-                availableWidth -= this.scrollWidth;
-            }
-            return availableWidth;
+            var leftWidth = this.ePinnedLeftColsViewport.scrollWidth;
+            var centerWidth = this.eBodyViewport.scrollWidth;
+            var rightWidth = this.ePinnedRightColsViewport.scrollWidth;
+            return leftWidth + centerWidth + rightWidth;
         }
 
         public setRowModel(rowModel: any) {

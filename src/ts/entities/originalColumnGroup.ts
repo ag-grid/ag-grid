@@ -28,6 +28,7 @@ module ag.grid {
         public getColGroupDef(): ColGroupDef {
             return this.colGroupDef;
         }
+
     }
 
 }
