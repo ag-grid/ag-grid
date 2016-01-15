@@ -144,8 +144,8 @@ include '../documentation_header.php';
                 as this gets called after <i>recomputeAggregates()</i> anyway.</td>
         </tr>
         <tr>
-            <th>refreshPivot()</th>
-            <td>Gets the grid to recompute the pivot row groups.</td>
+            <th>refreshGroup()</th>
+            <td>Gets the grid to recompute the row groups.</td>
         </tr>
         <tr>
             <th>getModel()</th>

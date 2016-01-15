@@ -71,7 +71,7 @@ gridsModule.controller('mainController', function($scope) {
         groupSuppressAutoColumn: true,
         //groupSuppressBlankHeader: true,
         groupIncludeFooter: false,
-        groupHidePivotColumns: true,
+        groupHideGroupColumns: true,
         //unSortIcon: true,
         //rowHeight: 30, // defaults to 25, can be any integer
         enableColResize: true, //one of [true, false]
@@ -85,7 +85,7 @@ gridsModule.controller('mainController', function($scope) {
         //suppressCellSelection: true,
         //suppressMultiSort: true,
         showToolPanel: false,
-        //toolPanelSuppressPivot: true,
+        //toolPanelSuppressGroup: true,
         //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
@@ -377,7 +377,7 @@ gridsModule.controller('mainController', function($scope) {
         var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
         gridOptions.groupIncludeFooter = useFooter;
 
-        gridOptions.api.refreshPivot();
+        gridOptions.api.refreshRowGroup();
     };
 
     $scope.toggleToolPanel = function() {

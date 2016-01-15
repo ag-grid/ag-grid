@@ -277,7 +277,7 @@ module ag.grid {
             eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
-            eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_CHANGE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
@@ -285,8 +285,8 @@ module ag.grid {
         }
 
         private onColumnChanged(event: ColumnChangeEvent): void {
-            if (event.isPivotChanged()) {
-                this.inMemoryRowController.onPivotChanged();
+            if (event.isRowGroupChanged()) {
+                this.inMemoryRowController.onRowGroupChanged();
             }
             if (event.isValueChanged()) {
                 this.inMemoryRowController.doAggregate();
@@ -301,8 +301,8 @@ module ag.grid {
             this.gridPanel.showPinnedColContainersIfNeeded();
         }
 
-        public refreshPivot(): void {
-            this.inMemoryRowController.onPivotChanged();
+        public refreshRowGroup(): void {
+            this.inMemoryRowController.onRowGroupChanged();
             this.refreshHeaderAndBody();
         }
 

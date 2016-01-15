@@ -54,8 +54,8 @@ include '../documentation_header.php';
             group: 'laGroup',
             // tool panel
             columns: 'laColumns',
-            pivotedColumns: 'laPivot Cols',
-            pivotedColumnsEmptyMessage: 'la please drag cols to here',
+            groupColumns: 'laGroup Cols',
+            groupColumnsEmptyMessage: 'la please drag cols to here',
             valueColumns: 'laValue Cols',
             valueColumnsEmptyMessage: 'la please drag cols to here'
         }

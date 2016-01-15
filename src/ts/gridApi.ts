@@ -356,8 +356,8 @@ module ag.grid {
             this.eventService.dispatchEvent(eventType, event);
         }
 
-        public refreshPivot(): void {
-            this.grid.refreshPivot();
+        public refreshRowGroup(): void {
+            this.grid.refreshRowGroup();
         }
 
         public destroy(): void {

@@ -620,7 +620,6 @@ module ag.grid {
                 // we are always interested in horizontal scrolls of the body
                 var newLeftPosition = this.eBodyViewport.scrollLeft;
                 if (newLeftPosition !== this.lastLeftPosition) {
-                    this.logger.log('eBodyViewport-scrollHandler: newLeftPosition = ' + newLeftPosition);
                     this.lastLeftPosition = newLeftPosition;
                     this.horizontallyScrollHeaderCenterAndFloatingCenter(newLeftPosition);
                     this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
@@ -630,7 +629,6 @@ module ag.grid {
                 // that has the scroll.
                 if (!this.columnModel.isPinningRight()) {
                     var newTopPosition = this.eBodyViewport.scrollTop;
-                    this.logger.log('eBodyViewport-scrollHandler: newTopPosition = ' + newTopPosition);
                     if (newTopPosition !== this.lastTopPosition) {
                         this.lastTopPosition = newTopPosition;
                         this.verticallyScrollLeftPinned(newTopPosition);
@@ -641,7 +639,6 @@ module ag.grid {
 
             this.ePinnedRightColsViewport.addEventListener('scroll', () => {
                 var newTopPosition = this.ePinnedRightColsViewport.scrollTop;
-                this.logger.log('ePinnedRightViewport-scrollHandler: newTopPosition = ' + newTopPosition);
                 if (newTopPosition !== this.lastTopPosition) {
                     this.lastTopPosition = newTopPosition;
                     this.verticallyScrollLeftPinned(newTopPosition);
@@ -689,7 +686,6 @@ module ag.grid {
         }
 
         private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any) {
-            this.logger.log('horizontallyScrollHeaderCenterAndFloatingCenter(' + bodyLeftPosition + ')');
             // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
             this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
             this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
@@ -697,7 +693,6 @@ module ag.grid {
         }
 
         private verticallyScrollLeftPinned(bodyTopPosition: any) {
-            this.logger.log('verticallyScrollLeftPinned(' + bodyTopPosition + ')');
             // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
             this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
         }

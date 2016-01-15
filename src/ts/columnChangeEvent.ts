@@ -105,8 +105,8 @@ module ag.grid {
             return this.columnGroup;
         }
 
-        public isPivotChanged(): boolean {
-            return this.type === Events.EVENT_COLUMN_PIVOT_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
+        public isRowGroupChanged(): boolean {
+            return this.type === Events.EVENT_COLUMN_ROW_GROUP_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
         }
 
         public isValueChanged(): boolean {

@@ -15,11 +15,11 @@ module ag.grid {
         ];
 
         public static SIMPLE_BOOLEAN_PROPERTIES = [
-            'virtualPaging','toolPanelSuppressPivot','toolPanelSuppressValues','rowsAlreadyGrouped',
+            'virtualPaging','toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
             'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
             'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
             'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
-            'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
+            'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHideGroupColumns',
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
             'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
             'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay'
@@ -28,7 +28,7 @@ module ag.grid {
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];
         public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
-            'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
+            'rowData','floatingTopRowData','floatingBottomRowData',
             'columnDefs','datasource','quickFilterText'];
 
         public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
@@ -133,11 +133,8 @@ module ag.grid {
                 component.api.setHeaderHeight(component.headerHeight);
             }
 
-            // need to review these, they are not impacting anything, they should
+            // need to review this, it is not impacting anything, they should
             // call something on the API to update the grid
-            if (changes.groupKeys) {
-                component.gridOptions.groupKeys = component.groupKeys;
-            }
             if (changes.groupAggFunction) {
                 component.gridOptions.groupAggFunction = component.groupAggFunction;
             }

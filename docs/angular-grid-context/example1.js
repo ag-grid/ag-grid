@@ -60,8 +60,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             reportingCurrency: 'EUR'
         },
         columnDefs: columnDefs,
-        rowData: data,
-        forPrint: true
+        rowData: data
     };
 
 });

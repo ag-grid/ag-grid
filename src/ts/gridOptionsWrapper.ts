@@ -42,11 +42,11 @@ module ag.grid {
         public getContext() { return this.gridOptions.context; }
         public isVirtualPaging() { return isTrue(this.gridOptions.virtualPaging); }
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
-        public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
+        public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
-        public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }
+        public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
         public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
         public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
         public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
@@ -70,7 +70,6 @@ module ag.grid {
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
         public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
         public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
-        public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
         public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
@@ -164,6 +163,13 @@ module ag.grid {
             if (options.groupAggFields) {
                 console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
             }
+            if (options.groupHidePivotColumns) {
+                console.warn('ag-grid: as of v3 groupHidePivotColumns is not used as pivot columns are now called rowGroup columns. Please refer to the documentation');
+            }
+            if (options.groupKeys) {
+                console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
+            }
+
         }
 
         public getLocaleTextFunc() {

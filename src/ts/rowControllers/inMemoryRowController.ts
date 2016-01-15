@@ -403,15 +403,15 @@ module ag.grid {
             }
         }
 
-        // called by grid when pivot cols change
-        public onPivotChanged(): void {
-            this.doPivoting();
+        // called by grid when row group cols change
+        public onRowGroupChanged(): void {
+            this.doRowGrouping();
             this.updateModel(constants.STEP_EVERYTHING);
         }
 
-        private doPivoting() {
+        private doRowGrouping() {
             var rowsAfterGroup: any;
-            var groupedCols = this.columnController.getPivotedColumns();
+            var groupedCols = this.columnController.getRowGroupColumns();
             var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
 
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
@@ -507,9 +507,9 @@ module ag.grid {
             this.recursivelyAddIdToNodes(nodes, firstIdToUse);
             this.allRows = nodes;
 
-            // pivot here, so filters have the agg data ready
+            // group here, so filters have the agg data ready
             if (this.columnController.isSetupComplete()) {
-                this.doPivoting();
+                this.doRowGrouping();
             }
         }
 

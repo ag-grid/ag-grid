@@ -5,8 +5,8 @@ module ag.grid {
         /** A new set of columns has been entered, everything has potentially changed. */
         public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
 
-        /** A pivot column was added, removed or order changed. */
-        public static EVENT_COLUMN_PIVOT_CHANGE = 'columnPivotChanged';
+        /** A row group column was added, removed or order changed. */
+        public static EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';
 
         /** A value column was added, removed or agg function was changed. */
         public static EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';

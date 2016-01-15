@@ -28,10 +28,6 @@ include '../documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>groupKeys</th>
-            <td>An array of 1 or more strings, each entry a column identifier to group by. Leave blank, or empty array, for no grouping.</td>
-        </tr>
-        <tr>
             <th>groupUseEntireRow</th>
             <td>If grouping, set to true or false (default is false). If true, a group row will span all columns across the entire
                 width of the table. If false, the cells will be rendered as normal and you will have the opportunity to include
@@ -67,8 +63,8 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>groupHidePivotColumns</th>
-            <td>If true, when a column is pivoted, it is not displayed as a normal column. Useful when you
+            <th>groupHideGroupColumns</th>
+            <td>If true, when a column is row grouped, it is not displayed as a normal column. Useful when you
                 don't want the data appearing twice, once is group column, once in normal column.
             </td>
         </tr>

@@ -28,7 +28,7 @@ include '../documentation_header.php';
     <p>
         Below lists all the methods on the column API. At the bottom of this page there is an example.
         Note that when talking about columns, a Column Group refers to grouping of the columns in
-        the header, a Column Pivot refers to grouping of the data when doing aggregation and grouping
+        the header, a Row Group refers to grouping of the data when doing aggregation and grouping
         of rows.
     </p>
 
@@ -168,20 +168,20 @@ include '../documentation_header.php';
                 of the column after the removal).</td>
         </tr>
         <tr>
-            <th>getPivotedColumns()</th>
-            <td>Returns the pivoted columns. Pivoted columns are used for row grouping.</td>
+            <th>getRowGroupColumns()</th>
+            <td>Returns the row group columns.</td>
         </tr>
         <tr>
-            <th>addPivotColumn(column)</th>
-            <td>Removes a pivoted column.</td>
+            <th>addRowGroupColumn(column)</th>
+            <td>Removes a row group column.</td>
         </tr>
         <tr>
-            <th>removePivotColumn(column)</th>
-            <td>Removes a pivoted column.</td>
+            <th>removeRowGroupColumn(column)</th>
+            <td>Removes a row group column.</td>
         </tr>
         <tr>
-            <th>movePivotColumn(fromIndex, toIndex)</th>
-            <td>Moves a pivot column.</td>
+            <th>moveRowGroupColumn(fromIndex, toIndex)</th>
+            <td>Moves a row group column.</td>
         </tr>
         <tr>
             <th>setColumnAggFunction(column, aggFunc)</th>
@@ -216,7 +216,7 @@ include '../documentation_header.php';
 
     <p>
         It is also possible to store the entire state of the columns and restore them again via
-        the API. This includes visibility, width, pivots and values.
+        the API. This includes visibility, width, row groups and values.
     </p>
 
     <ul>
@@ -230,8 +230,8 @@ include '../documentation_header.php';
     </p>
 
 <pre>[
-{colId: "athlete", aggFunc: "sum",  hide: false, pivotIndex: 0,    width: 150},
-{colId: "age",     aggFunc: null,   hide: true,  pivotIndex: null, width: 90}
+{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150},
+{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90}
 ]
 </pre>
 
@@ -250,8 +250,8 @@ include '../documentation_header.php';
         <li><b>aggFunc</b>: If this columns is a value column, this field specifies the aggregation function.
         If the column is not a value column, this field is null.</li>
         <li><b>hide</b>: True if the column is hidden, otherwise false.</li>
-        <li><b>pivotIndex</b>: The index of the pivot. If the column is not pivoted, this field is null.
-        If multiple columns are used to pivot, this index provides the order of the pivot.</li>
+        <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.
+        If multiple columns are used to group, this index provides the order of the grouping.</li>
         <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
     </ul>
     </p>

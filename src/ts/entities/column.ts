@@ -32,7 +32,6 @@ module ag.grid {
         private pinned: string;
         private index: number;
         private aggFunc: string;
-        private pivotIndex: number;
         private sort: string;
         private sortedAt: number;
 
@@ -64,14 +63,6 @@ module ag.grid {
 
         public setSortedAt(sortedAt: number): void {
             this.sortedAt = sortedAt;
-        }
-
-        public getPivotIndex(): number {
-            return this.pivotIndex;
-        }
-
-        public setPivotIndex(pivotIndex: number): void {
-            this.pivotIndex = pivotIndex;
         }
 
         public setAggFunc(aggFunc: string): void {

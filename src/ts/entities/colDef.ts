@@ -79,6 +79,9 @@ module ag.grid {
         /** Name of function to use for aggregation. One of [sum,min,max]. */
         aggFunc?: string;
 
+        /** To group by this column by default, provide an index here. */
+        rowGroupIndex?: number;
+
         /** Comparator function for custom sorting. */
         comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
@@ -135,6 +138,5 @@ module ag.grid {
 
         /** Function callback, gets called when a cell is right clicked. */
         onCellContextMenu?: Function;
-
     }
 }

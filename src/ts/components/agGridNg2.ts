@@ -42,7 +42,7 @@ module ag.grid {
 
         // column grid events
         public columnEverythingChanged = new _ng.core.EventEmitter();
-        public columnPivotChanged = new _ng.core.EventEmitter();
+        public columnRowGroupChanged = new _ng.core.EventEmitter();
         public columnValueChanged = new _ng.core.EventEmitter();
         public columnMoved = new _ng.core.EventEmitter();
         public columnVisible = new _ng.core.EventEmitter();
@@ -52,7 +52,7 @@ module ag.grid {
 
         // properties
         public virtualPaging: boolean;
-        public toolPanelSuppressPivot: boolean;
+        public toolPanelSuppressGroups: boolean;
         public toolPanelSuppressValues: boolean;
         public rowsAlreadyGrouped: boolean;
         public suppressRowClickSelection: boolean;
@@ -81,7 +81,7 @@ module ag.grid {
 
         public groupSuppressAutoColumn: boolean;
         public groupSelectsChildren: boolean;
-        public groupHidePivotColumns: boolean;
+        public groupHideGroupColumns: boolean;
         public groupIncludeFooter: boolean;
         public groupUseEntireRow: boolean;
         public groupSuppressRow: boolean;
@@ -104,7 +104,6 @@ module ag.grid {
         public floatingTopRowData: any[]; // should this be immutable ag2?
         public floatingBottomRowData: any[]; // should this be immutable ag2?
         public showToolPanel: boolean;
-        public groupKeys: string[];
         public groupAggFunction: (nodes: any[]) => void;
         public columnDefs: any[]; // change to typed
         public datasource: any; // should be typed
@@ -142,7 +141,7 @@ module ag.grid {
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
-                case Events.EVENT_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
+                case Events.EVENT_COLUMN_ROW_GROUP_CHANGE: emitter = this.columnRowGroupChanged; break;
                 case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
                 case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
                 case Events.EVENT_COLUMN_VISIBLE: emitter = this.columnVisible; break;
@@ -200,7 +199,7 @@ module ag.grid {
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
                     'rowClicked', 'rowDoubleClicked', 'ready',
                     // column events
-                    'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
+                    'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
                 inputs: ['gridOptions']
                     .concat(ComponentUtil.SIMPLE_PROPERTIES)

@@ -34,16 +34,16 @@ module ag.grid {
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
         public getDisplayedCenterColumns(): Column[] { return this._columnController.getDisplayedCenterColumns(); }
-        public getPivotedColumns(): Column[] { return this._columnController.getPivotedColumns(); }
+        public getRowGroupColumns(): Column[] { return this._columnController.getRowGroupColumns(); }
         public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
         public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
-        public movePivotColumn(fromIndex: number, toIndex: number): void { this._columnController.movePivotColumn(fromIndex, toIndex); }
+        public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
         public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
         public setColumnWidth(column: Column, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(column, newWidth, finished); }
         public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
-        public removePivotColumn(column: Column): void { this._columnController.removePivotColumn(column); }
-        public addPivotColumn(column: Column): void { this._columnController.addPivotColumn(column); }
+        public removeRowGroupColumn(column: Column): void { this._columnController.removeRowGroupColumn(column); }
+        public addRowGroupColumn(column: Column): void { this._columnController.addRowGroupColumn(column); }
         public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
         public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
 
@@ -95,7 +95,7 @@ module ag.grid {
 
         private headerRowCount = 0;
 
-        private pivotColumns: Column[];
+        private rowGroupColumns: Column[];
         private valueColumns: Column[];
 
         private groupAutoColumn: Column;
@@ -201,32 +201,32 @@ module ag.grid {
             return this.getWithOfColsInList(this.displayedRightColumns);
         }
 
-        public addPivotColumn(column: Column): void {
+        public addRowGroupColumn(column: Column): void {
             if (this.allColumns.indexOf(column) < 0) {
                 console.warn('not a valid column: ' + column);
                 return;
             }
-            if (this.pivotColumns.indexOf(column) >= 0) {
+            if (this.rowGroupColumns.indexOf(column) >= 0) {
                 console.warn('column is already a value column');
                 return;
             }
-            this.pivotColumns.push(column);
-            // because we could be taking out 'pivot' columns, the displayed
+            this.rowGroupColumns.push(column);
+            // because we could be taking out columns, the displayed
             // columns may differ, so need to work out all the columns again
             this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
         }
 
-        public removePivotColumn(column: Column): void {
-            if (this.pivotColumns.indexOf(column) < 0) {
-                console.warn('column not a pivot');
+        public removeRowGroupColumn(column: Column): void {
+            if (this.rowGroupColumns.indexOf(column) < 0) {
+                console.warn('column not a row group');
                 return;
             }
-            _.removeFromArray(this.pivotColumns, column);
+            _.removeFromArray(this.rowGroupColumns, column);
             this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
         }
 
         public addValueColumn(column: Column): void {
@@ -299,12 +299,12 @@ module ag.grid {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
         }
 
-        public movePivotColumn(fromIndex: number, toIndex: number): void {
-            var column = this.pivotColumns[fromIndex];
-            this.pivotColumns.splice(fromIndex, 1);
-            this.pivotColumns.splice(toIndex, 0, column);
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+        public moveRowGroupColumn(fromIndex: number, toIndex: number): void {
+            var column = this.rowGroupColumns[fromIndex];
+            this.rowGroupColumns.splice(fromIndex, 1);
+            this.rowGroupColumns.splice(toIndex, 0, column);
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
         }
 
         public moveColumn(fromIndex: number, toIndex: number): void {
@@ -332,8 +332,8 @@ module ag.grid {
         }
 
         // + toolPanel
-        public getPivotedColumns(): Column[] {
-            return this.pivotColumns;
+        public getRowGroupColumns(): Column[] {
+            return this.rowGroupColumns;
         }
 
         // + rowController -> while inserting rows
@@ -453,65 +453,79 @@ module ag.grid {
             var result = <any>[];
             for (var i = 0; i < this.allColumns.length; i++) {
                 var column = this.allColumns[i];
-                var pivotIndex = this.pivotColumns.indexOf(column);
+                var rowGroupIndex = this.rowGroupColumns.indexOf(column);
                 var resultItem = {
                     colId: column.getColId(),
                     hide: !column.isVisible(),
                     aggFunc: column.getAggFunc() ? column.getAggFunc : null,
                     width: column.getActualWidth(),
                     pinned: column.getPinned(),
-                    pivotIndex: pivotIndex >= 0 ? pivotIndex : null
+                    rowGroupIndex: rowGroupIndex >= 0 ? rowGroupIndex : null
                 };
                 result.push(resultItem);
             }
             return result;
         }
 
-        public setState(columnState: any): void {
+        public setState(columnState: any[]): void {
             var oldColumnList = this.allColumns;
             this.allColumns = [];
-            this.pivotColumns = [];
+            this.rowGroupColumns = [];
             this.valueColumns = [];
             var that = this;
 
-            _.forEach(columnState, function (stateItem: any) {
-                var oldColumn = _.find(oldColumnList, 'colId', stateItem.colId);
-                if (!oldColumn) {
-                    console.warn('ag-grid: column ' + stateItem.colId + ' not found');
-                    return;
-                }
-                // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                oldColumn.visible = stateItem.hide ? false : true;
-                // checks for 'true', otherwise false
-                oldColumn.pinned = stateItem.pinned === true;
-                // if width provided and valid, use it, otherwise stick with the old width
-                oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
-                // accept agg func only if valid
-                var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM].indexOf(stateItem.aggFunc) >= 0;
-                if (aggFuncValid) {
-                    oldColumn.aggFunc = stateItem.aggFunc;
-                    that.valueColumns.push(oldColumn);
-                } else {
-                    oldColumn.aggFunc = null;
-                }
-                // if pivot
-                if (typeof stateItem.pivotIndex === 'number' && stateItem.pivotIndex >= 0) {
-                    that.pivotColumns.push(oldColumn);
-                }
-                that.allColumns.push(oldColumn);
-                oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
-            });
+            if (columnState) {
+                columnState.forEach(function (stateItem: any) {
+                    var oldColumn = _.find(oldColumnList, 'colId', stateItem.colId);
+                    if (!oldColumn) {
+                        console.warn('ag-grid: column ' + stateItem.colId + ' not found');
+                        return;
+                    }
+                    // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
+                    oldColumn.visible = stateItem.hide ? false : true;
+                    // checks for 'true', otherwise false
+                    oldColumn.pinned = stateItem.pinned === true;
+                    // if width provided and valid, use it, otherwise stick with the old width
+                    oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
+                    // accept agg func only if valid
+                    var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM].indexOf(stateItem.aggFunc) >= 0;
+                    if (aggFuncValid) {
+                        oldColumn.aggFunc = stateItem.aggFunc;
+                        that.valueColumns.push(oldColumn);
+                    } else {
+                        oldColumn.aggFunc = null;
+                    }
+                    // if rowGroup
+                    if (typeof stateItem.rowGroupIndex === 'number' && stateItem.rowGroupIndex >= 0) {
+                        that.rowGroupColumns.push(oldColumn);
+                    }
+                    that.allColumns.push(oldColumn);
+                    oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
+                });
+            }
 
-            // anything left over, we got no data for, so add in the column as non-value, non-pivot and hidden
-            _.forEach(oldColumnList, function (oldColumn: Column) {
+            // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
+            oldColumnList.forEach( (oldColumn: Column) => {
                 oldColumn.setVisible(false);
                 oldColumn.setAggFunc(null);
                 oldColumn.setPinned(null);
-                that.allColumns.push(oldColumn);
+                this.allColumns.push(oldColumn);
             });
 
-            this.pivotColumns.sort(function (colA: Column, colB: Column): number {
-                return colA.getPivotIndex() - colB.getPivotIndex();
+            // sort the row group columns
+            this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
+                var rowGroupIndexA = -1;
+                var rowGroupIndexB = -1;
+                for (var i = 0; i<columnState.length; i++) {
+                    var state = columnState[i];
+                    if (state.colId === colA.getColId()) {
+                        rowGroupIndexA = state.rowGroupIndex;
+                    }
+                    if (state.colId === colB.getColId()) {
+                        rowGroupIndexB = state.rowGroupIndex;
+                    }
+                }
+                return rowGroupIndexA - rowGroupIndexB;
             });
 
             this.updateModel();
@@ -629,12 +643,26 @@ module ag.grid {
             this.headerRowCount = balancedTreeResult.treeDept + 1;
 
             this.allColumns = this.getColumnsFromTree(this.originalBalancedTree);
-            this.createPivotColumns();
+            this.extractRowGroupColumns();
             this.createValueColumns();
             this.updateModel();
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
             this.setupComplete = true;
+        }
+
+        private extractRowGroupColumns(): void {
+            this.rowGroupColumns = [];
+            // pull out the columns
+            this.allColumns.forEach( (column: Column) => {
+                if (typeof column.getColDef().rowGroupIndex === 'number') {
+                    this.rowGroupColumns.push(column);
+                }
+            });
+            // then sort them
+            this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
+                return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
+            });
         }
 
         // called by headerRenderer - when a header is opened or closed
@@ -802,7 +830,7 @@ module ag.grid {
         private createGroupAutoColumn(): void {
 
             // see if we need to insert the default grouping column
-            var needAGroupColumn = this.pivotColumns.length > 0
+            var needAGroupColumn = this.rowGroupColumns.length > 0
                 && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
                 && !this.gridOptionsWrapper.isGroupUseEntireRow()
                 && !this.gridOptionsWrapper.isGroupSuppressRow();
@@ -836,31 +864,15 @@ module ag.grid {
 
             for (var i = 0; i < this.allColumns.length; i++) {
                 var column = this.allColumns[i];
-                var hideBecauseOfPivot = this.pivotColumns.indexOf(column) >= 0
-                    && this.gridOptionsWrapper.isGroupHidePivotColumns();
-                if (column.isVisible() && !hideBecauseOfPivot) {
+                var hideBecauseOfRowGroup = this.rowGroupColumns.indexOf(column) >= 0
+                    && this.gridOptionsWrapper.isGroupHideGroupColumns();
+                if (column.isVisible() && !hideBecauseOfRowGroup) {
                     column.setIndex(visibleColumns.length);
                     visibleColumns.push(this.allColumns[i]);
                 }
             }
 
             return visibleColumns;
-        }
-
-        private createPivotColumns(): void {
-            this.pivotColumns = [];
-            var groupKeys = this.gridOptionsWrapper.getGroupKeys();
-            if (!groupKeys || groupKeys.length <= 0) {
-                return;
-            }
-            for (var i = 0; i < groupKeys.length; i++) {
-                var groupKey = groupKeys[i];
-                var column = this.getColumn(groupKey);
-                if (!column) {
-                    column = this.createDummyColumn(groupKey);
-                }
-                this.pivotColumns.push(column);
-            }
         }
 
         private createValueColumns(): void {
@@ -874,18 +886,6 @@ module ag.grid {
                     this.valueColumns.push(column);
                 }
             }
-        }
-
-        private createDummyColumn(field: any): Column {
-            throw 'no longer allowing this';
-            //var colDef = {
-            //    field: field,
-            //    headerName: field,
-            //    hide: false
-            //};
-            //var width = this.gridOptionsWrapper.getColWidth();
-            //var column = new Column(colDef, width, field);
-            //return column;
         }
 
         private getWithOfColsInList(columnList: Column[]) {

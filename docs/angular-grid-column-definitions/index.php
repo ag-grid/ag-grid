@@ -15,7 +15,13 @@ include '../documentation_header.php';
         properties you can set for a column definition.
     </p>
 
-    <h2>Column Groups and Columns</h2>
+    <p>
+        Every property below is optional with the exception of <i>children</i>. For column groups, <i>children</i>
+        is mandatory and that's also how the grid is able to distinguish a column from a column group
+        (if <i>children</i> is present, it knows it's a group).
+    </p>
+
+    <h2>Properties for Column Groups & Columns</h2>
 
     <table class="table">
         <tr>
@@ -32,7 +38,7 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    <h2>Columns Only</h2>
+    <h2>Properties for Columns</h2>
 
     <table class="table">
         <tr>
@@ -121,6 +127,10 @@ include '../documentation_header.php';
             <td>Name of function to use for aggregation. One of [sum,min,max].</td>
         </tr>
         <tr>
+            <th>rowGroupIndex</th>
+            <td>Include this column as a row group at the given index.</td>
+        </tr>
+        <tr>
             <th>comparator(valueA, valueB, nodeA, nodeB, isInverted)</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
@@ -177,7 +187,7 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    <h2>Column Groups Only</h2>
+    <h2>Properties for Column Groups</h2>
 
     <table class="table">
         <tr>

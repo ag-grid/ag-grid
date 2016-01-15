@@ -134,7 +134,7 @@ include '../documentation_header.php';
         <tr>
             <th>groupKeys<br/> groupUseEntireRow<br/>
                 groupDefaultExpanded<br/>
-                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHidePivotColumns <br/> groupSuppressBlankHeader</th>
+                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHideRowGroupColumns <br/> groupSuppressBlankHeader</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
@@ -180,13 +180,13 @@ include '../documentation_header.php';
             <td>Set to true to show the tool panel by default.</td>
         </tr>
         <tr>
-            <th>toolPanelSuppressPivot</th>
-            <td>Set to true to not show the values or the pivots in the tool panel. It does not make sense
-                to show the values if no pivot functionality is allowed.</td>
+            <th>toolPanelSuppressGroup</th>
+            <td>Set to true to not show the values or the row groups in the tool panel. It does not make sense
+                to show the values if no row grouping functionality is allowed.</td>
         </tr>
         <tr>
             <th>toolPanelSuppressValues</th>
-            <td>Set to true to not show the values in the tool panel. The pivot may optionally still
+            <td>Set to true to not show the values in the tool panel. The row group may optionally still
                 be shown. This is useful when you are providing your own aggregate function.</td>
         </tr>
         <tr>

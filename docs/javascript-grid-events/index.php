@@ -140,8 +140,8 @@ include '../documentation_header.php';
             <td>A column was resized.</td>
         </tr>
         <tr>
-            <th>columnPivotChanged</th>
-            <td>A pivot column was added or removed.</td>
+            <th>columnGroupChanged</th>
+            <td>A group column was added or removed.</td>
         </tr>
         <tr>
             <th>columnValueChanged</th>

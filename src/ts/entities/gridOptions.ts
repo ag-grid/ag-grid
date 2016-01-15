@@ -6,7 +6,7 @@ module ag.grid {
 
         // set once in init, can never change
         virtualPaging?: boolean;
-        toolPanelSuppressPivot?: boolean;
+        toolPanelSuppressGroups?: boolean;
         toolPanelSuppressValues?: boolean;
         rowsAlreadyGrouped?: boolean;
         suppressRowClickSelection?: boolean;
@@ -41,7 +41,7 @@ module ag.grid {
 
         groupSuppressAutoColumn?: boolean;
         groupSelectsChildren?: boolean;
-        groupHidePivotColumns?: boolean;
+        groupHideGroupColumns?: boolean;
         groupIncludeFooter?: boolean;
         groupUseEntireRow?: boolean;
         groupSuppressRow?: boolean;
@@ -65,7 +65,6 @@ module ag.grid {
         floatingTopRowData?: any[]; // should this be immutable ag2?
         floatingBottomRowData?: any[]; // should this be immutable ag2?
         showToolPanel?: boolean;
-        groupKeys?: string[];
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
         // in properties
