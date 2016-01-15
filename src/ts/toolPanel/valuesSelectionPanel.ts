@@ -61,7 +61,7 @@ module ag.grid {
             });
 
             var agValueType = new AgDropdownList(this.popupService, this.dragAndDropService);
-            agValueType.setModel([constants.SUM, constants.MIN, constants.MAX]);
+            agValueType.setModel([Column.AGG_SUM, Column.AGG_MIN, Column.AGG_MAX]);
             agValueType.setSelected(column.aggFunc);
             agValueType.setWidth(45);
 

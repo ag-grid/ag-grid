@@ -4,10 +4,10 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100},
+        {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
+        {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
+        {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
+        {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
         {headerName: "Age", field: "age", width: 90},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Year", field: "year", width: 90},
@@ -18,7 +18,6 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
-        groupUseEntireRow: false,
         groupKeys: ['country'],
         groupAggFields: ['gold','silver','bronze','total'],
         groupIncludeFooter: true,

@@ -306,14 +306,10 @@ module ag.grid {
             this.refreshHeaderAndBody();
         }
 
-        public getEventService(): EventService {
-            return this.eventService;
-        }
-
         private onIndividualColumnResized(column: Column): void {
             this.headerRenderer.onIndividualColumnResized(column);
             this.rowRenderer.onIndividualColumnResized(column);
-            if (column.pinned) {
+            if (column.isPinned()) {
                 this.updatePinnedColContainerWidthAfterColResize();
             } else {
                 this.updateBodyContainerWidthAfterColResize();
@@ -561,7 +557,7 @@ module ag.grid {
             var columnsWithSorting = <any>[];
             var i: any;
             for (i = 0; i < allColumns.length; i++) {
-                if (allColumns[i].sort) {
+                if (allColumns[i].getSort()) {
                     columnsWithSorting.push(allColumns[i]);
                 }
             }
@@ -594,7 +590,7 @@ module ag.grid {
 
                 var sortForCol: any = null;
                 var sortedAt = -1;
-                if (sortModelProvided && !column.colDef.suppressSorting) {
+                if (sortModelProvided && !column.getColDef().suppressSorting) {
                     for (var j = 0; j < sortModel.length; j++) {
                         var sortModelEntry = sortModel[j];
                         if (typeof sortModelEntry.colId === 'string'
@@ -607,11 +603,11 @@ module ag.grid {
                 }
 
                 if (sortForCol) {
-                    column.sort = sortForCol;
-                    column.sortedAt = sortedAt;
+                    column.setSort(sortForCol);
+                    column.setSortedAt(sortedAt);
                 } else {
-                    column.sort = null;
-                    column.sortedAt = null;
+                    column.setSort(null);
+                    column.setSortedAt(null);
                 }
             }
 

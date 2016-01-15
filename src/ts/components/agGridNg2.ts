@@ -106,7 +106,6 @@ module ag.grid {
         public showToolPanel: boolean;
         public groupKeys: string[];
         public groupAggFunction: (nodes: any[]) => void;
-        public groupAggFields: string[];
         public columnDefs: any[]; // change to typed
         public datasource: any; // should be typed
         public pinnedColumnCount: number;

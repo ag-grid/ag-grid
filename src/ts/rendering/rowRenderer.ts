@@ -83,9 +83,9 @@ module ag.grid {
 
         public onIndividualColumnResized(column: Column) {
             var newWidthPx = column.getActualWidth() + "px";
-            var selectorForAllColsInCell = ".cell-col-" + column.index;
+            var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
             this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-                var cellsForThisCol: NodeList = rowContainer.querySelectorAll(selectorForAllColsInCell);
+                var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
                 for (var i = 0; i < cellsForThisCol.length; i++) {
                     var element = <HTMLElement> cellsForThisCol[i];
                     element.style.width = newWidthPx;
@@ -453,7 +453,7 @@ module ag.grid {
             this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
             // this changes the css on the cell
-            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, cellToFocus.column.colDef, true);
+            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.getIndex(), cellToFocus.column.getColDef(), true);
         }
 
         private getNextCellToFocus(key: any, lastCellToFocus: any) {
@@ -547,7 +547,7 @@ module ag.grid {
             var column = this.columnModel.getAllDisplayedColumns()[colIndex];
             if (renderedRow && column) {
                 var eCell = renderedRow.getCellForCol(column);
-                this.focusCell(eCell, rowIndex, colIndex, column.colDef, true);
+                this.focusCell(eCell, rowIndex, colIndex, column.getColDef(), true);
             }
         }
 

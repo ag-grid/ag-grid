@@ -23,9 +23,11 @@ module ag.grid {
         public toString(): string {
             var result = 'ColumnChangeEvent {type: ' + this.type;
             if (this.column) { result += ', column: ' + this.column.getColId(); }
-            if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.colGroupDef ? this.columnGroup.colGroupDef.headerName : '(not defined]'; }
+            if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : '(not defined]'; }
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
+            if (this.visible) { result += ', visible: ' + this.visible; }
+            if (this.pinned) { result += ', visible: ' + this.visible; }
             if (typeof this.finished == 'boolean') { result += ', finished: ' + this.finished; }
             result += '}';
             return result;

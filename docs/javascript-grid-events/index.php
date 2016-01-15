@@ -160,8 +160,8 @@ include '../documentation_header.php';
             <td>A column group was opened / closed.</td>
         </tr>
         <tr>
-            <th>columnPinnedCountChanged</th>
-            <td>The number of pinned columns has changed.</td>
+            <th>columnPinned</th>
+            <td>A column group was pinned / unpinned.</td>
         </tr>
     </table>
 

@@ -157,7 +157,7 @@ module ag.grid {
             }
         }
 
-        private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {
+        private defaultGroupAggFunctionFactory(valueColumns: Column[]) {
 
             // make closure of variable, so is available for methods below
             var _valueService = this.valueService;
@@ -166,26 +166,16 @@ module ag.grid {
 
                 var result = <any>{};
 
-                if (valueKeys) {
-                    for (var i = 0; i < valueKeys.length; i++) {
-                        var valueKey = valueKeys[i];
-                        // at this point, if no values were numbers, the result is null (not zero)
-                        result[valueKey] = aggregateColumn(rows, constants.SUM, valueKey, null);
+                for (var j = 0; j < valueColumns.length; j++) {
+                    var valueColumn = valueColumns[j];
+                    var colKey = valueColumn.getColDef().field;
+                    if (!colKey) {
+                        console.log('ag-Grid: you need to provide a field for all value columns so that ' +
+                            'the grid knows what field to store the result in. so even if using a valueGetter, ' +
+                            'the result will not be stored in a value getter.');
                     }
-                }
-
-                if (valueColumns) {
-                    for (var j = 0; j < valueColumns.length; j++) {
-                        var valueColumn = valueColumns[j];
-                        var colKey = valueColumn.colDef.field;
-                        if (!colKey) {
-                            console.log('ag-Grid: you need to provide a field for all value columns so that ' +
-                                'the grid knows what field to store the result in. so even if using a valueGetter, ' +
-                                'the result will not be stored in a value getter.');
-                        }
-                        // at this point, if no values were numbers, the result is null (not zero)
-                        result[colKey] = aggregateColumn(rows, valueColumn.aggFunc, colKey, valueColumn.colDef);
-                    }
+                    // at this point, if no values were numbers, the result is null (not zero)
+                    result[colKey] = aggregateColumn(rows, valueColumn.getAggFunc(), colKey, valueColumn.getColDef());
                 }
 
                 return result;
@@ -209,17 +199,17 @@ module ag.grid {
                     if (typeof thisColumnValue === 'number') {
 
                         switch (aggFunc) {
-                            case constants.SUM :
+                            case Column.AGG_SUM :
                                 resultForColumn += thisColumnValue;
                                 break;
-                            case constants.MIN :
+                            case Column.AGG_MIN :
                                 if (resultForColumn === null) {
                                     resultForColumn = thisColumnValue;
                                 } else if (resultForColumn > thisColumnValue) {
                                     resultForColumn = thisColumnValue;
                                 }
                                 break;
-                            case constants.MAX :
+                            case Column.AGG_MAX :
                                 if (resultForColumn === null) {
                                     resultForColumn = thisColumnValue;
                                 } else if (resultForColumn < thisColumnValue) {
@@ -244,9 +234,8 @@ module ag.grid {
             }
 
             var valueColumns = this.columnController.getValueColumns();
-            var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
-            if ((valueColumns && valueColumns.length > 0) || (valueKeys && valueKeys.length > 0)) {
-                var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns, valueKeys);
+            if (valueColumns && valueColumns.length > 0) {
+                var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns);
                 this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction, 0);
             } else {
                 // if no agg data, need to clear out any previous items, when can be left behind
@@ -316,11 +305,11 @@ module ag.grid {
                 //see if there is a col we are sorting by
                 var sortingOptions = <any>[];
                 this.columnController.getAllColumns().forEach(function (column: Column) {
-                    if (column.sort) {
-                        var ascending = column.sort === constants.ASC;
+                    if (column.getSort()) {
+                        var ascending = column.getSort() === Column.SORT_ASC;
                         sortingOptions.push({
                             inverter: ascending ? 1 : -1,
-                            sortedAt: column.sortedAt,
+                            sortedAt: column.getSortedAt(),
                             column: column
                         });
                     }
@@ -378,11 +367,11 @@ module ag.grid {
             var that = this;
 
             function compare(nodeA: RowNode, nodeB: RowNode, column:Column, isInverted: boolean) {
-                var valueA = that.valueService.getValue(column.colDef, nodeA.data, nodeA);
-                var valueB = that.valueService.getValue(column.colDef, nodeB.data, nodeB);
-                if (column.colDef.comparator) {
+                var valueA = that.valueService.getValue(column.getColDef(), nodeA.data, nodeA);
+                var valueB = that.valueService.getValue(column.getColDef(), nodeB.data, nodeB);
+                if (column.getColDef().comparator) {
                     //if comparator provided, use it
-                    return column.colDef.comparator(valueA, valueB, nodeA, nodeB, isInverted);
+                    return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
                 } else {
                     //otherwise do our own comparison
                     return _.defaultComparator(valueA, valueB);

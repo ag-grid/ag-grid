@@ -138,8 +138,8 @@ module ag.grid {
                         this.columnController.setColumnsPinned(columnIds, event.getPinned());
                         break;
                     case Events.EVENT_COLUMN_GROUP_OPENED:
-                        this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.expanded);
-                        this.columnController.setColumnGroupOpened(slaveColumnGroup, masterColumnGroup.expanded);
+                        this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.isExpanded());
+                        this.columnController.setColumnGroupOpened(slaveColumnGroup, masterColumnGroup.isExpanded());
                         break;
                     case Events.EVENT_COLUMN_RESIZED:
                         this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());

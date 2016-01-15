@@ -13,16 +13,24 @@ module ag.grid {
 
         private instanceId: number;
 
-        //pinned: any;
-        expandable = false;
-        expanded = false;
-        colGroupDef: ColGroupDef;
+        private expandable = false;
+        private expanded = false;
+        private colGroupDef: ColGroupDef;
 
-        constructor(pinned: any, colGroupDef: ColGroupDef, groupId: string, instanceId: number) {
-            //this.pinned = pinned;
+        constructor(colGroupDef: ColGroupDef, groupId: string, instanceId: number) {
             this.colGroupDef = colGroupDef;
             this.groupId = groupId;
             this.instanceId = instanceId;
+        }
+
+        // returns header name if it exists, otherwise null. if will not exist if
+        // this group is a padding group, as they don't have colGroupDef's
+        public getHeaderName(): string {
+            if (this.colGroupDef) {
+                return this.colGroupDef.headerName;
+            } else {
+                return null;
+            }
         }
 
         public getGroupId(): string {
@@ -31,6 +39,22 @@ module ag.grid {
 
         public getInstanceId(): number {
             return this.instanceId;
+        }
+
+        public setExpanded(expanded: boolean): void {
+            this.expanded = expanded;
+        }
+
+        public isExpandable(): boolean {
+            return this.expandable;
+        }
+
+        public isExpanded(): boolean {
+            return this.expanded;
+        }
+
+        public getColGroupDef(): ColGroupDef {
+            return this.colGroupDef;
         }
 
         public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {

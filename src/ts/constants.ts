@@ -6,14 +6,9 @@ module ag.grid {
         static STEP_FILTER = 1;
         static STEP_SORT = 2;
         static STEP_MAP = 3;
-        static ASC = "asc";
-        static DESC = "desc";
+
         static ROW_BUFFER_SIZE = 20;
         static MIN_COL_WIDTH = 10;
-
-        static SUM = 'sum';
-        static MIN = 'min';
-        static MAX = 'max';
 
         static KEY_TAB = 9;
         static KEY_ENTER = 13;

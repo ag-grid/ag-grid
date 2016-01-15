@@ -198,11 +198,11 @@ module ag.grid {
         }
 
         public getRenderedCellForColumn(column: Column): RenderedCell {
-            return this.renderedCells[column.index];
+            return this.renderedCells[column.getIndex()];
         }
 
         public getCellForCol(column: Column): any {
-            var renderedCell = this.renderedCells[column.index];
+            var renderedCell = this.renderedCells[column.getIndex()];
             if (renderedCell) {
                 return renderedCell.getVGridCell().getElement();
             } else {
@@ -256,15 +256,15 @@ module ag.grid {
 
                 var vGridCell = renderedCell.getVGridCell();
 
-                if (column.pinned === Column.PINNED_LEFT) {
+                if (column.getPinned() === Column.PINNED_LEFT) {
                     this.vPinnedLeftRow.appendChild(vGridCell);
-                } else if (column.pinned === Column.PINNED_RIGHT) {
+                } else if (column.getPinned()=== Column.PINNED_RIGHT) {
                     this.vPinnedRightRow.appendChild(vGridCell);
                 } else {
                     this.vBodyRow.appendChild(vGridCell);
                 }
 
-                this.renderedCells[column.index] = renderedCell;
+                this.renderedCells[column.getIndex()] = renderedCell;
             }
         }
 

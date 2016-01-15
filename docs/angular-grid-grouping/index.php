@@ -32,12 +32,6 @@ include '../documentation_header.php';
             <td>An array of 1 or more strings, each entry a column identifier to group by. Leave blank, or empty array, for no grouping.</td>
         </tr>
         <tr>
-            <th>groupAggFields</th>
-            <td>If grouping, used to create simple 'sum' aggregates. Provide an array of field names that should be
-                summed into the parent group. Use this over groupAggFunction if you want simple 'sum' aggregation.
-            </td>
-        </tr>
-        <tr>
             <th>groupUseEntireRow</th>
             <td>If grouping, set to true or false (default is false). If true, a group row will span all columns across the entire
                 width of the table. If false, the cells will be rendered as normal and you will have the opportunity to include
@@ -231,35 +225,28 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
     <h3>Grouping with Aggregation</h3>
 
     <p>
-        You have three options for creating aggregates.
+        You have two options for creating aggregates.
         <ul>
         <li>
             <b>Option 1 - colDef.aggFunc:</b> Specify in the column definition what aggregation function
             you want to apply to that column. Available aggregation functions are [sum,min,max].
         </li>
         <li>
-            <b>Option 2 - gridOptions.groupAggFields:</b> Provide an array of field names that should be used
-            to create the aggregates. This is equivalent to specifying aggFunc='sum' on the relevant columns.
-            This method has the advantage of aggregating on fields that do not map to columns directly - an
-            example may be that the column uses a value getter for which the field is just one parameter.
-        </li>
-        <li>
-            <b>Option 3 - gridOptions.groupAggFunction:</b> provide a function to do the aggregation. This
+            <b>Option 2 - gridOptions.groupAggFunction:</b> provide a function to do the aggregation. This
             gives you full control.
         </li>
         </ul>
     </p>
 
     <note>
-        It is possible to mix option 1 and option 2 (ie both lists of aggregated fields will be combined).
-        If you choose option 3, then any configuration towards option 1 and 2 will be ignored.
+        It is not possible to mix the above two options. If you provide your own <i>groupAggFunction</i>
+        then any column <i>aggFunc</i> specified will be ignored.
     </note>
 
     <h4>Example Option 1 - Summing Fields</h4>
 
     <p>
-        The example below shows simple sum aggregation. The fields gold, silver, bronze and total are aggregated
-        using simple sum aggregation.
+        The example below shows simple sum aggregation on fields gold, silver, bronze and total.
     </p>
     <p>
         The example also shows the use of a grouping column. The grouping column is specified in the grid options.

@@ -251,7 +251,7 @@ module ag.grid {
             var that = this;
             this.columnController.getAllColumns().forEach(function (column: Column) {
                 var data = node.data;
-                var value = that.valueService.getValue(column.colDef, data, node);
+                var value = that.valueService.getValue(column.getColDef(), data, node);
                 if (value && value !== '') {
                     aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
                 }
@@ -272,7 +272,7 @@ module ag.grid {
         private createValueGetter(column: Column) {
             var that = this;
             return function valueGetter(node: any) {
-                return that.valueService.getValue(column.colDef, node.data, node);
+                return that.valueService.getValue(column.getColDef(), node.data, node);
             };
         }
 
@@ -297,7 +297,7 @@ module ag.grid {
         }
 
         private createFilterWrapper(column: Column) {
-            var colDef = column.colDef;
+            var colDef = column.getColDef();
 
             var filterWrapper = {
                 column: column,

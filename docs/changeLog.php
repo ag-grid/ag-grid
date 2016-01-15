@@ -22,6 +22,7 @@ include 'documentation_header.php';
     <li>Minor: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
     <li>Minor: setColumnVisible(column) and setColumnsVisible(listOfColumns)</li>
     <li>Minor: setColumnPinned(column) and setColumnsPinned(listOfColumns)</li>
+    <li>Major: groupAggFields is now gone, set the group agg function on the column instead.</li>
 
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>

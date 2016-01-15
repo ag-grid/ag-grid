@@ -66,7 +66,6 @@ module ag.grid {
         floatingBottomRowData?: any[]; // should this be immutable ag2?
         showToolPanel?: boolean;
         groupKeys?: string[];
-        groupAggFields?: string[];
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
         // in properties

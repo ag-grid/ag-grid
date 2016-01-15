@@ -29,7 +29,7 @@ module ag.grid {
         public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
             'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
-            'groupAggFields','columnDefs','datasource','quickFilterText'];
+            'columnDefs','datasource','quickFilterText'];
 
         public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
             'isScrollLag','isExternalFilterPresent','doesExternalFilterPass','getRowClass','getRowStyle',
@@ -140,9 +140,6 @@ module ag.grid {
             }
             if (changes.groupAggFunction) {
                 component.gridOptions.groupAggFunction = component.groupAggFunction;
-            }
-            if (changes.groupAggFields) {
-                component.gridOptions.groupAggFields = component.groupAggFields;
             }
         }
 

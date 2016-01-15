@@ -16,7 +16,7 @@ module ag.grid {
         }
 
         public createDisplayedGroups(sortedVisibleColumns: Column[],
-                                     balancedColumnTree: ColumnGroupChild[],
+                                     balancedColumnTree: OriginalColumnGroupChild[],
                                      groupInstanceIdCreator: GroupInstanceIdCreator): ColumnGroupChild[] {
 
             var result: ColumnGroupChild[] = [];
@@ -36,9 +36,9 @@ module ag.grid {
                     if (firstColumn || currentOriginalPath[i]!==previousOriginalPath[i]) {
                         // new group needed
                         var originalGroup = currentOriginalPath[i];
-                        var colId = originalGroup.getColId();
-                        var instanceId = groupInstanceIdCreator.getInstanceIdForKey(colId);
-                        var newGroup = new ColumnGroup(null, originalGroup.getColGroupDef(), colId, instanceId);
+                        var groupId = originalGroup.getGroupId();
+                        var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
+                        var newGroup = new ColumnGroup(originalGroup.getColGroupDef(), groupId, instanceId);
                         currentRealPath[i] = newGroup;
                         // if top level, add to result, otherwise add to parent
                         if (i==0) {
@@ -75,18 +75,34 @@ module ag.grid {
             return result;
         }
 
-        private getOriginalPathForColumn(balancedColumnTree: ColumnGroupChild[], column: Column): OriginalColumnGroup[] {
+        private createFakePath(balancedColumnTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
+            var result: OriginalColumnGroup[] = [];
+            var currentChildren = balancedColumnTree;
+            // this while look does search on the balanced tree, so our result is the right length
+            var index = 0;
+            while (currentChildren && currentChildren[0] && currentChildren[0] instanceof OriginalColumnGroup) {
+                // putting in a deterministic fake id, in case the API in the future needs to reference the col
+                result.push(new OriginalColumnGroup(null, 'FAKE_PATH_' + index));
+                currentChildren = (<OriginalColumnGroup>currentChildren[0]).getChildren();
+                index++;
+            }
+            return result;
+        }
+
+        private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
 
             var result: OriginalColumnGroup[] = [];
             var found = false;
 
             recursePath(balancedColumnTree, 0);
 
-            // catch error, so caller will fail rather than have wrong result
+            // it's possible we didn't find a path. this happens if the column is generated
+            // by the grid, in that the definition didn't come from the client. in this case,
+            // we create a fake original path.
             if (found) {
                 return result;
             } else {
-                return null;
+                return this.createFakePath(balancedColumnTree);
             }
 
             function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
@@ -107,7 +123,6 @@ module ag.grid {
                         }
                     }
                 }
-
             }
         }
     }

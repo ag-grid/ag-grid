@@ -90,7 +90,7 @@ module ag.grid {
                     if (node.group && index === 0) {
                         valueForCell =  this.createValueForGroupNode(node);
                     } else {
-                        valueForCell =  this.valueService.getValue(column.colDef, node.data, node);
+                        valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
                     }
                     if (valueForCell === null || valueForCell === undefined) {
                         valueForCell = '';

@@ -72,7 +72,6 @@ module ag.grid {
         public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
         public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
-        public getGroupAggFields() { return this.gridOptions.groupAggFields; }
         public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
@@ -161,6 +160,9 @@ module ag.grid {
             }
             if (options.suppressDescSort) {
                 console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortOrder instead.');
+            }
+            if (options.groupAggFields) {
+                console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
             }
         }
 

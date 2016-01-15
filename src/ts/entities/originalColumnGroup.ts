@@ -6,15 +6,15 @@ module ag.grid {
 
         private colGroupDef: ColGroupDef;
         private children: OriginalColumnGroupChild[];
-        private colId: string;
+        private groupId: string;
 
-        constructor(colGroupDef: ColGroupDef, colId: string) {
+        constructor(colGroupDef: ColGroupDef, groupId: string) {
             this.colGroupDef = colGroupDef;
-            this.colId = colId;
+            this.groupId = groupId;
         }
 
-        public getColId(): string {
-            return this.colId;
+        public getGroupId(): string {
+            return this.groupId;
         }
 
         public setChildren(children: OriginalColumnGroupChild[]): void {

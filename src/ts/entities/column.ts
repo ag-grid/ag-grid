@@ -16,17 +16,25 @@ module ag.grid {
         public static PINNED_RIGHT = 'right';
         public static PINNED_LEFT = 'left';
 
-        private actualWidth: any;
+        public static AGG_SUM = 'sum';
+        public static AGG_MIN = 'min';
+        public static AGG_MAX = 'max';
+
+        public static SORT_ASC = 'asc';
+        public static SORT_DESC = 'desc';
+
+        private colDef: ColDef;
         private colId: any;
 
-        colDef: ColDef;
-        visible: any;
-        pinned: string;
-        index: number;
-        aggFunc: string;
-        pivotIndex: number;
-        sort: string;
-        sortedAt: number;
+        private actualWidth: any;
+
+        private visible: any;
+        private pinned: string;
+        private index: number;
+        private aggFunc: string;
+        private pivotIndex: number;
+        private sort: string;
+        private sortedAt: number;
 
         constructor(colDef: ColDef, actualWidth: any, colId: String) {
             this.colDef = colDef;
@@ -40,6 +48,70 @@ module ag.grid {
             } else if (colDef.pinned === 'right') {
                 this.pinned = 'right';
             }
+        }
+
+        public getSort(): string {
+            return this.sort;
+        }
+
+        public setSort(sort: string): void {
+            this.sort = sort;
+        }
+
+        public getSortedAt(): number {
+            return this.sortedAt;
+        }
+
+        public setSortedAt(sortedAt: number): void {
+            this.sortedAt = sortedAt;
+        }
+
+        public getPivotIndex(): number {
+            return this.pivotIndex;
+        }
+
+        public setPivotIndex(pivotIndex: number): void {
+            this.pivotIndex = pivotIndex;
+        }
+
+        public setAggFunc(aggFunc: string): void {
+            this.aggFunc = aggFunc;
+        }
+
+        public getAggFunc(): string {
+            return this.aggFunc;
+        }
+
+        public getIndex(): number {
+            return this.index;
+        }
+
+        public setIndex(index: number): void {
+            this.index = index;
+        }
+
+        public setPinned(pinned: string): void {
+            this.pinned = pinned;
+        }
+
+        public isPinned(): boolean {
+            return this.pinned === Column.PINNED_LEFT || this.pinned === Column.PINNED_RIGHT;
+        }
+
+        public getPinned(): string {
+            return this.pinned;
+        }
+
+        public setVisible(visible: boolean): void {
+            this.visible = visible;
+        }
+
+        public isVisible(): boolean {
+            return this.visible;
+        }
+
+        public getColDef(): ColDef {
+            return this.colDef;
         }
 
         public getColumnGroupShow(): string {

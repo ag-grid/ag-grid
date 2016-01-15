@@ -68,7 +68,7 @@ module ag.grid {
             this.valueService = valueService;
             this.eventService = eventService;
 
-            this.checkboxSelection = this.column.colDef.checkboxSelection && !node.floating;
+            this.checkboxSelection = this.column.getColDef().checkboxSelection && !node.floating;
 
             this.node = node;
             this.rowIndex = rowIndex;
@@ -84,7 +84,7 @@ module ag.grid {
         }
 
         private getValue(): any {
-            return this.valueService.getValue(this.column.colDef, this.data, this.node);
+            return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
         }
 
         public getVGridCell(): ag.vdom.VHtmlElement {
@@ -112,7 +112,7 @@ module ag.grid {
 
         private setupComponents() {
             this.vGridCell = new ag.vdom.VHtmlElement("div");
-            this.vGridCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
+            this.vGridCell.setAttribute("col", (this.column.getIndex() !== undefined && this.column.getIndex() !== null) ? this.column.getIndex().toString() : '');
 
             this.vGridCell.setAttribute("colId", this.column.getColId());
 
@@ -203,13 +203,13 @@ module ag.grid {
         }
 
         public focusCell(forceBrowserFocus: boolean): void {
-            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.index, this.column.colDef, forceBrowserFocus);
+            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getIndex(), this.column.getColDef(), forceBrowserFocus);
         }
 
         private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
             this.editingCell = false;
             var newValue = eInput.value;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
 
             //If we don't remove the blur listener first, we get:
             //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
@@ -256,7 +256,7 @@ module ag.grid {
                 data: this.node.data,
                 value: this.value,
                 rowIndex: this.rowIndex,
-                colDef: this.column.colDef,
+                colDef: this.column.getColDef(),
                 $scope: this.scope,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()
@@ -273,7 +273,7 @@ module ag.grid {
 
         private addCellDoubleClickedHandler() {
             var that = this;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             this.vGridCell.addEventListener('dblclick', function (event: any) {
                 // always dispatch event to eventService
                 var agEvent: any = that.createEvent(event, this);
@@ -292,7 +292,7 @@ module ag.grid {
 
         private addCellContextMenuHandler() {
             var that = this;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             this.vGridCell.addEventListener('contextmenu', function (event: any) {
                 var agEvent: any = that.createEvent(event, this);
                 that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
@@ -314,7 +314,7 @@ module ag.grid {
             }
 
             // if boolean set, then just use it
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (typeof colDef.editable === 'boolean') {
                 return colDef.editable;
             }
@@ -330,7 +330,7 @@ module ag.grid {
         }
 
         private addCellClickedHandler() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             var that = this;
             this.vGridCell.addEventListener("click", function (event: any) {
                 // we pass false to focusCell, as we don't want the cell to focus
@@ -364,7 +364,7 @@ module ag.grid {
         }
 
         private addStylesFromCollDef() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.cellStyle) {
                 var cssToUse: any;
                 if (typeof colDef.cellStyle === 'function') {
@@ -391,7 +391,7 @@ module ag.grid {
         }
 
         private addClassesFromCollDef() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.cellClass) {
               var classToUse: any;
 
@@ -422,7 +422,7 @@ module ag.grid {
         }
 
         private addClassesFromRules() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             var classRules = colDef.cellClassRules;
             if (typeof classRules === 'object' && classRules !== null) {
 
@@ -568,7 +568,7 @@ module ag.grid {
         }
 
         public isVolatile() {
-            return this.column.colDef.volatile;
+            return this.column.getColDef().volatile;
         }
 
         public refreshCell() {
@@ -590,7 +590,7 @@ module ag.grid {
 
         private putDataIntoCell() {
             // template gets preference, then cellRenderer, then do it ourselves
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.template) {
                 this.vParentOfValue.setInnerHtml(colDef.template);
             } else if (colDef.templateUrl) {
@@ -611,7 +611,7 @@ module ag.grid {
         }
 
         private useCellRenderer(cellRenderer: Function | {}) {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
 
             var rendererParams = {
                 value: this.value,
@@ -654,7 +654,7 @@ module ag.grid {
         private addClasses() {
             this.vGridCell.addClass('ag-cell');
             this.vGridCell.addClass('ag-cell-no-focus');
-            this.vGridCell.addClass('cell-col-' + this.column.index);
+            this.vGridCell.addClass('cell-col-' + this.column.getIndex());
 
             if (this.node.group && this.node.footer) {
                 this.vGridCell.addClass('ag-footer-cell');

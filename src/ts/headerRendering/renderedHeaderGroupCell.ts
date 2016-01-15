@@ -53,7 +53,7 @@ module ag.grid {
             var classNames = ['ag-header-group-cell'];
             // having different classes below allows the style to not have a bottom border
             // on the group header, if no group is specified
-            if (this.columnGroup.colGroupDef) {
+            if (this.columnGroup.getColGroupDef()) {
                 classNames.push('ag-header-group-cell-with-group');
             } else {
                 classNames.push('ag-header-group-cell-no-group');
@@ -69,7 +69,7 @@ module ag.grid {
             }
 
             // no renderer, default text render
-            var groupName = this.columnGroup.colGroupDef ? this.columnGroup.colGroupDef.headerName : null;
+            var groupName = this.columnGroup.getHeaderName();
             if (groupName && groupName !== '') {
                 var eGroupCellLabel = document.createElement("div");
                 eGroupCellLabel.className = 'ag-header-group-cell-label';
@@ -80,7 +80,7 @@ module ag.grid {
                 eInnerText.innerHTML = groupName;
                 eGroupCellLabel.appendChild(eInnerText);
 
-                if (this.columnGroup.expandable) {
+                if (this.columnGroup.isExpandable()) {
                     this.addGroupExpandIcon(eGroupCellLabel);
                 }
             }
@@ -94,7 +94,7 @@ module ag.grid {
 
         private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
             var eGroupIcon: any;
-            if (this.columnGroup.expanded) {
+            if (this.columnGroup.isExpanded()) {
                 eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
             } else {
                 eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
@@ -104,7 +104,7 @@ module ag.grid {
 
             var that = this;
             eGroupIcon.onclick = function() {
-                var newExpandedValue = !that.columnGroup.expanded;
+                var newExpandedValue = !that.columnGroup.isExpanded();
                 that.columnController.setColumnGroupOpened(that.columnGroup, newExpandedValue);
             };
         }

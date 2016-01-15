@@ -281,7 +281,7 @@ module ag.grid {
         public getColumnDef(key:any) {
             var column = this.columnController.getColumn(key);
             if (column) {
-                return column.colDef;
+                return column.getColDef();
             } else {
                 return null;
             }

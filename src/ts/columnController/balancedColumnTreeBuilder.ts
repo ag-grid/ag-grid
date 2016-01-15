@@ -92,8 +92,8 @@ module ag.grid {
                 this.checkForDeprecatedItems(abstractColDef);
                 if (this.isColumnGroup(abstractColDef)) {
                     var groupColDef = <ColGroupDef> abstractColDef;
-                    var colId = columnKeyCreator.getUniqueKey(groupColDef.groupId, null);
-                    var originalGroup = new OriginalColumnGroup(groupColDef, colId);
+                    var groupId = columnKeyCreator.getUniqueKey(groupColDef.groupId, null);
+                    var originalGroup = new OriginalColumnGroup(groupColDef, groupId);
                     var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator);
                     originalGroup.setChildren(children);
                     result.push(originalGroup);
