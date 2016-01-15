@@ -85,14 +85,10 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.expandAll = function(expand) {
         var columnApi = $scope.gridOptions.columnApi;
-
         var groupNames = ['GroupA','GroupB','GroupC','GroupD','GroupE','GroupF','GroupG'];
 
-        // to give animation, we expand the groups one at a time, with 100ms gap between them
-        groupNames.forEach( function(groupId, index) {
-            setTimeout( function() {
-                columnApi.columnGroupOpened(groupId, expand);
-            }, index * 100);
+        groupNames.forEach( function(groupId) {
+            columnApi.columnGroupOpened(groupId, expand);
         });
     };
 

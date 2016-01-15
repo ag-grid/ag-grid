@@ -84,22 +84,9 @@ module ag.grid {
                     this.addGroupExpandIcon(eGroupCellLabel);
                 }
             }
-            //this.eHeaderGroup.appendChild(this.eHeaderGroupCell);
-
-            //this.columnGroup.displayedColumns.forEach( (column: Column) => {
-            //    var renderedHeaderCell = new RenderedHeaderCell(column, this, this.gridOptionsWrapper,
-            //        this.parentScope, this.filterManager, this.columnController, this.$compile,
-            //        this.angularGrid, this.getERoot());
-            //    this.children.push(renderedHeaderCell);
-            //    this.eHeaderGroup.appendChild(renderedHeaderCell.getGui());
-            //});
 
             this.setWidthOfGroupHeaderCell();
         }
-
-        //private isColumnInOurDisplayedGroup(column: Column): boolean {
-        //    return this.columnGroup.displayedColumns.indexOf(column) >= 0;
-        //}
 
         private setWidthOfGroupHeaderCell() {
             this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.getActualWidth());
