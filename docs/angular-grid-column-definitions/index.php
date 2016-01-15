@@ -10,10 +10,12 @@ include '../documentation_header.php';
 
     <h2>Column Definitions</h2>
 
-    Each column in the grid is defined using a column definition. Below is the set off all the
-    properties you can set for a column definition.
+    <p>
+        Each column in the grid is defined using a column definition. Below is the set off all the
+        properties you can set for a column definition.
+    </p>
 
-    <p/>
+    <h2>Column Groups and Columns</h2>
 
     <table class="table">
         <tr>
@@ -23,6 +25,19 @@ include '../documentation_header.php';
         <tr>
             <th>headerName</th>
             <td>The name to render in the column header</td>
+        </tr>
+        <tr>
+            <th>columnGroupShow</th>
+            <td>Whether to show the column when the group is open / closed.</td>
+        </tr>
+    </table>
+
+    <h2>Columns Only</h2>
+
+    <table class="table">
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
         </tr>
         <tr>
             <th>field</th>
@@ -41,8 +56,12 @@ include '../documentation_header.php';
         <tr>
             <th>hide</th>
             <td>Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field
-            'visible' and mark it false to hide, however we want all default values to be false and we want columns to be
-            visible by default.</td>
+                'visible' and mark it false to hide, however we want all default values to be false and we want columns to be
+                visible by default.</td>
+        </tr>
+        <tr>
+            <th>pinned</th>
+            <td>Set to 'left' or 'right' to pin.</td>
         </tr>
         <tr>
             <th>headerTooltip</th>
@@ -139,14 +158,6 @@ include '../documentation_header.php';
             <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
         </tr>
         <tr>
-            <th>headerGroup</th>
-            <td>If grouping columns, the group this column belongs to.</td>
-        </tr>
-        <tr>
-            <th>headerGroupShow</th>
-            <td>Whether to show the column when the group is open / closed.</td>
-        </tr>
-        <tr>
             <th>editable</th>
             <td>Set to true if this col is editable, otherwise false. Can also be a function
                 to have different rows editable.</td>
@@ -163,6 +174,24 @@ include '../documentation_header.php';
             <th>template<br/>templateUrl</th>
             <td>Cell template (or specify URL to load template from) to use for cell.
                 Useful for AngularJS cells.</td>
+        </tr>
+    </table>
+
+    <h2>Column Groups Only</h2>
+
+    <table class="table">
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>groupId</th>
+            <td>The unique ID to give the column. This is optional. If missing, a unique ID will be generated.
+                This ID is used to identify the column group in the column API.</td>
+        </tr>
+        <tr>
+            <th>children</th>
+            <td>A list containing a mix of columns and column groups.</td>
         </tr>
     </table>
 
