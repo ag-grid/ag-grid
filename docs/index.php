@@ -468,7 +468,7 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="minimised/ag-grid.min.js?ignore=notused15"></script>
+<script src="dist/ag-grid.min.js?ignore=notused15"></script>
 <link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused15">
 <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused15">
 <link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused15">
@@ -477,10 +477,8 @@
 <link href="best-angularjs-grid/basic.css?ignore=notused15" rel="stylesheet">
 <link href="example-account-report/account.css?ignore=notused15" rel="stylesheet">
 
-<script src="best-angularjs-grid/basic.js?ignore=notused15"></script>
-<!--<script src="minimised/account.js?ignore=notused15"></script>
--->
-<script src="example-account-report/account.js?ignore=notused15"></script>
+<script src="minimised/basic.js?ignore=notused15"></script>
+<script src="minimised/account.js?ignore=notused15"></script>
 <script src="minimised/fileBrowser.js?ignore=notused15"></script>
 <script src="minimised/index-script.js"></script>
 
