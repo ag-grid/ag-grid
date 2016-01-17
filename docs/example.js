@@ -45,8 +45,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-    $scope.colCount = 22;
-    $scope.rowCount = 100;
+    $scope.dataSize = '10x22';
 
     $scope.size = 'fill'; // model for size select
     $scope.width = '100%'; // the div gets it's width and height from here
@@ -294,16 +293,7 @@ gridsModule.controller('mainController', function($scope) {
         }
     };
 
-    $scope.onRowCountChanged = function() {
-        gridOptions.api.showLoading(true);
-        // put into a timeout, so browser gets a chance to update the loading panel
-        setTimeout( function () {
-            var data = createData();
-            gridOptions.api.setRowData(data);
-        }, 0);
-    };
-
-    $scope.onColCountChanged = function() {
+    $scope.onDataSizeChanged = function() {
         gridOptions.api.showLoading(true);
         setTimeout( function () {
             var colDefs = createCols();
@@ -385,9 +375,22 @@ gridsModule.controller('mainController', function($scope) {
         gridOptions.api.showToolPanel(!showing);
     };
 
-    function createCols() {
-        var colCount = parseInt($scope.colCount);
+    function getColCount() {
+        switch ($scope.dataSize) {
+            case '10x100': return 100;
+            default: return 22;
+        }
+    }
 
+    function getRowCount() {
+        switch ($scope.dataSize) {
+            case '100x22': return 100000;
+            default: return 1000;
+        }
+    }
+
+    function createCols() {
+        var colCount = getColCount();
         // start with a copy of the default cols
         var columns = defaultCols.slice(0, colCount);
 
@@ -402,8 +405,8 @@ gridsModule.controller('mainController', function($scope) {
     }
 
     function createData() {
-        var rowCount = parseInt($scope.rowCount);
-        var colCount = parseInt($scope.colCount);
+        var rowCount = getRowCount();
+        var colCount = getColCount();
         var data = [];
         for (var row = 1; row<=rowCount; row++) {
             if (row%10000===0) {

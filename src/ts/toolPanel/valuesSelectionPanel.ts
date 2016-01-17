@@ -82,7 +82,7 @@ module ag.grid {
         private setupComponents() {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var columnsLocalText = localeTextFunc('valueColumns', 'Aggregations');
-            var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to create values');
+            var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to aggregate values');
 
             this.cColumnList = new AgList(this.dragAndDropService);
             this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));

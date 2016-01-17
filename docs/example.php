@@ -82,21 +82,11 @@
 
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
-                Rows:
-                <select ng-model="rowCount" ng-change="onRowCountChanged()">
-                    <option value="10">10</option>
-                    <option value="100">100</option>
-                    <option value="1000">1,000</option>
-                    <option value="10000">10,000</option>
-                    <option value="30000">30,000</option>
-                    <option value="50000">50,000</option>
-                    <option value="100000">100,000</option>
-                </select>
-                Cols:
-                <select ng-model="colCount" ng-change="onColCountChanged()">
-                    <option value="22">22</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+                Data Size:
+                <select ng-model="dataSize" ng-change="onDataSizeChanged()">
+                    <option value="10x22">10,000 Rows, 22 Cols</option>
+                    <option value="10x100">10,000 Rows, 100 Cols</option>
+                    <option value="100x22">100,000 Rows, 22 Cols</option>
                 </select>
 
                 Size:
