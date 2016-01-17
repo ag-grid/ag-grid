@@ -14,6 +14,13 @@
         <button ng-click="resetPinned()">Left = {Athlete, Age} Right = {Total}</button>
         <button ng-click="pinCountry()">Left = {Country}</button>
     </span>
+
+    <span style="padding-left: 20px; padding-bottom: 4px; display: inline-block;">
+        Jump to:
+        <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
+        <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
+    </span>
+
     <br/>
 
     <div ag-grid="gridOptions" style="height: 450px;" class="ag-fresh"></div>

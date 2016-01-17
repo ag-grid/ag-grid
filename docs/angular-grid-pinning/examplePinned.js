@@ -3,6 +3,9 @@ var module = angular.module("example", ["agGrid"]);
 
 module.controller("exampleCtrl", function($scope, $http) {
 
+    $scope.jumpToColText = null;
+    $scope.jumpToRowText = null;
+
     var columnDefs = [
         {headerName: "Athlete", field: "athlete", width: 150, pinned: 'left'},
         {headerName: "Age", field: "age", width: 90, pinned: 'left'},
@@ -46,6 +49,20 @@ module.controller("exampleCtrl", function($scope, $http) {
         $scope.gridOptions.columnApi.setColumnPinned('age', null);
         $scope.gridOptions.columnApi.setColumnPinned('country', 'left');
         $scope.gridOptions.columnApi.setColumnPinned('total', null);
+    };
+
+    $scope.jumpToCol = function() {
+        var index = Number($scope.jumpToColText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            $scope.gridOptions.api.ensureColIndexVisible(index);
+        }
+    };
+
+    $scope.jumpToRow = function() {
+        var index = Number($scope.jumpToRowText);
+        if (typeof index === 'number' && !isNaN(index)) {
+            $scope.gridOptions.api.ensureIndexVisible(index);
+        }
     };
 
 });

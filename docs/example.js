@@ -226,7 +226,6 @@ gridsModule.controller('mainController', function($scope) {
                 {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                     filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                     filterParams: {cellRenderer: currencyRenderer},
-                    aggFunc: 'sum',
                     icons: {
                         sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                         sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -246,7 +245,7 @@ gridsModule.controller('mainController', function($scope) {
         },
         {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
             editable: true, newValueHandler: numberNewValueHandler, width: 150,
-            cellRenderer: currencyRenderer, cellStyle: currencyCssFunc, aggFunc: 'sum',
+            cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -278,20 +277,6 @@ gridsModule.controller('mainController', function($scope) {
     //setInterval(function() {
     //    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
     //}, 1000);
-
-    $scope.jumpToCol = function() {
-        var index = Number($scope.jumpToColText);
-        if (typeof index === 'number' && !isNaN(index)) {
-            gridOptions.api.ensureColIndexVisible(index);
-        }
-    };
-
-    $scope.jumpToRow = function() {
-        var index = Number($scope.jumpToRowText);
-        if (typeof index === 'number' && !isNaN(index)) {
-            gridOptions.api.ensureIndexVisible(index);
-        }
-    };
 
     $scope.onDataSizeChanged = function() {
         gridOptions.api.showLoading(true);
@@ -349,25 +334,6 @@ gridsModule.controller('mainController', function($scope) {
         setTimeout( function() {
             gridOptions.api.doLayout();
         }, 0);
-    };
-
-    $scope.onGroupTypeChanged = function() {
-        // setup keys
-        var groupBy = null;
-        if ($scope.groupBy!=="") {
-            groupBy = $scope.groupBy.split(",");
-        }
-        gridOptions.groupKeys = groupBy;
-
-        // setup type
-        var groupUseEntireRow = $scope.groupType==='row' || $scope.groupType==='rowWithFooter';
-        gridOptions.groupUseEntireRow = groupUseEntireRow;
-
-        // use footer or not
-        var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
-        gridOptions.groupIncludeFooter = useFooter;
-
-        gridOptions.api.refreshRowGroup();
     };
 
     $scope.toggleToolPanel = function() {

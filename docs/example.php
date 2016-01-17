@@ -103,11 +103,6 @@
                     <option value="ag-dark">Dark</option>
                 </select>
 
-                <span style="padding-left: 20px; display: inline-block;">
-                    Jump to:
-                    <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
-                    <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
-                </span>
             </div>
 
             <div style="padding: 4px;">
@@ -125,17 +120,6 @@
                 <span style="padding-left: 20px; display: inline-block;">
                     <button ng-click="toggleToolPanel()">Toggle Tool Panel</button>
                 </span>
-
-                Group Type:
-                <select ng-model="groupType" ng-change="onGroupTypeChanged()" style="width: 90px;">
-                    <option value="col">Col</option>
-                    <option value="colWithFooter">Col with Footer</option>
-                    <option value="row">Row</option>
-                    <option value="rowWithFooter">Row with Footer</option>
-                </select>
-
-                <button ng-click="gridOptions.api.expandAll()">Expand All</button>
-                <button ng-click="gridOptions.api.collapseAll()">Collapse All</button>
 
             </div>
         </div>

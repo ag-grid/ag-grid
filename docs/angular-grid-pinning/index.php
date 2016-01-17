@@ -29,6 +29,12 @@ include '../documentation_header.php';
         columns, in particular when 'Country' is pinned, it jumps to the first position.
     </p>
 
+    <h3>Jump To & Pinning</h3>
+
+    Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned
+    cols, by definition, are always visible. So below, if you try to jump to a pinned col, the grid will
+    print a warning to the console.
+
     <show-example example="examplePinned"></show-example>
 </div>
 

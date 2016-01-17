@@ -8,6 +8,12 @@
     <script src="example3.js"></script>
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<div ag-grid="gridOptions" style="height: 100%;" class="ag-fresh"></div>
+
+<div style="padding: 4px;">
+    <button ng-click="gridOptions.api.expandAll()">Expand All</button>
+    <button ng-click="gridOptions.api.collapseAll()">Collapse All</button>
+</div>
+
+<div ag-grid="gridOptions" style="height: 90%;" class="ag-fresh"></div>
 </body>
 </html>
