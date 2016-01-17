@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Grouping and Aggregation</h2>
+    <h2>Grouping Rows and Aggregation</h2>
 
     <p>
         To group, provide the columns you want to group by into the grid options.

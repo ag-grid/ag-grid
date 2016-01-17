@@ -215,6 +215,18 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping-headers/index.php">Grouping Columns</a>
                 <?php } ?>
 
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
+                <?php } ?>
+
+                <?php if ($key == "Floating") { ?>
+                    <span class="sidebarLinkSelected">Floating Rows</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-floating/index.php">Floating Rows</a>
+                <?php } ?>
+
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
@@ -301,18 +313,6 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Row Model</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-model/index.php">Row Model</a>
-                <?php } ?>
-
-                <?php if ($key == "Floating") { ?>
-                    <span class="sidebarLinkSelected">Floating Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-floating/index.php">Floating Rows</a>
-                <?php } ?>
-
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>
