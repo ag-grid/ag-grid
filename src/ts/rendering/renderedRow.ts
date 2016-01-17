@@ -244,14 +244,14 @@ module ag.grid {
         private drawNormalRow() {
             var columns = this.columnController.getAllDisplayedColumns();
             var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
-            for (var i = 0; i<columns.length; i++) {
-                var column = columns[i];
-                var firstRightPinnedCol = i === firstRightPinnedColIndex;
+            for (var colIndex = 0; colIndex<columns.length; colIndex++) {
+                var column = columns[colIndex];
+                var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
 
                 var renderedCell = new RenderedCell(firstRightPinnedCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
-                    this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnController,
+                    this.cellRendererMap, this.node, this.rowIndex, colIndex, this.scope, this.columnController,
                     this.valueService, this.eventService);
 
                 var vGridCell = renderedCell.getVGridCell();

@@ -86,7 +86,7 @@ module ag.grid {
         comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
         /** Set to true to render a selection checkbox in the column. */
-        checkboxSelection?: boolean;
+        checkboxSelection?: boolean | (Function);
 
         /** Set to true if no menu should be shown for this column header. */
         suppressMenu?: boolean;

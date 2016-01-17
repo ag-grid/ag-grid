@@ -136,7 +136,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>checkboxSelection</th>
-            <td>Set to true to render a selection checkbox in the column.</td>
+            <td>Boolean of Function. Set to true (or return true from functio) to render a selection checkbox in the column.</td>
         </tr>
         <tr>
             <th>suppressMenu</th>

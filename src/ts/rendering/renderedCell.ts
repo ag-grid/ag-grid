@@ -26,6 +26,7 @@ module ag.grid {
         private data: any;
         private node: RowNode;
         private rowIndex: number;
+        private colIndex: number;
         private editingCell: boolean;
 
         private scope: any;
@@ -51,7 +52,7 @@ module ag.grid {
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                    node: any, rowIndex: number, scope: any, columnController: ColumnController,
+                    node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
                     valueService: ValueService, eventService: EventService) {
 
             this.firstRightPinnedColumn = firstRightPinnedCol;
@@ -68,15 +69,45 @@ module ag.grid {
             this.valueService = valueService;
             this.eventService = eventService;
 
-            this.checkboxSelection = this.column.getColDef().checkboxSelection && !node.floating;
-
             this.node = node;
             this.rowIndex = rowIndex;
+            this.colIndex = colIndex;
             this.scope = scope;
             this.data = this.getDataForRow();
             this.value = this.getValue();
 
+            this.checkboxSelection = this.calculateCheckboxSelection();
+
             this.setupComponents();
+        }
+
+        public calculateCheckboxSelection() {
+            // never allow selection on floating rows
+            if (this.node.floating) {
+                return false;
+            }
+
+            // if boolean set, then just use it
+            var colDef = this.column.getColDef();
+            if (typeof colDef.checkboxSelection === 'boolean') {
+                return colDef.checkboxSelection;
+            }
+
+            // if function, then call the function to find out. we first check colDef for
+            // a function, and if missing then check gridOptions, so colDef has precedence
+            var selectionFunc: Function;
+            if (typeof colDef.checkboxSelection === 'function') {
+                selectionFunc = <Function>colDef.checkboxSelection;
+            }
+            if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
+                selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
+            }
+            if (selectionFunc) {
+                var params = this.createParams();
+                return selectionFunc(params);
+            }
+
+            return false;
         }
 
         public getColumn(): Column {
@@ -256,6 +287,7 @@ module ag.grid {
                 data: this.node.data,
                 value: this.value,
                 rowIndex: this.rowIndex,
+                colIndex: this.colIndex,
                 colDef: this.column.getColDef(),
                 $scope: this.scope,
                 context: this.gridOptionsWrapper.getContext(),

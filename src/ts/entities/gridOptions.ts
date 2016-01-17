@@ -59,6 +59,7 @@ module ag.grid {
         rowDeselection?: boolean;
         overlayLoadingTemplate?: string;
         overlayNoRowsTemplate?: string;
+        checkboxSelection?: Function;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?

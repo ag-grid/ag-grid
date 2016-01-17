@@ -56,6 +56,16 @@ gridsModule.controller('mainController', function($scope) {
     $scope.groupType = 'col';
     $scope.rowSelection = 'checkbox';
 
+    var groupColumn = {
+        headerName: "Group",
+        width: 200,
+        field: 'name',
+        cellRenderer: {
+            renderer: "group",
+            checkbox: true
+        }
+    };
+
     var gridOptions = {
         debug: true,
         //rowsBuffer: 1,
@@ -65,9 +75,9 @@ gridsModule.controller('mainController', function($scope) {
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
+//        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-        groupSuppressAutoColumn: true,
+//        groupSuppressAutoColumn: true,
         //groupSuppressBlankHeader: true,
         groupIncludeFooter: false,
         groupHideGroupColumns: true,
@@ -80,7 +90,7 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        //groupColumnDef: groupColumn,
+        groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
         showToolPanel: false,
@@ -89,6 +99,12 @@ gridsModule.controller('mainController', function($scope) {
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
         //groupAggFields: ['bankBalance','totalWinnings'],
+        checkboxSelection: function(params) {
+            // we show checkbox selection in the first column, unless we are grouping,
+            // as the group column is configured to always show selection
+            var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
+            return params.colIndex === 0 && !isGrouping;
+        },
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
@@ -114,7 +130,11 @@ gridsModule.controller('mainController', function($scope) {
         },
 
         getBusinessKeyForNode: function(node) {
-            return node.data.name;
+            if (node.data) {
+                return node.data.name;
+            } else {
+                return '';
+            }
         },
         // isScrollLag: function() { return false; },
         //suppressScrollLag: true,
@@ -153,10 +173,6 @@ gridsModule.controller('mainController', function($scope) {
         width: 200,
         editable: true,
         filter: PersonFilter,
-            cellRenderer: {
-                renderer: "group",
-                checkbox: true
-            },
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -288,7 +304,7 @@ gridsModule.controller('mainController', function($scope) {
         });
     };
 
-    $scope.onSelectionChanged = function() {
+/*    $scope.onSelectionChanged = function() {
         switch ($scope.rowSelection) {
             case 'checkbox' :
                 //firstColumn.checkboxSelection = true;
@@ -321,20 +337,7 @@ gridsModule.controller('mainController', function($scope) {
                 break;
         }
         gridOptions.api.deselectAll();
-    };
-
-    $scope.onSize = function() {
-        if ($scope.size === 'fill') {
-            $scope.width = '100%';
-            $scope.height = '100%';
-        } else {
-            $scope.width = '800px';
-            $scope.height = '600px';
-        }
-        setTimeout( function() {
-            gridOptions.api.doLayout();
-        }, 0);
-    };
+    };*/
 
     $scope.toggleToolPanel = function() {
         var showing = gridOptions.api.isToolPanelShowing();

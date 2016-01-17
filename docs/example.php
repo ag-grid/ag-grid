@@ -82,20 +82,17 @@
 
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
-                Data Size:
+                <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
+
+                <span style="padding-left: 20px;">Data Size:</span>
                 <select ng-model="dataSize" ng-change="onDataSizeChanged()">
                     <option value="10x22">10,000 Rows, 22 Cols</option>
                     <option value="10x100">10,000 Rows, 100 Cols</option>
                     <option value="100x22">100,000 Rows, 22 Cols</option>
                 </select>
 
-                Size:
-                <select ng-model="size" ng-change="onSize()">
-                    <option value="fill">Fill Page</option>
-                    <option value="fixed">800x600</option>
-                </select>
+                <span style="padding-left: 20px;">Theme:</span>
 
-                Style:
                 <select ng-model="style" style="width: 90px;">
                     <option value="">-none-</option>
                     <option value="ag-fresh">Fresh</option>
@@ -103,29 +100,15 @@
                     <option value="ag-dark">Dark</option>
                 </select>
 
-            </div>
-
-            <div style="padding: 4px;">
-
-                <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
-
-                Selection:
-                <select ng-model="rowSelection" ng-change="onSelectionChanged()" style="width: 100px;">
-                    <option value="">-none-</option>
-                    <option value="checkbox">Checkbox</option>
-                    <option value="single">Single</option>
-                    <option value="multiple">Multiple</option>
-                </select>
-
                 <span style="padding-left: 20px; display: inline-block;">
-                    <button ng-click="toggleToolPanel()">Toggle Tool Panel</button>
+                    <button ng-click="toggleToolPanel()">Tool Panel</button>
                 </span>
 
             </div>
         </div>
         <!-- The table div -->
-        <div style="padding: 150px 20px 20px 20px; height: 100%; box-sizing: border-box;">
-            <div ag-grid="gridOptions" style="height: 100%;" ng-style="{width: width, height: height}" ng-class="style"></div>
+        <div style="padding: 100px 20px 20px 20px; height: 100%; box-sizing: border-box;">
+            <div ag-grid="gridOptions" style="height: 100%;" ng-class="style"></div>
         </div>
     </body>
 

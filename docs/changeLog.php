@@ -25,6 +25,10 @@ include 'documentation_header.php';
     <li>Major: groupAggFields is now gone, set the group agg function on the column instead.</li>
     <li>Major: row pivoting is now called row grouping</li>
     <li>Major: In get/set column state, pivotIndex is now called rowGroupIndex</li>
+    <li>Major: checkboxSelection (on colDef) can now be a function, so you can use params in the function
+    to work out at runtime if the cell should have a checkbox. gridOptions now also has function of the same
+    name, so you can configure the grid to have a checkbox in the first column always regardless of the colDef
+    (this is what the test drive does).</li>
 
     <h3>Version 2.3.7</h3>
     <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>
