@@ -166,8 +166,8 @@ module ag.grid {
             this.selectionController.selectNode(node, tryMulti, suppressEvents);
         }
 
-        public deselectNode(node:any) {
-            this.selectionController.deselectNode(node);
+        public deselectNode(node:any, suppressEvents: boolean = false) {
+            this.selectionController.deselectNode(node, suppressEvents);
         }
 
         public selectAll() {
