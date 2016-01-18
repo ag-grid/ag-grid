@@ -29,6 +29,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             skipHeader: $scope.skipHeader === true,
             skipFooters: $scope.skipFooters === true,
             skipGroups: $scope.skipGroups === true,
+            allColumns: $scope.allColumns === true,
             fileName: $scope.fileName
         };
 

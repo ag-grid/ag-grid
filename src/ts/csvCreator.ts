@@ -9,6 +9,7 @@ module ag.grid {
         fileName?: string;
         customHeader?: string;
         customFooter?: string;
+        allColumns?: boolean;
     }
 
     export class CsvCreator {
@@ -55,8 +56,15 @@ module ag.grid {
             var skipFooters = params && params.skipFooters;
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
+            var allColumns = params && params.allColumns;
 
-            var columnsToExport = this.columnController.getAllDisplayedColumns();
+            var columnsToExport: Column[];
+            if (allColumns) {
+                columnsToExport = this.columnController.getAllColumns();
+            } else {
+                columnsToExport = this.columnController.getAllDisplayedColumns();
+            }
+
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
             }

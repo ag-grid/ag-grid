@@ -8,6 +8,11 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 3.1.0</h3>
+
+    <li>Minor: New <i>allColumns</i> property for export to csv</li>
+    <li>Minor: API method <i>deselectNode()</i> now takes <i>'suppressEvents'</i> parameter.</li>
+
     <h3>Version 3.0.0</h3>
 
     <p>

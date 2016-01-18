@@ -66,7 +66,8 @@ include 'documentation_header.php';
         </ul>
         </p>
         <p>
-            The above three things are small in a list, however they had massive implications. I've spent the last few days
+            The above three things are small in a list, however they had massive implications and required a very large coding effort.
+            I've spent the last few days
             fully testing everything, making sure all the above work in all the scenarios. If you are looking at the source
             code, the biggest difference you will see is around the ColumnController which is almost completely rewritten.
             Now the columns are stored in tree structures instead of lists (to support multi levels of grouping).
