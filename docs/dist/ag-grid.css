@@ -42,7 +42,17 @@ ag-grid-ng2 {
   overflow: hidden;
   width: 100%;
 }
-.ag-pinned-header {
+.ag-pinned-left-header {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-pinned-right-header {
+  float: right;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -54,7 +64,6 @@ ag-grid-ng2 {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  display: inline-block;
   overflow: hidden;
   height: 100%;
 }
@@ -76,31 +85,19 @@ ag-grid-ng2 {
   vertical-align: bottom;
   text-align: center;
   display: inline-block;
-}
-.ag-header-cell-grouped {
-  height: 50%;
-}
-.ag-header-cell-not-grouped {
-  height: 100%;
-}
-.ag-header-group {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: inline-block;
   height: 100%;
 }
 .ag-header-group-cell {
+  display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  text-align: center;
-  height: 50%;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 .ag-header-group-cell-label {
+  display: table-cell;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -115,6 +112,9 @@ ag-grid-ng2 {
   width: 4px;
   float: right;
   cursor: col-resize;
+}
+.ag-header-expand-icon {
+  padding-left: 4px;
 }
 .ag-header-cell-menu-button {
   float: right;
@@ -146,20 +146,28 @@ ag-grid-ng2 {
   box-sizing: border-box;
   overflow: hidden;
 }
-.ag-pinned-floating-top {
+.ag-pinned-left-floating-top {
+  float: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
   height: 100%;
-  position: relative;
+}
+.ag-pinned-right-floating-top {
+  float: right;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
 }
 .ag-floating-top-viewport {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  display: inline-block;
   overflow: hidden;
   height: 100%;
 }
@@ -180,20 +188,28 @@ ag-grid-ng2 {
   box-sizing: border-box;
   overflow: hidden;
 }
-.ag-pinned-floating-bottom {
+.ag-pinned-left-floating-bottom {
+  float: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
   height: 100%;
-  position: relative;
+}
+.ag-pinned-right-floating-bottom {
+  float: right;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
 }
 .ag-floating-bottom-viewport {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  display: inline-block;
   overflow: hidden;
   height: 100%;
 }
@@ -204,12 +220,20 @@ ag-grid-ng2 {
   position: relative;
   white-space: nowrap;
 }
-.ag-pinned-cols-viewport {
+.ag-pinned-left-cols-viewport {
   float: left;
-  position: absolute;
   overflow: hidden;
 }
-.ag-pinned-cols-container {
+.ag-pinned-left-cols-container {
+  display: inline-block;
+  position: relative;
+}
+.ag-pinned-right-cols-viewport {
+  float: right;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.ag-pinned-right-cols-container {
   display: inline-block;
   position: relative;
 }
@@ -217,7 +241,8 @@ ag-grid-ng2 {
   height: 100%;
 }
 .ag-body-viewport {
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
   height: 100%;
 }
 .ag-scrolls .ag-body-container {

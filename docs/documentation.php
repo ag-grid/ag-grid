@@ -41,14 +41,47 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-    <p>
-        <b>ag-Grid 2.3.7 Released</b>
-    </p>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; float: left;">
+            <img src="http://lindafranz.com/images/site/new-version-P1060305.jpg"/>
+        </div>
+        <div style="font-size: 25px; float: left; padding: 20px;">
+            ag-Grid v3.0.0 Released
+        </div>
+        <div style="float: right;  color: #767676;">
+            18th January 2016
+        </div>
+    </div>
 
-    <p>
-        This is a minor release. Grid now works with latest Angular 2 Beta 0. This beta version of
-        Angular 2 had breaking changes. Hopefully no more surprises from the Angular team!!!
-    </p>
+    <div style="padding-top: 20px;">
+        <p>
+            ag-Grid 3.0.0 is now released. The <a href="changeLog.php">change log</a> has a full set of changes and what
+            you need to do to upgrade. The new big changes are as follows:
+        </p>
+        <p>
+        <ul>
+            <li>Left and right column pinning with <a href="./angular-grid-pinning/index.php">updated documentation</a>. </li>
+            <li>Multiple levels of column grouping with <a href="./angular-grid-grouping-headers/index.php">updated documentation</a>. </li>
+            <li>Pivoting is now called 'row grouping' (it wasn't really pivoting, I will be implementing proper pivoting in the future and needed to remove the confusion!!).</li>
+        </ul>
+        </p>
+        <p>
+            The above three things are small in a list, however they had massive implications. I've spent the last few days
+            fully testing everything, making sure all the above work in all the scenarios. If you are looking at the source
+            code, the biggest difference you will see is around the ColumnController which is almost completely rewritten.
+            Now the columns are stored in tree structures instead of lists (to support multi levels of grouping).
+        </p>
+        <p>
+            This release has some minor breaking changes, especially if you are currently grouping headers or pivoting
+            (now called grouping rows). I tried to program the grid so if you are using old properties, it will hint
+            to the console what you need to change.
+        </p>
+        <p>
+            I have done massive amounts of regression testing and reviewing of the documentation.
+            If I missed anything, please let me know.
+        </p>
+    </div>
+
 
 </div>
 
@@ -68,7 +101,7 @@ include 'documentation_header.php';
 
 </div>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 250px;">
         <img style="width: 240px;" src="https://images.rapgenius.com/f0ee868d0cca75ec68f62d2b9bf57b16.748x431x1.png"/>
@@ -90,7 +123,7 @@ include 'documentation_header.php';
     </div>
 
 
-</div>
+</div>-->
 
 
 <div style="text-align: center; margin: 50px;">

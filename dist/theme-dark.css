@@ -7,10 +7,11 @@
   border-right: 1px solid #808080;
   padding: 4px;
 }
-.ag-dark .ag-pinned-right-cols-container {
-  border-left: 1px solid #808080;
-}
 .ag-dark .ag-header {
+  background-color: #430000;
+  border-bottom: 1px solid #808080;
+}
+.ag-dark .ag-no-scrolls .ag-header-container {
   background-color: #430000;
   border-bottom: 1px solid #808080;
 }
@@ -18,6 +19,9 @@
   border-right: 1px solid #808080;
 }
 .ag-dark .ag-pinned-right-header {
+  border-left: 1px solid #808080;
+}
+.ag-dark .ag-cell-first-right-pinned {
   border-left: 1px solid #808080;
 }
 .ag-dark .ag-header-cell-label {
@@ -29,6 +33,7 @@
 .ag-dark .ag-header-group-cell-label {
   font-weight: bold;
   padding: 4px;
+  padding-left: 10px;
 }
 .ag-dark .ag-header-group-cell {
   border-right: 1px solid #808080;
