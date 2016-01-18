@@ -116,6 +116,10 @@ include '../documentation_header.php';
             <th>cellValueChanged</th>
             <td>Value has changed after editing.</td>
         </tr>
+        <tr>
+            <th>onGridSizeChanged</th>
+            <td>The grid had to lay out again because it changed size.</td>
+        </tr>
 
     </table>
 
