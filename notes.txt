@@ -2,6 +2,7 @@
 Doing releases:
 1. Update version in bower.json
 2. Update version in package.json
-3. gulp release
+3. Remove 'exclude' from dist folders (in Niall's dev)
+4. gulp release
 -- build
-4. Push to node npm: npm publish ./
+5. Push to node npm: npm publish ./

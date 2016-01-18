@@ -15,21 +15,21 @@ module ag.grid {
         ];
 
         public static SIMPLE_BOOLEAN_PROPERTIES = [
-            'virtualPaging','toolPanelSuppressPivot','toolPanelSuppressValues','rowsAlreadyGrouped',
+            'virtualPaging','toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
             'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
             'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
             'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
-            'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHidePivotColumns',
+            'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHideGroupColumns',
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
             'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
             'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay'
         ];
 
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];
-        public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['groupHeaders','showToolPanel'];
+        public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
         public static WITH_IMPACT_OTHER_PROPERTIES = [
-            'rowData','floatingTopRowData','floatingBottomRowData','groupKeys',
-            'groupAggFields','columnDefs','datasource','quickFilterText'];
+            'rowData','floatingTopRowData','floatingBottomRowData',
+            'columnDefs','datasource','quickFilterText'];
 
         public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
             'isScrollLag','isExternalFilterPresent','doesExternalFilterPass','getRowClass','getRowStyle',
@@ -129,24 +129,14 @@ module ag.grid {
                 component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
             }
 
-            if (changes.groupHeaders) {
-                component.api.setGroupHeaders(component.groupHeaders);
-            }
-
             if (changes.headerHeight) {
                 component.api.setHeaderHeight(component.headerHeight);
             }
 
-            // need to review these, they are not impacting anything, they should
+            // need to review this, it is not impacting anything, they should
             // call something on the API to update the grid
-            if (changes.groupKeys) {
-                component.gridOptions.groupKeys = component.groupKeys;
-            }
             if (changes.groupAggFunction) {
                 component.gridOptions.groupAggFunction = component.groupAggFunction;
-            }
-            if (changes.groupAggFields) {
-                component.gridOptions.groupAggFields = component.groupAggFields;
             }
         }
 

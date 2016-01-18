@@ -13,7 +13,6 @@ module ag.grid {
 
         private gridOptions: GridOptions;
 
-        private groupHeaders: boolean;
         private headerHeight: number;
         private rowHeight: number;
         private floatingTopRowData: any[];
@@ -23,7 +22,6 @@ module ag.grid {
             this.gridOptions = gridOptions;
 
             this.headerHeight = gridOptions.headerHeight;
-            this.groupHeaders = gridOptions.groupHeaders;
             this.rowHeight = gridOptions.rowHeight;
             this.floatingTopRowData = gridOptions.floatingTopRowData;
             this.floatingBottomRowData = gridOptions.floatingBottomRowData;
@@ -44,11 +42,11 @@ module ag.grid {
         public getContext() { return this.gridOptions.context; }
         public isVirtualPaging() { return isTrue(this.gridOptions.virtualPaging); }
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
-        public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
+        public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
-        public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }
+        public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
         public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
         public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
         public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
@@ -72,9 +70,7 @@ module ag.grid {
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
         public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
         public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
-        public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
-        public getGroupAggFields() { return this.gridOptions.groupAggFields; }
         public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
@@ -99,24 +95,17 @@ module ag.grid {
         public getRowHeight() { return this.rowHeight; }
         public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
         public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
+        public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
 
         // properties
         public getHeaderHeight(): number {
             if (typeof this.headerHeight === 'number') {
                 return this.headerHeight;
             } else {
-                // otherwise return 25 if no grouping, 50 if grouping
-                if (this.groupHeaders) {
-                    return 50;
-                } else {
-                    return 25;
-                }
+                return 25;
             }
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
-
-        public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
-        public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
 
         public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
         public setFloatingTopRowData(rows: any[]): void { this.floatingTopRowData = rows; }
@@ -172,20 +161,16 @@ module ag.grid {
             if (options.suppressDescSort) {
                 console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortOrder instead.');
             }
-        }
+            if (options.groupAggFields) {
+                console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
+            }
+            if (options.groupHidePivotColumns) {
+                console.warn('ag-grid: as of v3 groupHidePivotColumns is not used as pivot columns are now called rowGroup columns. Please refer to the documentation');
+            }
+            if (options.groupKeys) {
+                console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
+            }
 
-        public getPinnedColCount() {
-            // if not using scrolls, then pinned columns doesn't make
-            // sense, so always return 0
-            if (this.isForPrint()) {
-                return 0;
-            }
-            if (this.gridOptions.pinnedColumnCount) {
-                //in case user puts in a string, cast to number
-                return Number(this.gridOptions.pinnedColumnCount);
-            } else {
-                return 0;
-            }
         }
 
         public getLocaleTextFunc() {

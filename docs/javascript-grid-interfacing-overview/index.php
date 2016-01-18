@@ -11,9 +11,9 @@ include '../documentation_header.php';
     <h2>Interfacing Overview</h2>
 
     <p>
-        The interface to ag-Grid is modelled around Web Components. This gives ag-Grid a consistent
+        The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
         feel to already existing DOM elements (nice for everyone). It also has the added benefit
-        of fitting nicely into AngularJS 2.
+        of fitting nicely into Web Components, React and AngularJS 2.
     </p>
     <p>
         Each interaction with the grid can be broken down into the following categories:
@@ -30,12 +30,6 @@ include '../documentation_header.php';
         <li><b>API</b>: API into the grid, to provide features that are not representable
         via properties and events.</li>
     </ul>
-
-    <p>
-        Even if you do not use AngularJS 2 or Web Components, the model above is
-        good for understanding the interface, as it helps towards it been self documenting
-        and predictable.
-    </p>
 
     <h2>
         <img src="/images/javascript.png" height="50"/>

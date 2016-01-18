@@ -26,8 +26,8 @@
             </span>
             <span style="margin-left: 20px;">
                 Column API:
-                <button (click)="agGrid.columnApi.hideColumn('country', true)">Hide Country Column</button>
-                <button (click)="agGrid.columnApi.hideColumn('country', false)">Show Country Column</button>
+                <button (click)="agGrid.columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button (click)="agGrid.columnApi.setColumnVisible('country', true)">Show Country Column</button>
             </span>
         </div>
         <div style="clear: both;"></div>
@@ -52,12 +52,11 @@
                      enableFilter
                      groupHeaders
                      suppressRowClickSelection
-                     toolPanelSuppressPivot
+                     toolPanelSuppressGroups
                      toolPanelSuppressValues
                      debug
                      rowHeight="22"
                      rowSelection="multiple"
-                     pinnedColumnCount="3"
 
                      (modelUpdated)="onModelUpdated()"
                      (cellClicked)="onCellClicked($event)"
@@ -77,7 +76,7 @@
                      (ready)="onReady($event)"
 
                      (columnEverythingChanged)="onColumnEvent($event)"
-                     (columnPivotChanged)="onColumnEvent($event)"
+                     (columnRowGroupChanged)="onColumnEvent($event)"
                      (columnValueChanged)="onColumnEvent($event)"
                      (columnMoved)="onColumnEvent($event)"
                      (columnVisible)="onColumnEvent($event)"

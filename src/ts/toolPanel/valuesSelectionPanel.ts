@@ -61,7 +61,7 @@ module ag.grid {
             });
 
             var agValueType = new AgDropdownList(this.popupService, this.dragAndDropService);
-            agValueType.setModel([constants.SUM, constants.MIN, constants.MAX]);
+            agValueType.setModel([Column.AGG_SUM, Column.AGG_MIN, Column.AGG_MAX]);
             agValueType.setSelected(column.aggFunc);
             agValueType.setWidth(45);
 
@@ -81,8 +81,8 @@ module ag.grid {
 
         private setupComponents() {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            var columnsLocalText = localeTextFunc('valueColumns', 'Value Columns');
-            var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to create values');
+            var columnsLocalText = localeTextFunc('valueColumns', 'Aggregations');
+            var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to aggregate values');
 
             this.cColumnList = new AgList(this.dragAndDropService);
             this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));

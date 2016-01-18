@@ -193,8 +193,8 @@ include '../documentation_header.php';
     <ul>
         <li><b>footer:</b> True if row is a footer. Footers  have group = true and footer = true.</li>
         <li><b>children:</b> Children of this group.</li>
-        <li><b>field:</b> The field we are pivoting on eg Country.</li>
-        <li><b>key:</b> The key for the pivot eg Ireland, UK, USA.</li>
+        <li><b>field:</b> The field we are grouping on eg Country.</li>
+        <li><b>key:</b> The key for the grouping eg Ireland, UK, USA.</li>
         <li><b>childrenAfterFilter:</b> Filtered children of this group.</li>
         <li><b>childrenAfterSort:</b> Sorted children of this group.</li>
         <li><b>allChildrenCount:</b> Number of children and grand children.</li>

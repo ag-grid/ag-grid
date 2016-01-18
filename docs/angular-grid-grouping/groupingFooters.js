@@ -12,8 +12,8 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Bronze", field: "bronze", width: 100},
         {headerName: "Total", field: "total", width: 100},
         {headerName: "Age", field: "age", width: 90},
-        {headerName: "Country", field: "country", width: 120},
-        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+        {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1},
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Sport", field: "sport", width: 110}
     ];
@@ -23,7 +23,6 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowData: null,
         groupSuppressAutoColumn: true,
         groupUseEntireRow: false,
-        groupKeys: ['country','year'],
         groupAggFunction: groupAggFunction,
         groupIncludeFooter: true
     };

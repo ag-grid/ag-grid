@@ -34,6 +34,13 @@ include '../documentation_header.php';
         For notes on JSPM, see the section on JSPM below.
     </p>
 
+    <p>
+        For a full working example using Typescript, please see
+        <a href="https://github.com/helix46/ag-grid-angular2-beta-ts">
+        https://github.com/helix46/ag-grid-angular2-beta-ts</a>,
+        kindly provided by helix46.
+    </p>
+
     <h2>Simple AngularJS 2 Example</h2>
 
     <p>
@@ -194,6 +201,22 @@ SampleAppComponent.annotations = [
         and Firefox. It didn't work on Safari or Internet Explorer with an ng2 error. I'm not worried about
         it as I'm assuming these are AngularJS issues that will be fixed in their final release as ag-Grid works
         fine in these browsers without using Angular.
+    </note>
+
+    <h2>Angular Compiling</h2>
+
+    <p>Angular Compiling is NOT supported inside ag-Grid for Angular 2.</p>
+
+    <note>
+        <p>
+            The grid does not use the Angular 2 compile service the same way it does for Angular 1. I spoke to some of the Angular team about this at Angular Connect in London in October 2014. Basically the Angular 2's compile service doesn't work like that in Angular 1. Angular 2 compiles everything at application start, and then the compile service is no longer available. It is not intended by Angular 2 for the application to use the compile service after the application has finished initialising. ag-Grid discovers the template at run-time and builds it's own html, so needs the compile service at run-time.
+        </p>
+        <p>
+            What can be done in Angular 2 is the compile service can be made available again (I do not know how to do this yet) and then I can use it as I was using the similar service in Angular 1, but because Angular 2 is still in beta, I didn't want to invest my time in this (very undocumented) approach. It also 'did not sound like a good idea for performance reasons' with the Angular 2 team, so I'm weary that this use-case has been catered for properly in Angular 2.
+        </p>
+        <p>
+            So, long story short, until Angular 2 is out of beta and someone can provide me with the best practice approach for using the Angular 2 compile service, ag-Grid won't support internal Angular 2 bindings.
+        </p>
     </note>
 
     <h2>Destroy</h2>

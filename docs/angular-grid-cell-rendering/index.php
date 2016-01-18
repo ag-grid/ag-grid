@@ -108,7 +108,11 @@ var colDef = {
         </tr>
         <tr>
             <th>rowIndex</th>
-            <td>The index of the row renderer, after sorting and filtering.</td>
+            <td>The index of the row, after sorting and filtering.</td>
+        </tr>
+        <tr>
+            <th>colIndex</th>
+            <td>The index of the column.</td>
         </tr>
         <tr>
             <th>api</th>
@@ -139,22 +143,18 @@ var colDef = {
         </tr>
     </table>
 
-    <h4>Angular Compiling</h4>
-
-    When using Angular Compiling, a new scope is created for each row. The data for the
-    row is attached to the scope as 'data'.
-
     <h4>Example: Formatting Cells</h4>
 
-    The below example shows three columns formatted, demonstrating each of the three
-    methods above.
-    <p/>
-    'Athlete' column uses cellStyle to format each cell in the column with the same style.
-    <p/>
-    'Age' column uses cellStyle to format each cell with the capital letter 'C'.
-    <p/>
-    'Gold' column renders the cell from scratch, by adding a gold star image for each
-    gold medal won.
+    <p>
+        The below example shows three columns formatted, demonstrating each of the three
+        methods above.
+    </p>
+    <ul>
+        <li>'Athlete' column uses cellStyle to format each cell in the column with the same style.</li>
+        <li>'Age' column uses cellStyle to format each cell with the capital letter 'C'.</li>
+        <li>'Gold' column renders the cell from scratch, by adding a gold star image for each
+            gold medal won.</li>
+    </ul>
 
     <show-example example="example1"></show-example>
 

@@ -56,7 +56,7 @@ module ag.grid {
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
 
-            var columnsToExport = this.columnController.getDisplayedColumns();
+            var columnsToExport = this.columnController.getAllDisplayedColumns();
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
             }
@@ -90,7 +90,7 @@ module ag.grid {
                     if (node.group && index === 0) {
                         valueForCell =  this.createValueForGroupNode(node);
                     } else {
-                        valueForCell =  this.valueService.getValue(column.colDef, node.data, node);
+                        valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
                     }
                     if (valueForCell === null || valueForCell === undefined) {
                         valueForCell = '';

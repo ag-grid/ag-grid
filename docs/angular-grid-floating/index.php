@@ -12,7 +12,7 @@ include '../documentation_header.php';
 
     <p>
         Floating rows hang either above or below the normal rows of a table. This feature is also called
-        Frozen rows in other grids. In ag-Grid they are called Floating rows.
+        Frozen rows in other grids. In ag-Grid they are called Floating Rows.
     </p>
 
     <p>

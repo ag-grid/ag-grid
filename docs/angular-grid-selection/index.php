@@ -69,10 +69,16 @@ include '../documentation_header.php';
         on the column definition. You can set this attribute on as many columns as you like, however
         it doesn't make sense to have it in more one column in a table.
     </p>
-
     <p>
         To enable checkbox selection for groups, set the attribute 'checkbox' to true for the
         group renderer. See the grouping section for details on the group renderer.
+    </p>
+    <p>
+        colDef.checkboxSelection can also be a function that returns true/false - use this if
+        you want only checkboxes on some rows but not others. gridOptions.checkboxSelection can
+        also be specified as a function - use this if you want, for example, the first column
+        to have checkbox selection regardless of which column it is (you would do this by looing
+        at the params and returning true if colIndex = 0).
     </p>
     <p>
         Selecting groups can have the effect of selecting the group row, or selecting all the children

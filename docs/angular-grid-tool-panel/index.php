@@ -11,7 +11,7 @@ include '../documentation_header.php';
     <h2>Tool Panel</h2>
 
     <p>
-        The tool panel is where you can change the state of the columns. This includes show / hide, move and pivot (group).
+        The tool panel is where you can change the state of the columns. This includes show / hide, move and group.
     </p>
 
     <p>
@@ -28,13 +28,13 @@ include '../documentation_header.php';
         aggregation function (which would then not use the values selected here).
     </p>
 
-    <h4>Suppress Pivot</h4>
+    <h4>Suppress Group</h4>
 
     <p>
-        If you don't want to show the pivot, set <i><b>toolPanelSuppressPivot=true</b></i> property.
+        If you don't want to show the group row, set <i><b>toolPanelSuppressGroups=true</b></i> property.
         This is used if you just want simple column visibility and reordering functionality
-        in the tool panel. Note that hiding the pivot has the impact of also hiding the values, as it
-        doesn't make sense to have values if you are not pivoting.
+        in the tool panel. Note that hiding the group has the impact of also hiding the values, as it
+        doesn't make sense to have values if you are not grouping.
     </p>
 
     <h3>Tool Panel Actions</h3>
@@ -51,15 +51,15 @@ include '../documentation_header.php';
 
     <h4>Reorder Columns</h4>
     <p>
-        To reorder the groups (either the displayed groups, or the pivoted groups),
+        To reorder the columns (either the displayed columns or the groups)
         drag the column to a new location in the list.
     </p>
 
-    <h4>Pivot (group) by Columns</h4>
+    <h4>Group by Columns</h4>
     <p>
-        To pivot by a column, drag the column down to the pivot GUI. The order of the column
-        in the pivot list can be changed by dragging, with the first value been the top most
-        pivot group.
+        To group by a column, drag the column down to the group GUI. The order of the column
+        in the group list can be changed by dragging, with the first value been the top most
+        group.
     </p>
 
     <h4>Aggregate Columns</h4>

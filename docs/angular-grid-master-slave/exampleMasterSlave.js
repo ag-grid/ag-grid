@@ -12,12 +12,16 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Sport", field: "sport", width: 150},
         // in the total col, we have a value getter, which usually means we don't need to provide a field
         // however the master/slave depends on the column id (which is derived from the field if provided) in
-        // order ot match up the columns
-        {headerName: "Total", headerGroup: "Medals", headerGroupShow: 'closed', field: "total",
-            valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-        {headerName: "Gold", headerGroup: "Medals", headerGroupShow: 'open', field: "gold", width: 100},
-        {headerName: "Silver", headerGroup: "Medals", headerGroupShow: 'open', field: "silver", width: 100},
-        {headerName: "Bronze", headerGroup: "Medals", headerGroupShow: 'open', field: "bronze", width: 100}
+        // order to match up the columns
+        {headerName: 'Medals',
+            children: [
+                {headerName: "Total", columnGroupShow: 'closed', field: "total",
+                    valueGetter: "data.gold + data.silver + data.bronze", width: 200},
+                {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
+                {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
+                {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
+            ]
+        }
     ];
 
     // this is the grid options for the top grid
@@ -54,20 +58,21 @@ module.controller("exampleCtrl", function($scope, $http) {
         .then(function(res){
             gridOptionsTop.api.setRowData(res.data);
             gridOptionsBottom.api.setRowData(res.data);
+            gridOptionsTop.api.sizeColumnsToFit();
         });
 
     $scope.onCbAthlete = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('athlete', !$scope.cbAthlete);
+        gridOptionsTop.columnApi.setColumnVisible('athlete', $scope.cbAthlete);
     };
 
     $scope.onCbAge = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('age', !$scope.cbAge);
+        gridOptionsTop.columnApi.setColumnVisible('age', $scope.cbAge);
     };
 
     $scope.onCbCountry = function() {
         // we only need to update one grid, as the other is a slave
-        gridOptionsTop.columnApi.hideColumn('country', !$scope.cbCountry);
+        gridOptionsTop.columnApi.setColumnVisible('country', $scope.cbCountry);
     };
 });

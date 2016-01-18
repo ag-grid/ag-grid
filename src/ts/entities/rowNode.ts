@@ -30,9 +30,9 @@ module ag.grid {
         footer?: boolean;
         /** Groups only - Children of this group */
         children?: RowNode[];
-        /** Groups only - The field we are pivoting on eg Country*/
+        /** Groups only - The field we are grouping on eg Country*/
         field?: string;
-        /** Groups only - The key for the pivot eg Ireland, UK, USA */
+        /** Groups only - The key for the group eg Ireland, UK, USA */
         key?: any;
         /** Groups only - Filtered children of this group */
         childrenAfterFilter?: RowNode[];

@@ -190,8 +190,7 @@ module ag.grid {
                 console.warn('ag-grid: sizeColumnsToFit does not work when forPrint=true');
                 return;
             }
-            var availableWidth = this.gridPanel.getWidthForSizeColsToFit();
-            this.columnController.sizeColumnsToFit(availableWidth);
+            var availableWidth = this.gridPanel.sizeColumnsToFit();
         }
 
         public showLoadingOverlay(): void {
@@ -281,7 +280,7 @@ module ag.grid {
         public getColumnDef(key:any) {
             var column = this.columnController.getColumn(key);
             if (column) {
-                return column.colDef;
+                return column.getColDef();
             } else {
                 return null;
             }
@@ -320,39 +319,12 @@ module ag.grid {
             this.gridPanel.onBodyHeightChange();
         }
 
-        public setGroupHeaders(groupHeaders: boolean) {
-            this.gridOptionsWrapper.setGroupHeaders(groupHeaders);
-            this.columnController.onColumnsChanged();
-            // if using the default height, then this is impacted by the header count
-            this.gridPanel.onBodyHeightChange();
-        }
-
         public showToolPanel(show:any) {
             this.grid.showToolPanel(show);
         }
 
         public isToolPanelShowing() {
             return this.grid.isToolPanelShowing();
-        }
-
-        public hideColumn(colId:any, hide:any) {
-            console.warn('ag-Grid: hideColumn deprecated - use hideColumn on columnApi instead eg api.columnApi.hideColumn()');
-            this.columnController.hideColumns([colId], hide);
-        }
-
-        public hideColumns(colIds:any, hide:any) {
-            console.warn('ag-Grid: hideColumns deprecated - use hideColumns on columnApi instead eg api.columnApi.hideColumns()');
-            this.columnController.hideColumns(colIds, hide);
-        }
-
-        public getColumnState() {
-            console.warn('ag-Grid: getColumnState deprecated - use getColumnState on columnApi instead eg api.columnApi.getState()');
-            return this.columnController.getState();
-        }
-
-        public setColumnState(state:any) {
-            console.warn('ag-Grid: setColumnState deprecated - use setColumnState on columnApi instead eg api.columnApi.setState()');
-            this.columnController.setState(state);
         }
 
         public doLayout() {
@@ -383,8 +355,8 @@ module ag.grid {
             this.eventService.dispatchEvent(eventType, event);
         }
 
-        public refreshPivot(): void {
-            this.grid.refreshPivot();
+        public refreshRowGroup(): void {
+            this.grid.refreshRowGroup();
         }
 
         public destroy(): void {

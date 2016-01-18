@@ -1,9 +1,5 @@
 /// <reference path='componentUtil.ts'/>
 
-// todo:
-// + need to hook into destroy callback
-// + how can we make this element extend div?
-
 module ag.grid {
 
     // lets load angular 2 if we can find it
@@ -46,7 +42,7 @@ module ag.grid {
 
         // column grid events
         public columnEverythingChanged = new _ng.core.EventEmitter();
-        public columnPivotChanged = new _ng.core.EventEmitter();
+        public columnRowGroupChanged = new _ng.core.EventEmitter();
         public columnValueChanged = new _ng.core.EventEmitter();
         public columnMoved = new _ng.core.EventEmitter();
         public columnVisible = new _ng.core.EventEmitter();
@@ -56,7 +52,7 @@ module ag.grid {
 
         // properties
         public virtualPaging: boolean;
-        public toolPanelSuppressPivot: boolean;
+        public toolPanelSuppressGroups: boolean;
         public toolPanelSuppressValues: boolean;
         public rowsAlreadyGrouped: boolean;
         public suppressRowClickSelection: boolean;
@@ -85,7 +81,7 @@ module ag.grid {
 
         public groupSuppressAutoColumn: boolean;
         public groupSelectsChildren: boolean;
-        public groupHidePivotColumns: boolean;
+        public groupHideGroupColumns: boolean;
         public groupIncludeFooter: boolean;
         public groupUseEntireRow: boolean;
         public groupSuppressRow: boolean;
@@ -108,15 +104,12 @@ module ag.grid {
         public floatingTopRowData: any[]; // should this be immutable ag2?
         public floatingBottomRowData: any[]; // should this be immutable ag2?
         public showToolPanel: boolean;
-        public groupKeys: string[];
         public groupAggFunction: (nodes: any[]) => void;
-        public groupAggFields: string[];
         public columnDefs: any[]; // change to typed
         public datasource: any; // should be typed
         public pinnedColumnCount: number;
         public quickFilterText: string;
         // in properties
-        public groupHeaders: boolean;
         public headerHeight: number;
 
         constructor(private elementDef: any) {
@@ -148,8 +141,7 @@ module ag.grid {
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
-                case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED: emitter = this.columnPinnedCountChanged; break;
-                case Events.EVENT_COLUMN_PIVOT_CHANGE: emitter = this.columnPivotChanged; break;
+                case Events.EVENT_COLUMN_ROW_GROUP_CHANGE: emitter = this.columnRowGroupChanged; break;
                 case Events.EVENT_COLUMN_RESIZED: emitter = this.columnResized; break;
                 case Events.EVENT_COLUMN_VALUE_CHANGE: emitter = this.columnValueChanged; break;
                 case Events.EVENT_COLUMN_VISIBLE: emitter = this.columnVisible; break;
@@ -180,17 +172,19 @@ module ag.grid {
     }
 
     // check for angular and component, as if angular 1, we will find angular but the wrong version
-    if ((<any> window).ng && (<any> window).ng.core && (<any> window).ng.core.Component) {
-        var ng = (<any> window).ng;
-        initialiseAgGridWithAngular2(ng);
-        // check if we are using SystemX
-        // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
-        // as it was resulting in a failed 'Fetch' of the Angular2 system
-    //} else if ((<any>window).System && (<any>window).System.import) {
-    //    (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
-    //        var ng = ngFromSystemX;
-    //        initialiseAgGridWithAngular2(ng);
-    //    });
+    if (typeof (window) !== 'undefined') { // this check was needed for unit tests, otherwise window undefined error below
+        if (window && (<any> window).ng && (<any> window).ng.core && (<any> window).ng.core.Component) {
+            var ng = (<any> window).ng;
+            initialiseAgGridWithAngular2(ng);
+            // check if we are using SystemX
+            // taking this out, as it was upsetting people who used SystemX but didn't use Angular2,
+            // as it was resulting in a failed 'Fetch' of the Angular2 system
+        //} else if ((<any>window).System && (<any>window).System.import) {
+        //    (<any>window).System.import('angular2/angular2').then( function(ngFromSystemX: any) {
+        //        var ng = ngFromSystemX;
+        //        initialiseAgGridWithAngular2(ng);
+        //    });
+        }
     }
 
     export function initialiseAgGridWithAngular2(ng: any) {
@@ -205,7 +199,7 @@ module ag.grid {
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
                     'rowClicked', 'rowDoubleClicked', 'ready',
                     // column events
-                    'columnEverythingChanged','columnPivotChanged','columnValueChanged','columnMoved',
+                    'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
                 inputs: ['gridOptions']
                     .concat(ComponentUtil.SIMPLE_PROPERTIES)

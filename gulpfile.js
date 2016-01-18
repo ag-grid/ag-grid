@@ -14,6 +14,8 @@ var merge = require('merge2');
 var pkg = require('./package.json');
 var tsd = require('gulp-tsd');
 
+var jasmine = require('gulp-jasmine');
+
 var headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
     ' * @version v<%= pkg.version %>',
@@ -28,14 +30,16 @@ var dtsHeaderTemplate =
     '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n' +
     '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
 
-gulp.task('default', ['stylus', 'tsd', 'debug-build', 'watch']);
-gulp.task('release', ['stylus', 'tsd', 'ts-release']);
+gulp.task('default', ['stylus', 'tsd', 'unit-tests', 'watch']);
+gulp.task('release', ['stylus', 'tsd', 'ts-release-build']);
 
 // Build
-gulp.task('debug-build', ['stylus', 'ts-debug']);
+gulp.task('debug-build', ['stylus', 'ts-dev-build']);
 gulp.task('stylus', stylusTask);
-gulp.task('ts-debug', tsDebugTask);
-gulp.task('ts-release', tsReleaseTask);
+//gulp.task('unit-tests', ['ts-dev-build'], tsTestTask);
+gulp.task('unit-tests', ['ts-dev-build']);
+gulp.task('ts-dev-build', tsDebugTask);
+gulp.task('ts-release-build', tsReleaseTask);
 
 // Watch
 gulp.task('watch', watchTask);
@@ -64,6 +68,13 @@ gulp.task('es6', function (callback) {
         .pipe(sourcemaps.write()) // for sourcemaps only
         .pipe(gulp.dest('./docs/dist'));
 });
+
+function tsTestTask() {
+    return gulp.src('./spec/**/*.js')
+        .pipe(jasmine({
+            verbose: false
+        }));
+}
 
 // does TS compiling, sourcemaps = yes, minification = no, distFolder = no
 function tsDebugTask() {
@@ -154,6 +165,6 @@ function stylusTask() {
 }
 
 function watchTask() {
-    gulp.watch('./src/ts/**/*', ['ts-debug']);
+    gulp.watch(['./src/ts/**/*','./spec/**/*'], ['unit-tests']);
     gulp.watch('./src/styles/**/*', ['stylus']);
 }

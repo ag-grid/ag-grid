@@ -13,7 +13,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Gold", field: "gold", width: 100, hide: true},
         {headerName: "Silver", field: "silver", width: 100, hide: true},
         {headerName: "Bronze", field: "bronze", width: 100, hide: true},
-        {headerName: "Total", field: "total", width: 100}
+        {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
     ];
 
     $scope.gridOptions = {
@@ -25,8 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $http.get("../olympicWinners.json")
         .then(function(res){
-            $scope.gridOptions.rowData = res.data;
-            $scope.gridOptions.api.onNewRows();
+            $scope.gridOptions.api.setRowData(res.data);
         });
 
 });

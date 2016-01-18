@@ -19,6 +19,22 @@ module.controller("exampleCtrl", function($scope, $http) {
         }
     };
 
+    var gbpFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'GBP',
+        minimumFractionDigits: 2
+    });
+    var eurFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2
+    });
+    var usdFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    });
+
     var data = [
         {product: 'Product 1', currency: 'EUR', price: 644},
         {product: 'Product 2', currency: 'EUR', price: 354},
@@ -31,20 +47,38 @@ module.controller("exampleCtrl", function($scope, $http) {
     var columnDefs = [
         {headerName: "Product", field: "product", width: 150},
         {headerName: "Currency", field: "currency", width: 150},
-        {headerName: "Price Local", field: "price", width: 150},
+        {headerName: "Price Local", field: "price",
+            cellStyle: {'text-align': 'right'},
+            cellRenderer: actualCurrencyCellRenderer,
+            width: 150},
         {headerName: "Report Price", width: 150,
+            cellStyle: {'text-align': 'right'},
             cellRenderer: reportingCurrencyCellRenderer,
             headerValueGetter: 'ctx.reportingCurrency'}
     ];
 
-    // in the future, change this to a value getter
+    function actualCurrencyCellRenderer(params) {
+        switch (params.data.currency) {
+            case 'EUR': return eurFormatter.format(params.value);
+            case 'USD': return usdFormatter.format(params.value);
+            case 'GBP': return gbpFormatter.format(params.value);
+        }
+    }
+
     function reportingCurrencyCellRenderer(params) {
-        var fxRateSet = exchangeRates[params.context.reportingCurrency];
+        var reportingCurrency = params.context.reportingCurrency;
+        var fxRateSet = exchangeRates[reportingCurrency];
         var fxRate = fxRateSet[params.data.currency];
+        var value;
         if (fxRate) {
-            return params.data.price * fxRate;
+            value = params.data.price * fxRate;
         } else {
-            return params.data.price;
+            value = params.data.price;
+        }
+        switch (reportingCurrency) {
+            case 'EUR': return eurFormatter.format(value);
+            case 'USD': return usdFormatter.format(value);
+            case 'GBP': return gbpFormatter.format(value);
         }
     }
 
@@ -60,8 +94,7 @@ module.controller("exampleCtrl", function($scope, $http) {
             reportingCurrency: 'EUR'
         },
         columnDefs: columnDefs,
-        rowData: data,
-        forPrint: true
+        rowData: data
     };
 
 });

@@ -41,7 +41,7 @@ module ag.grid {
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                     var groupColumn = groupedCols[currentLevel];
-                    groupKey = this.valueService.getValue(groupColumn.colDef, data, node);
+                    groupKey = this.valueService.getValue(groupColumn.getColDef(), data, node);
 
                     if (currentLevel === 0) {
                         currentGroup = topMostGroup;
@@ -52,7 +52,7 @@ module ag.grid {
                     if (!nextGroup) {
                         nextGroup = {
                             group: true,
-                            field: groupColumn.colId,
+                            field: groupColumn.getColDef().field,
                             id: index--,
                             key: groupKey,
                             expanded: this.isExpanded(expandByDefault, currentLevel),

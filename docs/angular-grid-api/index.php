@@ -144,8 +144,8 @@ include '../documentation_header.php';
                 as this gets called after <i>recomputeAggregates()</i> anyway.</td>
         </tr>
         <tr>
-            <th>refreshPivot()</th>
-            <td>Gets the grid to recompute the pivot row groups.</td>
+            <th>refreshGroup()</th>
+            <td>Gets the grid to recompute the row groups.</td>
         </tr>
         <tr>
             <th>getModel()</th>
@@ -301,13 +301,10 @@ include '../documentation_header.php';
                 This is useful if you want the raw value eg for csv export.</td>
         </tr>
         <tr>
-            <th>setGroupHeaders(value)</th>
-            <td>To set group headers (true / false) after the grid has initialised.</td>
-        </tr>
-        <tr>
             <th>setHeaderHeight(value)</th>
             <td>To set the header height (in pixels) after the grid has initialised. Set to null or undefined
-                to use the default.</td>
+                to use the default of 25px. If havling multiple rows in the header, due to column grouping,
+                this will be the height of each row.</td>
         </tr>
         <tr>
             <th>forEachNode(callback)</th>

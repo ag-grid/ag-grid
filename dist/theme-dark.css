@@ -7,16 +7,18 @@
   border-right: 1px solid #808080;
   padding: 4px;
 }
-.ag-dark .ag-header-container {
-  background-color: #430000;
-  border-bottom: 1px solid #808080;
+.ag-dark .ag-pinned-right-cols-container {
+  border-left: 1px solid #808080;
 }
-.ag-dark .ag-pinned-header {
+.ag-dark .ag-header {
   background-color: #430000;
   border-bottom: 1px solid #808080;
 }
 .ag-dark .ag-header-cell {
   border-right: 1px solid #808080;
+}
+.ag-dark .ag-pinned-right-header {
+  border-left: 1px solid #808080;
 }
 .ag-dark .ag-header-cell-label {
   padding: 4px 2px 4px 2px;

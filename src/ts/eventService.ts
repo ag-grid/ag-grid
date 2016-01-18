@@ -45,6 +45,8 @@ module ag.grid {
             _.removeFromArray(this.globalListeners, listener);
         }
 
+        // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
+        // type is not in other types of events???
         public dispatchEvent(eventType: string, event?: any): void {
             if (!event) {
                 event = {};

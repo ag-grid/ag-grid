@@ -2,7 +2,10 @@
 module ag.grid {
 
     // provide a reference to angular
-    var angular = (<any> window).angular;
+    var angular: any;
+    if (typeof window !== 'undefined') { // check needed for unit tests, otherwise 'variable not defined' error
+        angular = (<any> window).angular;
+    }
 
     // if angular is present, register the directive - checking for 'module' and 'directive' also to make
     // sure it's Angular 1 and not Angular 2

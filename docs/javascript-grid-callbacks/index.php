@@ -86,7 +86,12 @@ include '../documentation_header.php';
                 <i>row-id='abc'</i> where abc is what you return as the business key. This is useful for automated
             testing, as it provides a way for your tool to identify rules based on unique business keys.</td>
         </tr>
-
+        <tr>
+            <th>checkboxSelection(params)</th>
+            <td>Callback to say if a cell should have checkbox selection. Same as property on colDef,
+            except this gets called for each column. If you want the first column to have selection,
+            regardless of the column, get this to return "params.colIndex===0"</td>
+        </tr>
 
     </table>
 

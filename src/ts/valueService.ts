@@ -1,6 +1,6 @@
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="expressionService.ts" />
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
 
 module ag.grid {
 
@@ -67,7 +67,7 @@ module ag.grid {
         private getValueCallback(data: any, node: any, field: string): any {
             var otherColumn = this.columnController.getColumn(field);
             if (otherColumn) {
-                return this.getValue(otherColumn.colDef, data, node);
+                return this.getValue(otherColumn.getColDef(), data, node);
             } else {
                 return null;
             }
