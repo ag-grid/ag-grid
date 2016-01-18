@@ -50,14 +50,14 @@ module ag.grid {
         private totalPages: number;
         private currentPage: number;
 
-        init(angularGrid: any, gridOptionsWrapper: any) {
+        public init(angularGrid: any, gridOptionsWrapper: any) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.setupComponents();
             this.callVersion = 0;
         }
 
-        setDatasource(datasource: any) {
+        public setDatasource(datasource: any) {
             this.datasource = datasource;
 
             if (!datasource) {
@@ -68,7 +68,7 @@ module ag.grid {
             this.reset();
         }
 
-        reset() {
+        public reset() {
             // copy pageSize, to guard against it changing the the datasource between calls
             if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
                 console.warn('datasource.pageSize should be a number');
@@ -94,10 +94,20 @@ module ag.grid {
             this.loadPage();
         }
 
-        setTotalLabels() {
+        // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE
+        private myToLocaleString(input: number): string {
+            if (typeof input !== 'number') {
+                return '';
+            } else {
+                // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+                return input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            }
+        }
+
+        private setTotalLabels() {
             if (this.foundMaxRow) {
-                this.lbTotal.innerHTML = this.totalPages.toLocaleString();
-                this.lbRecordCount.innerHTML = this.rowCount.toLocaleString();
+                this.lbTotal.innerHTML = this.myToLocaleString(this.totalPages);
+                this.lbRecordCount.innerHTML = this.myToLocaleString(this.rowCount);
             } else {
                 var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
                 this.lbTotal.innerHTML = moreText;
@@ -105,11 +115,11 @@ module ag.grid {
             }
         }
 
-        calculateTotalPages() {
+        private calculateTotalPages() {
             this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
         }
 
-        pageLoaded(rows: any, lastRowIndex: any) {
+        private pageLoaded(rows: any, lastRowIndex: any) {
             var firstId = this.currentPage * this.pageSize;
             this.angularGrid.setRowData(rows, firstId);
             // see if we hit the last row
@@ -129,7 +139,7 @@ module ag.grid {
             this.updateRowLabels();
         }
 
-        updateRowLabels() {
+        private updateRowLabels() {
             var startRow: any;
             var endRow: any;
             if (this.isZeroPagesToDisplay()) {
@@ -142,19 +152,19 @@ module ag.grid {
                     endRow = this.rowCount;
                 }
             }
-            this.lbFirstRowOnPage.innerHTML = (startRow).toLocaleString();
-            this.lbLastRowOnPage.innerHTML = (endRow).toLocaleString();
+            this.lbFirstRowOnPage.innerHTML = this.myToLocaleString(startRow);
+            this.lbLastRowOnPage.innerHTML = this.myToLocaleString(endRow);
 
             // show the summary panel, when first shown, this is blank
             this.ePageRowSummaryPanel.style.visibility = "";
         }
 
-        loadPage() {
+        private loadPage() {
             this.enableOrDisableButtons();
             var startRow = this.currentPage * this.datasource.pageSize;
             var endRow = (this.currentPage + 1) * this.datasource.pageSize;
 
-            this.lbCurrent.innerHTML = (this.currentPage + 1).toLocaleString();
+            this.lbCurrent.innerHTML = this.myToLocaleString(this.currentPage + 1);
 
             this.callVersion++;
             var callVersionCopy = this.callVersion;
@@ -207,35 +217,35 @@ module ag.grid {
             }
         }
 
-        isCallDaemon(versionCopy: any) {
+        private isCallDaemon(versionCopy: any) {
             return versionCopy !== this.callVersion;
         }
 
-        onBtNext() {
+        private onBtNext() {
             this.currentPage++;
             this.loadPage();
         }
 
-        onBtPrevious() {
+        private onBtPrevious() {
             this.currentPage--;
             this.loadPage();
         }
 
-        onBtFirst() {
+        private onBtFirst() {
             this.currentPage = 0;
             this.loadPage();
         }
 
-        onBtLast() {
+        private onBtLast() {
             this.currentPage = this.totalPages - 1;
             this.loadPage();
         }
 
-        isZeroPagesToDisplay() {
+        private isZeroPagesToDisplay() {
             return this.foundMaxRow && this.totalPages === 0;
         }
 
-        enableOrDisableButtons() {
+        private enableOrDisableButtons() {
             var disablePreviousAndFirst = this.currentPage === 0;
             this.btPrevious.disabled = disablePreviousAndFirst;
             this.btFirst.disabled = disablePreviousAndFirst;
@@ -250,7 +260,7 @@ module ag.grid {
             this.btLast.disabled = disableLast;
         }
 
-        createTemplate() {
+        private createTemplate() {
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             return template
                 .replace('[PAGE]', localeTextFunc('page', 'Page'))
@@ -263,11 +273,11 @@ module ag.grid {
                 .replace('[LAST]', localeTextFunc('last', 'Last'));
         }
 
-        getGui() {
+        public getGui() {
             return this.eGui;
         }
 
-        setupComponents() {
+        private setupComponents() {
 
             this.eGui = utils.loadTemplate(this.createTemplate());
 
