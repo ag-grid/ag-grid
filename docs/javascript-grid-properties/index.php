@@ -180,7 +180,7 @@ include '../documentation_header.php';
             <td>Set to true to show the tool panel by default.</td>
         </tr>
         <tr>
-            <th>toolPanelSuppressGroup</th>
+            <th>toolPanelSuppressGroups</th>
             <td>Set to true to not show the values or the row groups in the tool panel. It does not make sense
                 to show the values if no row grouping functionality is allowed.</td>
         </tr>

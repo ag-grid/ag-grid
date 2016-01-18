@@ -190,8 +190,7 @@ module ag.grid {
                 console.warn('ag-grid: sizeColumnsToFit does not work when forPrint=true');
                 return;
             }
-            var availableWidth = this.gridPanel.getWidthForSizeColsToFit();
-            this.columnController.sizeColumnsToFit(availableWidth);
+            var availableWidth = this.gridPanel.sizeColumnsToFit();
         }
 
         public showLoadingOverlay(): void {

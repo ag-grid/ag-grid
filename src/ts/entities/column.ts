@@ -81,8 +81,14 @@ module ag.grid {
             this.index = index;
         }
 
-        public setPinned(pinned: string): void {
-            this.pinned = pinned;
+        public setPinned(pinned: string|boolean): void {
+            if (pinned===true || pinned===Column.PINNED_LEFT) {
+                this.pinned = Column.PINNED_LEFT;
+            } else if (pinned===Column.PINNED_RIGHT) {
+                this.pinned = Column.PINNED_RIGHT;
+            } else {
+                this.pinned = null;
+            }
         }
 
         public isPinned(): boolean {
@@ -94,7 +100,7 @@ module ag.grid {
         }
 
         public setVisible(visible: boolean): void {
-            this.visible = visible;
+            this.visible = visible===true;
         }
 
         public isVisible(): boolean {

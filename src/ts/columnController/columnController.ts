@@ -472,34 +472,35 @@ module ag.grid {
             this.allColumns = [];
             this.rowGroupColumns = [];
             this.valueColumns = [];
-            var that = this;
 
             if (columnState) {
-                columnState.forEach(function (stateItem: any) {
-                    var oldColumn = _.find(oldColumnList, 'colId', stateItem.colId);
+                columnState.forEach( (stateItem: any)=> {
+                    var oldColumn: Column = _.find(oldColumnList, 'colId', stateItem.colId);
                     if (!oldColumn) {
                         console.warn('ag-grid: column ' + stateItem.colId + ' not found');
                         return;
                     }
                     // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                    oldColumn.visible = stateItem.hide ? false : true;
-                    // checks for 'true', otherwise false
-                    oldColumn.pinned = stateItem.pinned === true;
+                    oldColumn.setVisible(stateItem.hide!==false);
+                    // sets pinned to 'left' or 'right'
+                    oldColumn.setPinned(stateItem.pinned===true);
                     // if width provided and valid, use it, otherwise stick with the old width
-                    oldColumn.actualWidth = stateItem.width >= constants.MIN_COL_WIDTH ? stateItem.width : oldColumn.actualWidth;
+                    if (stateItem.width >= constants.MIN_COL_WIDTH) {
+                        oldColumn.setActualWidth(stateItem.width);
+                    }
                     // accept agg func only if valid
                     var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM].indexOf(stateItem.aggFunc) >= 0;
                     if (aggFuncValid) {
-                        oldColumn.aggFunc = stateItem.aggFunc;
-                        that.valueColumns.push(oldColumn);
+                        oldColumn.setAggFunc(stateItem.aggFunc);
+                        this.valueColumns.push(oldColumn);
                     } else {
-                        oldColumn.aggFunc = null;
+                        oldColumn.setAggFunc(null);
                     }
                     // if rowGroup
                     if (typeof stateItem.rowGroupIndex === 'number' && stateItem.rowGroupIndex >= 0) {
-                        that.rowGroupColumns.push(oldColumn);
+                        this.rowGroupColumns.push(oldColumn);
                     }
-                    that.allColumns.push(oldColumn);
+                    this.allColumns.push(oldColumn);
                     oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
                 });
             }

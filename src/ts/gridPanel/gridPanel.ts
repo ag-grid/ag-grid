@@ -261,7 +261,9 @@ module ag.grid {
 
         public isVerticalScrollShowing(): boolean {
             if (this.columnModel.isPinningRight()) {
-                return this.ePinnedRightColsViewport.clientHeight < this.ePinnedRightColsViewport.scrollHeight
+                // if pinning right, then the scroll bar can show, however for some reason
+                // it overlays the grid and doesn't take space.
+                return false;
             } else {
                 return this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight
             }
@@ -345,13 +347,34 @@ module ag.grid {
             this.layout.hideOverlay();
         }
 
-        public getWidthForSizeColsToFit() {
+        private getWidthForSizeColsToFit() {
             var availableWidth = this.eBody.clientWidth;
             var scrollShowing = this.isVerticalScrollShowing();
             if (scrollShowing) {
                 availableWidth -= this.scrollWidth;
             }
             return availableWidth;
+        }
+
+        // method will call itself if no available width. this covers if the grid
+        // isn't visible, but is just about to be visible.
+        public sizeColumnsToFit(nextTimeout?: number) {
+            var availableWidth = this.getWidthForSizeColsToFit();
+            if (availableWidth>0) {
+                this.columnModel.sizeColumnsToFit(availableWidth);
+            } else {
+                if (nextTimeout===undefined) {
+                    setTimeout( ()=> {
+                        this.sizeColumnsToFit(100);
+                    }, 0);
+                } else if (nextTimeout===100) {
+                    setTimeout( ()=> {
+                        this.sizeColumnsToFit(-1);
+                    }, 100);
+                } else {
+                    console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with zero width, mabye the grid is not visible yet on the screen?');
+                }
+            }
         }
 
         public setRowModel(rowModel: any) {

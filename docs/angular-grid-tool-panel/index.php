@@ -31,7 +31,7 @@ include '../documentation_header.php';
     <h4>Suppress Group</h4>
 
     <p>
-        If you don't want to show the group row, set <i><b>toolPanelSuppressGroup=true</b></i> property.
+        If you don't want to show the group row, set <i><b>toolPanelSuppressGroups=true</b></i> property.
         This is used if you just want simple column visibility and reordering functionality
         in the tool panel. Note that hiding the group has the impact of also hiding the values, as it
         doesn't make sense to have values if you are not grouping.
