@@ -102,6 +102,7 @@ module ag.grid {
         onVirtualRowRemoved?(params: any): void;
         onRowClicked?(params: any): void;
         onRowDoubleClicked?(params: any): void;
+        onGridSizeChanged?(params: any): void;
 
         // apis, set by the grid on init
         api?: GridApi; // change to typed

@@ -39,6 +39,7 @@ module ag.grid {
         public rowClicked = new _ng.core.EventEmitter();
         public rowDoubleClicked = new _ng.core.EventEmitter();
         public ready = new _ng.core.EventEmitter();
+        public gridSizeChanged = new _ng.core.EventEmitter();
 
         // column grid events
         public columnEverythingChanged = new _ng.core.EventEmitter();
@@ -163,6 +164,7 @@ module ag.grid {
                 case Events.EVENT_ROW_CLICKED: emitter = this.rowClicked; break;
                 case Events.EVENT_ROW_DOUBLE_CLICKED: emitter = this.rowDoubleClicked; break;
                 case Events.EVENT_READY: emitter = this.ready; break;
+                case Events.EVENT_GRID_SIZE_CHANGED: emitter = this.ready; break;
                 default:
                     console.log('ag-Grid: AgGridNg2 - unknown event type: ' + eventType);
                     return;
@@ -197,7 +199,7 @@ module ag.grid {
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
                     'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                    'rowClicked', 'rowDoubleClicked', 'ready',
+                    'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged',
                     // column events
                     'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
