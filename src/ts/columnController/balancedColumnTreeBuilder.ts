@@ -88,6 +88,10 @@ module ag.grid {
 
             var result: OriginalColumnGroupChild[] = [];
 
+            if (!abstractColDefs) {
+                return result;
+            }
+
             abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
                 this.checkForDeprecatedItems(abstractColDef);
                 if (this.isColumnGroup(abstractColDef)) {
