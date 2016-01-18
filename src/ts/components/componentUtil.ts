@@ -22,7 +22,8 @@ module ag.grid {
             'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHideGroupColumns',
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
             'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
-            'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize'
+            'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
+            'suppressParentsInRowNodes'
         ];
 
         public static WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount','headerHeight'];

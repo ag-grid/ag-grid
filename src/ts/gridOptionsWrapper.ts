@@ -97,6 +97,7 @@ module ag.grid {
         public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
         public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
         public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
+        public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
 
         // properties
         public getHeaderHeight(): number {

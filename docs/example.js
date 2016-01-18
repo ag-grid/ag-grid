@@ -141,7 +141,7 @@ gridsModule.controller('mainController', function($scope) {
 
         // callback when row clicked
         onRowClicked: function(params) {
-            console.log("Callback onRowClicked: " + params.data.name + " - " + params.event);
+            console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
         },
         onRowDoubleClicked: function(params) {
             console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);

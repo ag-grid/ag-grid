@@ -207,7 +207,7 @@ module ag.grid {
                 groupCreator, valueService, eventService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
-            groupCreator.init(valueService);
+            groupCreator.init(valueService, gridOptionsWrapper);
             masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService);
 
             if (globalEventListener) {

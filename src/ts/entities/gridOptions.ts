@@ -34,6 +34,7 @@ module ag.grid {
         suppressLoadingOverlay?: boolean;
         suppressNoRowsOverlay?: boolean;
         suppressAutoSize?: boolean;
+        suppressParentsInRowNodes?: boolean;
 
         // just set once
         localeText?: any;
