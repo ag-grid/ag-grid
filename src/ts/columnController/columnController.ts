@@ -557,7 +557,7 @@ module ag.grid {
                 }
             }
 
-            if (colMatches(this.groupAutoColumn)) {
+            if (this.groupAutoColumn && colMatches(this.groupAutoColumn)) {
                 return this.groupAutoColumn;
             }
 
