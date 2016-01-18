@@ -16,6 +16,7 @@ include 'documentation_header.php';
     <li>Minor: New event <i>gridSizeChanged</i>, gets fired when grid changes size, due to window resize or other application state change. Useful if you want to lay out the grid, eg call api.sizeColumnsToFit()</li>
     <li>Minor: Bug fix - since v3 columnDefs was mandatory and threw error if missing. Is now optional again.</li>
     <li>Major: Implemented auto-size for column. Now columns can be told to fit their content.</li>
+    <li>Minor: New property: suppressParentsInRowNodes - if you don't want parents in the row node tree structure.</li>
 
     <h3>Version 3.0.0</h3>
 
