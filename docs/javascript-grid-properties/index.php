@@ -52,12 +52,8 @@ include '../documentation_header.php';
             <td>Array of Column Definitions..</td>
         </tr>
         <tr>
-            <th>groupHeaders</th>
-            <td>Whether to group the headers.</td>
-        </tr>
-        <tr>
             <th>headerHeight</th>
-            <td>Height, in pixels, of the header row. If not grouping headers, default is 25. If grouping headers, default is 50.</td>
+            <td>Height, in pixels, of the header row. The default is 25px. If grouping, each group row will be this height.</td>
         </tr>
         <tr>
             <th>rowData</th>
@@ -132,7 +128,7 @@ include '../documentation_header.php';
                 Turn on if you want to user AngularJS in your custom column headers.</td>
         </tr>
         <tr>
-            <th>groupKeys<br/> groupUseEntireRow<br/>
+            <th>groupUseEntireRow<br/>
                 groupDefaultExpanded<br/>
                 groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHideRowGroupColumns <br/> groupSuppressBlankHeader</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>

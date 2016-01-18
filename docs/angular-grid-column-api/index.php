@@ -84,8 +84,9 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>sizeColumnsToFit(width)</th>
-            <td>Get the columns to fit to a particular size. The gridApi.sizeColumnsToFit() uses
-            this method and passes in the grid width.</td>
+            <td>Don't use this! You are better off using gridApi.sizeColumnsToFit(), which first
+            works out the available with, and then calls this method. Only use this method if you
+            want to size to something other than the available width.</td>
         </tr>
         <tr>
             <th>setColumnGroupOpened(group, newValue)</th>
@@ -141,7 +142,7 @@ include '../documentation_header.php';
             <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnVisible(key, visible)</th>
+            <th>setColumnsVisible(key, visible)</th>
             <td>Same as setColumnVisible, but provide a list of column keys.</td>
         </tr>
         <tr>
@@ -230,8 +231,8 @@ include '../documentation_header.php';
     </p>
 
 <pre>[
-{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150},
-{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90}
+{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
+{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
 ]
 </pre>
 
@@ -253,6 +254,7 @@ include '../documentation_header.php';
         <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.
         If multiple columns are used to group, this index provides the order of the grouping.</li>
         <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
+        <li><b>pinned</b>: The pinned state of the column. Can be either 'left' or 'right'</li>
     </ul>
     </p>
 

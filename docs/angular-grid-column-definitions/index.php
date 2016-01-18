@@ -12,7 +12,9 @@ include '../documentation_header.php';
 
     <p>
         Each column in the grid is defined using a column definition. Below is the set off all the
-        properties you can set for a column definition.
+        properties you can set for column definitions. The section
+        <a href="../angular-grid-grouping-headers/index.php">column groups</a>
+        details how to group columns in the headers.
     </p>
 
     <p>
@@ -50,10 +52,6 @@ include '../documentation_header.php';
             <td>The field of the row to get the cells data from</td>
         </tr>
         <tr>
-            <th>headerValueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
-        <tr>
             <th>colId</th>
             <td>The unique ID to give the column. This is optional. If missing, the ID will default to the field.
             If both field and colId are missing, a unique ID will be generated. This ID is used to identify
@@ -79,6 +77,10 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>valueGetter(params)</th>
+            <td>Expression or function to get the cells value.</td>
+        </tr>
+        <tr>
+            <th>headerValueGetter(params)</th>
             <td>Expression or function to get the cells value.</td>
         </tr>
         <tr>
@@ -128,7 +130,8 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>rowGroupIndex</th>
-            <td>Include this column as a row group at the given index.</td>
+            <td>Set this in columns you want to group by. If only grouping by one column, set this to any number (eg 0).
+            If grouping by multiple columns, set this to where you want this column to be in the group (eg 0 for first, 1 for second, and so on).</td>
         </tr>
         <tr>
             <th>comparator(valueA, valueB, nodeA, nodeB, isInverted)</th>
@@ -136,7 +139,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>checkboxSelection</th>
-            <td>Boolean of Function. Set to true (or return true from functio) to render a selection checkbox in the column.</td>
+            <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
         </tr>
         <tr>
             <th>suppressMenu</th>
@@ -183,7 +186,7 @@ include '../documentation_header.php';
         <tr>
             <th>template<br/>templateUrl</th>
             <td>Cell template (or specify URL to load template from) to use for cell.
-                Useful for AngularJS cells.</td>
+                Useful for AngularJS 1.x cells only.</td>
         </tr>
     </table>
 

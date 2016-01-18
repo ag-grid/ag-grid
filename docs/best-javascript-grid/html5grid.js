@@ -166,7 +166,8 @@
     });
 
     function onBtBringGridBack() {
-        window.agGridGlobalFunc('#myGrid', gridOptions);
+        var eGridDiv = document.querySelector('#myGrid');
+        new ag.grid.Grid(eGridDiv, gridOptions);
         btBringGridBack.disabled = true;
         btDestroyGrid.disabled = false;
     }

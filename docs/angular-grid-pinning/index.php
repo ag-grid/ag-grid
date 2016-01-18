@@ -24,16 +24,18 @@ include '../documentation_header.php';
     The example also demonstrates changing the pinning via the API at runtime.</p>
 
     <p>
-        The grid will reorder the columns so that left pinned columns come first and right pinned columns
-        come last. Notice in the example below that the state of pinned columns impacts the order of the
-        columns, in particular when 'Country' is pinned, it jumps to the first position.
+        The grid will reorder the columns so that 'left pinned' columns come first and 'right pinned' columns
+        come last. In the example below the state of pinned columns impacts the order of the
+        columns such that when 'Country' is pinned, it jumps to the first position.
     </p>
 
     <h3>Jump To & Pinning</h3>
 
-    Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned
-    cols, by definition, are always visible. So below, if you try to jump to a pinned col, the grid will
-    print a warning to the console.
+    <p>
+        Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned
+        cols, by definition, are always visible. So below, if you try to jump to a pinned col, the grid will
+        print a warning to the console.
+    </p>
 
     <show-example example="examplePinned"></show-example>
 </div>

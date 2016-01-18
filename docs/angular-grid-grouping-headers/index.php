@@ -70,18 +70,18 @@ include '../documentation_header.php';
     <h3>Showing / Hiding Columns</h3>
 
     <p>
-        A group can have columns initially hidden. If you want to show or hide columns,
-        set <i>columnGroupShow</i> to either 'open' or 'closed' to one or more of the columns in the
-        group. When a column definition has <i>columnGroupShow</i> set, it behaves in the following way:
+        A group can have children initially hidden. If you want to show or hide children,
+        set <i>columnGroupShow</i> to either 'open' or 'closed' to one or more of the children.
+        When a children set have <i>columnGroupShow</i> set, it behaves in the following way:
         <ul>
-            <li><b>open:</b> The column is only shown when the group is open.</li>
-            <li><b>closed:</b> The column is only shown when the group is closed.</li>
-            <li><b>everything else:</b>Any other value, including null and undefined, the column is always shown.</li>
+            <li><b>open:</b> The child is only shown when the group is open.</li>
+            <li><b>closed:</b> The child is only shown when the group is closed.</li>
+            <li><b>everything else:</b> Any other value, including null and undefined, the child is always shown.</li>
         </ul>
     </p>
 
     <p>
-        If a group has any column that is dependent on the open / closed state, the open / close icon
+        If a group has any child that is dependent on the open / closed state, the open / close icon
         will appear. Otherwise the icon will not be shown.
     </p>
 
@@ -92,7 +92,7 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        If a group has a 'incompatible' set of columns, then the group opening / closing will
+        If a group has a 'incompatible' set of children, then the group opening / closing will
         not be activated. An incompatible set is one which will have no columns visible
         at some point (ie all are set to 'open' or 'closed').
     </p>
@@ -115,8 +115,8 @@ include '../documentation_header.php';
     <h3>Resizing Groups</h3>
 
     <p>
-        If you grab the group resize bar, it resizes each column in the group evenly distributing
-        the new additional width. If you grab the column resize bar, only that one column will
+        If you grab the group resize bar, it resizes each child in the group evenly distributing
+        the new additional width. If you grab the child resize bar, only that one column will
         be resized.
     </p>
 

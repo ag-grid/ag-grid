@@ -11,16 +11,28 @@ include '../documentation_header.php';
     <h2>Grouping Rows and Aggregation</h2>
 
     <p>
-        To group, provide the columns you want to group by into the grid options.
+        To group, mark the column definitions you want to group by with a rowGroupIndex.
         There is no limit on the number of columns that can be used.
         For example, the following groups by country column, then language column:
-        <pre>gridOptions.groupKeys = ['country','column'];</pre>
-        The identifiers are column ID's (see <a href="/angular-grid-column-definitions/index.php">
-        Column Definitions </a> for explanation of column IDs).
+        <code><pre>gridOptions.columnDefs = [
+    {field: 'country', rowGroupIndex: 0},
+    {field: 'language', rowGroupIndex: 1}
+];</pre></code>
     </p>
 
+    <h3>Grouping Auto Column</h3>
+
+    <p>If row grouping is active, by default the grid will provide an additional column for displaying
+    a tree structure, with expand / collapse navigation, for displaying the groups.</p>
+
     <p>
-        Grouping has the following grid properties:
+        The auto column only displaying when row grouping is active is useful when
+        the user is turning grouping on and off via the toolpanel.
+    </p>
+
+    <h3>Grid Grouping Properties</h3>
+    <p>
+        Grouping has the following grid properties (set these as grid properties, e.g. on the gridOptions, not on the columns):
     </p>
     <table class="table">
         <tr>
@@ -50,22 +62,21 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupColumnDef</th>
-            <td>If grouping, this column def is included as the first column definition in the grid. If not grouping,
-                this column is not included. Defining the grouping here (and not with the rest of your column
-                definitions) allows the grid to only show the grouping column when grouping is active, useful when
-                the user is turning grouping on and off via the toolpanel.
+            <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
+                this column is not included.
             </td>
         </tr>
         <tr>
             <th>groupSuppressAutoColumn</th>
             <td>If true, the grid will not swap in the grouping column when grouping is enabled. Use this if you
-                want complete control on the column displayed and don't want the grids help.
+                want complete control on the column displayed and don't want the grids help. In other words,
+                you alreay have a column in your column definitions that is responsible for displaying the groups.
             </td>
         </tr>
         <tr>
             <th>groupHideGroupColumns</th>
             <td>If true, when a column is row grouped, it is not displayed as a normal column. Useful when you
-                don't want the data appearing twice, once is group column, once in normal column.
+                don't want the data appearing twice, once in the group column and once in the normal column.
             </td>
         </tr>
         <tr>
@@ -156,13 +167,15 @@ gridOptions.groupColumnDef = {
 };</pre>
     <p>
         Because a group column is just a normal column, you can provide all the column attributes, such as header name,
-        css style and class, field, valueGetter etc. All of these parameters are used as appropriate.
+        css style and class, field, valueGetter etc. All of these parameters are used as appropriate. The example
+        above uses the stock 'group' cellRenderer - you can also use this, or you can build your own cellRenderer
+        from scratch.
     </p>
 
     <h4>Option 3 - No Grid Swapping of Columns:</h4>
     <p>
         Tell the grid you don't want it's help, that you will provide the group column yourself, included
-        in he main list of columns. If you use this, make sure you do have at least one column showing the
+        in the main list of columns. If you use this, make sure you do have at least one column showing the
         group, otherwise the grid will not make sense as you will have no way to expand / contract the groups.
     </p>
     <p>
@@ -400,6 +413,10 @@ gridOptions.groupRowRenderer: {
     </p>
 
     <show-example example="example5"></show-example>
+
+    <note>Grouping using the whole row doesn't work very well with pinned columns, as the group
+    row gets split into a separate component for the pinned sections. At the time of writing,
+    there is no way around this problem.</note>
 
     <h3>Suppress Group Row</h3>
 

@@ -21,6 +21,6 @@ var gridOptions = {
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
-    // angularGrid is a global function
-    agGridGlobalFunc('#myGrid', gridOptions);
+    var eGridDiv = document.querySelector('#myGrid');
+    new ag.grid.Grid(eGridDiv, gridOptions);
 });

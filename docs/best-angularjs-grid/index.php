@@ -84,6 +84,66 @@ include '../documentation_header.php';
 
     <show-example example="example2"></show-example>
 
+    <h2>Angular Compiling</h2>
+
+    <p>
+        Angular 1.x was great. It allows us to build large end-to-end single page web apps with relative ease.
+        However the author of ag-Grid is of the opinion that not everything should be
+        built in Angular. Angular 1.x does come with a disadvantage, it can slow things down.
+        ag-Grid does not use Angular 1.x (or any other framework) underneath the hood, it is all
+        blazing fast raw Javascript.
+    </p>
+    <p>
+        But maybe you are not worried about performance. Maybe you are not displaying
+        that many rows and columns. And maybe you want to provide your own cell renderers
+        and use Angular here. For whatever reason, it is possible to turn Angular on for
+        Angular version 1.x (not for version Angular 2).
+    </p>
+    <p>
+        When Angular is turned on in ag-Grid, every time a row is inserted, a new child
+        Angular Scope is created for that row. This scope gets the row attached to it
+        so it's available to any Angular logic inside the cell.
+    </p>
+    <p>
+        Each cell within the row does not get a new child scope. So if placing item inside the
+        child scope for the row, be aware that it is shared across all cells for that row.
+        If you want a cell to have it's own private scope, consider using a directive
+        for the renderer that will introduce a new scope.
+    </p>
+
+    <h4>Turn On Angular Compile</h4>
+    <p>
+        Angular compiling is turned on by setting the grid options attribute angularCompileRows to true.
+    </p>
+
+    <ul>
+        <li><b>angularCompileRows:</b> Whether to compile the rows for Angular.</li>
+        <li><b>angularCompileFilters:</b> Whether to compile provided custom filters.</li>
+        <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS.</li>
+    </ul>
+
+    <p>The default is always to have Angular compiling off for performance reasons.</p>
+
+    <h4>Example using Angular Compile</h4>
+
+    <p>
+        Below then uses three columns rendered using custom Angular renderers.
+    </p>
+    <ul>
+        <li><b>Athlete:</b> Uses simple binding to display text.</li>
+        <li><b>Age:</b> Uses simple binding to display a button, with a button click event using ng-click.</li>
+        <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
+    </ul>
+
+    <show-example example="exampleAngularCompiling"></show-example>
+
+    <note>
+        When scrolling the example above up and down, the cells rendered using Angular are blank
+        initially, and filled in during the next Angular digest cycle. This behaviour the author
+        has observed in other Angular grid implementations. This is another reason why the author
+        prefers non-Angular rendering for large grids.
+    </note>
+
     <h2>Destroy</h2>
 
     <p>

@@ -353,12 +353,6 @@ if (strcmp($version , 'latest') == 0) {
                     Other Bits
                 </h4>
 
-                <?php if ($key == "Angular Compiling") { ?>
-                    <span class="sidebarLinkSelected">Angular Compiling</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-angular-compiling/index.php">Angular Compiling</a>
-                <?php } ?>
-
                 <?php if ($key == "Styling") { ?>
                     <span class="sidebarLinkSelected">Layout & Styling</span>
                 <?php } else { ?>
