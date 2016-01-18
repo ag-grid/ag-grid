@@ -13,6 +13,7 @@ include 'documentation_header.php';
     <li>Minor: New <i>allColumns</i> property for export to csv</li>
     <li>Minor: API method <i>deselectNode()</i> now takes <i>'suppressEvents'</i> parameter.</li>
     <li>Minor: Now <i>colDef.field</i> can had deep references, eg colDef.field = 'owner.firstName' </li>
+    <li>Minor: New event <i>gridSizeChanged</i>, gets fired when grid changes size, due to window resize or other application state change. Useful if you want to lay out the grid, eg call api.sizeColumnsToFit()</li>
 
     <h3>Version 3.0.0</h3>
 

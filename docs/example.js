@@ -165,7 +165,7 @@ gridsModule.controller('mainController', function($scope) {
             console.log('Callback onReady: api = ' + event.api);
         },
         onGridSizeChanged: function(event) {
-            console.log('Callback onGridSizeChanged');
+            console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
         }
     };
     $scope.gridOptions = gridOptions;
