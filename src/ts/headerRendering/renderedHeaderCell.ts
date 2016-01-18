@@ -7,7 +7,6 @@
 module ag.grid {
 
     var _ = Utils;
-    var constants = Constants;
     var svgFactory = SvgFactory.getInstance();
 
     export class RenderedHeaderCell extends RenderedHeaderElement {
@@ -154,6 +153,12 @@ module ag.grid {
                 headerCellResize.className = "ag-header-cell-resize";
                 this.eHeaderCell.appendChild(headerCellResize);
                 this.addDragHandler(headerCellResize);
+
+                if (!this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize) {
+                    headerCellResize.addEventListener('dblclick', (event: MouseEvent) => {
+                        this.columnController.autoSizeColumn(this.column);
+                    });
+                }
             }
 
             this.addMenu();

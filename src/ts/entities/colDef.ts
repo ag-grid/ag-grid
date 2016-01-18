@@ -103,6 +103,9 @@ module ag.grid {
         /** Set to true if you do not want this column to be resizable by dragging it's edge. */
         suppressResize?: boolean;
 
+        /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
+        suppressAutoSize?: boolean;
+
         /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
         editable?: boolean | (Function);
 

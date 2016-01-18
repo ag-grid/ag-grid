@@ -96,6 +96,7 @@ module ag.grid {
         public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
         public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
         public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
+        public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
 
         // properties
         public getHeaderHeight(): number {

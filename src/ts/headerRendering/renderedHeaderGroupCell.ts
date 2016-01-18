@@ -66,6 +66,22 @@ module ag.grid {
                 this.eHeaderCellResize.className = "ag-header-cell-resize";
                 this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
                 this.addDragHandler(this.eHeaderCellResize);
+
+                if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
+                    this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
+                        // get list of all the column keys we are responsible for
+                        var keys: string[] = [];
+                        this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column)=>{
+                            // not all cols in the group may be participating with auto-resize
+                            if (!column.getColDef().suppressAutoSize) {
+                                keys.push(column.getColId());
+                            }
+                        });
+                        if (keys.length>0) {
+                            this.columnController.autoSizeColumns(keys);
+                        }
+                    });
+                }
             }
 
             // no renderer, default text render

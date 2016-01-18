@@ -81,6 +81,23 @@ module ag.grid {
             this.rowModel = rowModel;
         }
 
+        public getAllCellsForColumn(column: Column): HTMLElement[] {
+            var eCells: HTMLElement[] = [];
+
+            _.iterateObject(this.renderedRows, callback);
+            _.iterateObject(this.renderedBottomFloatingRows, callback);
+            _.iterateObject(this.renderedBottomFloatingRows, callback);
+
+            function callback(key: any, renderedRow: RenderedRow) {
+                var eCell = renderedRow.getCellForCol(column);
+                if (eCell) {
+                    eCells.push(eCell);
+                }
+            }
+
+            return eCells;
+        }
+
         public onIndividualColumnResized(column: Column) {
             var newWidthPx = column.getActualWidth() + "px";
             var selectorForAllColsInCell = ".cell-col-" + column.getIndex();

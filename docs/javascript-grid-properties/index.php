@@ -85,6 +85,11 @@ include '../documentation_header.php';
             <td>Set to true or false.</td>
         </tr>
         <tr>
+            <th>suppressAutoSize</th>
+            <td>If enableColResize=true suppressAutoSize suppressAutoSize=false, then double clicking the resize
+                bar in the header will not auto-size the column.</td>
+        </tr>
+        <tr>
             <th>enableSorting, enableServerSideSorting</th>
             <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
                 sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks

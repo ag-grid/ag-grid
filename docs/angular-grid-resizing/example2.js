@@ -27,7 +27,16 @@ module.controller("exampleCtrl", function($scope, $http) {
             $scope.gridOptions.api.setRowData(res.data);
         });
 
-    $scope.resize = function() {
+    $scope.sizeToFit = function() {
         $scope.gridOptions.api.sizeColumnsToFit();
     };
+
+    $scope.autoSizeAll = function() {
+        var allColumnIds = [];
+        columnDefs.forEach( function(columnDef) {
+            allColumnIds.push(columnDef.field);
+        });
+        $scope.gridOptions.columnApi.autoSizeColumns(allColumnIds);
+    };
+
 });

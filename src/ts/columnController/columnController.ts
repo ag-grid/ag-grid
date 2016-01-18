@@ -6,6 +6,7 @@
 /// <reference path="../masterSlaveService.ts" />
 /// <reference path="./displayedGroupCreator.ts" />
 /// <reference path="./balancedColumnTreeBuilder.ts" />
+/// <reference path="../rendering/autoWidthCalculator.ts" />
 
 module ag.grid {
 
@@ -46,6 +47,8 @@ module ag.grid {
         public addRowGroupColumn(column: Column): void { this._columnController.addRowGroupColumn(column); }
         public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
         public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
+        public autoSizeColumn(key: Column|ColDef|String): void {return this._columnController.autoSizeColumn(key); }
+        public autoSizeColumns(keys: (Column|ColDef|String)[]): void {return this._columnController.autoSizeColumns(keys); }
 
         public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void {
             console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
@@ -70,6 +73,7 @@ module ag.grid {
         private masterSlaveController: MasterSlaveService;
         private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
         private displayedGroupCreator: DisplayedGroupCreator;
+        private autoWidthCalculator: AutoWidthCalculator;
 
         // these are the columns provided by the client. this doesn't change, even if the
         // order or state of the columns and groups change. it will only change if the client
@@ -116,7 +120,7 @@ module ag.grid {
                     valueService: ValueService, masterSlaveController: MasterSlaveService,
                     eventService: EventService, balancedColumnTreeBuilder: BalancedColumnTreeBuilder,
                     displayedGroupCreator: DisplayedGroupCreator, columnUtils: ColumnUtils,
-                    loggerFactory: LoggerFactory) {
+                    autoWidthCalculator: AutoWidthCalculator, loggerFactory: LoggerFactory) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
             this.selectionRendererFactory = selectionRendererFactory;
@@ -127,7 +131,24 @@ module ag.grid {
             this.balancedColumnTreeBuilder = balancedColumnTreeBuilder;
             this.displayedGroupCreator = displayedGroupCreator;
             this.columnUtils = columnUtils;
+            this.autoWidthCalculator = autoWidthCalculator;
             this.logger = loggerFactory.create('ColumnController');
+        }
+
+        public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
+            this.actionOnColumns(keys, (column: Column)=> {
+                var requiredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
+                if (requiredWidth>0) {
+                    var newWidth = this.normaliseColumnWidth(column, requiredWidth);
+                    column.setActualWidth(newWidth);
+                }
+            }, ()=> {
+                return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
+            });
+        }
+
+        public autoSizeColumn(key: Column|String|ColDef): void {
+            this.autoSizeColumns([key]);
         }
 
         private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
@@ -266,12 +287,8 @@ module ag.grid {
             return this.displayedLeftColumns.length + this.displayedCenterColumns.length;
         }
 
-        public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
-            if (!this.doesColumnExistInGrid(column)) {
-                console.warn('column does not exist');
-                return;
-            }
-
+        // returns the widht we can set to this col, taking into consideration min and max widths
+        private normaliseColumnWidth(column: Column, newWidth: number): number {
             if (newWidth < column.getMinimumWidth()) {
                 newWidth = column.getMinimumWidth();
             }
@@ -279,6 +296,17 @@ module ag.grid {
             if (column.isGreaterThanMax(newWidth)) {
                 newWidth = column.getColDef().maxWidth;
             }
+
+            return newWidth;
+        }
+
+        public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
+            if (!this.doesColumnExistInGrid(column)) {
+                console.warn('column does not exist');
+                return;
+            }
+
+            newWidth = this.normaliseColumnWidth(column, newWidth);
 
             // check for change first, to avoid unnecessary firing of events
             // however we always fire 'finished' events. this is important

@@ -201,7 +201,7 @@ module ag.grid {
             return this.renderedCells[column.getIndex()];
         }
 
-        public getCellForCol(column: Column): any {
+        public getCellForCol(column: Column): HTMLElement {
             var renderedCell = this.renderedCells[column.getIndex()];
             if (renderedCell) {
                 return renderedCell.getVGridCell().getElement();

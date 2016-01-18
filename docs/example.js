@@ -647,19 +647,13 @@ function ratingRendererGeneral(value, forFilter)  {
     return result;
 }
 
-var currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'GBP',
-    minimumFractionDigits: 2
-});
-
 function currencyRenderer(params)  {
     if (params.value===null || params.value===undefined) {
         return null;
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-        return currencyFormatter.format(params.value);
+        return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 }
 

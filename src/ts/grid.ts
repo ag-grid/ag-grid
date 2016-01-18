@@ -174,6 +174,7 @@ module ag.grid {
             var loggerFactory = new LoggerFactory();
             var dragAndDropService = new DragAndDropService();
             var columnUtils = new ColumnUtils();
+            var autoWidthCalculator = new AutoWidthCalculator();
 
             // initialise all the beans
             gridOptionsWrapper.init(this.gridOptions, eventService);
@@ -182,6 +183,7 @@ module ag.grid {
             this.logger.log('initialising');
 
             columnUtils.init(gridOptionsWrapper);
+            autoWidthCalculator.init(rowRenderer, gridPanel);
             dragAndDropService.init(loggerFactory);
             eventService.init(loggerFactory);
             gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory);
@@ -196,7 +198,7 @@ module ag.grid {
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
                 expressionService, valueService, masterSlaveService, eventService,
                 balancedColumnTreeBuilder, displayedGroupCreator, columnUtils,
-                loggerFactory);
+                autoWidthCalculator, loggerFactory);
             rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
                 $scope, selectionController, expressionService, templateService, valueService, eventService);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
