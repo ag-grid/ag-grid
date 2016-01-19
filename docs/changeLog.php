@@ -18,6 +18,7 @@ include 'documentation_header.php';
     <li>Major: Implemented auto-size for column. Now columns can be told to fit their content.</li>
     <li>Minor: New property: suppressParentsInRowNodes - if you don't want parents in the row node tree structure.</li>
     <li>Minor: Fixed up placement of menu icon, it was hitting the header border.</li>
+    <li>Major: Rows can have variable heights with new getRowHeight() callback.</li>
 
     <h3>Version 3.0.0</h3>
 
