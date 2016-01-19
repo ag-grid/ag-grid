@@ -160,7 +160,7 @@ include '../documentation_header.php';
 
     <p><b>API:</b> Use api.getModel() and then model.getVirtualRowCount() and getVirtualRow() to get the nodes.</p>
 
-    <h2>Row Node</h2>
+    <h2 id="rowNode">Row Node</h2>
 
     <p>
         A rowNode is an ag-Grid representation of one row of data. The rowNode will contain a reference to the

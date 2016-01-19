@@ -2,3 +2,4 @@
 Ideas:
 + Don't allow hiding / grouping / aggregating certain columns
 + Lock first columns
++ Ideas: have 'email html version'

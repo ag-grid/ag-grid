@@ -1,4 +1,5 @@
 /// <reference path="constants.ts" />
+/// <reference path="rowControllers/floatingRowModel.ts" />
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="utils.ts" />
 /// <reference path="filter/filterManager.ts" />
@@ -37,6 +38,7 @@ module ag.grid {
         private doingVirtualPaging: boolean;
         private paginationController: PaginationController;
         private virtualPageRowController: VirtualPageRowController;
+        private floatingRowModel: FloatingRowModel;
         private finished: boolean;
 
         private selectionController: SelectionController;
@@ -67,7 +69,8 @@ module ag.grid {
 
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
-                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService);
+                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService,
+                this.eventService, this.floatingRowModel);
             this.gridOptions.columnApi = this.columnController.getColumnApi();
 
             var that = this;
@@ -152,6 +155,7 @@ module ag.grid {
             this.eUserProvidedDiv = eUserProvidedDiv;
 
             // create all the beans
+            var floatingRowModel = new FloatingRowModel();
             var balancedColumnTreeBuilder = new BalancedColumnTreeBuilder();
             var displayedGroupCreator = new DisplayedGroupCreator();
             var eventService = new EventService();
@@ -182,11 +186,12 @@ module ag.grid {
             this.logger = loggerFactory.create('Grid');
             this.logger.log('initialising');
 
+            floatingRowModel.init(gridOptionsWrapper);
             columnUtils.init(gridOptionsWrapper);
             autoWidthCalculator.init(rowRenderer, gridPanel);
             dragAndDropService.init(loggerFactory);
             eventService.init(loggerFactory);
-            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory);
+            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory, floatingRowModel);
             templateService.init($scope);
             expressionService.init(loggerFactory);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer, eventService);
@@ -199,8 +204,9 @@ module ag.grid {
                 expressionService, valueService, masterSlaveService, eventService,
                 balancedColumnTreeBuilder, displayedGroupCreator, columnUtils,
                 autoWidthCalculator, loggerFactory);
-            rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
-                $scope, selectionController, expressionService, templateService, valueService, eventService);
+            rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory,
+                $compile, $scope, selectionController, expressionService, templateService, valueService,
+                eventService, floatingRowModel);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
                 $scope, $compile);
             inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
@@ -257,6 +263,7 @@ module ag.grid {
             this.eventService = eventService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.dragAndDropService = dragAndDropService;
+            this.floatingRowModel = floatingRowModel;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.getLayout(),

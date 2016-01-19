@@ -221,6 +221,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
                 <?php } ?>
 
+                <?php if ($key == "Row Height") { ?>
+                    <span class="sidebarLinkSelected">Row Height</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-row-height/index.php">Row Height</a>
+                <?php } ?>
+
                 <?php if ($key == "Floating") { ?>
                     <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>

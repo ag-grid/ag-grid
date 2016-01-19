@@ -66,6 +66,7 @@ module ag.grid {
         private columnModel: ColumnController;
         private rowRenderer: RowRenderer;
         private rowModel: any;
+        private floatingRowModel: FloatingRowModel;
 
         private layout: BorderLayout;
         private logger: Logger;
@@ -104,7 +105,7 @@ module ag.grid {
         private lastTopPosition = -1;
 
         public init(gridOptionsWrapper: GridOptionsWrapper, columnModel: ColumnController, rowRenderer: RowRenderer,
-                    masterSlaveService: MasterSlaveService, loggerFactory: LoggerFactory) {
+                    masterSlaveService: MasterSlaveService, loggerFactory: LoggerFactory, floatingRowModel: FloatingRowModel) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             // makes code below more readable if we pull 'forPrint' out
             this.forPrint = this.gridOptionsWrapper.isForPrint();
@@ -114,6 +115,7 @@ module ag.grid {
             this.columnModel = columnModel;
             this.rowRenderer = rowRenderer;
             this.masterSlaveService = masterSlaveService;
+            this.floatingRowModel = floatingRowModel;
             this.logger = loggerFactory.create('GridPanel');
         }
 
@@ -227,9 +229,9 @@ module ag.grid {
                 return;
             }
 
-            var rowHeight = this.gridOptionsWrapper.getRowHeight();
-            var rowTopPixel = rowHeight * index;
-            var rowBottomPixel = rowTopPixel + rowHeight;
+            var nodeAtIndex = this.rowModel.getVirtualRow(index);
+            var rowTopPixel = nodeAtIndex.rowTop;
+            var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
 
             var viewportTopPixel = this.eBodyViewport.scrollTop;
             var viewportHeight = this.eBodyViewport.offsetHeight;
@@ -591,22 +593,11 @@ module ag.grid {
             var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
             this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
-            var floatingTopCount = 0;
-            if (this.gridOptionsWrapper.getFloatingTopRowData()) {
-                floatingTopCount = this.gridOptionsWrapper.getFloatingTopRowData().length;
-            }
-            var floatingBottomCount = 0;
-            if (this.gridOptionsWrapper.getFloatingBottomRowData()) {
-                floatingBottomCount = this.gridOptionsWrapper.getFloatingBottomRowData().length;
-            }
-
-            var rowHeight = this.gridOptionsWrapper.getRowHeight();
-
             // padding top covers the header and the floating rows on top
-            var floatingTopHeight = floatingTopCount * rowHeight;
+            var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
             var paddingTop = totalHeaderHeight + floatingTopHeight;
             // bottom is just the bottom floating rows
-            var floatingBottomHeight = floatingBottomCount * rowHeight;
+            var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
             var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
             var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;

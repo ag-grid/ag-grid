@@ -1,5 +1,6 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
+/// <reference path="../rowControllers/floatingRowModel.ts" />
 /// <reference path="renderedRow.ts" />
 /// <reference path="../cellRenderers/groupCellRendererFactory.ts" />
 
@@ -26,6 +27,7 @@ module ag.grid {
         private focusedCell: any;
         private valueService: ValueService;
         private eventService: EventService;
+        private floatingRowModel: FloatingRowModel;
 
         private renderedRows: {[key: string]: RenderedRow};
         private renderedTopFloatingRows: RenderedRow[] = [];
@@ -50,7 +52,8 @@ module ag.grid {
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
                     angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
                     selectionController: SelectionController, expressionService: ExpressionService,
-                    templateService: TemplateService, valueService: ValueService, eventService: EventService) {
+                    templateService: TemplateService, valueService: ValueService, eventService: EventService,
+                    floatingRowModel: FloatingRowModel) {
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
@@ -64,6 +67,7 @@ module ag.grid {
             this.valueService = valueService;
             this.findAllElements(gridPanel);
             this.eventService = eventService;
+            this.floatingRowModel = floatingRowModel;
 
             this.cellRendererMap = {
                 'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
@@ -152,23 +156,21 @@ module ag.grid {
         public refreshAllFloatingRows(): void {
             this.refreshFloatingRows(
                 this.renderedTopFloatingRows,
-                this.gridOptionsWrapper.getFloatingTopRowData(),
+                this.floatingRowModel.getFloatingTopRowData(),
                 this.eFloatingTopPinnedLeftContainer,
                 this.eFloatingTopPinnedRightContainer,
-                this.eFloatingTopContainer,
-                true);
+                this.eFloatingTopContainer);
             this.refreshFloatingRows(
                 this.renderedBottomFloatingRows,
-                this.gridOptionsWrapper.getFloatingBottomRowData(),
+                this.floatingRowModel.getFloatingBottomRowData(),
                 this.eFloatingBottomPinnedLeftContainer,
                 this.eFloatingBottomPinnedRightContainer,
-                this.eFloatingBottomContainer,
-                false);
+                this.eFloatingBottomContainer);
         }
 
-        private refreshFloatingRows(renderedRows: RenderedRow[], rowData: any[],
+        private refreshFloatingRows(renderedRows: RenderedRow[], rowNodes: RowNode[],
                                     pinnedLeftContainer: HTMLElement, pinnedRightContainer: HTMLElement,
-                                    bodyContainer: HTMLElement, isTop: boolean): void {
+                                    bodyContainer: HTMLElement): void {
             renderedRows.forEach( (row: RenderedRow) => {
                 row.destroy();
             });
@@ -184,14 +186,8 @@ module ag.grid {
             // should we be storing this somewhere???
             var mainRowWidth = this.columnModel.getBodyContainerWidth();
 
-            if (rowData) {
-                rowData.forEach( (data: any, rowIndex: number) => {
-                    var node: RowNode = {
-                        data: data,
-                        floating: true,
-                        floatingTop: isTop,
-                        floatingBottom: !isTop
-                    };
+            if (rowNodes) {
+                rowNodes.forEach( (node: RowNode, rowIndex: number) => {
                     var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
                         this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
                         this.selectionRendererFactory, this.$compile, this.templateService,
@@ -205,8 +201,7 @@ module ag.grid {
 
         public refreshView(refreshFromIndex?: any) {
             if (!this.gridOptionsWrapper.isForPrint()) {
-                var rowCount = this.rowModel.getVirtualRowCount();
-                var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
+                var containerHeight = this.rowModel.getVirtualRowCombinedHeight();
                 this.eBodyContainer.style.height = containerHeight + "px";
                 this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
                 this.ePinnedRightColsContainer.style.height = containerHeight + "px";
@@ -328,20 +323,30 @@ module ag.grid {
         }
 
         public drawVirtualRows() {
-            var first: any;
-            var last: any;
+            this.workOutFirstAndLastRowsToRender();
+            this.ensureRowsRendered();
+        }
+
+        public workOutFirstAndLastRowsToRender(): void {
 
             var rowCount = this.rowModel.getVirtualRowCount();
 
+            if (rowCount===0) {
+                this.firstVirtualRenderedRow = 0;
+                this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
+                return;
+            }
+
             if (this.gridOptionsWrapper.isForPrint()) {
-                first = 0;
-                last = rowCount;
+                this.firstVirtualRenderedRow = 0;
+                this.lastVirtualRenderedRow = rowCount;
             } else {
+
                 var topPixel = this.eBodyViewport.scrollTop;
                 var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-                first = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
-                last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
+                var first = this.rowModel.getRowAtPixel(topPixel);
+                var last = this.rowModel.getRowAtPixel(bottomPixel);
 
                 //add in buffer
                 var buffer = this.gridOptionsWrapper.getRowBuffer();
@@ -355,12 +360,11 @@ module ag.grid {
                 if (last > rowCount - 1) {
                     last = rowCount - 1;
                 }
+
+                this.firstVirtualRenderedRow = first;
+                this.lastVirtualRenderedRow = last;
             }
 
-            this.firstVirtualRenderedRow = first;
-            this.lastVirtualRenderedRow = last;
-
-            this.ensureRowsRendered();
         }
 
         public getFirstVirtualRenderedRow() {

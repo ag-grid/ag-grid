@@ -7,6 +7,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.jumpToRowText = null;
 
     var columnDefs = [
+        {headerName: "#", valueGetter: "node.id", width: 40, pinned: 'left'},
         {headerName: "Athlete", field: "athlete", width: 150, pinned: 'left'},
         {headerName: "Age", field: "age", width: 90, pinned: 'left'},
         {headerName: "Country", field: "country", width: 120},

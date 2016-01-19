@@ -20,7 +20,8 @@ module ag.grid {
                     private gridPanel: GridPanel,
                     private valueService: ValueService,
                     private masterSlaveService: MasterSlaveService,
-                    private eventService: EventService) {
+                    private eventService: EventService,
+                    private floatingRowModel: FloatingRowModel) {
             this.csvCreator = new CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
         }
 
@@ -61,13 +62,13 @@ module ag.grid {
         }
 
         public setFloatingTopRowData(rows: any[]): void {
-            this.gridOptionsWrapper.setFloatingTopRowData(rows);
+            this.floatingRowModel.setFloatingTopRowData(rows);
             this.gridPanel.onBodyHeightChange();
             this.refreshView();
         }
 
         public setFloatingBottomRowData(rows: any[]): void {
-            this.gridOptionsWrapper.setFloatingBottomRowData(rows);
+            this.floatingRowModel.setFloatingBottomRowData(rows);
             this.gridPanel.onBodyHeightChange();
             this.refreshView();
         }

@@ -21,7 +21,7 @@ module ag.grid {
 
         private renderedCells: {[key: number]: RenderedCell} = {};
         private scope: any;
-        private node: any;
+        private node: RowNode;
         private rowIndex: number;
 
         private cellRendererMap: {[key: string]: any};
@@ -59,7 +59,7 @@ module ag.grid {
                     eBodyContainer: HTMLElement,
                     ePinnedLeftContainer: HTMLElement,
                     ePinnedRightContainer: HTMLElement,
-                    node: any,
+                    node: RowNode,
                     rowIndex: number,
                     eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -135,20 +135,22 @@ module ag.grid {
 
             // if showing scrolls, position on the container
             if (!this.gridOptionsWrapper.isForPrint()) {
-                this.vBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                var topPx = this.node.rowTop + "px";
+                this.vBodyRow.style.top = topPx;
                 if (this.pinningLeft) {
-                    this.vPinnedLeftRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                    this.vPinnedLeftRow.style.top = topPx;
                 }
                 if (this.pinningRight) {
-                    this.vPinnedRightRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                    this.vPinnedRightRow.style.top = topPx;
                 }
             }
-            this.vBodyRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+            var heightPx = this.node.rowHeight + 'px';
+            this.vBodyRow.style.height = heightPx;
             if (this.pinningLeft) {
-                this.vPinnedLeftRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+                this.vPinnedLeftRow.style.height = heightPx;
             }
             if (this.pinningRight) {
-                this.vPinnedRightRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+                this.vPinnedRightRow.style.height = heightPx;
             }
 
             // if group item, insert the first row

@@ -46,6 +46,10 @@ module ag.grid {
         sibling?: RowNode;
         /** Not to be used, internal temporary map used by the grid when creating groups */
         _childrenMap?: {}
+        /** The height, in pixels, of this row */
+        rowHeight?: number;
+        /** The top pixel for this row */
+        rowTop?: number;
     }
 
 }

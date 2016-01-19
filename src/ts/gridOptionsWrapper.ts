@@ -14,24 +14,13 @@ module ag.grid {
         private gridOptions: GridOptions;
 
         private headerHeight: number;
-        private rowHeight: number;
-        private floatingTopRowData: any[];
-        private floatingBottomRowData: any[];
 
         public init(gridOptions: GridOptions, eventService: EventService): void {
             this.gridOptions = gridOptions;
 
             this.headerHeight = gridOptions.headerHeight;
-            this.rowHeight = gridOptions.rowHeight;
-            this.floatingTopRowData = gridOptions.floatingTopRowData;
-            this.floatingBottomRowData = gridOptions.floatingBottomRowData;
 
             eventService.addGlobalListener(this.globalEventHandler.bind(this));
-
-            // set defaults
-            if (!this.rowHeight) {
-                this.rowHeight = DEFAULT_ROW_HEIGHT;
-            }
 
             this.checkForDeprecated();
         }
@@ -57,6 +46,8 @@ module ag.grid {
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
         public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }
+        public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
+        public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
 
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
@@ -92,7 +83,6 @@ module ag.grid {
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
-        public getRowHeight() { return this.rowHeight; }
         public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
         public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
         public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
@@ -108,11 +98,6 @@ module ag.grid {
             }
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
-
-        public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
-        public setFloatingTopRowData(rows: any[]): void { this.floatingTopRowData = rows; }
-        public getFloatingBottomRowData(): any[] { return this.floatingBottomRowData; }
-        public setFloatingBottomRowData(rows: any[]): void { this.floatingBottomRowData = rows; }
 
         public isExternalFilterPresent() {
             if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
@@ -203,6 +188,22 @@ module ag.grid {
                 return eventName;
             } else {
                 return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+            }
+        }
+
+        public getRowHeightForNode(rowNode: RowNode): number {
+            if (typeof this.gridOptions.rowHeight === 'number') {
+                return this.gridOptions.rowHeight;
+            } else if (typeof this.gridOptions.getRowHeight === 'function') {
+                var params = {
+                    node: rowNode,
+                    data: rowNode.data,
+                    api: this.gridOptions.api,
+                    context: this.gridOptions.context
+                };
+                return this.gridOptions.getRowHeight(params);
+            } else {
+                return DEFAULT_ROW_HEIGHT;
             }
         }
     }

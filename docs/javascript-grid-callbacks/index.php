@@ -65,6 +65,10 @@ include '../documentation_header.php';
             <td>Callback version of property 'rowStyle'. Function should return an object of CSS values.</td>
         </tr>
         <tr>
+            <th>getRowHeight(params)</th>
+            <td>Callback version of property 'rowHeight'. Function should return a positive number.</td>
+        </tr>
+        <tr>
             <th>headerCellRenderer(params)</th>
             <td>Provide a function for custom header rendering.</td>
         </tr>

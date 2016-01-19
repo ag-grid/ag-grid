@@ -15,7 +15,6 @@ module ag.grid {
         suppressMultiSort?: boolean;
         suppressHorizontalScroll?: boolean;
         unSortIcon?: boolean;
-        rowHeight?: number;
         rowBuffer?: number;
         enableColResize?: boolean;
         enableCellExpressions?: boolean;
@@ -62,6 +61,7 @@ module ag.grid {
         overlayLoadingTemplate?: string;
         overlayNoRowsTemplate?: string;
         checkboxSelection?: Function;
+        rowHeight?: number;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
@@ -79,8 +79,9 @@ module ag.grid {
         isScrollLag?(): boolean;
         isExternalFilterPresent?(): boolean;
         doesExternalFilterPass?(node: RowNode): boolean;
-        getRowStyle?: any;
-        getRowClass?: any;
+        getRowStyle?: Function;
+        getRowClass?: Function;
+        getRowHeight?: Function;
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
         getBusinessKeyForNode?(node: RowNode): string;

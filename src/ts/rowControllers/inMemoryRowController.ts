@@ -18,11 +18,13 @@ module ag.grid {
         private filterManager: FilterManager;
         private $scope: any;
 
-        private allRows: RowNode[];
-        private rowsAfterGroup: RowNode[];
-        private rowsAfterFilter: RowNode[];
-        private rowsAfterSort: RowNode[];
-        private rowsAfterMap: RowNode[];
+        // the rows go through a pipeline of steps, each array below is the result
+        // after a certain step.
+        private allRows: RowNode[]; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
+        private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
+        private rowsAfterFilter: RowNode[]; // after filtering
+        private rowsAfterSort: RowNode[]; // after sorting
+        private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
         private model: any;
 
         private groupCreator: GroupCreator;
@@ -49,7 +51,7 @@ module ag.grid {
             this.rowsAfterGroup = null;
             this.rowsAfterFilter = null;
             this.rowsAfterSort = null;
-            this.rowsAfterMap = null;
+            this.rowsToDisplay = null;
         }
 
         private createModel() {
@@ -62,14 +64,20 @@ module ag.grid {
                     return that.rowsAfterGroup;
                 },
                 getVirtualRow: function (index: any): RowNode {
-                    return that.rowsAfterMap[index];
+                    return that.rowsToDisplay[index];
                 },
                 getVirtualRowCount: function (): number {
-                    if (that.rowsAfterMap) {
-                        return that.rowsAfterMap.length;
+                    if (that.rowsToDisplay) {
+                        return that.rowsToDisplay.length;
                     } else {
                         return 0;
                     }
+                },
+                getRowAtPixel: function(pixel: number): number {
+                    return that.getRowAtPixel(pixel);
+                },
+                getVirtualRowCombinedHeight: function (): number {
+                    return that.getVirtualRowCombinedHeight();
                 },
                 forEachInMemory: function (callback: any) {
                     that.forEachInMemory(callback);
@@ -84,6 +92,51 @@ module ag.grid {
                     that.forEachNodeAfterFilterAndSort(callback);
                 }
             };
+        }
+
+        public getRowAtPixel(pixelToMatch: number): number {
+            // do binary search of tree
+            // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
+            var bottomPointer = 0;
+            var topPointer = this.rowsToDisplay.length - 1;
+
+            // quick check, if the pixel is out of bounds, then return last row
+            var lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
+            if (lastNode.rowTop<=pixelToMatch) {
+                return this.rowsToDisplay.length - 1;
+            }
+
+            while (true) {
+
+                var midPointer = Math.floor((bottomPointer + topPointer) / 2);
+                var currentRowNode = this.rowsToDisplay[midPointer];
+
+                if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
+                    return midPointer;
+                } else if (currentRowNode.rowTop < pixelToMatch) {
+                    bottomPointer = midPointer + 1;
+                } else if (currentRowNode.rowTop > pixelToMatch) {
+                    topPointer = midPointer - 1;
+                }
+
+            }
+        }
+
+        private isRowInPixel(rowNode: RowNode, pixelToMatch: number): boolean {
+            var topPixel = rowNode.rowTop;
+            var bottomPixel = rowNode.rowTop + rowNode.rowHeight;
+            var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
+            return pixelInRow;
+        }
+
+        public getVirtualRowCombinedHeight(): number {
+            if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
+                var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+                var lastPixel = lastRow.rowTop + lastRow.rowHeight;
+                return lastPixel;
+            } else {
+                return 0;
+            }
         }
 
         public getModel() {
@@ -146,7 +199,7 @@ module ag.grid {
                 case constants.STEP_SORT:
                     this.doSort();
                 case constants.STEP_MAP:
-                    this.doGroupMapping();
+                    this.doRowsToDisplay();
             }
 
             this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
@@ -155,6 +208,10 @@ module ag.grid {
                     this.$scope.$apply();
                 }, 0);
             }
+        }
+
+        private ensureRowHasHeight(rowNode: RowNode): void {
+
         }
 
         private defaultGroupAggFunctionFactory(valueColumns: Column[]) {
@@ -560,34 +617,45 @@ module ag.grid {
             return count;
         }
 
-        private doGroupMapping() {
+        private nextRowTop: number;
+
+        private doRowsToDisplay() {
             // even if not doing grouping, we do the mapping, as the client might
             // of passed in data that already has a grouping in it somewhere
-            var rowsAfterMap = <any>[];
-            this.addToMap(rowsAfterMap, this.rowsAfterSort);
-            this.rowsAfterMap = rowsAfterMap;
+            this.rowsToDisplay = [];
+            this.nextRowTop = 0;
+            this.recursivelyAddToRowsToDisplay(this.rowsAfterSort);
         }
 
-        private addToMap(mappedData: any, originalNodes: any) {
-            if (!originalNodes) {
+        private recursivelyAddToRowsToDisplay(rowNodes: RowNode[]) {
+            if (!rowNodes) {
                 return;
             }
             var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
-            for (var i = 0; i < originalNodes.length; i++) {
-                var node = originalNodes[i];
-                if(!groupSuppressRow || (groupSuppressRow && !node.group)) {
-                    mappedData.push(node);
+            for (var i = 0; i < rowNodes.length; i++) {
+                var rowNode = rowNodes[i];
+                var skipGroupNode = groupSuppressRow && rowNode.group;
+                if (!skipGroupNode) {
+                    this.addRowNodeToRowsToDisplay(rowNode);
                 }
-                if (node.group && node.expanded) {
-                    this.addToMap(mappedData, node.childrenAfterSort);
+                if (rowNode.group && rowNode.expanded) {
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort);
 
                     // put a footer in if user is looking for it
                     if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                        var footerNode = this.createFooterNode(node);
-                        mappedData.push(footerNode);
+                        var footerNode = this.createFooterNode(rowNode);
+                        this.addRowNodeToRowsToDisplay(footerNode);
                     }
                 }
             }
+        }
+
+        // duplicated method, it's also in floatingRowModel
+        private addRowNodeToRowsToDisplay(rowNode: RowNode): void {
+            this.rowsToDisplay.push(rowNode);
+            rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.rowTop = this.nextRowTop;
+            this.nextRowTop += rowNode.rowHeight;
         }
 
         private createFooterNode(groupNode: any) {
