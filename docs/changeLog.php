@@ -19,6 +19,7 @@ include 'documentation_header.php';
     <li>Minor: New property: suppressParentsInRowNodes - if you don't want parents in the row node tree structure.</li>
     <li>Minor: Fixed up placement of menu icon, it was hitting the header border.</li>
     <li>Major: Rows can have variable heights with new getRowHeight() callback.</li>
+    <li>Minor: bugfix - setColState was not restoring 'visible' correctly</li>
 
     <h3>Version 3.0.0</h3>
 

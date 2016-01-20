@@ -22,6 +22,7 @@ module ag.grid {
         public getColumn(key: any): Column { return this._columnController.getColumn(key); }
         public setState(columnState: any): void { return this._columnController.setState(columnState); }
         public getState(): [any] { return this._columnController.getState(); }
+        public resetState(): void { this._columnController.resetState(); }
         public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
         public isPinningLeft(): boolean { return this._columnController.isPinningLeft(); }
         public isPinningRight(): boolean { return this._columnController.isPinningRight(); }
@@ -495,6 +496,26 @@ module ag.grid {
             return result;
         }
 
+        public resetState(): void {
+            // we can't use 'allColumns' as the order might of messed up, so get the original ordered list
+            var originalColumns = this.allColumns = this.getColumnsFromTree(this.originalBalancedTree);
+            var state: any[] = [];
+
+            if (originalColumns) {
+                originalColumns.forEach( (column) => {
+                    state.push({
+                        colId: column.getColId(),
+                        aggFunc: column.getColDef().aggFunc,
+                        hide: column.getColDef().hide,
+                        pinned: column.getColDef().pinned,
+                        rowGroupIndex: column.getColDef().rowGroupIndex,
+                        width: column.getColDef().width
+                    });
+                });
+            }
+            this.setState(state);
+        }
+
         public setState(columnState: any[]): void {
             var oldColumnList = this.allColumns;
             this.allColumns = [];
@@ -509,7 +530,7 @@ module ag.grid {
                         return;
                     }
                     // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                    oldColumn.setVisible(stateItem.hide!==false);
+                    oldColumn.setVisible(!stateItem.hide);
                     // sets pinned to 'left' or 'right'
                     oldColumn.setPinned(stateItem.pinned===true);
                     // if width provided and valid, use it, otherwise stick with the old width
