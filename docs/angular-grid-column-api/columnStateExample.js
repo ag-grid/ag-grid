@@ -54,6 +54,11 @@ module.controller("exampleCtrl", function($scope, $http) {
         console.log('column state restored');
     };
 
+    $scope.resetState = function() {
+        $scope.gridOptions.columnApi.setState(this.gridOptions.columnDefs);
+        console.log('column state restored');
+    };
+
     $scope.showAthlete = function(show) {
         $scope.gridOptions.columnApi.setColumnVisible('athlete', show);
     };

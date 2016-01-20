@@ -301,12 +301,17 @@ module ag.grid {
          * If icon provided, use this (either a string, or a function callback).
          * if not, then use the second parameter, which is the svgFactory function
          */
-        static createIcon(iconName: any, gridOptionsWrapper: any, colDefWrapper: any, svgFactoryFunc: () => Node) {
+        static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => Node) {
             var eResult = document.createElement('span');
+            eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
+            return eResult;
+        }
+
+        static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => Node) {
             var userProvidedIcon: Function | string;
             // check col for icon first
-            if (colDefWrapper && colDefWrapper.colDef.icons) {
-                userProvidedIcon = colDefWrapper.colDef.icons[iconName];
+            if (colDefWrapper && colDefWrapper.getColDef().icons) {
+                userProvidedIcon = colDefWrapper.getColDef().icons[iconName];
             }
             // it not in col, try grid options
             if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
@@ -323,17 +328,16 @@ module ag.grid {
                     throw 'icon from grid options needs to be a string or a function';
                 }
                 if (typeof rendererResult === 'string') {
-                    eResult.innerHTML = rendererResult;
+                    return this.loadTemplate(rendererResult);
                 } else if (this.isNodeOrElement(rendererResult)) {
-                    eResult.appendChild(rendererResult);
+                    return rendererResult;
                 } else {
                     throw 'iconRenderer should return back a string or a dom object';
                 }
             } else {
                 // otherwise we use the built in icon
-                eResult.appendChild(svgFactoryFunc());
+                return svgFactoryFunc();
             }
-            return eResult;
         }
 
         static addStylesToElement(eElement: any, styles: any) {

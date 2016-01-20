@@ -5,6 +5,7 @@
 /// <reference path="filter/filterManager.ts" />
 /// <reference path="columnController/columnController.ts" />
 /// <reference path="columnController/balancedColumnTreeBuilder.ts" />
+/// <reference path="headerRendering/headerTemplateLoader.ts" />
 /// <reference path="selectionController.ts" />
 /// <reference path="selectionRendererFactory.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
@@ -155,6 +156,7 @@ module ag.grid {
             this.eUserProvidedDiv = eUserProvidedDiv;
 
             // create all the beans
+            var headerTemplateLoader = new HeaderTemplateLoader();
             var floatingRowModel = new FloatingRowModel();
             var balancedColumnTreeBuilder = new BalancedColumnTreeBuilder();
             var displayedGroupCreator = new DisplayedGroupCreator();
@@ -186,6 +188,7 @@ module ag.grid {
             this.logger = loggerFactory.create('Grid');
             this.logger.log('initialising');
 
+            headerTemplateLoader.init(gridOptionsWrapper);
             floatingRowModel.init(gridOptionsWrapper);
             columnUtils.init(gridOptionsWrapper);
             autoWidthCalculator.init(rowRenderer, gridPanel);
@@ -208,7 +211,7 @@ module ag.grid {
                 $compile, $scope, selectionController, expressionService, templateService, valueService,
                 eventService, floatingRowModel);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
-                $scope, $compile);
+                $scope, $compile, headerTemplateLoader);
             inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
                 groupCreator, valueService, eventService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);

@@ -3,6 +3,7 @@
 /// <reference path='../gridOptionsWrapper.ts' />
 /// <reference path='../columnController/columnController.ts' />
 /// <reference path='renderedHeaderElement.ts' />
+/// <reference path='headerTemplateLoader.ts' />
 
 module ag.grid {
 
@@ -13,27 +14,31 @@ module ag.grid {
 
         private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
 
+        private parentGroup: RenderedHeaderGroupCell;
         private eHeaderCell: HTMLElement;
         private eSortAsc: HTMLElement;
         private eSortDesc: HTMLElement;
         private eSortNone: HTMLElement;
         private eFilterIcon: HTMLElement;
+        private eText: HTMLElement;
 
         private column: Column;
-        private gridOptionsWrapper: GridOptionsWrapper;
+
         private parentScope: any;
         private childScope: any;
+
+        private gridOptionsWrapper: GridOptionsWrapper;
         private filterManager: FilterManager;
         private columnController: ColumnController;
         private $compile: any;
-        private angularGrid: Grid;
-        private parentGroup: RenderedHeaderGroupCell;
+        private grid: Grid;
+        private headerTemplateLoader: HeaderTemplateLoader;
 
         private startWidth: number;
 
         constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
                     parentScope: any, filterManager: FilterManager, columnController: ColumnController,
-                    $compile: any, angularGrid: Grid, eRoot: HTMLElement) {
+                    $compile: any, angularGrid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader) {
             super(eRoot);
             this.column = column;
             this.parentGroup = parentGroup;
@@ -42,7 +47,8 @@ module ag.grid {
             this.filterManager = filterManager;
             this.columnController = columnController;
             this.$compile = $compile;
-            this.angularGrid = angularGrid;
+            this.grid = angularGrid;
+            this.headerTemplateLoader = headerTemplateLoader;
 
             this.setupComponents();
         }
@@ -74,70 +80,62 @@ module ag.grid {
             this.eHeaderCell.setAttribute("colId", this.column.getColId());
         }
 
-        private addClasses(): void {
-            _.addCssClass(this.eHeaderCell, 'ag-header-cell');
-        }
-
         private addMenu(): void {
-            var showMenu = this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressMenu;
-            if (!showMenu) {
+            var eMenu = <HTMLElement> this.eHeaderCell.querySelector('#agMenu');
+
+            // if no menu provided in template, do nothing
+            if (!eMenu) {
                 return;
             }
 
-            var eMenuButton = _.createIcon('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg);
-            _.addCssClass(eMenuButton, 'ag-header-icon');
+            var weWantMenu = this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressMenu;
+            if (!weWantMenu) {
+                _.removeFromParent(eMenu);
+                return;
+            }
 
-            eMenuButton.setAttribute("class", "ag-header-cell-menu-button");
             var that = this;
-            eMenuButton.onclick = function () {
+            eMenu.addEventListener('click',function () {
                 that.filterManager.showFilter(that.column, this);
-            };
-            this.eHeaderCell.appendChild(eMenuButton);
+            });
 
             if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-                eMenuButton.style.opacity = '0';
-                this.eHeaderCell.onmouseenter = function () {
-                    eMenuButton.style.opacity = '1';
-                };
-                this.eHeaderCell.onmouseleave = function () {
-                    eMenuButton.style.opacity = '0';
-                };
+                eMenu.style.opacity = '0';
+                this.eHeaderCell.addEventListener('mouseenter', function () {
+                    eMenu.style.opacity = '1';
+                });
+                this.eHeaderCell.addEventListener('mouseleave', function () {
+                    eMenu.style.opacity = '0';
+                });
             }
-            eMenuButton.style['transition'] = 'opacity 0.5s, border 0.2s';
-            var style: any = eMenuButton.style;
+            var style = <any> eMenu.style;
+            style['transition'] = 'opacity 0.5s, border 0.2s';
             style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';
         }
 
-        private addSortIcons(headerCellLabel: HTMLElement): void {
-            var addSortIcons = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-            if (!addSortIcons) {
-                return;
+        private addSortIcons(): void {
+            this.eSortAsc = <HTMLElement> this.eHeaderCell.querySelector('#agSortAsc');
+            this.eSortDesc = <HTMLElement> this.eHeaderCell.querySelector('#agSortDesc');
+            this.eSortNone = <HTMLElement> this.eHeaderCell.querySelector('#agNoSort');
+
+            if (this.eSortAsc) {
+                this.eSortAsc.style.display = 'none';
+            }
+            if (this.eSortDesc) {
+                this.eSortDesc.style.display = 'none';
             }
 
-            this.eSortAsc = _.createIcon('sortAscending', this.gridOptionsWrapper, this.column, svgFactory.createArrowUpSvg);
-            this.eSortDesc = _.createIcon('sortDescending', this.gridOptionsWrapper, this.column, svgFactory.createArrowDownSvg);
-            _.addCssClass(this.eSortAsc, 'ag-header-icon ag-sort-ascending-icon');
-            _.addCssClass(this.eSortDesc, 'ag-header-icon ag-sort-descending-icon');
-            headerCellLabel.appendChild(this.eSortAsc);
-            headerCellLabel.appendChild(this.eSortDesc);
-
+            var showingNoSortIcon = this.column.getColDef().unSortIcon || this.gridOptionsWrapper.isUnSortIcon();
             // 'no sort' icon
-            if (this.column.getColDef().unSortIcon || this.gridOptionsWrapper.isUnSortIcon()) {
-                this.eSortNone = _.createIcon('sortUnSort', this.gridOptionsWrapper, this.column, svgFactory.createArrowUpDownSvg);
-                _.addCssClass(this.eSortNone, 'ag-header-icon ag-sort-none-icon');
-                headerCellLabel.appendChild(this.eSortNone);
+            if (!showingNoSortIcon) {
+                _.removeFromParent(this.eSortNone);
             }
-
-            this.eSortAsc.style.display = 'none';
-            this.eSortDesc.style.display = 'none';
-            this.addSortHandling(headerCellLabel);
         }
 
         private setupComponents(): void {
-            this.eHeaderCell = document.createElement("div");
+            this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
 
             this.createScope();
-            this.addClasses();
             this.addAttributes();
             this.addHeaderClassesFromCollDef();
 
@@ -148,33 +146,19 @@ module ag.grid {
                 this.eHeaderCell.title = colDef.headerTooltip;
             }
 
-            if (this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize) {
-                var headerCellResize = document.createElement("div");
-                headerCellResize.className = "ag-header-cell-resize";
-                this.eHeaderCell.appendChild(headerCellResize);
-                this.addDragHandler(headerCellResize);
-
-                if (!this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize) {
-                    headerCellResize.addEventListener('dblclick', (event: MouseEvent) => {
-                        this.columnController.autoSizeColumn(this.column);
-                    });
-                }
-            }
+            this.addResize();
 
             this.addMenu();
 
             // label div
-            var headerCellLabel = document.createElement("div");
-            headerCellLabel.className = "ag-header-cell-label";
+            this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
 
             // add in sort icons
-            this.addSortIcons(headerCellLabel);
-
+            this.addSortIcons();
+            this.addSortHandling();
 
             // add in filter icon
-            this.eFilterIcon = _.createIcon('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg);
-            _.addCssClass(this.eFilterIcon, 'ag-header-icon');
-            headerCellLabel.appendChild(this.eFilterIcon);
+            this.eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
 
             // render the cell, use a renderer if one is provided
             var headerCellRenderer: any;
@@ -186,25 +170,48 @@ module ag.grid {
 
             var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
 
-            if (headerCellRenderer) {
-                this.useRenderer(headerNameValue, headerCellRenderer, headerCellLabel);
-            } else {
-                // no renderer, default text render
-                var eInnerText = document.createElement("span");
-                eInnerText.className = 'ag-header-cell-text';
-                eInnerText.innerHTML = headerNameValue;
-                headerCellLabel.appendChild(eInnerText);
+            if (this.eText) {
+                if (headerCellRenderer) {
+                    this.useRenderer(headerNameValue, headerCellRenderer);
+                } else {
+                    // no renderer, default text render
+                    this.eText.className = 'ag-header-cell-text';
+                    this.eText.innerHTML = headerNameValue;
+                }
             }
 
-            this.eHeaderCell.appendChild(headerCellLabel);
             this.eHeaderCell.style.width = _.formatWidth(this.column.getActualWidth());
 
             this.refreshFilterIcon();
             this.refreshSortIcon();
         }
 
-        private useRenderer(headerNameValue: string, headerCellRenderer: Function,
-                            headerCellLabel: HTMLElement): void {
+        private addResize(): void {
+            var colDef = this.column.getColDef();
+            var eResize = this.eHeaderCell.querySelector('#agResizeBar');
+
+            // if no eResize in template, do nothing
+            if (!eResize) {
+                return;
+            }
+
+            var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
+            if (!weWantResize) {
+                _.removeFromParent(eResize);
+                return;
+            }
+
+            this.addDragHandler(eResize);
+
+            var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+            if (weWantAutoSize) {
+                eResize.addEventListener('dblclick', (event: MouseEvent) => {
+                    this.columnController.autoSizeColumn(this.column);
+                });
+            }
+        }
+
+        private useRenderer(headerNameValue: string, headerCellRenderer: Function): void {
             // renderer provided, use it
             var cellRendererParams = {
                 colDef: this.column.getColDef(),
@@ -228,20 +235,18 @@ module ag.grid {
             // angular compile header if option is turned on
             if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
                 var childToAppendCompiled = this.$compile(childToAppend)(this.childScope)[0];
-                headerCellLabel.appendChild(childToAppendCompiled);
+                this.eText.appendChild(childToAppendCompiled);
             } else {
-                headerCellLabel.appendChild(childToAppend);
+                this.eText.appendChild(childToAppend);
             }
         }
 
         public refreshFilterIcon(): void {
             var filterPresent = this.filterManager.isFilterPresentForCol(this.column.getColId());
-            if (filterPresent) {
-                _.addCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
-                this.eFilterIcon.style.display = 'inline';
-            } else {
-                _.removeCssClass(this.eHeaderCell, 'ag-header-cell-filtered');
-                this.eFilterIcon.style.display = 'none';
+
+            if (this.eFilterIcon) {
+                _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-filtered', filterPresent);
+                this.eFilterIcon.style.display = filterPresent ? 'inline' : 'none';
             }
         }
 
@@ -249,7 +254,7 @@ module ag.grid {
             // update visibility of icons
             var sortAscending = this.column.getSort() === Column.SORT_ASC;
             var sortDescending = this.column.getSort() === Column.SORT_DESC;
-            var unSort = this.column.getSort() !== Column.SORT_DESC && this.column.getSort() !== Column.SORT_ASC;
+            var sortNone = this.column.getSort() !== Column.SORT_DESC && this.column.getSort() !== Column.SORT_ASC;
 
             if (this.eSortAsc) {
                 _.setVisible(this.eSortAsc, sortAscending);
@@ -258,8 +263,12 @@ module ag.grid {
                 _.setVisible(this.eSortDesc, sortDescending);
             }
             if (this.eSortNone) {
-                _.setVisible(this.eSortNone, unSort);
+                _.setVisible(this.eSortNone, sortNone);
             }
+
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-asc', sortAscending);
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-desc', sortDescending);
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-none', sortNone);
         }
 
         private getNextSortDirection(): string {
@@ -297,34 +306,32 @@ module ag.grid {
             return result;
         }
 
-        private addSortHandling(headerCellLabel: HTMLElement) {
-            var that = this;
-
-            headerCellLabel.addEventListener("click", function (event: any) {
+        private addSortHandling() {
+            this.eText.addEventListener("click", (event: any) => {
 
                 // update sort on current col
-                that.column.setSort(that.getNextSortDirection());
+                this.column.setSort(this.getNextSortDirection());
 
                 // sortedAt used for knowing order of cols when multi-col sort
-                if (that.column.getSort()) {
-                    that.column.setSortedAt(new Date().valueOf());
+                if (this.column.getSort()) {
+                    this.column.setSortedAt(new Date().valueOf());
                 } else {
-                    that.column.setSortedAt(null);
+                    this.column.setSortedAt(null);
                 }
 
-                var doingMultiSort = !that.gridOptionsWrapper.isSuppressMultiSort() && event.shiftKey;
+                var doingMultiSort = !this.gridOptionsWrapper.isSuppressMultiSort() && event.shiftKey;
 
                 // clear sort on all columns except this one, and update the icons
                 if (!doingMultiSort) {
-                    that.columnController.getAllColumns().forEach(function (columnToClear: any) {
+                    this.columnController.getAllColumns().forEach( (columnToClear: any)=> {
                         // Do not clear if either holding shift, or if column in question was clicked
-                        if (!(columnToClear === that.column)) {
+                        if (!(columnToClear === this.column)) {
                             columnToClear.sort = null;
                         }
                     });
                 }
 
-                that.angularGrid.onSortingChanged();
+                this.grid.onSortingChanged();
             });
         }
 

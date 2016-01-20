@@ -11,6 +11,7 @@ module ag.grid {
 
     export class HeaderRenderer {
 
+        private headerTemplateLoader: HeaderTemplateLoader;
         private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
         private angularGrid: Grid;
@@ -26,13 +27,15 @@ module ag.grid {
         private headerElements: RenderedHeaderElement[] = [];
 
         public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel,
-                    angularGrid: Grid, filterManager: FilterManager, $scope: any, $compile: any) {
+                    angularGrid: Grid, filterManager: FilterManager, $scope: any, $compile: any,
+                    headerTemplateLoader: HeaderTemplateLoader) {
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.columnController = columnController;
             this.angularGrid = angularGrid;
             this.filterManager = filterManager;
             this.$scope = $scope;
             this.$compile = $compile;
+            this.headerTemplateLoader = headerTemplateLoader;
             this.findAllElements(gridPanel);
         }
 
@@ -125,7 +128,7 @@ module ag.grid {
             } else {
                 return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
                     this.$scope, this.filterManager, this.columnController, this.$compile,
-                    this.angularGrid, this.eRoot);
+                    this.angularGrid, this.eRoot, this.headerTemplateLoader);
             }
         }
 

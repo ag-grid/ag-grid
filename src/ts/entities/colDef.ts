@@ -141,5 +141,8 @@ module ag.grid {
 
         /** Function callback, gets called when a cell is right clicked. */
         onCellContextMenu?: Function;
+
+        /** Icons for this column. Leave blank to use default. */
+        icons?: {[key: string]: string};
     }
 }
