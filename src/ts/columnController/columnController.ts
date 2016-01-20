@@ -36,6 +36,7 @@ module ag.grid {
         public getAllColumns(): Column[] { return this._columnController.getAllColumns(); }
         public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
         public getDisplayedCenterColumns(): Column[] { return this._columnController.getDisplayedCenterColumns(); }
+        public getDisplayedRightColumns(): Column[] { return this._columnController.getDisplayedRightColumns(); }
         public getRowGroupColumns(): Column[] { return this._columnController.getRowGroupColumns(); }
         public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
         public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
@@ -372,6 +373,9 @@ module ag.grid {
         // + rowController -> while inserting rows
         public getDisplayedLeftColumns(): Column[] {
             return this.displayedLeftColumns;
+        }
+        public getDisplayedRightColumns(): Column[] {
+            return this.displayedRightColumns;
         }
 
         // used by:

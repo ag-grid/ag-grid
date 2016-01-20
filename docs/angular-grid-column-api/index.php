@@ -162,9 +162,9 @@ include '../documentation_header.php';
             <td>Returns all the columns, regardless of visible or not.</td>
         </tr>
         <tr>
-            <th>getDisplayedColumns()</th>
+            <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns()</th>
             <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
-            the columns).</td>
+            the columns) for the pinned left, center and pinned right portions of the grid.</td>
         </tr>
         <tr>
             <th>moveColumn(fromIndex, toIndex)</th>
