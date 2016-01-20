@@ -13,11 +13,17 @@ module.controller("exampleCtrl", function($scope) {
         cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Monday", headerGroup: 'Weekly Editable Values',  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Tuesday", headerGroup: 'Weekly Editable Values', field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Wednesday", headerGroup: 'Weekly Editable Values', field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Thursday", headerGroup: 'Weekly Editable Values', field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-        {headerName: "Friday", headerGroup: 'Weekly Editable Values', field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules}
+        {field: 'nationality', rowGroupIndex: 0, hide: true},
+        {
+            headerName: 'Weekly Editable Values',
+            children: [
+                {headerName: "Monday",  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+                {headerName: "Tuesday", field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+                {headerName: "Wednesday", field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+                {headerName: "Thursday", field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules},
+                {headerName: "Friday", field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules}
+            ]
+        }
     ];
 
     var data = [
@@ -102,7 +108,6 @@ module.controller("exampleCtrl", function($scope) {
     }
 
     $scope.gridOptions = {
-        groupKeys: ['nationality'],
         groupIncludeFooter: true,
         groupDefaultExpanded: 1,
         groupAggFunction: groupAggFunction,

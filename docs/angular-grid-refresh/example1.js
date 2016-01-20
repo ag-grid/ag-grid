@@ -7,34 +7,49 @@ module.controller("exampleCtrl", function($scope) {
         {headerName: "Person", field: 'name', width: 400,
             cellStyle:  {'background-color': 'rgba(255, 255, 180, 0.5)'} // light yellow background
         },
-        {headerName: "Monday", headerGroup: 'Weekly Editable Values',  field: "mon", newValueHandler: numberNewValueHandler, editable: true},
-        {headerName: "Tuesday", headerGroup: 'Weekly Editable Values', field: "tue", newValueHandler: numberNewValueHandler, editable: true},
-        {headerName: "Wednesday", headerGroup: 'Weekly Editable Values', field: "wed", newValueHandler: numberNewValueHandler, editable: true},
-        {headerName: "Thursday", headerGroup: 'Weekly Editable Values', field: "thur", newValueHandler: numberNewValueHandler, editable: true},
-        {headerName: "Friday", headerGroup: 'Weekly Editable Values', field: "fri", newValueHandler: numberNewValueHandler, editable: true},
-        {headerName: "Total", headerGroup: 'Volatile Summary',
-            valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-            volatile: true,
-            cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'}, // light blue background
-            cellClassRules: {
-                'bold-and-red': 'x>20'
-            }
+        {
+            headerName: 'Weekly Editable Values',
+            children: [
+                {headerName: "Monday",  field: "mon", newValueHandler: numberNewValueHandler, editable: true},
+                {headerName: "Tuesday", field: "tue", newValueHandler: numberNewValueHandler, editable: true},
+                {headerName: "Wednesday", field: "wed", newValueHandler: numberNewValueHandler, editable: true},
+                {headerName: "Thursday", field: "thur", newValueHandler: numberNewValueHandler, editable: true},
+                {headerName: "Friday", field: "fri", newValueHandler: numberNewValueHandler, editable: true}
+            ]
         },
-        {headerName: "Avg",  headerGroup: 'Volatile Summary',
-            valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-            volatile: true,
-            cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'} // light blue background
+        {
+            headerName: 'Volatile Summary',
+            children: [
+                {headerName: "Total",
+                    valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
+                    volatile: true,
+                    cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'}, // light blue background
+                    cellClassRules: {
+                        'bold-and-red': 'x>20'
+                    }
+                },
+                {headerName: "Avg",
+                    valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
+                    volatile: true,
+                    cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'} // light blue background
+                }
+            ]
         },
-        {headerName: "Total", headerGroup: 'Hard Summary',
-            valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-            cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'}, // light red background
-            cellClassRules: {
-                'bold-and-red': 'x>20'
-            }
-        },
-        {headerName: "Avg",  headerGroup: 'Hard Summary',
-            valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-            cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'} // light red background
+        {
+            headerName: 'Hard Summary',
+            children: [
+                {headerName: "Total",
+                    valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
+                    cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'}, // light red background
+                    cellClassRules: {
+                        'bold-and-red': 'x>20'
+                    }
+                },
+                {headerName: "Avg",
+                    valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
+                    cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'} // light red background
+                }
+            ]
         }
     ];
 

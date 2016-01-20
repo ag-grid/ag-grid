@@ -83,6 +83,19 @@ module ag.grid {
             });
         }
 
+        public getMasterColumns(event: ColumnChangeEvent): Column[] {
+            var result: Column[] = [];
+            if (event.getColumn()) {
+                result.push(event.getColumn());
+            }
+            if (event.getColumns()) {
+                event.getColumns().forEach( (column: Column) => {
+                    result.push(column);
+                });
+            }
+            return result;
+        }
+
         public getColumnIds(event: ColumnChangeEvent): string[] {
             var result: string[] = [];
             if (event.getColumn()) {
@@ -123,6 +136,7 @@ module ag.grid {
                 // in time, all the methods below should use the column ids, it's a more generic way
                 // of handling columns, and also allows for single or multi column events
                 var columnIds = this.getColumnIds(event);
+                var masterColumns = this.getMasterColumns(event);
 
                 switch (event.getType()) {
                     case Events.EVENT_COLUMN_MOVED:
@@ -142,8 +156,10 @@ module ag.grid {
                         this.columnController.setColumnGroupOpened(slaveColumnGroup, masterColumnGroup.isExpanded());
                         break;
                     case Events.EVENT_COLUMN_RESIZED:
-                        this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());
-                        this.columnController.setColumnWidth(slaveColumn, masterColumn.getActualWidth(), event.isFinished());
+                        masterColumns.forEach( (masterColumn: Column)=> {
+                            this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());
+                            this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), event.isFinished());
+                        });
                         break;
                 }
 

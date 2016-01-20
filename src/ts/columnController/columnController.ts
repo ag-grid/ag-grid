@@ -41,7 +41,7 @@ module ag.grid {
         public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
         public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
         public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
-        public setColumnWidth(column: Column, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(column, newWidth, finished); }
+        public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
         public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removeRowGroupColumn(column: Column): void { this._columnController.removeRowGroupColumn(column); }
@@ -301,9 +301,9 @@ module ag.grid {
             return newWidth;
         }
 
-        public setColumnWidth(column: Column, newWidth: number, finished: boolean): void {
-            if (!this.doesColumnExistInGrid(column)) {
-                console.warn('column does not exist');
+        public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean): void {
+            var column = this.getColumn(key);
+            if (!column) {
                 return;
             }
 
@@ -486,7 +486,7 @@ module ag.grid {
                 var resultItem = {
                     colId: column.getColId(),
                     hide: !column.isVisible(),
-                    aggFunc: column.getAggFunc() ? column.getAggFunc : null,
+                    aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
                     width: column.getActualWidth(),
                     pinned: column.getPinned(),
                     rowGroupIndex: rowGroupIndex >= 0 ? rowGroupIndex : null

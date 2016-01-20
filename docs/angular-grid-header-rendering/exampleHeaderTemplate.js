@@ -11,7 +11,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                 eCell.innerHTML =
                     '<div style="text-align: left;">' +
                     '  <div id="agResizeBar" style="width: 4px; height: 100%; float: right; cursor: col-resize;"></div>' +
-                    '  <div style="padding: 4px;">' +
+                    '  <div style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
                     '    <span id="agMenu"><i class="fa fa-bars"></i></span>' +
                     '    <span id="agText"></span>' +
                     '    <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +
@@ -47,7 +47,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         headerCellTemplate:
             '<div style="text-align: left;">' +
             '  <div id="agResizeBar" style="width: 4px; height: 100%; float: right; cursor: col-resize;"></div>' +
-            '  <div style="padding: 4px;">' +
+            '  <div style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
             '    <span id="agMenu"><i class="fa fa-bars"></i></span>' +
             '    <span id="agText"></span>' +
             '    <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +

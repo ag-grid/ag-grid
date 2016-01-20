@@ -236,9 +236,13 @@ include '../documentation_header.php';
         <tr>
             <th>suppressParentsInRowNodes</th>
             <td>If true, rowNodes don't get their parents set. The grid doesn't use the parent reference,
-            it's included to help the client code navigate the node tree if it wants by providing bi-direction
-            navigation up and down the tree. If this is a problem (eg if you need to convert the tree to JSON,
-            which requires no cyclic dependencies) then set this to true.</td>
+                it's included to help the client code navigate the node tree if it wants by providing bi-direction
+                navigation up and down the tree. If this is a problem (eg if you need to convert the tree to JSON,
+                which requires no cyclic dependencies) then set this to true.</td>
+        </tr>
+        <tr>
+            <th>headerCellTemplate</th>
+            <td>String for HTML header template to use.</td>
         </tr>
 
     </table>

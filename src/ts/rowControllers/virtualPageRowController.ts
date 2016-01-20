@@ -14,7 +14,7 @@ module ag.grid {
 
         rowRenderer: any;
         datasourceVersion: any;
-        gridOptionsWrapper: any;
+        gridOptionsWrapper: GridOptionsWrapper;
         angularGrid: any;
         datasource: any;
         virtualRowCount: any;
@@ -346,7 +346,7 @@ module ag.grid {
         }
 
         public getRowHeightAsNumber(): number {
-            var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeight();
+            var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagiation();
             if (typeof rowHeight === 'number') {
                 return <number>rowHeight;
             } else {

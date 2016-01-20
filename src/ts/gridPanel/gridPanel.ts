@@ -712,7 +712,6 @@ module ag.grid {
         }
 
         private verticallyScrollBody(position: any) {
-            this.logger.log('verticallyScrollBody(' + position + ')');
             this.eBodyViewport.scrollTop = position;
         }
     }

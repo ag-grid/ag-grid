@@ -99,13 +99,13 @@ include '../documentation_header.php';
     <pre><code>&lt;div class="ag-header-cell">
     &lt;div id="agResizeBar" class="ag-header-cell-resize">&lt;/div>
     &lt;span id="agMenu" class="ag-header-icon ag-header-cell-menu-button">&lt;/span>
-    &lt;span class="ag-header-cell-label">
+    &lt;div class="ag-header-cell-label">
         &lt;span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon">&lt;/span>
         &lt;span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon">&lt;/span>
         &lt;span id="agNoSort" class="ag-header-icon ag-sort-none-icon">&lt;/span>
         &lt;span id="agFilter" class="ag-header-icon ag-filter-icon">&lt;/span>
         &lt;span id="agText" class="ag-header-cell-text">&lt;/span>
-    &lt;/span>
+    &lt;/div>
 &lt;/div></code></pre>
 
     <h4>Header Tempaltes and Custom Icons</h4>

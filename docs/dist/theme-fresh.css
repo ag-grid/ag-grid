@@ -64,6 +64,7 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
+  font-size: 0px /* with font size, a space was appearing below the menu button */;
 }
 .ag-fresh .ag-pinned-right-header {
   border-left: 1px solid #808080;

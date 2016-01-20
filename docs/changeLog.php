@@ -21,11 +21,12 @@ include 'documentation_header.php';
     <li>Major: Rows can have variable heights with new getRowHeight() callback.</li>
     <li>Minor: bugfix - setColState was not restoring 'visible' correctly</li>
     <li>Minor: New APi - columnApi.resetState()</li>
+    <li>Major: Implemented column header templates</li>
 
     <h3>Version 3.0.0</h3>
 
     <p>
-        Version 3 has many breaking changes. Where possible, the grid will hint if you are using an old property.
+        Version 3 is a major version and has breaking changes. Where possible, the grid will hint if you are using an old property.
     </p>
 
     <ul>

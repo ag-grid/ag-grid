@@ -54,8 +54,12 @@ include '../documentation_header.php';
         <tr>
             <th>colId</th>
             <td>The unique ID to give the column. This is optional. If missing, the ID will default to the field.
-            If both field and colId are missing, a unique ID will be generated. This ID is used to identify
-            the column in the API for sorting, filtering etc.</td>
+                If both field and colId are missing, a unique ID will be generated. This ID is used to identify
+                the column in the API for sorting, filtering etc.</td>
+        </tr>
+        <tr>
+            <th>headerCellTemplate</th>
+            <td>Can be string of HTML or a function function returning a string of HTML or a DOM Element.</td>
         </tr>
         <tr>
             <th>hide</th>

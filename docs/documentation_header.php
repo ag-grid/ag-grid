@@ -129,12 +129,6 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-width-and-height/index.php">Width & Height</a>
                 <?php } ?>
 
-                <?php if ($key == "Upgrading to 2.0") { ?>
-                    <span class="sidebarLinkSelected">Upgrading to 2.0</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>upgrading_to_2.x/index.php">Upgrading to 2.0</a>
-                <?php } ?>
-
                 <h4>
                     Interfacing
                 </h4>

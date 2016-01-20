@@ -30,9 +30,9 @@ include '../documentation_header.php';
     <h3>getRowHeight Callback</h3>
 
     <p>
-        To change the row height for variable rows, implement the <i>getRowHeight()</i> callback. For
-        example, to set the height to 50px for all non-floating rows and 25px for floating rows,
-        do the following:
+        To change the row height so that each row can have a different height,
+        implement the <i>getRowHeight()</i> callback. For example, to set the height
+        to 50px for all non-floating rows and 25px for floating rows, do the following:
     </p>
 
     <p>
