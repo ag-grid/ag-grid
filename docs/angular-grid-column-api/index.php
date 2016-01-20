@@ -112,6 +112,10 @@ include '../documentation_header.php';
             <td>Sets the state of the columns. See example below.</td>
         </tr>
         <tr>
+            <th>resetState()</th>
+            <td>Sets the state back to match the originally provided column definitions.</td>
+        </tr>
+        <tr>
             <th>getState()</th>
             <td>Gets the state of the columns. See example below.</td>
         </tr>
