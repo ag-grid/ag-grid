@@ -88,6 +88,8 @@ module ag.grid {
         public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
         public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
         public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
+        public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
+        public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
 
         // properties
         public getHeaderHeight(): number {

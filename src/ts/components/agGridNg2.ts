@@ -99,6 +99,7 @@ module ag.grid {
         public slaveGrids: GridOptions[];
         public rowSelection: string;
         public rowDeselection: boolean;
+        public headerCellTemplate: string;
 
         // changeable with impact
         public rowData: any[]; // should this be immutable for ag2?

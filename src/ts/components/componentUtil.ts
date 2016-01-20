@@ -7,7 +7,8 @@ module ag.grid {
             'icons','localeText','localeTextFunc',
             'groupColumnDef','context','rowStyle','rowClass','headerCellRenderer',
             'groupDefaultExpanded','slaveGrids','rowSelection',
-            'overlayLoadingTemplate','overlayNoRowsTemplate'
+            'overlayLoadingTemplate','overlayNoRowsTemplate',
+            'headerCellTemplate'
         ];
 
         public static SIMPLE_NUMBER_PROPERTIES = [
@@ -34,7 +35,7 @@ module ag.grid {
 
         public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
             'isScrollLag','isExternalFilterPresent','doesExternalFilterPass','getRowClass','getRowStyle',
-            'headerCellRenderer'];
+            'headerCellRenderer','getHeaderCellTemplate'];
 
         public static ALL_PROPERTIES = ComponentUtil.SIMPLE_PROPERTIES
             .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)

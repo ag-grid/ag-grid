@@ -288,9 +288,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Header Rendering") { ?>
-                    <span class="sidebarLinkSelected">Header Rendering</span>
+                    <span class="sidebarLinkSelected">Header Templates & Rendering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-header-rendering/index.php">Header Rendering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-header-rendering/index.php">Header Templates & Rendering</a>
                 <?php } ?>
 
                 <?php if ($key == "Keyboard Navigation") { ?>

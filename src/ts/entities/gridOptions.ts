@@ -62,6 +62,7 @@ module ag.grid {
         overlayNoRowsTemplate?: string;
         checkboxSelection?: Function;
         rowHeight?: number;
+        headerCellTemplate?: string;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
@@ -85,6 +86,7 @@ module ag.grid {
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
         getBusinessKeyForNode?(node: RowNode): string;
+        getHeaderCellTemplate?: (params: any) => string | HTMLElement;
 
         // events
         onReady?(api: any): void;

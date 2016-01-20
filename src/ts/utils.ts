@@ -170,7 +170,7 @@ module ag.grid {
         }
 
         static isVisible(element: HTMLElement) {
-            return (element.offsetParent !== null)
+            return (element.offsetParent !== null);
         }
 
         /** 

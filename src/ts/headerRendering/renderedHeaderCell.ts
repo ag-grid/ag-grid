@@ -8,7 +8,6 @@
 module ag.grid {
 
     var _ = Utils;
-    var svgFactory = SvgFactory.getInstance();
 
     export class RenderedHeaderCell extends RenderedHeaderElement {
 
@@ -134,6 +133,8 @@ module ag.grid {
 
         private setupComponents(): void {
             this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
+
+            _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 
             this.createScope();
             this.addAttributes();

@@ -52,6 +52,9 @@ module ag.grid {
         /** To provide custom rendering to the header. */
         headerCellRenderer?: Function | Object;
 
+        /** To provide a template for the header. */
+        headerCellTemplate?: ( (params: any) => string | HTMLElement ) | string | HTMLElement;
+
         /** CSS class for the header */
         headerClass?: string | string[] | ((params: any) => string | string[]);
 
