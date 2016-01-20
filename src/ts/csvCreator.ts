@@ -25,7 +25,7 @@ module ag.grid {
             var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
-            var blobObject = new Blob([csvString], {
+            var blobObject = new Blob(["\ufeff", csvString], {
                 type: "text/csv;charset=utf-8;"
             });
             // Internet Explorer
