@@ -14,7 +14,13 @@
             File Name:
             <input type="text" ng-model="fileName"/>
         </label>
-        <button ng-click="onBtExport()">Export to CSV</button>
+        <label style="margin-left: 20px;">
+            Separator
+            <input style="width: 20px;" type="text" ng-model="columnSeparator"/>
+        </label>
+        <label style="margin-left: 20px;">
+            <button ng-click="onBtExport()">Export to CSV</button>
+        </label>
     </div>
     <div style="padding-bottom: 4px;">
         <label style="margin-right: 20px;">

@@ -879,6 +879,7 @@ declare module ag.grid {
         getAllColumns(): Column[];
         getDisplayedLeftColumns(): Column[];
         getDisplayedCenterColumns(): Column[];
+        getDisplayedRightColumns(): Column[];
         getRowGroupColumns(): Column[];
         getValueColumns(): Column[];
         moveColumn(fromIndex: number, toIndex: number): void;
@@ -954,6 +955,7 @@ declare module ag.grid {
         getRowGroupColumns(): Column[];
         getDisplayedCenterColumns(): Column[];
         getDisplayedLeftColumns(): Column[];
+        getDisplayedRightColumns(): Column[];
         getAllColumns(): Column[];
         setColumnVisible(key: Column | ColDef | String, visible: boolean): void;
         setColumnsVisible(keys: (Column | ColDef | String)[], visible: boolean): void;

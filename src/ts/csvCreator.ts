@@ -10,7 +10,8 @@ module ag.grid {
         customHeader?: string;
         customFooter?: string;
         allColumns?: boolean;
-        colSeparator?: string;
+        columnSeparator?: string;
+
     }
 
     export class CsvCreator {
@@ -26,6 +27,8 @@ module ag.grid {
             var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
+            // for Excel, we need \ufeff at the start
+            // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
             var blobObject = new Blob(["\ufeff", csvString], {
                 type: "text/csv;charset=utf-8;"
             });
@@ -58,7 +61,7 @@ module ag.grid {
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
             var allColumns = params && params.allColumns;
-            var colSeparator = (params && params.colSeparator) || ',';
+            var columnSeparator = (params && params.columnSeparator) || ',';
 
             var columnsToExport: Column[];
             if (allColumns) {
@@ -83,7 +86,7 @@ module ag.grid {
                         nameForCol = '';
                     }
                     if (index != 0) {
-                        result += colSeparator;
+                        result += columnSeparator;
                     }
                     result += '"' + this.escape(nameForCol) + '"';
                 });
@@ -106,7 +109,7 @@ module ag.grid {
                         valueForCell = '';
                     }
                     if (index != 0) {
-                        result += colSeparator;
+                        result += columnSeparator;
                     }
                     result += '"' + this.escape(valueForCell) + '"';
                 });

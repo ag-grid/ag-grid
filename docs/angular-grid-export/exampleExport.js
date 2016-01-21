@@ -30,7 +30,8 @@ module.controller("exampleCtrl", function($scope, $http) {
             skipFooters: $scope.skipFooters === true,
             skipGroups: $scope.skipGroups === true,
             allColumns: $scope.allColumns === true,
-            fileName: $scope.fileName
+            fileName: $scope.fileName,
+            columnSeparator: $scope.columnSeparator
         };
 
         if ($scope.customHeader) {

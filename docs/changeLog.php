@@ -8,6 +8,11 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 3.1.1</h3>
+
+    <li>Minor: Added 'columnSeparator' to CSV Export</li>
+    <li>Minor: Added starting character of '\ufeff' to CSV Export (for Excel compatibility)</li>
+
     <h3>Version 3.1.0</h3>
 
     <li>Minor: New <i>allColumns</i> property for export to csv</li>

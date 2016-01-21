@@ -74,7 +74,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupRowInnerRenderer(params)<br/> groupAggFunction(params)<br/> groupRowRenderer(params)</th>
-            <td>Callbacks for grouping. See the section on grouping for details explanation.</td>
+            <td>Callbacks for grouping. See the section on <a href="../angular-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
             <th>isScrollLag()</th>

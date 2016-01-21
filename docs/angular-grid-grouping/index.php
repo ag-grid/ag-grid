@@ -95,7 +95,7 @@ include '../documentation_header.php';
         </tr>
     </table>
 
-    <p>
+    <p id="groupingCallbacks">
         Grouping has the following callbacks:
     </p>
 

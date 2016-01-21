@@ -3410,6 +3410,7 @@ var ag;
             ColumnApi.prototype.getAllColumns = function () { return this._columnController.getAllColumns(); };
             ColumnApi.prototype.getDisplayedLeftColumns = function () { return this._columnController.getDisplayedLeftColumns(); };
             ColumnApi.prototype.getDisplayedCenterColumns = function () { return this._columnController.getDisplayedCenterColumns(); };
+            ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
             ColumnApi.prototype.getRowGroupColumns = function () { return this._columnController.getRowGroupColumns(); };
             ColumnApi.prototype.getValueColumns = function () { return this._columnController.getValueColumns(); };
             ColumnApi.prototype.moveColumn = function (fromIndex, toIndex) { this._columnController.moveColumn(fromIndex, toIndex); };
@@ -3670,6 +3671,9 @@ var ag;
             // + rowController -> while inserting rows
             ColumnController.prototype.getDisplayedLeftColumns = function () {
                 return this.displayedLeftColumns;
+            };
+            ColumnController.prototype.getDisplayedRightColumns = function () {
+                return this.displayedRightColumns;
             };
             // used by:
             // + inMemoryRowController -> sorting, building quick filter text
