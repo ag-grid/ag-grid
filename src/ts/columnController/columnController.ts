@@ -47,10 +47,10 @@ module ag.grid {
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removeRowGroupColumn(column: Column): void { this._columnController.removeRowGroupColumn(column); }
         public addRowGroupColumn(column: Column): void { this._columnController.addRowGroupColumn(column); }
-        public getLeftDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getLeftDisplayedRootGroups(); }
-        public getCenterDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getCenterDisplayedRootGroups(); }
-        public getRightDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getRightDisplayedRootGroups(); }
-        public getAllDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getAllDisplayedRootGroups(); }
+        public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getLeftDisplayedColumnGroups(); }
+        public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getCenterDisplayedColumnGroups(); }
+        public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getRightDisplayedColumnGroups(); }
+        public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getAllDisplayedColumnGroups(); }
         public autoSizeColumn(key: Column|ColDef|String): void {return this._columnController.autoSizeColumn(key); }
         public autoSizeColumns(keys: (Column|ColDef|String)[]): void {return this._columnController.autoSizeColumns(keys); }
 
@@ -172,7 +172,7 @@ module ag.grid {
             }
         }
 
-        public getAllDisplayedRootGroups(): ColumnGroupChild[] {
+        public getAllDisplayedColumnGroups(): ColumnGroupChild[] {
             if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
                 return this.displayedLeftColumnTree
                     .concat(this.displayedCentreColumnTree)
@@ -196,15 +196,15 @@ module ag.grid {
         }
 
         // + headerRenderer -> setting pinned body width
-        public getLeftDisplayedRootGroups(): ColumnGroupChild[] {
+        public getLeftDisplayedColumnGroups(): ColumnGroupChild[] {
             return this.displayedLeftColumnTree;
         }
         // + headerRenderer -> setting pinned body width
-        public getRightDisplayedRootGroups(): ColumnGroupChild[] {
+        public getRightDisplayedColumnGroups(): ColumnGroupChild[] {
             return this.displayedRightColumnTree;
         }
         // + headerRenderer -> setting pinned body width
-        public getCenterDisplayedRootGroups(): ColumnGroupChild[] {
+        public getCenterDisplayedColumnGroups(): ColumnGroupChild[] {
             return this.displayedCentreColumnTree;
         }
 
@@ -668,7 +668,7 @@ module ag.grid {
                 return colId;
             }
 
-            var allColumnGroups = this.getAllDisplayedRootGroups();
+            var allColumnGroups = this.getAllDisplayedColumnGroups();
             var checkInstanceId = typeof instanceId === 'number';
             var result: ColumnGroup = null;
 
@@ -874,7 +874,7 @@ module ag.grid {
         }
 
         private updateGroups(): void {
-            var allGroups = this.getAllDisplayedRootGroups();
+            var allGroups = this.getAllDisplayedColumnGroups();
             this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
                 if (child instanceof ColumnGroup) {
                     var group = <ColumnGroup> child;

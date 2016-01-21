@@ -167,8 +167,8 @@ include '../documentation_header.php';
                 the columns) for the pinned left, center and pinned right portions of the grid.</td>
         </tr>
         <tr>
-            <th>getLeftDisplayedRootGroups(), getCenterDisplayedRootGroups(), getRightDisplayedRootGroups(), getAllDisplayedRootGroups()</th>
-            <td>Returns all header roots. If you are not grouping columns, these return the columns. If you are grouping,
+            <th>getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</th>
+            <td>Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping,
                 these return the top level groups - you can navigate down through each one to get the other lower level
                 headers and finally the columns at the bottom.</td>
         </tr>
