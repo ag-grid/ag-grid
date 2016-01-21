@@ -594,7 +594,7 @@ module ag.grid {
             }
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                if (parent) {
+                if (parent && !this.gridOptionsWrapper.isSuppressParentsInRowNodes()) {
                     node.parent = parent;
                 }
                 node.level = level;
