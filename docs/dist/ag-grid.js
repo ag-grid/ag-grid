@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
- * @version v3.1.0
+ * @version v3.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -156,7 +156,9 @@ var ag;
                 var csvString = this.getDataAsCsv(params);
                 var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
                 var fileName = fileNamePresent ? params.fileName : 'export.csv';
-                var blobObject = new Blob([csvString], {
+                // for Excel, we need \ufeff at the start
+                // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+                var blobObject = new Blob(["\ufeff", csvString], {
                     type: "text/csv;charset=utf-8;"
                 });
                 // Internet Explorer
@@ -186,6 +188,7 @@ var ag;
                 var includeCustomHeader = params && params.customHeader;
                 var includeCustomFooter = params && params.customFooter;
                 var allColumns = params && params.allColumns;
+                var columnSeparator = (params && params.columnSeparator) || ',';
                 var columnsToExport;
                 if (allColumns) {
                     columnsToExport = this.columnController.getAllColumns();
@@ -207,7 +210,7 @@ var ag;
                             nameForCol = '';
                         }
                         if (index != 0) {
-                            result += ',';
+                            result += columnSeparator;
                         }
                         result += '"' + _this.escape(nameForCol) + '"';
                     });
@@ -232,7 +235,7 @@ var ag;
                             valueForCell = '';
                         }
                         if (index != 0) {
-                            result += ',';
+                            result += columnSeparator;
                         }
                         result += '"' + _this.escape(valueForCell) + '"';
                     });
@@ -3410,6 +3413,7 @@ var ag;
             ColumnApi.prototype.getAllColumns = function () { return this._columnController.getAllColumns(); };
             ColumnApi.prototype.getDisplayedLeftColumns = function () { return this._columnController.getDisplayedLeftColumns(); };
             ColumnApi.prototype.getDisplayedCenterColumns = function () { return this._columnController.getDisplayedCenterColumns(); };
+            ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
             ColumnApi.prototype.getRowGroupColumns = function () { return this._columnController.getRowGroupColumns(); };
             ColumnApi.prototype.getValueColumns = function () { return this._columnController.getValueColumns(); };
             ColumnApi.prototype.moveColumn = function (fromIndex, toIndex) { this._columnController.moveColumn(fromIndex, toIndex); };
@@ -3670,6 +3674,9 @@ var ag;
             // + rowController -> while inserting rows
             ColumnController.prototype.getDisplayedLeftColumns = function () {
                 return this.displayedLeftColumns;
+            };
+            ColumnController.prototype.getDisplayedRightColumns = function () {
+                return this.displayedRightColumns;
             };
             // used by:
             // + inMemoryRowController -> sorting, building quick filter text
@@ -7080,6 +7087,11 @@ var ag;
                 style['transition'] = 'opacity 0.5s, border 0.2s';
                 style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';
             };
+            RenderedHeaderCell.prototype.removeSortIcons = function () {
+                _.removeFromParent(this.eHeaderCell.querySelector('#agSortAsc'));
+                _.removeFromParent(this.eHeaderCell.querySelector('#agSortDesc'));
+                _.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
+            };
             RenderedHeaderCell.prototype.addSortIcons = function () {
                 this.eSortAsc = this.eHeaderCell.querySelector('#agSortAsc');
                 this.eSortDesc = this.eHeaderCell.querySelector('#agSortDesc');
@@ -7112,8 +7124,7 @@ var ag;
                 // label div
                 this.eText = this.eHeaderCell.querySelector('#agText');
                 // add in sort icons
-                this.addSortIcons();
-                this.addSortHandling();
+                this.addSort();
                 // add in filter icon
                 this.eFilterIcon = this.eHeaderCell.querySelector('#agFilter');
                 // render the cell, use a renderer if one is provided
@@ -7138,6 +7149,16 @@ var ag;
                 this.eHeaderCell.style.width = _.formatWidth(this.column.getActualWidth());
                 this.refreshFilterIcon();
                 this.refreshSortIcon();
+            };
+            RenderedHeaderCell.prototype.addSort = function () {
+                var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+                if (enableSorting) {
+                    this.addSortIcons();
+                    this.addSortHandling();
+                }
+                else {
+                    this.removeSortIcons();
+                }
             };
             RenderedHeaderCell.prototype.addResize = function () {
                 var _this = this;
@@ -8218,7 +8239,7 @@ var ag;
                 }
                 for (var i = 0; i < nodes.length; i++) {
                     var node = nodes[i];
-                    if (parent) {
+                    if (parent && !this.gridOptionsWrapper.isSuppressParentsInRowNodes()) {
                         node.parent = parent;
                     }
                     node.level = level;

@@ -12,6 +12,7 @@ include 'documentation_header.php';
 
     <li>Minor: Added 'columnSeparator' to CSV Export</li>
     <li>Minor: Added starting character of '\ufeff' to CSV Export (for Excel compatibility)</li>
+    <li>Minor: Bugfix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
 
     <h3>Version 3.1.0</h3>
 

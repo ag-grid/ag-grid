@@ -112,6 +112,12 @@ module ag.grid {
             style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';
         }
 
+        private removeSortIcons(): void {
+            _.removeFromParent(this.eHeaderCell.querySelector('#agSortAsc'));
+            _.removeFromParent(this.eHeaderCell.querySelector('#agSortDesc'));
+            _.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
+        }
+
         private addSortIcons(): void {
             this.eSortAsc = <HTMLElement> this.eHeaderCell.querySelector('#agSortAsc');
             this.eSortDesc = <HTMLElement> this.eHeaderCell.querySelector('#agSortDesc');
@@ -155,8 +161,7 @@ module ag.grid {
             this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
 
             // add in sort icons
-            this.addSortIcons();
-            this.addSortHandling();
+            this.addSort();
 
             // add in filter icon
             this.eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
@@ -185,6 +190,16 @@ module ag.grid {
 
             this.refreshFilterIcon();
             this.refreshSortIcon();
+        }
+
+        private addSort(): void {
+            var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+            if (enableSorting) {
+                this.addSortIcons();
+                this.addSortHandling();
+            } else {
+                this.removeSortIcons();
+            }
         }
 
         private addResize(): void {
