@@ -10,6 +10,7 @@ module ag.grid {
         customHeader?: string;
         customFooter?: string;
         allColumns?: boolean;
+        colSeparator?: string;
     }
 
     export class CsvCreator {
@@ -25,7 +26,7 @@ module ag.grid {
             var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
-            var blobObject = new Blob([csvString], {
+            var blobObject = new Blob(["\ufeff", csvString], {
                 type: "text/csv;charset=utf-8;"
             });
             // Internet Explorer
@@ -57,6 +58,7 @@ module ag.grid {
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
             var allColumns = params && params.allColumns;
+            var colSeparator = (params && params.colSeparator) || ',';
 
             var columnsToExport: Column[];
             if (allColumns) {
@@ -81,7 +83,7 @@ module ag.grid {
                         nameForCol = '';
                     }
                     if (index != 0) {
-                        result += ',';
+                        result += colSeparator;
                     }
                     result += '"' + this.escape(nameForCol) + '"';
                 });
@@ -104,7 +106,7 @@ module ag.grid {
                         valueForCell = '';
                     }
                     if (index != 0) {
-                        result += ',';
+                        result += colSeparator;
                     }
                     result += '"' + this.escape(valueForCell) + '"';
                 });
