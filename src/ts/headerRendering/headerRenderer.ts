@@ -57,9 +57,9 @@ module ag.grid {
             });
             this.headerElements = [];
 
-            this.insertHeaderRowsIntoContainer(this.columnController.getLeftHeaderGroups(), this.ePinnedLeftHeader);
-            this.insertHeaderRowsIntoContainer(this.columnController.getRightHeaderGroups(), this.ePinnedRightHeader);
-            this.insertHeaderRowsIntoContainer(this.columnController.getCenterHeaderGroups(), this.eHeaderContainer);
+            this.insertHeaderRowsIntoContainer(this.columnController.getLeftDisplayedRootGroups(), this.ePinnedLeftHeader);
+            this.insertHeaderRowsIntoContainer(this.columnController.getRightDisplayedRootGroups(), this.ePinnedRightHeader);
+            this.insertHeaderRowsIntoContainer(this.columnController.getCenterDisplayedRootGroups(), this.eHeaderContainer);
         }
 
         private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {

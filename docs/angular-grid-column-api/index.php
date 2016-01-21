@@ -164,7 +164,13 @@ include '../documentation_header.php';
         <tr>
             <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns()</th>
             <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
-            the columns) for the pinned left, center and pinned right portions of the grid.</td>
+                the columns) for the pinned left, center and pinned right portions of the grid.</td>
+        </tr>
+        <tr>
+            <th>getLeftDisplayedRootGroups(), getCenterDisplayedRootGroups(), getRightDisplayedRootGroups(), getAllDisplayedRootGroups()</th>
+            <td>Returns all header roots. If you are not grouping columns, these return the columns. If you are grouping,
+                these return the top level groups - you can navigate down through each one to get the other lower level
+                headers and finally the columns at the bottom.</td>
         </tr>
         <tr>
             <th>moveColumn(fromIndex, toIndex)</th>
@@ -210,10 +216,6 @@ include '../documentation_header.php';
         <tr>
             <th>getValueColumns()</th>
             <td>Returns the value columns. Value columns are used for row aggregation.</td>
-        </tr>
-        <tr>
-            <th>getHeaderGroups()</th>
-            <td>Returns all the header groups.</td>
         </tr>
     </table>
 

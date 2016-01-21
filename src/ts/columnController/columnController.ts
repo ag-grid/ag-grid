@@ -47,8 +47,10 @@ module ag.grid {
         public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
         public removeRowGroupColumn(column: Column): void { this._columnController.removeRowGroupColumn(column); }
         public addRowGroupColumn(column: Column): void { this._columnController.addRowGroupColumn(column); }
-        public getLeftHeaderGroups(): ColumnGroupChild[] { return this._columnController.getLeftHeaderGroups(); }
-        public getCenterHeaderGroups(): ColumnGroupChild[] { return this._columnController.getCenterHeaderGroups(); }
+        public getLeftDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getLeftDisplayedRootGroups(); }
+        public getCenterDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getCenterDisplayedRootGroups(); }
+        public getRightDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getRightDisplayedRootGroups(); }
+        public getAllDisplayedRootGroups(): ColumnGroupChild[] { return this._columnController.getAllDisplayedRootGroups(); }
         public autoSizeColumn(key: Column|ColDef|String): void {return this._columnController.autoSizeColumn(key); }
         public autoSizeColumns(keys: (Column|ColDef|String)[]): void {return this._columnController.autoSizeColumns(keys); }
 
@@ -170,7 +172,7 @@ module ag.grid {
             }
         }
 
-        private getAllColumnGroups(): ColumnGroupChild[] {
+        public getAllDisplayedRootGroups(): ColumnGroupChild[] {
             if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
                 return this.displayedLeftColumnTree
                     .concat(this.displayedCentreColumnTree)
@@ -194,15 +196,15 @@ module ag.grid {
         }
 
         // + headerRenderer -> setting pinned body width
-        public getLeftHeaderGroups(): ColumnGroupChild[] {
+        public getLeftDisplayedRootGroups(): ColumnGroupChild[] {
             return this.displayedLeftColumnTree;
         }
         // + headerRenderer -> setting pinned body width
-        public getRightHeaderGroups(): ColumnGroupChild[] {
+        public getRightDisplayedRootGroups(): ColumnGroupChild[] {
             return this.displayedRightColumnTree;
         }
         // + headerRenderer -> setting pinned body width
-        public getCenterHeaderGroups(): ColumnGroupChild[] {
+        public getCenterDisplayedRootGroups(): ColumnGroupChild[] {
             return this.displayedCentreColumnTree;
         }
 
@@ -666,7 +668,7 @@ module ag.grid {
                 return colId;
             }
 
-            var allColumnGroups = this.getAllColumnGroups();
+            var allColumnGroups = this.getAllDisplayedRootGroups();
             var checkInstanceId = typeof instanceId === 'number';
             var result: ColumnGroup = null;
 
@@ -872,7 +874,7 @@ module ag.grid {
         }
 
         private updateGroups(): void {
-            var allGroups = this.getAllColumnGroups();
+            var allGroups = this.getAllDisplayedRootGroups();
             this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
                 if (child instanceof ColumnGroup) {
                     var group = <ColumnGroup> child;
