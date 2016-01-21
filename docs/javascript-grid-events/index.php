@@ -152,8 +152,8 @@ include '../documentation_header.php';
             <td>A column was resized.</td>
         </tr>
         <tr>
-            <th>columnGroupChanged</th>
-            <td>A group column was added or removed.</td>
+            <th>columnRowGroupChanged</th>
+            <td>A row group column was added or removed.</td>
         </tr>
         <tr>
             <th>columnValueChanged</th>
