@@ -542,9 +542,12 @@ module ag.grid {
             this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
                 // remove any previous focus
                 _.querySelectorAll_replaceCssClass(rowContainer, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+                _.querySelectorAll_replaceCssClass(rowContainer, '.ag-row-focus', 'ag-row-focus', 'ag-row-no-focus');
 
                 var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
                 _.querySelectorAll_replaceCssClass(rowContainer, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+                var selectorForRow = '[row="' + rowIndex + '"]';
+                _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
             });
 
             this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};

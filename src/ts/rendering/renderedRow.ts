@@ -463,6 +463,7 @@ module ag.grid {
             var classes: string[] = [];
 
             classes.push('ag-row');
+            classes.push('ag-row-no-focus');
 
             classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
