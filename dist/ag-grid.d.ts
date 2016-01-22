@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.1.0
+// Type definitions for ag-grid v3.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -66,6 +66,7 @@ declare module ag.grid {
         customHeader?: string;
         customFooter?: string;
         allColumns?: boolean;
+        columnSeparator?: string;
     }
     class CsvCreator {
         private rowController;
@@ -890,8 +891,10 @@ declare module ag.grid {
         addValueColumn(column: Column): void;
         removeRowGroupColumn(column: Column): void;
         addRowGroupColumn(column: Column): void;
-        getLeftHeaderGroups(): ColumnGroupChild[];
-        getCenterHeaderGroups(): ColumnGroupChild[];
+        getLeftDisplayedColumnGroups(): ColumnGroupChild[];
+        getCenterDisplayedColumnGroups(): ColumnGroupChild[];
+        getRightDisplayedColumnGroups(): ColumnGroupChild[];
+        getAllDisplayedColumnGroups(): ColumnGroupChild[];
         autoSizeColumn(key: Column | ColDef | String): void;
         autoSizeColumns(keys: (Column | ColDef | String)[]): void;
         columnGroupOpened(group: ColumnGroup | string, newValue: boolean): void;
@@ -929,13 +932,13 @@ declare module ag.grid {
         autoSizeColumns(keys: (Column | ColDef | String)[]): void;
         autoSizeColumn(key: Column | String | ColDef): void;
         private getColumnsFromTree(rootColumns);
-        private getAllColumnGroups();
+        getAllDisplayedColumnGroups(): ColumnGroupChild[];
         getColumnApi(): ColumnApi;
         isSetupComplete(): boolean;
         getHeaderRowCount(): number;
-        getLeftHeaderGroups(): ColumnGroupChild[];
-        getRightHeaderGroups(): ColumnGroupChild[];
-        getCenterHeaderGroups(): ColumnGroupChild[];
+        getLeftDisplayedColumnGroups(): ColumnGroupChild[];
+        getRightDisplayedColumnGroups(): ColumnGroupChild[];
+        getCenterDisplayedColumnGroups(): ColumnGroupChild[];
         getAllDisplayedColumns(): Column[];
         getPinnedLeftContainerWidth(): number;
         getPinnedRightContainerWidth(): number;
@@ -1355,8 +1358,10 @@ declare module ag.grid {
         private createScope();
         private addAttributes();
         private addMenu();
+        private removeSortIcons();
         private addSortIcons();
         private setupComponents();
+        private addSort();
         private addResize();
         private useRenderer(headerNameValue, headerCellRenderer);
         refreshFilterIcon(): void;

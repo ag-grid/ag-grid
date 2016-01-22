@@ -55,6 +55,28 @@ include 'documentation_header.php';
     </div>
 </div>
 
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; float: left;">
+            <img src="images/react_large.png"/>
+        </div>
+        <div style="float: right;  color: #767676;">
+            22th January 2016
+        </div>
+        <div style="margin-left: 130px;">
+            <div style="font-size: 25px;">
+                React is coming...
+            </div>
+            <p>
+                I am currently working on React integration. The grid has no dependencies, so already works
+                with React, so I am working on examples and making sure ag-Grid and React play
+                very well together.
+            </p>
+        </div>
+    </div>
+
+</div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 

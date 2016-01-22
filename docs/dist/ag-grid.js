@@ -3427,8 +3427,10 @@ var ag;
             ColumnApi.prototype.addValueColumn = function (column) { this._columnController.addValueColumn(column); };
             ColumnApi.prototype.removeRowGroupColumn = function (column) { this._columnController.removeRowGroupColumn(column); };
             ColumnApi.prototype.addRowGroupColumn = function (column) { this._columnController.addRowGroupColumn(column); };
-            ColumnApi.prototype.getLeftHeaderGroups = function () { return this._columnController.getLeftHeaderGroups(); };
-            ColumnApi.prototype.getCenterHeaderGroups = function () { return this._columnController.getCenterHeaderGroups(); };
+            ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this._columnController.getLeftDisplayedColumnGroups(); };
+            ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this._columnController.getCenterDisplayedColumnGroups(); };
+            ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this._columnController.getRightDisplayedColumnGroups(); };
+            ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this._columnController.getAllDisplayedColumnGroups(); };
             ColumnApi.prototype.autoSizeColumn = function (key) { return this._columnController.autoSizeColumn(key); };
             ColumnApi.prototype.autoSizeColumns = function (keys) { return this._columnController.autoSizeColumns(keys); };
             ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
@@ -3496,7 +3498,7 @@ var ag;
                     }
                 }
             };
-            ColumnController.prototype.getAllColumnGroups = function () {
+            ColumnController.prototype.getAllDisplayedColumnGroups = function () {
                 if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
                     return this.displayedLeftColumnTree
                         .concat(this.displayedCentreColumnTree)
@@ -3517,15 +3519,15 @@ var ag;
                 return this.headerRowCount;
             };
             // + headerRenderer -> setting pinned body width
-            ColumnController.prototype.getLeftHeaderGroups = function () {
+            ColumnController.prototype.getLeftDisplayedColumnGroups = function () {
                 return this.displayedLeftColumnTree;
             };
             // + headerRenderer -> setting pinned body width
-            ColumnController.prototype.getRightHeaderGroups = function () {
+            ColumnController.prototype.getRightDisplayedColumnGroups = function () {
                 return this.displayedRightColumnTree;
             };
             // + headerRenderer -> setting pinned body width
-            ColumnController.prototype.getCenterHeaderGroups = function () {
+            ColumnController.prototype.getCenterDisplayedColumnGroups = function () {
                 return this.displayedCentreColumnTree;
             };
             // + csvCreator
@@ -3944,7 +3946,7 @@ var ag;
                 if (colId instanceof grid.ColumnGroup) {
                     return colId;
                 }
-                var allColumnGroups = this.getAllColumnGroups();
+                var allColumnGroups = this.getAllDisplayedColumnGroups();
                 var checkInstanceId = typeof instanceId === 'number';
                 var result = null;
                 this.columnUtils.deptFirstAllColumnTreeSearch(allColumnGroups, function (child) {
@@ -4130,7 +4132,7 @@ var ag;
                 this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
             };
             ColumnController.prototype.updateGroups = function () {
-                var allGroups = this.getAllColumnGroups();
+                var allGroups = this.getAllDisplayedColumnGroups();
                 this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, function (child) {
                     if (child instanceof grid.ColumnGroup) {
                         var group = child;
@@ -4667,7 +4669,7 @@ var ag;
                 buff += this.toHtmlStringStyles();
                 buff += '>';
                 // contents
-                if (this.innerHtml) {
+                if (this.innerHtml !== null && this.innerHtml !== undefined) {
                     buff += this.innerHtml;
                 }
                 buff += this.toHtmlStringChildren();
@@ -5788,6 +5790,7 @@ var ag;
             RenderedRow.prototype.addDynamicClasses = function () {
                 var classes = [];
                 classes.push('ag-row');
+                classes.push('ag-row-no-focus');
                 classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
                 if (this.selectionController.isNodeSelected(this.node)) {
                     classes.push("ag-row-selected");
@@ -6465,8 +6468,11 @@ var ag;
                 this.eParentsOfRows.forEach(function (rowContainer) {
                     // remove any previous focus
                     _.querySelectorAll_replaceCssClass(rowContainer, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+                    _.querySelectorAll_replaceCssClass(rowContainer, '.ag-row-focus', 'ag-row-focus', 'ag-row-no-focus');
                     var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
                     _.querySelectorAll_replaceCssClass(rowContainer, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+                    var selectorForRow = '[row="' + rowIndex + '"]';
+                    _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
                 });
                 this.focusedCell = { rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef };
                 // this puts the browser focus on the cell (so it gets key presses)
@@ -7531,9 +7537,9 @@ var ag;
                     headerElement.destroy();
                 });
                 this.headerElements = [];
-                this.insertHeaderRowsIntoContainer(this.columnController.getLeftHeaderGroups(), this.ePinnedLeftHeader);
-                this.insertHeaderRowsIntoContainer(this.columnController.getRightHeaderGroups(), this.ePinnedRightHeader);
-                this.insertHeaderRowsIntoContainer(this.columnController.getCenterHeaderGroups(), this.eHeaderContainer);
+                this.insertHeaderRowsIntoContainer(this.columnController.getLeftDisplayedColumnGroups(), this.ePinnedLeftHeader);
+                this.insertHeaderRowsIntoContainer(this.columnController.getRightDisplayedColumnGroups(), this.ePinnedRightHeader);
+                this.insertHeaderRowsIntoContainer(this.columnController.getCenterDisplayedColumnGroups(), this.eHeaderContainer);
             };
             HeaderRenderer.prototype.addTreeNodesAtDept = function (cellTree, dept, result) {
                 var _this = this;
@@ -10931,6 +10937,12 @@ var ag;
                 if ($compile === void 0) { $compile = null; }
                 if (quickFilterOnScope === void 0) { quickFilterOnScope = null; }
                 this.virtualRowCallbacks = {};
+                if (!eGridDiv) {
+                    console.warn('ag-Grid: no div element provided to the grid');
+                }
+                if (!gridOptions) {
+                    console.warn('ag-Grid: no gridOptions provided to the grid');
+                }
                 this.gridOptions = gridOptions;
                 this.setupComponents($scope, $compile, eGridDiv, globalEventListener);
                 this.gridOptions.api = new grid.GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager, this.columnController, this.inMemoryRowController, this.selectionController, this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService, this.floatingRowModel);

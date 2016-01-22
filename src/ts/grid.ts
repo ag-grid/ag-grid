@@ -65,6 +65,13 @@ module ag.grid {
 
         constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
+            if (!eGridDiv) {
+                console.warn('ag-Grid: no div element provided to the grid');
+            }
+            if (!gridOptions) {
+                console.warn('ag-Grid: no gridOptions provided to the grid');
+            }
+
             this.gridOptions = gridOptions;
             this.setupComponents($scope, $compile, eGridDiv, globalEventListener);
 
