@@ -16,7 +16,7 @@ include '../documentation_header.php';
         <li><b>Header Templates:</b> This allows full control of the entire header cell, including
         icons (menu, filter, sort) and resize drag bar. Good if you want to structure the entire
         header differently e.g. move icons above text label.</li>
-        <li><b>Reader Rendering:</b> This keeps the template and allows you to render specifics in
+        <li><b>Header Rendering:</b> This keeps the template and allows you to render specifics in
         the label part of the header. Good if you want cosmetic changes to the label only e.g.
         include an image instead of text for the label.</li>
     </ul>
@@ -36,8 +36,8 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        The list above is confusing. What it's saying is you an specify the template in the colDef
-        or the gridOptions. If colDef, one property use used for function and non-function variants.
+        The list above is confusing. What it's saying is you can specify the template in the colDef
+        or the gridOptions. If colDef, one property is used for function and non-function variants.
         For gridOptions, the function and non-function variant is split. This was to keep the grid
         consistent with other properties and callbacks.
     </p>
