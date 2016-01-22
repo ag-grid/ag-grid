@@ -2,9 +2,11 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>Angular Grid and Native Javascript Grid</title>
-        <meta name="description" content="ag-Grid is one of the best Javascript data grids that works as Native Javascript Grid, Web Components Grid and AngularJS Grid. Feature rich. Blazing fast.">
-        <meta name="keywords" content="javascript angularjs angular data grid web components"/>
+        <title>ag-Grid - Enterprise Javascript Datagrid</title>
+        <meta name="description"
+              content=
+              "Javasript Data Grid built for Enterprise Application Developers. Supports React, AngularJS & Angular 2. Blazing fast. Feature rich. The best JavaScript DataGrid.">
+        <meta name="keywords" content="javascript react data grid angularjs angular web components"/>
         <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
