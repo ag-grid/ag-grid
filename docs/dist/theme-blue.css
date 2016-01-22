@@ -70,7 +70,7 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  font-size: 0px; /* with font size, a space was appearing below the menu button */
+  line-height: 0px; /* normal line height, a space was appearing below the menu button */
 /* When using bootstrap, box-sizing was set to 'border-box' */
 }
 .ag-blue .ag-header-icon {

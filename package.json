@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Advanced Framework Agnostic Javascript Datagrid.",
   "main": "dist/ag-grid.min.js",
   "scripts": {

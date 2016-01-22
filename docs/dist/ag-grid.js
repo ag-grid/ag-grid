@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
- * @version v3.1.1
+ * @version v3.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11990,7 +11990,6 @@ var ag;
         }
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
-/// <reference path="grid.ts" />
 /// <reference path="components/agGridNg2.ts" />
 /// <reference path="components/agGridNg1.ts" />
 /// <reference path="components/agGridWebComponent.ts" />

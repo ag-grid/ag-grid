@@ -1,4 +1,3 @@
-/// <reference path="grid.ts" />
 /// <reference path="components/agGridNg2.ts" />
 /// <reference path="components/agGridNg1.ts" />
 /// <reference path="components/agGridWebComponent.ts" />

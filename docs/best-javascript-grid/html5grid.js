@@ -145,7 +145,7 @@
         enableFilter: true,
         groupHeaders: true,
         rowHeight: 22,
-        modelUpdated: modelUpdated,
+        onModelUpdated: modelUpdated,
         debug: true
     };
 
