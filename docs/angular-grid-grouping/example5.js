@@ -44,7 +44,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
         var html = '';
         if (flagCode) {
-            html += '<img class="flag" border="0" width="20" height="15" src="http://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
+            html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
         }
 
         html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', params.node.key);

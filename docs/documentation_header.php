@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/documentation.css">
     <link rel="stylesheet" href="/style.css">
 
-    <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
+    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
 </head>
 

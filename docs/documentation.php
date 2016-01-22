@@ -55,6 +55,10 @@ include 'documentation_header.php';
     </div>
 </div>
 
+<div style="border: 2px solid darkred; background-color: #eee; padding: 10px; margin: 5px;">
+    Note: Version 3.1.1 has some problems because I messed up the release process. Please move to 3.1.2.
+</div>
+
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="overflow: hidden;">
@@ -227,7 +231,7 @@ include 'documentation_header.php';
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
     </div>

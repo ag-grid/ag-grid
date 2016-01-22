@@ -94,7 +94,7 @@ include('../mediaHeader.php');
         </p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -104,7 +104,7 @@ include('../mediaHeader.php');
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 

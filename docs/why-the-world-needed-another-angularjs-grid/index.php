@@ -18,7 +18,7 @@
 
     <link rel="stylesheet" type="text/css" href="/style.css">
 
-    <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
+    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
 </head>
 

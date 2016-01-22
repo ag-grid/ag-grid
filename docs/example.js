@@ -717,7 +717,7 @@ function countryCellRenderer(params) {
     if (params.value==="" || params.value===undefined || params.value===null) {
         return null;
     } else {
-        var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
+        var flag = "<img border='0' width='15' height='10' src='https://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
         return flag + " " + params.value;
     }
 }

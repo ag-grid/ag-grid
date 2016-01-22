@@ -7,7 +7,7 @@
               content=
               "Javasript Data Grid built for Enterprise Application Developers. Supports React, AngularJS & Angular 2. Blazing fast. Feature rich. The best JavaScript DataGrid.">
         <meta name="keywords" content="javascript react data grid angularjs angular web components"/>
-        <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
+        <meta property="og:image" content="https://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!--
@@ -37,7 +37,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
 -->
 
-        <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
+        <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
         <!--maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css-->
         <style>
@@ -166,7 +166,7 @@
 
                         <div style="margin-top: 30px;">
                             <div class="col-md-12" style="text-align: center;">
-                                <a class="btn btn-primary header-button" href="http://www.ag-grid.com/dist" role="button">
+                                <a class="btn btn-primary header-button" href="https://www.ag-grid.com/dist" role="button">
                                     <i class="fa fa-download header-icon"></i> Download
                                 </a>
                                 <a class="btn btn-primary header-button" href="example.html" role="button">
