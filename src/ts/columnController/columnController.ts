@@ -538,7 +538,7 @@ module ag.grid {
                     // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                     oldColumn.setVisible(!stateItem.hide);
                     // sets pinned to 'left' or 'right'
-                    oldColumn.setPinned(stateItem.pinned===true);
+                    oldColumn.setPinned(stateItem.pinned);
                     // if width provided and valid, use it, otherwise stick with the old width
                     if (stateItem.width >= constants.MIN_COL_WIDTH) {
                         oldColumn.setActualWidth(stateItem.width);
