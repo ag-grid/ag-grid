@@ -117,10 +117,13 @@ include '../documentation_header.php';
             <td>Value has changed after editing.</td>
         </tr>
         <tr>
-            <th>onGridSizeChanged</th>
+            <th>gridSizeChanged</th>
             <td>The grid had to lay out again because it changed size.</td>
         </tr>
-
+        <tr>
+            <th>rowGroupOpened</th>
+            <td>A row group was opened or closed.</td>
+        </tr>
     </table>
 
     <h2>Column Changed Events</h2>

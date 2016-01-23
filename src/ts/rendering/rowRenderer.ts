@@ -70,7 +70,7 @@ module ag.grid {
             this.floatingRowModel = floatingRowModel;
 
             this.cellRendererMap = {
-                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
+                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService),
                 'default': function(params: any) {
                     return params.value;
                 }

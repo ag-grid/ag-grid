@@ -8,6 +8,9 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 4.0.0</h3>
+    <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
+
     <h3>Version 3.1.2</h3>
     <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>
 

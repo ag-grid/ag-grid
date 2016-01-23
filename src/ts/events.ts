@@ -23,6 +23,9 @@ module ag.grid {
         /** A column group was opened / closed */
         public static EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
 
+        /** A column group was opened / closed */
+        public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
+
         /** One or more columns was resized. If just one, the column in the event is set. */
         public static EVENT_COLUMN_RESIZED = 'columnResized';
 

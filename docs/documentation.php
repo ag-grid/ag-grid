@@ -73,9 +73,11 @@ include 'documentation_header.php';
                 React is coming...
             </div>
             <p>
-                I am currently working on React integration. The grid has no dependencies, so already works
-                with React, so I am working on examples and making sure ag-Grid and React play
-                very well together.
+                I am currently working on React integration. Having spent the last few days working
+                through it I'm excited. The current interface of ag-Grid, based on web standards,
+                maps perfectly onto the React philosophy, even down to using React in custom
+                cellRenderers. In a few days I'll have the next release demonstrating ag-Grid
+                working alongside a full React application using Babel and Webpack.
             </p>
         </div>
     </div>

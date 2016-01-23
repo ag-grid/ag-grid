@@ -166,6 +166,9 @@ gridsModule.controller('mainController', function($scope) {
         },
         onGridSizeChanged: function(event) {
             console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
+        },
+        onRowGroupOpened: function(event) {
+            console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
         }
     };
     $scope.gridOptions = gridOptions;

@@ -10,7 +10,8 @@ module ag.grid {
 
     export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
                                     selectionRendererFactory: SelectionRendererFactory,
-                                    expressionService: ExpressionService) {
+                                    expressionService: ExpressionService,
+                                    eventService: EventService) {
 
         return function groupCellRenderer(params: any) {
 
@@ -113,6 +114,9 @@ module ag.grid {
             var refreshIndex = getRefreshFromIndex(params);
             params.api.onGroupExpandedOrCollapsed(refreshIndex);
             showAndHideExpandAndContract(eExpandIcon, eContractIcon, params.node.expanded);
+
+            var event: any = {node: params.node};
+            eventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
         }
 
         function createGroupExpandIcon(expanded: any) {

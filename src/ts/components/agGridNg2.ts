@@ -40,6 +40,7 @@ module ag.grid {
         public rowDoubleClicked = new _ng.core.EventEmitter();
         public ready = new _ng.core.EventEmitter();
         public gridSizeChanged = new _ng.core.EventEmitter();
+        public rowGroupOpened = new _ng.core.EventEmitter();
 
         // column grid events
         public columnEverythingChanged = new _ng.core.EventEmitter();
@@ -140,6 +141,7 @@ module ag.grid {
         private globalEventListener(eventType: string, event: any): void {
             var emitter: any;
             switch (eventType) {
+                case Events.EVENT_ROW_GROUP_OPENED: emitter = this.rowGroupOpened; break;
                 case Events.EVENT_COLUMN_GROUP_OPENED: emitter = this.columnGroupOpened; break;
                 case Events.EVENT_COLUMN_EVERYTHING_CHANGED: emitter = this.columnEverythingChanged; break;
                 case Events.EVENT_COLUMN_MOVED: emitter = this.columnMoved; break;
