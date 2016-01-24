@@ -313,6 +313,9 @@ module ag.grid {
 
         private unbindVirtualRow(indexToRemove: any) {
             var renderedRow = this.renderedRows[indexToRemove];
+            if (!renderedRow) {
+                return;
+            }
             renderedRow.destroy();
 
             var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
