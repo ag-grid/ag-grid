@@ -131,7 +131,9 @@ module ag.grid {
         }
 
         public ngOnChanges(changes: any): void {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this);
+            if (this._initialised) {
+                ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+            }
         }
 
         public ngOnDestroy(): void {
@@ -202,7 +204,7 @@ module ag.grid {
                     'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
                     'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
                     'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                    'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged',
+                    'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged', 'rowGroupOpened',
                     // column events
                     'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
                     'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
@@ -210,6 +212,7 @@ module ag.grid {
                     .concat(ComponentUtil.SIMPLE_PROPERTIES)
                     .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
                     .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
+                    .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
                     .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
                     .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
                     .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)

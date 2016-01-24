@@ -111,8 +111,11 @@ module ag.grid {
             this.periodicallyDoLayout();
 
             // if ready function provided, use it
-            var readyParams = {api: gridOptions.api};
-            this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
+            var readyEvent = {
+                api: gridOptions.api,
+                columnApi: gridOptions.columnApi
+            };
+            this.eventService.dispatchEvent(Events.EVENT_READY, readyEvent);
 
             this.logger.log('initialised');
         }

@@ -89,7 +89,7 @@ module ag.grid {
         getHeaderCellTemplate?: (params: any) => string | HTMLElement;
 
         // events
-        onReady?(api: any): void;
+        onReady?(params: any): void;
         onModelUpdated?(): void;
         onCellClicked?(params: any): void;
         onCellDoubleClicked?(params: any): void;

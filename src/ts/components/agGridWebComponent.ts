@@ -31,7 +31,9 @@ module ag.grid {
         };
 
         AgileGridProto.onChange = function (changes:any) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this);
+            if (this._initialised) {
+                ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+            }
         };
 
         AgileGridProto.__agGridGetProperty = function (key:string) {
