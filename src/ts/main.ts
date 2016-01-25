@@ -13,31 +13,14 @@ if (typeof window !== 'undefined') {
 (function() {
 
     // Establish the root object, `window` or `exports`
-    var root = this;
-
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = angularGridGlobalFunction;
-        }
-        exports.angularGrid = angularGridGlobalFunction;
-    }
-
-    root.agGridGlobalFunc = angularGridGlobalFunction;
-
-    // Global Function - this function is used for creating a grid, outside of any AngularJS
-    function angularGridGlobalFunction(element: any, gridOptions: any) {
-        // see if element is a query selector, or a real element
-        var eGridDiv: any;
-        if (typeof element === 'string') {
-            eGridDiv = document.querySelector(element);
-            if (!eGridDiv) {
-                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, ag-Grid initialisation aborted.');
-                return;
-            }
+            exports = module.exports = ag.grid;
         } else {
-            eGridDiv = element;
+            exports = ag.grid;
         }
-        new ag.grid.Grid(eGridDiv, gridOptions);
     }
+
+    //this.agGridGlobalFunc = angularGridGlobalFunction;
 
 }).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);

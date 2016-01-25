@@ -11,6 +11,7 @@ include 'documentation_header.php';
     <h3>Version 4.0.0</h3>
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
     <li>Minor: Bug fix - pinning was not saved during columnApi.getState()</li>
+    <li>Minor: Added 'typings' to package.json, so TypeScript can pick up typings from node module</li>
 
     <h3>Version 3.1.2</h3>
     <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>

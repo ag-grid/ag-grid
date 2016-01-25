@@ -3,6 +3,7 @@
   "version": "3.1.2",
   "description": "Advanced Framework Agnostic Javascript Datagrid.",
   "main": "dist/ag-grid.min.js",
+  "typings": "dist/ag-grid.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -39,7 +40,7 @@
     "nib": "^1.1.0",
     "stylus": "0.53.0",
     "vinyl-buffer": "1.0.0",
-    "typescript": "1.6.2",
+    "typescript": "1.7.5",
     "merge2": "0.3.6"
   }
 }

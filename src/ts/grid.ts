@@ -27,7 +27,6 @@
 /// <reference path="columnController/columnUtils.ts" />
 /// <reference path="dragAndDrop/dragAndDropService.ts" />
 
-
 module ag.grid {
 
     export class Grid {

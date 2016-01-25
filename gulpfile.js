@@ -51,23 +51,23 @@ gulp.task('tsd', function (callback) {
     }, callback);
 });
 
-gulp.task('es6', function (callback) {
-    var tsResult = gulp
-        .src('src/es6/**/*.ts')
-        .pipe(sourcemaps.init()) // for sourcemaps only
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            noImplicitAny: true,
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true,
-            target: 'es5',
-            module: 'commonjs'
-        }));
-
-    return tsResult.js
-        .pipe(sourcemaps.write()) // for sourcemaps only
-        .pipe(gulp.dest('./docs/dist'));
-});
+//gulp.task('es6', function (callback) {
+//    var tsResult = gulp
+//        .src('src/es6/**/*.ts')
+//        .pipe(sourcemaps.init()) // for sourcemaps only
+//        .pipe(gulpTypescript({
+//            typescript: typescript,
+//            noImplicitAny: true,
+//            experimentalDecorators: true,
+//            emitDecoratorMetadata: true,
+//            target: 'es5',
+//            module: 'commonjs'
+//        }));
+//
+//    return tsResult.js
+//        .pipe(sourcemaps.write()) // for sourcemaps only
+//        .pipe(gulp.dest('./docs/dist'));
+//});
 
 function tsTestTask() {
     return gulp.src('./spec/**/*.js')

@@ -55,6 +55,7 @@ module ag.grid {
             var pGridOptions = <any>gridOptions;
             // add in all the simple properties
             ComponentUtil.SIMPLE_PROPERTIES
+                .concat(ComponentUtil.CALLBACKS)
                 .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
                 .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
                 .forEach( (key)=> {

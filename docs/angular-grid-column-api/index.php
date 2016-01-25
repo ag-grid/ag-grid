@@ -154,8 +154,16 @@ include '../documentation_header.php';
             <td>Sets the column pinned / unpinned. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnsPinned(key, pinned)</th>
+            <th>setColumnsPinned(keys, pinned)</th>
             <td>Same as setColumnPinned, but provide a list of column keys.</td>
+        </tr>
+        <tr>
+            <th>autoSizeColumn(key)</th>
+            <td>Auto-sizes a column based on it's contents.</td>
+        </tr>
+        <tr>
+            <th>autoSizeColumns(keys)</th>
+            <td>Same as autoSizeColumn, but provide a list of column keys.</td>
         </tr>
         <tr>
             <th>getAllColumns()</th>
