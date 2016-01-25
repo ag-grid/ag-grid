@@ -10,16 +10,22 @@
         border-right: 1px solid grey;
         padding: 4px;
 
-    .ag-header-container
+    .ag-header
         background-color: #430000;
         border-bottom: 1px solid grey;
 
-    .ag-pinned-header
+    .ag-no-scrolls .ag-header-container
         background-color: #430000;
         border-bottom: 1px solid grey;
 
     .ag-header-cell
         border-right: 1px solid grey;
+
+    .ag-pinned-right-header
+        border-left: 1px solid grey;
+
+    .ag-cell-first-right-pinned
+        border-left: 1px solid grey;
 
     .ag-header-cell-label
         padding: 4px 2px 4px 2px ;
@@ -30,6 +36,7 @@
     .ag-header-group-cell-label
         font-weight: bold;
         padding: 4px;
+        padding-left: 10px;
 
     .ag-header-group-cell
         border-right: 1px solid grey;
@@ -46,6 +53,7 @@
         border: 1px solid transparent;
         border-radius: 3px;
         box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
+        line-height: 0px; /* normal line height, a space was appearing below the menu button */
 
     .ag-header-cell-menu-button:hover
         border: 1px solid #e0e0e0;
@@ -75,10 +83,6 @@
 
     .ag-body
         background-color: #ddd;
-
-    .ag-body-viewport {}
-
-    .ag-pinned-cols-viewport {}
 
     .ag-row-selected
         background-color: #000000;

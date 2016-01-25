@@ -23,11 +23,14 @@
     border-left: 2px solid transparent;
     border-bottom: 1px solid #9bc2e6;
 
-  .ag-pinned-header
+  .ag-cell-first-right-pinned
+    border-left: 1px dotted #9bc2e6;
+
+  .ag-header
     background-color: #5B9BD5;
     border-bottom: 1px solid #9BC2E6;
 
-  .ag-header-container
+  .ag-no-scrolls .ag-header-container
     background-color: #5B9BD5;
     border-bottom: 1px solid #9BC2E6;
 
@@ -39,6 +42,9 @@
 
   .ag-header-group-cell-with-group
     border-bottom: 1px solid #9BC2E6;
+
+  .ag-pinned-right-header
+    border-left: 1px solid #9BC2E6;
 
   .ag-header-cell-label
     padding: 4px 2px 4px 2px;
@@ -52,24 +58,29 @@
     padding: 4px;
     font-weight: bold;
     color: #ffffff;
+    padding-left: 10px;
 
   .ag-header-group-text
     margin-right: 2px;
 
   .ag-header-cell-menu-button
-    color: #5f6063;
+    color: #ffffff;
     border: 1px solid #a6acb3;
-    padding: 0 4px;
+    padding: 2px;
     margin-top: 3px;
     border-radius: 3px;
     box-sizing: content-box;
+    line-height: 0px; /* normal line height, a space was appearing below the menu button */
+
     /* When using bootstrap, box-sizing was set to 'border-box' */
 
-    background: -webkit-linear-gradient(#feffff, #eff2f7);
-    background: linear-gradient(#feffff, #eff2f7);
+    //background: -webkit-linear-gradient(#feffff, #eff2f7);
+    //background: linear-gradient(#feffff, #eff2f7);
 
   .ag-header-icon
     color: #fff;
+    stroke: #fff;
+    fill: #fff;
 
   .ag-dark .ag-header-expand-icon:hover
     cursor: pointer;

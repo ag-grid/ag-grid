@@ -3,9 +3,11 @@ module ag.grid {
     export class GroupCreator {
 
         private valueService: ValueService;
+        private gridOptionsWrapper: GridOptionsWrapper;
 
-        public init(valueService: ValueService) {
+        public init(valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper) {
             this.valueService = valueService;
+            this.gridOptionsWrapper = gridOptionsWrapper;
         }
 
         public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: any) {
@@ -27,6 +29,7 @@ module ag.grid {
             var currentGroup: any;
             var groupKey: string;
             var nextGroup: RowNode;
+            var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
 
             // start at -1 and go backwards, as all the positive indexes
             // are already used by the nodes.
@@ -41,7 +44,7 @@ module ag.grid {
 
                 for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                     var groupColumn = groupedCols[currentLevel];
-                    groupKey = this.valueService.getValue(groupColumn.colDef, data, node);
+                    groupKey = this.valueService.getValue(groupColumn.getColDef(), data, node);
 
                     if (currentLevel === 0) {
                         currentGroup = topMostGroup;
@@ -52,17 +55,20 @@ module ag.grid {
                     if (!nextGroup) {
                         nextGroup = {
                             group: true,
-                            field: groupColumn.colId,
+                            field: groupColumn.getColDef().field,
                             id: index--,
                             key: groupKey,
                             expanded: this.isExpanded(expandByDefault, currentLevel),
                             children: [],
                             // for top most level, parent is null
-                            parent: currentGroup === topMostGroup ? null : currentGroup,
+                            parent: null,
                             allChildrenCount: 0,
                             level: currentGroup.level + 1,
                             _childrenMap: {} //this is a temporary map, we remove at the end of this method
                         };
+                        if (includeParents) {
+                            nextGroup.parent = currentGroup === topMostGroup ? null : currentGroup;
+                        }
                         currentGroup._childrenMap[groupKey] = nextGroup;
                         currentGroup.children.push(nextGroup);
                         allGroups.push(nextGroup);
@@ -71,7 +77,9 @@ module ag.grid {
                     nextGroup.allChildrenCount++;
 
                     if (currentLevel == levelToInsertChild) {
-                        node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                        if (includeParents) {
+                            node.parent = nextGroup === topMostGroup ? null : nextGroup;
+                        }
                         nextGroup.children.push(node);
                     } else {
                         currentGroup = nextGroup;
@@ -79,7 +87,7 @@ module ag.grid {
                 }
 
             }
-``
+
             //remove the temporary map
             for (i = 0; i < allGroups.length; i++) {
                 delete allGroups[i]._childrenMap;

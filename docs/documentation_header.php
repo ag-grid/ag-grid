@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/documentation.css">
     <link rel="stylesheet" href="/style.css">
 
-    <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
+    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
 </head>
 
@@ -79,7 +79,7 @@ if (strcmp($version , 'latest') == 0) {
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
                         <input type="hidden" name="cmd" value="_s-xclick">
                         <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal ï¿½ The safer, easier way to pay online.">
                     </form>
                 </div>
 
@@ -127,12 +127,6 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Width & Height</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-width-and-height/index.php">Width & Height</a>
-                <?php } ?>
-
-                <?php if ($key == "Upgrading to 2.0") { ?>
-                    <span class="sidebarLinkSelected">Upgrading to 2.0</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>upgrading_to_2.x/index.php">Upgrading to 2.0</a>
                 <?php } ?>
 
                 <h4>
@@ -209,6 +203,30 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-pinning/index.php">Pinning</a>
                 <?php } ?>
 
+                <?php if ($key == "Grouping Columns") { ?>
+                    <span class="sidebarLinkSelected">Grouping Columns</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping-headers/index.php">Grouping Columns</a>
+                <?php } ?>
+
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
+                <?php } ?>
+
+                <?php if ($key == "Row Height") { ?>
+                    <span class="sidebarLinkSelected">Row Height</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-row-height/index.php">Row Height</a>
+                <?php } ?>
+
+                <?php if ($key == "Floating") { ?>
+                    <span class="sidebarLinkSelected">Floating Rows</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-floating/index.php">Floating Rows</a>
+                <?php } ?>
+
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
@@ -263,16 +281,10 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-refresh/index.php">Refresh</a>
                 <?php } ?>
 
-                <?php if ($key == "Grouping Headers") { ?>
-                    <span class="sidebarLinkSelected">Grouping Headers</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping-headers/index.php">Grouping Headers</a>
-                <?php } ?>
-
                 <?php if ($key == "Header Rendering") { ?>
-                    <span class="sidebarLinkSelected">Header Rendering</span>
+                    <span class="sidebarLinkSelected">Header Templates & Rendering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-header-rendering/index.php">Header Rendering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-header-rendering/index.php">Header Templates & Rendering</a>
                 <?php } ?>
 
                 <?php if ($key == "Keyboard Navigation") { ?>
@@ -301,18 +313,6 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Row Model</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-model/index.php">Row Model</a>
-                <?php } ?>
-
-                <?php if ($key == "Floating") { ?>
-                    <span class="sidebarLinkSelected">Floating Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-floating/index.php">Floating Rows</a>
-                <?php } ?>
-
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping & Aggregating Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping & Aggregating Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>
@@ -352,12 +352,6 @@ if (strcmp($version , 'latest') == 0) {
                 <h4>
                     Other Bits
                 </h4>
-
-                <?php if ($key == "Angular Compiling") { ?>
-                    <span class="sidebarLinkSelected">Angular Compiling</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-angular-compiling/index.php">Angular Compiling</a>
-                <?php } ?>
 
                 <?php if ($key == "Styling") { ?>
                     <span class="sidebarLinkSelected">Layout & Styling</span>

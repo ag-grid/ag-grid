@@ -17,6 +17,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     ];
 
     $scope.gridOptions = {
+        debug: true,
         columnDefs: columnDefs,
         rowData: null,
         enableSorting: true,
@@ -53,11 +54,23 @@ module.controller("exampleCtrl", function($scope, $http) {
         console.log('column state restored');
     };
 
+    $scope.resetState = function() {
+        $scope.gridOptions.columnApi.resetState();
+    };
+
     $scope.showAthlete = function(show) {
-        $scope.gridOptions.columnApi.hideColumn('athlete', !show);
+        $scope.gridOptions.columnApi.setColumnVisible('athlete', show);
     };
 
     $scope.showMedals = function(show) {
-        $scope.gridOptions.columnApi.hideColumns(['gold','silver','bronze'], !show);
+        $scope.gridOptions.columnApi.setColumnsVisible(['gold','silver','bronze'], show);
+    };
+
+    $scope.pinAthlete = function(pin) {
+        $scope.gridOptions.columnApi.setColumnPinned('athlete', pin);
+    };
+
+    $scope.pinAge = function(pin) {
+        $scope.gridOptions.columnApi.setColumnPinned('age', pin);
     };
 });

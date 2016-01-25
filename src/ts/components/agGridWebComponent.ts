@@ -1,7 +1,7 @@
 /// <reference path='componentUtil.ts'/>
 
 module ag.grid {
-   if ((<any>document).registerElement) {
+   if (typeof document!=='undefined' && (<any>document).registerElement) {
 
         // i don't think this type of extension is possible in TypeScript, so back to
         // plain Javascript to create this object
@@ -31,7 +31,9 @@ module ag.grid {
         };
 
         AgileGridProto.onChange = function (changes:any) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this);
+            if (this._initialised) {
+                ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+            }
         };
 
         AgileGridProto.__agGridGetProperty = function (key:string) {

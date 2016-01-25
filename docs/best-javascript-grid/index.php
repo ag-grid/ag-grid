@@ -19,16 +19,13 @@ include '../documentation_header.php';
     </p>
 
     <p>
-        To use ag-Grid using pure Javascript call the global <i>agGridGlobalFunc()</i> function to initialise an instance of the grid.
+        To use ag-Grid using pure Javascript new <i>ag.grid.Grid(div, gridOptions)</i> function to initialise an instance of the grid.
     </p>
 
-    <pre>agGridGlobalFunc(cssSelectorForDiv, gridOptions);</pre>
-
-    <p>
-        Where:<br>
-        <b>cssSelectorForDiv:</b> The CSS selector for the div to contain the grid.<br>
-        <b>gridOptions:</b> The grid options to pass to the grid.<br>
-    </p>
+    <pre>    // example creating a grid using raw Javascript
+    var eGridDiv = document.querySelector('#myGrid'); // get a reference to the grid div
+    new ag.grid.Grid(eGridDiv, gridOptions); //create a new grid
+</pre>
 
     <h2>Simple Plain Javascript Example</h2>
 

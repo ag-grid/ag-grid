@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "2.3.5",
+  "version": "3.1.2",
   "description": "Advanced Framework Agnostic Javascript Datagrid.",
   "main": "dist/ag-grid.min.js",
   "scripts": {
@@ -17,25 +17,28 @@
     "table",
     "angular"
   ],
-  "author": "Niall Crosby <info@angulargrid.com>",
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ceolter/ag-grid/issues"
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-foreach": "^0.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-stylus": "^2.0.1",
-    "gulp-uglify": "^1.2.0",
-    "gulp-typescript": "^2.5.0",
+    "gulp": "3.9.0",
+    "gulp-foreach": "0.1.0",
+    "gulp-rename": "1.2.2",
+    "gulp-stylus": "2.2.0",
+    "gulp-uglify": "1.5.1",
+    "gulp-typescript": "2.10.0",
     "gulp-sourcemaps": "1.5.2",
-    "gulp-header": "^1.0.0",
+    "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
+    "json-stable-stringify": "1.0.0",
+    "jasmine-core": "2.4.1",
+    "gulp-jasmine": "2.2.1",
     "nib": "^1.1.0",
-    "stylus": "^0.50.0",
-    "vinyl-buffer": "^1.0.0",
+    "stylus": "0.53.0",
+    "vinyl-buffer": "1.0.0",
     "typescript": "1.6.2",
     "merge2": "0.3.6"
   }

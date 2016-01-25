@@ -10,7 +10,7 @@ module.controller("exampleCtrl", function($scope) {
     ];
 
     var rowData = [
-        {make: "Toyota", model: "Celica", price: 35000},
+        {make: "Toyota", model: "Celica", price: 35000, pinned: true},
         {make: "Ford", model: "Mondeo", price: 32000},
         {make: "Ford", model: "Focus", price: 27000},
         {make: "BMW", model: "M5", price: 38000},

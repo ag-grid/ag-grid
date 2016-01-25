@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    ng.bootstrap(SampleAppComponent);
+    ng.platform.browser.bootstrap(SampleAppComponent);
 });
 
 var SampleAppComponent = function() {
@@ -127,11 +127,11 @@ SampleAppComponent.prototype.onColumnEvent = function($event) {
 };
 
 SampleAppComponent.annotations = [
-    new ng.Component({
+    new ng.core.Component({
         selector: 'sample-app'
     }),
-    new ng.View({
-        directives: [ag.grid.AgGridNg2, ng.NgIf],
+    new ng.core.View({
+        directives: [ag.grid.AgGridNg2],
         // put padding into the buttons
         styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
         templateUrl: 'sampleAppComponent.html'
@@ -245,15 +245,33 @@ var IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
 var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
 var columnDefs = [
-    {headerName: 'Selected', width: 30, checkboxSelection: true, suppressSorting: true, suppressMenu: true },
-    {headerName: "Name", field: "name", headerGroup: 'Employee', width: 150, editable: true},
-    {headerName: "Country", field: "country", headerGroup: 'Employee', width: 150, cellRenderer: countryCellRenderer,
-        filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
-    {headerName: "Skills", width: 125, headerGroup: 'IT Skills', suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-    {headerName: "Proficiency", field: "proficiency", headerGroup: 'IT Skills', filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
-    {headerName: "Mobile", field: "mobile", headerGroup: 'Contact', width: 150, filter: 'text'},
-    {headerName: "Land-line", field: "landline", headerGroup: 'Contact', width: 150, filter: 'text'},
-    {headerName: "Address", field: "address", headerGroup: 'Contact', width: 500, filter: 'text'}
+    {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true,
+        suppressMenu: true, pinned: true},
+    {
+        headerName: 'Employee',
+        children: [
+            {headerName: "Name", field: "name",
+                width: 150, pinned: true},
+            {headerName: "Country", field: "country", width: 150,
+                cellRenderer: countryCellRenderer, pinned: true,
+                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
+        ]
+    },
+    {
+        headerName: 'IT Skills',
+        children: [
+            {headerName: "Skills", width: 125, suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
+            {headerName: "Proficiency", field: "proficiency", filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+        ]
+    },
+    {
+        headerName: 'Contact',
+        children: [
+            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
+            {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
+            {headerName: "Address", field: "address", width: 500, filter: 'text'}
+        ]
+    }
 ];
 
 function skillsCellRenderer(params) {

@@ -14,7 +14,10 @@
   border-left: 1px solid transparent;
   border-bottom: 1px solid transparent;
 }
-.ag-fresh .ag-pinned-header {
+.ag-fresh .ag-cell-first-right-pinned {
+  border-left: 1px dotted #808080;
+}
+.ag-fresh .ag-header {
   background: -webkit-linear-gradient(#fff, #d3d3d3);
   background: -moz-linear-gradient(#fff, #d3d3d3);
   background: -o-linear-gradient(#fff, #d3d3d3);
@@ -22,7 +25,7 @@
   background: linear-gradient(#fff, #d3d3d3);
   border-bottom: 1px solid #808080;
 }
-.ag-fresh .ag-header-container {
+.ag-fresh .ag-no-scrolls .ag-header-container {
   background: -webkit-linear-gradient(#fff, #d3d3d3);
   background: -moz-linear-gradient(#fff, #d3d3d3);
   background: -o-linear-gradient(#fff, #d3d3d3);
@@ -47,7 +50,7 @@
 }
 .ag-fresh .ag-header-group-cell-label {
   padding: 4px;
-  font-weight: bold;
+  padding-left: 10px;
 }
 .ag-fresh .ag-header-group-text {
   margin-right: 2px;
@@ -61,6 +64,10 @@
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
+  line-height: 0px; /* normal line height, a space was appearing below the menu button */
+}
+.ag-fresh .ag-pinned-right-header {
+  border-left: 1px solid #808080;
 }
 .ag-fresh .ag-header-cell-menu-button:hover {
   border: 1px solid #000;

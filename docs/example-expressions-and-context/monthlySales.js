@@ -18,27 +18,34 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
     };
 
     var columnDefs = [
-        {headerName : 'Jan', headerGroup: 'Monthly Data', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+        {
+            headerName: 'Monthly Data',
+            children: [
+                {headerName : 'Jan', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Feb', headerGroup: 'Monthly Data', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                {headerName : 'Feb', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Mar', headerGroup: 'Monthly Data', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                {headerName : 'Mar', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Apr', headerGroup: 'Monthly Data', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                {headerName : 'Apr', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'May', headerGroup: 'Monthly Data', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                {headerName : 'May', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'Jun', headerGroup: 'Monthly Data', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
-            cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                {headerName : 'Jun', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
+                    cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
 
-        {headerName : 'YTD', headerGroup: 'Totals', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
-            valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}}
-
+                {headerName : 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
+                    valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}}
+            ]
+        },
+        {
+            field: 'country', rowGroupIndex: 0
+        }
     ];
 
     $scope.gridOptions = {
@@ -55,10 +62,10 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
         enableSorting: true,
         enableFilter: true,
         groupHeaders: true,
-        groupKeys: ['country'],
         rowHeight: 22,
         onModelUpdated: modelUpdated,
         groupSelectsChildren: true,
+        groupHideGroupColumns: true,
         context: {
             month: 0,
             months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
@@ -73,8 +80,8 @@ monthlySalesModule.controller('monthlySalesController', function($scope, $http) 
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>',
-            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
         groupAggFunction: groupAggFunction
     };

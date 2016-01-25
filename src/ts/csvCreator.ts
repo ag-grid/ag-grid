@@ -9,6 +9,9 @@ module ag.grid {
         fileName?: string;
         customHeader?: string;
         customFooter?: string;
+        allColumns?: boolean;
+        columnSeparator?: string;
+
     }
 
     export class CsvCreator {
@@ -24,7 +27,9 @@ module ag.grid {
             var csvString = this.getDataAsCsv(params);
             var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
             var fileName = fileNamePresent ? params.fileName : 'export.csv';
-            var blobObject = new Blob([csvString], {
+            // for Excel, we need \ufeff at the start
+            // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+            var blobObject = new Blob(["\ufeff", csvString], {
                 type: "text/csv;charset=utf-8;"
             });
             // Internet Explorer
@@ -55,8 +60,16 @@ module ag.grid {
             var skipFooters = params && params.skipFooters;
             var includeCustomHeader = params && params.customHeader;
             var includeCustomFooter = params && params.customFooter;
+            var allColumns = params && params.allColumns;
+            var columnSeparator = (params && params.columnSeparator) || ',';
 
-            var columnsToExport = this.columnController.getDisplayedColumns();
+            var columnsToExport: Column[];
+            if (allColumns) {
+                columnsToExport = this.columnController.getAllColumns();
+            } else {
+                columnsToExport = this.columnController.getAllDisplayedColumns();
+            }
+
             if (!columnsToExport || columnsToExport.length === 0) {
                 return '';
             }
@@ -73,7 +86,7 @@ module ag.grid {
                         nameForCol = '';
                     }
                     if (index != 0) {
-                        result += ',';
+                        result += columnSeparator;
                     }
                     result += '"' + this.escape(nameForCol) + '"';
                 });
@@ -90,13 +103,13 @@ module ag.grid {
                     if (node.group && index === 0) {
                         valueForCell =  this.createValueForGroupNode(node);
                     } else {
-                        valueForCell =  this.valueService.getValue(column.colDef, node.data, node);
+                        valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
                     }
                     if (valueForCell === null || valueForCell === undefined) {
                         valueForCell = '';
                     }
                     if (index != 0) {
-                        result += ',';
+                        result += columnSeparator;
                     }
                     result += '"' + this.escape(valueForCell) + '"';
                 });

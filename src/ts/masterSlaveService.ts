@@ -1,4 +1,4 @@
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="logger.ts" />
 /// <reference path="events.ts" />
@@ -32,9 +32,9 @@ module ag.grid {
 
             eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.fireColumnEvent.bind(this));
         }
 
         // common logic across all the fire methods
@@ -83,15 +83,41 @@ module ag.grid {
             });
         }
 
+        public getMasterColumns(event: ColumnChangeEvent): Column[] {
+            var result: Column[] = [];
+            if (event.getColumn()) {
+                result.push(event.getColumn());
+            }
+            if (event.getColumns()) {
+                event.getColumns().forEach( (column: Column) => {
+                    result.push(column);
+                });
+            }
+            return result;
+        }
+
+        public getColumnIds(event: ColumnChangeEvent): string[] {
+            var result: string[] = [];
+            if (event.getColumn()) {
+                result.push(event.getColumn().getColId());
+            }
+            if (event.getColumns()) {
+                event.getColumns().forEach( (column: Column) => {
+                    result.push(column.getColId());
+                });
+            }
+            return result;
+        }
+
         public onColumnEvent(event: ColumnChangeEvent): void {
             this.onEvent(() => {
 
-                // the column in the even is from the master grid. need to
+                // the column in the event is from the master grid. need to
                 // look up the equivalent from this (slave) grid
                 var masterColumn = event.getColumn();
                 var slaveColumn: Column;
                 if (masterColumn) {
-                    slaveColumn = this.columnController.getColumn(masterColumn.colId);
+                    slaveColumn = this.columnController.getColumn(masterColumn.getColId());
                 }
                 // if event was with respect to a master column, that is not present in this
                 // grid, then we ignore the event
@@ -101,9 +127,16 @@ module ag.grid {
                 var masterColumnGroup = event.getColumnGroup();
                 var slaveColumnGroup: ColumnGroup;
                 if (masterColumnGroup) {
-                    slaveColumnGroup = this.columnController.getColumnGroup(masterColumnGroup.name);
+                    var colId = masterColumnGroup.getGroupId();
+                    var instanceId = masterColumnGroup.getInstanceId();
+                    slaveColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
                 }
                 if (masterColumnGroup && !slaveColumnGroup) { return; }
+
+                // in time, all the methods below should use the column ids, it's a more generic way
+                // of handling columns, and also allows for single or multi column events
+                var columnIds = this.getColumnIds(event);
+                var masterColumns = this.getMasterColumns(event);
 
                 switch (event.getType()) {
                     case Events.EVENT_COLUMN_MOVED:
@@ -111,20 +144,22 @@ module ag.grid {
                         this.columnController.moveColumn(event.getFromIndex(), event.getToIndex());
                         break;
                     case Events.EVENT_COLUMN_VISIBLE:
-                        this.logger.log('onColumnEvent-> processing '+event+' visible = '+ masterColumn.visible);
-                        this.columnController.setColumnVisible(slaveColumn, masterColumn.visible);
+                        this.logger.log('onColumnEvent-> processing '+event+' visible = '+ event.isVisible());
+                        this.columnController.setColumnsVisible(columnIds, event.isVisible());
+                        break;
+                    case Events.EVENT_COLUMN_PINNED:
+                        this.logger.log('onColumnEvent-> processing '+event+' pinned = '+ event.getPinned());
+                        this.columnController.setColumnsPinned(columnIds, event.getPinned());
                         break;
                     case Events.EVENT_COLUMN_GROUP_OPENED:
-                        this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.expanded);
-                        this.columnController.columnGroupOpened(slaveColumnGroup, masterColumnGroup.expanded);
+                        this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.isExpanded());
+                        this.columnController.setColumnGroupOpened(slaveColumnGroup, masterColumnGroup.isExpanded());
                         break;
                     case Events.EVENT_COLUMN_RESIZED:
-                        this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.actualWidth);
-                        this.columnController.setColumnWidth(slaveColumn, masterColumn.actualWidth, event.isFinished());
-                        break;
-                    case Events.EVENT_COLUMN_PINNED_COUNT_CHANGED:
-                        this.logger.log('onColumnEvent-> processing '+event);
-                        this.columnController.setPinnedColumnCount(event.getPinnedColumnCount());
+                        masterColumns.forEach( (masterColumn: Column)=> {
+                            this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());
+                            this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), event.isFinished());
+                        });
                         break;
                 }
 

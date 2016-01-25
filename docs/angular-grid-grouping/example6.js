@@ -12,13 +12,15 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     var columnDefs = [
-        {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, cellStyle: function(params) {
+        {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, rowGroupIndex: 0,
+            cellStyle: function(params) {
             // color red for the first group
             if (params.node.parent.parent.firstChild) {
                 return {color: "red"};
             }
         }},
-        {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, cellStyle: function(params) {
+        {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroupIndex: 0,
+            cellStyle: function(params) {
             // color blue for the first in the current sub group
             if (params.node.firstChild) {
                 return {color: "blue"};
@@ -38,8 +40,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         groupSuppressRow: true,
-        enableSorting: true,
-        groupKeys: ['country', 'sport']
+        enableSorting: true
     };
 
     $http.get("../olympicWinners.json")

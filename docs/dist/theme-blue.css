@@ -20,11 +20,14 @@
   border-left: 2px solid transparent;
   border-bottom: 1px solid #9bc2e6;
 }
-.ag-blue .ag-pinned-header {
+.ag-blue .ag-cell-first-right-pinned {
+  border-left: 1px dotted #9bc2e6;
+}
+.ag-blue .ag-header {
   background-color: #5b9bd5;
   border-bottom: 1px solid #9bc2e6;
 }
-.ag-blue .ag-header-container {
+.ag-blue .ag-no-scrolls .ag-header-container {
   background-color: #5b9bd5;
   border-bottom: 1px solid #9bc2e6;
 }
@@ -36,6 +39,9 @@
 }
 .ag-blue .ag-header-group-cell-with-group {
   border-bottom: 1px solid #9bc2e6;
+}
+.ag-blue .ag-pinned-right-header {
+  border-left: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-cell-label {
   padding: 4px 2px 4px 2px;
@@ -49,34 +55,28 @@
   padding: 4px;
   font-weight: bold;
   color: #fff;
+  padding-left: 10px;
 }
 .ag-blue .ag-header-group-text {
   margin-right: 2px;
 }
 .ag-blue .ag-header-cell-menu-button {
-  color: #5f6063;
+  color: #fff;
   border: 1px solid #a6acb3;
-  padding: 0 4px;
+  padding: 2px;
   margin-top: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+  line-height: 0px; /* normal line height, a space was appearing below the menu button */
 /* When using bootstrap, box-sizing was set to 'border-box' */
-  background: -webkit--webkit-linear-gradient(#feffff, #eff2f7);
-  background: -webkit--moz-linear-gradient(#feffff, #eff2f7);
-  background: -webkit--o-linear-gradient(#feffff, #eff2f7);
-  background: -webkit--ms-linear-gradient(#feffff, #eff2f7);
-  background: -webkit-linear-gradient(#feffff, #eff2f7);
-  background: -webkit-linear-gradient(#feffff, #eff2f7);
-  background: -moz-linear-gradient(#feffff, #eff2f7);
-  background: -o-linear-gradient(#feffff, #eff2f7);
-  background: -ms-linear-gradient(#feffff, #eff2f7);
-  background: linear-gradient(#feffff, #eff2f7);
 }
 .ag-blue .ag-header-icon {
   color: #fff;
+  stroke: #fff;
+  fill: #fff;
 }
 .ag-blue .ag-dark .ag-header-expand-icon:hover {
   cursor: pointer;

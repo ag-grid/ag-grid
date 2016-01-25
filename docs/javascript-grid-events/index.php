@@ -116,7 +116,14 @@ include '../documentation_header.php';
             <th>cellValueChanged</th>
             <td>Value has changed after editing.</td>
         </tr>
-
+        <tr>
+            <th>gridSizeChanged</th>
+            <td>The grid had to lay out again because it changed size.</td>
+        </tr>
+        <tr>
+            <th>rowGroupOpened</th>
+            <td>A row group was opened or closed.</td>
+        </tr>
     </table>
 
     <h2>Column Changed Events</h2>
@@ -133,15 +140,23 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>columnEverythingChanged</th>
-            <td>Shotgun - gets called when new columns are set, so everything has changed.</td>
+            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so everything has changed.</td>
+        </tr>
+        <tr>
+            <th>columnVisible</th>
+            <td>A column, or group of columns, was hidden / shown.</td>
+        </tr>
+        <tr>
+            <th>columnPinned</th>
+            <td>A column, or group of columns, was pinned / unpinned.</td>
         </tr>
         <tr>
             <th>columnResized</th>
             <td>A column was resized.</td>
         </tr>
         <tr>
-            <th>columnPivotChanged</th>
-            <td>A pivot column was added or removed.</td>
+            <th>columnRowGroupChanged</th>
+            <td>A row group column was added or removed.</td>
         </tr>
         <tr>
             <th>columnValueChanged</th>
@@ -152,16 +167,8 @@ include '../documentation_header.php';
             <td>A column was moved.</td>
         </tr>
         <tr>
-            <th>columnVisible</th>
-            <td>A column was hidden / shown.</td>
-        </tr>
-        <tr>
             <th>columnGroupOpened</th>
             <td>A column group was opened / closed.</td>
-        </tr>
-        <tr>
-            <th>columnPinnedCountChanged</th>
-            <td>The number of pinned columns has changed.</td>
         </tr>
     </table>
 

@@ -13,3 +13,9 @@ ExpiresByType image/x-icon "access 1 hour"
 ExpiresDefault "access 1 hour"
 </IfModule>
 ## EXPIRES CACHING ##
+
+# Always use https for secure connections
+# (as it appears on your SSL certificate)
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]

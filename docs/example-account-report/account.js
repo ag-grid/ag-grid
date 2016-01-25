@@ -6,14 +6,35 @@ fileBrowserModule.controller('accountController', function($scope) {
         {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
         }},
-        {headerName: "Units", field: "amount1", headerGroup: 'Week 1', width: 70},
-        {headerName: "GBP", field: "gbp1", headerGroup: 'Week 1', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount2", headerGroup: 'Week 2', width: 70},
-        {headerName: "GBP", field: "gbp2", headerGroup: 'Week 2', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amount3", headerGroup: 'Week 3', width: 70},
-        {headerName: "GBP", field: "gbp3", headerGroup: 'Week 3', width: 70, cellRenderer: currencyRenderer},
-        {headerName: "Units", field: "amountTotal", headerGroup: 'Period Total', width: 70},
-        {headerName: "GBP", field: "gbpTotal", headerGroup: 'Period Total', width: 70, cellRenderer: currencyRenderer}
+        {headerName: "Units", field: "category", rowGroupIndex: 0, hide: true},
+        {
+            headerName: 'Week 1',
+            children: [
+                {headerName: "Units", field: "amount1", width: 70, aggFunc: 'sum'},
+                {headerName: "GBP", field: "gbp1", width: 70, cellRenderer: currencyRenderer, aggFunc: 'sum'}
+            ]
+        },
+        {
+            headerName: 'Week 2',
+            children: [
+                {headerName: "Units", field: "amount2", width: 70, aggFunc: 'sum'},
+                {headerName: "GBP", field: "gbp2", width: 70, cellRenderer: currencyRenderer, aggFunc: 'sum'}
+            ]
+        },
+        {
+            headerName: 'Week 3',
+            children: [
+                {headerName: "Units", field: "amount3", width: 70, aggFunc: 'sum'},
+                {headerName: "GBP", field: "gbp3", width: 70, cellRenderer: currencyRenderer, aggFunc: 'sum'}
+            ]
+        },
+        {
+            headerName: 'Period Total',
+            children: [
+                {headerName: "Units", field: "amountTotal", width: 70, aggFunc: 'sum'},
+                {headerName: "GBP", field: "gbpTotal", width: 70, cellRenderer: currencyRenderer, aggFunc: 'sum'}
+            ]
+        }
     ];
 
     function currencyRenderer(params) {
@@ -28,11 +49,9 @@ fileBrowserModule.controller('accountController', function($scope) {
         columnDefs: columnDefs,
         rowData: createRowData(),
         rowSelection: 'single',
-        groupKeys: ['category'],
         groupHeaders: true,
         groupDefaultExpanded: true,
         groupIncludeFooter: true,
-        groupAggFields: ['amount1','gbp1','amount2','gbp2','amount3','gbp3','amount4','gbp4'],
         enableColResize: true,
         enableSorting: false,
         forPrint: true,

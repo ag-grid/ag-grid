@@ -14,13 +14,13 @@ module ag.grid {
 
         rowRenderer: any;
         datasourceVersion: any;
-        gridOptionsWrapper: any;
+        gridOptionsWrapper: GridOptionsWrapper;
         angularGrid: any;
         datasource: any;
         virtualRowCount: any;
         foundMaxRow: any;
 
-        pageCache: any;
+        pageCache: {[key: string]: RowNode[]};
         pageCacheSize: any;
 
         pageLoadsInProgress: any;
@@ -100,13 +100,24 @@ module ag.grid {
             if (rows) {
                 for (var i = 0, j = rows.length; i < j; i++) {
                     var virtualRowIndex = (pageNumber * this.pageSize) + i;
-                    nodes.push({
-                        data: rows[i],
-                        id: virtualRowIndex
-                    });
+                    var node = this.createNode(rows[i], virtualRowIndex);
+                    nodes.push(node);
                 }
             }
             return nodes;
+        }
+
+        private createNode(data: any, virtualRowIndex: number): RowNode {
+            var rowHeight = this.getRowHeightAsNumber();
+            var top = rowHeight * virtualRowIndex;
+            console.log(virtualRowIndex + ' ' + rowHeight + ' - ' + top);
+            var rowNode = <RowNode> {
+                data: data,
+                id: virtualRowIndex,
+                rowTop: top,
+                rowHeight: rowHeight
+            };
+            return rowNode;
         }
 
         removeFromLoading(pageNumber: any) {
@@ -314,10 +325,8 @@ module ag.grid {
             if (!page) {
                 this.doLoadOrQueue(pageNumber);
                 // return back an empty row, so table can at least render empty cells
-                return {
-                    data: {},
-                    id: rowIndex
-                };
+                var dummyNode = this.createNode({}, rowIndex);
+                return dummyNode;
             } else {
                 var indexInThisPage = rowIndex % this.pageSize;
                 return page[indexInThisPage];
@@ -336,9 +345,38 @@ module ag.grid {
             }
         }
 
+        public getRowHeightAsNumber(): number {
+            var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagiation();
+            if (typeof rowHeight === 'number') {
+                return <number>rowHeight;
+            } else {
+                console.warn('ag-Grid row height must be a number when doing virtual paging');
+                return 25;
+            }
+        }
+
+        public getVirtualRowCombinedHeight(): number {
+            return this.virtualRowCount * this.getRowHeightAsNumber();
+        }
+
+        public getRowAtPixel(pixel: number): number {
+            var rowHeight = this.getRowHeightAsNumber();
+            if (rowHeight!==0) { // avoid divide by zero error
+                return Math.floor(pixel / rowHeight);
+            } else {
+                return 0;
+            }
+        }
+
         getModel() {
             var that = this;
             return {
+                getRowAtPixel: function(pixel: number): number {
+                    return that.getRowAtPixel(pixel);
+                },
+                getVirtualRowCombinedHeight: function(): number {
+                    return that.getVirtualRowCombinedHeight();
+                },
                 getVirtualRow: function (index: any) {
                     return that.getVirtualRow(index);
                 },

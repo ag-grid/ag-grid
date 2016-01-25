@@ -62,7 +62,7 @@ module.directive('country', function () {
         'France': 'fr'
     };
 
-    var flagHtml = '<img ng-show="flagCode" class="flag" border="0" width="20" height="15" src="http://flags.fmcdn.net/data/flags/mini/{{flagCode}}.png" />';
+    var flagHtml = '<img ng-show="flagCode" class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/{{flagCode}}.png" />';
     var nameHtml = '<span ng-bind="countryName" />';
 
     return {

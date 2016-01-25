@@ -6,7 +6,7 @@ module ag.grid {
 
         // set once in init, can never change
         virtualPaging?: boolean;
-        toolPanelSuppressPivot?: boolean;
+        toolPanelSuppressGroups?: boolean;
         toolPanelSuppressValues?: boolean;
         rowsAlreadyGrouped?: boolean;
         suppressRowClickSelection?: boolean;
@@ -15,7 +15,6 @@ module ag.grid {
         suppressMultiSort?: boolean;
         suppressHorizontalScroll?: boolean;
         unSortIcon?: boolean;
-        rowHeight?: number;
         rowBuffer?: number;
         enableColResize?: boolean;
         enableCellExpressions?: boolean;
@@ -33,6 +32,8 @@ module ag.grid {
         angularCompileHeaders?: boolean;
         suppressLoadingOverlay?: boolean;
         suppressNoRowsOverlay?: boolean;
+        suppressAutoSize?: boolean;
+        suppressParentsInRowNodes?: boolean;
 
         // just set once
         localeText?: any;
@@ -41,7 +42,7 @@ module ag.grid {
 
         groupSuppressAutoColumn?: boolean;
         groupSelectsChildren?: boolean;
-        groupHidePivotColumns?: boolean;
+        groupHideGroupColumns?: boolean;
         groupIncludeFooter?: boolean;
         groupUseEntireRow?: boolean;
         groupSuppressRow?: boolean;
@@ -59,19 +60,18 @@ module ag.grid {
         rowDeselection?: boolean;
         overlayLoadingTemplate?: string;
         overlayNoRowsTemplate?: string;
+        checkboxSelection?: Function;
+        rowHeight?: number;
+        headerCellTemplate?: string;
 
         // changeable with impact
         rowData?: any[]; // should this be immutable for ag2?
         floatingTopRowData?: any[]; // should this be immutable ag2?
         floatingBottomRowData?: any[]; // should this be immutable ag2?
         showToolPanel?: boolean;
-        groupKeys?: string[];
-        groupAggFields?: string[];
         columnDefs?: any[]; // change to typed
         datasource?: any; // should be typed
-        pinnedColumnCount?: number;
         // in properties
-        groupHeaders?: boolean;
         headerHeight?: number;
 
         // callbacks
@@ -80,14 +80,16 @@ module ag.grid {
         isScrollLag?(): boolean;
         isExternalFilterPresent?(): boolean;
         doesExternalFilterPass?(node: RowNode): boolean;
-        getRowStyle?: any;
-        getRowClass?: any;
+        getRowStyle?: Function;
+        getRowClass?: Function;
+        getRowHeight?: Function;
         headerCellRenderer?: any;
         groupAggFunction?(nodes: any[]): any;
         getBusinessKeyForNode?(node: RowNode): string;
+        getHeaderCellTemplate?: (params: any) => string | HTMLElement;
 
         // events
-        onReady?(api: any): void;
+        onReady?(params: any): void;
         onModelUpdated?(): void;
         onCellClicked?(params: any): void;
         onCellDoubleClicked?(params: any): void;
@@ -105,6 +107,7 @@ module ag.grid {
         onVirtualRowRemoved?(params: any): void;
         onRowClicked?(params: any): void;
         onRowDoubleClicked?(params: any): void;
+        onGridSizeChanged?(params: any): void;
 
         // apis, set by the grid on init
         api?: GridApi; // change to typed

@@ -11,10 +11,6 @@ module ag.grid {
             this.eRoot = eRoot;
         }
 
-        public getERoot(): HTMLElement {
-            return this.eRoot;
-        }
-
         // methods implemented by the base classes
         public destroy(): void {}
         public refreshFilterIcon(): void {}
@@ -22,6 +18,7 @@ module ag.grid {
         public onDragStart(): void {}
         public onDragging(dragChange: number, finished: boolean): void {}
         public onIndividualColumnResized(column: Column): void {}
+        public getGui(): HTMLElement { return null; }
 
         public addDragHandler(eDraggableElement: any) {
             var that = this;

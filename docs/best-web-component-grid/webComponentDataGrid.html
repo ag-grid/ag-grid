@@ -16,9 +16,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused14"></script>
-    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused14">
-    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused14">
+    <script src="../dist/ag-grid.js?ignore=notused16"></script>
+    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused16">
+    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused16">
 
     <script src="webComponentDataGrid.js"></script>
 
@@ -47,8 +47,8 @@
             </span>
             <span style="margin-left: 20px;">
                 Column API:
-                <button onclick="document.querySelector('#myGrid').columnApi.hideColumn('country', true)">Hide Country Column</button>
-                <button onclick="document.querySelector('#myGrid').columnApi.hideColumn('country', false)">Show Country Column</button>
+                <button onclick="document.querySelector('#myGrid').columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button onclick="document.querySelector('#myGrid').columnApi.setColumnVisible('country', true)">Show Country Column</button>
             </span>
         </div>
         <div style="float: right;" class="toolbar">
@@ -73,7 +73,7 @@
                      enable-filter
                      group-headers
                      suppress-row-click-selection
-                     tool-panel-suppress-pivot
+                     tool-panel-suppress-groups
                      tool-panel-suppress-values
                      row-height="22"
                      row-selection="multiple"

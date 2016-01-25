@@ -36,6 +36,10 @@ include '../documentation_header.php';
         <li><b>customHeader</b>: If you want to put some text at the top of the csv file, stick it here.
             You will need to include '\n' at the end, or many '\n' if you want the header to span lines..</li>
         <li><b>customFooter</b>: Same as customHeader, but for the end of the file.</li>
+        <li><b>allColumns</b>: If true, all columns will be exported in the order they appear in columnDefs.
+            Otherwise only the columns currently showing the in grid, and in that order, are exported.</li>
+        <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
+
     </ul>
 
     <p>

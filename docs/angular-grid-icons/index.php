@@ -48,8 +48,8 @@ gridOptions.icons = {
     sortUnSort: myUnSortIcon,
     groupExpanded: myGroupExpandedIcon,
     groupContracted: myGroupContractedIcon,
-    headerGroupOpened: myGroupExpandedIcon,
-    headerGroupClosed: myGroupContractedIcon,
+    columnGroupOpened: myGroupExpandedIcon,
+    columnGroupClosed: myGroupContractedIcon,
     columnVisible: myColumnVisibleIcon,
     columnHidden: myColumnHiddenIcon,
     columnRemoveFromGroup: myColumnRemoveFromGroupIcon

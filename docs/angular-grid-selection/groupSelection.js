@@ -9,17 +9,16 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Bronze", field: "bronze", width: 100},
         {headerName: "Total", field: "total", width: 100},
         {headerName: "Age", field: "age", width: 90, checkboxSelection: true},
-        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110}
+        {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1}
     ];
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
         rowData: null,
         rowSelection: 'multiple',
-        groupKeys: ['country','sport'],
         groupAggFunction: groupAggFunction,
         groupSelectsChildren: true,
         suppressRowClickSelection: true,

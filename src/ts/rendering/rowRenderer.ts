@@ -1,5 +1,6 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
+/// <reference path="../rowControllers/floatingRowModel.ts" />
 /// <reference path="renderedRow.ts" />
 /// <reference path="../cellRenderers/groupCellRendererFactory.ts" />
 
@@ -26,27 +27,33 @@ module ag.grid {
         private focusedCell: any;
         private valueService: ValueService;
         private eventService: EventService;
+        private floatingRowModel: FloatingRowModel;
 
         private renderedRows: {[key: string]: RenderedRow};
         private renderedTopFloatingRows: RenderedRow[] = [];
         private renderedBottomFloatingRows: RenderedRow[] = [];
 
         private eAllBodyContainers: HTMLElement[];
-        private eAllPinnedContainers: HTMLElement[];
+        private eAllPinnedLeftContainers: HTMLElement[];
+        private eAllPinnedRightContainers: HTMLElement[];
 
         private eBodyContainer: HTMLElement;
         private eBodyViewport: HTMLElement;
-        private ePinnedColsContainer: HTMLElement;
+        private ePinnedLeftColsContainer: HTMLElement;
+        private ePinnedRightColsContainer: HTMLElement;
         private eFloatingTopContainer: HTMLElement;
-        private eFloatingTopPinnedContainer: HTMLElement;
+        private eFloatingTopPinnedLeftContainer: HTMLElement;
+        private eFloatingTopPinnedRightContainer: HTMLElement;
         private eFloatingBottomContainer: HTMLElement;
-        private eFloatingBottomPinnedContainer: HTMLElement;
+        private eFloatingBottomPinnedLeftContainer: HTMLElement;
+        private eFloatingBottomPinnedRightContainer: HTMLElement;
         private eParentsOfRows: HTMLElement[];
 
         public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
                     angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
                     selectionController: SelectionController, expressionService: ExpressionService,
-                    templateService: TemplateService, valueService: ValueService, eventService: EventService) {
+                    templateService: TemplateService, valueService: ValueService, eventService: EventService,
+                    floatingRowModel: FloatingRowModel) {
             this.columnModel = columnModel;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.angularGrid = angularGrid;
@@ -60,9 +67,10 @@ module ag.grid {
             this.valueService = valueService;
             this.findAllElements(gridPanel);
             this.eventService = eventService;
+            this.floatingRowModel = floatingRowModel;
 
             this.cellRendererMap = {
-                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
+                'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService),
                 'default': function(params: any) {
                     return params.value;
                 }
@@ -77,11 +85,28 @@ module ag.grid {
             this.rowModel = rowModel;
         }
 
+        public getAllCellsForColumn(column: Column): HTMLElement[] {
+            var eCells: HTMLElement[] = [];
+
+            _.iterateObject(this.renderedRows, callback);
+            _.iterateObject(this.renderedBottomFloatingRows, callback);
+            _.iterateObject(this.renderedBottomFloatingRows, callback);
+
+            function callback(key: any, renderedRow: RenderedRow) {
+                var eCell = renderedRow.getCellForCol(column);
+                if (eCell) {
+                    eCells.push(eCell);
+                }
+            }
+
+            return eCells;
+        }
+
         public onIndividualColumnResized(column: Column) {
-            var newWidthPx = column.actualWidth + "px";
-            var selectorForAllColsInCell = ".cell-col-" + column.index;
+            var newWidthPx = column.getActualWidth() + "px";
+            var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
             this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-                var cellsForThisCol: NodeList = rowContainer.querySelectorAll(selectorForAllColsInCell);
+                var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
                 for (var i = 0; i < cellsForThisCol.length; i++) {
                     var element = <HTMLElement> cellsForThisCol[i];
                     element.style.width = newWidthPx;
@@ -102,41 +127,50 @@ module ag.grid {
 
         private findAllElements(gridPanel: any) {
             this.eBodyContainer = gridPanel.getBodyContainer();
-            this.ePinnedColsContainer = gridPanel.getPinnedColsContainer();
+            this.ePinnedLeftColsContainer = gridPanel.getPinnedLeftColsContainer();
+            this.ePinnedRightColsContainer = gridPanel.getPinnedRightColsContainer();
 
             this.eFloatingTopContainer = gridPanel.getFloatingTopContainer();
-            this.eFloatingTopPinnedContainer = gridPanel.getPinnedFloatingTop();
+            this.eFloatingTopPinnedLeftContainer = gridPanel.getPinnedLeftFloatingTop();
+            this.eFloatingTopPinnedRightContainer = gridPanel.getPinnedRightFloatingTop();
 
             this.eFloatingBottomContainer = gridPanel.getFloatingBottomContainer();
-            this.eFloatingBottomPinnedContainer = gridPanel.getPinnedFloatingBottom();
+            this.eFloatingBottomPinnedLeftContainer = gridPanel.getPinnedLeftFloatingBottom();
+            this.eFloatingBottomPinnedRightContainer = gridPanel.getPinnedRightFloatingBottom();
 
             this.eBodyViewport = gridPanel.getBodyViewport();
             this.eParentsOfRows = gridPanel.getRowsParent();
 
             this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
                 this.eFloatingTopContainer];
-            this.eAllPinnedContainers = [this.ePinnedColsContainer, this.eFloatingBottomPinnedContainer,
-                this.eFloatingTopPinnedContainer];
+            this.eAllPinnedLeftContainers = [
+                this.ePinnedLeftColsContainer,
+                this.eFloatingBottomPinnedLeftContainer,
+                this.eFloatingTopPinnedLeftContainer];
+            this.eAllPinnedRightContainers = [
+                this.ePinnedRightColsContainer,
+                this.eFloatingBottomPinnedRightContainer,
+                this.eFloatingTopPinnedRightContainer];
         }
 
         public refreshAllFloatingRows(): void {
             this.refreshFloatingRows(
                 this.renderedTopFloatingRows,
-                this.gridOptionsWrapper.getFloatingTopRowData(),
-                this.eFloatingTopPinnedContainer,
-                this.eFloatingTopContainer,
-                true);
+                this.floatingRowModel.getFloatingTopRowData(),
+                this.eFloatingTopPinnedLeftContainer,
+                this.eFloatingTopPinnedRightContainer,
+                this.eFloatingTopContainer);
             this.refreshFloatingRows(
                 this.renderedBottomFloatingRows,
-                this.gridOptionsWrapper.getFloatingBottomRowData(),
-                this.eFloatingBottomPinnedContainer,
-                this.eFloatingBottomContainer,
-                false);
+                this.floatingRowModel.getFloatingBottomRowData(),
+                this.eFloatingBottomPinnedLeftContainer,
+                this.eFloatingBottomPinnedRightContainer,
+                this.eFloatingBottomContainer);
         }
 
-        private refreshFloatingRows(renderedRows: RenderedRow[], rowData: any[],
-                                    pinnedContainer: HTMLElement, bodyContainer: HTMLElement,
-                                    isTop: boolean): void {
+        private refreshFloatingRows(renderedRows: RenderedRow[], rowNodes: RowNode[],
+                                    pinnedLeftContainer: HTMLElement, pinnedRightContainer: HTMLElement,
+                                    bodyContainer: HTMLElement): void {
             renderedRows.forEach( (row: RenderedRow) => {
                 row.destroy();
             });
@@ -144,7 +178,7 @@ module ag.grid {
             renderedRows.length = 0;
 
             // if no cols, don't draw row - can we get rid of this???
-            var columns = this.columnModel.getDisplayedColumns();
+            var columns = this.columnModel.getAllDisplayedColumns();
             if (!columns || columns.length == 0) {
                 return;
             }
@@ -152,18 +186,13 @@ module ag.grid {
             // should we be storing this somewhere???
             var mainRowWidth = this.columnModel.getBodyContainerWidth();
 
-            if (rowData) {
-                rowData.forEach( (data: any, rowIndex: number) => {
-                    var node: RowNode = {
-                        data: data,
-                        floating: true,
-                        floatingTop: isTop,
-                        floatingBottom: !isTop
-                    };
-                    var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
-                        this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
-                        this.$compile, this.templateService, this.selectionController, this,
-                        bodyContainer, pinnedContainer, node, rowIndex, this.eventService);
+            if (rowNodes) {
+                rowNodes.forEach( (node: RowNode, rowIndex: number) => {
+                    var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
+                        this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+                        this.selectionRendererFactory, this.$compile, this.templateService,
+                        this.selectionController, this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
+                        node, rowIndex, this.eventService);
                     renderedRow.setMainRowWidth(mainRowWidth);
                     renderedRows.push(renderedRow);
                 })
@@ -172,10 +201,10 @@ module ag.grid {
 
         public refreshView(refreshFromIndex?: any) {
             if (!this.gridOptionsWrapper.isForPrint()) {
-                var rowCount = this.rowModel.getVirtualRowCount();
-                var containerHeight = this.gridOptionsWrapper.getRowHeight() * rowCount;
+                var containerHeight = this.rowModel.getVirtualRowCombinedHeight();
                 this.eBodyContainer.style.height = containerHeight + "px";
-                this.ePinnedColsContainer.style.height = containerHeight + "px";
+                this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
+                this.ePinnedRightColsContainer.style.height = containerHeight + "px";
             }
 
             this.refreshAllVirtualRows(refreshFromIndex);
@@ -294,20 +323,30 @@ module ag.grid {
         }
 
         public drawVirtualRows() {
-            var first: any;
-            var last: any;
+            this.workOutFirstAndLastRowsToRender();
+            this.ensureRowsRendered();
+        }
+
+        public workOutFirstAndLastRowsToRender(): void {
 
             var rowCount = this.rowModel.getVirtualRowCount();
 
+            if (rowCount===0) {
+                this.firstVirtualRenderedRow = 0;
+                this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
+                return;
+            }
+
             if (this.gridOptionsWrapper.isForPrint()) {
-                first = 0;
-                last = rowCount;
+                this.firstVirtualRenderedRow = 0;
+                this.lastVirtualRenderedRow = rowCount;
             } else {
+
                 var topPixel = this.eBodyViewport.scrollTop;
                 var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-                first = Math.floor(topPixel / this.gridOptionsWrapper.getRowHeight());
-                last = Math.floor(bottomPixel / this.gridOptionsWrapper.getRowHeight());
+                var first = this.rowModel.getRowAtPixel(topPixel);
+                var last = this.rowModel.getRowAtPixel(bottomPixel);
 
                 //add in buffer
                 var buffer = this.gridOptionsWrapper.getRowBuffer();
@@ -321,12 +360,11 @@ module ag.grid {
                 if (last > rowCount - 1) {
                     last = rowCount - 1;
                 }
+
+                this.firstVirtualRenderedRow = first;
+                this.lastVirtualRenderedRow = last;
             }
 
-            this.firstVirtualRenderedRow = first;
-            this.lastVirtualRenderedRow = last;
-
-            this.ensureRowsRendered();
         }
 
         public getFirstVirtualRenderedRow() {
@@ -377,16 +415,17 @@ module ag.grid {
         }
 
         private insertRow(node: any, rowIndex: any, mainRowWidth: any) {
-            var columns = this.columnModel.getDisplayedColumns();
+            var columns = this.columnModel.getAllDisplayedColumns();
             // if no cols, don't draw row
             if (!columns || columns.length == 0) {
                 return;
             }
 
-            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid,
-                this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory,
-                this.$compile, this.templateService, this.selectionController, this,
-                this.eBodyContainer, this.ePinnedColsContainer, node, rowIndex, this.eventService);
+            var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
+                this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+                this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController,
+                this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
+                node, rowIndex, this.eventService);
             renderedRow.setMainRowWidth(mainRowWidth);
 
             this.renderedRows[rowIndex] = renderedRow;
@@ -435,7 +474,7 @@ module ag.grid {
             this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
             // this changes the css on the cell
-            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.index, cellToFocus.column.colDef, true);
+            this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.getIndex(), cellToFocus.column.getColDef(), true);
         }
 
         private getNextCellToFocus(key: any, lastCellToFocus: any) {
@@ -462,7 +501,7 @@ module ag.grid {
                     nextColumnToFocus = lastColumn;
                     break;
                 case Constants.KEY_RIGHT :
-                    var colToRight = this.columnModel.getVisibleColAfter(lastColumn);
+                    var colToRight = this.columnModel.getDisplayedColAfter(lastColumn);
                     // if already on right, do nothing
                     if (!colToRight) {
                         return null;
@@ -471,7 +510,7 @@ module ag.grid {
                     nextColumnToFocus = colToRight;
                     break;
                 case Constants.KEY_LEFT :
-                    var colToLeft = this.columnModel.getVisibleColBefore(lastColumn);
+                    var colToLeft = this.columnModel.getDisplayedColBefore(lastColumn);
                     // if already on left, do nothing
                     if (!colToLeft) {
                         return null;
@@ -503,9 +542,12 @@ module ag.grid {
             this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
                 // remove any previous focus
                 _.querySelectorAll_replaceCssClass(rowContainer, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
+                _.querySelectorAll_replaceCssClass(rowContainer, '.ag-row-focus', 'ag-row-focus', 'ag-row-no-focus');
 
                 var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
                 _.querySelectorAll_replaceCssClass(rowContainer, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
+                var selectorForRow = '[row="' + rowIndex + '"]';
+                _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
             });
 
             this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};
@@ -526,10 +568,10 @@ module ag.grid {
         // called via API
         public setFocusedCell(rowIndex: any, colIndex: any) {
             var renderedRow = this.renderedRows[rowIndex];
-            var column = this.columnModel.getDisplayedColumns()[colIndex];
+            var column = this.columnModel.getAllDisplayedColumns()[colIndex];
             if (renderedRow && column) {
                 var eCell = renderedRow.getCellForCol(column);
-                this.focusCell(eCell, rowIndex, colIndex, column.colDef, true);
+                this.focusCell(eCell, rowIndex, colIndex, column.getColDef(), true);
             }
         }
 
@@ -540,7 +582,7 @@ module ag.grid {
             var lastRowToCheck = this.lastVirtualRenderedRow;
             var currentRowIndex = rowIndex;
 
-            var visibleColumns = this.columnModel.getDisplayedColumns();
+            var visibleColumns = this.columnModel.getAllDisplayedColumns();
             var currentCol = column;
 
             while (true) {

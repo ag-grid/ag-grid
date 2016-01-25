@@ -39,7 +39,15 @@ ag-grid-ng2
     overflow: hidden
     width: 100%
 
-.ag-pinned-header
+.ag-pinned-left-header
+    float: left
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
+
+.ag-pinned-right-header
+    float: right
     box-sizing: border-box
     display: inline-block
     overflow: hidden
@@ -47,9 +55,11 @@ ag-grid-ng2
 
 .ag-header-viewport
     box-sizing: border-box
-    display: inline-block
     overflow: hidden
     height: 100%
+
+.ag-header-row {}
+    //position: absolute
 
 .ag-scrolls .ag-header-container
     box-sizing: border-box
@@ -65,26 +75,20 @@ ag-grid-ng2
     vertical-align: bottom
     text-align: center
     display: inline-block
-
-.ag-header-cell-grouped
-    height: 50%
-
-.ag-header-cell-not-grouped
     height: 100%
-
-.ag-header-group
-    box-sizing: border-box
-    display: inline-block
-    height: 100%
+    //float: left // safari doesn't align if we don't float
 
 .ag-header-group-cell
+    display: inline-block
     box-sizing: border-box
-    text-align: center
-    height: 50%
     text-overflow: ellipsis
     overflow: hidden
+    //float: left // safari doesn't align if we don't float
 
+// we needed to have display of table-cell below,
+// as with inline-block, the layout messed up in Safari (not problems in the others).
 .ag-header-group-cell-label
+    display table-cell
     text-overflow: ellipsis
     overflow: hidden
 
@@ -97,6 +101,9 @@ ag-grid-ng2
     width: 4px
     float: right
     cursor: col-resize
+
+.ag-header-expand-icon
+    padding-left 4px
 
 .ag-header-cell-menu-button
     float: right
@@ -126,16 +133,22 @@ ag-grid-ng2
     box-sizing: border-box
     overflow: hidden
 
-.ag-pinned-floating-top
+.ag-pinned-left-floating-top
+    float: left
     box-sizing: border-box
     display: inline-block
     overflow: hidden
     height: 100%
-    position: relative
+
+.ag-pinned-right-floating-top
+    float: right
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
 
 .ag-floating-top-viewport
     box-sizing: border-box
-    display: inline-block
     overflow: hidden
     height: 100%
 
@@ -153,16 +166,22 @@ ag-grid-ng2
     box-sizing: border-box
     overflow: hidden
 
-.ag-pinned-floating-bottom
+.ag-pinned-left-floating-bottom
+    float: left
     box-sizing: border-box
     display: inline-block
     overflow: hidden
     height: 100%
-    position: relative
+
+.ag-pinned-right-floating-bottom
+    float: right
+    box-sizing: border-box
+    display: inline-block
+    overflow: hidden
+    height: 100%
 
 .ag-floating-bottom-viewport
     box-sizing: border-box
-    display: inline-block
     overflow: hidden
     height: 100%
 
@@ -172,12 +191,20 @@ ag-grid-ng2
     white-space: nowrap
     //height: 100%
 
-.ag-pinned-cols-viewport
+.ag-pinned-left-cols-viewport
     float: left
-    position: absolute
     overflow: hidden
 
-.ag-pinned-cols-container
+.ag-pinned-left-cols-container
+    display: inline-block
+    position: relative
+
+.ag-pinned-right-cols-viewport
+    float: right
+    overflow-x: hidden;
+    overflow-y: auto;
+
+.ag-pinned-right-cols-container
     display: inline-block
     position: relative
 
@@ -185,7 +212,8 @@ ag-grid-ng2
     height: 100%
 
 .ag-body-viewport
-    overflow: auto
+    overflow-x: auto;
+    overflow-y: auto; // if we are pinning to the right, overflow y will be hidden
     height: 100%
 
 .ag-scrolls .ag-body-container

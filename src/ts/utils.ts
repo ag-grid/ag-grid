@@ -8,8 +8,10 @@ module ag.grid {
 
         // taken from:
         // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-        private static isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
-        private static isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
+        // both of these variables are lazy loaded, as otherwise they try and get initialised when we are loading
+        // unit tests and we don't have references to window or document in the unit tests
+        private static isSafari: boolean;
+        private static isIE: boolean;
 
         static iterateObject(object: any, callback: (key:string, value: any) => void) {
             var keys = Object.keys(object);
@@ -168,7 +170,7 @@ module ag.grid {
         }
 
         static isVisible(element: HTMLElement) {
-            return (element.offsetParent !== null)
+            return (element.offsetParent !== null);
         }
 
         /** 
@@ -299,12 +301,17 @@ module ag.grid {
          * If icon provided, use this (either a string, or a function callback).
          * if not, then use the second parameter, which is the svgFactory function
          */
-        static createIcon(iconName: any, gridOptionsWrapper: any, colDefWrapper: any, svgFactoryFunc: () => Node) {
+        static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => Node) {
             var eResult = document.createElement('span');
+            eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
+            return eResult;
+        }
+
+        static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => Node) {
             var userProvidedIcon: Function | string;
             // check col for icon first
-            if (colDefWrapper && colDefWrapper.colDef.icons) {
-                userProvidedIcon = colDefWrapper.colDef.icons[iconName];
+            if (colDefWrapper && colDefWrapper.getColDef().icons) {
+                userProvidedIcon = colDefWrapper.getColDef().icons[iconName];
             }
             // it not in col, try grid options
             if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
@@ -321,17 +328,16 @@ module ag.grid {
                     throw 'icon from grid options needs to be a string or a function';
                 }
                 if (typeof rendererResult === 'string') {
-                    eResult.innerHTML = rendererResult;
+                    return this.loadTemplate(rendererResult);
                 } else if (this.isNodeOrElement(rendererResult)) {
-                    eResult.appendChild(rendererResult);
+                    return rendererResult;
                 } else {
                     throw 'iconRenderer should return back a string or a dom object';
                 }
             } else {
                 // otherwise we use the built in icon
-                eResult.appendChild(svgFactoryFunc());
+                return svgFactoryFunc();
             }
-            return eResult;
         }
 
         static addStylesToElement(eElement: any, styles: any) {
@@ -379,10 +385,16 @@ module ag.grid {
         }
 
         static isBrowserIE(): boolean {
+            if (this.isIE===undefined) {
+                this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
+            }
             return this.isIE;
         }
 
         static isBrowserSafari(): boolean {
+            if (this.isSafari===undefined) {
+                this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
+            }
             return this.isSafari;
         }
 

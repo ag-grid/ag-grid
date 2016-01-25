@@ -4,7 +4,7 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 180,
+        {headerName: "Athlete", field: "athlete", width: 180, rowGroupIndex: 1,
             // use font awesome for first col, with numbers for sort
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -21,7 +21,7 @@ module.controller("exampleCtrl", function($scope, $http) {
                 sortDescending: 'D'
             }
         },
-        {headerName: "Country", field: "country", width: 120,
+        {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0,
             icons: {
                 sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                 sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -44,7 +44,6 @@ module.controller("exampleCtrl", function($scope, $http) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        groupKeys: ['country','athlete'],
         rowData: null,
         enableSorting: true,
         enableFilter: true,

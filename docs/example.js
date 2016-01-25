@@ -45,9 +45,7 @@ gridsModule.controller('mainController', function($scope) {
 
     var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-    $scope.colCount = 20;
-    $scope.rowCount = 100;
-    $scope.pinnedColumnCount = 0;
+    $scope.dataSize = '10x22';
 
     $scope.size = 'fill'; // model for size select
     $scope.width = '100%'; // the div gets it's width and height from here
@@ -56,8 +54,17 @@ gridsModule.controller('mainController', function($scope) {
     $scope.style = 'ag-fresh';
     $scope.groupBy = '';
     $scope.groupType = 'col';
-    $scope.groupHeaders = 'true';
     $scope.rowSelection = 'checkbox';
+
+    var groupColumn = {
+        headerName: "Group",
+        width: 200,
+        field: 'name',
+        cellRenderer: {
+            renderer: "group",
+            checkbox: true
+        }
+    };
 
     var gridOptions = {
         debug: true,
@@ -66,17 +73,15 @@ gridsModule.controller('mainController', function($scope) {
         //singleClickEdit: true,
         rowData: null,
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
-        groupHeaders: true,
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
+//        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-        groupSuppressAutoColumn: true,
+//        groupSuppressAutoColumn: true,
         //groupSuppressBlankHeader: true,
         groupIncludeFooter: false,
-        groupHidePivotColumns: true,
+        groupHideGroupColumns: true,
         //unSortIcon: true,
-        pinnedColumnCount: 0, //and integer, zero or more, default is 0
         //rowHeight: 30, // defaults to 25, can be any integer
         enableColResize: true, //one of [true, false]
         enableSorting: true, //one of [true, false]
@@ -85,15 +90,21 @@ gridsModule.controller('mainController', function($scope) {
         rowDeselection: true,
         groupSelectsChildren: true, // one of [true, false]
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        //groupColumnDef: groupColumn,
+        groupColumnDef: groupColumn,
         //suppressCellSelection: true,
         //suppressMultiSort: true,
         showToolPanel: false,
-        //toolPanelSuppressPivot: true,
+        //toolPanelSuppressGroups: true,
         //toolPanelSuppressValues: true,
         //groupSuppressAutoColumn: true,
         //groupAggFunction: groupAggFunction,
         //groupAggFields: ['bankBalance','totalWinnings'],
+        checkboxSelection: function(params) {
+            // we show checkbox selection in the first column, unless we are grouping,
+            // as the group column is configured to always show selection
+            var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
+            return params.colIndex === 0 && !isGrouping;
+        },
         angularCompileRows: false,
         angularCompileFilters: true,
         angularCompileHeaders: true,
@@ -114,19 +125,23 @@ gridsModule.controller('mainController', function($scope) {
             sortDescending: '<i class="fa fa-long-arrow-up"/>',
             groupExpanded: '<i class="fa fa-minus-square-o"/>',
             groupContracted: '<i class="fa fa-plus-square-o"/>',
-            headerGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            headerGroupClosed: '<i class="fa fa-plus-square-o"/>'
+            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
         },
 
         getBusinessKeyForNode: function(node) {
-            return node.data.name;
+            if (node.data) {
+                return node.data.name;
+            } else {
+                return '';
+            }
         },
         // isScrollLag: function() { return false; },
         //suppressScrollLag: true,
 
         // callback when row clicked
         onRowClicked: function(params) {
-            console.log("Callback onRowClicked: " + params.data.name + " - " + params.event);
+            console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
         },
         onRowDoubleClicked: function(params) {
             console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
@@ -148,6 +163,12 @@ gridsModule.controller('mainController', function($scope) {
         },
         onReady: function(event) {
             console.log('Callback onReady: api = ' + event.api);
+        },
+        onGridSizeChanged: function(event) {
+            console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
+        },
+        onRowGroupOpened: function(event) {
+            console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
         }
     };
     $scope.gridOptions = gridOptions;
@@ -155,14 +176,9 @@ gridsModule.controller('mainController', function($scope) {
     var firstColumn = {
         headerName: "Name",
         field: "name",
-        headerGroup: 'Participant',
         width: 200,
         editable: true,
         filter: PersonFilter,
-            cellRenderer: {
-                renderer: "group",
-                checkbox: true
-            },
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -179,57 +195,79 @@ gridsModule.controller('mainController', function($scope) {
 
     var defaultCols = [
         //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-        firstColumn,
-        {headerName: "Country", field: "country", headerGroup: 'Participant', width: 150, editable: true, cellRenderer: countryCellRenderer, filter: 'set',
-            floatCell: true,
-            filterParams: {
-                cellRenderer: countryCellRenderer,
-                cellHeight: 20,
-                newRowsAction: 'keep'
-            },
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Participant
+            headerName: 'Participant',
+            children: [
+                firstColumn,
+                {headerName: "Country", field: "country", width: 150, editable: true,
+                    cellRenderer: countryCellRenderer, filter: 'set',
+                    floatCell: true,
+                    filterParams: {
+                        cellRenderer: countryCellRenderer,
+                        cellHeight: 20,
+                        newRowsAction: 'keep'
+                    },
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                },
+                {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+                    cellRenderer: languageCellRenderer,
+                    headerTooltip: "Example tooltip for Language",
+                    filterParams: {newRowsAction: 'keep'},
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                }
+            ]
         },
-        {headerName: "Language", field: "language", headerGroup: 'Participant', width: 150, editable: true, filter: 'set', cellRenderer: languageCellRenderer,
-            headerTooltip: "Example tooltip for Language",
-            filterParams: {newRowsAction: 'keep'},
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Game of Choice'
+            headerName: 'Game of Choice',
+            children: [
+                {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                    cellClass: function() { return 'alphabet'; },
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    }
+                },
+                {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                    cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                    floatCell: true,
+                    filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
+            ]
         },
-        {headerName: "Game of Choice", field: "game", headerGroup: 'Game', width: 180, editable: true, filter: 'set', cellClass: function() { return 'alphabet'; },
-            icons: {
-                sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-            }
+        {
+            // column group 'Performance'
+            headerName: 'Performance',
+            children: [
+                {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+                    filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+                    filterParams: {cellRenderer: currencyRenderer},
+                    icons: {
+                        sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                        sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                    }
+                },
+                {headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                    cellRenderer: function() { return 'Abra...'; } },
+                {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
+                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                    cellRenderer: function() { return '...cadabra!'; } },
+            ]
         },
-        {headerName: "Bought", field: "bought", filter: 'set', headerGroup: 'Game', editable: true, width: 100,
-            cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-            floatCell: true,
-            filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
-        {headerName: "Bank Balance", field: "bankBalance", headerGroup: 'Performance', width: 150, editable: true, filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            filterParams: {cellRenderer: currencyRenderer},
-            aggFunc: 'sum',
-            icons: {
-                sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-            }
-        },
-        {headerName: "Extra Info 1", headerGroupShow: 'open', headerGroup: 'Performance', width: 150, editable: false,
-            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-            cellRenderer: function() { return 'Abra...'; } },
-        {headerName: "Extra Info 2", headerGroupShow: 'open', headerGroup: 'Performance', width: 150, editable: false,
-            suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-            cellRenderer: function() { return '...cadabra!'; } },
         {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
             floatCell: true,
             filterParams: {cellRenderer: ratingFilterRenderer}
         },
-        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number', editable: true, newValueHandler: numberNewValueHandler, width: 150, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            aggFunc: 'sum',
+        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+            editable: true, newValueHandler: numberNewValueHandler, width: 150,
+            cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
             icons: {
                 sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                 sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -237,9 +275,21 @@ gridsModule.controller('mainController', function($scope) {
         }
     ];
     //put in the month cols
+    var monthGroup = {
+        headerName: 'Monthly Breakdown',
+        children: []
+    };
+    defaultCols.push(monthGroup);
     months.forEach(function(month, index) {
-        defaultCols.push({headerName: month, headerGroup: 'Monthly Breakdown', field: month.toLocaleLowerCase(), width: 100, filter: 'number', editable: true,
-            newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer, filterCellRenderer: currencyRenderer,
+        monthGroup.children.push({
+            headerName: month, field: month.toLocaleLowerCase(),
+            width: 100, filter: 'number', editable: true,
+            cellClassRules: {
+                'good-score': 'x > 50000',
+                'bad-score': 'x < 10000'
+            },
+            newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
+            filterCellRenderer: currencyRenderer,
             cellStyle: {"text-align": "right"}})
     });
 
@@ -250,35 +300,7 @@ gridsModule.controller('mainController', function($scope) {
     //    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
     //}, 1000);
 
-    $scope.jumpToCol = function() {
-        var index = Number($scope.jumpToColText);
-        if (typeof index === 'number' && !isNaN(index)) {
-            gridOptions.api.ensureColIndexVisible(index);
-        }
-    };
-
-    $scope.jumpToRow = function() {
-        var index = Number($scope.jumpToRowText);
-        if (typeof index === 'number' && !isNaN(index)) {
-            gridOptions.api.ensureIndexVisible(index);
-        }
-    };
-
-    $scope.onRowCountChanged = function() {
-        gridOptions.api.showLoading(true);
-        // put into a timeout, so browser gets a chance to update the loading panel
-        setTimeout( function () {
-            var data = createData();
-            gridOptions.api.setRowData(data);
-        }, 0);
-    };
-
-    $scope.onPinnedColCountChanged = function() {
-        var newCount = Number($scope.pinnedColumnCount);
-        gridOptions.columnApi.setPinnedColumnCount(newCount);
-    };
-
-    $scope.onColCountChanged = function() {
+    $scope.onDataSizeChanged = function() {
         gridOptions.api.showLoading(true);
         setTimeout( function () {
             var colDefs = createCols();
@@ -288,7 +310,7 @@ gridsModule.controller('mainController', function($scope) {
         });
     };
 
-    $scope.onSelectionChanged = function() {
+/*    $scope.onSelectionChanged = function() {
         switch ($scope.rowSelection) {
             case 'checkbox' :
                 //firstColumn.checkboxSelection = true;
@@ -321,57 +343,34 @@ gridsModule.controller('mainController', function($scope) {
                 break;
         }
         gridOptions.api.deselectAll();
-    };
-
-    $scope.onGroupHeaders = function() {
-        var groupHeaders = $scope.groupHeaders === 'true';
-        gridOptions.api.setGroupHeaders(groupHeaders);
-    };
-
-    $scope.onSize = function() {
-        if ($scope.size === 'fill') {
-            $scope.width = '100%';
-            $scope.height = '100%';
-        } else {
-            $scope.width = '800px';
-            $scope.height = '600px';
-        }
-        setTimeout( function() {
-            gridOptions.api.doLayout();
-        }, 0);
-    };
-
-    $scope.onGroupTypeChanged = function() {
-        // setup keys
-        var groupBy = null;
-        if ($scope.groupBy!=="") {
-            groupBy = $scope.groupBy.split(",");
-        }
-        gridOptions.groupKeys = groupBy;
-
-        // setup type
-        var groupUseEntireRow = $scope.groupType==='row' || $scope.groupType==='rowWithFooter';
-        gridOptions.groupUseEntireRow = groupUseEntireRow;
-
-        // use footer or not
-        var useFooter = $scope.groupType==='colWithFooter' || $scope.groupType==='rowWithFooter';
-        gridOptions.groupIncludeFooter = useFooter;
-
-        gridOptions.api.refreshPivot();
-    };
+    };*/
 
     $scope.toggleToolPanel = function() {
         var showing = gridOptions.api.isToolPanelShowing();
         gridOptions.api.showToolPanel(!showing);
     };
 
-    function createCols() {
-        var colCount = parseInt($scope.colCount);
+    function getColCount() {
+        switch ($scope.dataSize) {
+            case '10x100': return 100;
+            default: return 22;
+        }
+    }
 
+    function getRowCount() {
+        switch ($scope.dataSize) {
+            case '100x22': return 100000;
+            default: return 1000;
+        }
+    }
+
+    function createCols() {
+        var colCount = getColCount();
         // start with a copy of the default cols
         var columns = defaultCols.slice(0, colCount);
 
-        for (var col = defaultCols.length; col<colCount; col++) {
+        // there are 22 cols by default
+        for (var col = 22; col<colCount; col++) {
             var colName = colNames[col % colNames.length];
             var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
             columns.push(colDef);
@@ -381,8 +380,8 @@ gridsModule.controller('mainController', function($scope) {
     }
 
     function createData() {
-        var rowCount = parseInt($scope.rowCount);
-        var colCount = parseInt($scope.colCount);
+        var rowCount = getRowCount();
+        var colCount = getColCount();
         var data = [];
         for (var row = 1; row<=rowCount; row++) {
             if (row%10000===0) {
@@ -657,15 +656,7 @@ function currencyRenderer(params)  {
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-
-        var valueInPence = Math.floor(params.value * 100);
-
-        var pence = valueInPence % 100;
-        var pounds = Math.floor(valueInPence / 100);
-
-        var penceStr = (pence <= 9) ? ('0' + pence) : '' + pence;
-
-        return '&pound; ' + pounds + "." + penceStr;
+        return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 }
 
@@ -729,7 +720,7 @@ function countryCellRenderer(params) {
     if (params.value==="" || params.value===undefined || params.value===null) {
         return null;
     } else {
-        var flag = "<img border='0' width='15' height='10' src='http://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
+        var flag = "<img border='0' width='15' height='10' src='https://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
         return flag + " " + params.value;
     }
 }

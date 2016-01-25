@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    ng.bootstrap(SampleAppComponent);
+    ng.platform.browser.bootstrap(SampleAppComponent);
 });
 
 var SampleAppComponent = function() {
@@ -26,15 +26,15 @@ var templateForSampleAppComponent =
         // give some size to the grid
         'style="height: 100%;" ' +
         // use AngularJS 2 properties for column-defs and row-data
-        '[column-defs]="columnDefs" ' +
-        '[row-data]="rowData" ' +
-    '/>';
+        '[columnDefs]="columnDefs" ' +
+        '[rowData]="rowData" ' +
+    '></ag-grid-ng2>';
 
 SampleAppComponent.annotations = [
-    new ng.Component({
+    new ng.core.Component({
         selector: 'simple-ng2-grid'
     }),
-    new ng.View({
+    new ng.core.View({
         // register the ag-Grid directive with this directive
         directives: [ag.grid.AgGridNg2],
         template: templateForSampleAppComponent

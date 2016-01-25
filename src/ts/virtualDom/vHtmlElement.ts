@@ -115,7 +115,7 @@ module ag.vdom {
             buff += '>';
 
             // contents
-            if (this.innerHtml) {
+            if (this.innerHtml !== null && this.innerHtml !== undefined) {
                 buff += this.innerHtml;
             }
             buff += this.toHtmlStringChildren();

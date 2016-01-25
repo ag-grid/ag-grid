@@ -1,6 +1,6 @@
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="expressionService.ts" />
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
 
 module ag.grid {
 
@@ -27,7 +27,7 @@ module ag.grid {
             if (colDef.valueGetter) {
                 result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
             } else if (field && data) {
-                result = data[field];
+                result = this.getValueUsingField(data, field);
             } else {
                 result = undefined;
             }
@@ -39,6 +39,27 @@ module ag.grid {
             }
 
             return result;
+        }
+
+        private getValueUsingField(data: any, field: string): void {
+            if (!field || !data) {
+                return;
+            }
+            // if no '.', then it's not a deep value
+            if (field.indexOf('.')<0) {
+                return data[field];
+            } else {
+                // otherwise it is a deep value, so need to dig for it
+                var fields = field.split('.');
+                var currentObject = data;
+                for (var i = 0; i<fields.length; i++) {
+                    currentObject = currentObject[fields[i]];
+                    if (!currentObject) {
+                        return null;
+                    }
+                }
+                return currentObject;
+            }
         }
 
         private executeValueGetter(valueGetter: any, data: any, colDef: any, node: any): any {
@@ -67,7 +88,7 @@ module ag.grid {
         private getValueCallback(data: any, node: any, field: string): any {
             var otherColumn = this.columnController.getColumn(field);
             if (otherColumn) {
-                return this.getValue(otherColumn.colDef, data, node);
+                return this.getValue(otherColumn.getColDef(), data, node);
             } else {
                 return null;
             }

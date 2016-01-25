@@ -55,8 +55,8 @@ module.controller("exampleCtrl", function($scope, $http) {
             endsWith: 'daEnds dawith',
             // tool panel
             columns: 'laColumns',
-            pivotedColumns: 'laPivot Cols',
-            pivotedColumnsEmptyMessage: 'la please drag cols to here',
+            rowGroupColumns: 'laPivot Cols',
+            rowGroupColumnsEmptyMessage: 'la please drag cols to here',
             valueColumns: 'laValue Cols',
             valueColumnsEmptyMessage: 'la please drag cols to here'
         }

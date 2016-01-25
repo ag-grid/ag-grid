@@ -1,7 +1,7 @@
 /// <reference path="../gridOptionsWrapper.ts" />
 /// <reference path="../grid.ts" />
 /// <reference path="../utils.ts" />
-/// <reference path="../columnController.ts" />
+/// <reference path="../columnController/columnController.ts" />
 /// <reference path="../expressionService.ts" />
 /// <reference path="rowRenderer.ts" />
 /// <reference path="../templateService.ts" />
@@ -15,12 +15,13 @@ module ag.grid {
 
     export class RenderedRow {
 
-        public vPinnedRow: any;
+        public vPinnedLeftRow: any;
+        public vPinnedRightRow: any;
         public vBodyRow: any;
 
         private renderedCells: {[key: number]: RenderedCell} = {};
         private scope: any;
-        private node: any;
+        private node: RowNode;
         private rowIndex: number;
 
         private cellRendererMap: {[key: string]: any};
@@ -35,9 +36,11 @@ module ag.grid {
         private $compile: any;
         private templateService: TemplateService;
         private selectionController: SelectionController;
-        private pinning: boolean;
+        private pinningLeft: boolean;
+        private pinningRight: boolean;
         private eBodyContainer: HTMLElement;
-        private ePinnedContainer: HTMLElement;
+        private ePinnedLeftContainer: HTMLElement;
+        private ePinnedRightContainer: HTMLElement;
         private valueService: ValueService;
         private eventService: EventService;
 
@@ -54,8 +57,9 @@ module ag.grid {
                     selectionController: SelectionController,
                     rowRenderer: RowRenderer,
                     eBodyContainer: HTMLElement,
-                    ePinnedContainer: HTMLElement,
-                    node: any,
+                    ePinnedLeftContainer: HTMLElement,
+                    ePinnedRightContainer: HTMLElement,
+                    node: RowNode,
                     rowIndex: number,
                     eventService: EventService) {
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -71,16 +75,23 @@ module ag.grid {
             this.selectionController = selectionController;
             this.rowRenderer = rowRenderer;
             this.eBodyContainer = eBodyContainer;
-            this.ePinnedContainer = ePinnedContainer;
-            this.pinning = columnController.isPinning();
+            this.ePinnedLeftContainer = ePinnedLeftContainer;
+            this.ePinnedRightContainer = ePinnedRightContainer;
+
+            this.pinningLeft = columnController.isPinningLeft();
+            this.pinningRight = columnController.isPinningRight();
+
             this.eventService = eventService;
 
             var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
             var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
 
             this.vBodyRow = this.createRowContainer();
-            if (this.pinning) {
-                this.vPinnedRow = this.createRowContainer();
+            if (this.pinningLeft) {
+                this.vPinnedLeftRow = this.createRowContainer();
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow = this.createRowContainer();
             }
 
             this.rowIndex = rowIndex;
@@ -102,30 +113,44 @@ module ag.grid {
             }
 
             this.vBodyRow.setAttribute('row', rowStr);
-            if (this.pinning) {
-                this.vPinnedRow.setAttribute('row', rowStr);
+            if (this.pinningLeft) {
+                this.vPinnedLeftRow.setAttribute('row', rowStr);
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.setAttribute('row', rowStr);
             }
 
             if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
                 var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
                 if (typeof businessKey === 'string' || typeof businessKey === 'number') {
                     this.vBodyRow.setAttribute('row-id', businessKey);
-                    if (this.pinning) {
-                        this.vPinnedRow.setAttribute('row-id', businessKey);
+                    if (this.pinningLeft) {
+                        this.vPinnedLeftRow.setAttribute('row-id', businessKey);
+                    }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.setAttribute('row-id', businessKey);
                     }
                 }
             }
 
             // if showing scrolls, position on the container
             if (!this.gridOptionsWrapper.isForPrint()) {
-                this.vBodyRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
-                if (this.pinning) {
-                    this.vPinnedRow.style.top = (this.gridOptionsWrapper.getRowHeight() * this.rowIndex) + "px";
+                var topPx = this.node.rowTop + "px";
+                this.vBodyRow.style.top = topPx;
+                if (this.pinningLeft) {
+                    this.vPinnedLeftRow.style.top = topPx;
+                }
+                if (this.pinningRight) {
+                    this.vPinnedRightRow.style.top = topPx;
                 }
             }
-            this.vBodyRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
-            if (this.pinning) {
-                this.vPinnedRow.style.height = (this.gridOptionsWrapper.getRowHeight()) + "px";
+            var heightPx = this.node.rowHeight + 'px';
+            this.vBodyRow.style.height = heightPx;
+            if (this.pinningLeft) {
+                this.vPinnedLeftRow.style.height = heightPx;
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.style.height = heightPx;
             }
 
             // if group item, insert the first row
@@ -134,20 +159,29 @@ module ag.grid {
             }
 
             this.bindVirtualElement(this.vBodyRow);
-            if (this.pinning) {
-                this.bindVirtualElement(this.vPinnedRow);
+            if (this.pinningLeft) {
+                this.bindVirtualElement(this.vPinnedLeftRow);
+            }
+            if (this.pinningRight) {
+                this.bindVirtualElement(this.vPinnedRightRow);
             }
 
             if (this.scope) {
                 this.$compile(this.vBodyRow.getElement())(this.scope);
-                if (this.pinning) {
-                    this.$compile(this.vPinnedRow.getElement())(this.scope);
+                if (this.pinningLeft) {
+                    this.$compile(this.vPinnedLeftRow.getElement())(this.scope);
+                }
+                if (this.pinningRight) {
+                    this.$compile(this.vPinnedRightRow.getElement())(this.scope);
                 }
             }
 
             this.eBodyContainer.appendChild(this.vBodyRow.getElement());
-            if (this.pinning) {
-                this.ePinnedContainer.appendChild(this.vPinnedRow.getElement());
+            if (this.pinningLeft) {
+                this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
+            }
+            if (this.pinningRight) {
+                this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
             }
         }
 
@@ -166,11 +200,11 @@ module ag.grid {
         }
 
         public getRenderedCellForColumn(column: Column): RenderedCell {
-            return this.renderedCells[column.index];
+            return this.renderedCells[column.getIndex()];
         }
 
-        public getCellForCol(column: Column): any {
-            var renderedCell = this.renderedCells[column.index];
+        public getCellForCol(column: Column): HTMLElement {
+            var renderedCell = this.renderedCells[column.getIndex()];
             if (renderedCell) {
                 return renderedCell.getVGridCell().getElement();
             } else {
@@ -181,8 +215,11 @@ module ag.grid {
         public destroy(): void {
             this.destroyScope();
 
-            if (this.pinning) {
-                this.ePinnedContainer.removeChild(this.vPinnedRow.getElement());
+            if (this.pinningLeft) {
+                this.ePinnedLeftContainer.removeChild(this.vPinnedLeftRow.getElement());
+            }
+            if (this.pinningRight) {
+                this.ePinnedRightContainer.removeChild(this.vPinnedRightRow.getElement());
             }
             this.eBodyContainer.removeChild(this.vBodyRow.getElement());
         }
@@ -207,26 +244,29 @@ module ag.grid {
         }
 
         private drawNormalRow() {
-            var columns = this.columnController.getDisplayedColumns();
-            for (var i = 0; i<columns.length; i++) {
-                var column = columns[i];
-                var firstCol = i === 0;
+            var columns = this.columnController.getAllDisplayedColumns();
+            var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
+            for (var colIndex = 0; colIndex<columns.length; colIndex++) {
+                var column = columns[colIndex];
+                var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
 
-                var renderedCell = new RenderedCell(firstCol, column,
+                var renderedCell = new RenderedCell(firstRightPinnedCol, column,
                     this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                     this.selectionRendererFactory, this.selectionController, this.templateService,
-                    this.cellRendererMap, this.node, this.rowIndex, this.scope, this.columnController,
+                    this.cellRendererMap, this.node, this.rowIndex, colIndex, this.scope, this.columnController,
                     this.valueService, this.eventService);
 
                 var vGridCell = renderedCell.getVGridCell();
 
-                if (column.pinned) {
-                    this.vPinnedRow.appendChild(vGridCell);
+                if (column.getPinned() === Column.PINNED_LEFT) {
+                    this.vPinnedLeftRow.appendChild(vGridCell);
+                } else if (column.getPinned()=== Column.PINNED_RIGHT) {
+                    this.vPinnedRightRow.appendChild(vGridCell);
                 } else {
                     this.vBodyRow.appendChild(vGridCell);
                 }
 
-                this.renderedCells[column.index] = renderedCell;
+                this.renderedCells[column.getIndex()] = renderedCell;
             }
         }
 
@@ -239,12 +279,17 @@ module ag.grid {
         private createGroupRow() {
             var eGroupRow = this.createGroupSpanningEntireRowCell(false);
 
-            if (this.pinning) {
-                this.vPinnedRow.appendChild(eGroupRow);
+            if (this.pinningLeft) {
+                this.vPinnedLeftRow.appendChild(eGroupRow);
                 var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
                 this.vBodyRow.appendChild(eGroupRowPadding);
             } else {
                 this.vBodyRow.appendChild(eGroupRow);
+            }
+
+            if (this.pinningRight) {
+                var ePinnedRightPadding = this.createGroupSpanningEntireRowCell(true);
+                this.vPinnedRightRow.appendChild(ePinnedRightPadding);
             }
         }
 
@@ -326,8 +371,11 @@ module ag.grid {
                     console.log('ag-Grid: rowStyle should be a string or an array, not be a function, use getRowStyle() instead');
                 } else {
                     this.vBodyRow.addStyles(rowStyle);
-                    if (this.pinning) {
-                        this.vPinnedRow.addStyles(rowStyle);
+                    if (this.pinningLeft) {
+                        this.vPinnedLeftRow.addStyles(rowStyle);
+                    }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.addStyles(rowStyle);
                     }
                 }
             }
@@ -342,8 +390,11 @@ module ag.grid {
                 };
                 var cssToUseFromFunc = rowStyleFunc(params);
                 this.vBodyRow.addStyles(cssToUseFromFunc);
-                if (this.pinning) {
-                    this.vPinnedRow.addStyles(cssToUseFromFunc);
+                if (this.pinningLeft) {
+                    this.vPinnedLeftRow.addStyles(cssToUseFromFunc);
+                }
+                if (this.pinningRight) {
+                    this.vPinnedRightRow.addStyles(cssToUseFromFunc);
                 }
             }
         }
@@ -412,6 +463,7 @@ module ag.grid {
             var classes: string[] = [];
 
             classes.push('ag-row');
+            classes.push('ag-row-no-focus');
 
             classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
@@ -481,8 +533,11 @@ module ag.grid {
             }
 
             this.vBodyRow.addClasses(classes);
-            if (this.pinning) {
-                this.vPinnedRow.addClasses(classes);
+            if (this.pinningLeft) {
+                this.vPinnedLeftRow.addClasses(classes);
+            }
+            if (this.pinningRight) {
+                this.vPinnedRightRow.addClasses(classes);
             }
         }
     }

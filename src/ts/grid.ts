@@ -1,8 +1,11 @@
 /// <reference path="constants.ts" />
+/// <reference path="rowControllers/floatingRowModel.ts" />
 /// <reference path="gridOptionsWrapper.ts" />
 /// <reference path="utils.ts" />
 /// <reference path="filter/filterManager.ts" />
-/// <reference path="columnController.ts" />
+/// <reference path="columnController/columnController.ts" />
+/// <reference path="columnController/balancedColumnTreeBuilder.ts" />
+/// <reference path="headerRendering/headerTemplateLoader.ts" />
 /// <reference path="selectionController.ts" />
 /// <reference path="selectionRendererFactory.ts" />
 /// <reference path="rendering/rowRenderer.ts" />
@@ -21,6 +24,7 @@
 /// <reference path="masterSlaveService.ts" />
 /// <reference path="logger.ts" />
 /// <reference path="eventService.ts" />
+/// <reference path="columnController/columnUtils.ts" />
 /// <reference path="dragAndDrop/dragAndDropService.ts" />
 
 
@@ -35,6 +39,7 @@ module ag.grid {
         private doingVirtualPaging: boolean;
         private paginationController: PaginationController;
         private virtualPageRowController: VirtualPageRowController;
+        private floatingRowModel: FloatingRowModel;
         private finished: boolean;
 
         private selectionController: SelectionController;
@@ -60,12 +65,20 @@ module ag.grid {
 
         constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
+            if (!eGridDiv) {
+                console.warn('ag-Grid: no div element provided to the grid');
+            }
+            if (!gridOptions) {
+                console.warn('ag-Grid: no gridOptions provided to the grid');
+            }
+
             this.gridOptions = gridOptions;
             this.setupComponents($scope, $compile, eGridDiv, globalEventListener);
 
             this.gridOptions.api = new GridApi(this, this.rowRenderer, this.headerRenderer, this.filterManager,
                 this.columnController, this.inMemoryRowController, this.selectionController,
-                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService, this.eventService);
+                this.gridOptionsWrapper, this.gridPanel, this.valueService, this.masterSlaveService,
+                this.eventService, this.floatingRowModel);
             this.gridOptions.columnApi = this.columnController.getColumnApi();
 
             var that = this;
@@ -98,8 +111,11 @@ module ag.grid {
             this.periodicallyDoLayout();
 
             // if ready function provided, use it
-            var readyParams = {api: gridOptions.api};
-            this.eventService.dispatchEvent(Events.EVENT_READY, readyParams);
+            var readyEvent = {
+                api: gridOptions.api,
+                columnApi: gridOptions.columnApi
+            };
+            this.eventService.dispatchEvent(Events.EVENT_READY, readyEvent);
 
             this.logger.log('initialised');
         }
@@ -140,6 +156,7 @@ module ag.grid {
                 var that = this;
                 setTimeout(function () {
                     that.doLayout();
+                    that.gridPanel.periodicallyCheck();
                     that.periodicallyDoLayout();
                 }, 500);
             }
@@ -149,6 +166,10 @@ module ag.grid {
             this.eUserProvidedDiv = eUserProvidedDiv;
 
             // create all the beans
+            var headerTemplateLoader = new HeaderTemplateLoader();
+            var floatingRowModel = new FloatingRowModel();
+            var balancedColumnTreeBuilder = new BalancedColumnTreeBuilder();
+            var displayedGroupCreator = new DisplayedGroupCreator();
             var eventService = new EventService();
             var gridOptionsWrapper = new GridOptionsWrapper();
             var selectionController = new SelectionController();
@@ -168,6 +189,8 @@ module ag.grid {
             var masterSlaveService = new MasterSlaveService();
             var loggerFactory = new LoggerFactory();
             var dragAndDropService = new DragAndDropService();
+            var columnUtils = new ColumnUtils();
+            var autoWidthCalculator = new AutoWidthCalculator();
 
             // initialise all the beans
             gridOptionsWrapper.init(this.gridOptions, eventService);
@@ -175,26 +198,35 @@ module ag.grid {
             this.logger = loggerFactory.create('Grid');
             this.logger.log('initialising');
 
+            headerTemplateLoader.init(gridOptionsWrapper);
+            floatingRowModel.init(gridOptionsWrapper);
+            columnUtils.init(gridOptionsWrapper);
+            autoWidthCalculator.init(rowRenderer, gridPanel);
             dragAndDropService.init(loggerFactory);
             eventService.init(loggerFactory);
-            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService);
+            gridPanel.init(gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory, floatingRowModel);
             templateService.init($scope);
             expressionService.init(loggerFactory);
             selectionController.init(this, gridPanel, gridOptionsWrapper, $scope, rowRenderer, eventService);
             filterManager.init(this, gridOptionsWrapper, $compile, $scope,
                 columnController, popupService, valueService);
             selectionRendererFactory.init(this, selectionController);
+            balancedColumnTreeBuilder.init(gridOptionsWrapper, loggerFactory, columnUtils);
+            displayedGroupCreator.init(columnUtils);
             columnController.init(this, selectionRendererFactory, gridOptionsWrapper,
-                expressionService, valueService, masterSlaveService, eventService);
-            rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory, $compile,
-                $scope, selectionController, expressionService, templateService, valueService, eventService);
+                expressionService, valueService, masterSlaveService, eventService,
+                balancedColumnTreeBuilder, displayedGroupCreator, columnUtils,
+                autoWidthCalculator, loggerFactory);
+            rowRenderer.init(columnController, gridOptionsWrapper, gridPanel, this, selectionRendererFactory,
+                $compile, $scope, selectionController, expressionService, templateService, valueService,
+                eventService, floatingRowModel);
             headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
-                $scope, $compile);
+                $scope, $compile, headerTemplateLoader);
             inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
                 groupCreator, valueService, eventService);
             virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);
             valueService.init(gridOptionsWrapper, expressionService, columnController);
-            groupCreator.init(valueService);
+            groupCreator.init(valueService, gridOptionsWrapper);
             masterSlaveService.init(gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService);
 
             if (globalEventListener) {
@@ -244,6 +276,7 @@ module ag.grid {
             this.eventService = eventService;
             this.gridOptionsWrapper = gridOptionsWrapper;
             this.dragAndDropService = dragAndDropService;
+            this.floatingRowModel = floatingRowModel;
 
             this.eRootPanel = new BorderLayout({
                 center: gridPanel.getLayout(),
@@ -266,16 +299,16 @@ module ag.grid {
             eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
-            eventService.addEventListener(Events.EVENT_COLUMN_PINNED_COUNT_CHANGED, this.onColumnChanged.bind(this));
-            eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_CHANGE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
             eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
+            eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
         }
 
         private onColumnChanged(event: ColumnChangeEvent): void {
-            if (event.isPivotChanged()) {
-                this.inMemoryRowController.onPivotChanged();
+            if (event.isRowGroupChanged()) {
+                this.inMemoryRowController.onRowGroupChanged();
             }
             if (event.isValueChanged()) {
                 this.inMemoryRowController.doAggregate();
@@ -290,19 +323,15 @@ module ag.grid {
             this.gridPanel.showPinnedColContainersIfNeeded();
         }
 
-        public refreshPivot(): void {
-            this.inMemoryRowController.onPivotChanged();
+        public refreshRowGroup(): void {
+            this.inMemoryRowController.onRowGroupChanged();
             this.refreshHeaderAndBody();
-        }
-
-        public getEventService(): EventService {
-            return this.eventService;
         }
 
         private onIndividualColumnResized(column: Column): void {
             this.headerRenderer.onIndividualColumnResized(column);
             this.rowRenderer.onIndividualColumnResized(column);
-            if (column.pinned) {
+            if (column.isPinned()) {
                 this.updatePinnedColContainerWidthAfterColResize();
             } else {
                 this.updateBodyContainerWidthAfterColResize();
@@ -377,6 +406,7 @@ module ag.grid {
             this.headerRenderer.refreshHeader();
             this.headerRenderer.updateFilterIcons();
             this.headerRenderer.updateSortIcons();
+            this.headerRenderer.setPinnedColContainerWidth();
             this.gridPanel.setBodyContainerWidth();
             this.gridPanel.setPinnedColContainerWidth();
             this.rowRenderer.refreshView();
@@ -473,6 +503,7 @@ module ag.grid {
         private setupColumns() {
             this.columnController.onColumnsChanged();
             this.gridPanel.showPinnedColContainersIfNeeded();
+            this.gridPanel.onBodyHeightChange();
         }
 
         // rowsToRefresh is at what index to start refreshing the rows. the assumption is
@@ -548,7 +579,7 @@ module ag.grid {
             var columnsWithSorting = <any>[];
             var i: any;
             for (i = 0; i < allColumns.length; i++) {
-                if (allColumns[i].sort) {
+                if (allColumns[i].getSort()) {
                     columnsWithSorting.push(allColumns[i]);
                 }
             }
@@ -581,12 +612,12 @@ module ag.grid {
 
                 var sortForCol: any = null;
                 var sortedAt = -1;
-                if (sortModelProvided && !column.colDef.suppressSorting) {
+                if (sortModelProvided && !column.getColDef().suppressSorting) {
                     for (var j = 0; j < sortModel.length; j++) {
                         var sortModelEntry = sortModel[j];
                         if (typeof sortModelEntry.colId === 'string'
-                            && typeof column.colId === 'string'
-                            && sortModelEntry.colId === column.colId) {
+                            && typeof column.getColId() === 'string'
+                            && sortModelEntry.colId === column.getColId()) {
                             sortForCol = sortModelEntry.sort;
                             sortedAt = j;
                         }
@@ -594,11 +625,11 @@ module ag.grid {
                 }
 
                 if (sortForCol) {
-                    column.sort = sortForCol;
-                    column.sortedAt = sortedAt;
+                    column.setSort(sortForCol);
+                    column.setSortedAt(sortedAt);
                 } else {
-                    column.sort = null;
-                    column.sortedAt = null;
+                    column.setSort(null);
+                    column.setSortedAt(null);
                 }
             }
 
@@ -668,6 +699,7 @@ module ag.grid {
 
         public updatePinnedColContainerWidthAfterColResize() {
             this.gridPanel.setPinnedColContainerWidth();
+            this.headerRenderer.setPinnedColContainerWidth();
         }
 
         public doLayout() {
@@ -677,6 +709,11 @@ module ag.grid {
             // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
             if (sizeChanged) {
                 this.rowRenderer.drawVirtualRows();
+                var event = {
+                    clientWidth: this.eRootPanel.getGui().clientWidth,
+                    clientHeight: this.eRootPanel.getGui().clientHeight
+                };
+                this.eventService.dispatchEvent(Events.EVENT_GRID_SIZE_CHANGED, event);
             }
         }
     }

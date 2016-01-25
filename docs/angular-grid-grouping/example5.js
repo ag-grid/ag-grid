@@ -25,7 +25,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Silver", field: "silver", width: 100},
         {headerName: "Bronze", field: "bronze", width: 100},
         {headerName: "Total", field: "total", width: 100},
-        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
         {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Sport", field: "sport", width: 110}
@@ -35,7 +35,6 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs,
         rowData: null,
         groupUseEntireRow: true,
-        groupKeys: ['country'],
         groupAggFunction: groupAggFunction,
         groupRowInnerRenderer: groupRowInnerRendererFunc
     };
@@ -45,7 +44,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 
         var html = '';
         if (flagCode) {
-            html += '<img class="flag" border="0" width="20" height="15" src="http://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
+            html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
         }
 
         html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', params.node.key);

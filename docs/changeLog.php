@@ -8,6 +8,68 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 4.0.0</h3>
+    <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
+    <li>Minor: Bug fix - pinning was not saved during columnApi.getState()</li>
+
+    <h3>Version 3.1.2</h3>
+    <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>
+
+    <h3>Version 3.1.1</h3>
+
+    <li>Minor: Added 'columnSeparator' to CSV Export</li>
+    <li>Minor: Added starting character of '\ufeff' to CSV Export (for Excel compatibility)</li>
+    <li>Minor: Bugfix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
+
+    <h3>Version 3.1.0</h3>
+
+    <li>Minor: New <i>allColumns</i> property for export to csv</li>
+    <li>Minor: API method <i>deselectNode()</i> now takes <i>'suppressEvents'</i> parameter.</li>
+    <li>Minor: Now <i>colDef.field</i> can had deep references, eg colDef.field = 'owner.firstName' </li>
+    <li>Minor: New event <i>gridSizeChanged</i>, gets fired when grid changes size, due to window resize or other application state change. Useful if you want to lay out the grid, eg call api.sizeColumnsToFit()</li>
+    <li>Minor: Bug fix - since v3 columnDefs was mandatory and threw error if missing. Is now optional again.</li>
+    <li>Major: Implemented auto-size for column. Now columns can be told to fit their content.</li>
+    <li>Minor: New property: suppressParentsInRowNodes - if you don't want parents in the row node tree structure.</li>
+    <li>Minor: Fixed up placement of menu icon, it was hitting the header border.</li>
+    <li>Major: Rows can have variable heights with new getRowHeight() callback.</li>
+    <li>Minor: bugfix - setColState was not restoring 'visible' correctly</li>
+    <li>Minor: New APi - columnApi.resetState()</li>
+    <li>Major: Implemented column header templates</li>
+
+    <h3>Version 3.0.0</h3>
+
+    <p>
+        Version 3 is a major version and has breaking changes. Where possible, the grid will hint if you are using an old property.
+    </p>
+
+    <ul>
+    <li>Major: Grouping of headers is now called 'columnGrouping' and can now take multiple levels of groups.</li>
+    <li>Major: Pinning can now be done on the left and right, previously was just the right.</li>
+    <li>Major: Row pivoting is now called row grouping. So the two types of grouping are now called Row Grouping and Column Grouping. Pivoting was taken out as it wasn't true pivoting. The was done to allow true pivoting to happen in a future release and avoid any name clashes.</li>
+    <li>Major: gridOptions.groupKeys and gridOptions.groupAggFields are now gone. These were duplicated ways of setting rowGroups and rowAggregation. The correct (and only non-duplicated way) is to use colDef.rowGroupIndex and colDef.aggFunc.</li>
+    <li>Major: New Column API method setColumnPinned().</li>
+    <li>Major: api.refreshPivot() now called api.refreshRowGroup()</li>
+    <li>Major: Event EVENT_COLUMN_PINNED_COUNT_CHANGED removed and EVENT_COLUMN_PINNED added.</li>
+    <li>Major: Column getState() and setState() now include pinned state.</li>
+    <li>Major: Header Height is now height per row, so if 25, and three column groups, total header height is 3x25 = 75. Before it was total header height (so height was split evenly across the header rows)</li>
+    <li>Major: gridOptions.groupHeaders is no longer a property, as grouping in the headers is now defined inside the column definitions.</li>
+    <li>Minor: CSS Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
+    <li>Major: colDef.headerGroupShow is now called colDef.columnGroupShow.</li>
+    <li>Major: Icons {headerGroupOpened, headerGroupClosed} now called {columnGroupOpened, columnGroupClosed}</li>
+    <li>Major: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
+    <li>Major: setColumnVisible(key) now takes a 'key' which can be a colId, field, ColDef object or Column object - previously you had to provide a Column object. Also new method setColumnsVisible(listOfKeys) for updating batches of columns.</li>
+    <li>Major: New methods setColumnPinned(key) and setColumnsPinned(listOfKeys) - behave similar to previously mentioned 'visible' methods</li>
+    <li>Major: In get/set column state, pivotIndex is now called rowGroupIndex</li>
+    <li>Major: If doing raw Javascript version, then angularGridGlobalFunction() is now deprecated, use "new ag.grid.Grid()" method instead.</li>
+    <li>Major: checkboxSelection (on colDef) can now be a function, so you can use params in the function
+        to work out at runtime if the cell should have a checkbox. gridOptions now also has function of the same
+        name, so you can configure the grid to have a checkbox in the first column always regardless of the colDef
+        (this is what the test drive does).</li>
+    </ul>
+
+    <h3>Version 2.3.7</h3>
+    <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>
+
     <h3>Version 2.3.5</h3>
     <li>Minor: Overlays can now be disabled via new properties suppressLoadingOverlay and suppressNoRowsOverlay.</li>
 

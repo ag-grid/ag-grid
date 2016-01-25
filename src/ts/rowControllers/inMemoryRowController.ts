@@ -18,11 +18,13 @@ module ag.grid {
         private filterManager: FilterManager;
         private $scope: any;
 
-        private allRows: RowNode[];
-        private rowsAfterGroup: RowNode[];
-        private rowsAfterFilter: RowNode[];
-        private rowsAfterSort: RowNode[];
-        private rowsAfterMap: RowNode[];
+        // the rows go through a pipeline of steps, each array below is the result
+        // after a certain step.
+        private allRows: RowNode[]; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
+        private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
+        private rowsAfterFilter: RowNode[]; // after filtering
+        private rowsAfterSort: RowNode[]; // after sorting
+        private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
         private model: any;
 
         private groupCreator: GroupCreator;
@@ -49,7 +51,7 @@ module ag.grid {
             this.rowsAfterGroup = null;
             this.rowsAfterFilter = null;
             this.rowsAfterSort = null;
-            this.rowsAfterMap = null;
+            this.rowsToDisplay = null;
         }
 
         private createModel() {
@@ -62,14 +64,20 @@ module ag.grid {
                     return that.rowsAfterGroup;
                 },
                 getVirtualRow: function (index: any): RowNode {
-                    return that.rowsAfterMap[index];
+                    return that.rowsToDisplay[index];
                 },
                 getVirtualRowCount: function (): number {
-                    if (that.rowsAfterMap) {
-                        return that.rowsAfterMap.length;
+                    if (that.rowsToDisplay) {
+                        return that.rowsToDisplay.length;
                     } else {
                         return 0;
                     }
+                },
+                getRowAtPixel: function(pixel: number): number {
+                    return that.getRowAtPixel(pixel);
+                },
+                getVirtualRowCombinedHeight: function (): number {
+                    return that.getVirtualRowCombinedHeight();
                 },
                 forEachInMemory: function (callback: any) {
                     that.forEachInMemory(callback);
@@ -84,6 +92,51 @@ module ag.grid {
                     that.forEachNodeAfterFilterAndSort(callback);
                 }
             };
+        }
+
+        public getRowAtPixel(pixelToMatch: number): number {
+            // do binary search of tree
+            // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
+            var bottomPointer = 0;
+            var topPointer = this.rowsToDisplay.length - 1;
+
+            // quick check, if the pixel is out of bounds, then return last row
+            var lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
+            if (lastNode.rowTop<=pixelToMatch) {
+                return this.rowsToDisplay.length - 1;
+            }
+
+            while (true) {
+
+                var midPointer = Math.floor((bottomPointer + topPointer) / 2);
+                var currentRowNode = this.rowsToDisplay[midPointer];
+
+                if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
+                    return midPointer;
+                } else if (currentRowNode.rowTop < pixelToMatch) {
+                    bottomPointer = midPointer + 1;
+                } else if (currentRowNode.rowTop > pixelToMatch) {
+                    topPointer = midPointer - 1;
+                }
+
+            }
+        }
+
+        private isRowInPixel(rowNode: RowNode, pixelToMatch: number): boolean {
+            var topPixel = rowNode.rowTop;
+            var bottomPixel = rowNode.rowTop + rowNode.rowHeight;
+            var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
+            return pixelInRow;
+        }
+
+        public getVirtualRowCombinedHeight(): number {
+            if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
+                var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+                var lastPixel = lastRow.rowTop + lastRow.rowHeight;
+                return lastPixel;
+            } else {
+                return 0;
+            }
         }
 
         public getModel() {
@@ -146,7 +199,7 @@ module ag.grid {
                 case constants.STEP_SORT:
                     this.doSort();
                 case constants.STEP_MAP:
-                    this.doGroupMapping();
+                    this.doRowsToDisplay();
             }
 
             this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
@@ -157,52 +210,63 @@ module ag.grid {
             }
         }
 
-        private defaultGroupAggFunctionFactory(valueColumns: Column[], valueKeys: string[]) {
+        private ensureRowHasHeight(rowNode: RowNode): void {
+
+        }
+
+        private defaultGroupAggFunctionFactory(valueColumns: Column[]) {
+
+            // make closure of variable, so is available for methods below
+            var _valueService = this.valueService;
 
             return function groupAggFunction(rows: any) {
 
                 var result = <any>{};
 
-                if (valueKeys) {
-                    for (var i = 0; i < valueKeys.length; i++) {
-                        var valueKey = valueKeys[i];
-                        // at this point, if no values were numbers, the result is null (not zero)
-                        result[valueKey] = aggregateColumn(rows, constants.SUM, valueKey);
+                for (var j = 0; j < valueColumns.length; j++) {
+                    var valueColumn = valueColumns[j];
+                    var colKey = valueColumn.getColDef().field;
+                    if (!colKey) {
+                        console.log('ag-Grid: you need to provide a field for all value columns so that ' +
+                            'the grid knows what field to store the result in. so even if using a valueGetter, ' +
+                            'the result will not be stored in a value getter.');
                     }
-                }
-
-                if (valueColumns) {
-                    for (var j = 0; j < valueColumns.length; j++) {
-                        var valueColumn = valueColumns[j];
-                        var colKey = valueColumn.colDef.field;
-                        // at this point, if no values were numbers, the result is null (not zero)
-                        result[colKey] = aggregateColumn(rows, valueColumn.aggFunc, colKey);
-                    }
+                    // at this point, if no values were numbers, the result is null (not zero)
+                    result[colKey] = aggregateColumn(rows, valueColumn.getAggFunc(), colKey, valueColumn.getColDef());
                 }
 
                 return result;
             };
 
-            function aggregateColumn(rows: RowNode[], aggFunc: string, colKey: string) {
+            // if colDef is passed in, we are working off a column value, if it is not passed in, we are
+            // working off colKeys passed in to the gridOptions
+            function aggregateColumn(rowNodes: RowNode[], aggFunc: string, colKey: string, colDef: ColDef) {
                 var resultForColumn: any = null;
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    var thisColumnValue = row.data[colKey];
+                for (var i = 0; i < rowNodes.length; i++) {
+                    var rowNode = rowNodes[i];
+                    // if the row is a group, then it will only have an agg result value,
+                    // which means valueGetter is never used.
+                    var thisColumnValue: any;
+                    if (colDef && !rowNode.group) {
+                        thisColumnValue = _valueService.getValue(colDef, rowNode.data, rowNode);
+                    } else {
+                        thisColumnValue = rowNode.data[colKey];
+                    }
                     // only include if the value is a number
                     if (typeof thisColumnValue === 'number') {
 
                         switch (aggFunc) {
-                            case constants.SUM :
+                            case Column.AGG_SUM :
                                 resultForColumn += thisColumnValue;
                                 break;
-                            case constants.MIN :
+                            case Column.AGG_MIN :
                                 if (resultForColumn === null) {
                                     resultForColumn = thisColumnValue;
                                 } else if (resultForColumn > thisColumnValue) {
                                     resultForColumn = thisColumnValue;
                                 }
                                 break;
-                            case constants.MAX :
+                            case Column.AGG_MAX :
                                 if (resultForColumn === null) {
                                     resultForColumn = thisColumnValue;
                                 } else if (resultForColumn < thisColumnValue) {
@@ -227,9 +291,8 @@ module ag.grid {
             }
 
             var valueColumns = this.columnController.getValueColumns();
-            var valueKeys = this.gridOptionsWrapper.getGroupAggFields();
-            if ((valueColumns && valueColumns.length > 0) || (valueKeys && valueKeys.length > 0)) {
-                var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns, valueKeys);
+            if (valueColumns && valueColumns.length > 0) {
+                var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns);
                 this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction, 0);
             } else {
                 // if no agg data, need to clear out any previous items, when can be left behind
@@ -299,11 +362,11 @@ module ag.grid {
                 //see if there is a col we are sorting by
                 var sortingOptions = <any>[];
                 this.columnController.getAllColumns().forEach(function (column: Column) {
-                    if (column.sort) {
-                        var ascending = column.sort === constants.ASC;
+                    if (column.getSort()) {
+                        var ascending = column.getSort() === Column.SORT_ASC;
                         sortingOptions.push({
                             inverter: ascending ? 1 : -1,
-                            sortedAt: column.sortedAt,
+                            sortedAt: column.getSortedAt(),
                             column: column
                         });
                     }
@@ -361,11 +424,11 @@ module ag.grid {
             var that = this;
 
             function compare(nodeA: RowNode, nodeB: RowNode, column:Column, isInverted: boolean) {
-                var valueA = that.valueService.getValue(column.colDef, nodeA.data, nodeA);
-                var valueB = that.valueService.getValue(column.colDef, nodeB.data, nodeB);
-                if (column.colDef.comparator) {
+                var valueA = that.valueService.getValue(column.getColDef(), nodeA.data, nodeA);
+                var valueB = that.valueService.getValue(column.getColDef(), nodeB.data, nodeB);
+                if (column.getColDef().comparator) {
                     //if comparator provided, use it
-                    return column.colDef.comparator(valueA, valueB, nodeA, nodeB, isInverted);
+                    return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
                 } else {
                     //otherwise do our own comparison
                     return _.defaultComparator(valueA, valueB);
@@ -397,15 +460,15 @@ module ag.grid {
             }
         }
 
-        // called by grid when pivot cols change
-        public onPivotChanged(): void {
-            this.doPivoting();
+        // called by grid when row group cols change
+        public onRowGroupChanged(): void {
+            this.doRowGrouping();
             this.updateModel(constants.STEP_EVERYTHING);
         }
 
-        private doPivoting() {
+        private doRowGrouping() {
             var rowsAfterGroup: any;
-            var groupedCols = this.columnController.getPivotedColumns();
+            var groupedCols = this.columnController.getRowGroupColumns();
             var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
 
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
@@ -501,9 +564,9 @@ module ag.grid {
             this.recursivelyAddIdToNodes(nodes, firstIdToUse);
             this.allRows = nodes;
 
-            // pivot here, so filters have the agg data ready
+            // group here, so filters have the agg data ready
             if (this.columnController.isSetupComplete()) {
-                this.doPivoting();
+                this.doRowGrouping();
             }
         }
 
@@ -531,7 +594,7 @@ module ag.grid {
             }
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                if (parent) {
+                if (parent && !this.gridOptionsWrapper.isSuppressParentsInRowNodes()) {
                     node.parent = parent;
                 }
                 node.level = level;
@@ -554,34 +617,45 @@ module ag.grid {
             return count;
         }
 
-        private doGroupMapping() {
+        private nextRowTop: number;
+
+        private doRowsToDisplay() {
             // even if not doing grouping, we do the mapping, as the client might
             // of passed in data that already has a grouping in it somewhere
-            var rowsAfterMap = <any>[];
-            this.addToMap(rowsAfterMap, this.rowsAfterSort);
-            this.rowsAfterMap = rowsAfterMap;
+            this.rowsToDisplay = [];
+            this.nextRowTop = 0;
+            this.recursivelyAddToRowsToDisplay(this.rowsAfterSort);
         }
 
-        private addToMap(mappedData: any, originalNodes: any) {
-            if (!originalNodes) {
+        private recursivelyAddToRowsToDisplay(rowNodes: RowNode[]) {
+            if (!rowNodes) {
                 return;
             }
             var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
-            for (var i = 0; i < originalNodes.length; i++) {
-                var node = originalNodes[i];
-                if(!groupSuppressRow || (groupSuppressRow && !node.group)) {
-                    mappedData.push(node);
+            for (var i = 0; i < rowNodes.length; i++) {
+                var rowNode = rowNodes[i];
+                var skipGroupNode = groupSuppressRow && rowNode.group;
+                if (!skipGroupNode) {
+                    this.addRowNodeToRowsToDisplay(rowNode);
                 }
-                if (node.group && node.expanded) {
-                    this.addToMap(mappedData, node.childrenAfterSort);
+                if (rowNode.group && rowNode.expanded) {
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort);
 
                     // put a footer in if user is looking for it
                     if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                        var footerNode = this.createFooterNode(node);
-                        mappedData.push(footerNode);
+                        var footerNode = this.createFooterNode(rowNode);
+                        this.addRowNodeToRowsToDisplay(footerNode);
                     }
                 }
             }
+        }
+
+        // duplicated method, it's also in floatingRowModel
+        private addRowNodeToRowsToDisplay(rowNode: RowNode): void {
+            this.rowsToDisplay.push(rowNode);
+            rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.rowTop = this.nextRowTop;
+            this.nextRowTop += rowNode.rowHeight;
         }
 
         private createFooterNode(groupNode: any) {

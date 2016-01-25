@@ -1,4 +1,4 @@
-/// <reference path='../columnController.ts' />
+/// <reference path='../columnController/columnController.ts' />
 /// <reference path='../utils.ts' />
 /// <reference path="../gridOptionsWrapper.ts" />
 /// <reference path="../expressionService.ts" />
@@ -26,10 +26,11 @@ module ag.grid {
         private data: any;
         private node: RowNode;
         private rowIndex: number;
+        private colIndex: number;
         private editingCell: boolean;
 
         private scope: any;
-        private isFirstColumn: boolean = false;
+        private firstRightPinnedColumn: boolean;
 
         private gridOptionsWrapper: GridOptionsWrapper;
         private expressionService: ExpressionService;
@@ -47,14 +48,14 @@ module ag.grid {
         private value: any;
         private checkboxSelection: boolean;
 
-        constructor(isFirstColumn: any, column: any, $compile: any, rowRenderer: RowRenderer,
+        constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
                     gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                     selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
                     templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                    node: any, rowIndex: number, scope: any, columnController: ColumnController,
+                    node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
                     valueService: ValueService, eventService: EventService) {
 
-            this.isFirstColumn = isFirstColumn;
+            this.firstRightPinnedColumn = firstRightPinnedCol;
             this.column = column;
             this.rowRenderer = rowRenderer;
             this.gridOptionsWrapper = gridOptionsWrapper;
@@ -68,15 +69,45 @@ module ag.grid {
             this.valueService = valueService;
             this.eventService = eventService;
 
-            this.checkboxSelection = this.column.colDef.checkboxSelection && !node.floating;
-
             this.node = node;
             this.rowIndex = rowIndex;
+            this.colIndex = colIndex;
             this.scope = scope;
             this.data = this.getDataForRow();
             this.value = this.getValue();
 
+            this.checkboxSelection = this.calculateCheckboxSelection();
+
             this.setupComponents();
+        }
+
+        public calculateCheckboxSelection() {
+            // never allow selection on floating rows
+            if (this.node.floating) {
+                return false;
+            }
+
+            // if boolean set, then just use it
+            var colDef = this.column.getColDef();
+            if (typeof colDef.checkboxSelection === 'boolean') {
+                return colDef.checkboxSelection;
+            }
+
+            // if function, then call the function to find out. we first check colDef for
+            // a function, and if missing then check gridOptions, so colDef has precedence
+            var selectionFunc: Function;
+            if (typeof colDef.checkboxSelection === 'function') {
+                selectionFunc = <Function>colDef.checkboxSelection;
+            }
+            if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
+                selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
+            }
+            if (selectionFunc) {
+                var params = this.createParams();
+                return selectionFunc(params);
+            }
+
+            return false;
         }
 
         public getColumn(): Column {
@@ -84,7 +115,7 @@ module ag.grid {
         }
 
         private getValue(): any {
-            return this.valueService.getValue(this.column.colDef, this.data, this.node);
+            return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
         }
 
         public getVGridCell(): ag.vdom.VHtmlElement {
@@ -112,9 +143,9 @@ module ag.grid {
 
         private setupComponents() {
             this.vGridCell = new ag.vdom.VHtmlElement("div");
-            this.vGridCell.setAttribute("col", (this.column.index !== undefined && this.column.index !== null) ? this.column.index.toString() : '');
+            this.vGridCell.setAttribute("col", (this.column.getIndex() !== undefined && this.column.getIndex() !== null) ? this.column.getIndex().toString() : '');
 
-            this.vGridCell.setAttribute("colId", this.column.colId);
+            this.vGridCell.setAttribute("colId", this.column.getColId());
 
             // only set tab index if cell selection is enabled
             if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
@@ -132,7 +163,7 @@ module ag.grid {
                 this.addCellNavigationHandler();
             }
 
-            this.vGridCell.addStyles({width: this.column.actualWidth + "px"});
+            this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
 
             this.createParentOfValue();
 
@@ -159,7 +190,7 @@ module ag.grid {
                 eInput.value = value;
             }
 
-            eInput.style.width = (this.column.actualWidth - 14) + 'px';
+            eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
             this.vGridCell.appendChild(eInput);
             eInput.focus();
             eInput.select();
@@ -203,13 +234,13 @@ module ag.grid {
         }
 
         public focusCell(forceBrowserFocus: boolean): void {
-            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.index, this.column.colDef, forceBrowserFocus);
+            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getIndex(), this.column.getColDef(), forceBrowserFocus);
         }
 
         private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
             this.editingCell = false;
             var newValue = eInput.value;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
 
             //If we don't remove the blur listener first, we get:
             //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
@@ -256,7 +287,8 @@ module ag.grid {
                 data: this.node.data,
                 value: this.value,
                 rowIndex: this.rowIndex,
-                colDef: this.column.colDef,
+                colIndex: this.colIndex,
+                colDef: this.column.getColDef(),
                 $scope: this.scope,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()
@@ -273,7 +305,7 @@ module ag.grid {
 
         private addCellDoubleClickedHandler() {
             var that = this;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             this.vGridCell.addEventListener('dblclick', function (event: any) {
                 // always dispatch event to eventService
                 var agEvent: any = that.createEvent(event, this);
@@ -292,7 +324,7 @@ module ag.grid {
 
         private addCellContextMenuHandler() {
             var that = this;
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             this.vGridCell.addEventListener('contextmenu', function (event: any) {
                 var agEvent: any = that.createEvent(event, this);
                 that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
@@ -314,7 +346,7 @@ module ag.grid {
             }
 
             // if boolean set, then just use it
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (typeof colDef.editable === 'boolean') {
                 return colDef.editable;
             }
@@ -330,7 +362,7 @@ module ag.grid {
         }
 
         private addCellClickedHandler() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             var that = this;
             this.vGridCell.addEventListener("click", function (event: any) {
                 // we pass false to focusCell, as we don't want the cell to focus
@@ -364,7 +396,7 @@ module ag.grid {
         }
 
         private addStylesFromCollDef() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.cellStyle) {
                 var cssToUse: any;
                 if (typeof colDef.cellStyle === 'function') {
@@ -391,7 +423,7 @@ module ag.grid {
         }
 
         private addClassesFromCollDef() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.cellClass) {
               var classToUse: any;
 
@@ -422,7 +454,7 @@ module ag.grid {
         }
 
         private addClassesFromRules() {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             var classRules = colDef.cellClassRules;
             if (typeof classRules === 'object' && classRules !== null) {
 
@@ -568,7 +600,7 @@ module ag.grid {
         }
 
         public isVolatile() {
-            return this.column.colDef.volatile;
+            return this.column.getColDef().volatile;
         }
 
         public refreshCell() {
@@ -590,7 +622,7 @@ module ag.grid {
 
         private putDataIntoCell() {
             // template gets preference, then cellRenderer, then do it ourselves
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
             if (colDef.template) {
                 this.vParentOfValue.setInnerHtml(colDef.template);
             } else if (colDef.templateUrl) {
@@ -611,7 +643,7 @@ module ag.grid {
         }
 
         private useCellRenderer(cellRenderer: Function | {}) {
-            var colDef = this.column.colDef;
+            var colDef = this.column.getColDef();
 
             var rendererParams = {
                 value: this.value,
@@ -654,13 +686,17 @@ module ag.grid {
         private addClasses() {
             this.vGridCell.addClass('ag-cell');
             this.vGridCell.addClass('ag-cell-no-focus');
-            this.vGridCell.addClass('cell-col-' + this.column.index);
+            this.vGridCell.addClass('cell-col-' + this.column.getIndex());
 
             if (this.node.group && this.node.footer) {
                 this.vGridCell.addClass('ag-footer-cell');
             }
             if (this.node.group && !this.node.footer) {
                 this.vGridCell.addClass('ag-group-cell');
+            }
+
+            if (this.firstRightPinnedColumn) {
+                this.vGridCell.addClass('ag-cell-first-right-pinned');
             }
         }
 

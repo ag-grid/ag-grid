@@ -2,10 +2,12 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>Angular Grid and Native Javascript Grid</title>
-        <meta name="description" content="ag-Grid is one of the best Javascript data grids that works as Native Javascript Grid, Web Components Grid and AngularJS Grid. Feature rich. Blazing fast.">
-        <meta name="keywords" content="javascript angularjs angular data grid web components"/>
-        <meta property="og:image" content="http://www.ag-grid.com/images/angular-grid.png"/>
+        <title>ag-Grid - Enterprise Javascript Datagrid</title>
+        <meta name="description"
+              content=
+              "Javasript Data Grid built for Enterprise Application Developers. Supports React, AngularJS & Angular 2. Blazing fast. Feature rich. The best JavaScript DataGrid.">
+        <meta name="keywords" content="javascript react data grid angularjs angular web components"/>
+        <meta property="og:image" content="https://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!--
@@ -35,7 +37,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
 -->
 
-        <link rel="shortcut icon" href="http://www.ag-grid.com/favicon.ico" />
+        <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
         <!--maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css-->
         <style>
@@ -164,7 +166,7 @@
 
                         <div style="margin-top: 30px;">
                             <div class="col-md-12" style="text-align: center;">
-                                <a class="btn btn-primary header-button" href="http://www.ag-grid.com/dist" role="button">
+                                <a class="btn btn-primary header-button" href="https://www.ag-grid.com/dist" role="button">
                                     <i class="fa fa-download header-icon"></i> Download
                                 </a>
                                 <a class="btn btn-primary header-button" href="example.html" role="button">
@@ -468,18 +470,18 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="minimised/ag-grid.min.js?ignore=notused14"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused14">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused14">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused14">
+<script src="dist/ag-grid.min.js?ignore=notused16"></script>
+<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused16">
+<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused16">
+<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused16">
 
-<link href="example-file-browser/fileBrowser.css?ignore=notused14" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused14" rel="stylesheet">
-<link href="example-account-report/account.css?ignore=notused14" rel="stylesheet">
+<link href="example-file-browser/fileBrowser.css?ignore=notused16" rel="stylesheet">
+<link href="best-angularjs-grid/basic.css?ignore=notused16" rel="stylesheet">
+<link href="example-account-report/account.css?ignore=notused16" rel="stylesheet">
 
-<script src="best-angularjs-grid/basic.js?ignore=notused14"></script>
-<script src="minimised/account.js?ignore=notused14"></script>
-<script src="minimised/fileBrowser.js?ignore=notused14"></script>
+<script src="minimised/basic.js?ignore=notused16"></script>
+<script src="minimised/account.js?ignore=notused16"></script>
+<script src="minimised/fileBrowser.js?ignore=notused16"></script>
 <script src="minimised/index-script.js"></script>
 
 <?php include_once("analytics.php"); ?>

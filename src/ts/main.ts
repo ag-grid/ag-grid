@@ -1,8 +1,14 @@
-/// <reference path="grid.ts" />
 /// <reference path="components/agGridNg2.ts" />
 /// <reference path="components/agGridNg1.ts" />
 /// <reference path="components/agGridWebComponent.ts" />
 /// <reference path="../../typings/tsd" />
+
+// creating the random local variable was needed to get the unit tests working.
+// if not, the tests would not load as we were referencing an undefined window object
+var __RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF: any;
+if (typeof window !== 'undefined') {
+    __RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF = window;
+}
 
 (function() {
 
@@ -34,4 +40,4 @@
         new ag.grid.Grid(eGridDiv, gridOptions);
     }
 
-}).call(window);
+}).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);

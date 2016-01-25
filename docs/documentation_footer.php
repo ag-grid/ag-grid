@@ -36,7 +36,7 @@
         <hr/>
 
         <footer class="license">
-            © Niall Crosby 2015
+            © Niall Crosby 2015 - 2016
         </footer>
     </div>
 

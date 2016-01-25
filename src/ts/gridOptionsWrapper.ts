@@ -13,27 +13,14 @@ module ag.grid {
 
         private gridOptions: GridOptions;
 
-        private groupHeaders: boolean;
         private headerHeight: number;
-        private rowHeight: number;
-        private floatingTopRowData: any[];
-        private floatingBottomRowData: any[];
 
         public init(gridOptions: GridOptions, eventService: EventService): void {
             this.gridOptions = gridOptions;
 
             this.headerHeight = gridOptions.headerHeight;
-            this.groupHeaders = gridOptions.groupHeaders;
-            this.rowHeight = gridOptions.rowHeight;
-            this.floatingTopRowData = gridOptions.floatingTopRowData;
-            this.floatingBottomRowData = gridOptions.floatingBottomRowData;
 
             eventService.addGlobalListener(this.globalEventHandler.bind(this));
-
-            // set defaults
-            if (!this.rowHeight) {
-                this.rowHeight = DEFAULT_ROW_HEIGHT;
-            }
 
             this.checkForDeprecated();
         }
@@ -44,11 +31,11 @@ module ag.grid {
         public getContext() { return this.gridOptions.context; }
         public isVirtualPaging() { return isTrue(this.gridOptions.virtualPaging); }
         public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
-        public isToolPanelSuppressPivot() { return isTrue(this.gridOptions.toolPanelSuppressPivot); }
+        public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
         public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
         public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
         public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
-        public isGroupHidePivotColumns() { return isTrue(this.gridOptions.groupHidePivotColumns); }
+        public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
         public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
         public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
         public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
@@ -59,6 +46,8 @@ module ag.grid {
         public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
         public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
         public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }
+        public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
+        public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
 
         public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
         public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
@@ -72,9 +61,7 @@ module ag.grid {
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
         public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
         public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
-        public getGroupKeys() { return this.gridOptions.groupKeys; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
-        public getGroupAggFields() { return this.gridOptions.groupAggFields; }
         public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
         public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
@@ -96,32 +83,23 @@ module ag.grid {
         public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
         public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
         public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
-        public getRowHeight() { return this.rowHeight; }
         public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
         public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
+        public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
+        public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
+        public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
+        public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
+        public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
 
         // properties
         public getHeaderHeight(): number {
             if (typeof this.headerHeight === 'number') {
                 return this.headerHeight;
             } else {
-                // otherwise return 25 if no grouping, 50 if grouping
-                if (this.groupHeaders) {
-                    return 50;
-                } else {
-                    return 25;
-                }
+                return 25;
             }
         }
         public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
-
-        public isGroupHeaders(): boolean { return isTrue(this.groupHeaders); }
-        public setGroupHeaders(groupHeaders: boolean): void { this.groupHeaders = groupHeaders; }
-
-        public getFloatingTopRowData(): any[] { return this.floatingTopRowData; }
-        public setFloatingTopRowData(rows: any[]): void { this.floatingTopRowData = rows; }
-        public getFloatingBottomRowData(): any[] { return this.floatingBottomRowData; }
-        public setFloatingBottomRowData(rows: any[]): void { this.floatingBottomRowData = rows; }
 
         public isExternalFilterPresent() {
             if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
@@ -172,20 +150,16 @@ module ag.grid {
             if (options.suppressDescSort) {
                 console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortOrder instead.');
             }
-        }
+            if (options.groupAggFields) {
+                console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
+            }
+            if (options.groupHidePivotColumns) {
+                console.warn('ag-grid: as of v3 groupHidePivotColumns is not used as pivot columns are now called rowGroup columns. Please refer to the documentation');
+            }
+            if (options.groupKeys) {
+                console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
+            }
 
-        public getPinnedColCount() {
-            // if not using scrolls, then pinned columns doesn't make
-            // sense, so always return 0
-            if (this.isForPrint()) {
-                return 0;
-            }
-            if (this.gridOptions.pinnedColumnCount) {
-                //in case user puts in a string, cast to number
-                return Number(this.gridOptions.pinnedColumnCount);
-            } else {
-                return 0;
-            }
         }
 
         public getLocaleTextFunc() {
@@ -216,6 +190,31 @@ module ag.grid {
                 return eventName;
             } else {
                 return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+            }
+        }
+
+        // we don't allow dynamic row height for virtual paging
+        public getRowHeightForVirtualPagiation(): number {
+            if (typeof this.gridOptions.rowHeight === 'number') {
+                return this.gridOptions.rowHeight;
+            } else {
+                return DEFAULT_ROW_HEIGHT;
+            }
+        }
+
+        public getRowHeightForNode(rowNode: RowNode): number {
+            if (typeof this.gridOptions.rowHeight === 'number') {
+                return this.gridOptions.rowHeight;
+            } else if (typeof this.gridOptions.getRowHeight === 'function') {
+                var params = {
+                    node: rowNode,
+                    data: rowNode.data,
+                    api: this.gridOptions.api,
+                    context: this.gridOptions.context
+                };
+                return this.gridOptions.getRowHeight(params);
+            } else {
+                return DEFAULT_ROW_HEIGHT;
             }
         }
     }

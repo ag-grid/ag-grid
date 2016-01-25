@@ -29,7 +29,9 @@ module.controller("exampleCtrl", function($scope, $http) {
             skipHeader: $scope.skipHeader === true,
             skipFooters: $scope.skipFooters === true,
             skipGroups: $scope.skipGroups === true,
-            fileName: $scope.fileName
+            allColumns: $scope.allColumns === true,
+            fileName: $scope.fileName,
+            columnSeparator: $scope.columnSeparator
         };
 
         if ($scope.customHeader) {

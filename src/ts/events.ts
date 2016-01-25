@@ -5,8 +5,8 @@ module ag.grid {
         /** A new set of columns has been entered, everything has potentially changed. */
         public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
 
-        /** A pivot column was added, removed or order changed. */
-        public static EVENT_COLUMN_PIVOT_CHANGE = 'columnPivotChanged';
+        /** A row group column was added, removed or order changed. */
+        public static EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';
 
         /** A value column was added, removed or agg function was changed. */
         public static EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';
@@ -17,14 +17,17 @@ module ag.grid {
         /** One or more columns was shown / hidden */
         public static EVENT_COLUMN_VISIBLE = 'columnVisible';
 
+        /** One or more columns was pinned / unpinned*/
+        public static EVENT_COLUMN_PINNED = 'columnPinned';
+
         /** A column group was opened / closed */
         public static EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
 
-        /** One or more columns was resized. If just one, the column in the event is set. */
-        public static EVENT_COLUMN_RESIZED = 'columnResized';
+        /** A column group was opened / closed */
+        public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 
         /** One or more columns was resized. If just one, the column in the event is set. */
-        public static EVENT_COLUMN_PINNED_COUNT_CHANGED = 'columnPinnedCountChanged';
+        public static EVENT_COLUMN_RESIZED = 'columnResized';
 
         public static EVENT_MODEL_UPDATED = 'modelUpdated';
         public static EVENT_CELL_CLICKED = 'cellClicked';
@@ -44,6 +47,7 @@ module ag.grid {
         public static EVENT_ROW_CLICKED = 'rowClicked';
         public static EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
         public static EVENT_READY = 'ready';
+        public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     }
 
 }
