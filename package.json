@@ -1,0 +1,42 @@
+{
+  "name": "ag-grid-react-component",
+  "version": "0.0.1",
+  "description": "ag-Grid React Component",
+  "main": "dist/ag-grid-react-component.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceolter/ag-grid-react-component.git"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/ag-grid/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
+  "devDependencies": {
+    "vinyl-buffer": "1.0.0",
+    "merge2": "0.3.6",
+    "gulp": "3.9.0",
+    "gulp-uglify": "1.5.1",
+    "gulp-rename": "1.2.2",
+    "gulp-typescript": "2.10.0",
+    "typescript": "1.7.5",
+    "gulp-header": "1.7.0",
+    "gulp-tsd": "0.0.4"
+  },
+  "dependencies": {
+    "react-dom": "0.14.6",
+    "react": "0.14.6",
+    "ag-grid": "file:../ag-grid"
+  }
+}
