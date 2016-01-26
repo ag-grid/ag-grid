@@ -474,7 +474,13 @@ module ag.grid {
             var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
 
             if (doingGrouping) {
-                var expandByDefault = this.gridOptionsWrapper.isGroupSuppressRow() || this.gridOptionsWrapper.getGroupDefaultExpanded();
+                var expandByDefault: number;
+                if (this.gridOptionsWrapper.isGroupSuppressRow()) {
+                    // 99999 means 'expand everything'
+                    expandByDefault = -1;
+                } else {
+                    expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+                }
                 rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
             } else {
                 rowsAfterGroup = this.allRows;

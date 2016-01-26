@@ -1,4 +1,5 @@
 /// <reference path="constants.ts" />
+/// <reference path="components/componentUtil.ts" />
 
 module ag.grid {
 
@@ -60,7 +61,7 @@ module ag.grid {
         public getApi() { return this.gridOptions.api; }
         public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
         public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
-        public getGroupDefaultExpanded() { return this.gridOptions.groupDefaultExpanded; }
+        public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
         public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
         public getRowData(): any[] { return this.gridOptions.rowData; }
         public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
@@ -159,7 +160,9 @@ module ag.grid {
             if (options.groupKeys) {
                 console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
             }
-
+            if (typeof options.groupDefaultExpanded === 'boolean') {
+                console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
+            }
         }
 
         public getLocaleTextFunc() {
@@ -179,17 +182,9 @@ module ag.grid {
 
         // responsible for calling the onXXX functions on gridOptions
         public globalEventHandler(eventName: string, event?: any): void {
-            var callbackMethodName = this.getCallbackForEvent(eventName);
+            var callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
             if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
                 (<any>this.gridOptions)[callbackMethodName](event);
-            }
-        }
-
-        private getCallbackForEvent(eventName: string): string {
-            if (!eventName || eventName.length < 2) {
-                return eventName;
-            } else {
-                return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
             }
         }
 

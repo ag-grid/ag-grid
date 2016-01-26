@@ -310,7 +310,7 @@ module ag.grid {
                 // if user provided a filter, just use it
                 // first up, create child scope if needed
                 if (this.gridOptionsWrapper.isAngularCompileFilters()) {
-                    filterWrapper.scope = this.$scope.$new();;
+                    filterWrapper.scope = this.$scope.$new();
                 }
                 // now create filter (had to cast to any to get 'new' working)
                 this.assertMethodHasNoParameters(colDef.filter);
@@ -369,6 +369,14 @@ module ag.grid {
             }
 
             return filterWrapper;
+        }
+
+        public destroy() {
+            _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
+                if (filterWrapper.filter.destroy) {
+                    filterWrapper.filter.destroy();
+                }
+            });
         }
 
         private assertMethodHasNoParameters(theMethod: any) {

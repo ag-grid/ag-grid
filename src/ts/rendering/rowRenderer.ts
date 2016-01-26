@@ -268,6 +268,11 @@ module ag.grid {
             this.drawVirtualRows();
         }
 
+        public destroy() {
+            var rowsToRemove = Object.keys(this.renderedRows);
+            this.removeVirtualRow(rowsToRemove);
+        }
+
         private refreshAllVirtualRows(fromIndex: any) {
             // remove all current virtual rows, as they have old data
             var rowsToRemove = Object.keys(this.renderedRows);

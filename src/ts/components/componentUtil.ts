@@ -2,20 +2,37 @@ module ag.grid {
 
     export class ComponentUtil {
 
-        public static SIMPLE_PROPERTIES = [
-            'sortingOrder',
-            'icons','localeText','localeTextFunc',
-            'groupColumnDef','context','rowStyle','rowClass','headerCellRenderer',
-            'groupDefaultExpanded','slaveGrids','rowSelection',
-            'overlayLoadingTemplate','overlayNoRowsTemplate',
-            'headerCellTemplate'
+        public static EVENTS = [
+            // core grid events
+            'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
+            'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+            'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
+            'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged', 'rowGroupOpened',
+            // column events
+            'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
+            'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'
         ];
 
-        public static SIMPLE_NUMBER_PROPERTIES = [
-            'rowHeight','rowBuffer','colWidth'
+        // function below fills this with onXXX methods, based on the above events
+        private static EVENT_CALLBACKS: string[];
+
+        public static STRING_PROPERTIES = [
+            'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
+            'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText'];
+
+        public static OBJECT_PROPERTIES = [
+            'rowStyle','context','groupColumnDef','localeText','icons','datasource'
         ];
 
-        public static SIMPLE_BOOLEAN_PROPERTIES = [
+        public static ARRAY_PROPERTIES = [
+            'slaveGrids','rowData','floatingTopRowData','floatingBottomRowData','columnDefs'
+        ];
+
+        public static NUMBER_PROPERTIES = [
+            'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded'
+        ];
+
+        public static BOOLEAN_PROPERTIES = [
             'virtualPaging','toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
             'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
             'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
@@ -24,27 +41,29 @@ module ag.grid {
             'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
             'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
             'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
-            'suppressParentsInRowNodes'
+            'suppressParentsInRowNodes','showToolPanel'
         ];
 
-        public static WITH_IMPACT_STRING_PROPERTIES = ['quickFilterText'];
-        public static WITH_IMPACT_NUMBER_PROPERTIES = ['headerHeight'];
-        public static WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
-        public static WITH_IMPACT_OTHER_PROPERTIES = [
-            'rowData','floatingTopRowData','floatingBottomRowData',
-            'columnDefs','datasource'];
+        public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
+            'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
+            'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate'];
 
-        public static CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
-            'isScrollLag','isExternalFilterPresent','doesExternalFilterPass','getRowClass','getRowStyle',
-            'headerCellRenderer','getHeaderCellTemplate'];
+        public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
+            .concat(ComponentUtil.OBJECT_PROPERTIES)
+            .concat(ComponentUtil.STRING_PROPERTIES)
+            .concat(ComponentUtil.NUMBER_PROPERTIES)
+            .concat(ComponentUtil.FUNCTION_PROPERTIES)
+            .concat(ComponentUtil.BOOLEAN_PROPERTIES);
 
-        public static ALL_PROPERTIES = ComponentUtil.SIMPLE_PROPERTIES
-            .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
-            .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
-            .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
-            .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
-            .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
-            .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES);
+        public static getEventCallbacks(): string[] {
+            if (!ComponentUtil.EVENT_CALLBACKS) {
+                ComponentUtil.EVENT_CALLBACKS = [];
+                ComponentUtil.EVENTS.forEach( (eventName: string)=> {
+                    ComponentUtil.EVENT_CALLBACKS.push(ComponentUtil.getCallbackForEvent(eventName));
+                });
+            }
+            return ComponentUtil.EVENT_CALLBACKS;
+        }
 
         public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions {
             // create empty grid options if none were passed
@@ -54,27 +73,40 @@ module ag.grid {
             // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
             var pGridOptions = <any>gridOptions;
             // add in all the simple properties
-            ComponentUtil.SIMPLE_PROPERTIES
-                .concat(ComponentUtil.CALLBACKS)
-                .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
-                .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
+            ComponentUtil.ARRAY_PROPERTIES
+                .concat(ComponentUtil.STRING_PROPERTIES)
+                .concat(ComponentUtil.OBJECT_PROPERTIES)
+                .concat(ComponentUtil.FUNCTION_PROPERTIES)
                 .forEach( (key)=> {
                 if (typeof (component)[key] !== 'undefined') {
                     pGridOptions[key] = component[key];
                 }
             });
-            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES).forEach( (key)=> {
+            ComponentUtil.BOOLEAN_PROPERTIES.forEach( (key)=> {
                 if (typeof (component)[key] !== 'undefined') {
                     pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
                 }
             });
-            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES).forEach( (key)=> {
+            ComponentUtil.NUMBER_PROPERTIES.forEach( (key)=> {
                 if (typeof (component)[key] !== 'undefined') {
                     pGridOptions[key] = ComponentUtil.toNumber(component[key]);
                 }
             });
+            ComponentUtil.getEventCallbacks().forEach( (funcName) => {
+                if (typeof (component)[funcName] !== 'undefined') {
+                    pGridOptions[funcName] = component[funcName];
+                }
+            });
 
             return gridOptions;
+        }
+
+        public static getCallbackForEvent(eventName: string): string {
+            if (!eventName || eventName.length < 2) {
+                return eventName;
+            } else {
+                return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+            }
         }
 
         // change this method, the caller should know if it's initialised or not, plus 'initialised'
@@ -88,19 +120,27 @@ module ag.grid {
             var pGridOptions = <any> gridOptions;
 
             // check if any change for the simple types, and if so, then just copy in the new value
-            ComponentUtil.SIMPLE_PROPERTIES.forEach( (key)=> {
+            ComponentUtil.ARRAY_PROPERTIES
+                .concat(ComponentUtil.OBJECT_PROPERTIES)
+                .concat(ComponentUtil.STRING_PROPERTIES)
+                .forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = changes[key].currentValue;
                 }
             });
-            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.forEach( (key)=> {
+            ComponentUtil.BOOLEAN_PROPERTIES.forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue);
                 }
             });
-            ComponentUtil.SIMPLE_NUMBER_PROPERTIES.forEach( (key)=> {
+            ComponentUtil.NUMBER_PROPERTIES.forEach( (key)=> {
                 if (changes[key]) {
                     pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue);
+                }
+            });
+            ComponentUtil.getEventCallbacks().forEach( (funcName)=> {
+                if (changes[funcName]) {
+                    pGridOptions[funcName] = changes[funcName].currentValue;
                 }
             });
 
@@ -134,12 +174,6 @@ module ag.grid {
 
             if (changes.headerHeight) {
                 api.setHeaderHeight(changes.headerHeight.currentValue);
-            }
-
-            // need to review this, it is not impacting anything, they should
-            // call something on the API to update the grid
-            if (changes.groupAggFunction) {
-                gridOptions.groupAggFunction = changes.groupAggFunction.currentValue;
             }
         }
 

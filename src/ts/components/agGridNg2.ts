@@ -96,7 +96,7 @@ module ag.grid {
         public rowStyle: any;
         public rowClass: any;
         public headerCellRenderer: any;
-        public groupDefaultExpanded: any;
+        public groupDefaultExpanded: number;
         public slaveGrids: GridOptions[];
         public rowSelection: string;
         public rowDeselection: boolean;
@@ -199,24 +199,8 @@ module ag.grid {
         (<any>AgGridNg2).annotations = [
             new _ng.core.Component({
                 selector: 'ag-grid-ng2',
-                outputs: [
-                    // core grid events
-                    'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
-                    'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
-                    'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                    'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged', 'rowGroupOpened',
-                    // column events
-                    'columnEverythingChanged','columnRowGroupChanged','columnValueChanged','columnMoved',
-                    'columnVisible','columnGroupOpened','columnResized','columnPinnedCountChanged'],
-                inputs: ['gridOptions']
-                    .concat(ComponentUtil.SIMPLE_PROPERTIES)
-                    .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
-                    .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
-                    .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
-                    .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
-                    .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
-                    .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
-                    .concat(ComponentUtil.CALLBACKS),
+                outputs: ComponentUtil.EVENTS,
+                inputs: ComponentUtil.ALL_PROPERTIES.concat(['gridOptions']),
                 compileChildren: false // no angular on the inside thanks
             }),
             new _ng.core.View({
@@ -227,4 +211,5 @@ module ag.grid {
         ];
         (<any>AgGridNg2).parameters = [[_ng.core.ElementRef]];
     }
+
 }

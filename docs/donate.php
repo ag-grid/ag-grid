@@ -14,10 +14,10 @@ include './documentation_header.php';
     <h2>Donate</h2>
 
     <div style="padding-top: 10px; color: #111;">
-        Please click this button to donate £350 GBP to ag-Grid.
+        Please click this button to donate $500 USD to ag-Grid.
     </div>
     <div style="padding-top: 10px; padding-bottom: 10px;">
-        <button onclick="processDonation()">Donate £350</button>
+        <button onclick="processDonation()">Donate $500</button>
     </div>
 
     <!-- test -->
@@ -42,8 +42,8 @@ include './documentation_header.php';
             handler.open({
                 name: 'ag-Grid',
                 description: 'Donation',
-                currency: "gbp",
-                amount: 35000
+                currency: "usd",
+                amount: 50000
             });
 
             function createBlock() {
@@ -71,7 +71,7 @@ include './documentation_header.php';
                     if (data==='Success') {
                         setTimeout(function() {
                             var eMessage = createBlock();
-                            eMessage.innerHTML = 'Your payment of £350 has been received. Thank you very much.';
+                            eMessage.innerHTML = 'Your payment of $500 USD has been received. Thank you very much.';
                         }, 1000);
                     }
                 };

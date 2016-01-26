@@ -54,7 +54,7 @@ module ag.grid {
         context?: any;
         rowStyle?: any;
         rowClass?: any;
-        groupDefaultExpanded?: any;
+        groupDefaultExpanded?: number;
         slaveGrids?: GridOptions[];
         rowSelection?: string;
         rowDeselection?: boolean;

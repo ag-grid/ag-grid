@@ -75,7 +75,7 @@ gridsModule.controller('mainController', function($scope) {
         rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
         groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
-//        groupDefaultExpanded: true, //one of [true, false], or an integer if greater than 1
+//        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
         //groupSuppressBlankHeader: true,

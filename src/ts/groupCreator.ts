@@ -10,7 +10,7 @@ module ag.grid {
             this.gridOptionsWrapper = gridOptionsWrapper;
         }
 
-        public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: any) {
+        public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 
             var topMostGroup: RowNode = {
                 level: -1,
@@ -98,9 +98,13 @@ module ag.grid {
 
         isExpanded(expandByDefault: any, level: any) {
             if (typeof expandByDefault === 'number') {
-                return level < expandByDefault;
+                if (expandByDefault===-1) {
+                    return true;
+                } else {
+                    return level < expandByDefault;
+                }
             } else {
-                return expandByDefault === true || expandByDefault === 'true';
+                return false;
             }
         }
     }

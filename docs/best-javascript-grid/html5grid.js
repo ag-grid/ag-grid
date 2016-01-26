@@ -122,8 +122,10 @@
         {
             headerName: 'IT Skills',
             children: [
-                {headerName: "Skills", width: 125, suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-                {headerName: "Proficiency", field: "proficiency", filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+                {headerName: "Skills", width: 125, suppressSorting: true,
+                    cellRenderer: skillsCellRenderer, filter: SkillFilter},
+                {headerName: "Proficiency", field: "proficiency", filter: 'number',
+                    width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
             ]
         },
         {

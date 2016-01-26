@@ -8,8 +8,8 @@ $tokenId = $token->id;
 
 try {
     \Stripe\Charge::create(array(
-        "amount" => 35000,
-        "currency" => "gbp",
+        "amount" => 50000,
+        "currency" => "usd",
         "card" => $tokenId
     ));
     $result = 'Success';

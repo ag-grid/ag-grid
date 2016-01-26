@@ -147,8 +147,11 @@ module ag.grid {
             this.grid.updateModelAndRefresh(Constants.STEP_MAP);
         }
 
-        public addVirtualRowListener(rowIndex:any, callback:any) {
-            this.grid.addVirtualRowListener(rowIndex, callback);
+        public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
+            if (typeof eventName !== 'string') {
+                console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, pleae check the documentation.');
+            }
+            this.grid.addVirtualRowListener(eventName, rowIndex, callback);
         }
 
         public setQuickFilter(newFilter:any) {

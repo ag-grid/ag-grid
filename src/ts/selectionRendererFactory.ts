@@ -3,11 +3,11 @@ module ag.grid {
 
     export class SelectionRendererFactory {
 
-        private angularGrid: any;
+        private grid: Grid;
         private selectionController: any;
 
-        public init(angularGrid: any, selectionController: any) {
-            this.angularGrid = angularGrid;
+        public init(grid: Grid, selectionController: any) {
+            this.grid = grid;
             this.selectionController = selectionController;
         }
 
@@ -33,12 +33,8 @@ module ag.grid {
                 }
             };
 
-            this.angularGrid.addVirtualRowListener(rowIndex, {
-                rowSelected: function (selected: any) {
-                    setCheckboxState(eCheckbox, selected);
-                },
-                rowRemoved: function () {
-                }
+            this.grid.addVirtualRowListener(Grid.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
+                setCheckboxState(eCheckbox, selected);
             });
 
             return eCheckbox;

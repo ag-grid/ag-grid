@@ -657,7 +657,8 @@ module ag.grid {
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 refreshCell: this.refreshCell.bind(this),
-                eGridCell: this.vGridCell
+                eGridCell: this.vGridCell,
+                eParentOfValue: this.vParentOfValue
             };
             // start duplicated code
             var actualCellRenderer: Function;

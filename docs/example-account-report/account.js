@@ -50,7 +50,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         rowData: createRowData(),
         rowSelection: 'single',
         groupHeaders: true,
-        groupDefaultExpanded: true,
+        groupDefaultExpanded: 9999,
         groupIncludeFooter: true,
         enableColResize: true,
         enableSorting: false,

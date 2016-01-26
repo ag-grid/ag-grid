@@ -198,10 +198,15 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>addVirtualRowListener(rowIndex, callback)</th>
-            <td>Register a callback for notifications about a particular virtualised row. When
-                the row is removed from the table (due to virtualisation), the callback is removed.
-                This callback is intended for cell renderers, that want to register for events
+            <th>addVirtualRowListener(event, rowIndex, callback)</th>
+            <td>Register a callback for notifications about a particular virtualised row.
+                Unlike normal events, you do not need to unregister virtual row listeners.
+                When the row is removed from the grid, all associated row listeners will
+                also be removed. There are two events: 'virtualRowRemoved' - listen
+                for this event if your cellRenderer needs to do clean down after the
+                row no longer exists. 'virtualRowSelected' - listen for this event
+                if you want your cell listener to do something when the row is selected.
+                This callback is intended for cellRenderers that want to register for events
                 for the rendered row - thus if the row is no longer rendered on the screen, the
                 callbacks stop. If the row is redrawn, then the cell renderer must register
                 another callback.
@@ -209,7 +214,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getRenderedNodes()</th>
-            <td>Retrieve rendered nodes. Due to virtulisation this will contain only the current visible rows and the amount in the buffer.
+            <td>Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and the amount in the buffer.
             </td>
         </tr>
         <tr>

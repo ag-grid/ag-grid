@@ -12,6 +12,9 @@ include 'documentation_header.php';
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
     <li>Minor: Bug fix - pinning was not saved during columnApi.getState()</li>
     <li>Minor: Added 'typings' to package.json, so TypeScript can pick up typings from node module</li>
+    <li>Minor: groupDefaultExpanded must be number (used to be number or boolean). Set to -1 instead of 'true' for same effect.</li>
+    <li>Minor: addVirtualRowListener - now takes an event type and a function, so has similar pattern to normal event listeners.</li>
+    <li>Minor: New method 'destroy' added to custom filters. If you need to do cleanup, put it in the destroy method.</li>
 
     <h3>Version 3.1.2</h3>
     <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>
@@ -20,7 +23,7 @@ include 'documentation_header.php';
 
     <li>Minor: Added 'columnSeparator' to CSV Export</li>
     <li>Minor: Added starting character of '\ufeff' to CSV Export (for Excel compatibility)</li>
-    <li>Minor: Bugfix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
+    <li>Minor: Bug fix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
 
     <h3>Version 3.1.0</h3>
 

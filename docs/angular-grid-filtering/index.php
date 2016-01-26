@@ -242,6 +242,7 @@ columnDefinition = {
     MyCustomFilter.prototype.afterGuiAttached = function(params) {}
     MyCustomFilter.prototype.onNewRowsLoaded = function () {}
     MyCustomFilter.prototype.onAnyFilterChanged = function () {}
+    MyCustomFilter.prototype.destroy = function () {}
 
     </pre>
 
@@ -349,6 +350,14 @@ columnDefinition = {
     }
 }</pre>
             </td>
+            <tr>
+                <th>destroy</th>
+                <td>Gets called when the grid is destroyed. If your custom filter needs to do
+                    any resource cleaning up, do it here. A filter is NOT destroyed when it is
+                    made 'not visible', as the gui is kept to be shown again if the user selects
+                    that filter again.
+                </td>
+            </tr>
         </tr>
     </table>
 

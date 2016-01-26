@@ -37,7 +37,7 @@ include '../documentation_header.php';
         Web Components
     </h4>
     <p>
-        Add callbacks to the gridOptions or set as AngularJS properties.
+        Add callbacks to the gridOptions or set as component properties.
     </p>
 
     <h2>List of Callbacks</h2>

@@ -110,7 +110,6 @@ module ag.grid {
         private createNode(data: any, virtualRowIndex: number): RowNode {
             var rowHeight = this.getRowHeightAsNumber();
             var top = rowHeight * virtualRowIndex;
-            console.log(virtualRowIndex + ' ' + rowHeight + ' - ' + top);
             var rowNode = <RowNode> {
                 data: data,
                 id: virtualRowIndex,
