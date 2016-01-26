@@ -37,6 +37,6 @@
   "dependencies": {
     "react-dom": "0.14.6",
     "react": "0.14.6",
-    "ag-grid": "file:../ag-grid"
+    "ag-grid": "latest"
   }
 }

@@ -48,7 +48,7 @@ function tsReleaseTask() {
             //emitDecoratorMetadata: true,
             target: 'es5',
             //module: 'commonjs',
-            jsx: 'react',
+            //jsx: 'react',
             //declarationFiles: true,
             out: 'ag-grid-react-component.js'
         }));

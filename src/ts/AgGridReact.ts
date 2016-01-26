@@ -8,8 +8,7 @@ module ag.react {
 
         render: function() {
             return React.DOM.div({
-                style: this.props.style,
-                className: this.props.className
+                style: {height: '100%'}
             });
         },
 
@@ -60,6 +59,15 @@ module ag.react {
                     };
                 }
             });
+            AgGrid.ComponentUtil.getEventCallbacks().forEach( (funcName: string)=> {
+                if (this.props[funcName]!==nextProps[funcName]) {
+                    changes[funcName] = {
+                        previousValue: this.props[funcName],
+                        currentValue: nextProps[funcName]
+                    };
+                }
+            });
+
             AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         },
 
@@ -69,32 +77,21 @@ module ag.react {
     });
 
     AgGridReact.propTypes = {
-        style: React.PropTypes.object,
-        className: React.PropTypes.string,
         gridOptions: React.PropTypes.object,
-
-        // we should iterate through all the properties and add them here
-        onReady: React.PropTypes.func,
-        showToolPanel: React.PropTypes.bool
     };
 
-//
-//ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES
-//    .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
-//    .forEach( (propKey)=> {
-//        agGridReactNoType.propTypes[propKey] = React.PropTypes.bool;
-//    });
+    addProperties(AgGrid.ComponentUtil.getEventCallbacks(), React.PropTypes.func);
+    addProperties(AgGrid.ComponentUtil.BOOLEAN_PROPERTIES, React.PropTypes.bool);
+    addProperties(AgGrid.ComponentUtil.STRING_PROPERTIES, React.PropTypes.string);
+    addProperties(AgGrid.ComponentUtil.OBJECT_PROPERTIES, React.PropTypes.object);
+    addProperties(AgGrid.ComponentUtil.ARRAY_PROPERTIES, React.PropTypes.array);
+    addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, React.PropTypes.number);
+    addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, React.PropTypes.func);
 
-//ComponentUtil.SIMPLE_PROPERTIES
-//    .concat(ComponentUtil.WITH_IMPACT_STRING_PROPERTIES)
-//    .forEach( (propKey)=> {
-//        AgGridReact.propTypes[propKey] = React.PropTypes.bool;
-//    });
-
-//.concat(ComponentUtil.)
-//.concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
-//.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
-//.concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
-//.concat(ComponentUtil.CALLBACKS),
+    function addProperties(listOfProps: string[], propType: any) {
+        listOfProps.forEach( (propKey: string)=> {
+            AgGridReact[propKey] = propType;
+        });
+    }
 
 }
