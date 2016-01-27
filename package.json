@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react-component",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "ag-Grid React Component",
   "main": "dist/ag-grid-react-component.min.js",
   "scripts": {
@@ -35,9 +35,9 @@
     "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
     "react-dom": "0.14.6",
-    "react": "0.14.6",
+    "react": "0.14.6"
   },
   "dependencies": {
-    "ag-grid": "3.2.1"
+    "ag-grid": "3.2.2"
   }
 }

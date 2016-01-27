@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react-component",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
     "Niall Crosby <niall.crosby@gmail.com>"
@@ -31,9 +31,9 @@
   ],
   "devDependencies": {
     "react-dom": "0.14.6",
-    "react": "0.14.6",
-    "ag-grid": "3.2.1"
+    "react": "0.14.6"
   },
   "dependencies": {
+    "ag-grid": "3.2.2"
   }
 }
