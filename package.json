@@ -36,8 +36,8 @@
     "gulp-tsd": "0.0.4",
     "react-dom": "0.14.6",
     "react": "0.14.6",
-    "ag-grid": "3.2.1"
   },
   "dependencies": {
+    "ag-grid": "3.2.1"
   }
 }
