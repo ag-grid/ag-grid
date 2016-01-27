@@ -55,8 +55,10 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<div style="border: 2px solid darkred; background-color: #eee; padding: 10px; margin: 5px;">
-    Note: Version 3.1.1 has some problems because I messed up the release process. Please move to 3.1.2.
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px;">
+    <b>Version 3.2.0 released</b>. Minor changes, see the <a href="changeLog.php">change log</a>. This release
+    was mostly to support the 'React Component' which I'm going to release as soon as I get the
+    documentation updated.
 </div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
