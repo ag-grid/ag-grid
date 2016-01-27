@@ -10,6 +10,34 @@ include('mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
+        <a href="react-loves-ag-grid/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="react-loves-ag-grid/">
+                React Loves ag-Grid
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            27th January 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Article announcing ag-Grids support for React. Not only do they work together,
+        they play together very well indeed!
+    </div>
+
+</div>
+
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
         <a href="ag-grid-in-2016/">
             <img src="images/agGridDaily.png"/>
         </a>

@@ -8,13 +8,14 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 4.0.0</h3>
+    <h3>Version 3.2.0</h3>
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
     <li>Minor: Bug fix - pinning was not saved during columnApi.getState()</li>
     <li>Minor: Added 'typings' to package.json, so TypeScript can pick up typings from node module</li>
     <li>Minor: groupDefaultExpanded must be number (used to be number or boolean). Set to -1 instead of 'true' for same effect.</li>
     <li>Minor: addVirtualRowListener - now takes an event type and a function, so has similar pattern to normal event listeners.</li>
     <li>Minor: New method 'destroy' added to custom filters. If you need to do cleanup, put it in the destroy method.</li>
+    <li>Minor: Took out 'agGridGlobalFunc()', should use ag.grid.Grid() instead.</li>
 
     <h3>Version 3.1.2</h3>
     <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>

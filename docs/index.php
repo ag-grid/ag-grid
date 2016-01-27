@@ -2,11 +2,11 @@
 <html style="height: 100%">
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid - Enterprise Javascript Datagrid</title>
+        <title>ag-Grid - Enterprise Javascript Data Grid</title>
         <meta name="description"
               content=
-              "Javasript Data Grid built for Enterprise Application Developers. Supports React, AngularJS & Angular 2. Blazing fast. Feature rich. The best JavaScript DataGrid.">
-        <meta name="keywords" content="javascript react data grid angularjs angular web components"/>
+              "Javascript data grid that's feature rich and blazing fast with a brilliant API. Supports Plain Javascript, React, AngularJS 1 & 2 and Web Componets. ag-Grid simply is the best JavaScript data grid you can get.">
+        <meta name="keywords" content="javascript data grid react angularjs angular 2 web components"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/angular-grid.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -152,10 +152,9 @@
                             The Best Javascript Data Grid
                         </h2>
                         <div style="font-size: 16px;">
-                            Feature rich, high performance, no dependencies.
+                            Feature rich, high performance, great API, no dependencies.
                         </div>
                         <div>
-                            'ag' stands for <b>Ag</b>nostic - works with any framework
                         </div>
 
 <!--
@@ -200,14 +199,8 @@
 -->
         <div class="container">
             <div class="row" style="margin-top: 20px;">
-                <div class="col-md-3" style="text-align: center;">
-                    <h4>Javascript Grid</h4>
-                </div>
-                <div class="col-md-6" style="text-align: center;">
-                    <h4>Angular Grid</h4>
-                </div>
-                <div class="col-md-3" style="text-align: center;">
-                    <h4>Web Component Grid</h4>
+                <div class="col-md-12" style="text-align: center;">
+                    <h4>'ag' stads for <b>Ag</b>nostic - choose your framework</h4>
                 </div>
             </div>
 
@@ -217,7 +210,9 @@
                         padding: 20px;
                     }
                 </style>
-                <div class="col-md-3" style="text-align: center;">
+                <div class="col-md-1" style="text-align: center;">
+                </div>
+                <div class="col-md-2" style="text-align: center;">
                     <a href="/best-javascript-grid/index.php">
                         <div>
                             <img style="height: 100px;" src="images/javascript_large.png"/>
@@ -227,7 +222,17 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-3" style="text-align: center;">
+                <div class="col-md-2" style="text-align: center;">
+                    <a href="/best-react-grid/index.php">
+                        <div>
+                            <img style="height: 100px;" src="images/react_large.png"/>
+                        </div>
+                        <div class="usage-footer">
+                            <h4>React</h4>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-2" style="text-align: center;">
                     <a href="/best-angularjs-grid/index.php">
                         <div>
                             <img style="height: 100px;" src="images/angularjs_large.png"/>
@@ -237,7 +242,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-3" style="text-align: center;">
+                <div class="col-md-2" style="text-align: center;">
                     <a href="/best-angularjs-2-grid/index.php">
                         <div>
                             <img style="height: 100px;" src="images/angular2_large.png"/>
@@ -247,7 +252,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-3" style="text-align: center;">
+                <div class="col-md-2" style="text-align: center;">
                     <a href="/best-web-component-grid/index.php">
                         <div>
                             <img style="height: 100px;" src="images/webComponents_large.png"/>
@@ -458,7 +463,7 @@
             <hr>
 
             <footer class="license">
-                © Niall Crosby 2015
+                © ag-Grid Ltd 2015-2016
             </footer>
         </div>
 
@@ -470,18 +475,18 @@
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-<script src="dist/ag-grid.min.js?ignore=notused16"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused16">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused16">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused16">
+<script src="dist/ag-grid.min.js?ignore=notused17"></script>
+<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused17">
+<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused17">
+<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused17">
 
-<link href="example-file-browser/fileBrowser.css?ignore=notused16" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused16" rel="stylesheet">
-<link href="example-account-report/account.css?ignore=notused16" rel="stylesheet">
+<link href="example-file-browser/fileBrowser.css?ignore=notused17" rel="stylesheet">
+<link href="best-angularjs-grid/basic.css?ignore=notused17" rel="stylesheet">
+<link href="example-account-report/account.css?ignore=notused17" rel="stylesheet">
 
-<script src="minimised/basic.js?ignore=notused16"></script>
-<script src="minimised/account.js?ignore=notused16"></script>
-<script src="minimised/fileBrowser.js?ignore=notused16"></script>
+<script src="minimised/basic.js?ignore=notused17"></script>
+<script src="minimised/account.js?ignore=notused17"></script>
+<script src="minimised/fileBrowser.js?ignore=notused17"></script>
 <script src="minimised/index-script.js"></script>
 
 <?php include_once("analytics.php"); ?>

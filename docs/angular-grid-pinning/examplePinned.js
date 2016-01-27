@@ -7,7 +7,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     $scope.jumpToRowText = null;
 
     var columnDefs = [
-        {headerName: "#", valueGetter: "node.id", width: 40, pinned: 'left'},
+        {headerName: "#", colId: "rowNum", valueGetter: "node.id", width: 40, pinned: 'left'},
         {headerName: "Athlete", field: "athlete", width: 150, pinned: 'left'},
         {headerName: "Age", field: "age", width: 90, pinned: 'left'},
         {headerName: "Country", field: "country", width: 120},
@@ -32,6 +32,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         });
 
     $scope.clearPinned = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('rowNum', null);
         $scope.gridOptions.columnApi.setColumnPinned('athlete', null);
         $scope.gridOptions.columnApi.setColumnPinned('age', null);
         $scope.gridOptions.columnApi.setColumnPinned('country', null);
@@ -39,6 +40,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     $scope.resetPinned = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('rowNum', 'left');
         $scope.gridOptions.columnApi.setColumnPinned('athlete', 'left');
         $scope.gridOptions.columnApi.setColumnPinned('age', 'left');
         $scope.gridOptions.columnApi.setColumnPinned('country', null);
@@ -46,6 +48,7 @@ module.controller("exampleCtrl", function($scope, $http) {
     };
 
     $scope.pinCountry = function() {
+        $scope.gridOptions.columnApi.setColumnPinned('rowNum', null);
         $scope.gridOptions.columnApi.setColumnPinned('athlete', null);
         $scope.gridOptions.columnApi.setColumnPinned('age', null);
         $scope.gridOptions.columnApi.setColumnPinned('country', 'left');

@@ -105,6 +105,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-grid/index.php"><img src="/images/javascript.png" width="20px">Javascript</a>
                 <?php } ?>
 
+                <?php if ($key == "Getting Started React") { ?>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/react.png" width="20px">React</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-grid/index.php"><img src="/images/react.png" width="20px">React</a>
+                <?php } ?>
+
                 <?php if ($key == "Getting Started ng1") { ?>
                     <span class="sidebarLinkSelected childItem"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</span>
                 <?php } else { ?>

@@ -21,6 +21,8 @@ if (typeof window !== 'undefined') {
         }
     }
 
-    //this.agGridGlobalFunc = angularGridGlobalFunction;
+    this.agGridGlobalFunc = function() {
+        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new ag.grid.Grid()" to create a new grid. Check the examples in the documentation.')
+    };
 
 }).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);

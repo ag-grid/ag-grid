@@ -36,7 +36,7 @@
         <hr/>
 
         <footer class="license">
-            © Niall Crosby 2015 - 2016
+            © ag-Grid Ltd 2015-2016 - 2016
         </footer>
     </div>
 

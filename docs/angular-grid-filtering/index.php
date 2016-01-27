@@ -355,7 +355,7 @@ columnDefinition = {
                 <td>Gets called when the grid is destroyed. If your custom filter needs to do
                     any resource cleaning up, do it here. A filter is NOT destroyed when it is
                     made 'not visible', as the gui is kept to be shown again if the user selects
-                    that filter again.
+                    that filter again. The filter is destroyed when the grid is destroyed.
                 </td>
             </tr>
         </tr>

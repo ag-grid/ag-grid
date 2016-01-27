@@ -656,7 +656,7 @@ function currencyRenderer(params)  {
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-        return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 }
 

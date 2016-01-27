@@ -32,7 +32,7 @@ module ag.grid {
 
         AgileGridProto.onChange = function (changes:any) {
             if (this._initialised) {
-                ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+                ComponentUtil.processOnChange(changes, this._gridOptions, this.api);
             }
         };
 
