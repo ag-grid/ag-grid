@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Framework Agnostic Javascript Datagrid.
- * @version v3.1.2
+ * @version v3.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -298,6 +298,8 @@ var ag;
             Events.EVENT_COLUMN_PINNED = 'columnPinned';
             /** A column group was opened / closed */
             Events.EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
+            /** A column group was opened / closed */
+            Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
             /** One or more columns was resized. If just one, the column in the event is set. */
             Events.EVENT_COLUMN_RESIZED = 'columnResized';
             Events.EVENT_MODEL_UPDATED = 'modelUpdated';
@@ -862,7 +864,196 @@ var ag;
         grid.FloatingRowModel = FloatingRowModel;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
+var ag;
+(function (ag) {
+    var grid;
+    (function (grid) {
+        var ComponentUtil = (function () {
+            function ComponentUtil() {
+            }
+            ComponentUtil.getEventCallbacks = function () {
+                if (!ComponentUtil.EVENT_CALLBACKS) {
+                    ComponentUtil.EVENT_CALLBACKS = [];
+                    ComponentUtil.EVENTS.forEach(function (eventName) {
+                        ComponentUtil.EVENT_CALLBACKS.push(ComponentUtil.getCallbackForEvent(eventName));
+                    });
+                }
+                return ComponentUtil.EVENT_CALLBACKS;
+            };
+            ComponentUtil.copyAttributesToGridOptions = function (gridOptions, component) {
+                // create empty grid options if none were passed
+                if (typeof gridOptions !== 'object') {
+                    gridOptions = {};
+                }
+                // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
+                var pGridOptions = gridOptions;
+                // add in all the simple properties
+                ComponentUtil.ARRAY_PROPERTIES
+                    .concat(ComponentUtil.STRING_PROPERTIES)
+                    .concat(ComponentUtil.OBJECT_PROPERTIES)
+                    .concat(ComponentUtil.FUNCTION_PROPERTIES)
+                    .forEach(function (key) {
+                    if (typeof (component)[key] !== 'undefined') {
+                        pGridOptions[key] = component[key];
+                    }
+                });
+                ComponentUtil.BOOLEAN_PROPERTIES.forEach(function (key) {
+                    if (typeof (component)[key] !== 'undefined') {
+                        pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
+                    }
+                });
+                ComponentUtil.NUMBER_PROPERTIES.forEach(function (key) {
+                    if (typeof (component)[key] !== 'undefined') {
+                        pGridOptions[key] = ComponentUtil.toNumber(component[key]);
+                    }
+                });
+                ComponentUtil.getEventCallbacks().forEach(function (funcName) {
+                    if (typeof (component)[funcName] !== 'undefined') {
+                        pGridOptions[funcName] = component[funcName];
+                    }
+                });
+                return gridOptions;
+            };
+            ComponentUtil.getCallbackForEvent = function (eventName) {
+                if (!eventName || eventName.length < 2) {
+                    return eventName;
+                }
+                else {
+                    return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+                }
+            };
+            // change this method, the caller should know if it's initialised or not, plus 'initialised'
+            // is not relevant for all component types.
+            // maybe pass in the api and columnApi instead???
+            ComponentUtil.processOnChange = function (changes, gridOptions, api) {
+                //if (!component._initialised || !changes) { return; }
+                if (!changes) {
+                    return;
+                }
+                // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
+                var pGridOptions = gridOptions;
+                // check if any change for the simple types, and if so, then just copy in the new value
+                ComponentUtil.ARRAY_PROPERTIES
+                    .concat(ComponentUtil.OBJECT_PROPERTIES)
+                    .concat(ComponentUtil.STRING_PROPERTIES)
+                    .forEach(function (key) {
+                    if (changes[key]) {
+                        pGridOptions[key] = changes[key].currentValue;
+                    }
+                });
+                ComponentUtil.BOOLEAN_PROPERTIES.forEach(function (key) {
+                    if (changes[key]) {
+                        pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue);
+                    }
+                });
+                ComponentUtil.NUMBER_PROPERTIES.forEach(function (key) {
+                    if (changes[key]) {
+                        pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue);
+                    }
+                });
+                ComponentUtil.getEventCallbacks().forEach(function (funcName) {
+                    if (changes[funcName]) {
+                        pGridOptions[funcName] = changes[funcName].currentValue;
+                    }
+                });
+                if (changes.showToolPanel) {
+                    api.showToolPanel(changes.showToolPanel.currentValue);
+                }
+                if (changes.quickFilterText) {
+                    api.setQuickFilter(changes.quickFilterText.currentValue);
+                }
+                if (changes.rowData) {
+                    api.setRowData(changes.rowData.currentValue);
+                }
+                if (changes.floatingTopRowData) {
+                    api.setFloatingTopRowData(changes.floatingTopRowData.currentValue);
+                }
+                if (changes.floatingBottomRowData) {
+                    api.setFloatingBottomRowData(changes.floatingBottomRowData.currentValue);
+                }
+                if (changes.columnDefs) {
+                    api.setColumnDefs(changes.columnDefs.currentValue);
+                }
+                if (changes.datasource) {
+                    api.setDatasource(changes.datasource.currentValue);
+                }
+                if (changes.headerHeight) {
+                    api.setHeaderHeight(changes.headerHeight.currentValue);
+                }
+            };
+            ComponentUtil.toBoolean = function (value) {
+                if (typeof value === 'boolean') {
+                    return value;
+                }
+                else if (typeof value === 'string') {
+                    // for boolean, compare to empty String to allow attributes appearing with
+                    // not value to be treated as 'true'
+                    return value.toUpperCase() === 'TRUE' || value == '';
+                }
+                else {
+                    return false;
+                }
+            };
+            ComponentUtil.toNumber = function (value) {
+                if (typeof value === 'number') {
+                    return value;
+                }
+                else if (typeof value === 'string') {
+                    return Number(value);
+                }
+                else {
+                    return undefined;
+                }
+            };
+            ComponentUtil.EVENTS = [
+                // core grid events
+                'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
+                'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
+                'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
+                'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged', 'rowGroupOpened',
+                // column events
+                'columnEverythingChanged', 'columnRowGroupChanged', 'columnValueChanged', 'columnMoved',
+                'columnVisible', 'columnGroupOpened', 'columnResized', 'columnPinnedCountChanged'
+            ];
+            ComponentUtil.STRING_PROPERTIES = [
+                'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
+                'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText'];
+            ComponentUtil.OBJECT_PROPERTIES = [
+                'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource'
+            ];
+            ComponentUtil.ARRAY_PROPERTIES = [
+                'slaveGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData', 'columnDefs'
+            ];
+            ComponentUtil.NUMBER_PROPERTIES = [
+                'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupDefaultExpanded'
+            ];
+            ComponentUtil.BOOLEAN_PROPERTIES = [
+                'virtualPaging', 'toolPanelSuppressGroups', 'toolPanelSuppressValues', 'rowsAlreadyGrouped',
+                'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
+                'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+                'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
+                'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupHideGroupColumns',
+                'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
+                'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
+                'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
+                'suppressParentsInRowNodes', 'showToolPanel'
+            ];
+            ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
+                'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
+                'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate'];
+            ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
+                .concat(ComponentUtil.OBJECT_PROPERTIES)
+                .concat(ComponentUtil.STRING_PROPERTIES)
+                .concat(ComponentUtil.NUMBER_PROPERTIES)
+                .concat(ComponentUtil.FUNCTION_PROPERTIES)
+                .concat(ComponentUtil.BOOLEAN_PROPERTIES);
+            return ComponentUtil;
+        })();
+        grid.ComponentUtil = ComponentUtil;
+    })(grid = ag.grid || (ag.grid = {}));
+})(ag || (ag = {}));
 /// <reference path="constants.ts" />
+/// <reference path="components/componentUtil.ts" />
 var ag;
 (function (ag) {
     var grid;
@@ -1012,6 +1203,9 @@ var ag;
                 if (options.groupKeys) {
                     console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
                 }
+                if (typeof options.groupDefaultExpanded === 'boolean') {
+                    console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
+                }
             };
             GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
                 if (this.gridOptions.localeTextFunc) {
@@ -1030,17 +1224,9 @@ var ag;
             };
             // responsible for calling the onXXX functions on gridOptions
             GridOptionsWrapper.prototype.globalEventHandler = function (eventName, event) {
-                var callbackMethodName = this.getCallbackForEvent(eventName);
+                var callbackMethodName = grid.ComponentUtil.getCallbackForEvent(eventName);
                 if (typeof this.gridOptions[callbackMethodName] === 'function') {
                     this.gridOptions[callbackMethodName](event);
-                }
-            };
-            GridOptionsWrapper.prototype.getCallbackForEvent = function (eventName) {
-                if (!eventName || eventName.length < 2) {
-                    return eventName;
-                }
-                else {
-                    return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
                 }
             };
             // we don't allow dynamic row height for virtual paging
@@ -2400,7 +2586,6 @@ var ag;
                     // first up, create child scope if needed
                     if (this.gridOptionsWrapper.isAngularCompileFilters()) {
                         filterWrapper.scope = this.$scope.$new();
-                        ;
                     }
                     // now create filter (had to cast to any to get 'new' working)
                     this.assertMethodHasNoParameters(colDef.filter);
@@ -2458,6 +2643,13 @@ var ag;
                     filterWrapper.gui = eFilterGui;
                 }
                 return filterWrapper;
+            };
+            FilterManager.prototype.destroy = function () {
+                _.iterateObject(this.allFilters, function (key, filterWrapper) {
+                    if (filterWrapper.filter.destroy) {
+                        filterWrapper.filter.destroy();
+                    }
+                });
             };
             FilterManager.prototype.assertMethodHasNoParameters = function (theMethod) {
                 var getRowsParams = _.getFunctionParameters(theMethod);
@@ -3826,7 +4018,7 @@ var ag;
                         // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                         oldColumn.setVisible(!stateItem.hide);
                         // sets pinned to 'left' or 'right'
-                        oldColumn.setPinned(stateItem.pinned === true);
+                        oldColumn.setPinned(stateItem.pinned);
                         // if width provided and valid, use it, otherwise stick with the old width
                         if (stateItem.width >= constants.MIN_COL_WIDTH) {
                             oldColumn.setActualWidth(stateItem.width);
@@ -4470,12 +4662,12 @@ var ag;
 var ag;
 (function (ag) {
     var grid;
-    (function (grid) {
+    (function (grid_3) {
         var SelectionRendererFactory = (function () {
             function SelectionRendererFactory() {
             }
-            SelectionRendererFactory.prototype.init = function (angularGrid, selectionController) {
-                this.angularGrid = angularGrid;
+            SelectionRendererFactory.prototype.init = function (grid, selectionController) {
+                this.grid = grid;
                 this.selectionController = selectionController;
             };
             SelectionRendererFactory.prototype.createSelectionCheckbox = function (node, rowIndex) {
@@ -4497,18 +4689,14 @@ var ag;
                         that.selectionController.deselectIndex(rowIndex);
                     }
                 };
-                this.angularGrid.addVirtualRowListener(rowIndex, {
-                    rowSelected: function (selected) {
-                        setCheckboxState(eCheckbox, selected);
-                    },
-                    rowRemoved: function () {
-                    }
+                this.grid.addVirtualRowListener(grid_3.Grid.VIRTUAL_ROW_SELECTED, rowIndex, function (selected) {
+                    setCheckboxState(eCheckbox, selected);
                 });
                 return eCheckbox;
             };
             return SelectionRendererFactory;
         })();
-        grid.SelectionRendererFactory = SelectionRendererFactory;
+        grid_3.SelectionRendererFactory = SelectionRendererFactory;
         function setCheckboxState(eCheckbox, state) {
             if (typeof state === 'boolean') {
                 eCheckbox.checked = state;
@@ -5368,7 +5556,8 @@ var ag;
                     api: this.gridOptionsWrapper.getApi(),
                     context: this.gridOptionsWrapper.getContext(),
                     refreshCell: this.refreshCell.bind(this),
-                    eGridCell: this.vGridCell
+                    eGridCell: this.vGridCell,
+                    eParentOfValue: this.vParentOfValue
                 };
                 // start duplicated code
                 var actualCellRenderer;
@@ -5880,7 +6069,7 @@ var ag;
         var svgFactory = grid.SvgFactory.getInstance();
         var utils = grid.Utils;
         var constants = grid.Constants;
-        function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService) {
+        function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService) {
             return function groupCellRenderer(params) {
                 var eGroupCell = document.createElement('span');
                 var node = params.node;
@@ -5972,6 +6161,8 @@ var ag;
                 var refreshIndex = getRefreshFromIndex(params);
                 params.api.onGroupExpandedOrCollapsed(refreshIndex);
                 showAndHideExpandAndContract(eExpandIcon, eContractIcon, params.node.expanded);
+                var event = { node: params.node };
+                eventService.dispatchEvent(grid.Events.EVENT_ROW_GROUP_OPENED, event);
             }
             function createGroupExpandIcon(expanded) {
                 var eIcon;
@@ -6085,7 +6276,7 @@ var ag;
                 this.eventService = eventService;
                 this.floatingRowModel = floatingRowModel;
                 this.cellRendererMap = {
-                    'group': grid.groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService),
+                    'group': grid.groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService),
                     'default': function (params) {
                         return params.value;
                     }
@@ -6240,6 +6431,10 @@ var ag;
                 this.removeVirtualRow(indexesToRemove);
                 // add draw them again
                 this.drawVirtualRows();
+            };
+            RowRenderer.prototype.destroy = function () {
+                var rowsToRemove = Object.keys(this.renderedRows);
+                this.removeVirtualRow(rowsToRemove);
             };
             RowRenderer.prototype.refreshAllVirtualRows = function (fromIndex) {
                 // remove all current virtual rows, as they have old data
@@ -7702,10 +7897,15 @@ var ag;
             };
             GroupCreator.prototype.isExpanded = function (expandByDefault, level) {
                 if (typeof expandByDefault === 'number') {
-                    return level < expandByDefault;
+                    if (expandByDefault === -1) {
+                        return true;
+                    }
+                    else {
+                        return level < expandByDefault;
+                    }
                 }
                 else {
-                    return expandByDefault === true || expandByDefault === 'true';
+                    return false;
                 }
             };
             return GroupCreator;
@@ -8134,7 +8334,14 @@ var ag;
                 var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
                 var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
                 if (doingGrouping) {
-                    var expandByDefault = this.gridOptionsWrapper.isGroupSuppressRow() || this.gridOptionsWrapper.getGroupDefaultExpanded();
+                    var expandByDefault;
+                    if (this.gridOptionsWrapper.isGroupSuppressRow()) {
+                        // 99999 means 'expand everything'
+                        expandByDefault = -1;
+                    }
+                    else {
+                        expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+                    }
                     rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
                 }
                 else {
@@ -8401,7 +8608,6 @@ var ag;
             VirtualPageRowController.prototype.createNode = function (data, virtualRowIndex) {
                 var rowHeight = this.getRowHeightAsNumber();
                 var top = rowHeight * virtualRowIndex;
-                console.log(virtualRowIndex + ' ' + rowHeight + ' - ' + top);
                 var rowNode = {
                     data: data,
                     id: virtualRowIndex,
@@ -10456,7 +10662,7 @@ var ag;
 var ag;
 (function (ag) {
     var grid;
-    (function (grid_3) {
+    (function (grid_4) {
         var GridApi = (function () {
             function GridApi(grid, rowRenderer, headerRenderer, filterManager, columnController, inMemoryRowController, selectionController, gridOptionsWrapper, gridPanel, valueService, masterSlaveService, eventService, floatingRowModel) {
                 this.grid = grid;
@@ -10472,7 +10678,7 @@ var ag;
                 this.masterSlaveService = masterSlaveService;
                 this.eventService = eventService;
                 this.floatingRowModel = floatingRowModel;
-                this.csvCreator = new grid_3.CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
+                this.csvCreator = new grid_4.CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
             }
             /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
             GridApi.prototype.__getMasterSlaveService = function () {
@@ -10559,18 +10765,21 @@ var ag;
                 return this.grid.getRowModel();
             };
             GridApi.prototype.onGroupExpandedOrCollapsed = function (refreshFromIndex) {
-                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP, refreshFromIndex);
+                this.grid.updateModelAndRefresh(grid_4.Constants.STEP_MAP, refreshFromIndex);
             };
             GridApi.prototype.expandAll = function () {
                 this.inMemoryRowController.expandOrCollapseAll(true, null);
-                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP);
+                this.grid.updateModelAndRefresh(grid_4.Constants.STEP_MAP);
             };
             GridApi.prototype.collapseAll = function () {
                 this.inMemoryRowController.expandOrCollapseAll(false, null);
-                this.grid.updateModelAndRefresh(grid_3.Constants.STEP_MAP);
+                this.grid.updateModelAndRefresh(grid_4.Constants.STEP_MAP);
             };
-            GridApi.prototype.addVirtualRowListener = function (rowIndex, callback) {
-                this.grid.addVirtualRowListener(rowIndex, callback);
+            GridApi.prototype.addVirtualRowListener = function (eventName, rowIndex, callback) {
+                if (typeof eventName !== 'string') {
+                    console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, pleae check the documentation.');
+                }
+                this.grid.addVirtualRowListener(eventName, rowIndex, callback);
             };
             GridApi.prototype.setQuickFilter = function (newFilter) {
                 this.grid.onQuickFilterChanged(newFilter);
@@ -10745,7 +10954,7 @@ var ag;
             };
             return GridApi;
         })();
-        grid_3.GridApi = GridApi;
+        grid_4.GridApi = GridApi;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 /// <reference path="gridOptionsWrapper.ts" />
@@ -10936,7 +11145,10 @@ var ag;
                 if ($scope === void 0) { $scope = null; }
                 if ($compile === void 0) { $compile = null; }
                 if (quickFilterOnScope === void 0) { quickFilterOnScope = null; }
-                this.virtualRowCallbacks = {};
+                this.virtualRowListeners = {
+                    virtualRowRemoved: {},
+                    virtualRowSelected: {}
+                };
                 if (!eGridDiv) {
                     console.warn('ag-Grid: no div element provided to the grid');
                 }
@@ -10969,8 +11181,11 @@ var ag;
                 this.finished = false;
                 this.periodicallyDoLayout();
                 // if ready function provided, use it
-                var readyParams = { api: gridOptions.api };
-                this.eventService.dispatchEvent(grid.Events.EVENT_READY, readyParams);
+                var readyEvent = {
+                    api: gridOptions.api,
+                    columnApi: gridOptions.columnApi
+                };
+                this.eventService.dispatchEvent(grid.Events.EVENT_READY, readyEvent);
                 this.logger.log('initialised');
             }
             Grid.prototype.decideStartingOverlay = function () {
@@ -11233,6 +11448,8 @@ var ag;
                 }
                 this.finished = true;
                 this.dragAndDropService.destroy();
+                this.rowRenderer.destroy();
+                this.filterManager.destroy();
                 this.eUserProvidedDiv.removeChild(this.eRootPanel.getGui());
                 this.logger.log('Grid DOM removed');
             };
@@ -11440,18 +11657,24 @@ var ag;
                 }
                 this.eventService.dispatchEvent(grid.Events.EVENT_AFTER_SORT_CHANGED);
             };
-            Grid.prototype.addVirtualRowListener = function (rowIndex, callback) {
-                if (!this.virtualRowCallbacks[rowIndex]) {
-                    this.virtualRowCallbacks[rowIndex] = [];
+            Grid.prototype.addVirtualRowListener = function (eventName, rowIndex, callback) {
+                var listenersMap = this.virtualRowListeners[eventName];
+                if (!listenersMap) {
+                    console.warn('ag-Grid: invalid listener type ' + eventName + ', expected values are ' + Object.keys(this.virtualRowListeners));
+                    return;
                 }
-                this.virtualRowCallbacks[rowIndex].push(callback);
+                if (!listenersMap[rowIndex]) {
+                    listenersMap[rowIndex] = [];
+                }
+                listenersMap[rowIndex].push(callback);
             };
             Grid.prototype.onVirtualRowSelected = function (rowIndex, selected) {
                 // inform the callbacks of the event
-                if (this.virtualRowCallbacks[rowIndex]) {
-                    this.virtualRowCallbacks[rowIndex].forEach(function (callback) {
-                        if (typeof callback.rowSelected === 'function') {
-                            callback.rowSelected(selected);
+                var listenersMap = this.virtualRowListeners[Grid.VIRTUAL_ROW_SELECTED];
+                if (listenersMap[rowIndex]) {
+                    listenersMap[rowIndex].forEach(function (callback) {
+                        if (typeof callback === 'function') {
+                            callback(selected);
                         }
                     });
                 }
@@ -11459,15 +11682,19 @@ var ag;
             };
             Grid.prototype.onVirtualRowRemoved = function (rowIndex) {
                 // inform the callbacks of the event
-                if (this.virtualRowCallbacks[rowIndex]) {
-                    this.virtualRowCallbacks[rowIndex].forEach(function (callback) {
-                        if (typeof callback.rowRemoved === 'function') {
-                            callback.rowRemoved();
+                var listenersMap = this.virtualRowListeners[Grid.VIRTUAL_ROW_REMOVED];
+                if (listenersMap[rowIndex]) {
+                    listenersMap[rowIndex].forEach(function (callback) {
+                        if (typeof callback === 'function') {
+                            callback();
                         }
                     });
                 }
-                // remove the callbacks
-                delete this.virtualRowCallbacks[rowIndex];
+                this.removeVirtualCallbacksForRow(rowIndex);
+            };
+            Grid.prototype.removeVirtualCallbacksForRow = function (rowIndex) {
+                delete this.virtualRowListeners[Grid.VIRTUAL_ROW_REMOVED][rowIndex];
+                delete this.virtualRowListeners[Grid.VIRTUAL_ROW_SELECTED][rowIndex];
             };
             Grid.prototype.setColumnDefs = function (colDefs) {
                 if (colDefs) {
@@ -11500,165 +11727,11 @@ var ag;
                     this.eventService.dispatchEvent(grid.Events.EVENT_GRID_SIZE_CHANGED, event);
                 }
             };
+            Grid.VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
+            Grid.VIRTUAL_ROW_SELECTED = 'virtualRowSelected';
             return Grid;
         })();
         grid.Grid = Grid;
-    })(grid = ag.grid || (ag.grid = {}));
-})(ag || (ag = {}));
-var ag;
-(function (ag) {
-    var grid;
-    (function (grid) {
-        var ComponentUtil = (function () {
-            function ComponentUtil() {
-            }
-            ComponentUtil.copyAttributesToGridOptions = function (gridOptions, component) {
-                // create empty grid options if none were passed
-                if (typeof gridOptions !== 'object') {
-                    gridOptions = {};
-                }
-                // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-                var pGridOptions = gridOptions;
-                // add in all the simple properties
-                ComponentUtil.SIMPLE_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES).forEach(function (key) {
-                    if (typeof (component)[key] !== 'undefined') {
-                        pGridOptions[key] = component[key];
-                    }
-                });
-                ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES).forEach(function (key) {
-                    if (typeof (component)[key] !== 'undefined') {
-                        pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
-                    }
-                });
-                ComponentUtil.SIMPLE_NUMBER_PROPERTIES.concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES).forEach(function (key) {
-                    if (typeof (component)[key] !== 'undefined') {
-                        pGridOptions[key] = ComponentUtil.toNumber(component[key]);
-                    }
-                });
-                return gridOptions;
-            };
-            ComponentUtil.processOnChange = function (changes, gridOptions, component) {
-                if (!component._initialised || !changes) {
-                    return;
-                }
-                // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-                //var pThis = <any>this;
-                var pGridOptions = gridOptions;
-                // check if any change for the simple types, and if so, then just copy in the new value
-                ComponentUtil.SIMPLE_PROPERTIES.forEach(function (key) {
-                    if (changes[key]) {
-                        pGridOptions[key] = changes[key].currentValue;
-                    }
-                });
-                ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES.forEach(function (key) {
-                    if (changes[key]) {
-                        pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue);
-                    }
-                });
-                ComponentUtil.SIMPLE_NUMBER_PROPERTIES.forEach(function (key) {
-                    if (changes[key]) {
-                        pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue);
-                    }
-                });
-                if (changes.showToolPanel) {
-                    component.api.showToolPanel(component.showToolPanel);
-                }
-                if (changes.quickFilterText) {
-                    component.api.setQuickFilter(component.quickFilterText);
-                }
-                if (changes.rowData) {
-                    component.api.setRowData(component.rowData);
-                }
-                if (changes.floatingTopRowData) {
-                    component.api.setFloatingTopRowData(component.floatingTopRowData);
-                }
-                if (changes.floatingBottomRowData) {
-                    component.api.setFloatingBottomRowData(component.floatingBottomRowData);
-                }
-                if (changes.columnDefs) {
-                    component.api.setColumnDefs(component.columnDefs);
-                }
-                if (changes.datasource) {
-                    component.api.setDatasource(component.datasource);
-                }
-                if (changes.pinnedColumnCount) {
-                    component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
-                }
-                if (changes.pinnedColumnCount) {
-                    component.columnApi.setPinnedColumnCount(component.pinnedColumnCount);
-                }
-                if (changes.headerHeight) {
-                    component.api.setHeaderHeight(component.headerHeight);
-                }
-                // need to review this, it is not impacting anything, they should
-                // call something on the API to update the grid
-                if (changes.groupAggFunction) {
-                    component.gridOptions.groupAggFunction = component.groupAggFunction;
-                }
-            };
-            ComponentUtil.toBoolean = function (value) {
-                if (typeof value === 'boolean') {
-                    return value;
-                }
-                else if (typeof value === 'string') {
-                    // for boolean, compare to empty String to allow attributes appearing with
-                    // not value to be treated as 'true'
-                    return value.toUpperCase() === 'TRUE' || value == '';
-                }
-                else {
-                    return false;
-                }
-            };
-            ComponentUtil.toNumber = function (value) {
-                if (typeof value === 'number') {
-                    return value;
-                }
-                else if (typeof value === 'string') {
-                    return Number(value);
-                }
-                else {
-                    return undefined;
-                }
-            };
-            ComponentUtil.SIMPLE_PROPERTIES = [
-                'sortingOrder',
-                'icons', 'localeText', 'localeTextFunc',
-                'groupColumnDef', 'context', 'rowStyle', 'rowClass', 'headerCellRenderer',
-                'groupDefaultExpanded', 'slaveGrids', 'rowSelection',
-                'overlayLoadingTemplate', 'overlayNoRowsTemplate',
-                'headerCellTemplate'
-            ];
-            ComponentUtil.SIMPLE_NUMBER_PROPERTIES = [
-                'rowHeight', 'rowBuffer', 'colWidth'
-            ];
-            ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES = [
-                'virtualPaging', 'toolPanelSuppressGroups', 'toolPanelSuppressValues', 'rowsAlreadyGrouped',
-                'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-                'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
-                'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
-                'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupHideGroupColumns',
-                'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
-                'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
-                'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
-                'suppressParentsInRowNodes'
-            ];
-            ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES = ['pinnedColumnCount', 'headerHeight'];
-            ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES = ['showToolPanel'];
-            ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES = [
-                'rowData', 'floatingTopRowData', 'floatingBottomRowData',
-                'columnDefs', 'datasource', 'quickFilterText'];
-            ComponentUtil.CALLBACKS = ['groupRowInnerRenderer', 'groupRowRenderer', 'groupAggFunction',
-                'isScrollLag', 'isExternalFilterPresent', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle',
-                'headerCellRenderer', 'getHeaderCellTemplate'];
-            ComponentUtil.ALL_PROPERTIES = ComponentUtil.SIMPLE_PROPERTIES
-                .concat(ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
-                .concat(ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
-                .concat(ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
-                .concat(ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
-                .concat(ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES);
-            return ComponentUtil;
-        })();
-        grid.ComponentUtil = ComponentUtil;
     })(grid = ag.grid || (ag.grid = {}));
 })(ag || (ag = {}));
 /// <reference path='componentUtil.ts'/>
@@ -11695,6 +11768,7 @@ var ag;
                 this.rowDoubleClicked = new _ng.core.EventEmitter();
                 this.ready = new _ng.core.EventEmitter();
                 this.gridSizeChanged = new _ng.core.EventEmitter();
+                this.rowGroupOpened = new _ng.core.EventEmitter();
                 // column grid events
                 this.columnEverythingChanged = new _ng.core.EventEmitter();
                 this.columnRowGroupChanged = new _ng.core.EventEmitter();
@@ -11716,7 +11790,9 @@ var ag;
                 this._initialised = true;
             };
             AgGridNg2.prototype.ngOnChanges = function (changes) {
-                grid.ComponentUtil.processOnChange(changes, this.gridOptions, this);
+                if (this._initialised) {
+                    grid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+                }
             };
             AgGridNg2.prototype.ngOnDestroy = function () {
                 this.api.destroy();
@@ -11724,6 +11800,9 @@ var ag;
             AgGridNg2.prototype.globalEventListener = function (eventType, event) {
                 var emitter;
                 switch (eventType) {
+                    case grid.Events.EVENT_ROW_GROUP_OPENED:
+                        emitter = this.rowGroupOpened;
+                        break;
                     case grid.Events.EVENT_COLUMN_GROUP_OPENED:
                         emitter = this.columnGroupOpened;
                         break;
@@ -11823,23 +11902,8 @@ var ag;
             AgGridNg2.annotations = [
                 new _ng.core.Component({
                     selector: 'ag-grid-ng2',
-                    outputs: [
-                        // core grid events
-                        'modelUpdated', 'cellClicked', 'cellDoubleClicked', 'cellContextMenu', 'cellValueChanged', 'cellFocused',
-                        'rowSelected', 'rowDeselected', 'selectionChanged', 'beforeFilterChanged', 'afterFilterChanged',
-                        'filterModified', 'beforeSortChanged', 'afterSortChanged', 'virtualRowRemoved',
-                        'rowClicked', 'rowDoubleClicked', 'ready', 'gridSizeChanged',
-                        // column events
-                        'columnEverythingChanged', 'columnRowGroupChanged', 'columnValueChanged', 'columnMoved',
-                        'columnVisible', 'columnGroupOpened', 'columnResized', 'columnPinnedCountChanged'],
-                    inputs: ['gridOptions']
-                        .concat(grid.ComponentUtil.SIMPLE_PROPERTIES)
-                        .concat(grid.ComponentUtil.SIMPLE_BOOLEAN_PROPERTIES)
-                        .concat(grid.ComponentUtil.SIMPLE_NUMBER_PROPERTIES)
-                        .concat(grid.ComponentUtil.WITH_IMPACT_OTHER_PROPERTIES)
-                        .concat(grid.ComponentUtil.WITH_IMPACT_BOOLEAN_PROPERTIES)
-                        .concat(grid.ComponentUtil.WITH_IMPACT_NUMBER_PROPERTIES)
-                        .concat(grid.ComponentUtil.CALLBACKS),
+                    outputs: grid.ComponentUtil.EVENTS,
+                    inputs: grid.ComponentUtil.ALL_PROPERTIES.concat(['gridOptions']),
                     compileChildren: false // no angular on the inside thanks
                 }),
                 new _ng.core.View({
@@ -11856,7 +11920,7 @@ var ag;
 var ag;
 (function (ag) {
     var grid;
-    (function (grid_4) {
+    (function (grid_5) {
         // provide a reference to angular
         var angular;
         if (typeof window !== 'undefined') {
@@ -11877,7 +11941,7 @@ var ag;
                 };
             });
         }
-        grid_4.initialiseAgGridWithAngular1 = initialiseAgGridWithAngular1;
+        grid_5.initialiseAgGridWithAngular1 = initialiseAgGridWithAngular1;
         function AngularDirectiveController($element, $scope, $compile, $attrs) {
             var gridOptions;
             var quickFilterOnScope;
@@ -11927,7 +11991,9 @@ var ag;
                 this.onChange(changeObject);
             };
             AgileGridProto.onChange = function (changes) {
-                grid.ComponentUtil.processOnChange(changes, this.gridOptions, this);
+                if (this._initialised) {
+                    grid.ComponentUtil.processOnChange(changes, this._gridOptions, this.api);
+                }
             };
             AgileGridProto.__agGridGetProperty = function (key) {
                 if (!this.__attributes) {
@@ -12002,28 +12068,15 @@ if (typeof window !== 'undefined') {
 }
 (function () {
     // Establish the root object, `window` or `exports`
-    var root = this;
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = angularGridGlobalFunction;
-        }
-        exports.angularGrid = angularGridGlobalFunction;
-    }
-    root.agGridGlobalFunc = angularGridGlobalFunction;
-    // Global Function - this function is used for creating a grid, outside of any AngularJS
-    function angularGridGlobalFunction(element, gridOptions) {
-        // see if element is a query selector, or a real element
-        var eGridDiv;
-        if (typeof element === 'string') {
-            eGridDiv = document.querySelector(element);
-            if (!eGridDiv) {
-                console.warn('WARNING - was not able to find element ' + element + ' in the DOM, ag-Grid initialisation aborted.');
-                return;
-            }
+            exports = module.exports = ag.grid;
         }
         else {
-            eGridDiv = element;
+            exports = ag.grid;
         }
-        new ag.grid.Grid(eGridDiv, gridOptions);
     }
+    this.agGridGlobalFunc = function () {
+        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new ag.grid.Grid()" to create a new grid. Check the examples in the documentation.');
+    };
 }).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);

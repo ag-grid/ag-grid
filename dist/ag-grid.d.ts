@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.1.2
+// Type definitions for ag-grid v3.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -96,6 +96,8 @@ declare module ag.grid {
         static EVENT_COLUMN_PINNED: string;
         /** A column group was opened / closed */
         static EVENT_COLUMN_GROUP_OPENED: string;
+        /** A column group was opened / closed */
+        static EVENT_ROW_GROUP_OPENED: string;
         /** One or more columns was resized. If just one, the column in the event is set. */
         static EVENT_COLUMN_RESIZED: string;
         static EVENT_MODEL_UPDATED: string;
@@ -270,6 +272,25 @@ declare module ag.grid {
     }
 }
 declare module ag.grid {
+    class ComponentUtil {
+        static EVENTS: string[];
+        private static EVENT_CALLBACKS;
+        static STRING_PROPERTIES: string[];
+        static OBJECT_PROPERTIES: string[];
+        static ARRAY_PROPERTIES: string[];
+        static NUMBER_PROPERTIES: string[];
+        static BOOLEAN_PROPERTIES: string[];
+        static FUNCTION_PROPERTIES: string[];
+        static ALL_PROPERTIES: string[];
+        static getEventCallbacks(): string[];
+        static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions;
+        static getCallbackForEvent(eventName: string): string;
+        static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi): void;
+        static toBoolean(value: any): boolean;
+        static toNumber(value: any): number;
+    }
+}
+declare module ag.grid {
     class GridOptionsWrapper {
         private gridOptions;
         private headerHeight;
@@ -308,7 +329,7 @@ declare module ag.grid {
         getApi(): GridApi;
         isEnableColResize(): boolean;
         isSingleClickEdit(): boolean;
-        getGroupDefaultExpanded(): any;
+        getGroupDefaultExpanded(): number;
         getGroupAggFunction(): (nodes: any[]) => any;
         getRowData(): any[];
         isGroupUseEntireRow(): boolean;
@@ -348,7 +369,6 @@ declare module ag.grid {
         private checkForDeprecated();
         getLocaleTextFunc(): Function;
         globalEventHandler(eventName: string, event?: any): void;
-        private getCallbackForEvent(eventName);
         getRowHeightForVirtualPagiation(): number;
         getRowHeightForNode(rowNode: RowNode): number;
     }
@@ -679,6 +699,7 @@ declare module ag.grid {
         getFilterApi(column: Column): any;
         private getOrCreateFilterWrapper(column);
         private createFilterWrapper(column);
+        destroy(): void;
         private assertMethodHasNoParameters(theMethod);
         showFilter(column: Column, eventSource: any): void;
     }
@@ -1029,9 +1050,9 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class SelectionRendererFactory {
-        private angularGrid;
+        private grid;
         private selectionController;
-        init(angularGrid: any, selectionController: any): void;
+        init(grid: Grid, selectionController: any): void;
         createSelectionCheckbox(node: any, rowIndex: any): HTMLInputElement;
     }
 }
@@ -1206,7 +1227,7 @@ declare module ag.grid {
     }
 }
 declare module ag.grid {
-    function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper, selectionRendererFactory: SelectionRendererFactory, expressionService: ExpressionService): (params: any) => HTMLSpanElement;
+    function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper, selectionRendererFactory: SelectionRendererFactory, expressionService: ExpressionService, eventService: EventService): (params: any) => HTMLSpanElement;
 }
 declare module ag.grid {
     class RowRenderer {
@@ -1258,6 +1279,7 @@ declare module ag.grid {
         refreshRows(rowNodes: RowNode[]): void;
         refreshCells(rowNodes: RowNode[], colIds: string[]): void;
         rowDataChanged(rows: any): void;
+        destroy(): void;
         private refreshAllVirtualRows(fromIndex);
         refreshGroupRows(): void;
         private removeVirtualRow(rowsToRemove, fromIndex?);
@@ -1429,7 +1451,7 @@ declare module ag.grid {
         private valueService;
         private gridOptionsWrapper;
         init(valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper): void;
-        group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: any): RowNode[];
+        group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number): RowNode[];
         isExpanded(expandByDefault: any, level: any): boolean;
     }
 }
@@ -1925,7 +1947,7 @@ declare module ag.grid {
         context?: any;
         rowStyle?: any;
         rowClass?: any;
-        groupDefaultExpanded?: any;
+        groupDefaultExpanded?: number;
         slaveGrids?: GridOptions[];
         rowSelection?: string;
         rowDeselection?: boolean;
@@ -1953,7 +1975,7 @@ declare module ag.grid {
         groupAggFunction?(nodes: any[]): any;
         getBusinessKeyForNode?(node: RowNode): string;
         getHeaderCellTemplate?: (params: any) => string | HTMLElement;
-        onReady?(api: any): void;
+        onReady?(params: any): void;
         onModelUpdated?(): void;
         onCellClicked?(params: any): void;
         onCellDoubleClicked?(params: any): void;
@@ -2021,7 +2043,7 @@ declare module ag.grid {
         onGroupExpandedOrCollapsed(refreshFromIndex: any): void;
         expandAll(): void;
         collapseAll(): void;
-        addVirtualRowListener(rowIndex: any, callback: any): void;
+        addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
         setQuickFilter(newFilter: any): void;
         selectIndex(index: any, tryMulti: any, suppressEvents: any): void;
         deselectIndex(index: number, suppressEvents?: boolean): void;
@@ -2097,7 +2119,9 @@ declare module ag.grid {
 }
 declare module ag.grid {
     class Grid {
-        private virtualRowCallbacks;
+        static VIRTUAL_ROW_REMOVED: string;
+        static VIRTUAL_ROW_SELECTED: string;
+        private virtualRowListeners;
         private gridOptions;
         private gridOptionsWrapper;
         private inMemoryRowController;
@@ -2156,29 +2180,14 @@ declare module ag.grid {
         getSortModel(): any;
         setSortModel(sortModel: any): void;
         onSortingChanged(): void;
-        addVirtualRowListener(rowIndex: any, callback: any): void;
-        onVirtualRowSelected(rowIndex: any, selected: any): void;
-        onVirtualRowRemoved(rowIndex: any): void;
+        addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
+        onVirtualRowSelected(rowIndex: number, selected: boolean): void;
+        onVirtualRowRemoved(rowIndex: number): void;
+        private removeVirtualCallbacksForRow(rowIndex);
         setColumnDefs(colDefs?: ColDef[]): void;
         updateBodyContainerWidthAfterColResize(): void;
         updatePinnedColContainerWidthAfterColResize(): void;
         doLayout(): void;
-    }
-}
-declare module ag.grid {
-    class ComponentUtil {
-        static SIMPLE_PROPERTIES: string[];
-        static SIMPLE_NUMBER_PROPERTIES: string[];
-        static SIMPLE_BOOLEAN_PROPERTIES: string[];
-        static WITH_IMPACT_NUMBER_PROPERTIES: string[];
-        static WITH_IMPACT_BOOLEAN_PROPERTIES: string[];
-        static WITH_IMPACT_OTHER_PROPERTIES: string[];
-        static CALLBACKS: string[];
-        static ALL_PROPERTIES: string[];
-        static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions;
-        static processOnChange(changes: any, gridOptions: GridOptions, component: any): void;
-        static toBoolean(value: any): boolean;
-        static toNumber(value: any): number;
     }
 }
 declare module ag.grid {
@@ -2208,6 +2217,7 @@ declare module ag.grid {
         rowDoubleClicked: any;
         ready: any;
         gridSizeChanged: any;
+        rowGroupOpened: any;
         columnEverythingChanged: any;
         columnRowGroupChanged: any;
         columnValueChanged: any;
@@ -2256,7 +2266,7 @@ declare module ag.grid {
         rowStyle: any;
         rowClass: any;
         headerCellRenderer: any;
-        groupDefaultExpanded: any;
+        groupDefaultExpanded: number;
         slaveGrids: GridOptions[];
         rowSelection: string;
         rowDeselection: boolean;
