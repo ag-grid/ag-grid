@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react-component",
-  "version": "0.0.1",
+  "version": "3.2.1",
   "description": "ag-Grid React Component",
   "main": "dist/ag-grid-react-component.min.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "grid",
     "data",
     "table",
-    "angular"
+    "angular",
+    "react"
   ],
   "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",
@@ -32,11 +33,11 @@
     "gulp-typescript": "2.10.0",
     "typescript": "1.7.5",
     "gulp-header": "1.7.0",
-    "gulp-tsd": "0.0.4"
-  },
-  "dependencies": {
+    "gulp-tsd": "0.0.4",
     "react-dom": "0.14.6",
     "react": "0.14.6",
-    "ag-grid": "latest"
+    "ag-grid": "3.2.1"
+  },
+  "dependencies": {
   }
 }

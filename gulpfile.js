@@ -49,7 +49,7 @@ function tsReleaseTask() {
             target: 'es5',
             //module: 'commonjs',
             //jsx: 'react',
-            //declarationFiles: true,
+            declarationFiles: true,
             out: 'ag-grid-react-component.js'
         }));
 

@@ -1,0 +1,39 @@
+{
+  "name": "ag-grid-react-component",
+  "version": "3.2.1",
+  "homepage": "http://www.ag-grid.com/",
+  "authors": [
+    "Niall Crosby <niall.crosby@gmail.com>"
+  ],
+  "description": "React Component for ag-Grid Data Grid",
+  "main": [
+    "dist/ag-grid-react-component.js"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "typescript": {
+    "definitions": "dist/ag-grid-react-component.d.ts"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular",
+    "react"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "devDependencies": {
+    "react-dom": "0.14.6",
+    "react": "0.14.6",
+    "ag-grid": "3.2.1"
+  },
+  "dependencies": {
+  }
+}
