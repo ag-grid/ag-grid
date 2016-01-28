@@ -2,9 +2,9 @@
 <html style="height: 100%;">
 
     <head>
-        <title>ag-Grid Angular Example</title>
-        <meta name="description" content="AngularJS Grid Example">
-        <meta name="keywords" content="angular angularjs grid table example"/>
+        <title>ag-Grid Data Grid Example</title>
+        <meta name="description" content="Example of using ag-Grid demonstrating that it can work very fast with thousands of rows.">
+        <meta name="keywords" content="react angular angularjs data grid example"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Bootstrap -->
@@ -18,8 +18,6 @@
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
-
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
         <script src="./dist/ag-grid.js?ignore=notused17"></script>
         <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused17">
@@ -52,7 +50,7 @@
         </style>
     </head>
 
-    <body ng-app="agGridApp" ng-controller="mainController" style="height: 100%; margin: 0px; padding: 0px;">
+    <body style="height: 100%; margin: 0px; padding: 0px;">
 
         <div style="position: absolute; top: 55px; left: 0px; padding: 0px 20px 20px 20px;">
 
@@ -82,10 +80,17 @@
 
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
-                <input placeholder="Filter..." type="text" ng-model="gridOptions.quickFilterText"/>
+                <input placeholder="Filter..." type="text"
+                       onpaste="onFilterChanged(this.value)"
+                       oninput="onFilterChanged(this.value)"
+                       onchange="onFilterChanged(this.value)"
+                       onchange="onFilterChanged(this.value)"
+                       onkeydown="onFilterChanged(this.value)"
+                       onkeyup="onFilterChanged(this.value)"
+                />
 
                 <span style="padding-left: 20px;">Data Size:</span>
-                <select ng-model="dataSize" ng-change="onDataSizeChanged()">
+                <select onchange="onDataSizeChanged(this.value)">
                     <option value="10x22">10,000 Rows, 22 Cols</option>
                     <option value="10x100">10,000 Rows, 100 Cols</option>
                     <option value="100x22">100,000 Rows, 22 Cols</option>
@@ -93,22 +98,22 @@
 
                 <span style="padding-left: 20px;">Theme:</span>
 
-                <select ng-model="style" style="width: 90px;">
+                <select onchange="onThemeChanged(this.value)" style="width: 90px;">
                     <option value="">-none-</option>
-                    <option value="ag-fresh">Fresh</option>
+                    <option value="ag-fresh" selected>Fresh</option>
                     <option value="ag-blue">Blue</option>
                     <option value="ag-dark">Dark</option>
                 </select>
 
                 <span style="padding-left: 20px; display: inline-block;">
-                    <button ng-click="toggleToolPanel()">Tool Panel</button>
+                    <button onclick="toggleToolPanel()">Tool Panel</button>
                 </span>
 
             </div>
         </div>
         <!-- The table div -->
         <div style="padding: 100px 20px 20px 20px; height: 100%; box-sizing: border-box;">
-            <div ag-grid="gridOptions" style="height: 100%;" ng-class="style"></div>
+            <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
         </div>
     </body>
 

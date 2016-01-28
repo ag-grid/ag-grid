@@ -1,27 +1,26 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused17"></script>
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused17">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused17">
     <script src="exampleFilterExternal.js"></script>
 </head>
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
     <div>
         <label>
-            <input type="radio" value="everyone" ng-model="ageType" ng-change="externalFilterChanged()"/> Everyone
+            <input type="radio" name="filter" value="everyone" checked onchange="externalFilterChanged(this.value)"/> Everyone
         </label>
         <label style="padding-left: 50px;">
-            <input type="radio" value="below30" ng-model="ageType" ng-change="externalFilterChanged()"/> Below 30
+            <input type="radio" name="filter" value="below30" onchange="externalFilterChanged(this.value)"/> Below 30
         </label>
         <label style="padding-left: 50px;">
-            <input type="radio" value="between30and50" ng-model="ageType" ng-change="externalFilterChanged()"/> Between 30 and 50
+            <input type="radio" name="filter" value="between30and50" onchange="externalFilterChanged(this.value)"/> Between 30 and 50
         </label>
         <label style="padding-left: 50px;">
-            <input type="radio" value="above50" ng-model="ageType" ng-change="externalFilterChanged()"/> Above 50
+            <input type="radio" name="filter" value="above50" onchange="externalFilterChanged(this.value)"/> Above 50
         </label>
     </div>
-    <div ag-grid="gridOptions" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>
+    <div id="myGrid" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>
 </body>
 </html>

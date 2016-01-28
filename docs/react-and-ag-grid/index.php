@@ -49,7 +49,7 @@ include('../mediaHeader.php');
         </p>
         <p>
             <div style="text-align: center">
-            <span style="color: darkgrey">Fig 1 - Sample ag-Grid React Component Usage</span>
+            <span style="color: darkgrey">Fig 1 - Sample ag-Grid and React - see <a href="../best-react-grid/">full example here</a></span>
             <br/>
             <img src="reactAndAgGrid.png" style="width: 500px;"/>
             </div>
@@ -69,6 +69,7 @@ include('../mediaHeader.php');
             data grid everyone was waiting for. You won't need to throw away your
             grid next time you want to move to a different framework.
         </p>
+
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

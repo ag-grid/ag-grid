@@ -11,7 +11,6 @@ module ag.grid {
         customFooter?: string;
         allColumns?: boolean;
         columnSeparator?: string;
-
     }
 
     export class CsvCreator {

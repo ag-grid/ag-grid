@@ -1,452 +1,424 @@
-var gridsModule = angular.module("agGridApp", ["agGrid"]);
 
-gridsModule.controller('mainController', function($scope) {
+document.addEventListener('DOMContentLoaded', function() {
+    gridDiv = document.querySelector('#myGrid');
+    new ag.grid.Grid(gridDiv, gridOptions);
+});
 
-    var colNames = ["Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+var gridDiv;
 
-    var countries = [
-        {country: "Ireland", continent: "Europe", language: "English"},
-        {country: "Spain", continent: "Europe", language: "Spanish"},
-        {country: "United Kingdom", continent: "Europe", language: "English"},
-        {country: "France", continent: "Europe", language: "French"},
-        {country: "Germany", continent: "Europe", language: "(other)"},
-        {country: "Sweden", continent: "Europe", language: "(other)"},
-        {country: "Norway", continent: "Europe", language: "(other)"},
-        {country: "Italy", continent: "Europe", language: "(other)"},
-        {country: "Greece", continent: "Europe", language: "(other)"},
-        {country: "Iceland", continent: "Europe", language: "(other)"},
-        {country: "Portugal", continent: "Europe", language: "Portuguese"},
-        {country: "Malta", continent: "Europe", language: "(other)"},
-        {country: "Brazil", continent: "South America", language: "Portuguese"},
-        {country: "Argentina", continent: "South America", language: "Spanish"},
-        {country: "Colombia", continent: "South America", language: "Spanish"},
-        {country: "Peru", continent: "South America", language: "Spanish"},
-        {country: "Venezuela", continent: "South America", language: "Spanish"},
-        {country: "Uruguay", continent: "South America", language: "Spanish"}
-    ];
+var colNames = ["Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
 
-    var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
-        "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
-        "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
-        "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
-        "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
-        "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
-    ];
-    var booleanValues = [true, "true", false, "false", null, undefined, ""];
+var countries = [
+    {country: "Ireland", continent: "Europe", language: "English"},
+    {country: "Spain", continent: "Europe", language: "Spanish"},
+    {country: "United Kingdom", continent: "Europe", language: "English"},
+    {country: "France", continent: "Europe", language: "French"},
+    {country: "Germany", continent: "Europe", language: "(other)"},
+    {country: "Sweden", continent: "Europe", language: "(other)"},
+    {country: "Norway", continent: "Europe", language: "(other)"},
+    {country: "Italy", continent: "Europe", language: "(other)"},
+    {country: "Greece", continent: "Europe", language: "(other)"},
+    {country: "Iceland", continent: "Europe", language: "(other)"},
+    {country: "Portugal", continent: "Europe", language: "Portuguese"},
+    {country: "Malta", continent: "Europe", language: "(other)"},
+    {country: "Brazil", continent: "South America", language: "Portuguese"},
+    {country: "Argentina", continent: "South America", language: "Spanish"},
+    {country: "Colombia", continent: "South America", language: "Spanish"},
+    {country: "Peru", continent: "South America", language: "Spanish"},
+    {country: "Venezuela", continent: "South America", language: "Spanish"},
+    {country: "Uruguay", continent: "South America", language: "Spanish"}
+];
 
-    var firstNames = ["Sophie","Isabelle","Emily","Olivia","Lily","Chloe","Isabella",
-        "Amelia","Jessica","Sophia","Ava","Charlotte","Mia","Lucy","Grace","Ruby",
-        "Ella","Evie","Freya","Isla","Poppy","Daisy","Layla"];
-    var lastNames = ["Beckham","Black","Braxton","Brennan","Brock","Bryson","Cadwell",
-        "Cage","Carson","Chandler","Cohen","Cole","Corbin","Dallas","Dalton","Dane",
-        "Donovan","Easton","Fisher","Fletcher","Grady","Greyson","Griffin","Gunner",
-        "Hayden","Hudson","Hunter","Jacoby","Jagger","Jaxon","Jett","Kade","Kane",
-        "Keating","Keegan","Kingston","Kobe"];
+var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+    "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
+    "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
+    "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
+    "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
+    "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
+];
+var booleanValues = [true, "true", false, "false", null, undefined, ""];
 
-    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var firstNames = ["Sophie","Isabelle","Emily","Olivia","Lily","Chloe","Isabella",
+    "Amelia","Jessica","Sophia","Ava","Charlotte","Mia","Lucy","Grace","Ruby",
+    "Ella","Evie","Freya","Isla","Poppy","Daisy","Layla"];
+var lastNames = ["Beckham","Black","Braxton","Brennan","Brock","Bryson","Cadwell",
+    "Cage","Carson","Chandler","Cohen","Cole","Corbin","Dallas","Dalton","Dane",
+    "Donovan","Easton","Fisher","Fletcher","Grady","Greyson","Griffin","Gunner",
+    "Hayden","Hudson","Hunter","Jacoby","Jagger","Jaxon","Jett","Kade","Kane",
+    "Keating","Keegan","Kingston","Kobe"];
 
-    $scope.dataSize = '10x22';
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-    $scope.size = 'fill'; // model for size select
-    $scope.width = '100%'; // the div gets it's width and height from here
-    $scope.height = '100%';
+var dataSize = '10x22';
 
-    $scope.style = 'ag-fresh';
-    $scope.groupBy = '';
-    $scope.groupType = 'col';
-    $scope.rowSelection = 'checkbox';
+var size = 'fill'; // model for size select
+var width = '100%'; // the div gets it's width and height from here
+var height = '100%';
 
-    var groupColumn = {
-        headerName: "Group",
-        width: 200,
-        field: 'name',
-        cellRenderer: {
-            renderer: "group",
-            checkbox: true
-        }
-    };
+var style = 'ag-fresh';
+var groupBy = '';
+var groupType = 'col';
+var rowSelection = 'checkbox';
 
-    var gridOptions = {
-        debug: true,
-        //rowsBuffer: 1,
-        columnDefs: [],
-        //singleClickEdit: true,
-        rowData: null,
-        rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
-        groupKeys: undefined, //set as string of keys eg ["region","country"],
+var groupColumn = {
+    headerName: "Group",
+    width: 200,
+    field: 'name',
+    cellRenderer: {
+        renderer: "group",
+        checkbox: true
+    }
+};
+
+var gridOptions = {
+    debug: true,
+    //rowsBuffer: 1,
+    columnDefs: [],
+    //singleClickEdit: true,
+    rowData: null,
+    rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
+    groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
-        //groupSuppressBlankHeader: true,
-        groupIncludeFooter: false,
-        groupHideGroupColumns: true,
-        //unSortIcon: true,
-        //rowHeight: 30, // defaults to 25, can be any integer
-        enableColResize: true, //one of [true, false]
-        enableSorting: true, //one of [true, false]
-        enableFilter: true, //one of [true, false]
-        rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
-        rowDeselection: true,
-        groupSelectsChildren: true, // one of [true, false]
-        suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-        groupColumnDef: groupColumn,
-        //suppressCellSelection: true,
-        //suppressMultiSort: true,
-        showToolPanel: false,
-        //toolPanelSuppressGroups: true,
-        //toolPanelSuppressValues: true,
-        //groupSuppressAutoColumn: true,
-        //groupAggFunction: groupAggFunction,
-        //groupAggFields: ['bankBalance','totalWinnings'],
-        checkboxSelection: function(params) {
-            // we show checkbox selection in the first column, unless we are grouping,
-            // as the group column is configured to always show selection
-            var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
-            return params.colIndex === 0 && !isGrouping;
-        },
-        angularCompileRows: false,
-        angularCompileFilters: true,
-        angularCompileHeaders: true,
-        //forPrint: true,
-        //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-        //headerCellRenderer: headerCellRenderer_text,
-        //headerCellRenderer: headerCellRenderer_dom,
-        onRowSelected: rowSelected, //callback when row selected
-        onRowDeselected: rowDeselected, //callback when row selected
-        onSelectionChanged: selectionChanged, //callback when selection changed,
-        icons: {
-            //menu: '<i class="fa fa-bars"/>',
-            //columnVisible: '<i class="fa fa-eye"/>',
-            //columnHidden: '<i class="fa fa-eye-slash"/>',
-            columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-            filter: '<i class="fa fa-filter"/>',
-            sortAscending: '<i class="fa fa-long-arrow-down"/>',
-            sortDescending: '<i class="fa fa-long-arrow-up"/>',
-            groupExpanded: '<i class="fa fa-minus-square-o"/>',
-            groupContracted: '<i class="fa fa-plus-square-o"/>',
-            columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-            columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
-        },
+    //groupSuppressBlankHeader: true,
+    groupIncludeFooter: false,
+    groupHideGroupColumns: true,
+    //unSortIcon: true,
+    //rowHeight: 30, // defaults to 25, can be any integer
+    enableColResize: true, //one of [true, false]
+    enableSorting: true, //one of [true, false]
+    enableFilter: true, //one of [true, false]
+    rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+    rowDeselection: true,
+    groupSelectsChildren: true, // one of [true, false]
+    suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+    groupColumnDef: groupColumn,
+    //suppressCellSelection: true,
+    //suppressMultiSort: true,
+    showToolPanel: false,
+    //toolPanelSuppressGroups: true,
+    //toolPanelSuppressValues: true,
+    //groupSuppressAutoColumn: true,
+    //groupAggFunction: groupAggFunction,
+    //groupAggFields: ['bankBalance','totalWinnings'],
+    checkboxSelection: function(params) {
+        // we show checkbox selection in the first column, unless we are grouping,
+        // as the group column is configured to always show selection
+        var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
+        return params.colIndex === 0 && !isGrouping;
+    },
+    //forPrint: true,
+    //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
+    //headerCellRenderer: headerCellRenderer_text,
+    //headerCellRenderer: headerCellRenderer_dom,
+    onRowSelected: rowSelected, //callback when row selected
+    onRowDeselected: rowDeselected, //callback when row selected
+    onSelectionChanged: selectionChanged, //callback when selection changed,
+    icons: {
+        //menu: '<i class="fa fa-bars"/>',
+        //columnVisible: '<i class="fa fa-eye"/>',
+        //columnHidden: '<i class="fa fa-eye-slash"/>',
+        columnRemoveFromGroup: '<i class="fa fa-remove"/>',
+        filter: '<i class="fa fa-filter"/>',
+        sortAscending: '<i class="fa fa-long-arrow-down"/>',
+        sortDescending: '<i class="fa fa-long-arrow-up"/>',
+        groupExpanded: '<i class="fa fa-minus-square-o"/>',
+        groupContracted: '<i class="fa fa-plus-square-o"/>',
+        columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+        columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
+    },
 
-        getBusinessKeyForNode: function(node) {
-            if (node.data) {
-                return node.data.name;
-            } else {
-                return '';
-            }
-        },
-        // isScrollLag: function() { return false; },
-        //suppressScrollLag: true,
-
-        // callback when row clicked
-        onRowClicked: function(params) {
-            console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
-        },
-        onRowDoubleClicked: function(params) {
-            console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
-        },
-        // callback when cell clicked
-        onCellClicked: function(params) {
-            console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
-        },
-        // callback when cell double clicked
-        onCellDoubleClicked:  function(params) {
-            console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
-        },
-        // callback when cell right clicked
-        onCellContextMenu:  function(params) {
-            console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
-        },
-        onCellFocused: function(params) {
-            console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
-        },
-        onReady: function(event) {
-            console.log('Callback onReady: api = ' + event.api);
-        },
-        onGridSizeChanged: function(event) {
-            console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
-        },
-        onRowGroupOpened: function(event) {
-            console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+    getBusinessKeyForNode: function(node) {
+        if (node.data) {
+            return node.data.name;
+        } else {
+            return '';
         }
-    };
-    $scope.gridOptions = gridOptions;
+    },
+    // isScrollLag: function() { return false; },
+    //suppressScrollLag: true,
 
-    var firstColumn = {
-        headerName: "Name",
-        field: "name",
-        width: 200,
-        editable: true,
-        filter: PersonFilter,
-        icons: {
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-        }
-    };
+    // callback when row clicked
+    onRowClicked: function(params) {
+        console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
+    },
+    onRowDoubleClicked: function(params) {
+        console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
+    },
+    // callback when cell clicked
+    onCellClicked: function(params) {
+        console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+    },
+    // callback when cell double clicked
+    onCellDoubleClicked:  function(params) {
+        console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+    },
+    // callback when cell right clicked
+    onCellContextMenu:  function(params) {
+        console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+    },
+    onCellFocused: function(params) {
+        console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
+    },
+    onReady: function(event) {
+        console.log('Callback onReady: api = ' + event.api);
+    },
+    onGridSizeChanged: function(event) {
+        console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
+    },
+    onRowGroupOpened: function(event) {
+        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+    }
+};
 
-    //var groupColumn = {
-    //    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
-    //    cellRenderer: {
-    //        renderer: "group",
-    //        checkbox: true
-    //    }
-    //};
+var firstColumn = {
+    headerName: "Name",
+    field: "name",
+    width: 200,
+    editable: true,
+    filter: PersonFilter,
+    icons: {
+        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+    }
+};
 
-    var defaultCols = [
-        //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-        {
-            // column group 'Participant
-            headerName: 'Participant',
-            children: [
-                firstColumn,
-                {headerName: "Country", field: "country", width: 150, editable: true,
-                    cellRenderer: countryCellRenderer, filter: 'set',
-                    floatCell: true,
-                    filterParams: {
-                        cellRenderer: countryCellRenderer,
-                        cellHeight: 20,
-                        newRowsAction: 'keep'
-                    },
-                    icons: {
-                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                    }
+//var groupColumn = {
+//    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
+//    cellRenderer: {
+//        renderer: "group",
+//        checkbox: true
+//    }
+//};
+
+var defaultCols = [
+    //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
+    {
+        // column group 'Participant
+        headerName: 'Participant',
+        children: [
+            firstColumn,
+            {headerName: "Country", field: "country", width: 150, editable: true,
+                cellRenderer: countryCellRenderer, filter: 'set',
+                floatCell: true,
+                filterParams: {
+                    cellRenderer: countryCellRenderer,
+                    cellHeight: 20,
+                    newRowsAction: 'keep'
                 },
-                {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                    cellRenderer: languageCellRenderer,
-                    headerTooltip: "Example tooltip for Language",
-                    filterParams: {newRowsAction: 'keep'},
-                    icons: {
-                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                    }
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
-            ]
-        },
-        {
-            // column group 'Game of Choice'
-            headerName: 'Game of Choice',
-            children: [
-                {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
-                    cellClass: function() { return 'alphabet'; },
-                    icons: {
-                        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                    }
-                },
-                {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
-                    cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-                    floatCell: true,
-                    filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
-            ]
-        },
-        {
-            // column group 'Performance'
-            headerName: 'Performance',
-            children: [
-                {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-                    filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-                    filterParams: {cellRenderer: currencyRenderer},
-                    icons: {
-                        sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                        sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-                    }
-                },
-                {headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-                    cellRenderer: function() { return 'Abra...'; } },
-                {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                    suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-                    cellRenderer: function() { return '...cadabra!'; } },
-            ]
-        },
-        {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
-            floatCell: true,
-            filterParams: {cellRenderer: ratingFilterRenderer}
-        },
-        {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
-            editable: true, newValueHandler: numberNewValueHandler, width: 150,
-            cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-            icons: {
-                sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-            }
-        }
-    ];
-    //put in the month cols
-    var monthGroup = {
-        headerName: 'Monthly Breakdown',
-        children: []
-    };
-    defaultCols.push(monthGroup);
-    months.forEach(function(month, index) {
-        monthGroup.children.push({
-            headerName: month, field: month.toLocaleLowerCase(),
-            width: 100, filter: 'number', editable: true,
-            cellClassRules: {
-                'good-score': 'x > 50000',
-                'bad-score': 'x < 10000'
             },
-            newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
-            filterCellRenderer: currencyRenderer,
-            cellStyle: {"text-align": "right"}})
-    });
-
-    gridOptions.columnDefs = createCols();
-    gridOptions.rowData = createData();
-
-    //setInterval(function() {
-    //    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
-    //}, 1000);
-
-    $scope.onDataSizeChanged = function() {
-        gridOptions.api.showLoading(true);
-        setTimeout( function () {
-            var colDefs = createCols();
-            var data = createData();
-            gridOptions.api.setColumnDefs(colDefs);
-            gridOptions.api.setRowData(data);
-        });
-    };
-
-/*    $scope.onSelectionChanged = function() {
-        switch ($scope.rowSelection) {
-            case 'checkbox' :
-                //firstColumn.checkboxSelection = true;
-                //groupColumn.cellRenderer.checkbox = true;
-                firstColumn.cellRenderer.checkbox = true;
-                gridOptions.rowSelection = 'multiple';
-                gridOptions.suppressRowClickSelection = true;
-                break;
-            case 'single' :
-                //firstColumn.checkboxSelection = false;
-                //groupColumn.cellRenderer.checkbox = false;
-                firstColumn.cellRenderer.checkbox = false;
-                gridOptions.rowSelection = 'single';
-                gridOptions.suppressRowClickSelection = false;
-                break;
-            case 'multiple' :
-                //firstColumn.checkboxSelection = false;
-                //groupColumn.cellRenderer.checkbox = false;
-                firstColumn.cellRenderer.checkbox = false;
-                gridOptions.rowSelection = 'multiple';
-                gridOptions.suppressRowClickSelection = false;
-                break;
-            default :
-                // turn selection off
-                //firstColumn.checkboxSelection = false;
-                //groupColumn.cellRenderer.checkbox = false;
-                firstColumn.cellRenderer.checkbox = false;
-                gridOptions.rowSelection = null;
-                gridOptions.suppressRowClickSelection = false;
-                break;
-        }
-        gridOptions.api.deselectAll();
-    };*/
-
-    $scope.toggleToolPanel = function() {
-        var showing = gridOptions.api.isToolPanelShowing();
-        gridOptions.api.showToolPanel(!showing);
-    };
-
-    function getColCount() {
-        switch ($scope.dataSize) {
-            case '10x100': return 100;
-            default: return 22;
-        }
-    }
-
-    function getRowCount() {
-        switch ($scope.dataSize) {
-            case '100x22': return 100000;
-            default: return 1000;
-        }
-    }
-
-    function createCols() {
-        var colCount = getColCount();
-        // start with a copy of the default cols
-        var columns = defaultCols.slice(0, colCount);
-
-        // there are 22 cols by default
-        for (var col = 22; col<colCount; col++) {
-            var colName = colNames[col % colNames.length];
-            var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
-            columns.push(colDef);
-        }
-
-        return columns;
-    }
-
-    function createData() {
-        var rowCount = getRowCount();
-        var colCount = getColCount();
-        var data = [];
-        for (var row = 1; row<=rowCount; row++) {
-            if (row%10000===0) {
-                console.log('created ' + row + ' rows');
+            {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+                cellRenderer: languageCellRenderer,
+                headerTooltip: "Example tooltip for Language",
+                filterParams: {newRowsAction: 'keep'},
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
             }
-            var rowItem = {};
-
-            //create data for the known columns
-            var countryData = countries[row % countries.length];
-            rowItem.country = countryData.country;
-            rowItem.continent = countryData.continent;
-            rowItem.language = countryData.language;
-
-            var firstName = firstNames[row % firstNames.length];
-            var lastName = lastNames[row % lastNames.length];
-            rowItem.name = firstName + " " + lastName;
-
-            rowItem.game = games[row % games.length];
-            rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
-            rowItem.rating = (Math.round(Math.random()*5));
-            rowItem.bought = booleanValues[row % booleanValues.length];
-
-            var totalWinnings = 0;
-            months.forEach(function(month) {
-                var value = ((Math.round(Math.random()*10000000))/100) - 20;
-                rowItem[month.toLocaleLowerCase()] = value;
-                totalWinnings += value;
-            });
-            rowItem.totalWinnings = totalWinnings;
-
-            //create dummy data for the additional columns
-            for (var col = defaultCols.length; col<colCount; col++) {
-                var value;
-                var randomBit = Math.random().toString().substring(2,5);
-                value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
-                rowItem["col"+col] = value;
-            }
-            data.push(rowItem);
-        }
-        return data;
-    }
-
-    function selectionChanged(event) {
-        console.log('Callback selectionChanged: selection count = ' + event.selectedRows.length);
-    }
-
-    function rowSelected(event) {
-        // this clogs the console, when to many rows displayed, and use selected 'select all'.
-        // so check 'not to many rows'
-        if (gridOptions.rowData.length <= 100) {
-            var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
-            console.log("Callback rowSelected: " + valueToPrint);
-        }
-    }
-
-    function rowDeselected(event) {
-        // this clogs the console, when to many rows displayed, and use selected 'select all'.
-        // so check 'not to many rows'
-        if (gridOptions.rowData.length <= 100) {
-            var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
-            console.log("Callback rowDeselected: " + valueToPrint);
+        ]
+    },
+    {
+        // column group 'Game of Choice'
+        headerName: 'Game of Choice',
+        children: [
+            {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                cellClass: function() { return 'alphabet'; },
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
+            },
+            {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                floatCell: true,
+                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
+        ]
+    },
+    {
+        // column group 'Performance'
+        headerName: 'Performance',
+        children: [
+            {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+                filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+                filterParams: {cellRenderer: currencyRenderer},
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                }
+            },
+            {headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                cellRenderer: function() { return 'Abra...'; } },
+            {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                cellRenderer: function() { return '...cadabra!'; } },
+        ]
+    },
+    {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
+        floatCell: true,
+        filterParams: {cellRenderer: ratingFilterRenderer}
+    },
+    {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+        editable: true, newValueHandler: numberNewValueHandler, width: 150,
+        cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        icons: {
+            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
         }
     }
-
+];
+//put in the month cols
+var monthGroup = {
+    headerName: 'Monthly Breakdown',
+    children: []
+};
+defaultCols.push(monthGroup);
+months.forEach(function(month) {
+    monthGroup.children.push({
+        headerName: month, field: month.toLocaleLowerCase(),
+        width: 100, filter: 'number', editable: true,
+        cellClassRules: {
+            'good-score': 'x > 50000',
+            'bad-score': 'x < 10000'
+        },
+        newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
+        filterCellRenderer: currencyRenderer,
+        cellStyle: {"text-align": "right"}})
 });
+
+gridOptions.columnDefs = createCols();
+gridOptions.rowData = createData();
+
+//setInterval(function() {
+//    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
+//}, 1000);
+
+function onDataSizeChanged(newDataSize) {
+    dataSize = newDataSize;
+    gridOptions.api.showLoading(true);
+    setTimeout( function () {
+        var colDefs = createCols();
+        var data = createData();
+        gridOptions.api.setColumnDefs(colDefs);
+        gridOptions.api.setRowData(data);
+    });
+}
+
+function toggleToolPanel() {
+    var showing = gridOptions.api.isToolPanelShowing();
+    gridOptions.api.showToolPanel(!showing);
+}
+
+function getColCount() {
+    switch (dataSize) {
+        case '10x100': return 100;
+        default: return 22;
+    }
+}
+
+function getRowCount() {
+    switch (dataSize) {
+        case '100x22': return 100000;
+        default: return 1000;
+    }
+}
+
+function createCols() {
+    var colCount = getColCount();
+    // start with a copy of the default cols
+    var columns = defaultCols.slice(0, colCount);
+
+    // there are 22 cols by default
+    for (var col = 22; col<colCount; col++) {
+        var colName = colNames[col % colNames.length];
+        var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
+        columns.push(colDef);
+    }
+
+    return columns;
+}
+
+function createData() {
+    var rowCount = getRowCount();
+    var colCount = getColCount();
+    var data = [];
+    for (var row = 1; row<=rowCount; row++) {
+        if (row%10000===0) {
+            console.log('created ' + row + ' rows');
+        }
+        var rowItem = {};
+
+        //create data for the known columns
+        var countryData = countries[row % countries.length];
+        rowItem.country = countryData.country;
+        rowItem.continent = countryData.continent;
+        rowItem.language = countryData.language;
+
+        var firstName = firstNames[row % firstNames.length];
+        var lastName = lastNames[row % lastNames.length];
+        rowItem.name = firstName + " " + lastName;
+
+        rowItem.game = games[row % games.length];
+        rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
+        rowItem.rating = (Math.round(Math.random()*5));
+        rowItem.bought = booleanValues[row % booleanValues.length];
+
+        var totalWinnings = 0;
+        months.forEach(function(month) {
+            var value = ((Math.round(Math.random()*10000000))/100) - 20;
+            rowItem[month.toLocaleLowerCase()] = value;
+            totalWinnings += value;
+        });
+        rowItem.totalWinnings = totalWinnings;
+
+        //create dummy data for the additional columns
+        for (var col = defaultCols.length; col<colCount; col++) {
+            var value;
+            var randomBit = Math.random().toString().substring(2,5);
+            value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
+            rowItem["col"+col] = value;
+        }
+        data.push(rowItem);
+    }
+    return data;
+}
+
+function selectionChanged(event) {
+    console.log('Callback selectionChanged: selection count = ' + event.selectedRows.length);
+}
+
+function rowSelected(event) {
+    // this clogs the console, when to many rows displayed, and use selected 'select all'.
+    // so check 'not to many rows'
+    if (gridOptions.rowData.length <= 100) {
+        var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
+        console.log("Callback rowSelected: " + valueToPrint);
+    }
+}
+
+function rowDeselected(event) {
+    // this clogs the console, when to many rows displayed, and use selected 'select all'.
+    // so check 'not to many rows'
+    if (gridOptions.rowData.length <= 100) {
+        var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
+        console.log("Callback rowDeselected: " + valueToPrint);
+    }
+}
+
+function onThemeChanged(newTheme) {
+    gridDiv.className = newTheme;
+}
+
+function onFilterChanged(newFilter) {
+    gridOptions.api.setQuickFilter(newFilter);
+}
 
 var COUNTRY_CODES = {
     Ireland: "ie",
@@ -579,47 +551,6 @@ WinningsFilter.prototype.doesFilterPass = function (node) {
 WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
-
-function headerCellRenderer_dom(colDef) {
-    var eContainer = document.createElement("span");
-    eContainer.style.border = '1px solid darkgreen';
-
-    var eText = document.createTextNode(colDef.displayName);
-    eContainer.appendChild(eText);
-
-    return eContainer;
-}
-
-function headerCellRenderer_text(params) {
-    return params.colDef.displayName;
-}
-
-function headerCellRenderer_angular(params) {
-    params.$scope.showIcon = false;
-    return '<span ng-mouseover="showIcon = true" ng-mouseleave="showIcon = false">' +
-        '<img ' +
-        '   src="http://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg"' +
-        '   style="width: 20px; position: absolute; top: 3px; left: 5px;"' +
-        '   ng-show="showIcon">' +
-        '{{colDef.displayName}}' +
-        '</span>';
-}
-
-/*
-function groupAggFunction(nodes) {
-    var colsToSum = ['bankBalance','totalWinnings','jan','feb',"mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
-    var sums = {};
-    colsToSum.forEach(function(key) { sums[key] = 0; });
-
-    nodes.forEach(function(node) {
-        colsToSum.forEach(function(key) {
-            sums[key] += node.data[key];
-        });
-    });
-
-    return sums;
-}
-*/
 
 function currencyCssFunc(params) {
     if (params.value!==null && params.value!==undefined && params.value<0) {
