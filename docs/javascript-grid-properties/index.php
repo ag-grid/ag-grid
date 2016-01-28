@@ -25,11 +25,19 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>
     <p>
-        Add properties to the gridOptions object, or you can also add as HTML attributes or AngularJS 2 bound properties.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or AngularJS 2 bound properties.
     </p>
 
     <h4>
@@ -37,7 +45,7 @@ include '../documentation_header.php';
         Web Components
     </h4>
     <p>
-        Add properties to the gridOptions object, or you can also add as HTML attributes or set directly onto the DOM element.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the DOM element.
     </p>
 
     <h2>List of Properties</h2>

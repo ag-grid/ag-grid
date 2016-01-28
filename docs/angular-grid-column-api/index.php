@@ -58,6 +58,15 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Use the column API passed to you via the onReady callback of the React component. You can also
+        use the columnApi placed inside gridOptions by the grid during initialisation.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>

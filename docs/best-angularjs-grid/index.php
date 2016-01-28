@@ -66,24 +66,6 @@ include '../documentation_header.php';
 
     <show-example example="basic"></show-example>
 
-    <h2>Further Example Starting Point</h2>
-
-    <p>
-        Below is another simple example, but it loads rows instead of creating rows on the fly.
-        This example is used as as starting point for most of the further examples in the
-        documentation.
-    </p>
-
-    <p>
-        The rows are loaded after the grid is initialised, so the grid's API is used to
-        update the rows into the grid. The API is explained in full in it's own section
-        within the documentation.
-    </p>
-
-    <pre><code>$scope.gridOptions.api.setRowData(newRows)</code></pre>
-
-    <show-example example="example2"></show-example>
-
     <h2>Angular Compiling</h2>
 
     <p>

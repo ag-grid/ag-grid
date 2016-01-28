@@ -27,7 +27,7 @@ module ag.grid {
             if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
             if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
             if (this.visible) { result += ', visible: ' + this.visible; }
-            if (this.pinned) { result += ', visible: ' + this.visible; }
+            if (this.pinned) { result += ', pinned: ' + this.pinned; }
             if (typeof this.finished == 'boolean') { result += ', finished: ' + this.finished; }
             result += '}';
             return result;
