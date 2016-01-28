@@ -55,35 +55,38 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px;">
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
+        <a href="react-and-ag-grid/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="react-and-ag-grid/">
+                React and ag-Grid - the Perfect Match
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            28th January 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Article announcing ag-Grids support for React. Not only do they work together,
+        they play together very well indeed!
+    </div>
+
+</div>
+
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <b>Version 3.2.0 released</b>. Minor changes, see the <a href="changeLog.php">change log</a>. This release
     was mostly to support the 'React Component' which I'm going to release as soon as I get the
     documentation updated.
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            <img src="images/react_large.png"/>
-        </div>
-        <div style="float: right;  color: #767676;">
-            22th January 2016
-        </div>
-        <div style="margin-left: 130px;">
-            <div style="font-size: 25px;">
-                React is coming...
-            </div>
-            <p>
-                I am currently working on React integration. Having spent the last few days working
-                through it I'm excited. The current interface of ag-Grid, based on web standards,
-                maps perfectly onto the React philosophy, even down to using React in custom
-                cellRenderers. In a few days I'll have the next release demonstrating ag-Grid
-                working alongside a full React application using Babel and Webpack.
-            </p>
-        </div>
-    </div>
-
 </div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">

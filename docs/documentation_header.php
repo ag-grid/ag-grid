@@ -87,12 +87,6 @@ if (strcmp($version , 'latest') == 0) {
                     The Basics
                 </h4>
 
-                <?php if ($key == "Install") { ?>
-                    <span class="sidebarLinkSelected">Install</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-install/index.php">Install</a>
-                <?php } ?>
-
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>
                 <?php } else { ?>

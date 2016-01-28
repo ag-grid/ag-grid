@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "React Loves ag-Grid";
+$pageTitle = "React and ag-Grid, the Perfect Match";
 $pageDescription = "ag-Grid is a world leading Enterprise Javascript Data-Grid. React is a world leading Javascript Javascript Rendering Library. This page explains how they both work really well together.";
 $pageKeyboards = "react ag-grid javascript grid";
 
@@ -10,7 +10,7 @@ include('../mediaHeader.php');
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h2>
-            <h2>React Loves ag-Grid</h2>
+            <h2>React and ag-Grid, the Perfect Match</h2>
     </div>
 </div>
 
@@ -20,13 +20,16 @@ include('../mediaHeader.php');
         <p>
             ag-Grid is an enterprise JavaScript data grid with zero library dependencies,
             including no dependency for it's rendering. You can build an application
-            using just JavaScript and ag-Grid alone.
+            using just JavaScript and ag-Grid alone. The 'ag' stands for framework AGnostic.
         </p>
 
+        <div style="text-align: center">
+            <img src="../images/reactAndAgGrid.png" style="width: 300px; padding: 20px;"/>
+        </div>
+
         <p>
-            Last year ag-Grid provided components for
-            AngularJS 1 & 2 and Web Components. Now ag-Grid is providing
-            a React custom component and React rendering.
+            Now ag-Grid is providing
+            an optional React component and React rendering.
             ag-Grd is fully in bed with React and treats React as a first class component
             - meaning if you are using React, ag-Grid is NOT using any other
             framework to get the job done.
@@ -38,7 +41,7 @@ include('../mediaHeader.php');
             React also uses immutability to assist state management. ag-Grid uses
             the same principles. ag-Grid's core
             interface maps directly onto what is required by React making ag-Grid
-            and React feel right at home with eachother.
+            and React match perfectly.
         </p>
 
         <p>
@@ -55,15 +58,16 @@ include('../mediaHeader.php');
         <p>
             ag-Grid then goes one step further, it embraces React for rendering.
             That means you can use React for custom cell
-            rendering inside the grid. You provide ag-Grid with the React component
-            and it knows what
-            to do with to seamlessly integrate.
+            rendering, if you choose, inside the grid. You provide ag-Grid with the React component
+            and it knows what to do to seamlessly integrate. No other grid on the market is
+            both agnostic and still allows you to use React for rendering.
         </p>
 
         <p>
             ag-Grid's future is bright. It's abaility to integrate with the different
             frameworks makes it strongly positioned to be the enterprise level
-            data grid everyone was waiting for.
+            data grid everyone was waiting for. You won't need to throw away your
+            grid next time you want to move to a different framework.
         </p>
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
