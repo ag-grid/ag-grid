@@ -30,7 +30,7 @@ include('../mediaHeader.php');
         <p>
             Now ag-Grid is providing
             an optional React component and React rendering.
-            ag-Grd is fully in bed with React and treats React as a first class component
+            ag-Grid is fully in bed with React and treats React as a first class component
             - meaning if you are using React, ag-Grid is NOT using any other
             framework to get the job done.
         </p>
@@ -64,7 +64,7 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            ag-Grid's future is bright. It's abaility to integrate with the different
+            ag-Grid's future is bright. It's ability to integrate with the different
             frameworks makes it strongly positioned to be the enterprise level
             data grid everyone was waiting for. You won't need to throw away your
             grid next time you want to move to a different framework.

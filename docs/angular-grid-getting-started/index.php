@@ -59,7 +59,7 @@ include '../documentation_header.php';
     <p>
         Almost all the examples in this online documentation use this simple way of loading ag-Grid and do not use a
         framework like React or AngularJS. This is to make the examples as easy to follow (focusing only on what the example
-        si about) and easy to copy and run locally.
+        is about) and easy to copy and run locally.
     </p>
 
     <note>I still have AngularJS lingering in some of the examples. I'll be taking that out soon.</note>

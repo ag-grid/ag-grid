@@ -1,28 +1,39 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused17"></script>
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused17">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused17">
     <script src="examplePinned.js"></script>
 </head>
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
 
     <span style="padding-bottom: 4px; display: inline-block;">
-        <button ng-click="clearPinned()">Clear Pinned</button>
-        <button ng-click="resetPinned()">Left = {#, Athlete, Age} Right = {Total}</button>
-        <button ng-click="pinCountry()">Left = {Country}</button>
+        <button onclick="clearPinned()">Clear Pinned</button>
+        <button onclick="resetPinned()">Left = {#, Athlete, Age} Right = {Total}</button>
+        <button onclick="pinCountry()">Left = {Country}</button>
     </span>
 
     <span style="padding-left: 20px; padding-bottom: 4px; display: inline-block;">
         Jump to:
-        <input placeholder="row" type="text" ng-model="jumpToRowText" ng-change="jumpToRow()" style="width: 40px"/>
-        <input placeholder="col" type="text" ng-model="jumpToColText" ng-change="jumpToCol()" style="width: 40px"/>
+        <input placeholder="row" type="text" style="width: 40px"
+               onpaste="jumpToRow(this.value)"
+               oninput="jumpToRow(this.value)"
+               onchange="jumpToRow(this.value)"
+               onchange="jumpToRow(this.value)"
+               onkeydown="jumpToRow(this.value)"
+               onkeyup="jumpToRow(this.value)"/>
+        <input placeholder="col" type="text" style="width: 40px"
+               onpaste="jumpToRow(this.value)"
+               oninput="jumpToCol(this.value)"
+               onchange="jumpToCol(this.value)"
+               onchange="jumpToCol(this.value)"
+               onkeydown="jumpToCol(this.value)"
+               onkeyup="jumpToCol(this.value)"/>
     </span>
 
     <br/>
 
-    <div ag-grid="gridOptions" style="height: 450px;" class="ag-fresh"></div>
+    <div id="myGrid" style="height: 450px;" class="ag-fresh"></div>
 </body>
 </html>

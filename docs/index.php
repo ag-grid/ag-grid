@@ -200,7 +200,7 @@
         <div class="container">
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-12" style="text-align: center;">
-                    <h4>'ag' stads for <b>Ag</b>nostic - choose your framework</h4>
+                    <h4>'ag' stands for <b>Ag</b>nostic - choose your framework</h4>
                 </div>
             </div>
 

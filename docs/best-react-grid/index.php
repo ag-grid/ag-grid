@@ -113,7 +113,7 @@ import 'ag-grid-root/theme-fresh.css';</code></pre>
     <p>
         When the grid is initialised, it will fire the <i>ready</i> event. If you want to
         use the API of the grid, you should put an <i>onReady(params)</i> callback onto
-        the grid and grab teh api from the params. You can then call this api at a later
+        the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
         setting and changing the props).
         <pre><code>// provide ready callback to the grid
