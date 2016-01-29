@@ -32,8 +32,7 @@ include '../documentation_header.php';
         If you are, then you might be wondering what all this refresh rubbish is all about and do you need it?
         Well if you are happy with what you have, that's totally fine, you can keep it. It is the authors
         opinion to avoid two-way-binding inside a grid as it gives poor performance, especially when displaying large
-        amounts of data and virtualising the rows. On top of that, it is also the authors goal to have a grid that
-        is not dependent on AngularJS, to allow the grid to work in other frameworks.
+        amounts of data and virtualising the rows.
     </note>
 
     <h3>Refreshing Everything, Specific Rows or Specific Cells</h3>

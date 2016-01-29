@@ -78,20 +78,20 @@ include '../documentation_header.php';
         default language).
     </p>
 
-    <pre>    $scope.gridOptions = {
-        enableSorting: true,
-        enableFilter: true,
-        enableColResize: true,
-        columnDefs: columnDefs,
-        localeTextFunc: function(key, defaultValue) {
-            // to avoid key clash with external keys, we add 'grid' to the start of each key.
-		    var gridKey = 'grid.' + key;
-            // look the value up. here we use the AngularJS $filter service, however you can use whatever
-            // service you want, AngularJS or otherwise.
-		    var value = $filter('translate')(gridKey);
-		    return value === gridKey ? defaultValue : value;
-        }
-    };</pre>
+    <pre>var gridOptions = {
+    enableSorting: true,
+    enableFilter: true,
+    enableColResize: true,
+    columnDefs: columnDefs,
+    localeTextFunc: function(key, defaultValue) {
+        // to avoid key clash with external keys, we add 'grid' to the start of each key.
+        var gridKey = 'grid.' + key;
+        // look the value up. here we use the AngularJS $filter service, however you can use whatever
+        // service you want, AngularJS or otherwise.
+        var value = $filter('translate')(gridKey);
+        return value === gridKey ? defaultValue : value;
+    }
+};</pre>
 
 </div>
 

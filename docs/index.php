@@ -213,9 +213,9 @@
                 <div class="col-md-1" style="text-align: center;">
                 </div>
                 <div class="col-md-2" style="text-align: center;">
-                    <a href="/best-javascript-grid/index.php">
+                    <a href="/best-javascript-data-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/javascript_large.png"/>
+                            <img style="height: 100px;" src="images/javascript_large.png" alt="Best Javascript Data Grid" title="Best Javascript Data Grid"/>
                         </div>
                         <div class="usage-footer">
                             <h4>Pure Javascipt</h4>
@@ -223,9 +223,9 @@
                     </a>
                 </div>
                 <div class="col-md-2" style="text-align: center;">
-                    <a href="/best-react-grid/index.php">
+                    <a href="/best-react-data-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/react_large.png"/>
+                            <img style="height: 100px;" src="images/react_large.png" alt="Best React Data Grid" title="Best React Data Grid"/>
                         </div>
                         <div class="usage-footer">
                             <h4>React</h4>
@@ -233,9 +233,9 @@
                     </a>
                 </div>
                 <div class="col-md-2" style="text-align: center;">
-                    <a href="/best-angularjs-grid/index.php">
+                    <a href="/best-angularjs-data-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/angularjs_large.png"/>
+                            <img style="height: 100px;" src="images/angularjs_large.png" alt="Best AngularJS Data Grid" title="Best AngularJS Data Grid"/>
                         </div>
                         <div class="usage-footer">
                             <h4>AngularJS 1.x</h4>
@@ -243,9 +243,9 @@
                     </a>
                 </div>
                 <div class="col-md-2" style="text-align: center;">
-                    <a href="/best-angularjs-2-grid/index.php">
+                    <a href="/best-angular-2-data-grid/index.php">
                         <div>
-                            <img style="height: 100px;" src="images/angular2_large.png"/>
+                            <img style="height: 100px;" src="images/angular2_large.png" alt="Best Angular 2 Data Grid" title="Best Angular 2 Data Grid"/>
                         </div>
                         <div class="usage-footer">
                             <h4>AngularJS 2</h4>
@@ -253,7 +253,7 @@
                     </a>
                 </div>
                 <div class="col-md-2" style="text-align: center;">
-                    <a href="/best-web-component-grid/index.php">
+                    <a href="/best-web-component-data-grid/index.php" alt="Best Web Component Data Grid" title="Best Web Component Data Grid">
                         <div>
                             <img style="height: 100px;" src="images/webComponents_large.png"/>
                         </div>
@@ -481,7 +481,7 @@
 <link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused17">
 
 <link href="example-file-browser/fileBrowser.css?ignore=notused17" rel="stylesheet">
-<link href="best-angularjs-grid/basic.css?ignore=notused17" rel="stylesheet">
+<link href="best-angularjs-data-grid/basic.css?ignore=notused17" rel="stylesheet">
 <link href="example-account-report/account.css?ignore=notused17" rel="stylesheet">
 
 <script src="minimised/basic.js?ignore=notused17"></script>

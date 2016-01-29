@@ -1,6 +1,5 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused17"></script>
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused17">
@@ -15,12 +14,12 @@
     }
 </style>
 
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
     <div style="height: 6%;">
-        <button ng-click="onRefreshAll()">Refresh All</button>
-        <button ng-click="onDoubleJillian()">Double Jillian</button>
-        <button ng-click="onDoubleNiall()">Double Niall</button>
+        <button onclick="onRefreshAll()">Refresh All</button>
+        <button onclick="onDoubleJillian()">Double Jillian</button>
+        <button onclick="onDoubleNiall()">Double Niall</button>
     </div>
-    <div style="height: 94%;" ag-grid="gridOptions" class="ag-fresh"></div>
+    <div style="height: 94%;" id="myGrid" class="ag-fresh"></div>
 </body>
 </html>

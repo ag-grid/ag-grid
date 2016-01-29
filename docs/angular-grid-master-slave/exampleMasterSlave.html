@@ -1,19 +1,18 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused17"></script>
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused17">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused17">
     <script src="exampleMasterSlave.js"></script>
 </head>
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
 <div style="height: 10%">
-    <label><input type="checkbox" ng-model="cbAthlete" ng-change="onCbAthlete()"/>Athlete</label>
-    <label><input type="checkbox" ng-model="cbAge" ng-change="onCbAge()"/>Age</label>
-    <label><input type="checkbox" ng-model="cbCountry" ng-change="onCbCountry()"/>Country</label>
+    <label><input type="checkbox" checked onchange="onCbAthlete(this.checked)"/>Athlete</label>
+    <label><input type="checkbox" checked onchange="onCbAge(this.checked)"/>Age</label>
+    <label><input type="checkbox" checked onchange="onCbCountry(this.checked)"/>Country</label>
 </div>
-<div ag-grid="gridOptionsTop" style="height: 45%;" class="ag-fresh"></div>
-<div ag-grid="gridOptionsBottom" style="height: 45%;" class="ag-fresh"></div>
+<div id="myGridTop" style="height: 45%;" class="ag-fresh"></div>
+<div id="myGridBottom" style="height: 45%;" class="ag-fresh"></div>
 </body>
 </html>

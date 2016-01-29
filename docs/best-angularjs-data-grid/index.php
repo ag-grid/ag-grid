@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started ng1";
-$pageTitle = "Best AngularJS Grid";
-$pageDescription = "Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
+$pageTitle = "Best AngularJS Data Grid";
+$pageDescription = "Shows an example of the best Javascript Data Grid. Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
 $pageKeyboards = "Best AngularJS Grid Datagrid";
 include '../documentation_header.php';
 ?>

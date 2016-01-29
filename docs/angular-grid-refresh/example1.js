@@ -1,8 +1,3 @@
-
-var module = angular.module("example", ["agGrid"]);
-
-module.controller("exampleCtrl", function($scope) {
-
     var columnDefs = [
         {headerName: "Person", field: 'name', width: 400,
             cellStyle:  {'background-color': 'rgba(255, 255, 180, 0.5)'} // light yellow background
@@ -83,10 +78,10 @@ module.controller("exampleCtrl", function($scope) {
 
     function cellValueChangedFunction() {
         // after a value changes, get the volatile cells to update
-        $scope.gridOptions.api.softRefreshView();
+        gridOptions.api.softRefreshView();
     }
 
-    $scope.gridOptions = {
+    var gridOptions = {
         columnDefs: columnDefs,
         rowData: data,
         groupHeaders: true,
@@ -98,8 +93,12 @@ module.controller("exampleCtrl", function($scope) {
         }
     };
 
-    $scope.onHardRefresh = function() {
-        $scope.gridOptions.api.refreshView();
-    };
+    function onHardRefresh() {
+        gridOptions.api.refreshView();
+    }
 
-});
+    // setup the grid after the page has finished loading
+    document.addEventListener('DOMContentLoaded', function() {
+        var gridDiv = document.querySelector('#myGrid');
+        new ag.grid.Grid(gridDiv, gridOptions);
+    });

@@ -1,7 +1,3 @@
-var fileBrowserModule = angular.module('account', ['agGrid']);
-
-fileBrowserModule.controller('accountController', function($scope) {
-
     var columnDefs = [
         {headerName: '', field: 'item', width: 200, cellRenderer: {
             renderer: 'group'
@@ -45,7 +41,7 @@ fileBrowserModule.controller('accountController', function($scope) {
         }
     }
 
-    $scope.gridOptions = {
+    var gridOptions = {
         columnDefs: columnDefs,
         rowData: createRowData(),
         rowSelection: 'single',
@@ -88,4 +84,9 @@ fileBrowserModule.controller('accountController', function($scope) {
 
         return rows;
     }
-});
+
+    // setup the grid after the page has finished loading
+    document.addEventListener('DOMContentLoaded', function() {
+        var gridDiv = document.querySelector('#myGrid');
+        new ag.grid.Grid(gridDiv, gridOptions);
+    });

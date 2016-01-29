@@ -1,53 +1,52 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused17"></script>
     <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused17">
     <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused17">
     <script src="exampleExport.js"></script>
 </head>
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
 
     <div style="padding-bottom: 4px;">
         <label>
             File Name:
-            <input type="text" ng-model="fileName"/>
+            <input type="text" id="fileName"/>
         </label>
         <label style="margin-left: 20px;">
             Separator
-            <input style="width: 20px;" type="text" ng-model="columnSeparator"/>
+            <input style="width: 20px;" type="text" id="columnSeparator"/>
         </label>
         <label style="margin-left: 20px;">
-            <button ng-click="onBtExport()">Export to CSV</button>
+            <button onclick="onBtExport()">Export to CSV</button>
         </label>
     </div>
     <div style="padding-bottom: 4px;">
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="skipHeader"/>
+            <input type="checkbox" id="skipHeader"/>
             Skip Header
         </label>
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="skipFooters"/>
+            <input type="checkbox" id="skipFooters"/>
             Skip Footers
         </label>
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="skipGroups"/>
+            <input type="checkbox" id="skipGroups"/>
             Skip Groups
         </label>
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="customHeader"/>
+            <input type="checkbox" id="customHeader"/>
             Custom Header
         </label>
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="customFooter"/>
+            <input type="checkbox" id="customFooter"/>
             Custom Footer
         </label>
         <label style="margin-right: 20px;">
-            <input type="checkbox" ng-model="allColumns"/>
+            <input type="checkbox" id="allColumns"/>
             All Columns
         </label>
     </div>
-    <div ag-grid="gridOptions" style="height: 400px;" class="ag-fresh"></div>
+    <div id="myGrid" style="height: 400px;" class="ag-fresh"></div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started Web Components";
-$pageTitle = "Best Web Component Grid";
-$pageDescription = "Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
+$pageTitle = "Best Web Component Data Grid";
+$pageDescription = "Demonstrates the best Web Component Data Grid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
 $pageKeyboards = "Best Javascript Web Component Data Grid";
 include '../documentation_header.php';
 ?>

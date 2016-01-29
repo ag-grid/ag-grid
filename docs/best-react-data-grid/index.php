@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started React";
-$pageTitle = "Best React Grid";
-$pageDescription = "Shows and example of a data grid for using with React.";
+$pageTitle = "Best React Data Grid";
+$pageDescription = "Demonstrates teh best React Data Grid. Shows and example of a data grid for using with React.";
 $pageKeyboards = "React Grid";
 include '../documentation_header.php';
 ?>
