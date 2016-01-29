@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Getting Started - Plain Javascript</h2>
+    <h2>Best JavaScript Data Grid</h2>
 
     <p>
         You don't have to use any framework to use ag-Grid if you don't want to.

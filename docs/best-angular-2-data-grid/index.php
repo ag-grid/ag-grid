@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Getting Started - AngularJS 2.0</h2>
+    <h2>Best Angular 2.0 Data Grid</h2>
 
     <h4>AngularJS 2 Still in Beta</h4>
 

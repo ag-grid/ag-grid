@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Getting Started - React</h2>
+    <h2>Best ReactJS Data Grid</h2>
 
     <p>
         Webpack and Babel are popular within the React community. So I've

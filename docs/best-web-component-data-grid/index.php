@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Getting Started - Web Components</h2>
+    <h2>Best Web Components Data Grid</h2>
 
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created

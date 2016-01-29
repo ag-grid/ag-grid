@@ -8,7 +8,7 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Getting Started - AngularJS 1.x</h2>
+    <h2>Best AngularJS Data Grid</h2>
 
     <p>
         The ag-Grid script, when loaded, will check if AngularJS is loaded. If it finds it,
