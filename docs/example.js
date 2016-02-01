@@ -56,8 +56,6 @@ var width = '100%'; // the div gets it's width and height from here
 var height = '100%';
 
 var style = 'ag-fresh';
-var groupBy = '';
-var groupType = 'col';
 var rowSelection = 'checkbox';
 
 var groupColumn = {

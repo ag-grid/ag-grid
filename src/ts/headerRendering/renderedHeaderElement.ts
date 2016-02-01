@@ -1,3 +1,5 @@
+/// <reference path='../gridOptionsWrapper.ts'/>
+
 module ag.grid {
 
     var _ = Utils;
@@ -6,9 +8,11 @@ module ag.grid {
 
         private eRoot: HTMLElement;
         private dragStartX: number;
+        private gridOptionsWrapper: GridOptionsWrapper;
 
-        constructor(eRoot: HTMLElement) {
+        constructor(eRoot: HTMLElement, gridOptionsWrapper: GridOptionsWrapper) {
             this.eRoot = eRoot;
+            this.gridOptionsWrapper = gridOptionsWrapper;
         }
 
         // methods implemented by the base classes
@@ -19,6 +23,10 @@ module ag.grid {
         public onDragging(dragChange: number, finished: boolean): void {}
         public onIndividualColumnResized(column: Column): void {}
         public getGui(): HTMLElement { return null; }
+
+        protected getGridOptionsWrapper(): GridOptionsWrapper {
+            return this.gridOptionsWrapper;
+        }
 
         public addDragHandler(eDraggableElement: any) {
             var that = this;
@@ -57,6 +65,34 @@ module ag.grid {
                 that.eRoot.removeEventListener(key, listener);
             });
             that.onDragging(dragChange, true);
+        }
+
+        protected addHeaderClassesFromCollDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement) {
+            if (abstractColDef && abstractColDef.headerClass) {
+                var classToUse: string | string[];
+                if (typeof abstractColDef.headerClass === 'function') {
+                    var params = {
+                        // bad naming, as colDef here can be a group or a column,
+                        // however most people won't appreciate the difference,
+                        // so keeping it as colDef to avoid confusion.
+                        colDef: abstractColDef,
+                        context: this.gridOptionsWrapper.getContext(),
+                        api: this.gridOptionsWrapper.getApi()
+                    };
+                    var headerClassFunc = <(params: any) => string | string[]> abstractColDef.headerClass;
+                    classToUse = headerClassFunc(params);
+                } else {
+                    classToUse = <string | string[]> abstractColDef.headerClass;
+                }
+
+                if (typeof classToUse === 'string') {
+                    _.addCssClass(eHeaderCell, classToUse);
+                } else if (Array.isArray(classToUse)) {
+                    classToUse.forEach((cssClassItem: any): void => {
+                        _.addCssClass(eHeaderCell, cssClassItem);
+                    });
+                }
+            }
         }
 
     }

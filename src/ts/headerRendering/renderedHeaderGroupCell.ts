@@ -13,7 +13,6 @@ module ag.grid {
         private eHeaderGroupCell: HTMLElement;
         private eHeaderCellResize: HTMLElement;
         private columnGroup: ColumnGroup;
-        private gridOptionsWrapper: GridOptionsWrapper;
         private columnController: ColumnController;
 
         private groupWidthStart: number;
@@ -26,16 +25,17 @@ module ag.grid {
         constructor(columnGroup:ColumnGroup, gridOptionsWrapper:GridOptionsWrapper,
                     columnController: ColumnController, eRoot: HTMLElement, angularGrid: Grid,
                     parentScope: any, filterManager: FilterManager, $compile: any) {
-            super(eRoot);
+            super(eRoot, gridOptionsWrapper);
             this.columnController = columnController;
             this.columnGroup = columnGroup;
-            this.gridOptionsWrapper = gridOptionsWrapper;
             this.parentScope = parentScope;
             this.filterManager = filterManager;
             this.$compile = $compile;
             this.angularGrid = angularGrid;
             this.setupComponents();
         }
+
+
 
         public getGui(): HTMLElement {
             return this.eHeaderGroupCell;
@@ -59,15 +59,16 @@ module ag.grid {
                 classNames.push('ag-header-group-cell-no-group');
             }
             this.eHeaderGroupCell.className = classNames.join(' ');
-            this.eHeaderGroupCell.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+            this.eHeaderGroupCell.style.height = this.getGridOptionsWrapper().getHeaderHeight() + 'px';
+            this.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell);
 
-            if (this.gridOptionsWrapper.isEnableColResize()) {
+            if (this.getGridOptionsWrapper().isEnableColResize()) {
                 this.eHeaderCellResize = document.createElement("div");
                 this.eHeaderCellResize.className = "ag-header-cell-resize";
                 this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
                 this.addDragHandler(this.eHeaderCellResize);
 
-                if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
+                if (!this.getGridOptionsWrapper().isSuppressAutoSize()) {
                     this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
                         // get list of all the column keys we are responsible for
                         var keys: string[] = [];
@@ -111,9 +112,9 @@ module ag.grid {
         private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
             var eGroupIcon: any;
             if (this.columnGroup.isExpanded()) {
-                eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+                eGroupIcon = _.createIcon('columnGroupOpened', this.getGridOptionsWrapper(), null, svgFactory.createArrowLeftSvg);
             } else {
-                eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+                eGroupIcon = _.createIcon('columnGroupClosed', this.getGridOptionsWrapper(), null, svgFactory.createArrowRightSvg);
             }
             eGroupIcon.className = 'ag-header-expand-icon';
             eGroupCellLabel.appendChild(eGroupIcon);

@@ -6,6 +6,8 @@ module ag.grid {
         headerName?: string;
         /** Whether to show the column when the group is open / closed. */
         columnGroupShow?: string;
+        /** CSS class for the header */
+        headerClass?: string | string[] | ((params: any) => string | string[]);
     }
 
     export interface ColGroupDef extends AbstractColDef {
@@ -54,9 +56,6 @@ module ag.grid {
 
         /** To provide a template for the header. */
         headerCellTemplate?: ( (params: any) => string | HTMLElement ) | string | HTMLElement;
-
-        /** CSS class for the header */
-        headerClass?: string | string[] | ((params: any) => string | string[]);
 
         /** Initial width, in pixels, of the cell */
         width?: number;
