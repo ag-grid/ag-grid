@@ -1,6 +1,6 @@
 /// <reference path='componentUtil.ts'/>
 
-module ag.grid {
+module agGrid {
 
     // lets load angular 2 if we can find it
     var _ng: any;
@@ -12,7 +12,7 @@ module ag.grid {
 
         // not intended for user to interact with. so putting _ in so if use gets reference
         // to this object, they kind'a know it's not part of the agreed interface
-        private _agGrid: ag.grid.Grid;
+        private _agGrid: agGrid.Grid;
         private _initialised = false;
 
         private gridOptions: GridOptions;
@@ -123,7 +123,7 @@ module ag.grid {
             this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
             var nativeElement = this.elementDef.nativeElement;
             var globalEventLister = this.globalEventListener.bind(this);
-            this._agGrid = new ag.grid.Grid(nativeElement, this.gridOptions, globalEventLister);
+            this._agGrid = new agGrid.Grid(nativeElement, this.gridOptions, globalEventLister);
             this.api = this.gridOptions.api;
             this.columnApi = this.gridOptions.columnApi;
 

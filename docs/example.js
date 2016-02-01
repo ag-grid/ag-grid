@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     gridDiv = document.querySelector('#myGrid');
-    new ag.grid.Grid(gridDiv, gridOptions);
+    new agGrid.Grid(gridDiv, gridOptions);
 });
 
 var gridDiv;
@@ -300,7 +300,7 @@ gridOptions.rowData = createData();
 
 function onDataSizeChanged(newDataSize) {
     dataSize = newDataSize;
-    gridOptions.api.showLoading(true);
+    gridOptions.api.showLoadingOverlay();
     setTimeout( function () {
         var colDefs = createCols();
         var data = createData();

@@ -1,7 +1,7 @@
 /// <reference path="constants.ts" />
 /// <reference path="components/componentUtil.ts" />
 
-module ag.grid {
+module agGrid {
 
     var DEFAULT_ROW_HEIGHT = 25;
     var constants = Constants;

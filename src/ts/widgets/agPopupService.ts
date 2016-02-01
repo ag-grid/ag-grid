@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

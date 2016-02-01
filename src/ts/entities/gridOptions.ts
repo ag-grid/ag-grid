@@ -1,6 +1,6 @@
 /// <reference path="colDef.ts" />
 
-module ag.grid {
+module agGrid {
 
     export interface GridOptions {
 

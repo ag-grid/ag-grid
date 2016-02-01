@@ -5,7 +5,7 @@
 /// <reference path='renderedHeaderElement.ts' />
 /// <reference path='headerTemplateLoader.ts' />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

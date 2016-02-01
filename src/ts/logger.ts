@@ -1,5 +1,5 @@
 
-module ag.grid {
+module agGrid {
 
     export class LoggerFactory {
 

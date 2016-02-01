@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     export class Events {
 

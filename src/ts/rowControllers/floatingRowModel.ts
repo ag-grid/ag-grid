@@ -1,6 +1,6 @@
 /// <reference path="../entities/rowNode.ts" />
 
-module ag.grid {
+module agGrid {
 
     export class FloatingRowModel {
 

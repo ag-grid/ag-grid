@@ -5,7 +5,7 @@
 /// <reference path="../headerRendering/renderedHeaderCell.ts" />
 /// <reference path="../headerRendering/renderedHeaderGroupCell.ts" />
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
 

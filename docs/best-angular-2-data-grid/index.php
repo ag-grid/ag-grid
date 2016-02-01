@@ -100,7 +100,7 @@ SampleAppComponent.annotations = [
     new ng.core.View({
         // tell AngularJS that the SimpleAppComponent directive
         // uses the ag-Grid directive
-        directives: [ag.grid.AgGridNg2],
+        directives: [agGrid.AgGridNg2],
         // the template for our component
         template: templateForSampleAppComponent
     })

@@ -1,5 +1,5 @@
 
-module ag.grid {
+module agGrid {
 
     export class Constants {
         static STEP_EVERYTHING = 0;

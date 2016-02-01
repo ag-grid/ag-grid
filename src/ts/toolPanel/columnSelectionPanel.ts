@@ -4,7 +4,7 @@
 /// <reference path="../constants.ts" />
 /// <reference path="../layout/BorderLayout.ts" />
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
     var svgFactory = SvgFactory.getInstance();

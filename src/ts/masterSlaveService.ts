@@ -4,7 +4,7 @@
 /// <reference path="events.ts" />
 /// <reference path="eventService.ts" />
 
-module ag.grid {
+module agGrid {
 
     export class MasterSlaveService {
 

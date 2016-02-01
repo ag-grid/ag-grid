@@ -4,7 +4,7 @@
 /// <reference path='../logger.ts'/>
 /// <reference path='columnKeyCreator.ts'/>
 
-module ag.grid {
+module agGrid {
 
     // takes in a list of columns, as specified by the column definitions, and returns column groups
     export class BalancedColumnTreeBuilder {

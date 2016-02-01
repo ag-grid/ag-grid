@@ -169,7 +169,7 @@
 
     function onBtBringGridBack() {
         var eGridDiv = document.querySelector('#myGrid');
-        new ag.grid.Grid(eGridDiv, gridOptions);
+        new agGrid.Grid(eGridDiv, gridOptions);
         btBringGridBack.disabled = true;
         btDestroyGrid.disabled = false;
     }

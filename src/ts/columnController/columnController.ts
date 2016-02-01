@@ -8,7 +8,7 @@
 /// <reference path="./balancedColumnTreeBuilder.ts" />
 /// <reference path="../rendering/autoWidthCalculator.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
     var constants = Constants;

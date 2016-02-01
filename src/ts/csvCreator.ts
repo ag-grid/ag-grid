@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     var LINE_SEPARATOR = '\r\n';
 

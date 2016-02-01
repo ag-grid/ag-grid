@@ -24,7 +24,7 @@ include '../documentation_header.php';
 
     <pre>    // example creating a grid using raw Javascript
     var eGridDiv = document.querySelector('#myGrid'); // get a reference to the grid div
-    new ag.grid.Grid(eGridDiv, gridOptions); //create a new grid
+    new agGrid.Grid(eGridDiv, gridOptions); //create a new grid
 </pre>
 
     <h2>Simple Plain Javascript Example</h2>

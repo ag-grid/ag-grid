@@ -3,7 +3,7 @@
 /// <reference path='../entities/originalColumnGroup.ts'/>
 /// <reference path='../logger.ts'/>
 
-module ag.grid {
+module agGrid {
 
     var constants = Constants;
 

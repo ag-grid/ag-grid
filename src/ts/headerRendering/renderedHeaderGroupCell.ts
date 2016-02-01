@@ -2,7 +2,7 @@
 /// <reference path='renderedHeaderCell.ts' />
 /// <reference path='renderedHeaderElement.ts' />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
     var constants = Constants;

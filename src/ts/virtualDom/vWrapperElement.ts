@@ -1,6 +1,6 @@
 /// <reference path="vElement.ts" />
 
-module ag.vdom {
+module agGrid {
 
     export class VWrapperElement extends VElement {
 

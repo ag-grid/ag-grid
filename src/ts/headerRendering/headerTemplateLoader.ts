@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts"/>
 /// <reference path="../svgFactory.ts"/>
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
     var svgFactory = SvgFactory.getInstance();

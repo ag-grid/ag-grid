@@ -79,7 +79,7 @@ function cellValueChanged() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDivLeft = document.querySelector('#myGridLeft');
-    new ag.grid.Grid(gridDivLeft, gridOptionsLeft);
+    new agGrid.Grid(gridDivLeft, gridOptionsLeft);
     var gridDivRight = document.querySelector('#myGridRight');
-    new ag.grid.Grid(gridDivRight, gridOptionsRight);
+    new agGrid.Grid(gridDivRight, gridOptionsRight);
 });

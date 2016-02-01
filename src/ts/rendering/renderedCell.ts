@@ -9,16 +9,16 @@
 /// <reference path="../virtualDom/vHtmlElement.ts" />
 /// <reference path="../virtualDom/vWrapperElement.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 
     export class RenderedCell {
 
-        private vGridCell: ag.vdom.VHtmlElement; // the outer cell
-        private vSpanWithValue: ag.vdom.VHtmlElement; // inner cell
-        private vCellWrapper: ag.vdom.VHtmlElement;
-        private vParentOfValue: ag.vdom.VHtmlElement;
+        private vGridCell: VHtmlElement; // the outer cell
+        private vSpanWithValue: VHtmlElement; // inner cell
+        private vCellWrapper: VHtmlElement;
+        private vParentOfValue: VHtmlElement;
 
         private checkboxOnChangeListener: EventListener;
 
@@ -118,7 +118,7 @@ module ag.grid {
             return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
         }
 
-        public getVGridCell(): ag.vdom.VHtmlElement {
+        public getVGridCell(): VHtmlElement {
             return this.vGridCell;
         }
 
@@ -142,7 +142,7 @@ module ag.grid {
         }
 
         private setupComponents() {
-            this.vGridCell = new ag.vdom.VHtmlElement("div");
+            this.vGridCell = new VHtmlElement("div");
             this.vGridCell.setAttribute("col", (this.column.getIndex() !== undefined && this.column.getIndex() !== null) ? this.column.getIndex().toString() : '');
 
             this.vGridCell.setAttribute("colId", this.column.getColId());
@@ -579,15 +579,15 @@ module ag.grid {
 
         private createParentOfValue() {
             if (this.checkboxSelection) {
-                this.vCellWrapper = new ag.vdom.VHtmlElement('span');
+                this.vCellWrapper = new VHtmlElement('span');
                 this.vCellWrapper.addClass('ag-cell-wrapper');
                 this.vGridCell.appendChild(this.vCellWrapper);
 
                 this.createSelectionCheckbox();
-                this.vCellWrapper.appendChild(new ag.vdom.VWrapperElement(this.eCheckbox));
+                this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
 
                 // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-                this.vSpanWithValue = new ag.vdom.VHtmlElement('span');
+                this.vSpanWithValue = new VHtmlElement('span');
                 this.vSpanWithValue.addClass('ag-cell-value');
 
                 this.vCellWrapper.appendChild(this.vSpanWithValue);

@@ -1,8 +1,8 @@
 /// <reference path="../utils.ts" />
 
-module ag.vdom {
+module agGrid {
 
-    var _ = ag.grid.Utils;
+    var _ = agGrid.Utils;
 
     export class VElement {
 

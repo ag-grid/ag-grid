@@ -119,5 +119,5 @@ var gridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
-    new ag.grid.Grid(gridDiv, gridOptions);
+    new agGrid.Grid(gridDiv, gridOptions);
 });

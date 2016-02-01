@@ -1,6 +1,6 @@
 /// <references path='events.ts'/>
 
-module ag.grid {
+module agGrid {
 
     export class ColumnChangeEvent {
 

@@ -36,7 +36,7 @@ SampleAppComponent.annotations = [
     }),
     new ng.core.View({
         // register the ag-Grid directive with this directive
-        directives: [ag.grid.AgGridNg2],
+        directives: [agGrid.AgGridNg2],
         template: templateForSampleAppComponent
     })
 ];

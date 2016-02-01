@@ -4,7 +4,7 @@
 /// <reference path="renderedRow.ts" />
 /// <reference path="../cellRenderers/groupCellRendererFactory.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

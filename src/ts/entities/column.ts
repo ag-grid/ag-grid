@@ -1,7 +1,7 @@
 /// <reference path="../constants.ts" />
 /// <reference path="columnGroup.ts" />
 
-module ag.grid {
+module agGrid {
 
     var constants = Constants;
 

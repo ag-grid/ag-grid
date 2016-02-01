@@ -2,7 +2,7 @@
 /// <reference path="setFilterModel.ts" />
 /// <reference path="setFilterParameters.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

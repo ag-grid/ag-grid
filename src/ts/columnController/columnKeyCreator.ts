@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     // class returns a unique id to use for the column. it checks the existing columns, and if the requested
     // id is already taken, it will start appending numbers until it gets a unique id.

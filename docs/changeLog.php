@@ -10,6 +10,8 @@ include 'documentation_header.php';
 
     <h3>Version 3.3.0</h3>
     <li>Minor: headerClass (column definition) can now be provided for column groups.</li>
+    <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
+    <li>Major: If using Angular 2 then what was "directives: [ag.grid.AgGridNg2]" is now "directives: [agGrid.AgGridNg2]".</li>
 
     <h3>Version 3.2.0</h3>
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>

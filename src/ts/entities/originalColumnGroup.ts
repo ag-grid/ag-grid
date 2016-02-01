@@ -1,6 +1,6 @@
 /// <reference path="./originalColumnGroupChild.ts"/>
 
-module ag.grid {
+module agGrid {
 
     export class OriginalColumnGroup implements OriginalColumnGroupChild {
 

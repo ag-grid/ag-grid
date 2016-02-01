@@ -1,5 +1,5 @@
 
-module ag.grid {
+module agGrid {
 
     // provide a reference to angular
     var angular: any;
@@ -37,7 +37,7 @@ module ag.grid {
         }
 
         var eGridDiv = $element[0];
-        var grid = new ag.grid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
+        var grid = new agGrid.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
 
         $scope.$on("$destroy", function() {
             grid.destroy();

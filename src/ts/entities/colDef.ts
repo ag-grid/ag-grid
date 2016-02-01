@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     /** AbstractColDef can be a group or a column definition */
     export interface AbstractColDef {

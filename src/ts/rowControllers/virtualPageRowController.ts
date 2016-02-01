@@ -5,7 +5,7 @@
  * or standard pagination, the inMemoryRowController is used.
  */
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
     var logging = false;

@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     export interface RowNode {
         /** Unique ID for the node. Can be though of as the index of the row in the original list,

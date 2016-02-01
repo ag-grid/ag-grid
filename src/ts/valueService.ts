@@ -2,7 +2,7 @@
 /// <reference path="expressionService.ts" />
 /// <reference path="columnController/columnController.ts" />
 
-module ag.grid {
+module agGrid {
 
     export class ValueService {
 

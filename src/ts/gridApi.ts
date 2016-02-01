@@ -3,7 +3,7 @@
 /// <reference path="headerRendering/headerRenderer.ts" />
 /// <reference path="csvCreator.ts" />
 
-module ag.grid {
+module agGrid {
 
     export class GridApi {
 

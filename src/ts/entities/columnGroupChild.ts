@@ -1,4 +1,4 @@
-module ag.grid {
+module agGrid {
 
     // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.
     // See the note at the top of Column class.

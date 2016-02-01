@@ -1,6 +1,6 @@
 /// <reference path="../utils.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

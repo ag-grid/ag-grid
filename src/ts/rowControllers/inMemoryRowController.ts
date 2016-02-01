@@ -3,7 +3,7 @@
 /// <reference path="../groupCreator.ts" />
 /// <reference path="../entities/rowNode.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
     var constants = Constants;

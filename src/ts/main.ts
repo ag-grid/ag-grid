@@ -15,14 +15,29 @@ if (typeof window !== 'undefined') {
     // Establish the root object, `window` or `exports`
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = ag.grid;
+            exports = module.exports = agGrid;
         } else {
-            exports = ag.grid;
+            exports = agGrid;
         }
     }
 
     this.agGridGlobalFunc = function() {
-        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new ag.grid.Grid()" to create a new grid. Check the examples in the documentation.')
+        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new agGrid.Grid()" to create a new grid. Check the examples in the documentation.')
     };
 
 }).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);
+
+// how to build out the package was taken from inspecting TypeScript generated code
+var ag: any;
+(function (ag: any) {
+    var grid: any;
+    (function (grid: any) {
+        var Grid = (function () {
+            function Grid() {
+                console.error('Error creating ag-Grid: Do not use "new ag.grid.Grid()", since ag-Grid v3.3 the way to do it is "new agGrid.Grid()"');
+            }
+            return Grid;
+        })();
+        grid.Grid = Grid;
+    })(grid = ag.grid || (ag.grid = {}));
+})(ag || (ag = {}));

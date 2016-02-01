@@ -9,7 +9,7 @@
 /// <reference path="renderedCell.ts" />
 /// <reference path="../virtualDom/vHtmlElement.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 
@@ -270,7 +270,7 @@ module ag.grid {
             }
         }
 
-        private bindVirtualElement(vElement: ag.vdom.VHtmlElement): void {
+        private bindVirtualElement(vElement: VHtmlElement): void {
             var html = vElement.toHtmlString();
             var element: Element = <Element> _.loadTemplate(html);
             vElement.elementAttached(element);
@@ -419,7 +419,7 @@ module ag.grid {
         }
 
         private createRowContainer() {
-            var vRow = new ag.vdom.VHtmlElement('div');
+            var vRow = new VHtmlElement('div');
             var that = this;
             vRow.addEventListener("click", function (event: any) {
                 var agEvent = that.createEvent(event, this);

@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../entities/colDef.ts" />
 
-module ag.grid {
+module agGrid {
 
     var _ = Utils;
 

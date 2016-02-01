@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../layout/borderLayout.ts" />
 
-module ag.grid {
+module agGrid {
 
     // the long lines below are on purpose, otherwise there is while space between some of the dives that
     // we do not want to have, and this white space ends up as gaps in some of the browsers

@@ -1,7 +1,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="textAndNumberFilterParameters.ts" />
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
 

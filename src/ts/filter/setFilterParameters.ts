@@ -1,6 +1,6 @@
 /** The filter parameters for set filter */
 
-module ag.grid {
+module agGrid {
 
     export interface SetFilterParameters {
 

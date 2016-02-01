@@ -64,9 +64,9 @@ function btSizeColsToFix() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDivTop = document.querySelector('#myGridTop');
-    new ag.grid.Grid(gridDivTop, gridOptionsTop);
+    new agGrid.Grid(gridDivTop, gridOptionsTop);
     var gridDivBottom = document.querySelector('#myGridBottom');
-    new ag.grid.Grid(gridDivBottom, gridOptionsBottom);
+    new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.

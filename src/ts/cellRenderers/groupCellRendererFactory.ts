@@ -2,7 +2,7 @@
 /// <reference path="../utils.ts" />
 /// <reference path="../constants.ts" />
 
-module ag.grid {
+module agGrid {
 
     var svgFactory = SvgFactory.getInstance();
     var utils = Utils;

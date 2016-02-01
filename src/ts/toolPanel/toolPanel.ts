@@ -4,7 +4,7 @@
 /// <reference path="./valuesSelectionPanel.ts" />
 /// <reference path="../layout/verticalStack.ts" />
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
 

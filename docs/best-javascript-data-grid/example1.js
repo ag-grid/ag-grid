@@ -22,5 +22,5 @@ var gridOptions = {
 // ag-Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
-    new ag.grid.Grid(eGridDiv, gridOptions);
+    new agGrid.Grid(eGridDiv, gridOptions);
 });

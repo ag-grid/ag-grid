@@ -2,7 +2,7 @@
 /// <reference path="../dragAndDrop/dragAndDropService" />
 /// <amd-dependency path="text!agList.html"/>
 
-module ag.grid {
+module agGrid {
 
     var utils = Utils;
     var template =

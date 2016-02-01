@@ -1,6 +1,6 @@
 /// <reference path='componentUtil.ts'/>
 
-module ag.grid {
+module agGrid {
    if (typeof document!=='undefined' && (<any>document).registerElement) {
 
         // i don't think this type of extension is possible in TypeScript, so back to
@@ -47,7 +47,7 @@ module ag.grid {
 
             var globalEventListener = this.globalEventListener.bind(this);
             this._gridOptions = ComponentUtil.copyAttributesToGridOptions(options, this);
-            this._agGrid = new ag.grid.Grid(this, this._gridOptions, globalEventListener);
+            this._agGrid = new agGrid.Grid(this, this._gridOptions, globalEventListener);
 
             this.api = options.api;
             this.columnApi = options.columnApi;
