@@ -53,7 +53,7 @@ include '../documentation_header.php';
     <pre><code>var gridOptions = {
     // PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application
     rowData: myRowData,
-    colDef: myColDefs,
+    columnDefs: myColDefs,
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
