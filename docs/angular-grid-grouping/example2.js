@@ -14,9 +14,11 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     groupIncludeFooter: true,
+    enableSorting: true,
     groupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
+        comparator: agGrid.defaultGroupComparator,
         cellRenderer: {
             renderer: 'group',
             footerValueGetter: '"Total (" + x + ")"',

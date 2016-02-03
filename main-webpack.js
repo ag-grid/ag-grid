@@ -8,6 +8,7 @@ exports.ComponentUtil = require('./lib/components/componentUtil').ComponentUtil;
 exports.ColumnController = require('./lib/columnController/columnController').ColumnController;
 exports.initialiseAgGridWithAngular1 = require('./lib/components/agGridNg1').initialiseAgGridWithAngular1;
 exports.initialiseAgGridWithWebComponents = require('./lib/components/agGridWebComponent').initialiseAgGridWithWebComponents;
+exports.defaultGroupComparator = require('./lib/functions').defaultGroupComparator;
 
 require('./styles/ag-grid.css');
 require('./styles/theme-blue.css');

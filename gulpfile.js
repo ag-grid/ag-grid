@@ -64,6 +64,7 @@ function tsdTask(callback) {
 function tscTask() {
     var tsResult = gulp
         .src('src/ts/**/*.ts')
+        //.pipe(sourcemaps.init())
         .pipe(gulpTypescript({
             typescript: typescript,
             module: 'commonjs',
@@ -79,6 +80,7 @@ function tscTask() {
             .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
             .pipe(gulp.dest('lib')),
         tsResult.js
+            //.pipe(sourcemaps.write())
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('lib'))
     ])
@@ -106,6 +108,7 @@ function webpackTask(minify) {
                 library: ["agGrid"],
                 libraryTarget: "umd"
             },
+            //devtool: 'inline-source-map',
             module: {
                 loaders: [
                     { test: /\.css$/, loader: "style-loader!css-loader" }

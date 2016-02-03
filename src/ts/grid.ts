@@ -591,64 +591,11 @@ export class Grid {
     }
 
     public getSortModel() {
-        var allColumns = this.columnController.getAllColumns();
-        var columnsWithSorting = <any>[];
-        var i: any;
-        for (i = 0; i < allColumns.length; i++) {
-            if (allColumns[i].getSort()) {
-                columnsWithSorting.push(allColumns[i]);
-            }
-        }
-        columnsWithSorting.sort(function (a: any, b: any) {
-            return a.sortedAt - b.sortedAt;
-        });
-
-        var result = <any>[];
-        for (i = 0; i < columnsWithSorting.length; i++) {
-            var resultEntry = {
-                colId: columnsWithSorting[i].colId,
-                sort: columnsWithSorting[i].sort
-            };
-            result.push(resultEntry);
-        }
-
-        return result;
+        return this.columnController.getSortModel();
     }
 
     public setSortModel(sortModel: any) {
-        if (!this.gridOptionsWrapper.isEnableSorting()) {
-            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
-            return;
-        }
-        // first up, clear any previous sort
-        var sortModelProvided = sortModel !== null && sortModel !== undefined && sortModel.length > 0;
-        var allColumns = this.columnController.getAllColumns();
-        for (var i = 0; i < allColumns.length; i++) {
-            var column = allColumns[i];
-
-            var sortForCol: any = null;
-            var sortedAt = -1;
-            if (sortModelProvided && !column.getColDef().suppressSorting) {
-                for (var j = 0; j < sortModel.length; j++) {
-                    var sortModelEntry = sortModel[j];
-                    if (typeof sortModelEntry.colId === 'string'
-                        && typeof column.getColId() === 'string'
-                        && sortModelEntry.colId === column.getColId()) {
-                        sortForCol = sortModelEntry.sort;
-                        sortedAt = j;
-                    }
-                }
-            }
-
-            if (sortForCol) {
-                column.setSort(sortForCol);
-                column.setSortedAt(sortedAt);
-            } else {
-                column.setSort(null);
-                column.setSortedAt(null);
-            }
-        }
-
+        this.columnController.setSortModel(sortModel);
         this.onSortingChanged();
     }
 

@@ -1,7 +1,10 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200, cellRenderer: {
-        renderer: 'group'
-    }},
+    {headerName: "Athlete", field: "athlete", width: 200,
+        comparator: agGrid.defaultGroupComparator,
+        cellRenderer: {
+            renderer: 'group'
+        }
+    },
     {headerName: "Age", field: "age", width: 90, cellRenderer: ageRenderer},
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
@@ -17,6 +20,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     groupUseEntireRow: false,
+    enableSorting: true,
     groupAggFunction: groupAggFunction,
     groupSuppressAutoColumn: true,
     getRowStyle: rowStyleFunc

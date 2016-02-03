@@ -42,11 +42,12 @@ include '../documentation_header.php';
         ag-Grid is distributed as both a self contained bundle (that places ag-Grid on the global scope)
         and also via a CommonJS package.
     </p>
+
     <h4>Self Contained Bundle</h4>
 
-    <p>
-        To use the bundle, reference the bundle from your html page as follows:
-    </p>
+    <p>Using the bundled version is the quickest way to get going, you just put the reference into your
+        HTML page and it works.</p>
+
         <pre>&lt;script src="pathToGrid/ag-grid.js">&lt;/script></pre>
 
     <p>
@@ -71,6 +72,8 @@ var AgGrid = require('ag-grid');
 import {Grid} from 'ag-grid/main';
 </pre>
 
+    <p>Most single page web-apps use CommonJS and Bundling, so will use the CommonJS version of ag-Grid.</p>
+
     <h3>Additional Projects</h3>
 
     <p>If using React or Angular 2, you will also need to reference the additional ag-Grid project for that
@@ -79,8 +82,7 @@ import {Grid} from 'ag-grid/main';
     <h3>Bundled vs CommonJS & Frameworks Summary</h3>
 
     <p>
-        So which should you choose, bundled or CommonJS? And do you need an additional project? The table
-        below summarises.
+        The table below summarises bundles vs CommonJS with respect to the frameworks.
     </p>
 
     <style>
@@ -98,8 +100,8 @@ import {Grid} from 'ag-grid/main';
     <table style="background-color: beige">
         <tr style="background-color: blanchedalmond">
             <th>Framework</th>
-            <th>Bundled</th>
-            <th>CommonJS</th>
+            <th>Works with Bundled</th>
+            <th>Works with CommonJS</th>
             <th>Extra Project</th>
         </tr>
         <tr>
@@ -110,8 +112,8 @@ import {Grid} from 'ag-grid/main';
         </tr>
         <tr>
             <td>React</td>
-            <td>Works</td>
             <td>No</td>
+            <td>Works</td>
             <td>ag-grid-react</td>
         </tr>
         <tr>
@@ -122,8 +124,8 @@ import {Grid} from 'ag-grid/main';
         </tr>
         <tr>
             <td>Angular 2</td>
-            <td>Works</td>
             <td>No</td>
+            <td>Works</td>
             <td>ag-grid-ng2</td>
         </tr>
         <tr>
@@ -138,13 +140,12 @@ import {Grid} from 'ag-grid/main';
         The 'odd ones out' above are Angular 2 and React. Both of these modules have dependencies
         on their associated frameworks (eg ag-grid-ng2 has a dependency on Angular 2). To provide
         these dependencies, CommonJS is used, thus you need CommonJS packaging for them to work.
-        Also to keep these dependencies out of the core grid (you don't want Angular 2 dependency
-        if using React for example) they are separated out into separate projects.
+        In other words, the bundled ag-Grid, doesn't have a reference to the Angular 2 or React
+        libraries, so you can't use it in these scenarios.
     </p>
-
     <p>
-        So if you have the choice, use the bundled version if you are not using CommonJS (or compatible)
-        packaging in your application.
+        Also to keep these Angular 2 and React dependencies out of the core grid (you don't want Angular 2 dependency
+        if using React for example) they are separated out into separate projects.
     </p>
 
     <h3>List of Loading / Building Examples</h3>
@@ -186,7 +187,7 @@ import {Grid} from 'ag-grid/main';
         ag-Grid does not favor any framework. It's agnostic. It doesn't have a preference what framework you use. ag-Grid supports
         5 flavours: React, AngularJS, Angular 2, Web Components and Native Javascript. Every ag-Grid
         feature is fully available in each framework, there is no bias. You choose which framework you
-        want. So continue now to the section on the framework you are interested in to continue, then jump to the
+        want. So continue now to the section on the framework you are interested in, then jump to the
         details of how to use the grid.
     </p>
 

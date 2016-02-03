@@ -4,6 +4,7 @@ import EventService from "./eventService";
 import Constants from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
+import {ColDef} from "./entities/colDef";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -66,7 +67,7 @@ export default class GridOptionsWrapper {
     public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
-    public getGroupColumnDef() { return this.gridOptions.groupColumnDef; }
+    public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
     public isAngularCompileRows() { return isTrue(this.gridOptions.angularCompileRows); }
     public isAngularCompileFilters() { return isTrue(this.gridOptions.angularCompileFilters); }

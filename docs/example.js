@@ -62,6 +62,7 @@ var groupColumn = {
     headerName: "Group",
     width: 200,
     field: 'name',
+    comparator: agGrid.defaultGroupComparator,
     cellRenderer: {
         renderer: "group",
         checkbox: true
@@ -453,37 +454,49 @@ function PersonFilter() {
 }
 
 PersonFilter.prototype.init = function (params) {
-    this.$scope = params.$scope;
-    this.$scope.onFilterChanged = function() {
-        params.filterChangedCallback();
-    };
     this.valueGetter = params.valueGetter;
+    this.filterText = null;
+    this.setupGui(params);
+};
+
+// not called by ag-Grid, just for us to help setup
+PersonFilter.prototype.setupGui = function (params) {
+    this.gui = document.createElement('div');
+    this.gui.innerHTML =
+        '<div style="padding: 4px;">' +
+        '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
+        '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>' +
+        '<div style="margin-top: 20px; width: 200px;">Just to iterate anything can go in here, here is an image:</div>' +
+        '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
+        '</div>';
+
+    this.eFilterText = this.gui.querySelector('#filterText');
+    this.eFilterText.addEventListener("changed", listener);
+    this.eFilterText.addEventListener("paste", listener);
+    this.eFilterText.addEventListener("input", listener);
+    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
+    // listen for this further ones
+    this.eFilterText.addEventListener("keydown", listener);
+    this.eFilterText.addEventListener("keyup", listener);
+
+    var that = this;
+    function listener(event) {
+        that.filterText = event.target.value;
+        params.filterChangedCallback();
+    }
 };
 
 PersonFilter.prototype.getGui = function () {
-    return '<div>' +
-     '  <div style="font-weight: bold; background-color: #bbb; text-align: center;">Example Custom Filter</div>' +
-     '  <div style="margin: 4px;"><input type="text" ng-model="filterText" ng-change="onFilterChanged()" placeholder="Full name search..."/></div>' +
-     '  <div style="display: inline-block; width: 200px; padding: 4px; margin: 4px; border: 1px solid #888; background-color: #fffff0;">' +
-     '    This filter does partial word search, the following all bring back the name Sophie Beckham: <br/>' +
-     '    => "sophie"<br/>' +
-     '    => "beckham"<br/>' +
-     '    => "sophie beckham"<br/>' +
-     '    => "beckham sophie"<br/>' +
-     '    => "beck so"<br/>' +
-     '  </div>' +
-     '</div>';
+    return this.gui;
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {
-    var filterText = this.$scope.filterText;
-    if (!filterText) {
-        return true;
-    }
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
-    var value = this.valueGetter(params);
-    filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+    var valueGetter = this.valueGetter;
+    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+        var value = valueGetter(params);
         if (value.toString().toLowerCase().indexOf(filterWord)<0) {
             passed = false;
         }
@@ -493,8 +506,20 @@ PersonFilter.prototype.doesFilterPass = function (params) {
 };
 
 PersonFilter.prototype.isFilterActive = function () {
-    var value = this.$scope.filterText;
-    return value !== null && value !== undefined && value !== '';
+    return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+};
+
+PersonFilter.prototype.getApi = function() {
+    var that = this;
+    return {
+        getModel: function() {
+            var model = {value: that.filterText.value};
+            return model;
+        },
+        setModel: function(model) {
+            that.eFilterText.value = model.value;
+        }
+    }
 };
 
 function WinningsFilter() {

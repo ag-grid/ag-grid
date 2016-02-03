@@ -47,10 +47,10 @@ if (strcmp($version , 'latest') == 0) {
                             <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
+                            <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>

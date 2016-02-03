@@ -65,6 +65,17 @@ function clearSort() {
     gridOptions.api.setSortModel(null);
 }
 
+var savedSort;
+
+function saveSort() {
+    savedSort = gridOptions.api.getSortModel();
+    console.log('Saved sort: ' + JSON.stringify(savedSort));
+}
+
+function restoreFromSave() {
+    gridOptions.api.setSortModel(savedSort);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

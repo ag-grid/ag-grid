@@ -250,7 +250,7 @@ export default class Utils {
 
     }
 
-    static defaultComparator(valueA: any, valueB: any) {
+    static defaultComparator(valueA: any, valueB: any): number {
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
         if (valueAMissing && valueBMissing) {

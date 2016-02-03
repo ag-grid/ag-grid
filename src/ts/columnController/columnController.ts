@@ -22,6 +22,7 @@ import {Events} from "../events";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import GroupInstanceIdCreator from "./groupInstanceIdCreator";
+import {defaultGroupComparator} from "../functions";
 
 export class ColumnApi {
 
@@ -492,6 +493,91 @@ export class ColumnController {
         return this.displayedRightColumns.length > 0;
     }
 
+    public clearSortBarThisColumn(columnToSkip: Column): void {
+        this.getAllColumnsIncludingAuto().forEach( (columnToClear: any)=> {
+            // Do not clear if either holding shift, or if column in question was clicked
+            if (!(columnToClear === columnToSkip)) {
+                columnToClear.sort = null;
+            }
+        });
+    }
+
+    private getAllColumnsIncludingAuto(): Column[] {
+        var result = this.allColumns.slice(0);
+        if (this.groupAutoColumn) {
+            result.push(this.groupAutoColumn);
+        }
+        return result;
+    }
+
+    public getColumnsWithSortingOrdered(): Column[] {
+        // pull out all the columns that have sorting set
+        var columnsWithSorting = <Column[]> _.filter(this.getAllColumnsIncludingAuto(), (column:Column) => { return !!column.getSort();} );
+
+        // put the columns in order of which one got sorted first
+        columnsWithSorting.sort( (a: any, b: any) => { return a.sortedAt - b.sortedAt} );
+
+        return columnsWithSorting;
+    }
+
+    // used by row controller, when doing the sorting
+    public getSortForRowController(): any[] {
+        var columnsWithSorting = this.getColumnsWithSortingOrdered();
+
+        return _.map(columnsWithSorting, (column: Column) => {
+            var ascending = column.getSort() === Column.SORT_ASC;
+            return {
+                inverter: ascending ? 1 : -1,
+                column: column
+            }
+        });
+    }
+
+    // used by the public api, for saving the sort model
+    public getSortModel() {
+        var columnsWithSorting = this.getColumnsWithSortingOrdered();
+
+        return _.map(columnsWithSorting, (column: Column) => {
+            return {
+                colId: column.getColId(),
+                sort: column.getSort()
+            }
+        });
+    }
+
+    public setSortModel(sortModel: any) {
+        if (!this.gridOptionsWrapper.isEnableSorting()) {
+            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
+            return;
+        }
+        // first up, clear any previous sort
+        var sortModelProvided = sortModel && sortModel.length > 0;
+
+        this.getAllColumnsIncludingAuto().forEach( (column: Column)=> {
+            var sortForCol: any = null;
+            var sortedAt = -1;
+            if (sortModelProvided && !column.getColDef().suppressSorting) {
+                for (var j = 0; j < sortModel.length; j++) {
+                    var sortModelEntry = sortModel[j];
+                    if (typeof sortModelEntry.colId === 'string'
+                        && typeof column.getColId() === 'string'
+                        && sortModelEntry.colId === column.getColId()) {
+                        sortForCol = sortModelEntry.sort;
+                        sortedAt = j;
+                    }
+                }
+            }
+
+            if (sortForCol) {
+                column.setSort(sortForCol);
+                column.setSortedAt(sortedAt);
+            } else {
+                column.setSort(null);
+                column.setSortedAt(null);
+            }
+        });
+    }
+
     public getState(): [any] {
         if (!this.allColumns || this.allColumns.length < 0) {
             return <any>[];
@@ -909,6 +995,7 @@ export class ColumnController {
                 var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
                 groupColDef = {
                     headerName: localeTextFunc('group', 'Group'),
+                    comparator: defaultGroupComparator,
                     cellRenderer: {
                         renderer: 'group'
                     }

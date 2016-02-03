@@ -336,12 +336,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
 
             // clear sort on all columns except this one, and update the icons
             if (!doingMultiSort) {
-                this.columnController.getAllColumns().forEach( (columnToClear: any)=> {
-                    // Do not clear if either holding shift, or if column in question was clicked
-                    if (!(columnToClear === this.column)) {
-                        columnToClear.sort = null;
-                    }
-                });
+                this.columnController.clearSortBarThisColumn(this.column);
             }
 
             this.grid.onSortingChanged();

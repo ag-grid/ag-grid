@@ -368,29 +368,13 @@ export default class InMemoryRowController {
             sorting = false;
         } else {
             //see if there is a col we are sorting by
-            var sortingOptions = <any>[];
-            this.columnController.getAllColumns().forEach(function (column: Column) {
-                if (column.getSort()) {
-                    var ascending = column.getSort() === Column.SORT_ASC;
-                    sortingOptions.push({
-                        inverter: ascending ? 1 : -1,
-                        sortedAt: column.getSortedAt(),
-                        column: column
-                    });
-                }
-            });
-            if (sortingOptions.length > 0) {
-                sorting = true;
-            }
+            var sortingOptions = this.columnController.getSortForRowController();
+            sorting = sortingOptions.length > 0;
         }
 
         var rowNodesReadyForSorting = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
 
         if (sorting) {
-            // The columns are to be sorted in the order that the user selected them:
-            sortingOptions.sort(function (optionA: any, optionB: any) {
-                return optionA.sortedAt - optionB.sortedAt;
-            });
             this.sortList(rowNodesReadyForSorting, sortingOptions);
         } else {
             // if no sorting, set all group children after sort to the original list.
