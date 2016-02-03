@@ -1,5 +1,5 @@
 {
-  "name": "ag-grid-react-component",
+  "name": "ag-grid-react",
   "version": "3.2.2",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
@@ -7,16 +7,15 @@
   ],
   "description": "React Component for ag-Grid Data Grid",
   "main": [
-    "dist/ag-grid-react-component.js"
+    "dist/ag-grid-react.js"
   ],
   "moduleType": [
     "node"
   ],
   "typescript": {
-    "definitions": "dist/ag-grid-react-component.d.ts"
+    "definitions": "dist/ag-grid-react.d.ts"
   },
   "keywords": [
-    "web-components",
     "grid",
     "data",
     "table",
