@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "3.2.2",
+  "version": "3.3.0-alpha.1",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "scripts": {

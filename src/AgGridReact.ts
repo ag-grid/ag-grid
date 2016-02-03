@@ -1,3 +1,5 @@
+/// <reference path="../typings/tsd"/>
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var AgGrid = require('ag-grid');

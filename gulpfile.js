@@ -12,7 +12,7 @@ gulp.task('default', ['tsd'], tscTask);
 
 function tscTask() {
     var tsResult = gulp
-        .src('src/ts/**/*.ts')
+        .src('src/**/*.ts')
         .pipe(gulpTypescript({
             typescript: typescript,
             module: 'commonjs',
