@@ -248,7 +248,7 @@ SampleAppComponent.annotations = [
         Note that Angular 2 also throws a ready event. So if you are listening for the ready event
         via Angular 2 binding, you will get two events, one from Angular 2, one from ag-Grid.
         The event from ag-Grid will have the attributes api and columnApi which you can check for.
-        <pre><code>function onReady(event) {
+        <pre><code>function onGridReady(event) {
     if (event.api) {
         // this is the ag-Grid event
     } else {

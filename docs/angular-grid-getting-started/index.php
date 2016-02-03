@@ -8,8 +8,6 @@ include '../documentation_header.php';
 
 <div>
 
-
-
     <h2>Download & Install</h2>
 
     <table>
@@ -62,7 +60,6 @@ include '../documentation_header.php';
         is about) and easy to copy and run locally.
     </p>
 
-    <note>I still have AngularJS lingering in some of the examples. I'll be taking that out soon.</note>
     <p>
         Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>.
         <b>You do not need to include this extra parameter</b>. It's purpose is as a dummy parameter, which the documentation

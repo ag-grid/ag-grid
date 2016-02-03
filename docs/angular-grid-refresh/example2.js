@@ -111,7 +111,7 @@ var gridOptions = {
     rowData: data,
     rowSelection: 'single',
     enableSorting: true,
-    onReady: function(params) {
+    onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
 };

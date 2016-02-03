@@ -29,7 +29,7 @@ include '../documentation_header.php';
         React
     </h4>
     <p>
-        The API is provided to you in the onReady callback of the React component.
+        The API is provided to you in the onGridReady callback of the React component.
         Or if you are providing gridOptions object, you can use the API attached
         to this after the grid has initialised.
     </p>

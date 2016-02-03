@@ -66,7 +66,7 @@ var gridOptions = {
         month: 0,
         months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
     },
-    onReady: function(event) {
+    onGridReady: function(event) {
         event.api.sizeColumnsToFit();
     },
     icons: {

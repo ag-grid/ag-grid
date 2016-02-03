@@ -53,7 +53,7 @@ include '../documentation_header.php';
     <pre><code>var gridOptions = {
     // PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application
     rowData: myRowData,
-    colDef: myColDefs,
+    columnDefs: myColDefs,
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
@@ -64,7 +64,7 @@ include '../documentation_header.php';
     // EVENTS - add event callback handlers
     onRowClicked: function(event) { console.log('a row was clicked'); },
     onColumnResized: function(event) { console.log('a column was resized'); },
-    onReady: function(event) { console.log('the grid is now ready'); },
+    onGridReady: function(event) { console.log('the grid is now ready'); },
 
     // CALLBACKS
     isScrollLag: function() { return false; }
@@ -134,7 +134,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         <li><b>Properties</b>: Properties are defined by passing React props down to ag-Grid.</li>
         <li><b>Callbacks</b>: Callbacks are also placed as React Props.</li>
         <li><b>Event Handlers</b>: Event handlers are again placed as React Props.</li>
-        <li><b>API</b>: The grid API and column API are provided to you via the onReady() event callback.</li>
+        <li><b>API</b>: The grid API and column API are provided to you via the onGridReady() event callback.</li>
     </ul>
 
     <p>
@@ -156,7 +156,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     // these are registering event callbacks
     onCellClicked={this.onCellClicked.bind(this)}"
     onColumnResized={this.onColumnEvent.bind(this)}"
-    onReady={this.onReady.bind(this)}" // inside onReady, you receive the grid API's if you want them
+    onGridReady={this.onGridReady.bind(this)}" // inside onGridReady, you receive the grid API's if you want them
 /></code></pre>
 
     <p>

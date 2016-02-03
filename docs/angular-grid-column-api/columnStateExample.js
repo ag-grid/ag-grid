@@ -18,7 +18,7 @@ var gridOptions = {
     enableSorting: true,
     enableColResize: true,
     showToolPanel: true,
-    onReady: function() {
+    onGridReady: function() {
         gridOptions.api.addGlobalListener(function(type, event) {
             if (type.indexOf('column') >= 0) {
                 console.log('Got column event: ' + event);

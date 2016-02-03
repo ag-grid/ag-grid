@@ -2,8 +2,7 @@
   "name": "ag-grid",
   "version": "3.2.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-  "main": "dist/ag-grid.min.js",
-  "typings": "dist/ag-grid.d.ts",
+  "main": "./main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -35,6 +34,8 @@
     "gulp-sourcemaps": "1.5.2",
     "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
+    "style-loader": "0.13.0",
+    "css-loader": "0.23.1",
     "json-stable-stringify": "1.0.0",
     "jasmine-core": "2.4.1",
     "gulp-jasmine": "2.2.1",
@@ -42,6 +43,8 @@
     "stylus": "0.53.0",
     "vinyl-buffer": "1.0.0",
     "typescript": "1.7.5",
-    "merge2": "0.3.6"
+    "merge2": "0.3.6",
+    "webpack-stream": "3.1.0",
+    "webpack": "1.12.12"
   }
 }

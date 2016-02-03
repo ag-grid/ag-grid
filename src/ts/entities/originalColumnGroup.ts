@@ -1,34 +1,31 @@
-/// <reference path="./originalColumnGroupChild.ts"/>
+import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
+import {ColGroupDef} from "./colDef";
 
-module agGrid {
+export class OriginalColumnGroup implements OriginalColumnGroupChild {
 
-    export class OriginalColumnGroup implements OriginalColumnGroupChild {
+    private colGroupDef: ColGroupDef;
+    private children: OriginalColumnGroupChild[];
+    private groupId: string;
 
-        private colGroupDef: ColGroupDef;
-        private children: OriginalColumnGroupChild[];
-        private groupId: string;
+    constructor(colGroupDef: ColGroupDef, groupId: string) {
+        this.colGroupDef = colGroupDef;
+        this.groupId = groupId;
+    }
 
-        constructor(colGroupDef: ColGroupDef, groupId: string) {
-            this.colGroupDef = colGroupDef;
-            this.groupId = groupId;
-        }
+    public getGroupId(): string {
+        return this.groupId;
+    }
 
-        public getGroupId(): string {
-            return this.groupId;
-        }
+    public setChildren(children: OriginalColumnGroupChild[]): void {
+        this.children = children;
+    }
 
-        public setChildren(children: OriginalColumnGroupChild[]): void {
-            this.children = children;
-        }
+    public getChildren(): OriginalColumnGroupChild[] {
+        return this.children;
+    }
 
-        public getChildren(): OriginalColumnGroupChild[] {
-            return this.children;
-        }
-
-        public getColGroupDef(): ColGroupDef {
-            return this.colGroupDef;
-        }
-
+    public getColGroupDef(): ColGroupDef {
+        return this.colGroupDef;
     }
 
 }

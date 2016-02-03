@@ -53,8 +53,8 @@ SampleAppComponent.prototype.onModelUpdated = function() {
     this.calculateRowCount();
 };
 
-SampleAppComponent.prototype.onReady = function() {
-    console.log('onReady');
+SampleAppComponent.prototype.onGridReady = function() {
+    console.log('onGridReady');
     this.calculateRowCount();
 };
 

@@ -12,6 +12,16 @@ include 'documentation_header.php';
     <li>Minor: headerClass (column definition) can now be provided for column groups.</li>
     <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
     <li>Major: If using Angular 2 then what was "directives: [ag.grid.AgGridNg2]" is now "directives: [agGrid.AgGridNg2]".</li>
+    <li>Major: Event 'ready' is now called 'gridReady'</li>
+
+    <li>Major Build Changes:
+        <ul>
+            <li>CSS now bundled in ag-Grid.js file</li>
+            <li>Took out TypeScript internal modules</li>
+            <li>Moved to ECMA 6 style imports (instead of require)</li>
+            <li>Moved to WebPack for bundling</li>
+        </ul>
+    </li>
 
     <h3>Version 3.2.0</h3>
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>

@@ -62,7 +62,7 @@ include '../documentation_header.php';
         React
     </h4>
     <p>
-        Use the column API passed to you via the onReady callback of the React component. You can also
+        Use the column API passed to you via the onGridReady callback of the React component. You can also
         use the columnApi placed inside gridOptions by the grid during initialisation.
     </p>
 

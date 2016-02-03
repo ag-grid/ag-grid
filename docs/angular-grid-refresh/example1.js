@@ -88,7 +88,7 @@
         rowSelection: 'single',
         enableSorting: true,
         onCellValueChanged: cellValueChangedFunction,
-        onReady: function(event) {
+        onGridReady: function(event) {
             event.api.sizeColumnsToFit();
         }
     };

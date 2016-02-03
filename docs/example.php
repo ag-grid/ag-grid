@@ -20,10 +20,6 @@
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
         <script src="./dist/ag-grid.js?ignore=notused17"></script>
-        <link rel="stylesheet" type="text/css" href="./dist/ag-grid.css?ignore=notused17">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-fresh.css?ignore=notused17">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-dark.css?ignore=notused17">
-        <link rel="stylesheet" type="text/css" href="./dist/theme-blue.css?ignore=notused17">
 
         <script src="example.js"></script>
 

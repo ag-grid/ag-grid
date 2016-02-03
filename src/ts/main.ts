@@ -1,7 +1,4 @@
-/// <reference path="components/agGridNg2.ts" />
-/// <reference path="components/agGridNg1.ts" />
-/// <reference path="components/agGridWebComponent.ts" />
-/// <reference path="../../typings/tsd" />
+import './grid';
 
 // creating the random local variable was needed to get the unit tests working.
 // if not, the tests would not load as we were referencing an undefined window object
@@ -10,22 +7,22 @@ if (typeof window !== 'undefined') {
     __RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF = window;
 }
 
-(function() {
-
-    // Establish the root object, `window` or `exports`
-    if (typeof exports !== 'undefined') {
-        if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = agGrid;
-        } else {
-            exports = agGrid;
-        }
-    }
-
-    this.agGridGlobalFunc = function() {
-        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new agGrid.Grid()" to create a new grid. Check the examples in the documentation.')
-    };
-
-}).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);
+//(function() {
+//
+//    // Establish the root object, `window` or `exports`
+//    if (typeof exports !== 'undefined') {
+//        if (typeof module !== 'undefined' && module.exports) {
+//            exports = module.exports = agGrid;
+//        } else {
+//            exports = agGrid;
+//        }
+//    }
+//
+//    this.agGridGlobalFunc = function() {
+//        console.warn('ag-Grid: agGridGlobalFunc() is no longer used. Please use "new agGrid.Grid()" to create a new grid. Check the examples in the documentation.')
+//    };
+//
+//}).call(__RANDOM_GLOBAL_VARIABLE_FSKJFHSKJFHKSDAJF);
 
 // how to build out the package was taken from inspecting TypeScript generated code
 var ag: any;

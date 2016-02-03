@@ -13,8 +13,12 @@ var header = require('gulp-header');
 var merge = require('merge2');
 var pkg = require('./package.json');
 var tsd = require('gulp-tsd');
+var webpack = require('webpack');
+var webpackStream = require('webpack-stream');
 
 var jasmine = require('gulp-jasmine');
+
+var bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 var headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -30,105 +34,87 @@ var dtsHeaderTemplate =
     '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n' +
     '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
 
-gulp.task('default', ['stylus', 'tsd', 'unit-tests', 'watch']);
-gulp.task('release', ['stylus', 'tsd', 'ts-release-build']);
+gulp.task('default', ['watch']);
+gulp.task('release', ['webpack','webpack-minify','copyToDocs']);
 
-// Build
-gulp.task('debug-build', ['stylus', 'ts-dev-build']);
+gulp.task('tsc', tscTask);
+gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true));
+gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false));
+
+gulp.task('copyToDocs', ['webpack'], copyToDocsTask);
+
+gulp.task('watch', ['copyToDocs'], watchTask);
+gulp.task('tsd', tsdTask);
 gulp.task('stylus', stylusTask);
-//gulp.task('unit-tests', ['ts-dev-build'], tsTestTask);
-gulp.task('unit-tests', ['ts-dev-build']);
-gulp.task('ts-dev-build', tsDebugTask);
-gulp.task('ts-release-build', tsReleaseTask);
 
-// Watch
-gulp.task('watch', watchTask);
-
-gulp.task('tsd', function (callback) {
+function tsdTask(callback) {
     tsd({
         command: 'reinstall',
         config: './tsd.json'
     }, callback);
-});
+}
 
-//gulp.task('es6', function (callback) {
-//    var tsResult = gulp
-//        .src('src/es6/**/*.ts')
-//        .pipe(sourcemaps.init()) // for sourcemaps only
-//        .pipe(gulpTypescript({
-//            typescript: typescript,
-//            noImplicitAny: true,
-//            experimentalDecorators: true,
-//            emitDecoratorMetadata: true,
-//            target: 'es5',
-//            module: 'commonjs'
+//function tsTestTask() {
+//    return gulp.src('./spec/**/*.js')
+//        .pipe(jasmine({
+//            verbose: false
 //        }));
-//
-//    return tsResult.js
-//        .pipe(sourcemaps.write()) // for sourcemaps only
-//        .pipe(gulp.dest('./docs/dist'));
-//});
+//}
 
-function tsTestTask() {
-    return gulp.src('./spec/**/*.js')
-        .pipe(jasmine({
-            verbose: false
-        }));
-}
-
-// does TS compiling, sourcemaps = yes, minification = no, distFolder = no
-function tsDebugTask() {
-
-    var tsResult = gulp
-        .src('src/ts/**/*.ts')
-        .pipe(sourcemaps.init()) // for sourcemaps only
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            noImplicitAny: true,
-            //experimentalDecorators: true,
-            //emitDecoratorMetadata: true,
-            target: 'es5',
-            //module: 'commonjs',
-            out: 'ag-grid.js'
-        }));
-
-    return tsResult.js
-        .pipe(sourcemaps.write()) // for sourcemaps only
-        .pipe(rename('ag-grid.js'))
-        .pipe(gulp.dest('./docs/dist'));
-
-}
-
-// does TS compiling, sourcemaps = no, minification = yes, distFolder = yes
-function tsReleaseTask() {
+function tscTask() {
     var tsResult = gulp
         .src('src/ts/**/*.ts')
         .pipe(gulpTypescript({
             typescript: typescript,
-            noImplicitAny: true,
-            //experimentalDecorators: true,
-            //emitDecoratorMetadata: true,
-            target: 'es5',
-            //module: 'commonjs',
+            module: 'commonjs',
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
             declarationFiles: true,
-            out: 'ag-grid.js'
+            target: 'es5',
+            noImplicitAny: true
         }));
 
     return merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
-            .pipe(gulp.dest('dist')),
+            .pipe(gulp.dest('lib')),
         tsResult.js
-            .pipe(rename('ag-grid.js'))
             .pipe(header(headerTemplate, { pkg : pkg }))
-            .pipe(gulp.dest('./dist'))
-            .pipe(gulp.dest('./docs/dist'))
-            .pipe(buffer())
-            .pipe(uglify())
-            .pipe(rename('ag-grid.min.js'))
-            .pipe(gulp.dest('./dist'))
-            .pipe(gulp.dest('./docs/dist'))
-    ]);
+            .pipe(gulp.dest('lib'))
+    ])
+}
+
+function webpackTask(minify) {
+
+    var plugins = [];
+    var fileName;
+    if (minify) {
+        plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
+        fileName = 'ag-grid-min.js';
+    } else {
+        fileName = 'ag-grid.js';
+    }
+
+    return gulp.src('src/entry.js')
+        .pipe(webpackStream({
+            entry: {
+                main: "./main-webpack.js"
+            },
+            output: {
+                path: path.join(__dirname, "dist"),
+                filename: fileName,
+                library: ["agGrid"],
+                libraryTarget: "umd"
+            },
+            module: {
+                loaders: [
+                    { test: /\.css$/, loader: "style-loader!css-loader" }
+                ]
+            },
+            plugins: plugins
+        }))
+        .pipe(header(bundleTemplate, { pkg : pkg }))
+        .pipe(gulp.dest('./dist/'));
 }
 
 function stylusTask() {
@@ -141,30 +127,17 @@ function stylusTask() {
                     use: nib(),
                     compress: false
                 }))
-                .pipe(gulp.dest('./docs/dist/'))
-                .pipe(gulp.dest('./dist/'));
+                .pipe(gulp.dest('./styles/'));
         }));
 
-    // Compressed
-    return gulp.src('./src/styles/*.styl')
-        .pipe(foreach(function(stream, file) {
-            return stream
-                .pipe(stylus({
-                    use: nib(),
-                    compress: true
-                }))
-                .pipe(rename((function() {
-                    var name = path.basename(file.path);
-                    var dot = name.indexOf('.');
-                    name = name.substring(0, dot) + '.min.css';
-                    return name;
-                })()))
-                .pipe(gulp.dest('./dist/'))
-                .pipe(gulp.dest('./docs/dist/'));
-        }));
+}
+
+function copyToDocsTask() {
+    gulp.src('./dist/*')
+        .pipe(gulp.dest('./docs/dist'));
 }
 
 function watchTask() {
-    gulp.watch(['./src/ts/**/*','./spec/**/*'], ['unit-tests']);
-    gulp.watch('./src/styles/**/*', ['stylus']);
+    gulp.watch('./src/ts/**/*', ['copyToDocs']);
+    gulp.watch('./src/styles/**/*', ['copyToDocs']);
 }

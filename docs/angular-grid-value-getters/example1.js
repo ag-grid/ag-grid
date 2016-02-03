@@ -20,7 +20,7 @@ var gridOptions = {
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
-    onReady: function() {
+    onGridReady: function() {
         gridOptions.api.sizeColumnsToFit()
     }
 };

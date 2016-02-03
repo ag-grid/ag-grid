@@ -20301,8 +20301,8 @@
 	            this.setState({ showToolPanel: event.target.checked });
 	        }
 	    }, {
-	        key: 'onReady',
-	        value: function onReady(params) {
+	        key: 'onGridReady',
+	        value: function onGridReady(params) {
 	            this.api = params.api;
 	            this.columnApi = params.columnApi;
 	        }
@@ -20477,7 +20477,7 @@
 	                    _react2.default.createElement(_agGridReactComponent.AgGridReact, { gridOptions: this.gridOptions
 	
 	                        // listening for events
-	                        , onReady: this.onReady.bind(this),
+	                        , onGridReady: this.onGridReady.bind(this),
 	                        onRowSelected: this.onRowSelected.bind(this),
 	                        onCellClicked: this.onCellClicked.bind(this)
 	

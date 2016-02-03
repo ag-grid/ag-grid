@@ -20,7 +20,7 @@ var gridOptionsLeft = {
     context: {
         theNumber: 4
     },
-    onReady: function(event) {
+    onGridReady: function(event) {
         event.api.sizeColumnsToFit();
     }
 };
@@ -44,7 +44,7 @@ var rowDataRight = [
 var gridOptionsRight = {
     columnDefs: columnDefsRight,
     rowData: rowDataRight,
-    onReady: function(event) {
+    onGridReady: function(event) {
         event.api.sizeColumnsToFit();
     }
 };

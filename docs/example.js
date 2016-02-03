@@ -160,8 +160,11 @@ var gridOptions = {
     onCellFocused: function(params) {
         console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
-    onReady: function(event) {
-        console.log('Callback onReady: api = ' + event.api);
+    onGridReady: function(event) {
+        console.log('Callback onGridReady: api = ' + event.api);
+        //event.api.addGlobalListener(function(type, event) {
+        //    console.log('event ' + type);
+        //});
     },
     onGridSizeChanged: function(event) {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
@@ -295,7 +298,7 @@ gridOptions.columnDefs = createCols();
 gridOptions.rowData = createData();
 
 //setInterval(function() {
-//    $scope.gridOptions.api.ensureIndexVisible(Math.random() * 100000);
+//    gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
 //}, 1000);
 
 function onDataSizeChanged(newDataSize) {
