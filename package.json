@@ -1,0 +1,41 @@
+{
+  "name": "ag-grid-ng2",
+  "version": "0.0.1",
+  "description": "ag-Grid Angular 2 Component",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceolter/ag-grid-ng2.git"
+  },
+  "keywords": [
+    "grid",
+    "data",
+    "table",
+    "angular"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/ag-grid-ng2/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
+  "devDependencies": {
+    "vinyl-buffer": "1.0.0",
+    "merge2": "0.3.6",
+    "gulp": "3.9.0",
+    "gulp-rename": "1.2.2",
+    "gulp-typescript": "2.10.0",
+    "typescript": "1.7.5",
+    "gulp-header": "1.7.0",
+    "gulp-tsd": "0.0.4"
+  },
+  "peerDependencies": {
+    "angular2": "~2.0.0-beta.0",
+    "ag-grid": "~3.3.0-alpha.1"
+  },
+  "dependencies": {
+  }
+}
