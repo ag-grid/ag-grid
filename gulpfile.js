@@ -90,7 +90,7 @@ function webpackTask(minify) {
     var fileName;
     if (minify) {
         plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
-        fileName = 'ag-grid-min.js';
+        fileName = 'ag-grid.min.js';
     } else {
         fileName = 'ag-grid.js';
     }

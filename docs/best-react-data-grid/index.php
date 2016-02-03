@@ -11,10 +11,18 @@ include '../documentation_header.php';
     <h2>Best ReactJS Data Grid</h2>
 
     <p>
-        Webpack and Babel are popular within the React community. So I've
-        put together a <a href="https://github.com/ceolter/ag-grid-react-example">
-        sample application on Github</a> using these. This page goes through how
-        ag-Grid works with React using this example. It is assumed you are
+        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
+        <ul>
+        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
+        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
+    </ul>
+    </p>
+
+    <p>
+        Webpack and Babel are popular within the React community. The remainder of this page goes
+        through an example using Webpack and Babel. The full example is
+        <a href="https://github.com/ceolter/ag-grid-react-example">
+        available on Github</a>. It is assumed you are
         already familiar with Webpack, Babel and React.
 
         The example demonstrates:
@@ -47,25 +55,25 @@ include '../documentation_header.php';
 
     <h2>Dependencies</h2>
     <p>
-    In your package.json file, specify dependency on ag-grid AND ag-grid-react-component.
-    The ag-grid package contains the core ag-grid engine (you will reference the css from
-    here for example) and the ag-grid-react-component contains the React component and
+    In your package.json file, specify dependency on ag-grid AND ag-grid-react.
+    The ag-grid package contains the core ag-grid engine and the ag-grid-react
+        contains the React component and
     some utils for React rendering.
         <pre><code>  "dependencies": {
     ...
-    "ag-grid": "3.2.2",
-    "ag-grid-react-component": "3.2.2"
+    "ag-grid": "3.3.x",
+    "ag-grid-react": "3.3.x"
 }</code></pre>
-    The version of the component must match the version of the grid. Going forward, I will
-    be releasing the component in parallel with the grid so there is no confusion about which
-    version of the component for which version of the grid.
+    The major and minor versions should match. Every time a new major or minor
+    version of ag-Grid is released, the component will also be released. However
+    for patch versions, the component will not be released.
     </p>
 
     <h2>Configuring AgGridReact Component</h2>
     <p>
         The root of the example application is MyApp.jsx. At the top of this file you can
         see the import the AgGridReact component as follows:
-        <pre><code>import {AgGridReact} from 'ag-grid-react-component';</code></pre>
+        <pre><code>import {AgGridReact} from 'ag-grid-react';</code></pre>
         After the import you can then reference the component inside your JSX definitions.
         See the <i>render()</i> function in MyApp.jsx, it has AgGridReact defined as
         follows:
@@ -98,25 +106,23 @@ include '../documentation_header.php';
     in the core ag-Grid. To access them, first up we need to define an alias to use inside
     webpack.config.js:
 <pre><code>alias: {
-    "ag-grid-root" : __dirname + "/node_modules/ag-grid/dist"
+            "ag-grid-root" : __dirname + "/node_modules/ag-grid"
 }</code></pre>
     Once this is done, we can then access the two css files that we need as follows:
-    <pre><code>import 'ag-grid-root/ag-grid.css';
-import 'ag-grid-root/theme-fresh.css';</code></pre>
-    You will also need to configure CSS loaders for Webpack, but that's not ag-Grid specific
-    so I'm not going to explain. P.S. - If anyone knows how to load the CSS without having
-    to use an alias, please tell me!!
+    <pre><code>import 'ag-grid-root/styles/ag-grid.css';
+import 'ag-grid-root/styles/theme-fresh.css';</code></pre>
+    You will also need to configure CSS loaders for Webpack.
     </p>
 
     <h2>Grid API</h2>
 
     <p>
-        When the grid is initialised, it will fire the <i>ready</i> event. If you want to
+        When the grid is initialised, it will fire the <i>gridReady</i> event. If you want to
         use the API of the grid, you should put an <i>onGridReady(params)</i> callback onto
         the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
         setting and changing the props).
-        <pre><code>// provide ready callback to the grid
+        <pre><code>// provide gridReady callback to the grid
 &lt;AgGridReact
     onGridReady={this.onGridReady.bind(this)}
     .../>
@@ -197,11 +203,6 @@ somePointLater() {
     ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
     custom filter should appear on your components backing object. The example shows all of this in action.</p>
 </div>
-
-<note>
-    Getting big components like ag-Grid to work inside React was a lot of work for me and I made
-    many decisions. If I did it wrong, or there is a better way, let me know!
-</note>
 
 <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
 <!-- Example uses font awesome icons -->

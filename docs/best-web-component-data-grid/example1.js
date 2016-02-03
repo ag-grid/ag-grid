@@ -1,5 +1,5 @@
 
-// this example has items declared globally. bad javascript. but keeps the example simple.
+agGrid.initialiseAgGridWithWebComponents();
 
 var columnDefs = [
     {headerName: "Make", field: "make"},

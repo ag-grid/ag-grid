@@ -11,26 +11,32 @@ include '../documentation_header.php';
     <h2>Best AngularJS Data Grid</h2>
 
     <p>
-        The ag-Grid script, when loaded, will check if AngularJS is loaded. If it finds it,
-        it will register the grid as an AngularJS 1.x Directive. All you need to do is make sure you
-        load AngularJS before you load ag-Grid, and then load ag-Grid before you initialise
-        your AngularJS module.
+        When using AngularJS, you have the choice of using the bundled version of ag-Grid
+        or the CommonJS version.
+    </p>
+    <p>
+        When the ag-Grid script loads, it does not register with AngularJS. This is because
+        AngularJS is an optional part of ag-Grid and you need to tell ag-Grid you
+        want to use it.
     </p>
 
     <h4>Creating the AngularJS Module</h4>
     Include ag-Grid as a dependency of your module like this:
     <p/>
-    <pre><code>var module = angular.module("example", <b>["agGrid"]</b>);</code></pre>
+    <pre><code>// get ag-Grid to create an Angular module and register the ag-Grid directive
+agGrid.initialiseAgGridWithAngular1(angular);
+// create your module with ag-Grid as a dependency
+var module = angular.module("example", ["agGrid"]);</code></pre>
 
     <h4>ag-Grid Div</h4>
 
     <p>
-        To include a grid in your html, add the ag-Grid attribute to a div. The value
+        To include a grid in your html, add the <i>ag-grid</i> attribute to a div. The value
         of the div should be the provided grid options on the scope.
     </p>
 
     <p>
-        It is also usual (although not necessary) to provide a styling theme to
+        It is also usual to provide a styling theme to
         the grid. Three themes come with the grid, ag-fresh, ag-dark and ag-blue. Each one is
         set by applying the corresponding class of the same name to the div. In the
         example, ag-fresh is used.
@@ -50,7 +56,7 @@ include '../documentation_header.php';
     <h4>Grid Options</h4>
     <p>
         The grid options provide ag-Grid with the details needed to render. At a
-        minimum you provide the columns (columnDefs) and the rows (rowData).
+        minimum you should provide the columns (columnDefs) and the rows (rowData).
     </p>
 
     <h2>Basic AngularJS 1.x Example</h2>
@@ -69,7 +75,7 @@ include '../documentation_header.php';
     <h2>Angular Compiling</h2>
 
     <p>
-        Angular 1.x was great. It allows us to build large end-to-end single page web apps with relative ease.
+        Angular 1.x is great. It allows us to build large end-to-end single page web apps with relative ease.
         However the author of ag-Grid is of the opinion that not everything should be
         built in Angular. Angular 1.x does come with a disadvantage, it can slow things down.
         ag-Grid does not use Angular 1.x (or any other framework) underneath the hood, it is all
@@ -79,7 +85,7 @@ include '../documentation_header.php';
         But maybe you are not worried about performance. Maybe you are not displaying
         that many rows and columns. And maybe you want to provide your own cell renderers
         and use Angular here. For whatever reason, it is possible to turn Angular on for
-        Angular version 1.x (not for version Angular 2).
+        Angular version 1.x (this is not true for ag-Grid and Angular 2).
     </p>
     <p>
         When Angular is turned on in ag-Grid, every time a row is inserted, a new child

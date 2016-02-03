@@ -1,4 +1,6 @@
 
+agGrid.initialiseAgGridWithAngular1(angular);
+
 var module = angular.module("example", ["agGrid"]);
 
 module.controller("exampleCtrl", function($scope, $http) {

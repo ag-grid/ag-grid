@@ -33,6 +33,20 @@ include '../documentation_header.php';
 
     <h4>Using ag-Grid Web Component</h4>
 
+
+    <p>
+        When using Web Components, you have the choice of using the bundled version of ag-Grid
+        or the CommonJS version.
+    </p>
+    <p>
+        When the ag-Grid script loads, it does not register the Web Component. This is because the
+        Web Component is an optional part of ag-Grid and you need to tell ag-Grid you
+        want to use it.
+    </p>
+
+    <pre><code>// get ag-Grid to install the web component
+agGrid.initialiseAgGridWithWebComponents();</code></pre>
+
     <p>
         ag-Grid registers as a tag named 'ag-grid'. To insert a grid into your application, use the
         ag-grid tag and then either provide the grid options through Javascript or provide options

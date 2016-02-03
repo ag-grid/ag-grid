@@ -7,18 +7,11 @@
   ],
   "description": "Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
   "main": [
-    "dist/ag-grid.js",
-    "dist/ag-grid.css",
-    "dist/theme-fresh.css",
-    "dist/theme-blue.css",
-    "dist/theme-dark.css"
+    "./main.js"
   ],
   "moduleType": [
     "node"
   ],
-  "typescript": {
-    "definitions": "dist/ag-grid.d.ts"
-  },
   "keywords": [
     "web-components",
     "grid",

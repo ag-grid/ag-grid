@@ -171,22 +171,6 @@ include 'documentation_header.php';
 
 </div>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <p>
-        Thank you Mohan for your thumbs up. Great other people understand where I am
-        going with framework agnostic. If things don't work out for you in React,
-        you can always try things out in Angular 2 or something else!!!
-    </p>
-
-    <img src="images/quote.jpg" style="padding-top: 10px; padding-bottom: 10px;"/>
-
-    <p>
-        This was left on <a href="ag-grid-in-2016"> ag-Grid in 2016</a>.
-    </p>
-
-</div>
-
 <!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 250px;">

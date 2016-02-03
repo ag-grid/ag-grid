@@ -1,5 +1,7 @@
 (function () {
 
+    agGrid.initialiseAgGridWithWebComponents();
+
     var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
         "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
         "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];

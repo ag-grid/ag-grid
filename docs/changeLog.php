@@ -13,6 +13,10 @@ include 'documentation_header.php';
     <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
     <li>Major: If using Angular 2 then what was "directives: [ag.grid.AgGridNg2]" is now "directives: [agGrid.AgGridNg2]".</li>
     <li>Major: Event 'ready' is now called 'gridReady'</li>
+    <li>Major: Angular 1 - you now need to initialise the grid via agGrid.initialiseAgGridWithAngular1(angular)</li>
+    <li>Major: Web Components - you now need to initialise the grid via agGrid.initialiseAgGridWithWebComponents()</li>
+    <li>Major: Angular 2 - Dropped support for UMD version of Angular</li>
+    <li>Major: Angular 2 - Now supports CommonJS and ECMA 6 module loading</li>
 
     <li>Major Build Changes:
         <ul>
@@ -20,6 +24,7 @@ include 'documentation_header.php';
             <li>Took out TypeScript internal modules</li>
             <li>Moved to ECMA 6 style imports (instead of require)</li>
             <li>Moved to WebPack for bundling</li>
+            <li>Moved Angular 2 component to new project</li>
         </ul>
     </li>
 

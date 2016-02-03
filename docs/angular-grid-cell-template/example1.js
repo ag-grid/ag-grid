@@ -1,4 +1,6 @@
 
+// this example uses Angular 1. cellTemplates doesn't make sense with any other framework
+agGrid.initialiseAgGridWithAngular1(angular);
 var module = angular.module('example', ['agGrid']);
 
 module.controller('exampleCtrl', function($scope, $http) {

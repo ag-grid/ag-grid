@@ -1,3 +1,6 @@
+
+agGrid.initialiseAgGridWithAngular1(angular);
+
 var fileBrowserModule = angular.module('basic', ['agGrid']);
 
 fileBrowserModule.controller('basicController', function($scope) {

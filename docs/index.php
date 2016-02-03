@@ -476,9 +476,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
 <script src="dist/ag-grid.min.js?ignore=notused17"></script>
-<link rel="stylesheet" type="text/css" href="./dist/ag-grid.min.css?ignore=notused17">
-<link rel="stylesheet" type="text/css" href="./dist/theme-fresh.min.css?ignore=notused17">
-<link rel="stylesheet" type="text/css" href="./dist/theme-dark.min.css?ignore=notused17">
 
 <link href="example-file-browser/fileBrowser.css?ignore=notused17" rel="stylesheet">
 <link href="best-angularjs-data-grid/basic.css?ignore=notused17" rel="stylesheet">

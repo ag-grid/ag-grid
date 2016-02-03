@@ -8,150 +8,104 @@ include '../documentation_header.php';
 
 <div>
 
-    <h2>Best Angular 2.0 Data Grid</h2>
-
-    <h4>AngularJS 2 Still in Beta</h4>
+    <h2>Best Angular 2 Data Grid</h2>
 
     <p>
-        ag-Grid's integration is been developed against beta versions of AngularJS 2.
-        Until the final version is released, ag-Grid's integration with AngularJS 2
+        When using AngularJS 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
+        already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
+        are, then don't worry, you will be none the wiser).
+    </p>
+
+    <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
+
+    <h3>Angular 2 Still in Beta</h3>
+
+    <p>
+        ag-Grid's integration is been developed against beta versions of Angular 2.
+        Until the final version is released, ag-Grid's integration with Angular 2
         is also liable to change. The examples below work with Angular version 2.0.0-beta.0.
         At the time of writing, that was the latest version.
     </p>
 
-    <h4>Self Extracting AngularJS 2</h4>
+    <h3>Angular 2 Full Example</h3>
 
     <p>
-        AngularJS 2 was written for TypeScript and ECMA 6 module loading.
-        However this is not mandatory, you can use the UMD
-        version of AngularJS if you don't want to use ECMA 6 module loading
-        and / or TypeScript. For simplicity, and to minimise the barrier
-        to entry, the examples in this documentation use Javascript and
-        the UMD version of AngularJS 2.
+        This page goes through <a href="https://github.com/helix46/ag-grid-angular2-beta-ts"> the
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a>
+        example on Github. Because the example depends on SystemX and JSPM, it is not included in the
+        online documentation.
     </p>
+
+    <h3>Dependencies</h3>
 
     <p>
-        For notes on JSPM, see the section on JSPM below.
+        In your package.json file, specify dependency on ag-grid AND ag-grid-ng2.
+        The ag-grid package contains the core ag-grid engine and the ag-grid-ng2
+        contains the Angular 2 component.
+        <pre><code>"dependencies": {
+    ...
+    "ag-grid": "3.3.x",
+    "ag-grid-ng2": "3.3.x"
+}</code></pre>
+    The major and minor versions should match. Every time a new major or minor
+    version of ag-Grid is released, the component will also be released. However
+    for patch versions, the component will not be released.
     </p>
+
+    <p>You will then bbe able to access ag-Grid inside your application:</p>
+
+    <pre>import {AgGridNg2} from 'ag-grid-ng2/main';</pre>
 
     <p>
-        For a full working example using Typescript, please see
-        <a href="https://github.com/helix46/ag-grid-angular2-beta-ts">
-        https://github.com/helix46/ag-grid-angular2-beta-ts</a>,
-        kindly provided by helix46.
+        Which you can then use as a directive inside component:
     </p>
 
-    <h2>Simple AngularJS 2 Example</h2>
+    <pre>@Component({
+    directives: [AgGridNg2],
+    ...
+})</pre>
 
     <p>
-        Below shows a step by step guide on setting up ag-Grid with an AngularJS 2 application
-        using Javascript.
+        You will need to include the CSS for ag-Grid, either directly inside
+        your html page, or as part of creating your bundle if bundling. Teh following
+        shows referencing the css from your web page:
     </p>
-
-    <h4>Include Dependencies</h4>
-
-    <p>
-        Include the dependencies for the application in the <i>head</i> section of your html.
-    </p>
-
-    <pre>&lt;!-- This is the UMD version of AngularJS 2.0 -->
-&lt;script src="http://code.angularjs.org/2.0.0-beta.0/Rx.umd.js">&lt;/script>
-&lt;script src="http://code.angularjs.org/2.0.0-beta.0/angular2-polyfills.js">&lt;/script>
-&lt;script src="http://code.angularjs.org/2.0.0-beta.0/angular2-all.umd.js">&lt;/script>
-
-&lt;!-- include ag-Grid javascript file -->
-&lt;script src="../dist/ag-grid.js">&lt;/script>
-
-&lt;!-- include your application code, after ag-Grid and AngularJS as it depends on both -->
-&lt;script src="exampleSimpleNg2.js">&lt;/script>
-
-&lt;!-- include stylesheets for the grid -->
-&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.css">
-&lt;link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css"></pre>
-
-    <h4>
-        Simple App Root Component
-    </h4>
-
-    <p>
-        You can't have the grid as your root component as you need your application outside
-        the grid to provide details to the grid.
-    </p>
-
-    <p>
-        In your HTML, include a root component as follows:
-    </p>
-    <pre>&lt;simple-ng2-grid/></pre>
-
-    <p>
-        Then in your Javascript, you need to define your component. Doing this use AngularJS UMD
-        and Javascript (not Typescript) is done as follows:
-    </p>
-
-    <pre>// define a function to act as the class for the component
-var SampleAppComponent = function() {}
-
-// add AngularJS 2 annotations to the function
-SampleAppComponent.annotations = [
-    new ng.core.Component({
-        // tell AngularJS to match the &lt;simple-ng2-grid> tag
-        selector: 'simple-ng2-grid'
-    }),
-    new ng.core.View({
-        // tell AngularJS that the SimpleAppComponent directive
-        // uses the ag-Grid directive
-        directives: [agGrid.AgGridNg2],
-        // the template for our component
-        template: templateForSampleAppComponent
-    })
-];
+    <pre>&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" />
+&lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
 
-    <h4>Simple App Template</h4>
-
     <p>
-        In the example, the constructor sets the row data and column definitions onto
-        the component instance, which is then available to the components template
-        for binding. The template for Simple App only has one element, the ag-Grid
-        element.
+        You will also need to configure SystemX for ag-grid and ag-grid-component as follows:
     </p>
 
-    <pre>&lt;ag-grid-ng2
-    // use one of the ag-Grid themes
-    class="ag-fresh"
-    // give some size to the grid
-    style="height: 100%;"
-    // use AngularJS 2 properties for columnDefs and rowData
-    [columnDefs]="columnDefs"
-    [rowData]="rowData"
-/></pre>
+    <pre>System.config({
+    packages: {
+        lib: {
+            format: 'register',
+            defaultExtension: 'js'
+        },
+        'ag-grid-ng2': {
+            defaultExtension: "js"
+        },
+        'ag-grid': {
+            defaultExtension: "js"
+        }
+    },
+    map: {
+        'ag-grid-ng2': 'node_modules/ag-grid-ng2',
+        'ag-grid': 'node_modules/ag-grid'
+    }
+});</pre>
 
     <p>
-        The example shows use of AngularJS property bindings. The grid has full support for
-        AngularJS property bindings, events and attributes. The simple example doesn't show
-        it all. See the complex example below for more meat.
+        All the above items are specific to either Angular 2 or SystemX. The above is intended to point
+        you in the right direction. If you need more information on this, please see the documentation
+        for those projects.
     </p>
 
-    <h4>Simple App Bootstrap</h4>
+    <h2>Configuring ag-Grid in Angular 2</h2>
 
-    <p>
-        Then when everything is defined, we can bootstrap this mother, as follows:
-    </p>
-
-    <pre>document.addEventListener('DOMContentLoaded', function () {
-    ng.platform.browser.bootstrap(SampleAppComponent);
-});
-</pre>
-
-    <show-example example="exampleSimpleNg2"></show-example>
-
-    <h2>Complex AngularJS 2 Example</h2>
-
-    <p>
-        Now we are ready to get more of AngularJS 2 involved!
-        The example below demonstrates the following:
-    </p>
-
+    <p>You can configure the grid in the following ways through Angular 2:</p>
     <ul>
         <li><b>Events:</b> All data out of the grid comes through events. These use
             Angular 2 event bindings eg <i>(modelUpdated)="onModelUpdated()"</i>.
@@ -194,14 +148,33 @@ SampleAppComponent.annotations = [
         informed to redraw.
     </p>
 
-    <show-example example="exampleNg2" extra-pages="sampleAppComponent.html"></show-example>
+    <p>
+        The example has ag-Grid configured through the template in the following ways:
+    </p>
 
-    <note>
-        I tested the above examples to work on my Windows 8 machine with latest Chrome, Microsoft Edge
-        and Firefox. It didn't work on Safari or Internet Explorer with an ng2 error. I'm not worried about
-        it as I'm assuming these are AngularJS issues that will be fixed in their final release as ag-Grid works
-        fine in these browsers without using Angular.
-    </note>
+    <pre>// notice the grid has an id called agGrid, which can be used to call the API
+&lt;ag-grid-ng2 #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
+
+    // items bound to properties on the controller
+    [gridOptions]="gridOptions"
+    [columnDefs]="columnDefs"
+    [showToolPanel]="showToolPanel"
+    [rowData]="rowData"
+
+    // boolean values 'turned on'
+    enableColResize
+    enableSorting
+    enableFilter
+
+    // simple values, not bound
+    rowHeight="22"
+    rowSelection="multiple"
+
+    // event callbacks
+    (modelUpdated)="onModelUpdated()"
+    (cellClicked)="onCellClicked($event)"
+    (cellDoubleClicked)="onCellDoubleClicked($event)">
+&lt;/ag-grid-ng2></pre>
 
     <h2>Angular Compiling</h2>
 
@@ -209,7 +182,7 @@ SampleAppComponent.annotations = [
 
     <note>
         <p>
-            The grid does not use the Angular 2 compile service the same way it does for Angular 1. I spoke to some of the Angular team about this at Angular Connect in London in October 2014. Basically the Angular 2's compile service doesn't work like that in Angular 1. Angular 2 compiles everything at application start, and then the compile service is no longer available. It is not intended by Angular 2 for the application to use the compile service after the application has finished initialising. ag-Grid discovers the template at run-time and builds it's own html, so needs the compile service at run-time.
+            The grid does not use the Angular 2 compile service the same way it does for Angular 1. I spoke to some of the Angular team about this at Angular Connect in London in October 2015. Basically the Angular 2's compile service doesn't work like that in Angular 1. Angular 2 compiles everything at application start, and then the compile service is no longer available. It is not intended by Angular 2 for the application to use the compile service after the application has finished initialising. ag-Grid discovers the template at run-time and builds it's own html, so needs the compile service at run-time.
         </p>
         <p>
             What can be done in Angular 2 is the compile service can be made available again (I do not know how to do this yet) and then I can use it as I was using the similar service in Angular 1, but because Angular 2 is still in beta, I didn't want to invest my time in this (very undocumented) approach. It also 'did not sound like a good idea for performance reasons' with the Angular 2 team, so I'm weary that this use-case has been catered for properly in Angular 2.
@@ -225,36 +198,6 @@ SampleAppComponent.annotations = [
         You do not need to manually clean up the grid. The grid ties in with the AngularJS 2 lifecycle
         and releases all resources when the directive is destroyed. The example above demonstrates this
         by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
-    </p>
-
-    <h2>JSPM</h2>
-
-    <p>
-        To get one version of the grid to work with all technologies required one Javascript file
-        to work regardless of you using JSPM, CommonJS, Angular 1 or 2, or no Angular at all, had
-        one pitfall for me. That was JSPM loading of the Angular 2 library (as this will cause and
-        error if Angular 2 is not available, which will be the case if you are using Angular 1 or
-        no Angular at all). To get around this, you have to initialise the grid with Angular 2 if
-        using JSPM. This is done as follows:
-    </p>
-
-    <pre>System.import('angular2/angular2').then( function(ng2) {
-    ag.grid.initialiseAgGridWithAngular2(ng2);
-});</pre>
-
-    <h2>Ready Event</h2>
-
-    <p>
-        Note that Angular 2 also throws a ready event. So if you are listening for the ready event
-        via Angular 2 binding, you will get two events, one from Angular 2, one from ag-Grid.
-        The event from ag-Grid will have the attributes api and columnApi which you can check for.
-        <pre><code>function onGridReady(event) {
-    if (event.api) {
-        // this is the ag-Grid event
-    } else {
-        // this is the Angular 2 event
-    }
-}</code></pre>
     </p>
 
     <h2>Next Steps...</h2>
