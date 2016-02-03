@@ -105,6 +105,10 @@ export default class InMemoryRowController {
         var topPointer = this.rowsToDisplay.length - 1;
 
         // quick check, if the pixel is out of bounds, then return last row
+        if (pixelToMatch<=0) {
+            // if pixel is less than or equal zero, it's always the first row
+            return 0;
+        }
         var lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
         if (lastNode.rowTop<=pixelToMatch) {
             return this.rowsToDisplay.length - 1;
