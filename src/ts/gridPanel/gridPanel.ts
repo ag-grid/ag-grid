@@ -579,13 +579,11 @@ export default class GridPanel {
 
     private sizeHeaderAndBody(): void {
         if (this.forPrint) {
-            this.sizeHeaderAndBodyForPrint();
-        } else {
-            this.sizeHeaderAndBodyNormal();
+            // if doing 'for print', then the header and footers are laid
+            // out naturally by the browser. it whatever size that's needed to fit.
+            return;
         }
-    }
 
-    private sizeHeaderAndBodyNormal(): void {
         var heightOfContainer = this.layout.getCentreHeight();
         if (!heightOfContainer) {
             return;
@@ -615,11 +613,6 @@ export default class GridPanel {
 
         this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
         this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
-    }
-
-    private sizeHeaderAndBodyForPrint(): void {
-        var headerHeightPixels = this.gridOptionsWrapper.getHeaderHeight() + 'px';
-        this.eHeaderContainer.style['height'] = headerHeightPixels;
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {

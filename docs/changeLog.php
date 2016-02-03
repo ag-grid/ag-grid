@@ -17,6 +17,7 @@ include 'documentation_header.php';
     <li>Major: Web Components - you now need to initialise the grid via agGrid.initialiseAgGridWithWebComponents()</li>
     <li>Major: Angular 2 - Dropped support for UMD version of Angular</li>
     <li>Major: Angular 2 - Now supports CommonJS and ECMA 6 module loading</li>
+    <li>Minor: BugFix: forPrint was not sizing headers correctly when doing grouped columns.</li>
 
     <li>Major Build Changes:
         <ul>
