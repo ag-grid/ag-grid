@@ -36,6 +36,7 @@ import ColumnChangeEvent from "./columnChangeEvent";
 import Column from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
+import {DragService} from "./headerRendering/dragService";
 
 export class Grid {
 
@@ -180,6 +181,7 @@ export class Grid {
         this.eUserProvidedDiv = eUserProvidedDiv;
 
         // create all the beans
+        var dragService = new DragService();
         var headerTemplateLoader = new HeaderTemplateLoader();
         var floatingRowModel = new FloatingRowModel();
         var balancedColumnTreeBuilder = new BalancedColumnTreeBuilder();
@@ -235,7 +237,7 @@ export class Grid {
             $compile, $scope, selectionController, expressionService, templateService, valueService,
             eventService, floatingRowModel);
         headerRenderer.init(gridOptionsWrapper, columnController, gridPanel, this, filterManager,
-            $scope, $compile, headerTemplateLoader);
+            $scope, $compile, headerTemplateLoader, dragService);
         inMemoryRowController.init(gridOptionsWrapper, columnController, this, filterManager, $scope,
             groupCreator, valueService, eventService);
         virtualPageRowController.init(rowRenderer, gridOptionsWrapper, this);

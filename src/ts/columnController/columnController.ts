@@ -351,6 +351,10 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
+    public getColumnIndex(column: Column): number {
+        return this.allColumns.indexOf(column);
+    }
+
     public moveColumn(fromIndex: number, toIndex: number): void {
         var column = this.allColumns[fromIndex];
         this.allColumns.splice(fromIndex, 1);
@@ -461,6 +465,42 @@ export class ColumnController {
         }
 
         this.eventService.dispatchEvent(event.getType(), event);
+    }
+
+    // same as getDisplayColBefore, but stays in current container,
+    // so if column is pinned left, will only return pinned left columns
+    public getDisplayedColBeforeConsideringPinned(col: any): Column {
+        var beforeCol = this.getDisplayedColBefore(col);
+        if (beforeCol && beforeCol.getPinned()===col.getPinned()) {
+            return beforeCol;
+        } else {
+            return null;
+        }
+    }
+
+    public getPixelsBeforeConsideringPinned(column: Column): number {
+        var allDisplayedColumns = this.getAllDisplayedColumns();
+        var result = 0;
+        for (var i = 0; i<allDisplayedColumns.length; i++) {
+            var colToConsider = allDisplayedColumns[i];
+            if (colToConsider===column) {
+                return result;
+            }
+            if (colToConsider.getPinned()===column.getPinned()) {
+                result += colToConsider.getActualWidth();
+            }
+        }
+        // this should never happen, we should of come across our col in the above loop
+        return null;
+    }
+
+    public getDisplayedColAfterConsideringPinned(col: any): Column {
+        var afterCol = this.getDisplayedColAfter(col);
+        if (afterCol && afterCol.getPinned()===col.getPinned()) {
+            return afterCol;
+        } else {
+            return null;
+        }
     }
 
     public getDisplayedColBefore(col: any): Column {

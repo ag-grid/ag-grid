@@ -8,6 +8,7 @@ import FilterManager from "../filter/filterManager";
 import {Grid} from "../grid";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import Column from "../entities/column";
+import {DragService} from "./dragService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -23,22 +24,19 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
     private parentScope: any;
     private filterManager: FilterManager;
     private $compile: any;
-    private angularGrid: Grid;
 
     constructor(columnGroup:ColumnGroup, gridOptionsWrapper:GridOptionsWrapper,
-                columnController: ColumnController, eRoot: HTMLElement, angularGrid: Grid,
-                parentScope: any, filterManager: FilterManager, $compile: any) {
-        super(eRoot, gridOptionsWrapper);
+                columnController: ColumnController, eRoot: HTMLElement,
+                parentScope: any, filterManager: FilterManager, $compile: any,
+                dragService: DragService) {
+        super(gridOptionsWrapper);
         this.columnController = columnController;
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
         this.filterManager = filterManager;
         this.$compile = $compile;
-        this.angularGrid = angularGrid;
-        this.setupComponents();
+        this.setupComponents(eRoot, dragService);
     }
-
-
 
     public getGui(): HTMLElement {
         return this.eHeaderGroupCell;
@@ -50,7 +48,7 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
         }
     }
 
-    private setupComponents() {
+    private setupComponents(eRoot: HTMLElement, dragService: DragService) {
 
         this.eHeaderGroupCell = document.createElement('div');
         var classNames = ['ag-header-group-cell'];
@@ -69,7 +67,14 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
             this.eHeaderCellResize = document.createElement("div");
             this.eHeaderCellResize.className = "ag-header-cell-resize";
             this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
-            this.addDragHandler(this.eHeaderCellResize);
+            dragService.addDragHandling({
+                eDraggableElement: this.eHeaderCellResize,
+                eBody: eRoot,
+                cursor: 'col-resize',
+                startAfterPixels: 0,
+                onDragStart: this.onDragStart.bind(this),
+                onDragging: this.onDragging.bind(this)
+            });
 
             if (!this.getGridOptionsWrapper().isSuppressAutoSize()) {
                 this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {

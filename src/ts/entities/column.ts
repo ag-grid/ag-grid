@@ -3,6 +3,7 @@ import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColDef} from "./colDef";
 import {AbstractColDef} from "./colDef";
+import EventService from "../eventService";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -33,6 +34,11 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private aggFunc: string;
     private sort: string;
     private sortedAt: number;
+    private moving = false;
+
+    public static EVENT_MOVING_CHANGED = 'movingChanged';
+
+    private eventService: EventService = new EventService();
 
     constructor(colDef: ColDef, actualWidth: any, colId: String) {
         this.colDef = colDef;
@@ -46,6 +52,23 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         } else if (colDef.pinned === 'right') {
             this.pinned = 'right';
         }
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
+        this.eventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.eventService.removeEventListener(eventType, listener);
+    }
+
+    public setMoving(moving: boolean) {
+        this.moving = moving;
+        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED, {moving: this.moving});
+    }
+
+    public isMoving(): boolean {
+        return this.moving;
     }
 
     public getSort(): string {

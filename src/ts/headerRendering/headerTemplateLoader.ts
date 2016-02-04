@@ -11,7 +11,7 @@ export default class HeaderTemplateLoader {
         '<div class="ag-header-cell">' +
         '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
         '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-        '  <div class="ag-header-cell-label">' +
+        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
         '    <span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
         '    <span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
         '    <span id="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +

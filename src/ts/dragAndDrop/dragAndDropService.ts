@@ -1,6 +1,9 @@
 import _ from '../utils';
 import {Logger, LoggerFactory} from "../logger";
 
+/** Functionality for internal DnD functionality between GUI widgets. Eg this service is used to drag columns
+ * from the 'available columns' list and putting them into the 'grouped columns' in the tool panel.
+ * This service is NOT used by the column headers for resizing and moving, that is a different use case. */
 export default class DragAndDropService {
 
     private dragItem: any;

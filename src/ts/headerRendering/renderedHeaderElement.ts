@@ -5,12 +5,9 @@ import {AbstractColDef} from "../entities/colDef";
 
 export default class RenderedHeaderElement {
 
-    private eRoot: HTMLElement;
-    private dragStartX: number;
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor(eRoot: HTMLElement, gridOptionsWrapper: GridOptionsWrapper) {
-        this.eRoot = eRoot;
+    constructor(gridOptionsWrapper: GridOptionsWrapper) {
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 
@@ -18,52 +15,11 @@ export default class RenderedHeaderElement {
     public destroy(): void {}
     public refreshFilterIcon(): void {}
     public refreshSortIcon(): void {}
-    public onDragStart(): void {}
-    public onDragging(dragChange: number, finished: boolean): void {}
     public onIndividualColumnResized(column: Column): void {}
     public getGui(): HTMLElement { return null; }
 
     protected getGridOptionsWrapper(): GridOptionsWrapper {
         return this.gridOptionsWrapper;
-    }
-
-    public addDragHandler(eDraggableElement: any) {
-        var that = this;
-        eDraggableElement.addEventListener('mousedown', function (downEvent: any) {
-            that.onDragStart();
-            that.eRoot.style.cursor = "col-resize";
-            that.dragStartX = downEvent.clientX;
-
-            var listenersToRemove = <any> {};
-            var lastDelta = 0;
-
-            listenersToRemove.mousemove = function (moveEvent: any) {
-                var newX = moveEvent.clientX;
-                lastDelta = newX - that.dragStartX;
-                that.onDragging(lastDelta, false);
-            };
-
-            listenersToRemove.mouseup = function () {
-                that.stopDragging(listenersToRemove, lastDelta);
-            };
-
-            listenersToRemove.mouseleave = function () {
-                that.stopDragging(listenersToRemove, lastDelta);
-            };
-
-            that.eRoot.addEventListener('mousemove', listenersToRemove.mousemove);
-            that.eRoot.addEventListener('mouseup', listenersToRemove.mouseup);
-            that.eRoot.addEventListener('mouseleave', listenersToRemove.mouseleave);
-        });
-    }
-
-    public stopDragging(listenersToRemove: any, dragChange: number) {
-        this.eRoot.style.cursor = "";
-        var that = this;
-        _.iterateObject(listenersToRemove, function (key: any, listener: any) {
-            that.eRoot.removeEventListener(key, listener);
-        });
-        that.onDragging(dragChange, true);
     }
 
     protected addHeaderClassesFromCollDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement) {

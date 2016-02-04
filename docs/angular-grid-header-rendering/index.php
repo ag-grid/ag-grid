@@ -108,7 +108,7 @@ include '../documentation_header.php';
     &lt;/div>
 &lt;/div></code></pre>
 
-    <h4>Header Tempaltes and Custom Icons</h4>
+    <h4>Header Templates and Custom Icons</h4>
 
     <p>
         If you are providing your own header template, then any custom icons you specify in the

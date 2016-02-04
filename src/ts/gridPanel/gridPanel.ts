@@ -8,49 +8,62 @@ import BorderLayout from "../layout/borderLayout";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 
-// the long lines below are on purpose, otherwise there is while space between some of the dives that
-// we do not want to have, and this white space ends up as gaps in some of the browsers
+// in the html below, it is important that there are no white space between some of the divs, as if there is white space,
+// it won't render correctly in safari, as safari renders white space as a gap
 var gridHtml =
-        `<div>
-            <!-- header -->
-            <div class="ag-header">
-                <div class="ag-pinned-left-header"></div><div class="ag-pinned-right-header"></div><div class="ag-header-viewport"><div class="ag-header-container"></div></div>
-            </div>
-            <!-- floating top -->
-            <div class="ag-floating-top">
-                <div class="ag-pinned-left-floating-top"></div><div class="ag-pinned-right-floating-top"></div><div class="ag-floating-top-viewport"><div class="ag-floating-top-container"></div></div>
-            </div>
-            <!-- floating bottom -->
-            <div class="ag-floating-bottom">
-                <div class="ag-pinned-left-floating-bottom"></div><div class="ag-pinned-right-floating-bottom"></div><div class="ag-floating-bottom-viewport"><div class="ag-floating-bottom-container"></div></div>
-            </div>
-            <!-- body -->
-            <div class="ag-body">
-                <div class="ag-pinned-left-cols-viewport">
-                    <div class="ag-pinned-left-cols-container"></div>
-                </div>
-                <div class="ag-pinned-right-cols-viewport">
-                    <div class="ag-pinned-right-cols-container"></div>
-                </div>
-                <div class="ag-body-viewport-wrapper">
-                    <div class="ag-body-viewport">
-                        <div class="ag-body-container"></div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+    '<div>'+
+        // header
+        '<div class="ag-header">'+
+            '<div class="ag-pinned-left-header"></div>' +
+            '<div class="ag-pinned-right-header"></div>' +
+            '<div class="ag-header-viewport">' +
+                '<div class="ag-header-container"></div>' +
+                '<div class="ag-header-overlay"></div>' +
+            '</div>'+
+        '</div>'+
+        // floating top
+        '<div class="ag-floating-top">'+
+            '<div class="ag-pinned-left-floating-top"></div>' +
+            '<div class="ag-pinned-right-floating-top"></div>' +
+            '<div class="ag-floating-top-viewport">' +
+                '<div class="ag-floating-top-container"></div>' +
+            '</div>'+
+        '</div>'+
+        // floating bottom
+        '<div class="ag-floating-bottom">'+
+            '<div class="ag-pinned-left-floating-bottom"></div>' +
+            '<div class="ag-pinned-right-floating-bottom"></div>' +
+            '<div class="ag-floating-bottom-viewport">' +
+                '<div class="ag-floating-bottom-container"></div>' +
+            '</div>'+
+        '</div>'+
+        // body
+        '<div class="ag-body">'+
+            '<div class="ag-pinned-left-cols-viewport">'+
+                '<div class="ag-pinned-left-cols-container"></div>'+
+            '</div>'+
+            '<div class="ag-pinned-right-cols-viewport">'+
+                '<div class="ag-pinned-right-cols-container"></div>'+
+            '</div>'+
+            '<div class="ag-body-viewport-wrapper">'+
+                '<div class="ag-body-viewport">'+
+                    '<div class="ag-body-container"></div>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+    '</div>';
 
 var gridForPrintHtml =
-        `<div>
-            <!-- header -->
-            <div class="ag-header-container"></div>
-            <!-- floating top -->
-            <div class="ag-floating-top-container"></div>
-            <!-- body -->
-            <div class="ag-body-container"></div>
-            <!-- floating bottom -->
-            <div class="ag-floating-bottom-container"></div>
-        </div>`;
+        '<div>'+
+            // header
+            '<div class="ag-header-container"></div>'+
+            // floating
+            '<div class="ag-floating-top-container"></div>'+
+            // body
+            '<div class="ag-body-container"></div>'+
+            // floating bottom
+            '<div class="ag-floating-bottom-container"></div>'+
+        '</div>';
 
 // wrapping in outer div, and wrapper, is needed to center the loading icon
 // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
@@ -85,6 +98,7 @@ export default class GridPanel {
     private ePinnedLeftColsContainer: HTMLElement;
     private ePinnedRightColsContainer: HTMLElement;
     private eHeaderContainer: HTMLElement;
+    private eHeaderOverlay: HTMLElement;
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
     private eHeader: HTMLElement;
@@ -406,6 +420,10 @@ export default class GridPanel {
         return this.eHeaderContainer;
     }
 
+    public getHeaderOverlay() {
+        return this.eHeaderOverlay;
+    }
+
     public getRoot() {
         return this.eRoot;
     }
@@ -447,6 +465,7 @@ export default class GridPanel {
             this.ePinnedRightHeader = this.queryHtmlElement('.ag-pinned-right-header');
             this.eHeader = this.queryHtmlElement('.ag-header');
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
+            this.eHeaderOverlay = this.queryHtmlElement('.ag-header-overlay');
             this.eHeaderViewport = this.queryHtmlElement('.ag-header-viewport');
 
             this.eFloatingTop = this.queryHtmlElement('.ag-floating-top');

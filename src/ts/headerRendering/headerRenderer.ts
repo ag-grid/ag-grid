@@ -11,13 +11,14 @@ import ColumnGroup from "../entities/columnGroup";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import Column from "../entities/column";
 import RenderedHeaderCell from "./renderedHeaderCell";
+import {DragService} from "./dragService";
 
 export default class HeaderRenderer {
 
     private headerTemplateLoader: HeaderTemplateLoader;
     private gridOptionsWrapper: GridOptionsWrapper;
     private columnController: ColumnController;
-    private angularGrid: Grid;
+    private grid: Grid;
     private filterManager: FilterManager;
     private $scope: any;
     private $compile: any;
@@ -26,19 +27,23 @@ export default class HeaderRenderer {
     private eHeaderContainer: HTMLElement;
     private eHeaderViewport: HTMLElement;
     private eRoot: HTMLElement;
+    private dragService: DragService;
+
+    public eHeaderOverlay: HTMLElement;
 
     private headerElements: RenderedHeaderElement[] = [];
 
     public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel,
-                angularGrid: Grid, filterManager: FilterManager, $scope: any, $compile: any,
-                headerTemplateLoader: HeaderTemplateLoader) {
+                grid: Grid, filterManager: FilterManager, $scope: any, $compile: any,
+                headerTemplateLoader: HeaderTemplateLoader, dragService: DragService) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnController = columnController;
-        this.angularGrid = angularGrid;
+        this.grid = grid;
         this.filterManager = filterManager;
         this.$scope = $scope;
         this.$compile = $compile;
         this.headerTemplateLoader = headerTemplateLoader;
+        this.dragService = dragService;
         this.findAllElements(gridPanel);
     }
 
@@ -48,6 +53,7 @@ export default class HeaderRenderer {
         this.eHeaderContainer = gridPanel.getHeaderContainer();
         this.eHeaderViewport = gridPanel.getHeaderViewport();
         this.eRoot = gridPanel.getRoot();
+        this.eHeaderOverlay = gridPanel.getHeaderOverlay();
     }
 
     public refreshHeader() {
@@ -97,6 +103,7 @@ export default class HeaderRenderer {
 
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
+        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
         for (var dept = 0; ; dept++) {
 
             var nodesAtDept: ColumnGroupChild[] = [];
@@ -110,8 +117,8 @@ export default class HeaderRenderer {
 
             var eRow: HTMLElement = document.createElement('div');
             eRow.className = 'ag-header-row';
-            eRow.style.top = (dept * this.gridOptionsWrapper.getHeaderHeight()) + 'px';
-            eRow.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+            eRow.style.top = (dept * rowHeight) + 'px';
+            eRow.style.height = rowHeight + 'px';
 
             nodesAtDept.forEach( (child: ColumnGroupChild) => {
                 var renderedHeaderElement = this.createHeaderElement(child);
@@ -121,17 +128,19 @@ export default class HeaderRenderer {
 
             eContainerToAddTo.appendChild(eRow);
         }
+
+        this.eHeaderOverlay.style.height = rowHeight + 'px';
+        this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
     }
 
     private createHeaderElement(columnGroupChild: ColumnGroupChild): RenderedHeaderElement {
         if (columnGroupChild instanceof ColumnGroup) {
             return new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.gridOptionsWrapper,
-                this.columnController, this.eRoot, this.angularGrid, this.$scope,
-                this.filterManager, this.$compile);
+                this.columnController, this.eRoot, this.$scope,  this.filterManager, this.$compile, this.dragService);
         } else {
             return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
                 this.$scope, this.filterManager, this.columnController, this.$compile,
-                this.angularGrid, this.eRoot, this.headerTemplateLoader);
+                this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService);
         }
     }
 

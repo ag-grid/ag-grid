@@ -7,6 +7,9 @@ import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
 import HeaderTemplateLoader from "./headerTemplateLoader";
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import {DragService} from "./dragService";
+import HeaderRenderer from "./headerRenderer";
+import {MoveColumnController} from "./moveColumnController";
 
 export default class RenderedHeaderCell extends RenderedHeaderElement {
 
@@ -21,8 +24,6 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private eText: HTMLElement;
 
     private column: Column;
-
-    private parentScope: any;
     private childScope: any;
 
     private filterManager: FilterManager;
@@ -30,23 +31,30 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private $compile: any;
     private grid: Grid;
     private headerTemplateLoader: HeaderTemplateLoader;
+    private headerRenderer: HeaderRenderer;
 
     private startWidth: number;
 
+    // for better structured code, anything we need to do when this column gets destroyed,
+    // we put a function in here. otherwise we would have a big destroy function with lots
+    // of 'if / else' mapping to things that got created.
+    private destroyFunctions: (()=>void)[] = [];
+
     constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
                 parentScope: any, filterManager: FilterManager, columnController: ColumnController,
-                $compile: any, angularGrid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader) {
-        super(eRoot, gridOptionsWrapper);
+                $compile: any, grid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
+                headerRenderer: HeaderRenderer, dragService: DragService) {
+        super(gridOptionsWrapper);
         this.column = column;
         this.parentGroup = parentGroup;
-        this.parentScope = parentScope;
         this.filterManager = filterManager;
         this.columnController = columnController;
         this.$compile = $compile;
-        this.grid = angularGrid;
+        this.grid = grid;
         this.headerTemplateLoader = headerTemplateLoader;
+        this.headerRenderer = headerRenderer;
 
-        this.setupComponents();
+        this.setupComponents(eRoot, parentScope, dragService);
     }
 
     public getGui(): HTMLElement {
@@ -54,17 +62,21 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     public destroy(): void {
-        if (this.childScope) {
-            this.childScope.$destroy();
-        }
+        this.destroyFunctions.forEach( (func)=> {
+            func();
+        });
     }
 
-    private createScope(): void {
+    private createScope(parentScope: any): void {
         if (this.getGridOptionsWrapper().isAngularCompileHeaders()) {
-            this.childScope = this.parentScope.$new();
+            this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colIndex = this.column.getIndex();
             this.childScope.colDefWrapper = this.column;
+
+            this.destroyFunctions.push( ()=> {
+                this.childScope.$destroy();
+            });
         }
     }
 
@@ -134,14 +146,35 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         }
     }
 
-    private setupComponents(): void {
+    private addMovingCss(): void {
+        // this function adds or removes the moving css, based on if the col is moving
+        var addMovingCssFunc = ()=> {
+            if (this.column.isMoving()) {
+                _.addCssClass(this.eHeaderCell, 'ag-header-cell-moving');
+            } else {
+                _.removeCssClass(this.eHeaderCell, 'ag-header-cell-moving');
+            }
+        };
+        // call it now once, so the col is set up correctly
+        addMovingCssFunc();
+        // then call it every time we are informed of a moving state change in the col
+        this.column.addEventListener(Column.EVENT_MOVING_CHANGED, addMovingCssFunc);
+        // finally we remove the listener when this cell is no longer rendered
+        this.destroyFunctions.push(()=> {
+            this.column.removeEventListener(Column.EVENT_MOVING_CHANGED, addMovingCssFunc);
+        });
+    }
+
+    private setupComponents(eRoot: HTMLElement, parentScope: any, dragService: DragService): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
 
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 
-        this.createScope();
+        this.createScope(parentScope);
         this.addAttributes();
         this.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell);
+
+        this.addMovingCss();
 
         var colDef = this.column.getColDef();
 
@@ -150,12 +183,12 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             this.eHeaderCell.title = colDef.headerTooltip;
         }
 
-        this.addResize();
-
-        this.addMenu();
-
         // label div
         this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
+
+        this.addResize(eRoot, dragService);
+        this.addMove(eRoot, dragService);
+        this.addMenu();
 
         // add in sort icons
         this.addSort();
@@ -199,7 +232,11 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         }
     }
 
-    private addResize(): void {
+    private addMove(eRoot: HTMLElement, dragService: DragService): void {
+        new MoveColumnController(this.column, this.eHeaderCell, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService);
+    }
+
+    private addResize(eRoot: HTMLElement, dragService: DragService): void {
         var colDef = this.column.getColDef();
         var eResize = this.eHeaderCell.querySelector('#agResizeBar');
 
@@ -214,7 +251,14 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             return;
         }
 
-        this.addDragHandler(eResize);
+        dragService.addDragHandling({
+            eDraggableElement: eResize,
+            eBody: eRoot,
+            cursor: 'col-resize',
+            startAfterPixels: 0,
+            onDragStart: this.onDragStart.bind(this),
+            onDragging: this.onDragging.bind(this)
+        });
 
         var weWantAutoSize = !this.getGridOptionsWrapper().isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
