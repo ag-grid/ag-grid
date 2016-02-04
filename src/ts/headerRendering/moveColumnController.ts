@@ -82,7 +82,8 @@ export class MoveColumnController {
                 var leftColumn = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
                 if (leftColumn) {
                     var oldIndex = this.columnController.getColumnIndex(this.column);
-                    this.columnController.moveColumn(oldIndex, oldIndex-1);
+                    var newIndex = this.columnController.getColumnIndex(leftColumn);
+                    this.columnController.moveColumn(oldIndex, newIndex);
                     this.deltaUsed -= leftColumn.getActualWidth();
                     checkForAnotherColumn = true;
                 }
@@ -92,7 +93,8 @@ export class MoveColumnController {
 
                 if (rightColumn) {
                     var oldIndex = this.columnController.getColumnIndex(this.column);
-                    this.columnController.moveColumn(oldIndex, oldIndex+1);
+                    var newIndex = this.columnController.getColumnIndex(rightColumn);
+                    this.columnController.moveColumn(oldIndex, newIndex);
                     this.deltaUsed += rightColumn.getActualWidth();
                     checkForAnotherColumn = true;
                 }

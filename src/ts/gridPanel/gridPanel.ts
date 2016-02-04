@@ -18,8 +18,8 @@ var gridHtml =
             '<div class="ag-pinned-right-header"></div>' +
             '<div class="ag-header-viewport">' +
                 '<div class="ag-header-container"></div>' +
-                '<div class="ag-header-overlay"></div>' +
             '</div>'+
+            '<div class="ag-header-overlay"></div>' +
         '</div>'+
         // floating top
         '<div class="ag-floating-top">'+

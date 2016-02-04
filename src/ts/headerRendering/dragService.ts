@@ -52,7 +52,6 @@ class DragInstance {
 
         this.draggingStarted = false;
         var startAfterPixelsExist = typeof params.startAfterPixels === 'number' && params.startAfterPixels>0;
-        console.log('startAfterPixelsExist = ' + startAfterPixelsExist);
         if (!startAfterPixelsExist) {
             this.startDragging();
         }
