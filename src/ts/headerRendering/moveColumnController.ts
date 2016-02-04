@@ -69,9 +69,10 @@ export class MoveColumnController {
 
         // the while loop keeps going until there are no more columns to move. this caters for the user
         // moving the mouse very fast and we need to swap the column twice or more
-        var needToCheckForColumnMove = true;
-        while (needToCheckForColumnMove) {
+        var checkForAnotherColumn = true;
+        while (checkForAnotherColumn) {
             var deltaAdjusted = delta - this.deltaUsed;
+            checkForAnotherColumn = false;
 
             var dragOverLeftColumn = -deltaAdjusted > this.clickPositionOnHeader;
             var dragOverRightColumn = deltaAdjusted > (this.column.getActualWidth() - this.clickPositionOnHeader);
@@ -83,6 +84,7 @@ export class MoveColumnController {
                     var oldIndex = this.columnController.getColumnIndex(this.column);
                     this.columnController.moveColumn(oldIndex, oldIndex-1);
                     this.deltaUsed -= leftColumn.getActualWidth();
+                    checkForAnotherColumn = true;
                 }
             } else if (dragOverRightColumn && dragMovingRight) {
                 // move right
@@ -92,9 +94,8 @@ export class MoveColumnController {
                     var oldIndex = this.columnController.getColumnIndex(this.column);
                     this.columnController.moveColumn(oldIndex, oldIndex+1);
                     this.deltaUsed += rightColumn.getActualWidth();
+                    checkForAnotherColumn = true;
                 }
-            } else {
-                needToCheckForColumnMove = false;
             }
         }
 

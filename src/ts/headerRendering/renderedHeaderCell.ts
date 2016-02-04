@@ -233,7 +233,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addMove(eRoot: HTMLElement, dragService: DragService): void {
-        new MoveColumnController(this.column, this.eHeaderCell, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService);
+        var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
+        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService);
     }
 
     private addResize(eRoot: HTMLElement, dragService: DragService): void {
