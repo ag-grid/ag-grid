@@ -63,36 +63,42 @@ export class MoveColumnController {
 
     private onDragging(delta: number, finished: boolean): void {
         // we have leapfrogged a column if we move more than the previous columns width
-        var deltaAdjusted = delta - this.deltaUsed;
         this.eFloatingCloneCell.style.left = (this.startLeftPosition + delta) + 'px';
-
-        var dragOverLeftColumn = -deltaAdjusted > this.clickPositionOnHeader;
-        var dragOverRightColumn = deltaAdjusted > (this.column.getActualWidth() - this.clickPositionOnHeader);
-
         var dragMovingRight = delta > this.lastDelta;
         var dragMovingLeft = delta < this.lastDelta;
 
-        if (dragOverLeftColumn && dragMovingLeft) {
-            // move left
-            var leftColumn = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
-            if (leftColumn) {
-                var oldIndex = this.columnController.getColumnIndex(this.column);
-                this.columnController.moveColumn(oldIndex, oldIndex-1);
-                this.deltaUsed -= leftColumn.getActualWidth();
-            }
+        // the while loop keeps going until there are no more columns to move. this caters for the user
+        // moving the mouse very fast and we need to swap the column twice or more
+        var needToCheckForColumnMove = true;
+        while (needToCheckForColumnMove) {
+            var deltaAdjusted = delta - this.deltaUsed;
 
-        } else if (dragOverRightColumn && dragMovingRight) {
-            // move right
-            var rightColumn = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+            var dragOverLeftColumn = -deltaAdjusted > this.clickPositionOnHeader;
+            var dragOverRightColumn = deltaAdjusted > (this.column.getActualWidth() - this.clickPositionOnHeader);
 
-            if (rightColumn) {
-                var oldIndex = this.columnController.getColumnIndex(this.column);
-                this.columnController.moveColumn(oldIndex, oldIndex+1);
-                this.deltaUsed += rightColumn.getActualWidth();
+            if (dragOverLeftColumn && dragMovingLeft) {
+                // move left
+                var leftColumn = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
+                if (leftColumn) {
+                    var oldIndex = this.columnController.getColumnIndex(this.column);
+                    this.columnController.moveColumn(oldIndex, oldIndex-1);
+                    this.deltaUsed -= leftColumn.getActualWidth();
+                }
+            } else if (dragOverRightColumn && dragMovingRight) {
+                // move right
+                var rightColumn = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+
+                if (rightColumn) {
+                    var oldIndex = this.columnController.getColumnIndex(this.column);
+                    this.columnController.moveColumn(oldIndex, oldIndex+1);
+                    this.deltaUsed += rightColumn.getActualWidth();
+                }
+            } else {
+                needToCheckForColumnMove = false;
             }
         }
-        this.lastDelta = delta;
 
+        this.lastDelta = delta;
         if (finished) {
             this.column.setMoving(false);
             this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
