@@ -360,61 +360,8 @@ export class ColumnController {
         return this.allColumns.indexOf(column);
     }
 
-    public getCountOfOrphanableHiddenChildren(column: Column): number {
-        // if this column was to move, how many children would be left without a parent
-        var pathToChild = this.getPathForColumn(column);
-
-        for (var i = pathToChild.length - 1; i>=0; i--) {
-            var columnGroup = pathToChild[i];
-            var onlyDisplayedChild = columnGroup.getDisplayedChildren().length === 1;
-            var moreThanOneChild = columnGroup.getChildren().length > 1;
-            if (onlyDisplayedChild  &&  moreThanOneChild) {
-                // return total columns below here, not including the column under inspection
-                var leafColumns = columnGroup.getLeafColumns();
-                return leafColumns.length - 1;
-            }
-        }
-
-        return 0;
-    }
-
-    private getPathForColumn(column: Column): ColumnGroup[] {
-        var result: ColumnGroup[] = [];
-        var found = false;
-
-        recursePath(this.getAllDisplayedColumnGroups(), 0);
-
-        // we should always find the path, but in case there is a bug somewhere, returning null
-        // will make it fail rather than provide a 'hard to track down' bug
-        if (found) {
-            return result;
-        } else {
-            return null;
-        }
-
-        function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
-
-            for (var i = 0; i<balancedColumnTree.length; i++) {
-                if (found) {
-                    // quit the search, so 'result' is kept with the found result
-                    return;
-                }
-                var node = balancedColumnTree[i];
-                if (node instanceof ColumnGroup) {
-                    var nextNode = <ColumnGroup> node;
-                    recursePath(nextNode.getChildren(), dept+1);
-                    result[dept] = node;
-                } else {
-                    if (node === column) {
-                        found = true;
-                    }
-                }
-            }
-        }
-    }
-
-    public moveColumnWithHiddenChildren(column: Column, toIndex: number): void {
-        
+    public getPathForColumn(column: Column): ColumnGroup[] {
+        return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {

@@ -9,7 +9,6 @@ export class MoveColumnController {
 
     private column: Column;
     private lastDelta = 0;
-    private deltaUsed: number;
     private clickPositionOnHeader: number;
     private startLeftPosition: number;
 
@@ -41,8 +40,6 @@ export class MoveColumnController {
     }
 
     private onDragStart(event: MouseEvent): void {
-        this.deltaUsed = 0;
-
         // the overlay spans all three (left, right, center), so we need to
         // pad the floating clone so it appears over the right container
         if (this.column.getPinned()===Column.PINNED_LEFT) {
@@ -109,15 +106,22 @@ export class MoveColumnController {
                 var oldIndex = this.columnController.getColumnIndex(this.column);
                 var newIndex: number;
                 // see if we are jumping a closed group
-                var countOfHiddenChildren = this.columnController.getCountOfOrphanableHiddenChildren(colToSwapWith);
+                var childrenToJump = this.getColumnsAndOrphans(colToSwapWith);
                 if (wantToMoveLeft) {
-                    this.deltaUsed -= colToSwapWith.getActualWidth();
-                    newIndex = oldIndex - 1 - countOfHiddenChildren;
+                    newIndex = this.columnController.getColumnIndex(childrenToJump[0]);
                 } else {
-                    this.deltaUsed += colToSwapWith.getActualWidth();
-                    newIndex = oldIndex + 1 + countOfHiddenChildren;
+                    newIndex = this.columnController.getColumnIndex(childrenToJump[childrenToJump.length-1]);
                 }
-                this.columnController.moveColumn(this.column, newIndex);
+
+                // we move one column, UNLESS the column is the only visible column
+                // of a group, in which case we move the whole group.
+                console.log('a ' + colToSwapWith.getColId() + ' newIndex = ' + newIndex);
+                var columnsToMove = this.getColumnsAndOrphans(this.column);
+                columnsToMove.reverse().forEach( column => {
+                    this.columnController.moveColumn(column, newIndex);
+                });
+                console.log('b');
+
                 checkForAnotherColumn = true;
             }
         }
@@ -129,59 +133,21 @@ export class MoveColumnController {
         }
     }
 
-/*
-    private onDragging2(delta: number, finished: boolean): void {
-        // we have leapfrogged a column if we move more than the previous columns width
-        this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
-        var dragMovingRight = delta > this.lastDelta;
-        var dragMovingLeft = delta < this.lastDelta;
+    private getColumnsAndOrphans(column: Column): Column[] {
+        // if this column was to move, how many children would be left without a parent
+        var pathToChild = this.columnController.getPathForColumn(column);
 
-        // the while loop keeps going until there are no more columns to move. this caters for the user
-        // moving the mouse very fast and we need to swap the column twice or more
-        var checkForAnotherColumn = true;
-        while (checkForAnotherColumn) {
-            var deltaAdjusted = delta - this.deltaUsed;
-            checkForAnotherColumn = false;
-
-            var dragOverLeftColumn = -deltaAdjusted > this.clickPositionOnHeader;
-            var dragOverRightColumn = deltaAdjusted > (this.column.getActualWidth() - this.clickPositionOnHeader);
-
-            var wantToMoveLeft = dragOverLeftColumn && dragMovingLeft;
-            var wantToMoveRight = dragOverRightColumn && dragMovingRight;
-            var colToSwapWith: Column = null;
-
-            if (wantToMoveLeft) {
-                colToSwapWith = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
-            }
-            if (wantToMoveRight) {
-                colToSwapWith = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
-            }
-
-            // if we are a closed group, we need to move all the columns, not just this one
-
-            if (colToSwapWith) {
-                var oldIndex = this.columnController.getColumnIndex(this.column);
-                var newIndex: number;
-                // see if we are jumping a closed group
-                var countOfHiddenChildren = this.columnController.getCountOfOrphanableHiddenChildren(colToSwapWith);
-                if (wantToMoveLeft) {
-                    this.deltaUsed -= colToSwapWith.getActualWidth();
-                    newIndex = oldIndex - 1 - countOfHiddenChildren;
-                } else {
-                    this.deltaUsed += colToSwapWith.getActualWidth();
-                    newIndex = oldIndex + 1 + countOfHiddenChildren;
-                }
-                this.columnController.moveColumn(this.column, newIndex);
-                checkForAnotherColumn = true;
+        for (var i = pathToChild.length - 1; i>=0; i--) {
+            var columnGroup = pathToChild[i];
+            var onlyDisplayedChild = columnGroup.getDisplayedChildren().length === 1;
+            var moreThanOneChild = columnGroup.getChildren().length > 1;
+            if (onlyDisplayedChild && moreThanOneChild) {
+                // return total columns below here, not including the column under inspection
+                var leafColumns = columnGroup.getLeafColumns();
+                return leafColumns;
             }
         }
 
-        this.lastDelta = delta;
-        if (finished) {
-            this.column.setMoving(false);
-            this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
-        }
+        return [column];
     }
-*/
-
 }

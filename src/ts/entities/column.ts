@@ -4,6 +4,7 @@ import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColDef} from "./colDef";
 import {AbstractColDef} from "./colDef";
 import EventService from "../eventService";
+import ColumnGroup from "./columnGroup";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).

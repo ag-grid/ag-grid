@@ -36,6 +36,12 @@ export default class BalancedColumnTreeBuilder {
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
+        this.columnUtils.deptFirstOriginalTreeSearch(balancedTree, (child: OriginalColumnGroupChild)=> {
+            if (child instanceof OriginalColumnGroup) {
+                (<OriginalColumnGroup>child).calculateExpandable();
+            }
+        });
+
         return {
             balancedTree: balancedTree,
             treeDept: treeDept

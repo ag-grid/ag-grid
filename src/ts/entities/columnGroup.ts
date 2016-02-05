@@ -2,6 +2,7 @@ import {ColumnGroupChild} from "./columnGroupChild";
 import {ColGroupDef} from "./colDef";
 import Column from "./column";
 import {AbstractColDef} from "./colDef";
+import {OriginalColumnGroup} from "./originalColumnGroup";
 
 export default class ColumnGroup implements ColumnGroupChild {
 
@@ -14,24 +15,20 @@ export default class ColumnGroup implements ColumnGroupChild {
     private displayedChildren: ColumnGroupChild[] = [];
 
     private groupId: string;
-
     private instanceId: number;
+    private originalColumnGroup: OriginalColumnGroup;
 
-    private expandable = false;
-    private expanded = false;
-    private colGroupDef: ColGroupDef;
-
-    constructor(colGroupDef: ColGroupDef, groupId: string, instanceId: number) {
-        this.colGroupDef = colGroupDef;
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
         this.groupId = groupId;
         this.instanceId = instanceId;
+        this.originalColumnGroup = originalColumnGroup;
     }
 
     // returns header name if it exists, otherwise null. if will not exist if
     // this group is a padding group, as they don't have colGroupDef's
     public getHeaderName(): string {
-        if (this.colGroupDef) {
-            return this.colGroupDef.headerName;
+        if (this.originalColumnGroup.getColGroupDef()) {
+            return this.originalColumnGroup.getColGroupDef().headerName;
         } else {
             return null;
         }
@@ -43,22 +40,6 @@ export default class ColumnGroup implements ColumnGroupChild {
 
     public getInstanceId(): number {
         return this.instanceId;
-    }
-
-    public setExpanded(expanded: boolean): void {
-        this.expanded = expanded;
-    }
-
-    public isExpandable(): boolean {
-        return this.expandable;
-    }
-
-    public isExpanded(): boolean {
-        return this.expanded;
-    }
-
-    public getColGroupDef(): ColGroupDef {
-        return this.colGroupDef;
     }
 
     public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
@@ -107,7 +88,6 @@ export default class ColumnGroup implements ColumnGroupChild {
         return this.displayedChildren;
     }
 
-
     public getLeafColumns(): Column[] {
         var result: Column[] = [];
         this.addLeafColumns(result);
@@ -120,8 +100,24 @@ export default class ColumnGroup implements ColumnGroupChild {
         return result;
     }
 
+    // why two methods here doing the same thing?
     public getDefinition(): AbstractColDef {
-        return this.colGroupDef;
+        return this.originalColumnGroup.getColGroupDef();
+    }
+    public getColGroupDef(): ColGroupDef {
+        return this.originalColumnGroup.getColGroupDef();
+    }
+
+    public isExpandable(): boolean {
+        return this.originalColumnGroup.isExpandable();
+    }
+
+    public isExpanded(): boolean {
+        return this.originalColumnGroup.isExpanded();
+    }
+
+    public setExpanded(expanded: boolean): void {
+        this.originalColumnGroup.setExpanded(expanded);
     }
 
     private addDisplayedLeafColumns(leafColumns: Column[]): void {
@@ -149,50 +145,14 @@ export default class ColumnGroup implements ColumnGroupChild {
     }
 
     public getColumnGroupShow(): string {
-        if (this.colGroupDef) {
-            return this.colGroupDef.columnGroupShow;
-        } else {
-            // if there is no col def, then this must be a padding
-            // group, which means we exactly only child. we then
-            // take the value from the child and push it up, making
-            // this group 'invisible'.
-            return this.children[0].getColumnGroupShow();
-        }
-    }
-
-    // need to check that this group has at least one col showing when both expanded and contracted.
-    // if not, then we don't allow expanding and contracting on this group
-    public calculateExpandable() {
-        // want to make sure the group doesn't disappear when it's open
-        var atLeastOneShowingWhenOpen = false;
-        // want to make sure the group doesn't disappear when it's closed
-        var atLeastOneShowingWhenClosed = false;
-        // want to make sure the group has something to show / hide
-        var atLeastOneChangeable = false;
-        for (var i = 0, j = this.children.length; i < j; i++) {
-            var abstractColumn = this.children[i];
-            // if the abstractColumn is a grid generated group, there will be no colDef
-            var headerGroupShow = abstractColumn.getColumnGroupShow();
-            if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
-                atLeastOneShowingWhenOpen = true;
-                atLeastOneChangeable = true;
-            } else if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_CLOSED) {
-                atLeastOneShowingWhenClosed = true;
-                atLeastOneChangeable = true;
-            } else {
-                atLeastOneShowingWhenOpen = true;
-                atLeastOneShowingWhenClosed = true;
-            }
-        }
-
-        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+        return this.originalColumnGroup.getColumnGroupShow();
     }
 
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
         // it not expandable, everything is visible
-        if (!this.expandable) {
+        if (!this.originalColumnGroup.isExpandable()) {
             this.displayedChildren = this.children;
             return;
         }
@@ -203,13 +163,13 @@ export default class ColumnGroup implements ColumnGroupChild {
             switch (headerGroupShow) {
                 case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                     // when set to open, only show col if group is open
-                    if (this.expanded) {
+                    if (this.originalColumnGroup.isExpanded()) {
                         this.displayedChildren.push(abstractColumn);
                     }
                     break;
                 case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
                     // when set to open, only show col if group is open
-                    if (!this.expanded) {
+                    if (!this.originalColumnGroup.isExpanded()) {
                         this.displayedChildren.push(abstractColumn);
                     }
                     break;

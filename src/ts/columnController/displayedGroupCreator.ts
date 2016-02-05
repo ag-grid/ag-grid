@@ -38,7 +38,7 @@ export default class DisplayedGroupCreator {
                     var originalGroup = currentOriginalPath[i];
                     var groupId = originalGroup.getGroupId();
                     var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-                    var newGroup = new ColumnGroup(originalGroup.getColGroupDef(), groupId, instanceId);
+                    var newGroup = new ColumnGroup(originalGroup, groupId, instanceId);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i==0) {
@@ -64,12 +64,6 @@ export default class DisplayedGroupCreator {
 
             previousRealPath = currentRealPath;
             previousOriginalPath = currentOriginalPath;
-        });
-
-        this.columnUtils.deptFirstAllColumnTreeSearch(result, (child: ColumnGroupChild)=> {
-            if (child instanceof ColumnGroup) {
-                (<ColumnGroup>child).calculateExpandable();
-            }
         });
 
         return result;

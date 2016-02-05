@@ -127,6 +127,13 @@ export default class HeaderRenderer {
             eRow.style.height = rowHeight + 'px';
 
             nodesAtDept.forEach( (child: ColumnGroupChild) => {
+
+                // skip groups that have no displayed children. this can happen when the group is broken,
+                // and this section happens to have nothing to display for the open / closed state
+                if (child instanceof ColumnGroup && (<ColumnGroup>child).getDisplayedChildren().length==0) {
+                    return;
+                }
+
                 var renderedHeaderElement = this.createHeaderElement(child);
                 this.headerElements.push(renderedHeaderElement);
                 eRow.appendChild(renderedHeaderElement.getGui());
