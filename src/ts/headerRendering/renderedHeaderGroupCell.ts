@@ -60,7 +60,7 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
             classNames.push('ag-header-group-cell-no-group');
         }
         this.eHeaderGroupCell.className = classNames.join(' ');
-        this.eHeaderGroupCell.style.height = this.getGridOptionsWrapper().getHeaderHeight() + 'px';
+        //this.eHeaderGroupCell.style.height = this.getGridOptionsWrapper().getHeaderHeight() + 'px';
         this.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell);
 
         if (this.getGridOptionsWrapper().isEnableColResize()) {
@@ -99,6 +99,10 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
             this.eHeaderGroupCell.appendChild(eGroupCellLabel);
+
+            if (_.isBrowserSafari()) {
+                eGroupCellLabel.style.display = 'table-cell';
+            }
 
             var eInnerText = document.createElement("span");
             eInnerText.className = 'ag-header-group-text';

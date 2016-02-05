@@ -5,6 +5,9 @@ import {AbstractColDef} from "./colDef";
 
 export default class ColumnGroup implements ColumnGroupChild {
 
+    public static HEADER_GROUP_SHOW_OPEN = 'open';
+    public static HEADER_GROUP_SHOW_CLOSED = 'closed';
+
     // all the children of this group, regardless of whether they are opened or closed
     private children: ColumnGroupChild[];
     // depends on the open/closed state of the group, only displaying columns are stored here
@@ -153,10 +156,10 @@ export default class ColumnGroup implements ColumnGroupChild {
             var abstractColumn = this.children[i];
             // if the abstractColumn is a grid generated group, there will be no colDef
             var headerGroupShow = abstractColumn.getColumnGroupShow();
-            if (headerGroupShow === 'open') {
+            if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;
-            } else if (headerGroupShow === 'closed') {
+            } else if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_CLOSED) {
                 atLeastOneShowingWhenClosed = true;
                 atLeastOneChangeable = true;
             } else {
@@ -181,13 +184,13 @@ export default class ColumnGroup implements ColumnGroupChild {
             var abstractColumn = this.children[i];
             var headerGroupShow = abstractColumn.getColumnGroupShow();
             switch (headerGroupShow) {
-                case 'open':
+                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                     // when set to open, only show col if group is open
                     if (this.expanded) {
                         this.displayedChildren.push(abstractColumn);
                     }
                     break;
-                case 'closed':
+                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
                     // when set to open, only show col if group is open
                     if (!this.expanded) {
                         this.displayedChildren.push(abstractColumn);

@@ -293,12 +293,6 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
     }
 
-    private doesColumnExistInGrid(column: Column): boolean {
-        var columnInAllColumns = this.allColumns.indexOf(column) >= 0;
-        var columnIsGroupAutoColumn = column === this.groupAutoColumn;
-        return columnInAllColumns || columnIsGroupAutoColumn;
-    }
-
     public getFirstRightPinnedColIndex(): number {
         return this.displayedLeftColumns.length + this.displayedCenterColumns.length;
     }
@@ -875,13 +869,49 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
     }
 
+    // used by updateModel
+    private getColumnGroupState(): any {
+        var groupState: any = {};
+        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
+            if (child instanceof ColumnGroup) {
+                var columnGroup = <ColumnGroup> child;
+                var key = columnGroup.getGroupId();
+                // if more than one instance of the group, we only record the state of the first item
+                if (!groupState.hasOwnProperty(key)) {
+                    groupState[key] = columnGroup.isExpanded();
+                }
+            }
+        });
+        return groupState;
+    }
+
+    // used by updateModel
+    private setColumnGroupState(groupState: any): any {
+        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
+            if (child instanceof ColumnGroup) {
+                var columnGroup = <ColumnGroup> child;
+                var key = columnGroup.getGroupId();
+                var shouldExpandGroup = groupState[key]===true && columnGroup.isExpandable();
+                if (shouldExpandGroup) {
+                    columnGroup.setExpanded(true);
+                }
+            }
+        });
+    }
+
+    // after:
     private updateModel() {
+        // save opened / closed state
+        var oldGroupState = this.getColumnGroupState();
+
         // following 3 methods are only called from here
         this.createGroupAutoColumn();
         var visibleColumns = this.updateVisibleColumns();
-
-        // only called from here
         this.buildAllGroups(visibleColumns);
+
+        // restore opened / closed state
+        this.setColumnGroupState(oldGroupState);
+
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();
     }
