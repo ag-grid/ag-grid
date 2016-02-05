@@ -1,7 +1,7 @@
 
 var columnDefs = [
     {
-        headerName: "Group 1",
+        headerName: "<span style='background-color: lightblue'>Group 1</span>",
         groupId: "Group1",
         children: [
             {headerName: "AAA", field: "athlete", pinned: true, width: 100},
@@ -15,7 +15,7 @@ var columnDefs = [
         ]
     },
     {
-        headerName: "Group 2",
+        headerName: "<span style='background-color: lightgreen'>Group 2</span>",
         groupId: "Group2",
         children: [
             {headerName: "AAA", field: "athlete", pinned: true, width: 100},

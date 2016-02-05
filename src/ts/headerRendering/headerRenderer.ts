@@ -28,6 +28,7 @@ export default class HeaderRenderer {
     private eHeaderViewport: HTMLElement;
     private eRoot: HTMLElement;
     private dragService: DragService;
+    private gridPanel: GridPanel;
 
     public eHeaderOverlay: HTMLElement;
 
@@ -44,16 +45,17 @@ export default class HeaderRenderer {
         this.$compile = $compile;
         this.headerTemplateLoader = headerTemplateLoader;
         this.dragService = dragService;
-        this.findAllElements(gridPanel);
+        this.gridPanel = gridPanel;
+        this.findAllElements();
     }
 
-    private findAllElements(gridPanel: GridPanel) {
-        this.ePinnedLeftHeader = gridPanel.getPinnedLeftHeader();
-        this.ePinnedRightHeader = gridPanel.getPinnedRightHeader();
-        this.eHeaderContainer = gridPanel.getHeaderContainer();
-        this.eHeaderViewport = gridPanel.getHeaderViewport();
-        this.eRoot = gridPanel.getRoot();
-        this.eHeaderOverlay = gridPanel.getHeaderOverlay();
+    private findAllElements() {
+        this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();
+        this.ePinnedRightHeader = this.gridPanel.getPinnedRightHeader();
+        this.eHeaderContainer = this.gridPanel.getHeaderContainer();
+        this.eHeaderViewport = this.gridPanel.getHeaderViewport();
+        this.eRoot = this.gridPanel.getRoot();
+        this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
     }
 
     public refreshHeader() {
@@ -153,7 +155,8 @@ export default class HeaderRenderer {
         } else {
             return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
                 this.$scope, this.filterManager, this.columnController, this.$compile,
-                this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService);
+                this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService,
+                this.gridPanel);
         }
     }
 

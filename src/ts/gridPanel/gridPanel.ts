@@ -628,6 +628,10 @@ export default class GridPanel {
         this.eBodyViewport.scrollLeft = hScrollPosition;
     }
 
+    public getHorizontalScrollPosition(): number {
+        return this.eBodyViewport.scrollLeft;
+    }
+
     private addScrollListener() {
         // if printing, then no scrolling, so no point in listening for scroll events
         if (this.forPrint) {

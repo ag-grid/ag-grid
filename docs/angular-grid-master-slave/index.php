@@ -102,8 +102,7 @@ gridOptionsMaster = {
         It is possible that you have column groups that are split because of pinning or the
         order of the columns. The grid below has only two groups that are split, displayed
         as many split groups. The master/slave also works here in that a change to a split
-        group will only impact the correct split group in the other grid (eg opening up
-        'Group 1' will only open up for corresponding 'Group 1' in the other grid).
+        group will open / close all the instances of that group in both tables.
     </p>
 
     <show-example example="exampleMasterSlaveGroups"></show-example>

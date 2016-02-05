@@ -10,6 +10,7 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {DragService} from "./dragService";
 import HeaderRenderer from "./headerRenderer";
 import {MoveColumnController} from "./moveColumnController";
+import GridPanel from "../gridPanel/gridPanel";
 
 export default class RenderedHeaderCell extends RenderedHeaderElement {
 
@@ -43,7 +44,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
                 parentScope: any, filterManager: FilterManager, columnController: ColumnController,
                 $compile: any, grid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
-                headerRenderer: HeaderRenderer, dragService: DragService) {
+                headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel) {
         super(gridOptionsWrapper);
         this.column = column;
         this.parentGroup = parentGroup;
@@ -54,7 +55,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         this.headerTemplateLoader = headerTemplateLoader;
         this.headerRenderer = headerRenderer;
 
-        this.setupComponents(eRoot, parentScope, dragService);
+        this.setupComponents(eRoot, parentScope, dragService, gridPanel);
     }
 
     public getGui(): HTMLElement {
@@ -160,7 +161,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         });
     }
 
-    private setupComponents(eRoot: HTMLElement, parentScope: any, dragService: DragService): void {
+    private setupComponents(eRoot: HTMLElement, parentScope: any, dragService: DragService, gridPanel: GridPanel): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
 
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
@@ -182,7 +183,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
 
         this.addResize(eRoot, dragService);
-        this.addMove(eRoot, dragService);
+        this.addMove(eRoot, dragService, gridPanel);
         this.addMenu();
 
         // add in sort icons
@@ -227,9 +228,9 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         }
     }
 
-    private addMove(eRoot: HTMLElement, dragService: DragService): void {
+    private addMove(eRoot: HTMLElement, dragService: DragService, gridPanel: GridPanel): void {
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService);
+        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel);
     }
 
     private addResize(eRoot: HTMLElement, dragService: DragService): void {

@@ -19,13 +19,15 @@ export class MoveColumnController {
     private columnController: ColumnController;
 
     private floatPadding: number;
+    private gridPanel: GridPanel;
 
-    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService) {
+    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService, gridPanel: GridPanel) {
 
         this.eHeaderCell = eHeaderCell;
         this.headerRenderer = headerRenderer;
         this.columnController = columnController;
         this.column = column;
+        this.gridPanel = gridPanel;
 
         dragService.addDragHandling({
             eDraggableElement: eDraggableElement,
@@ -48,6 +50,7 @@ export class MoveColumnController {
             this.floatPadding = this.headerRenderer.getRightPinnedStartPixel();
         } else {
             this.floatPadding = this.columnController.getPinnedLeftContainerWidth();
+            this.floatPadding -= this.gridPanel.getHorizontalScrollPosition();
         }
 
         // make clone of header cell for the 'floating ghost'
@@ -72,6 +75,7 @@ export class MoveColumnController {
     }
 
     private onDragging(delta: number, finished: boolean): void {
+
         this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
         var dragMovingRight = delta > this.lastDelta;
         var dragMovingLeft = delta < this.lastDelta;
@@ -103,7 +107,6 @@ export class MoveColumnController {
 
             // if we are a closed group, we need to move all the columns, not just this one
             if (colToSwapWith) {
-                var oldIndex = this.columnController.getColumnIndex(this.column);
                 var newIndex: number;
                 // see if we are jumping a closed group
                 var childrenToJump = this.getColumnsAndOrphans(colToSwapWith);
@@ -117,9 +120,6 @@ export class MoveColumnController {
                 // of a group, in which case we move the whole group.
                 var columnsToMove = this.getColumnsAndOrphans(this.column);
                 this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
-                //columnsToMove.reverse().forEach( column => {
-                //    this.columnController.moveColumn(column, newIndex);
-                //});
 
                 checkForAnotherColumn = true;
             }
