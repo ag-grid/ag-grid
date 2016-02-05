@@ -50,6 +50,8 @@ export default class RenderedCell {
     private value: any;
     private checkboxSelection: boolean;
 
+    private destroyMethods: Function[] = [];
+
     constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
                 gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
                 selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
@@ -81,6 +83,12 @@ export default class RenderedCell {
         this.checkboxSelection = this.calculateCheckboxSelection();
 
         this.setupComponents();
+    }
+
+    public destroy(): void {
+        this.destroyMethods.forEach( theFunction => {
+            theFunction();
+        });
     }
 
     public calculateCheckboxSelection() {
@@ -143,11 +151,37 @@ export default class RenderedCell {
         }
     }
 
+    private setLeftOnCell(): void {
+        var leftChangedListener = () => {
+            this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
+        };
+
+        this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+        });
+
+        leftChangedListener();
+    }
+
+    private setWidthOnCell(): void {
+        var widthChangedListener = () => {
+            this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
+        };
+
+        this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        });
+
+        widthChangedListener();
+    }
+
     private setupComponents() {
         this.vGridCell = new VHtmlElement("div");
-        this.vGridCell.setAttribute("col", (this.column.getIndex() !== undefined && this.column.getIndex() !== null) ? this.column.getIndex().toString() : '');
 
-        this.vGridCell.setAttribute("colId", this.column.getColId());
+        this.setLeftOnCell();
+        this.setWidthOnCell();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
@@ -164,8 +198,6 @@ export default class RenderedCell {
         if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
             this.addCellNavigationHandler();
         }
-
-        this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
 
         this.createParentOfValue();
 
@@ -236,7 +268,7 @@ export default class RenderedCell {
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
-        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getIndex(), this.column.getColDef(), forceBrowserFocus);
+        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
     }
 
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
@@ -689,7 +721,7 @@ export default class RenderedCell {
     private addClasses() {
         this.vGridCell.addClass('ag-cell');
         this.vGridCell.addClass('ag-cell-no-focus');
-        this.vGridCell.addClass('cell-col-' + this.column.getIndex());
+        this.vGridCell.setAttribute("colId", this.column.getColId());
 
         if (this.node.group && this.node.footer) {
             this.vGridCell.addClass('ag-footer-cell');

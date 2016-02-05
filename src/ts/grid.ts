@@ -332,6 +332,8 @@ export class Grid {
 
         if (event.isIndividualColumnResized()) {
             this.onIndividualColumnResized(event.getColumn());
+        } else if (event.getType()===Events.EVENT_COLUMN_MOVED) {
+            this.refreshHeader();
         } else {
             this.refreshHeaderAndBody();
         }
@@ -346,7 +348,7 @@ export class Grid {
 
     private onIndividualColumnResized(column: Column): void {
         this.headerRenderer.onIndividualColumnResized(column);
-        this.rowRenderer.onIndividualColumnResized(column);
+        //this.rowRenderer.onIndividualColumnResized(column);
         if (column.isPinned()) {
             this.updatePinnedColContainerWidthAfterColResize();
         } else {
@@ -419,10 +421,19 @@ export class Grid {
 
     // gets called after columns are shown / hidden from groups expanding
     private refreshHeaderAndBody() {
+        this.logger.log('refreshHeaderAndBody');
+        this.refreshHeader();
+        this.refreshBody();
+    }
+
+    private refreshHeader() {
         this.headerRenderer.refreshHeader();
         this.headerRenderer.updateFilterIcons();
         this.headerRenderer.updateSortIcons();
         this.headerRenderer.setPinnedColContainerWidth();
+    }
+
+    private refreshBody() {
         this.gridPanel.setBodyContainerWidth();
         this.gridPanel.setPinnedColContainerWidth();
         this.rowRenderer.refreshView();
@@ -583,12 +594,12 @@ export class Grid {
         return this.filterManager.getFilterModel();
     }
 
-    public setFocusedCell(rowIndex: any, colIndex: any) {
+    public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
         this.gridPanel.ensureIndexVisible(rowIndex);
-        this.gridPanel.ensureColIndexVisible(colIndex);
+        this.gridPanel.ensureColumnVisible(colKey);
         var that = this;
         setTimeout(function () {
-            that.rowRenderer.setFocusedCell(rowIndex, colIndex);
+            that.rowRenderer.setFocusedCell(rowIndex, colKey);
         }, 10);
     }
 

@@ -49,6 +49,7 @@ export class ColumnApi {
     public getDisplayedLeftColumns(): Column[] { return this._columnController.getDisplayedLeftColumns(); }
     public getDisplayedCenterColumns(): Column[] { return this._columnController.getDisplayedCenterColumns(); }
     public getDisplayedRightColumns(): Column[] { return this._columnController.getDisplayedRightColumns(); }
+    public getAllDisplayedColumns(): Column[] { return this._columnController.getAllDisplayedColumns(); }
     public getRowGroupColumns(): Column[] { return this._columnController.getRowGroupColumns(); }
     public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
     public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumn(fromIndex, toIndex); }
@@ -109,9 +110,9 @@ export class ColumnController {
 
     // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
     // displayed trees, however it also takes into account if the groups are open or not.
-    private displayedLeftColumns: Column[];
-    private displayedRightColumns: Column[];
-    private displayedCenterColumns: Column[];
+    private displayedLeftColumns: Column[] = [];
+    private displayedRightColumns: Column[] = [];
+    private displayedCenterColumns: Column[] = [];
 
     private headerRowCount = 0;
 
@@ -220,6 +221,11 @@ export class ColumnController {
         return this.displayedCentreColumnTree;
     }
 
+    // gridPanel -> ensureColumnVisible
+    public isColumnDisplayed(column: Column): boolean {
+        return this.getAllDisplayedColumns().indexOf(column) >= 0;
+    }
+
     // + csvCreator
     public getAllDisplayedColumns(): Column[] {
         // order we add the arrays together is important, so the result
@@ -318,14 +324,19 @@ export class ColumnController {
 
         newWidth = this.normaliseColumnWidth(column, newWidth);
 
+        var widthChanged = column.getActualWidth() !== newWidth;
+
+        if (widthChanged) {
+            column.setActualWidth(newWidth);
+            this.setLeftValues();
+        }
+
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
-        if (finished || column.getActualWidth() !== newWidth) {
-            column.setActualWidth(newWidth);
-
+        if (finished || widthChanged) {
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
@@ -922,23 +933,28 @@ export class ColumnController {
     }
 
     private updateDisplayedColumnsFromGroups() {
-        this.displayedLeftColumns = [];
-        this.displayedRightColumns = [];
-        this.displayedCenterColumns = [];
-
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
         this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
         this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
+        this.setLeftValues();
+    }
+
+    private setLeftValues(): void {
+        // go through each list of displayed columns
+        [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
+            var left = 0;
+            columns.forEach( column => {
+                column.setLeft(left);
+                left += column.getActualWidth();
+            });
+        });
     }
 
     private addToDisplayedColumns(displayedColumnTree: ColumnGroupChild[], displayedColumns: Column[]): void {
         displayedColumns.length = 0;
-        var leftPixel = 0;
         this.columnUtils.deptFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild)=> {
             if (child instanceof Column) {
                 displayedColumns.push(child);
-                child.setLeft(leftPixel);
-                leftPixel += child.getActualWidth();
             }
         });
     }
@@ -1096,7 +1112,6 @@ export class ColumnController {
             var hideBecauseOfRowGroup = this.rowGroupColumns.indexOf(column) >= 0
                 && this.gridOptionsWrapper.isGroupHideGroupColumns();
             if (column.isVisible() && !hideBecauseOfRowGroup) {
-                column.setIndex(visibleColumns.length);
                 visibleColumns.push(this.allColumns[i]);
             }
         }

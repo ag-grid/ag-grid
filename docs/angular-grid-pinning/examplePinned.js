@@ -43,9 +43,20 @@ function pinCountry() {
 }
 
 function jumpToCol(value) {
+    if (typeof value !== 'string' || value === '') {
+        return;
+    }
+
     var index = Number(value);
-    if (typeof index === 'number' && !isNaN(index)) {
-        gridOptions.api.ensureColIndexVisible(index);
+    if (typeof index !== 'number' || isNaN(index)) {
+        return;
+    }
+
+    // it's actually a column the api needs, so look the column up
+    var allColumns = gridOptions.columnApi.getAllColumns();
+    var column = allColumns[index];
+    if (column) {
+        gridOptions.api.ensureColumnVisible(column);
     }
 }
 

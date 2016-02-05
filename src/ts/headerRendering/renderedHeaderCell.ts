@@ -71,7 +71,6 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         if (this.getGridOptionsWrapper().isAngularCompileHeaders()) {
             this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
-            this.childScope.colIndex = this.column.getIndex();
             this.childScope.colDefWrapper = this.column;
 
             this.destroyFunctions.push( ()=> {
@@ -81,10 +80,6 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addAttributes(): void {
-        this.eHeaderCell.setAttribute("col", (
-                            this.column.getIndex() !== undefined
-                            && this.column.getIndex() !== null)
-                            ? this.column.getIndex().toString() : '');
         this.eHeaderCell.setAttribute("colId", this.column.getColId());
     }
 

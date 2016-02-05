@@ -21,7 +21,7 @@ export default class RenderedRow {
     public vPinnedRightRow: any;
     public vBodyRow: any;
 
-    private renderedCells: {[key: number]: RenderedCell} = {};
+    private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
     private node: RowNode;
     private rowIndex: number;
@@ -202,11 +202,11 @@ export default class RenderedRow {
     }
 
     public getRenderedCellForColumn(column: Column): RenderedCell {
-        return this.renderedCells[column.getIndex()];
+        return this.renderedCells[column.getColId()];
     }
 
     public getCellForCol(column: Column): HTMLElement {
-        var renderedCell = this.renderedCells[column.getIndex()];
+        var renderedCell = this.renderedCells[column.getColId()];
         if (renderedCell) {
             return renderedCell.getVGridCell().getElement();
         } else {
@@ -224,6 +224,11 @@ export default class RenderedRow {
             this.ePinnedRightContainer.removeChild(this.vPinnedRightRow.getElement());
         }
         this.eBodyContainer.removeChild(this.vBodyRow.getElement());
+
+        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+            renderedCell.destroy();
+        });
+
     }
 
     private destroyScope(): void {
@@ -268,7 +273,7 @@ export default class RenderedRow {
                 this.vBodyRow.appendChild(vGridCell);
             }
 
-            this.renderedCells[column.getIndex()] = renderedCell;
+            this.renderedCells[column.getColId()] = renderedCell;
         }
     }
 

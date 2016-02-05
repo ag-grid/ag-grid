@@ -243,8 +243,8 @@ include '../documentation_header.php';
             <td>Ensures the index is visible, scrolling the table if needed.</td>
         </tr>
         <tr>
-            <th>ensureColIndexVisible(index)</th>
-            <td>Ensures the column index is visible, scrolling the table if needed.</td>
+            <th>ensureColumnVisible(colId)</th>
+            <td>Ensures the column is visible, scrolling the table if needed.</td>
         </tr>
         <tr>
             <th>ensureNodeVisible(comparator)</th>

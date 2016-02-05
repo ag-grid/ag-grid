@@ -20,6 +20,9 @@ include 'documentation_header.php';
     <li>Minor: BugFix: forPrint was not sizing headers correctly when doing grouped columns.</li>
     <li>Major: Added sorting to groups</li>
     <li>Minor: Added minColWidth and maxColWidth grid properties. Impacts all columns if set.</li>
+    <li>Major: Column no longer has 'index' attribute, as the columns moving now has no meaning. Use 'colId' to identify columns.</li>
+    <li>Major: api.ensureColIndexVisible(index) replace with api.ensureColumnVisible(colKey)</li>
+    <li>Major: Focused cell not longer has attribute colIndex, instead has attribute colId.</li>
 
     <li>Major Build Changes:
         <ul>

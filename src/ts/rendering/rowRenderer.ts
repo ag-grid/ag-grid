@@ -34,7 +34,14 @@ export default class RowRenderer {
     private rowModel: any;
     private firstVirtualRenderedRow: number;
     private lastVirtualRenderedRow: number;
-    private focusedCell: any;
+
+    private focusedCell: {
+        rowIndex: number,
+        colId: string,
+        node: RowNode,
+        colDef: ColDef
+    };
+
     private valueService: ValueService;
     private eventService: EventService;
     private floatingRowModel: FloatingRowModel;
@@ -112,17 +119,17 @@ export default class RowRenderer {
         return eCells;
     }
 
-    public onIndividualColumnResized(column: Column) {
-        var newWidthPx = column.getActualWidth() + "px";
-        var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
-        this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-            var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
-            for (var i = 0; i < cellsForThisCol.length; i++) {
-                var element = <HTMLElement> cellsForThisCol[i];
-                element.style.width = newWidthPx;
-            }
-        });
-    }
+    //public onIndividualColumnResized(column: Column) {
+    //    var newWidthPx = column.getActualWidth() + "px";
+    //    var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
+    //    this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
+    //        var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
+    //        for (var i = 0; i < cellsForThisCol.length; i++) {
+    //            var element = <HTMLElement> cellsForThisCol[i];
+    //            element.style.width = newWidthPx;
+    //        }
+    //    });
+    //}
 
     public setMainRowWidths() {
         var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
@@ -489,7 +496,7 @@ export default class RowRenderer {
         this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
         // this changes the css on the cell
-        this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.getIndex(), cellToFocus.column.getColDef(), true);
+        this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.getColId(), cellToFocus.column.getColDef(), true);
     }
 
     private getNextCellToFocus(key: any, lastCellToFocus: any) {
@@ -548,7 +555,7 @@ export default class RowRenderer {
     }
 
     // called by the renderedRow
-    public focusCell(eCell: any, rowIndex: number, colIndex: number, colDef: ColDef, forceBrowserFocus: any) {
+    public focusCell(eCell: any, rowIndex: number, colId: string, colDef: ColDef, forceBrowserFocus: any) {
         // do nothing if cell selection is off
         if (this.gridOptionsWrapper.isSuppressCellSelection()) {
             return;
@@ -559,13 +566,13 @@ export default class RowRenderer {
             _.querySelectorAll_replaceCssClass(rowContainer, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
             _.querySelectorAll_replaceCssClass(rowContainer, '.ag-row-focus', 'ag-row-focus', 'ag-row-no-focus');
 
-            var selectorForCell = '[row="' + rowIndex + '"] [col="' + colIndex + '"]';
+            var selectorForCell = '[row="' + rowIndex + '"] [colId="' + colId + '"]';
             _.querySelectorAll_replaceCssClass(rowContainer, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
             var selectorForRow = '[row="' + rowIndex + '"]';
             _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
         });
 
-        this.focusedCell = {rowIndex: rowIndex, colIndex: colIndex, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};
+        this.focusedCell = {rowIndex: rowIndex, colId: colId, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};
 
         // this puts the browser focus on the cell (so it gets key presses)
         if (forceBrowserFocus) {

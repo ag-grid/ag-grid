@@ -16,6 +16,7 @@ import CsvExportParams from "./csvCreator";
 import {ColDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import Constants from "./constants";
+import Column from "./entities/column";
 
 export class GridApi {
 
@@ -255,7 +256,11 @@ export class GridApi {
     }
 
     public ensureColIndexVisible(index:any) {
-        this.gridPanel.ensureColIndexVisible(index);
+        console.warn('ag-Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
+    }
+
+    public ensureColumnVisible(key: string|Column|ColDef) {
+        this.gridPanel.ensureColumnVisible(key);
     }
 
     public ensureIndexVisible(index:any) {
@@ -288,12 +293,12 @@ export class GridApi {
         return this.getFilterApi(colDef);
     }
 
-    public getFilterApi(key:any) {
+    public getFilterApi(key: string|Column|ColDef) {
         var column = this.columnController.getColumn(key);
         return this.filterManager.getFilterApi(column);
     }
 
-    public getColumnDef(key:any) {
+    public getColumnDef(key: string|Column|ColDef) {
         var column = this.columnController.getColumn(key);
         if (column) {
             return column.getColDef();
@@ -326,8 +331,8 @@ export class GridApi {
         return this.rowRenderer.getFocusedCell();
     }
 
-    public setFocusedCell(rowIndex:any, colIndex:any) {
-        this.grid.setFocusedCell(rowIndex, colIndex);
+    public setFocusedCell(rowIndex:any, colId:any) {
+        this.grid.setFocusedCell(rowIndex, colId);
     }
 
     public setHeaderHeight(headerHeight: number) {

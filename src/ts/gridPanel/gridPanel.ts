@@ -300,30 +300,19 @@ export default class GridPanel {
         }
     }
 
-    public ensureColIndexVisible(index: any) {
-        var leftColumns = this.columnController.getDisplayedLeftColumns();
-        var centerColumns = this.columnController.getDisplayedCenterColumns();
-
-        var minAllowedIndex = leftColumns.length;
-        var maxAllowedIndex = minAllowedIndex + centerColumns.length - 1;
-
-        var indexIsInRange = index >= minAllowedIndex && index <= maxAllowedIndex;
-        if (!indexIsInRange) {
-            console.warn('index is not in range, should be between '
-                + minAllowedIndex + ' and ' + maxAllowedIndex);
-            console.warn('Remember it makes no sense to scroll to a pinned column');
+    public ensureColumnVisible(key: any) {
+        var column = this.columnController.getColumn(key);
+        if (column.isPinned()) {
+            console.warn('calling ensureIndexVisible on a '+column.getPinned()+' pinned column doesn\'t make sense for column ' + column.getColId());
             return;
         }
 
-        var centerIndex = index - leftColumns.length;
-        var column = centerColumns[centerIndex];
-
-        // sum up all col width to the let to get the start pixel
-        var colLeftPixel = 0;
-        for (var i = 0; i < centerIndex; i++) {
-            colLeftPixel += centerColumns[i].getActualWidth();
+        if (!this.columnController.isColumnDisplayed(column)) {
+            console.warn('column is not currently visible');
+            return;
         }
 
+        var colLeftPixel = column.getLeft();
         var colRightPixel = colLeftPixel + column.getActualWidth();
 
         var viewportLeftPixel = this.eBodyViewport.scrollLeft;

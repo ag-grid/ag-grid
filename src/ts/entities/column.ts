@@ -30,7 +30,6 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     private visible: any;
     private pinned: string;
-    private index: number;
     private left: number;
     private aggFunc: string;
     private sort: string;
@@ -41,6 +40,8 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private maxWidth: number;
 
     public static EVENT_MOVING_CHANGED = 'movingChanged';
+    public static EVENT_LEFT_CHANGED = 'leftChanged';
+    public static EVENT_WIDTH_CHANGED = 'widthChanged';
 
     private eventService: EventService = new EventService();
 
@@ -80,7 +81,7 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public setMoving(moving: boolean) {
         this.moving = moving;
-        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED, {moving: this.moving});
+        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED);
     }
 
     public isMoving(): boolean {
@@ -111,20 +112,15 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         return this.aggFunc;
     }
 
-    public getIndex(): number {
-        return this.index;
-    }
-
-    public setIndex(index: number): void {
-        this.index = index;
-    }
-
     public getLeft(): number {
         return this.left;
     }
 
     public setLeft(left: number) {
-        this.left = left;
+        if (this.left !== left) {
+            this.left = left;
+            this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);
+        }
     }
 
     public setPinned(pinned: string|boolean): void {
@@ -174,7 +170,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setActualWidth(actualWidth: number): void {
-        this.actualWidth = actualWidth;
+        if (this.actualWidth !== actualWidth) {
+            this.actualWidth = actualWidth;
+            this.eventService.dispatchEvent(Column.EVENT_WIDTH_CHANGED);
+        }
     }
 
     public isGreaterThanMax(width: number): boolean {
