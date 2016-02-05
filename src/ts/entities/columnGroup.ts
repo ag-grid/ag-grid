@@ -107,6 +107,13 @@ export default class ColumnGroup implements ColumnGroupChild {
         return this.displayedChildren;
     }
 
+
+    public getLeafColumns(): Column[] {
+        var result: Column[] = [];
+        this.addLeafColumns(result);
+        return result;
+    }
+
     public getDisplayedLeafColumns(): Column[] {
         var result: Column[] = [];
         this.addDisplayedLeafColumns(result);
@@ -123,6 +130,16 @@ export default class ColumnGroup implements ColumnGroupChild {
                 leafColumns.push(<Column>child);
             } else if (child instanceof ColumnGroup) {
                 (<ColumnGroup>child).addDisplayedLeafColumns(leafColumns);
+            }
+        });
+    }
+
+    private addLeafColumns(leafColumns: Column[]): void {
+        this.children.forEach( (child: ColumnGroupChild) => {
+            if (child instanceof Column) {
+                leafColumns.push(<Column>child);
+            } else if (child instanceof ColumnGroup) {
+                (<ColumnGroup>child).addLeafColumns(leafColumns);
             }
         });
     }

@@ -75,6 +75,62 @@ export class MoveColumnController {
     }
 
     private onDragging(delta: number, finished: boolean): void {
+        this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
+        var dragMovingRight = delta > this.lastDelta;
+        var dragMovingLeft = delta < this.lastDelta;
+
+        // the while loop keeps going until there are no more columns to move. this caters for the user
+        // moving the mouse very fast and we need to swap the column twice or more
+        var checkForAnotherColumn = true;
+        while (checkForAnotherColumn) {
+
+            // get current pixel position
+            var hoveringOverPixel = this.startLeftPosition + this.clickPositionOnHeader + delta;
+
+            var dragOverLeftColumn = this.column.getLeft() > hoveringOverPixel;
+            var dragOverRightColumn = (this.column.getLeft() + this.column.getActualWidth()) < hoveringOverPixel;
+
+            var wantToMoveLeft = dragOverLeftColumn && dragMovingLeft;
+            var wantToMoveRight = dragOverRightColumn && dragMovingRight;
+
+            checkForAnotherColumn = false;
+
+            var colToSwapWith: Column = null;
+
+            if (wantToMoveLeft) {
+                colToSwapWith = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
+            }
+            if (wantToMoveRight) {
+                colToSwapWith = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+            }
+
+            // if we are a closed group, we need to move all the columns, not just this one
+            if (colToSwapWith) {
+                var oldIndex = this.columnController.getColumnIndex(this.column);
+                var newIndex: number;
+                // see if we are jumping a closed group
+                var countOfHiddenChildren = this.columnController.getCountOfOrphanableHiddenChildren(colToSwapWith);
+                if (wantToMoveLeft) {
+                    this.deltaUsed -= colToSwapWith.getActualWidth();
+                    newIndex = oldIndex - 1 - countOfHiddenChildren;
+                } else {
+                    this.deltaUsed += colToSwapWith.getActualWidth();
+                    newIndex = oldIndex + 1 + countOfHiddenChildren;
+                }
+                this.columnController.moveColumn(this.column, newIndex);
+                checkForAnotherColumn = true;
+            }
+        }
+
+        this.lastDelta = delta;
+        if (finished) {
+            this.column.setMoving(false);
+            this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
+        }
+    }
+
+/*
+    private onDragging2(delta: number, finished: boolean): void {
         // we have leapfrogged a column if we move more than the previous columns width
         this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
         var dragMovingRight = delta > this.lastDelta;
@@ -90,27 +146,33 @@ export class MoveColumnController {
             var dragOverLeftColumn = -deltaAdjusted > this.clickPositionOnHeader;
             var dragOverRightColumn = deltaAdjusted > (this.column.getActualWidth() - this.clickPositionOnHeader);
 
-            if (dragOverLeftColumn && dragMovingLeft) {
-                // move left
-                var leftColumn = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
-                if (leftColumn) {
-                    var oldIndex = this.columnController.getColumnIndex(this.column);
-                    var newIndex = this.columnController.getColumnIndex(leftColumn);
-                    this.columnController.moveColumn(oldIndex, newIndex);
-                    this.deltaUsed -= leftColumn.getActualWidth();
-                    checkForAnotherColumn = true;
-                }
-            } else if (dragOverRightColumn && dragMovingRight) {
-                // move right
-                var rightColumn = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+            var wantToMoveLeft = dragOverLeftColumn && dragMovingLeft;
+            var wantToMoveRight = dragOverRightColumn && dragMovingRight;
+            var colToSwapWith: Column = null;
 
-                if (rightColumn) {
-                    var oldIndex = this.columnController.getColumnIndex(this.column);
-                    var newIndex = this.columnController.getColumnIndex(rightColumn);
-                    this.columnController.moveColumn(oldIndex, newIndex);
-                    this.deltaUsed += rightColumn.getActualWidth();
-                    checkForAnotherColumn = true;
+            if (wantToMoveLeft) {
+                colToSwapWith = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
+            }
+            if (wantToMoveRight) {
+                colToSwapWith = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+            }
+
+            // if we are a closed group, we need to move all the columns, not just this one
+
+            if (colToSwapWith) {
+                var oldIndex = this.columnController.getColumnIndex(this.column);
+                var newIndex: number;
+                // see if we are jumping a closed group
+                var countOfHiddenChildren = this.columnController.getCountOfOrphanableHiddenChildren(colToSwapWith);
+                if (wantToMoveLeft) {
+                    this.deltaUsed -= colToSwapWith.getActualWidth();
+                    newIndex = oldIndex - 1 - countOfHiddenChildren;
+                } else {
+                    this.deltaUsed += colToSwapWith.getActualWidth();
+                    newIndex = oldIndex + 1 + countOfHiddenChildren;
                 }
+                this.columnController.moveColumn(this.column, newIndex);
+                checkForAnotherColumn = true;
             }
         }
 
@@ -120,5 +182,6 @@ export class MoveColumnController {
             this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
         }
     }
+*/
 
 }

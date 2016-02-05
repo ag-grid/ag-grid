@@ -144,7 +144,7 @@ export default class MasterSlaveService {
             switch (event.getType()) {
                 case Events.EVENT_COLUMN_MOVED:
                     this.logger.log('onColumnEvent-> processing '+event+' fromIndex = '+ event.getFromIndex() + ', toIndex = ' + event.getToIndex());
-                    this.columnController.moveColumn(event.getFromIndex(), event.getToIndex());
+                    this.columnController.moveColumn(event.getColumn(), event.getToIndex());
                     break;
                 case Events.EVENT_COLUMN_VISIBLE:
                     this.logger.log('onColumnEvent-> processing '+event+' visible = '+ event.isVisible());

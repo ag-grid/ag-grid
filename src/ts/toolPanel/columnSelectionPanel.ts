@@ -96,7 +96,7 @@ export default class ColumnSelectionPanel {
     }
 
     private onItemMoved(fromIndex: number, toIndex: number) {
-        this.columnController.moveColumn(fromIndex, toIndex);
+        this.columnController.moveColumnByIndex(fromIndex, toIndex);
     }
 
     public getGui() {
