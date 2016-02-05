@@ -62,6 +62,7 @@ export class ComponentUtil {
     }
 
     public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions {
+        checkForDeprecated(component);
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = <GridOptions> {};
@@ -111,6 +112,8 @@ export class ComponentUtil {
     public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi): void {
         //if (!component._initialised || !changes) { return; }
         if (!changes) { return; }
+
+        checkForDeprecated(changes);
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = <any> gridOptions;
@@ -199,3 +202,9 @@ export class ComponentUtil {
 _.iterateObject(Events, function(key, value) {
     ComponentUtil.EVENTS.push(value);
 });
+
+function checkForDeprecated(changes: any): void {
+    if (changes.ready || changes.onReady) {
+        console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
+    }
+}
