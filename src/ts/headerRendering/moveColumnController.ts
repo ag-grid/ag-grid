@@ -99,22 +99,15 @@ export class MoveColumnController {
             var colToSwapWith: Column = null;
 
             if (wantToMoveLeft) {
-                colToSwapWith = this.columnController.getDisplayedColBeforeConsideringPinned(this.column);
+                colToSwapWith = this.columnController.getDisplayedColBeforeForMoving(this.column);
             }
             if (wantToMoveRight) {
-                colToSwapWith = this.columnController.getDisplayedColAfterConsideringPinned(this.column);
+                colToSwapWith = this.columnController.getDisplayedColAfterForMoving(this.column);
             }
 
             // if we are a closed group, we need to move all the columns, not just this one
             if (colToSwapWith) {
-                var newIndex: number;
-                // see if we are jumping a closed group
-                var childrenToJump = this.getColumnsAndOrphans(colToSwapWith);
-                if (wantToMoveLeft) {
-                    newIndex = this.columnController.getColumnIndex(childrenToJump[0]);
-                } else {
-                    newIndex = this.columnController.getColumnIndex(childrenToJump[childrenToJump.length-1]);
-                }
+                var newIndex = this.columnController.getColumnIndex(colToSwapWith);
 
                 // we move one column, UNLESS the column is the only visible column
                 // of a group, in which case we move the whole group.

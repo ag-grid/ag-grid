@@ -229,6 +229,9 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addMove(eRoot: HTMLElement, dragService: DragService, gridPanel: GridPanel): void {
+        if (this.column.getColDef().suppressMovable) {
+            return;
+        }
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
         new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel);
     }

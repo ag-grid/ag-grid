@@ -98,6 +98,9 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
 
+    /** Set to true to not allow moving this column via dragging it's header */
+    suppressMovable?: boolean;
+
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
 

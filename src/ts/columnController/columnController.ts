@@ -487,11 +487,14 @@ export class ColumnController {
 
     // same as getDisplayColBefore, but stays in current container,
     // so if column is pinned left, will only return pinned left columns
-    public getDisplayedColBeforeConsideringPinned(col: any): Column {
+    public getDisplayedColBeforeForMoving(col: any): Column {
         if (col===this.groupAutoColumn) {
             return null;
         }
         var beforeCol = this.getDisplayedColBefore(col);
+        if (beforeCol===this.groupAutoColumn) {
+            return null;
+        }
         if (beforeCol && beforeCol.getPinned()===col.getPinned()) {
             return beforeCol;
         } else {
@@ -515,11 +518,14 @@ export class ColumnController {
         return null;
     }
 
-    public getDisplayedColAfterConsideringPinned(col: any): Column {
+    public getDisplayedColAfterForMoving(col: any): Column {
         if (col===this.groupAutoColumn) {
             return null;
         }
         var afterCol = this.getDisplayedColAfter(col);
+        if (afterCol===this.groupAutoColumn) {
+            return null;
+        }
         if (afterCol && afterCol.getPinned()===col.getPinned()) {
             return afterCol;
         } else {
@@ -1105,6 +1111,9 @@ export class ColumnController {
                     }
                 };
             }
+            // we never allow moving the group column
+            groupColDef.suppressMovable = true;
+
             var groupColumnWidth = this.columnUtils.calculateColInitialWidth(groupColDef);
             var colId = 'ag-Grid-AutoColumn';
             var minColWidth = this.gridOptionsWrapper.getMinColWidth();
