@@ -95,6 +95,9 @@ export default class BalancedColumnTreeBuilder {
             return result;
         }
 
+        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
+
         abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
             this.checkForDeprecatedItems(abstractColDef);
             if (this.isColumnGroup(abstractColDef)) {
@@ -108,7 +111,7 @@ export default class BalancedColumnTreeBuilder {
                 var colDef = <ColDef> abstractColDef;
                 var width = this.columnUtils.calculateColInitialWidth(colDef);
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new Column(colDef, width, colId);
+                var column = new Column(colDef, width, colId, minColWidth, maxColWidth);
                 result.push(column);
             }
         });

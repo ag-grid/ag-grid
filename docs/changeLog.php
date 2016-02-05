@@ -19,6 +19,7 @@ include 'documentation_header.php';
     <li>Major: Angular 2 - Now supports CommonJS and ECMA 6 module loading</li>
     <li>Minor: BugFix: forPrint was not sizing headers correctly when doing grouped columns.</li>
     <li>Major: Added sorting to groups</li>
+    <li>Minor: Added minColWidth and maxColWidth grid properties. Impacts all columns if set.</li>
 
     <li>Major Build Changes:
         <ul>

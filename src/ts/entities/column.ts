@@ -36,11 +36,14 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt: number;
     private moving = false;
 
+    private minWidth: number;
+    private maxWidth: number;
+
     public static EVENT_MOVING_CHANGED = 'movingChanged';
 
     private eventService: EventService = new EventService();
 
-    constructor(colDef: ColDef, actualWidth: any, colId: String) {
+    constructor(colDef: ColDef, actualWidth: any, colId: String, globalMinWidth: number, globalMaxWidth: number) {
         this.colDef = colDef;
         this.actualWidth = actualWidth;
         this.visible = !colDef.hide;
@@ -51,6 +54,18 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
             this.pinned = 'left';
         } else if (colDef.pinned === 'right') {
             this.pinned = 'right';
+        }
+
+        if (this.colDef.minWidth) {
+            this.minWidth = this.colDef.minWidth;
+        } else {
+            this.minWidth = globalMinWidth;
+        }
+
+        if (this.colDef.maxWidth) {
+            this.maxWidth = this.colDef.maxWidth;
+        } else {
+            this.maxWidth = globalMaxWidth;
         }
     }
 
@@ -154,18 +169,22 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public isGreaterThanMax(width: number): boolean {
-        if (this.colDef.maxWidth >= constants.MIN_COL_WIDTH) {
-            return width > this.colDef.maxWidth;
+        if (this.maxWidth) {
+            return width > this.maxWidth;
         } else {
             return false;
         }
     }
 
-    public getMinimumWidth(): number {
-        return Math.max(this.colDef.minWidth, constants.MIN_COL_WIDTH);
+    public getMinWidth(): number {
+        return this.minWidth;
+    }
+
+    public getMaxWidth(): number {
+        return this.maxWidth;
     }
 
     public setMinimum(): void {
-        this.actualWidth = this.getMinimumWidth();
+        this.actualWidth = this.minWidth;
     }
 }

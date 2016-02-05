@@ -391,7 +391,8 @@ export default class GridPanel {
                     this.sizeColumnsToFit(-1);
                 }, 100);
             } else {
-                console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with zero width, mabye the grid is not visible yet on the screen?');
+                console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
+                    'zero width, maybe the grid is not visible yet on the screen?');
             }
         }
     }

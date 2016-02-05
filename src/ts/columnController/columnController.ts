@@ -303,14 +303,14 @@ export class ColumnController {
         return this.displayedLeftColumns.length + this.displayedCenterColumns.length;
     }
 
-    // returns the widht we can set to this col, taking into consideration min and max widths
+    // returns the width we can set to this col, taking into consideration min and max widths
     private normaliseColumnWidth(column: Column, newWidth: number): number {
-        if (newWidth < column.getMinimumWidth()) {
-            newWidth = column.getMinimumWidth();
+        if (newWidth < column.getMinWidth()) {
+            newWidth = column.getMinWidth();
         }
 
         if (column.isGreaterThanMax(newWidth)) {
-            newWidth = column.getColDef().maxWidth;
+            newWidth = column.getMaxWidth();
         }
 
         return newWidth;
@@ -470,6 +470,9 @@ export class ColumnController {
     // same as getDisplayColBefore, but stays in current container,
     // so if column is pinned left, will only return pinned left columns
     public getDisplayedColBeforeConsideringPinned(col: any): Column {
+        if (col===this.groupAutoColumn) {
+            return null;
+        }
         var beforeCol = this.getDisplayedColBefore(col);
         if (beforeCol && beforeCol.getPinned()===col.getPinned()) {
             return beforeCol;
@@ -495,6 +498,9 @@ export class ColumnController {
     }
 
     public getDisplayedColAfterConsideringPinned(col: any): Column {
+        if (col===this.groupAutoColumn) {
+            return null;
+        }
         var afterCol = this.getDisplayedColAfter(col);
         if (afterCol && afterCol.getPinned()===col.getPinned()) {
             return afterCol;
@@ -677,7 +683,7 @@ export class ColumnController {
                 // sets pinned to 'left' or 'right'
                 oldColumn.setPinned(stateItem.pinned);
                 // if width provided and valid, use it, otherwise stick with the old width
-                if (stateItem.width >= constants.MIN_COL_WIDTH) {
+                if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
                     oldColumn.setActualWidth(stateItem.width);
                 }
                 // accept agg func only if valid
@@ -947,7 +953,7 @@ export class ColumnController {
                 for (var i = colsToSpread.length - 1; i >= 0; i--) {
                     var column = colsToSpread[i];
                     var newWidth = Math.round(column.getActualWidth() * scale);
-                    if (newWidth < column.getMinimumWidth()) {
+                    if (newWidth < column.getMinWidth()) {
                         column.setMinimum();
                         moveToNotSpread(column);
                         finishedResizing = false;
@@ -1043,7 +1049,9 @@ export class ColumnController {
             }
             var groupColumnWidth = this.columnUtils.calculateColInitialWidth(groupColDef);
             var colId = 'ag-Grid-AutoColumn';
-            this.groupAutoColumn = new Column(groupColDef, groupColumnWidth, colId);
+            var minColWidth = this.gridOptionsWrapper.getMinColWidth();
+            var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
+            this.groupAutoColumn = new Column(groupColDef, groupColumnWidth, colId, minColWidth, maxColWidth);
         } else {
             this.groupAutoColumn = null;
         }

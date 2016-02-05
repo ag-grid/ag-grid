@@ -4,7 +4,7 @@ import {AbstractColDef} from "./colDef";
 // See the note at the top of Column class.
 export interface ColumnGroupChild {
     getActualWidth(): number;
-    getMinimumWidth(): number;
+    getMinWidth(): number;
     getDefinition(): AbstractColDef;
     getColumnGroupShow(): string;
 }

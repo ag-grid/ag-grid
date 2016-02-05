@@ -85,10 +85,10 @@ export default class ColumnGroup implements ColumnGroupChild {
         return groupActualWidth;
     }
 
-    public getMinimumWidth(): number {
+    public getMinWidth(): number {
         var result = 0;
         this.displayedChildren.forEach( (groupChild: ColumnGroupChild) => {
-            result += groupChild.getMinimumWidth();
+            result += groupChild.getMinWidth();
         });
         return result;
     }

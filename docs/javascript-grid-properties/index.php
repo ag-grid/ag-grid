@@ -165,6 +165,14 @@ include '../documentation_header.php';
             <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
         </tr>
         <tr>
+            <th>colMinWidth</th>
+            <td>The default min width for each col. Min widths specified in column definitions get preference, otherwise 20px is the default.</td>
+        </tr>
+        <tr>
+            <th>colMaxWidth</th>
+            <td>The default max width for each col. Max widths specified in column definitions get preference, otherwise no max is set.</td>
+        </tr>
+        <tr>
             <th>rowClass</th>
             <td>The class to give a particular row. Provide either a string (class name) or array of string (array
                 of class names). If you want a different class per row, then use the callback getRowClass(params) instead.</td>

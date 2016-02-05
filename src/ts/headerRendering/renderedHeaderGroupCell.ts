@@ -145,7 +145,7 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
     public onDragging(dragChange: any, finished: boolean): void {
 
         var newWidth = this.groupWidthStart + dragChange;
-        var minWidth = this.columnGroup.getMinimumWidth();
+        var minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;
         }
@@ -168,8 +168,8 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
                 // if not the last col, calculate the column width as normal
                 var startChildSize = this.childrenWidthStarts[index];
                 newChildSize = startChildSize * changeRatio;
-                if (newChildSize < column.getMinimumWidth()) {
-                    newChildSize = column.getMinimumWidth();
+                if (newChildSize < column.getMinWidth()) {
+                    newChildSize = column.getMinWidth();
                 }
                 pixelsToDistribute -= newChildSize;
             } else {

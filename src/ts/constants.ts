@@ -5,7 +5,6 @@ export default class Constants {
     static STEP_MAP = 3;
 
     static ROW_BUFFER_SIZE = 2;
-    static MIN_COL_WIDTH = 10;
 
     static KEY_TAB = 9;
     static KEY_ENTER = 13;

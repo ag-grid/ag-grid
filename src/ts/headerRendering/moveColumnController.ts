@@ -3,6 +3,7 @@ import HeaderRenderer from "./headerRenderer";
 import {ColumnController} from "../columnController/columnController";
 import _ from '../utils';
 import Column from "../entities/column";
+import GridPanel from "../gridPanel/gridPanel";
 
 export class MoveColumnController {
 
@@ -17,6 +18,8 @@ export class MoveColumnController {
 
     private headerRenderer: HeaderRenderer;
     private columnController: ColumnController;
+
+    private floatPadding: number;
 
     constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService) {
 
@@ -40,6 +43,16 @@ export class MoveColumnController {
     private onDragStart(event: MouseEvent): void {
         this.deltaUsed = 0;
 
+        // the overlay spans all three (left, right, center), so we need to
+        // pad the floating clone so it appears over the right container
+        if (this.column.getPinned()===Column.PINNED_LEFT) {
+            this.floatPadding = 0;
+        } else if (this.column.getPinned()===Column.PINNED_RIGHT) {
+            this.floatPadding = this.headerRenderer.getRightPinnedStartPixel();
+        } else {
+            this.floatPadding = this.columnController.getPinnedLeftContainerWidth();
+        }
+
         // make clone of header cell for the 'floating ghost'
         this.eFloatingCloneCell = <HTMLElement> this.eHeaderCell.cloneNode(true);
         this.headerRenderer.eHeaderOverlay.appendChild(this.eFloatingCloneCell);
@@ -47,7 +60,7 @@ export class MoveColumnController {
         _.addCssClass(this.eFloatingCloneCell, 'ag-header-cell-moving-clone');
         this.eFloatingCloneCell.style.position = 'absolute';
         this.eFloatingCloneCell.style.top = 0 + 'px';
-        this.eFloatingCloneCell.style.left = this.startLeftPosition + 'px';
+        this.eFloatingCloneCell.style.left = this.floatPadding + this.startLeftPosition + 'px';
 
         // showing menu while hovering looks ugly, so hide header
         var cloneMenu = <HTMLElement> this.eFloatingCloneCell.querySelector('#agMenu');
@@ -63,7 +76,7 @@ export class MoveColumnController {
 
     private onDragging(delta: number, finished: boolean): void {
         // we have leapfrogged a column if we move more than the previous columns width
-        this.eFloatingCloneCell.style.left = (this.startLeftPosition + delta) + 'px';
+        this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
         var dragMovingRight = delta > this.lastDelta;
         var dragMovingLeft = delta < this.lastDelta;
 

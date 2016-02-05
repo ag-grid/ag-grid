@@ -14,6 +14,8 @@ function isTrue(value: any) {
 
 export default class GridOptionsWrapper {
 
+    private static MIN_COL_WIDTH = 10;
+
     private gridOptions: GridOptions;
 
     private headerHeight: number;
@@ -124,8 +126,24 @@ export default class GridOptionsWrapper {
         return this.gridOptions.groupRowInnerRenderer;
     }
 
+    public getMinColWidth() {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+            return this.gridOptions.minColWidth;
+        } else {
+            return GridOptionsWrapper.MIN_COL_WIDTH;
+        }
+    }
+
+    public getMaxColWidth() {
+        if (this.gridOptions.maxColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+            return this.gridOptions.maxColWidth;
+        } else {
+            return null;
+        }
+    }
+
     public getColWidth() {
-        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < Constants.MIN_COL_WIDTH) {
+        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
             return 200;
         } else {
             return this.gridOptions.colWidth;

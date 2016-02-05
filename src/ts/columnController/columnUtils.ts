@@ -16,9 +16,9 @@ export default class ColumnUtils {
         if (!colDef.width) {
             // if no width defined in colDef, use default
             return this.gridOptionsWrapper.getColWidth();
-        } else if (colDef.width < constants.MIN_COL_WIDTH) {
+        } else if (colDef.width < this.gridOptionsWrapper.getMinColWidth()) {
             // if width in col def to small, set to min width
-            return constants.MIN_COL_WIDTH;
+            return this.gridOptionsWrapper.getMinColWidth();
         } else {
             // otherwise use the provided width
             return colDef.width;

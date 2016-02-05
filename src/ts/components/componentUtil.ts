@@ -24,7 +24,8 @@ export class ComponentUtil {
     ];
 
     public static NUMBER_PROPERTIES = [
-        'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded'
+        'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
+        'minColWidth','maxColWidth'
     ];
 
     public static BOOLEAN_PROPERTIES = [

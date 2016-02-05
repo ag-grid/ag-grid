@@ -99,6 +99,12 @@ export default class HeaderRenderer {
         this.eHeaderViewport.style.marginRight = pinnedRightWidth;
     }
 
+    public getRightPinnedStartPixel(): number {
+        var rightStart = this.ePinnedRightHeader.getBoundingClientRect().left;
+        var parentStart = this.eHeaderOverlay.getBoundingClientRect().left;
+        return rightStart - parentStart;
+    }
+
     private insertHeaderRowsIntoContainer(cellTree: ColumnGroupChild[], eContainerToAddTo: HTMLElement): void {
 
         // if we are displaying header groups, then we have many rows here.

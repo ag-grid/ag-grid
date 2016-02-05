@@ -30,6 +30,8 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     colWidth?: number;
+    minColWidth?: number;
+    maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     debug?: boolean;
