@@ -4,6 +4,7 @@ import {ColumnController} from "../columnController/columnController";
 import _ from '../utils';
 import Column from "../entities/column";
 import GridPanel from "../gridPanel/gridPanel";
+import GridOptionsWrapper from "../gridOptionsWrapper";
 
 export class MoveColumnController {
 
@@ -21,13 +22,16 @@ export class MoveColumnController {
     private floatPadding: number;
     private gridPanel: GridPanel;
 
-    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService, gridPanel: GridPanel) {
+    private addMovingCssToGrid: boolean;
+
+    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper) {
 
         this.eHeaderCell = eHeaderCell;
         this.headerRenderer = headerRenderer;
         this.columnController = columnController;
         this.column = column;
         this.gridPanel = gridPanel;
+        this.addMovingCssToGrid = !gridOptionsWrapper.isSuppressMovingCss();
 
         dragService.addDragHandling({
             eDraggableElement: eDraggableElement,
@@ -72,6 +76,9 @@ export class MoveColumnController {
         var headerCellLeft = this.eHeaderCell.getBoundingClientRect().left;
         this.clickPositionOnHeader = event.clientX - headerCellLeft;
         this.column.setMoving(true);
+        if (this.addMovingCssToGrid) {
+            this.gridPanel.setMovingCss(true);
+        }
     }
 
     private onDragging(delta: number, finished: boolean): void {
@@ -122,6 +129,9 @@ export class MoveColumnController {
         if (finished) {
             this.column.setMoving(false);
             this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
+            if (this.addMovingCssToGrid) {
+                this.gridPanel.setMovingCss(false);
+            }
         }
     }
 

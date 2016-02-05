@@ -171,6 +171,10 @@ export default class GridPanel {
         }
     }
 
+    public setMovingCss(moving: boolean): void {
+        _.addOrRemoveCssClass(this.eRoot, 'ag-column-moving', moving);
+    }
+
     public getPinnedLeftFloatingTop(): HTMLElement {
         return this.ePinnedLeftFloatingTop;
     }

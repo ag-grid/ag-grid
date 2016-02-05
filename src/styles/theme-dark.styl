@@ -9,7 +9,9 @@
     .ag-cell
         border-right: 1px solid grey;
         padding: 4px;
-        //transition: left 0.2s;
+
+    .ag-column-moving .ag-cell
+        transition: left 0.2s;
 
     .ag-header
         background-color: #430000;
@@ -80,8 +82,14 @@
     .ag-row-odd
         background-color: #302E2E;
 
+        .ag-cell
+            background-color: #302E2E;
+
     .ag-row-even
         background-color: #403E3E;
+
+        .ag-cell
+            background-color: #403E3E;
 
     .ag-overlay-loading-wrapper
         background-color: rgba(255, 255, 255, 0.5);

@@ -156,6 +156,11 @@ export default class FilterManager {
                 continue
             }
 
+            // don't bother with filters that are not active
+            if (!filterWrapper.filter.isFilterActive()) {
+                continue;
+            }
+
             if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }

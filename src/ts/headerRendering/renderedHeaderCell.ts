@@ -229,11 +229,11 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addMove(eRoot: HTMLElement, dragService: DragService, gridPanel: GridPanel): void {
-        if (this.column.getColDef().suppressMovable) {
+        if (this.getGridOptionsWrapper().isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
             return;
         }
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel);
+        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
     }
 
     private addResize(eRoot: HTMLElement, dragService: DragService): void {

@@ -11,14 +11,6 @@ include '../documentation_header.php';
     <h2>Best ReactJS Data Grid</h2>
 
     <p>
-        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
-        <ul>
-        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
-    </ul>
-    </p>
-
-    <p>
         Webpack and Babel are popular within the React community. The remainder of this page goes
         through an example using Webpack and Babel. The full example is
         <a href="https://github.com/ceolter/ag-grid-react-example">
@@ -54,6 +46,13 @@ include '../documentation_header.php';
     </table>
 
     <h2>Dependencies</h2>
+    <p>
+        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
+    <ul>
+        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
+        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
+    </ul>
+    </p>
     <p>
     In your package.json file, specify dependency on ag-grid AND ag-grid-react.
     The ag-grid package contains the core ag-grid engine and the ag-grid-react
