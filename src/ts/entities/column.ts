@@ -194,6 +194,6 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setMinimum(): void {
-        this.actualWidth = this.minWidth;
+        this.setActualWidth(this.minWidth);
     }
 }

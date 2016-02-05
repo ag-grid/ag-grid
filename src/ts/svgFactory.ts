@@ -68,6 +68,14 @@ export default class SvgFactory {
         return createPolygonSvg("0,0 3,6 6,0", 6);
     }
 
+    //public createOpenSvg() {
+    //    return createPlusMinus(true);
+    //}
+    //
+    //public createCloseSvg() {
+    //    return createPlusMinus(false);
+    //}
+
     // UnSort Icon SVG
     public createArrowUpDownSvg() {
         var svg = createIconSvg();
@@ -83,6 +91,52 @@ export default class SvgFactory {
         return svg;
     }
 }
+
+// i couldn't figure out how to not make these blurry
+
+/*function createPlusMinus(plus: boolean) {
+    var eSvg = document.createElementNS(SVG_NS, "svg");
+    var size = "14";
+    eSvg.setAttribute("width", size);
+    eSvg.setAttribute("height", size);
+
+    var eRect = document.createElementNS(SVG_NS, "rect");
+    eRect.setAttribute('x', '1');
+    eRect.setAttribute('y', '1');
+    eRect.setAttribute('width', '12');
+    eRect.setAttribute('height', '12');
+    eRect.setAttribute('rx', '2');
+    eRect.setAttribute('ry', '2');
+    eRect.setAttribute('fill', 'none');
+    eRect.setAttribute('stroke', 'black');
+    eRect.setAttribute('stroke-width', '1');
+    eRect.setAttribute('stroke-linecap', 'butt');
+    eSvg.appendChild(eRect);
+
+    var eLineAcross = document.createElementNS(SVG_NS, "line");
+    eLineAcross.setAttribute('x1','2');
+    eLineAcross.setAttribute('x2','12');
+    eLineAcross.setAttribute('y1','7');
+    eLineAcross.setAttribute('y2','7');
+    eLineAcross.setAttribute('stroke','black');
+    eLineAcross.setAttribute('stroke-width', '1');
+    eLineAcross.setAttribute('stroke-linecap', 'butt');
+    eSvg.appendChild(eLineAcross);
+
+    if (plus) {
+        var eLineDown = document.createElementNS(SVG_NS, "line");
+        eLineDown.setAttribute('x1','7');
+        eLineDown.setAttribute('x2','7');
+        eLineDown.setAttribute('y1','2');
+        eLineDown.setAttribute('y2','12');
+        eLineDown.setAttribute('stroke','black');
+        eLineDown.setAttribute('stroke-width', '1');
+        eLineDown.setAttribute('stroke-linecap', 'butt');
+        eSvg.appendChild(eLineDown);
+    }
+
+    return eSvg;
+}*/
 
 function createPolygonSvg(points: any, width?: any) {
     var eSvg = createIconSvg(width);

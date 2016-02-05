@@ -764,7 +764,7 @@ export class ColumnController {
         return foundColumns;
     }
 
-    public getColumn(key: any): Column {
+    public getColumn(key: string|ColDef|Column): Column {
         if (!key) {return null;}
 
         for (var i = 0; i < this.allColumns.length; i++) {
@@ -1014,7 +1014,7 @@ export class ColumnController {
                         moveToNotSpread(column);
                         finishedResizing = false;
                     } else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getColDef().maxWidth);
+                        column.setActualWidth(column.getMaxWidth());
                         moveToNotSpread(column);
                         finishedResizing = false;
                     } else {
@@ -1029,6 +1029,8 @@ export class ColumnController {
                 }
             }
         }
+
+        this.setLeftValues();
 
         // widths set, refresh the gui
         colsToFireEventFor.forEach( (column: Column) => {

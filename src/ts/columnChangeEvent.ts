@@ -11,7 +11,6 @@ export default class ColumnChangeEvent {
     // se if event impacts multiple columns
     private columns: Column[];
     private columnGroup: ColumnGroup;
-    private fromIndex: number;
     private toIndex: number;
     private finished: boolean;
     private visible: boolean;
@@ -25,7 +24,6 @@ export default class ColumnChangeEvent {
         var result = 'ColumnChangeEvent {type: ' + this.type;
         if (this.column) { result += ', column: ' + this.column.getColId(); }
         if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : '(not defined]'; }
-        if (this.fromIndex) { result += ', fromIndex: ' + this.fromIndex; }
         if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }
         if (this.visible) { result += ', visible: ' + this.visible; }
         if (this.pinned) { result += ', pinned: ' + this.pinned; }
@@ -72,18 +70,9 @@ export default class ColumnChangeEvent {
         return this;
     }
 
-    public withFromIndex(fromIndex: number): ColumnChangeEvent {
-        this.fromIndex = fromIndex;
-        return this;
-    }
-
     public withToIndex(toIndex: number): ColumnChangeEvent {
         this.toIndex = toIndex;
         return this;
-    }
-
-    public getFromIndex(): number  {
-        return this.fromIndex;
     }
 
     public getToIndex(): number  {

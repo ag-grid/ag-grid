@@ -153,6 +153,9 @@ export default class RenderedCell {
 
     private setLeftOnCell(): void {
         var leftChangedListener = () => {
+            //if (this.column.getColId()==='age') {
+            //    console.log('left changed: ' + this.column.getColId() + ' ' + this.column.getLeft());
+            //}
             this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
         };
 
