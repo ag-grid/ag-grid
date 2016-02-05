@@ -31,6 +31,7 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private visible: any;
     private pinned: string;
     private index: number;
+    private left: number;
     private aggFunc: string;
     private sort: string;
     private sortedAt: number;
@@ -116,6 +117,14 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public setIndex(index: number): void {
         this.index = index;
+    }
+
+    public getLeft(): number {
+        return this.left;
+    }
+
+    public setLeft(left: number) {
+        this.left = left;
     }
 
     public setPinned(pinned: string|boolean): void {

@@ -922,26 +922,23 @@ export class ColumnController {
     }
 
     private updateDisplayedColumnsFromGroups() {
-        // if grouping, then only show col as per group rules
         this.displayedLeftColumns = [];
         this.displayedRightColumns = [];
         this.displayedCenterColumns = [];
 
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedLeftColumnTree, (child: ColumnGroupChild)=> {
-            if (child instanceof Column) {
-                this.displayedLeftColumns.push(child);
-            }
-        });
+        this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
+        this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
+        this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
+    }
 
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedRightColumnTree, (child: ColumnGroupChild)=> {
+    private addToDisplayedColumns(displayedColumnTree: ColumnGroupChild[], displayedColumns: Column[]): void {
+        displayedColumns.length = 0;
+        var leftPixel = 0;
+        this.columnUtils.deptFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild)=> {
             if (child instanceof Column) {
-                this.displayedRightColumns.push(child);
-            }
-        });
-
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.displayedCentreColumnTree, (child: ColumnGroupChild)=> {
-            if (child instanceof Column) {
-                this.displayedCenterColumns.push(child);
+                displayedColumns.push(child);
+                child.setLeft(leftPixel);
+                leftPixel += child.getActualWidth();
             }
         });
     }
