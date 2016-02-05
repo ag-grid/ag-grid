@@ -29,7 +29,7 @@ var countries = [
     {country: "Uruguay", continent: "South America", language: "Spanish"}
 ];
 
-var games = ["Chess","Cross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+var games = ["Chess","Cross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
     "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
     "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
     "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
@@ -71,6 +71,8 @@ var groupColumn = {
 
 var gridOptions = {
     debug: true,
+    //minColWidth: 50,
+    //maxColWidth: 300,
     //rowsBuffer: 1,
     columnDefs: [],
     //singleClickEdit: true,
@@ -82,6 +84,8 @@ var gridOptions = {
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
     //groupSuppressBlankHeader: true,
+    //suppressMovingCss: true,
+    //suppressMovableColumns: true,
     groupIncludeFooter: false,
     groupHideGroupColumns: true,
     //unSortIcon: true,
@@ -204,6 +208,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: countryCellRenderer, filter: 'set',
+                //pinned: 'left',
                 floatCell: true,
                 filterParams: {
                     cellRenderer: countryCellRenderer,
@@ -217,6 +222,7 @@ var defaultCols = [
             },
             {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
+                //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
                 icons: {
@@ -232,20 +238,23 @@ var defaultCols = [
         children: [
             {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
                 cellClass: function() { return 'alphabet'; },
+                //pinned: 'right',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
             {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                //pinned: 'right',
                 cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
-                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}},
+                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
         ]
     },
     {
         // column group 'Performance'
         headerName: 'Performance',
+        groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
@@ -260,7 +269,7 @@ var defaultCols = [
                 cellRenderer: function() { return 'Abra...'; } },
             {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
                 suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-                cellRenderer: function() { return '...cadabra!'; } },
+                cellRenderer: function() { return '...cadabra!'; } }
         ]
     },
     {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
@@ -506,7 +515,9 @@ PersonFilter.prototype.doesFilterPass = function (params) {
 };
 
 PersonFilter.prototype.isFilterActive = function () {
-    return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+    var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+    console.log('person filter active = ' + isActive);
+    return isActive;
 };
 
 PersonFilter.prototype.getApi = function() {
