@@ -364,16 +364,19 @@ export class ColumnController {
         return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
     }
 
-    public moveColumn(key: string|Column|ColDef, toIndex: number) {
-        var column = this.getColumn(key);
-        var fromIndex = this.allColumns.indexOf(column);
-        this.allColumns.splice(fromIndex, 1);
-        this.allColumns.splice(toIndex, 0, column);
+    public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
+        this.actionOnColumns(keys, (column: Column)=> {
+            var fromIndex = this.allColumns.indexOf(column);
+            this.allColumns.splice(fromIndex, 1);
+            this.allColumns.splice(toIndex, 0, column);
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
+        });
         this.updateModel();
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
-            .withFromIndex(fromIndex)
-            .withToIndex(toIndex);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
+    }
+
+    public moveColumn(key: string|Column|ColDef, toIndex: number) {
+        this.moveColumns([key], toIndex);
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number): void {

@@ -115,12 +115,11 @@ export class MoveColumnController {
 
                 // we move one column, UNLESS the column is the only visible column
                 // of a group, in which case we move the whole group.
-                console.log('a ' + colToSwapWith.getColId() + ' newIndex = ' + newIndex);
                 var columnsToMove = this.getColumnsAndOrphans(this.column);
-                columnsToMove.reverse().forEach( column => {
-                    this.columnController.moveColumn(column, newIndex);
-                });
-                console.log('b');
+                this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
+                //columnsToMove.reverse().forEach( column => {
+                //    this.columnController.moveColumn(column, newIndex);
+                //});
 
                 checkForAnotherColumn = true;
             }
