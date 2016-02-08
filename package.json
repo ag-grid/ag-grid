@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "3.0.0-alpha.1",
+  "version": "3.3.0",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "scripts": {
@@ -23,18 +23,17 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "vinyl-buffer": "1.0.0",
-    "merge2": "0.3.6",
-    "gulp": "3.9.0",
-    "gulp-rename": "1.2.2",
-    "gulp-typescript": "2.10.0",
-    "typescript": "1.7.5",
-    "gulp-header": "1.7.0",
-    "gulp-tsd": "0.0.4"
+    "angular2": "2.0.0-beta.3",
+    "systemjs": "0.19.6",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.3",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.0",
+    "zone.js": "0.5.11"
   },
   "peerDependencies": {
-    "angular2": "~2.0.0-beta.0",
-    "ag-grid": "~3.3.0-alpha.1"
+    "angular2": "2.0.0-beta.3",
+    "ag-grid": "3.3.x"
   },
   "dependencies": {
   }

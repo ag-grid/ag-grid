@@ -1,4 +1,4 @@
-// ag-grid-ng2 v3.0.0-alpha.1
+// ag-grid-ng2 v3.3.0
 import { ElementRef } from 'angular2/core';
 export declare class AgGridNg2 {
     private elementDef;
