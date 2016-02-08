@@ -23,6 +23,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private eSortNone: HTMLElement;
     private eFilterIcon: HTMLElement;
     private eText: HTMLElement;
+    private eHeaderCellLabel: HTMLElement;
 
     private column: Column;
     private childScope: any;
@@ -181,6 +182,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
 
         // label div
         this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
+        this.eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
 
         this.addResize(eRoot, dragService);
         this.addMove(eRoot, dragService, gridPanel);
@@ -236,9 +238,9 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             // don't allow moving of headers when forPrint, as the header overlay doesn't exist
             return;
         }
-        var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        if (eHeaderCellLabel) {
-            new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
+
+        if (this.eHeaderCellLabel) {
+            new MoveColumnController(this.column, this.eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
         }
     }
 
@@ -370,7 +372,10 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addSortHandling() {
-        this.eText.addEventListener("click", (event: any) => {
+        if (!this.eHeaderCellLabel) {
+            return;
+        }
+        this.eHeaderCellLabel.addEventListener("click", (event: any) => {
 
             // update sort on current col
             this.column.setSort(this.getNextSortDirection());

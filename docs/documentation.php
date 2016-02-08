@@ -55,7 +55,7 @@ include 'documentation_header.php';
 
     <div style="padding-top: 20px;">
         <p>
-            ag-Grid 3.3 is here. The <a href="changeLog.php">change log</a> has a full set of changes. The
+            The <a href="changeLog.php">change log</a> has a full set of changes. The
             highlights are as follows:
         </p>
         <p>
@@ -75,6 +75,16 @@ include 'documentation_header.php';
             </li>
         </ul>
         </p>
+        <h3>Examples on Github:</h3>
+        <p>
+
+        <ul>
+            <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
+            <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
+            <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a> - Project on Github</li>
+        </ul>
+        </p>
+        <h3>New ag-Grid Directory Structure (only for those interested)</h3>
         <p>
             The new build has the following structure:<br/>
             <b>\src</b> -> contains source files (TypeScript and CSS), don't touch these!<br/>
