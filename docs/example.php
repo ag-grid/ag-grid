@@ -87,7 +87,7 @@
 
                 <span style="padding-left: 20px;">Data Size:</span>
                 <select onchange="onDataSizeChanged(this.value)">
-                    <option value="10x22">10,000 Rows, 22 Cols</option>
+                    <option value="1x22">1,000 Rows, 22 Cols</option>
                     <option value="10x100">10,000 Rows, 100 Cols</option>
                     <option value="100x22">100,000 Rows, 22 Cols</option>
                 </select>
@@ -103,6 +103,11 @@
 
                 <span style="padding-left: 20px; display: inline-block;">
                     <button onclick="toggleToolPanel()">Tool Panel</button>
+                </span>
+
+                <span id="message" style="margin-left: 10px;">
+                    <i class="fa fa-spinner fa-spin"></i>
+                    <span id="messageText"></span>
                 </span>
 
             </div>

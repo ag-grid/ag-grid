@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+    createData();
 });
 
 var gridDiv;
@@ -49,7 +50,7 @@ var lastNames = ["Beckham","Black","Braxton","Brennan","Brock","Bryson","Cadwell
 
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-var dataSize = '10x22';
+var dataSize = '1x22';
 
 var size = 'fill'; // model for size select
 var width = '100%'; // the div gets it's width and height from here
@@ -305,7 +306,6 @@ months.forEach(function(month) {
 });
 
 gridOptions.columnDefs = createCols();
-gridOptions.rowData = createData();
 
 //setInterval(function() {
 //    gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
@@ -313,13 +313,7 @@ gridOptions.rowData = createData();
 
 function onDataSizeChanged(newDataSize) {
     dataSize = newDataSize;
-    gridOptions.api.showLoadingOverlay();
-    setTimeout( function () {
-        var colDefs = createCols();
-        var data = createData();
-        gridOptions.api.setColumnDefs(colDefs);
-        gridOptions.api.setRowData(data);
-    });
+    createData();
 }
 
 function toggleToolPanel() {
@@ -336,8 +330,10 @@ function getColCount() {
 
 function getRowCount() {
     switch (dataSize) {
+        case '1x22': return 1000;
+        case '10x100': return 10000;
         case '100x22': return 100000;
-        default: return 1000;
+        default: return -1;
     }
 }
 
@@ -356,49 +352,89 @@ function createCols() {
     return columns;
 }
 
+var loadInstance = 0;
+
 function createData() {
+
+    var eMessage = document.querySelector('#message');
+    var eMessageText = document.querySelector('#messageText');
+    loadInstance ++;
+
+    var loadInstanceCopy = loadInstance;
+    gridOptions.api.showLoadingOverlay();
+
+    var colDefs = createCols();
+
     var rowCount = getRowCount();
     var colCount = getColCount();
+
+    var row = 0;
     var data = [];
-    for (var row = 1; row<=rowCount; row++) {
-        if (row%10000===0) {
-            console.log('created ' + row + ' rows');
+
+    eMessage.style.display = 'inline';
+
+    var intervalId = setInterval( function() {
+        if (loadInstanceCopy!=loadInstance) {
+            clearInterval(intervalId);
+            return;
         }
-        var rowItem = {};
 
-        //create data for the known columns
-        var countryData = countries[row % countries.length];
-        rowItem.country = countryData.country;
-        rowItem.continent = countryData.continent;
-        rowItem.language = countryData.language;
-
-        var firstName = firstNames[row % firstNames.length];
-        var lastName = lastNames[row % lastNames.length];
-        rowItem.name = firstName + " " + lastName;
-
-        rowItem.game = games[row % games.length];
-        rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
-        rowItem.rating = (Math.round(Math.random()*5));
-        rowItem.bought = booleanValues[row % booleanValues.length];
-
-        var totalWinnings = 0;
-        months.forEach(function(month) {
-            var value = ((Math.round(Math.random()*10000000))/100) - 20;
-            rowItem[month.toLocaleLowerCase()] = value;
-            totalWinnings += value;
-        });
-        rowItem.totalWinnings = totalWinnings;
-
-        //create dummy data for the additional columns
-        for (var col = defaultCols.length; col<colCount; col++) {
-            var value;
-            var randomBit = Math.random().toString().substring(2,5);
-            value = colNames[col % colNames.length]+"-"+randomBit +" - (" +row+","+col+")";
-            rowItem["col"+col] = value;
+        for (var i = 0; i<1000; i++) {
+            var rowItem = createRowItem(row, colCount);
+            data.push(rowItem);
+            row++;
         }
-        data.push(rowItem);
+
+        eMessageText.innerHTML = ' Loading rows ' + row;
+
+        if (row >= rowCount) {
+            clearInterval(intervalId);
+            setTimeout( function() {
+                gridOptions.api.setColumnDefs(colDefs);
+                gridOptions.api.setRowData(data);
+                eMessage.style.display = 'none';
+                eMessageText.innerHTML = '';
+            }, 0);
+        }
+
+    }, 0);
+}
+
+function createRowItem(row, colCount) {
+    var rowItem = {};
+
+    //create data for the known columns
+    var countryData = countries[row % countries.length];
+    rowItem.country = countryData.country;
+    rowItem.continent = countryData.continent;
+    rowItem.language = countryData.language;
+
+    var firstName = firstNames[row % firstNames.length];
+    var lastName = lastNames[row % lastNames.length];
+    rowItem.name = firstName + " " + lastName;
+
+    rowItem.game = games[row % games.length];
+    rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
+    rowItem.rating = (Math.round(Math.random()*5));
+    rowItem.bought = booleanValues[row % booleanValues.length];
+
+    var totalWinnings = 0;
+    months.forEach(function(month) {
+        var value = ((Math.round(Math.random()*10000000))/100) - 20;
+        rowItem[month.toLocaleLowerCase()] = value;
+        totalWinnings += value;
+    });
+    rowItem.totalWinnings = totalWinnings;
+
+    //create dummy data for the additional columns
+    for (var col = defaultCols.length; col<colCount; col++) {
+        var value;
+        var randomBit = Math.random().toString().substring(2,5);
+        value = colNames[col % colNames.length]+"-"+randomBit +" - (" +(row+1)+","+col+")";
+        rowItem["col"+col] = value;
     }
-    return data;
+
+    return rowItem;
 }
 
 function selectionChanged(event) {

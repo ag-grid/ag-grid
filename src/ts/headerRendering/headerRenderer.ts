@@ -30,7 +30,7 @@ export default class HeaderRenderer {
     private dragService: DragService;
     private gridPanel: GridPanel;
 
-    public eHeaderOverlay: HTMLElement;
+    private eHeaderOverlay: HTMLElement;
 
     private headerElements: RenderedHeaderElement[] = [];
 
@@ -71,6 +71,14 @@ export default class HeaderRenderer {
         this.insertHeaderRowsIntoContainer(this.columnController.getLeftDisplayedColumnGroups(), this.ePinnedLeftHeader);
         this.insertHeaderRowsIntoContainer(this.columnController.getRightDisplayedColumnGroups(), this.ePinnedRightHeader);
         this.insertHeaderRowsIntoContainer(this.columnController.getCenterDisplayedColumnGroups(), this.eHeaderContainer);
+    }
+
+    public addChildToOverlay(child: HTMLElement): void {
+        this.eHeaderOverlay.appendChild(child);
+    }
+
+    public removeChildFromOverlay(child: HTMLElement): void {
+        this.eHeaderOverlay.removeChild(child);
     }
 
     private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {

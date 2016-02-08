@@ -277,6 +277,11 @@ export default class GridPanel {
         // otherwise, row is already in view, so do nothing
     }
 
+    // + moveColumnController
+    public getCenterWidth(): number {
+        return this.eBodyViewport.clientWidth;
+    }
+
     public isHorizontalScrollShowing(): boolean {
         var result = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
         return result;
@@ -630,6 +635,14 @@ export default class GridPanel {
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         this.eBodyViewport.scrollLeft = hScrollPosition;
+    }
+
+    // tries to scroll by pixels, but returns what the result actually was
+    public scrollHorizontally(pixels: number): number {
+        var oldScrollPosition = this.eBodyViewport.scrollLeft;
+        this.setHorizontalScrollPosition(oldScrollPosition + pixels);
+        var newScrollPosition = this.eBodyViewport.scrollLeft;
+        return newScrollPosition - oldScrollPosition;
     }
 
     public getHorizontalScrollPosition(): number {

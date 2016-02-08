@@ -12,6 +12,9 @@ export class MoveColumnController {
     private lastDelta = 0;
     private clickPositionOnHeader: number;
     private startLeftPosition: number;
+    private scrollSinceStart: number;
+
+    private hoveringOverPixelLastTime: number;
 
     private eFloatingCloneCell: HTMLElement;
     private eHeaderCell: HTMLElement;
@@ -22,6 +25,12 @@ export class MoveColumnController {
     private floatPadding: number;
     private gridPanel: GridPanel;
 
+    private needToMoveLeft = false;
+    private needToMoveRight = false;
+    private movingIntervalId: number;
+    private intervalCount: number;
+
+    private centreWidth: number;
     private addMovingCssToGrid: boolean;
 
     constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper) {
@@ -32,6 +41,7 @@ export class MoveColumnController {
         this.column = column;
         this.gridPanel = gridPanel;
         this.addMovingCssToGrid = !gridOptionsWrapper.isSuppressMovingCss();
+        this.centreWidth = gridPanel.getCenterWidth();
 
         dragService.addDragHandling({
             eDraggableElement: eDraggableElement,
@@ -59,7 +69,7 @@ export class MoveColumnController {
 
         // make clone of header cell for the 'floating ghost'
         this.eFloatingCloneCell = <HTMLElement> this.eHeaderCell.cloneNode(true);
-        this.headerRenderer.eHeaderOverlay.appendChild(this.eFloatingCloneCell);
+        this.headerRenderer.addChildToOverlay(this.eFloatingCloneCell);
         this.startLeftPosition = this.columnController.getPixelsBeforeConsideringPinned(this.column);
         _.addCssClass(this.eFloatingCloneCell, 'ag-header-cell-moving-clone');
         this.eFloatingCloneCell.style.position = 'absolute';
@@ -79,21 +89,24 @@ export class MoveColumnController {
         if (this.addMovingCssToGrid) {
             this.gridPanel.setMovingCss(true);
         }
+
+        this.scrollSinceStart = 0;
+        this.hoveringOverPixelLastTime = this.startLeftPosition + this.clickPositionOnHeader + this.scrollSinceStart;
     }
 
     private onDragging(delta: number, finished: boolean): void {
-
         this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
-        var dragMovingRight = delta > this.lastDelta;
-        var dragMovingLeft = delta < this.lastDelta;
+
+        // get current pixel position
+        var hoveringOverPixel = this.startLeftPosition + this.clickPositionOnHeader + delta + this.scrollSinceStart;
+        var dragMovingRight = hoveringOverPixel > this.hoveringOverPixelLastTime;
+        var dragMovingLeft = hoveringOverPixel < this.hoveringOverPixelLastTime;
+        this.hoveringOverPixelLastTime = hoveringOverPixel;
 
         // the while loop keeps going until there are no more columns to move. this caters for the user
         // moving the mouse very fast and we need to swap the column twice or more
         var checkForAnotherColumn = true;
         while (checkForAnotherColumn) {
-
-            // get current pixel position
-            var hoveringOverPixel = this.startLeftPosition + this.clickPositionOnHeader + delta;
 
             var dragOverLeftColumn = this.column.getLeft() > hoveringOverPixel;
             var dragOverRightColumn = (this.column.getLeft() + this.column.getActualWidth()) < hoveringOverPixel;
@@ -125,14 +138,65 @@ export class MoveColumnController {
             }
         }
 
-        this.lastDelta = delta;
+        // we only look to scroll if the column is not pinned, as pinned columns are always visible
+        if (!this.column.isPinned()) {
+            // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
+            //var hoveringOverPixelScrollAdjusted = this.startLeftPosition + this.clickPositionOnHeaderScrollAdjusted + delta;
+            // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
+            var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
+            var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
+            this.needToMoveLeft = hoveringOverPixel < (firstVisiblePixel + 50);
+            this.needToMoveRight = hoveringOverPixel > (lastVisiblePixel - 50);
+            if (this.needToMoveLeft || this.needToMoveRight) {
+                this.ensureIntervalStarted();
+            } else {
+                this.ensureIntervalCleared();
+            }
+        }
+
         if (finished) {
             this.column.setMoving(false);
-            this.headerRenderer.eHeaderOverlay.removeChild(this.eFloatingCloneCell);
+            this.headerRenderer.removeChildFromOverlay(this.eFloatingCloneCell);
             if (this.addMovingCssToGrid) {
                 this.gridPanel.setMovingCss(false);
             }
+            this.ensureIntervalCleared();
         }
+
+        this.lastDelta = delta;
+    }
+
+    private ensureIntervalStarted(): void {
+        if (!this.movingIntervalId) {
+            this.intervalCount = 0;
+            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+        }
+    }
+
+    private ensureIntervalCleared(): void {
+        if (this.moveInterval) {
+            clearInterval(this.movingIntervalId);
+            this.movingIntervalId = null;
+        }
+    }
+
+    private moveInterval(): void {
+        var pixelsToMove: number;
+        this.intervalCount++;
+        pixelsToMove = 10 + (this.intervalCount * 5);
+        if (pixelsToMove > 100) {
+            pixelsToMove = 100;
+        }
+
+        var pixelsMoved = 0;
+        if (this.needToMoveLeft) {
+            pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
+        } else if (this.needToMoveRight) {
+            pixelsMoved = this.gridPanel.scrollHorizontally(pixelsToMove);
+        }
+        this.scrollSinceStart += pixelsMoved;
+
+        this.onDragging(this.lastDelta, false);
     }
 
     private getColumnsAndOrphans(column: Column): Column[] {
