@@ -40,15 +40,15 @@ If you are doing a Pull Request:
 Folder Structure
 ==============
 The new build has the following structure:
-**\src** -> contains source files (TypeScript and CSS), don't touch these!
-**\dist** -> contains distribution files
-**\dist\ag-grid.js and \dist\ag-grid.min.js** -> use these if not using a package manager and put ag-Grid on
+-**\src** -> contains source files (TypeScript and CSS), don't touch these!
+-**\dist** -> contains distribution files
+-**\dist\ag-grid.js and \dist\ag-grid.min.js** -> use these if not using a package manager and put ag-Grid on
 the global scope. The new JavaScript distribution files contain the CSS for the grid, no need to reference
 separately.
-**\dist\styles** -> contains CSS files, used if doing your own bundling.
-**\dist\lib** -> contains compiles JavaScript files in CommonJS format.
-**\main.js** -> CommonJS root file, reference this file if importing project via CommonJS.
-**\main.d.ts** -> CommonJS root definition file.
+-**\dist\styles** -> contains CSS files, used if doing your own bundling.
+-**\dist\lib** -> contains compiles JavaScript files in CommonJS format.
+-**\main.js** -> CommonJS root file, reference this file if importing project via CommonJS.
+-**\main.d.ts** -> CommonJS root definition file.
 
 
 Asking Questions
