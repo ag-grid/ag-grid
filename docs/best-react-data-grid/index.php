@@ -113,6 +113,31 @@ import 'ag-grid-root/styles/theme-fresh.css';</code></pre>
     You will also need to configure CSS loaders for Webpack.
     </p>
 
+
+    <h2>Applying Theme</h2>
+
+    <p>
+        You need to set a theme for the grid. You do this by giving the grid a CSS class, one
+        of ag-fresh, ag-blue or ag-dark. You must have the CSS loaded as specified above
+        for this to work.
+    </p>
+
+    <pre>// a parent container of the grid, you could put this on your body tag
+// if you only every wanted to use one style of grid
+
+// HTML
+&lt;div class="ag-fresh">
+    ...
+
+// OR JSX
+&lt;div className="ag-fresh">
+    ...
+
+    // then later, use the grid
+    &lt;AgGridReact
+        ...
+</pre>
+
     <h2>Grid API</h2>
 
     <p>

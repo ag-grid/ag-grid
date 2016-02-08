@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "3.3.0-alpha.1",
+  "version": "3.3.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
@@ -16,7 +16,11 @@
     "data",
     "table",
     "angular",
-    "react-component"
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
   ],
   "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",

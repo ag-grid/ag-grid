@@ -1,8 +1,8 @@
 
-export * from './lib/grid';
-export * from './lib/entities/gridOptions';
-export * from './lib/gridApi';
-export * from './lib/components/componentUtil';
-export * from './lib/events';
-export * from './lib/gridApi';
-export * from './lib/columnController/columnController';
+export * from './dist/lib/grid';
+export * from './dist/lib/entities/gridOptions';
+export * from './dist/lib/gridApi';
+export * from './dist/lib/components/componentUtil';
+export * from './dist/lib/events';
+export * from './dist/lib/gridApi';
+export * from './dist/lib/columnController/columnController';

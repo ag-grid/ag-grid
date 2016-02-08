@@ -228,7 +228,10 @@ ag-grid-ng2
 .ag-scrolls .ag-row
     white-space: nowrap
     position: absolute
-    width: 100%
+
+.ag-no-scrolls .ag-row
+//    white-space: nowrap
+    position: relative // need at least some position for the cell height to work
 
 .agile-gird-row:hover
     background-color: aliceblue

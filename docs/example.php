@@ -19,7 +19,7 @@
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
-        <script src="./dist/ag-grid.js?ignore=notused17"></script>
+        <script src="./dist/ag-grid.js?ignore=notused18"></script>
 
         <script src="example.js"></script>
 

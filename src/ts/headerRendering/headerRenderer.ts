@@ -74,11 +74,15 @@ export default class HeaderRenderer {
     }
 
     public addChildToOverlay(child: HTMLElement): void {
-        this.eHeaderOverlay.appendChild(child);
+        if (this.eHeaderOverlay) {
+            this.eHeaderOverlay.appendChild(child);
+        }
     }
 
     public removeChildFromOverlay(child: HTMLElement): void {
-        this.eHeaderOverlay.removeChild(child);
+        if (this.eHeaderOverlay) {
+            this.eHeaderOverlay.removeChild(child);
+        }
     }
 
     private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
@@ -152,8 +156,11 @@ export default class HeaderRenderer {
             eContainerToAddTo.appendChild(eRow);
         }
 
-        this.eHeaderOverlay.style.height = rowHeight + 'px';
-        this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
+        // if forPrint, overlay is missing
+        if (this.eHeaderOverlay) {
+            this.eHeaderOverlay.style.height = rowHeight + 'px';
+            this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
+        }
     }
 
     private createHeaderElement(columnGroupChild: ColumnGroupChild): RenderedHeaderElement {

@@ -48,6 +48,13 @@ include '../documentation_header.php';
         cellRenderer.
     </p>
 
+    <h3>Example</h3>
+
+    <p>
+        Example below shows floating rows. To mix things up a bit, the example also has pinned left and right
+        columns, to show the floating rows playing nicely with pinning.
+    </p>
+
     <show-example example="exampleFloating" example-height="450px"></show-example>
 
 </div>

@@ -11,7 +11,6 @@ include 'documentation_header.php';
     <h3>Version 3.3.0</h3>
     <li>Minor: headerClass (column definition) can now be provided for column groups.</li>
     <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
-    <li>Major: If using Angular 2 then what was "directives: [ag.grid.AgGridNg2]" is now "directives: [agGrid.AgGridNg2]".</li>
     <li>Major: Event 'ready' is now called 'gridReady'</li>
     <li>Major: Angular 1 - you now need to initialise the grid via agGrid.initialiseAgGridWithAngular1(angular)</li>
     <li>Major: Web Components - you now need to initialise the grid via agGrid.initialiseAgGridWithWebComponents()</li>
@@ -23,6 +22,7 @@ include 'documentation_header.php';
     <li>Major: Column no longer has 'index' attribute, as the columns moving now has no meaning. Use 'colId' to identify columns.</li>
     <li>Major: api.ensureColIndexVisible(index) replace with api.ensureColumnVisible(colKey)</li>
     <li>Major: Focused cell not longer has attribute colIndex, instead has attribute colId.</li>
+    <li>Major: Movable columns via dragging the column header.</li>
 
     <li>Major Build Changes:
         <ul>

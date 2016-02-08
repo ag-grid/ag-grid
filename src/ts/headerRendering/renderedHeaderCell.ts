@@ -232,8 +232,14 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         if (this.getGridOptionsWrapper().isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
             return;
         }
+        if (this.getGridOptionsWrapper().isForPrint()) {
+            // don't allow moving of headers when forPrint, as the header overlay doesn't exist
+            return;
+        }
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
+        if (eHeaderCellLabel) {
+            new MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
+        }
     }
 
     private addResize(eRoot: HTMLElement, dragService: DragService): void {

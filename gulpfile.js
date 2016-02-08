@@ -78,11 +78,11 @@ function tscTask() {
     return merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
-            .pipe(gulp.dest('lib')),
+            .pipe(gulp.dest('dist/lib')),
         tsResult.js
             //.pipe(sourcemaps.write())
             .pipe(header(headerTemplate, { pkg : pkg }))
-            .pipe(gulp.dest('lib'))
+            .pipe(gulp.dest('dist/lib'))
     ])
 }
 
@@ -130,7 +130,7 @@ function stylusTask() {
                     use: nib(),
                     compress: false
                 }))
-                .pipe(gulp.dest('./styles/'));
+                .pipe(gulp.dest('./dist/styles/'));
         }));
 
 }
