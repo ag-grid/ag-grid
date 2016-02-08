@@ -23,7 +23,6 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "angular2": "2.0.0-beta.3",
     "systemjs": "0.19.6",
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.33.3",
@@ -32,7 +31,7 @@
     "zone.js": "0.5.11"
   },
   "peerDependencies": {
-    "angular2": "2.0.0-beta.3",
+    "angular2": "~2.0.0-beta.3",
     "ag-grid": "3.3.x"
   },
   "dependencies": {
