@@ -77,12 +77,8 @@
             <!-- First row of header, has table options -->
             <div style="padding: 4px;">
                 <input placeholder="Filter..." type="text"
-                       onpaste="onFilterChanged(this.value)"
                        oninput="onFilterChanged(this.value)"
-                       onchange="onFilterChanged(this.value)"
-                       onchange="onFilterChanged(this.value)"
-                       onkeydown="onFilterChanged(this.value)"
-                       onkeyup="onFilterChanged(this.value)"
+                       ondblclick="filterDoubleClicked(event)"
                 />
 
                 <span style="padding-left: 20px;">Data Size:</span>

@@ -357,9 +357,9 @@ export default class RenderedRow {
         return eRow;
     }
 
-    public setMainRowWidth(width: number) {
-        this.vBodyRow.addStyles({width: width + "px"});
-    }
+    //public setMainRowWidth(width: number) {
+    //    this.vBodyRow.addStyles({width: width + "px"});
+    //}
 
     private createChildScopeOrNull(data: any) {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {

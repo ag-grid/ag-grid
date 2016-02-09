@@ -8,7 +8,10 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 3.3.1</h3>
+    <h3>Version 3.3.3</h3>
+    <li>Buf fix: Pinned rows were not colored correctly</li>
+
+    <h3>Version 3.3.2</h3>
     <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with CommonJS</li>
     <li>Buf fix: Period in fields (ie address.line1) was not working for editing.</li>
 
