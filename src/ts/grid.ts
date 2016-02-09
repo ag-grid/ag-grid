@@ -523,6 +523,12 @@ export class Grid {
 		var gridOptionsWrapper = this.gridOptionsWrapper;
 		var that = this;
 		
+		if (that.lastSelectedRowIndex > endShiftSelectRowIndex){
+			var lastRowIndexTemp = that.lastSelectedRowIndex;
+			that.lastSelectedRowIndex = endShiftSelectRowIndex - 1;
+			endShiftSelectRowIndex = lastRowIndexTemp;
+		}
+		
 		gridOptionsWrapper.gridOptions.api.forEachNode(function(node){
 			if (node.childIndex > that.lastSelectedRowIndex && node.childIndex <= endShiftSelectRowIndex) {
 				that.onRowClicked(true, node.childIndex, node);
