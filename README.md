@@ -62,5 +62,8 @@ Contributing
 ==============
 
 ag-Grid is not looking for contributors. It is not intended to be developed
-by an online community. PR's on new features are generally not accepted. PR's
-on small bug fixes are generally accepted.
+by an online community.
+
+PR's on new features **are not** generally accepted. 
+
+PR's on small bug fixes **are** generally accepted.
