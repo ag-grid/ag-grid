@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.3.2
+// Type definitions for ag-grid v3.3.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -57,7 +57,6 @@ export default class RenderedRow {
     private bindVirtualElement(vElement);
     private createGroupRow();
     private createGroupSpanningEntireRowCell(padding);
-    setMainRowWidth(width: number): void;
     private createChildScopeOrNull(data);
     private addDynamicStyles();
     private createParams();

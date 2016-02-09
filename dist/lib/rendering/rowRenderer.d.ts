@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.3.2
+// Type definitions for ag-grid v3.3.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -64,7 +64,7 @@ export default class RowRenderer {
     refreshCells(rowNodes: RowNode[], colIds: string[]): void;
     rowDataChanged(rows: any): void;
     destroy(): void;
-    private refreshAllVirtualRows(fromIndex);
+    private refreshAllVirtualRows(fromIndex?);
     refreshGroupRows(): void;
     private removeVirtualRow(rowsToRemove, fromIndex?);
     private unbindVirtualRow(indexToRemove);

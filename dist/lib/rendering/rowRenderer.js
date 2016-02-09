@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.2
+ * @version v3.3.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,17 +55,6 @@ var RowRenderer = (function () {
         }
         return eCells;
     };
-    //public onIndividualColumnResized(column: Column) {
-    //    var newWidthPx = column.getActualWidth() + "px";
-    //    var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
-    //    this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-    //        var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
-    //        for (var i = 0; i < cellsForThisCol.length; i++) {
-    //            var element = <HTMLElement> cellsForThisCol[i];
-    //            element.style.width = newWidthPx;
-    //        }
-    //    });
-    //}
     RowRenderer.prototype.setMainRowWidths = function () {
         var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
         this.eAllBodyContainers.forEach(function (container) {
@@ -113,12 +102,9 @@ var RowRenderer = (function () {
         if (!columns || columns.length == 0) {
             return;
         }
-        // should we be storing this somewhere???
-        var mainRowWidth = this.columnModel.getBodyContainerWidth();
         if (rowNodes) {
             rowNodes.forEach(function (node, rowIndex) {
                 var renderedRow = new renderedRow_1.default(_this.gridOptionsWrapper, _this.valueService, _this.$scope, _this.angularGrid, _this.columnModel, _this.expressionService, _this.cellRendererMap, _this.selectionRendererFactory, _this.$compile, _this.templateService, _this.selectionController, _this, bodyContainer, pinnedLeftContainer, pinnedRightContainer, node, rowIndex, _this.eventService);
-                renderedRow.setMainRowWidth(mainRowWidth);
                 renderedRows.push(renderedRow);
             });
         }
@@ -279,8 +265,8 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.ensureRowsRendered = function () {
         //var start = new Date().getTime();
+        var _this = this;
         var mainRowWidth = this.columnModel.getBodyContainerWidth();
-        var that = this;
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
         // add in new rows
@@ -293,7 +279,7 @@ var RowRenderer = (function () {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
-                that.insertRow(node, rowIndex, mainRowWidth);
+                this.insertRow(node, rowIndex, mainRowWidth);
             }
         }
         // at this point, everything in our 'rowsToRemove' . . .
@@ -301,9 +287,7 @@ var RowRenderer = (function () {
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             // we do it in a timeout, in case we are already in an apply
-            setTimeout(function () {
-                that.$scope.$apply();
-            }, 0);
+            setTimeout(function () { _this.$scope.$apply(); }, 0);
         }
         //var end = new Date().getTime();
         //console.log(end-start);
@@ -315,9 +299,38 @@ var RowRenderer = (function () {
             return;
         }
         var renderedRow = new renderedRow_1.default(this.gridOptionsWrapper, this.valueService, this.$scope, this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap, this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController, this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, node, rowIndex, this.eventService);
-        renderedRow.setMainRowWidth(mainRowWidth);
+        //renderedRow.setMainRowWidth(mainRowWidth);
         this.renderedRows[rowIndex] = renderedRow;
     };
+    // Separating out the rendering into frames was experimental, but it looked crap.
+    //private rowRenderIntervalId: number;
+    //
+    //private renderRows(): void {
+    //    var frameStartMillis = new Date().getTime();
+    //    var keys = Object.keys(this.renderedRows);
+    //    keys.sort( (a, b) => Number(a) - Number(b) );
+    //    var atLeastOne = false;
+    //    var count = 0;
+    //    for (var i = 0; i<keys.length; i++) {
+    //        var renderedRow = this.renderedRows[keys[i]];
+    //        if (!renderedRow.isRendered()) {
+    //            renderedRow.render();
+    //            atLeastOne = true;
+    //            var nowMillis = new Date().getTime();
+    //            var frameDuration = nowMillis - frameStartMillis;
+    //            count++;
+    //            // 16ms is 60 FPS, so if going slower than 60 FPS, we finish this frame
+    //            if (frameDuration>100) {
+    //                break;
+    //            }
+    //        }
+    //    }
+    //    if (!atLeastOne) {
+    //        clearInterval(this.rowRenderIntervalId);
+    //        this.rowRenderIntervalId = null;
+    //    }
+    //    //console.log('count = ' + count);
+    //}
     RowRenderer.prototype.getRenderedNodes = function () {
         var renderedRows = this.renderedRows;
         return Object.keys(renderedRows).map(function (key) {
