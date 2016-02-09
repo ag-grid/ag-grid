@@ -61,6 +61,28 @@ export default class ValueService {
         }
     }
 
+    public setValueUsingField(data: any, field: string, newValue: any): void {
+        if (!field || !data) {
+            return;
+        }
+        // if no '.', then it's not a deep value
+        if (field.indexOf('.')<0) {
+            data[field] = newValue;
+        } else {
+            // otherwise it is a deep value, so need to dig for it
+            var fieldPieces = field.split('.');
+            var currentObject = data;
+            while (fieldPieces.length > 0 && currentObject) {
+                let fieldPiece = fieldPieces.shift();
+                if (fieldPieces.length === 0) {
+                    currentObject[fieldPiece] = newValue;
+                } else {
+                    currentObject = currentObject[fieldPiece];
+                }
+            }
+        }
+    }
+
     private executeValueGetter(valueGetter: any, data: any, colDef: any, node: any): any {
 
         var context = this.gridOptionsWrapper.getContext();

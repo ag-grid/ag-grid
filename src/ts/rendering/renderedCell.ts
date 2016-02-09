@@ -298,7 +298,7 @@ export default class RenderedCell {
             if (colDef.newValueHandler) {
                 colDef.newValueHandler(paramsForCallbacks);
             } else {
-                this.node.data[colDef.field] = newValue;
+                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
             }
 
             // at this point, the value has been updated
