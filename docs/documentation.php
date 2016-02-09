@@ -41,6 +41,29 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
+    <div style="float: left; width: 240px;">
+        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+                Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
+            </a>
+        </div>
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Supporting all the frameworks and build systems took days of research and practicing.
+        This article goes through lessons learnt and how to structure a project while supporting
+        all the frameworks and build systems around today.
+    </div>
+
+</div>
+
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
             <img src="images/panda.png"/>
