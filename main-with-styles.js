@@ -1,5 +1,4 @@
-
-////////// MAKE SURE YOU EDIT main-webpack.js IF EDITING THIS FILE!!!
+// same as main.js, except also includes the styles, so webpack includes the css in the bundle
 
 exports.Grid = require('./dist/lib/grid').Grid;
 exports.GridApi = require('./dist/lib/gridApi').GridApi;
@@ -24,4 +23,7 @@ exports.RowNode = require('./dist/lib/entities/rowNode').RowNode;
 exports.SetFilterParameters = require('./dist/lib/filter/setFilterParameters').SetFilterParameters;
 exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumberFilterParameters').TextAndNumberFilterParameters;
 
-//exports. = require('./dist/lib/entities/gridOptions').;
+require('./dist/styles/ag-grid.css');
+require('./dist/styles/theme-blue.css');
+require('./dist/styles/theme-dark.css');
+require('./dist/styles/theme-fresh.css');

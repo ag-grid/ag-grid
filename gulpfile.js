@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var path = require('path');
+var clean = require('gulp-clean');
 var uglify = require('gulp-uglify');
 var foreach = require('gulp-foreach');
 var rename = require("gulp-rename");
@@ -35,24 +36,44 @@ var dtsHeaderTemplate =
     '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
 
 gulp.task('default', ['watch']);
-gulp.task('release', ['webpack','webpack-minify','copyToDocs']);
+gulp.task('release', ['copyToDocs-release']);
 
-gulp.task('tsc', tscTask);
-gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true));
-gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false));
+gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
 
-gulp.task('copyToDocs', ['webpack'], copyToDocsTask);
+gulp.task('tsc', ['cleanDist','cleanDocs'], tscTask);
 
-gulp.task('watch', ['copyToDocs'], watchTask);
-gulp.task('tsd', tsdTask);
-gulp.task('stylus', stylusTask);
+gulp.task('webpack-minify-noStyle', ['tsc','stylus'], webpackTask.bind(null, true, false));
+gulp.task('webpack-noStyle', ['tsc','stylus'], webpackTask.bind(null, false, false));
+gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
+gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
 
-function tsdTask(callback) {
-    tsd({
-        command: 'reinstall',
-        config: './tsd.json'
-    }, callback);
+gulp.task('copyToDocs-dev', ['webpack'], copyToDocsTask);
+gulp.task('copyToDocs-release', ['webpack-all'], copyToDocsTask);
+
+gulp.task('watch', ['copyToDocs-dev'], watchTask);
+//gulp.task('tsd', tsdTask);
+gulp.task('stylus', ['cleanDist','cleanDocs'], stylusTask);
+gulp.task('cleanDist', cleanDist);
+gulp.task('cleanDocs', cleanDocs);
+
+function cleanDist() {
+    return gulp
+        .src('dist', {read: false})
+        .pipe(clean());
 }
+
+function cleanDocs() {
+    return gulp
+        .src('docs/dist', {read: false})
+        .pipe(clean());
+}
+
+//function tsdTask(callback) {
+//    tsd({
+//        command: 'reinstall',
+//        config: './tsd.json'
+//    }, callback);
+//}
 
 //function tsTestTask() {
 //    return gulp.src('./spec/**/*.js')
@@ -86,21 +107,23 @@ function tscTask() {
     ])
 }
 
-function webpackTask(minify) {
+function webpackTask(minify, styles) {
 
     var plugins = [];
-    var fileName;
     if (minify) {
         plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
-        fileName = 'ag-grid.min.js';
-    } else {
-        fileName = 'ag-grid.js';
     }
+    var mainFile = styles ? './main-with-styles.js' : './main.js';
+
+    var fileName = 'ag-grid';
+    fileName += minify ? '.min' : '';
+    fileName += styles ? '' : '.noStyle';
+    fileName += '.js';
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
             entry: {
-                main: "./main-webpack.js"
+                main: mainFile
             },
             output: {
                 path: path.join(__dirname, "dist"),
@@ -141,6 +164,6 @@ function copyToDocsTask() {
 }
 
 function watchTask() {
-    gulp.watch('./src/ts/**/*', ['copyToDocs']);
-    gulp.watch('./src/styles/**/*', ['copyToDocs']);
+    gulp.watch('./src/ts/**/*', ['copyToDocs-dev']);
+    gulp.watch('./src/styles/**/*', ['copyToDocs-dev']);
 }

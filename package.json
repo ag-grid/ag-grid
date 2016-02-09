@@ -36,6 +36,7 @@
     "gulp-uglify": "1.5.1",
     "gulp-typescript": "2.10.0",
     "gulp-sourcemaps": "1.5.2",
+    "gulp-clean": "0.3.1",
     "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
     "style-loader": "0.13.0",
