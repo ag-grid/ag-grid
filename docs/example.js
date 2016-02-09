@@ -307,9 +307,11 @@ months.forEach(function(month) {
 
 gridOptions.columnDefs = createCols();
 
-//setInterval(function() {
-//    gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
-//}, 1000);
+function filterDoubleClicked(event) {
+    setInterval(function() {
+        gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
+    }, 1000);
+}
 
 function onDataSizeChanged(newDataSize) {
     dataSize = newDataSize;

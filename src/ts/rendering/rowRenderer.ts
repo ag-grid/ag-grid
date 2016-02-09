@@ -188,9 +188,6 @@ export default class RowRenderer {
             return;
         }
 
-        // should we be storing this somewhere???
-        var mainRowWidth = this.columnModel.getBodyContainerWidth();
-
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
                 var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
@@ -198,7 +195,6 @@ export default class RowRenderer {
                     this.selectionRendererFactory, this.$compile, this.templateService,
                     this.selectionController, this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
                     node, rowIndex, this.eventService);
-                renderedRow.setMainRowWidth(mainRowWidth);
                 renderedRows.push(renderedRow);
             })
         }
@@ -433,10 +429,40 @@ export default class RowRenderer {
             this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex, this.eventService);
-        renderedRow.setMainRowWidth(mainRowWidth);
+        //renderedRow.setMainRowWidth(mainRowWidth);
 
         this.renderedRows[rowIndex] = renderedRow;
     }
+
+    // Separating out the rendering into frames was experimental, but it looked crap.
+    //private rowRenderIntervalId: number;
+    //
+    //private renderRows(): void {
+    //    var frameStartMillis = new Date().getTime();
+    //    var keys = Object.keys(this.renderedRows);
+    //    keys.sort( (a, b) => Number(a) - Number(b) );
+    //    var atLeastOne = false;
+    //    var count = 0;
+    //    for (var i = 0; i<keys.length; i++) {
+    //        var renderedRow = this.renderedRows[keys[i]];
+    //        if (!renderedRow.isRendered()) {
+    //            renderedRow.render();
+    //            atLeastOne = true;
+    //            var nowMillis = new Date().getTime();
+    //            var frameDuration = nowMillis - frameStartMillis;
+    //            count++;
+    //            // 16ms is 60 FPS, so if going slower than 60 FPS, we finish this frame
+    //            if (frameDuration>100) {
+    //                break;
+    //            }
+    //        }
+    //    }
+    //    if (!atLeastOne) {
+    //        clearInterval(this.rowRenderIntervalId);
+    //        this.rowRenderIntervalId = null;
+    //    }
+    //    //console.log('count = ' + count);
+    //}
 
     public getRenderedNodes() {
         var renderedRows = this.renderedRows;
