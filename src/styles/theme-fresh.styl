@@ -1,19 +1,15 @@
 @import 'nib'
 
-.ag-fresh 
+.ag-fresh
     .ag-root
         border: 1px solid grey;
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     .ag-cell
         padding: 2px;
 
-    .ag-column-moving .ag-cell
-        transition: left 0.2s;
-
     .ag-cell:focus
         //outline: none;
-
     .ag-cell-focus
         border: 1px solid darkgrey;
 
@@ -37,16 +33,13 @@
     .ag-header-cell
         border-right: 1px solid grey;
 
-    .ag-header-cell-moving .ag-header-cell-label
-        opacity: 0.0;
-
     .ag-header-cell-moving
-        background-color rgb(190,190,190);
+        background-color rgb(190, 190, 190);
 
     .ag-header-cell-moving-clone
         border-right: 1px solid grey;
         border-left: 1px solid grey;
-        background-color:rgba(220, 220, 220, 0.8);
+        background-color: rgba(220, 220, 220, 0.8);
 
     .ag-header-group-cell
         border-right: 1px solid grey;
@@ -55,7 +48,7 @@
         border-bottom: 1px solid grey;
 
     .ag-header-cell-label
-        padding: 4px 2px 4px 2px ;
+        padding: 4px 2px 4px 2px;
 
     .ag-header-cell-text
         padding-left: 2px;
@@ -64,16 +57,14 @@
         padding: 4px;
         padding-left: 10px;
 
-    .ag-header-group-text
-        margin-right: 2px;
-
     .ag-header-cell-menu-button
         padding: 2px;
         margin-top: 4px;
         border: 1px solid transparent;
         border-radius: 3px;
         box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
-        line-height: 0px; /* normal line height, a space was appearing below the menu button */
+        line-height: 0px;
+    /* normal line height, a space was appearing below the menu button */
 
     .ag-pinned-right-header
         border-left: 1px solid grey;
@@ -156,26 +147,6 @@
     .ag-filter-value
         margin-left: 4px;
 
-    .ag-selection-checkbox
-        margin-left: 4px;
-
-    .ag-paging-panel
-        padding: 4px;
-
-    .ag-paging-button
-        margin-left: 4px;
-        margin-right: 4px;
-
-    .ag-paging-row-summary-panel
-        display: inline-block;
-        width: 300px;
-
-    .ag-column-not-visible
-        opacity: 0.75;
-
-    .ag-not-dragging
-        border: 1px solid transparent;
-
     .ag-drop-target-above
         //border: 1px solid transparent;
         border-top: 5px solid darkgrey;
@@ -207,7 +178,3 @@
 
     .ag-popup-list .ag-list-item:hover
         background-color: lightblue;
-
-    .ag-visible-icons
-        padding-left: 2px;
-        padding-right: 2px;
