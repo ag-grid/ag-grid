@@ -429,13 +429,19 @@ export default class RenderedRow {
         var vRow = new VHtmlElement('div');
         var that = this;
         vRow.addEventListener("click", function (event: any) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
-
-            // ctrlKey for windows, metaKey for Apple
-            var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
-            that.angularGrid.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
-        });
+			if (event.shiftKey){
+				that.angularGrid.onShiftSelectRows(that.rowIndex);
+			}
+			else {
+				var agEvent = that.createEvent(event, this);
+				that.eventService.dispatchEvent(grid.Events.EVENT_ROW_CLICKED, agEvent);
+				// ctrlKey for windows, metaKey for Apple
+				var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
+				that.angularGrid.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
+				
+			}
+			that.angularGrid.lastSelectedRowIndex = that.rowIndex;
+		});
         vRow.addEventListener("dblclick", function (event: any) {
             var agEvent = that.createEvent(event, this);
             that.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
