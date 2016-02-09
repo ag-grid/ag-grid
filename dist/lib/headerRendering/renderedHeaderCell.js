@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.0
+ * @version v3.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -136,6 +136,7 @@ var RenderedHeaderCell = (function (_super) {
         }
         // label div
         this.eText = this.eHeaderCell.querySelector('#agText');
+        this.eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
         this.addResize(eRoot, dragService);
         this.addMove(eRoot, dragService, gridPanel);
         this.addMenu();
@@ -184,9 +185,8 @@ var RenderedHeaderCell = (function (_super) {
             // don't allow moving of headers when forPrint, as the header overlay doesn't exist
             return;
         }
-        var eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        if (eHeaderCellLabel) {
-            new moveColumnController_1.MoveColumnController(this.column, eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
+        if (this.eHeaderCellLabel) {
+            new moveColumnController_1.MoveColumnController(this.column, this.eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
         }
     };
     RenderedHeaderCell.prototype.addResize = function (eRoot, dragService) {
@@ -307,7 +307,10 @@ var RenderedHeaderCell = (function (_super) {
     };
     RenderedHeaderCell.prototype.addSortHandling = function () {
         var _this = this;
-        this.eText.addEventListener("click", function (event) {
+        if (!this.eHeaderCellLabel) {
+            return;
+        }
+        this.eHeaderCellLabel.addEventListener("click", function (event) {
             // update sort on current col
             _this.column.setSort(_this.getNextSortDirection());
             // sortedAt used for knowing order of cols when multi-col sort

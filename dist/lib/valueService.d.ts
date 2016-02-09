@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.3.0
+// Type definitions for ag-grid v3.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -13,6 +13,7 @@ export default class ValueService {
     init(gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService, columnController: ColumnController): void;
     getValue(colDef: ColDef, data: any, node: any): any;
     private getValueUsingField(data, field);
+    setValueUsingField(data: any, field: string, newValue: any): void;
     private executeValueGetter(valueGetter, data, colDef, node);
     private getValueCallback(data, node, field);
 }

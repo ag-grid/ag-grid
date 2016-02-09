@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.0
+ * @version v3.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,6 +52,29 @@ var ValueService = (function () {
                 }
             }
             return currentObject;
+        }
+    };
+    ValueService.prototype.setValueUsingField = function (data, field, newValue) {
+        if (!field || !data) {
+            return;
+        }
+        // if no '.', then it's not a deep value
+        if (field.indexOf('.') < 0) {
+            data[field] = newValue;
+        }
+        else {
+            // otherwise it is a deep value, so need to dig for it
+            var fieldPieces = field.split('.');
+            var currentObject = data;
+            while (fieldPieces.length > 0 && currentObject) {
+                var fieldPiece = fieldPieces.shift();
+                if (fieldPieces.length === 0) {
+                    currentObject[fieldPiece] = newValue;
+                }
+                else {
+                    currentObject = currentObject[fieldPiece];
+                }
+            }
         }
     };
     ValueService.prototype.executeValueGetter = function (valueGetter, data, colDef, node) {

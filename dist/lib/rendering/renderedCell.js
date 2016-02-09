@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.0
+ * @version v3.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -219,7 +219,7 @@ var RenderedCell = (function () {
                 colDef.newValueHandler(paramsForCallbacks);
             }
             else {
-                this.node.data[colDef.field] = newValue;
+                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
             }
             // at this point, the value has been updated
             this.value = this.getValue();
