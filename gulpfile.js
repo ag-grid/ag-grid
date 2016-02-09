@@ -15,6 +15,7 @@ var pkg = require('./package.json');
 var tsd = require('gulp-tsd');
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
+var del = require('del');
 
 var jasmine = require('gulp-jasmine');
 
@@ -34,12 +35,18 @@ var dtsHeaderTemplate =
     '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n' +
     '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
 
-gulp.task('default', ['watch']);
-gulp.task('release', ['webpack','webpack-minify','copyToDocs']);
+gulp.task('clean', function (next) {
+    del(['dist/','docs/dist'] , next);
+});
+
+gulp.task('default', ['clean', 'watch']);
+gulp.task('release', ['clean', 'webpack','webpack-minify', 'webpack-no-styles', 'webpack-no-styles-minify','copyToDocs']);
 
 gulp.task('tsc', tscTask);
-gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true));
-gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false));
+gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
+gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
+gulp.task('webpack-no-styles-minify', ['tsc','stylus'], webpackTask.bind(null, true, false));
+gulp.task('webpack-no-styles', ['tsc','stylus'], webpackTask.bind(null, false, false));
 
 gulp.task('copyToDocs', ['webpack'], copyToDocsTask);
 
@@ -86,21 +93,22 @@ function tscTask() {
     ])
 }
 
-function webpackTask(minify) {
+function webpackTask(minify, isStyleIncluded) {
 
     var plugins = [];
-    var fileName;
+    var fileName = 'ag-grid';
     if (minify) {
         plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
-        fileName = 'ag-grid.min.js';
+
+        fileName += isStyleIncluded ? '.min.js' : '-no-styles.min.js';
     } else {
-        fileName = 'ag-grid.js';
+        fileName += isStyleIncluded ? '.js' : '-no-styles.js';
     }
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
             entry: {
-                main: "./main-webpack.js"
+                main: isStyleIncluded ? "./main-webpack.js" : "./main.js"
             },
             output: {
                 path: path.join(__dirname, "dist"),
@@ -136,7 +144,7 @@ function stylusTask() {
 }
 
 function copyToDocsTask() {
-    gulp.src('./dist/*')
+    gulp.src('./dist/**')
         .pipe(gulp.dest('./docs/dist'));
 }
 
