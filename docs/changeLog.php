@@ -9,6 +9,10 @@ include 'documentation_header.php';
 <div style="padding: 20px;">
 
     <h3>Version 3.3.0</h3>
+    <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with CommonJS</li>
+    <li>Buf fix: Period in fields (ie address.line1) was not working for editing.</li>
+
+    <h3>Version 3.3.0</h3>
     <li>Minor: headerClass (column definition) can now be provided for column groups.</li>
     <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
     <li>Major: Event 'ready' is now called 'gridReady'</li>
