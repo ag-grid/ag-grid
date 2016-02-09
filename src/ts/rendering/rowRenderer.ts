@@ -119,18 +119,6 @@ export default class RowRenderer {
         return eCells;
     }
 
-    //public onIndividualColumnResized(column: Column) {
-    //    var newWidthPx = column.getActualWidth() + "px";
-    //    var selectorForAllColsInCell = ".cell-col-" + column.getIndex();
-    //    this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-    //        var cellsForThisCol: NodeListOf<Element> = rowContainer.querySelectorAll(selectorForAllColsInCell);
-    //        for (var i = 0; i < cellsForThisCol.length; i++) {
-    //            var element = <HTMLElement> cellsForThisCol[i];
-    //            element.style.width = newWidthPx;
-    //        }
-    //    });
-    //}
-
     public setMainRowWidths() {
         var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
 
@@ -290,7 +278,7 @@ export default class RowRenderer {
         this.removeVirtualRow(rowsToRemove);
     }
 
-    private refreshAllVirtualRows(fromIndex: any) {
+    private refreshAllVirtualRows(fromIndex?: any) {
         // remove all current virtual rows, as they have old data
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove, fromIndex);
@@ -402,7 +390,6 @@ export default class RowRenderer {
         //var start = new Date().getTime();
 
         var mainRowWidth = this.columnModel.getBodyContainerWidth();
-        var that = this;
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -417,7 +404,7 @@ export default class RowRenderer {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node) {
-                that.insertRow(node, rowIndex, mainRowWidth);
+                this.insertRow(node, rowIndex, mainRowWidth);
             }
         }
 
@@ -427,9 +414,7 @@ export default class RowRenderer {
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             // we do it in a timeout, in case we are already in an apply
-            setTimeout(function () {
-                that.$scope.$apply();
-            }, 0);
+            setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
         //var end = new Date().getTime();
