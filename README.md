@@ -61,10 +61,6 @@ Please do not use GitHub issues to ask questions. Ask questions on the
 Contributing
 ==============
 
-ag-Grid is not looking for contributors for the project. If you have ideas, feel free to
-get in touch and let me know. Or if you want to suggest something, feel free to
-create a pull request with your ideas.
-
-If you would like to help, then please provide me with guidance and advice.
-I don't claim to know everything, so welcome others opinions on the direction
-of the project.
+ag-Grid is not looking for contributors. It is not intended to be developed
+by an online community. PR's on new features are generally not accepted. PR's
+on small bug fixes are generally accepted.
