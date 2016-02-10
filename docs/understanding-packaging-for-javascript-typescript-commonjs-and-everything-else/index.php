@@ -43,13 +43,30 @@ include('../mediaHeader.php');
         a full working example of the concepts below. The project is written in TypeScript, however you do not need TypeScript
         to use the project.</p>
 
+        <h3>Learning from Angular 2 and Typescript</h3>
+
+        <p>You do not need to be using, or even a fan of, Angular 2 or Typescript for them to be useful for you.
+        You can learn from them and benefit from what they bring to the community even if your a Babel and React guy.
+        <ul>
+            <li><b>Typescript</b> is written by Microsoft, a proper company with experience writing proper compilers
+            including C# and C++. This means I respect more their 'design on things' that I would open source
+            community driven projects. Personally I learnt a lot by observing the different options of the Typescript
+            compiler and how they changed the resultant JavaScript code.</li>
+            <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be it's achilles heel,
+                in that it's using cutting edge technologies, but it is forcing these technologies into the main
+            stream and ironing them out. A lot can be learnt of the future by looking at what Angular 2 is doing
+            and I pay respect to the Angular 2 team for taking the brave steps.</li>
+        </ul></p>
+
+
         <h3>Folder Structure</h3>
 
         <p>
-            We are going to be generating a lot of files. To make this easy to work with, we defint two
+            We are going to be generating a lot of files. To make this easy to work with, we define two
             core folders as follows:
             <ul>
-            <li><b>src</b>: All the source files that we edit. This includes TypeScript and .styl files (for Stylus).</li>
+            <li><b>src</b>: All the source files that we edit. This includes TypeScript and .styl files (for Stylus,
+                what ag-Grid uses to generate CSS).</li>
             <li><b>dist</b>: All the generated files. This includes TypeScript output (JavaScript),
                 Stylus output (CSS) and WebPack output (JavaScript).</li>
         </ul>
@@ -60,12 +77,14 @@ include('../mediaHeader.php');
         <p>
             Internal modules in Typescript allow you to structure your 'pre ECMA 6 modules' code into separate
             files and then have Typescript combine all the files together (similar to bundling via Browserify and
-            Webpack) and provide a level of namespacing away from the global scope.
+            Webpack) and provide a level of namespacing away from the global scope. This was great back in the day
+            before Browserify and WebPack, as it allowed splitting up your project into multiple files and then
+            have the Typescript compiler bundle your files into one file.
         </p>
 
         <pre>
 /* This top bit is the old way of referenceing other TypeScript files, it ensures */
-/* when Typescript joins the files together, this file goes after Myutils.ts */
+/* when Typescript joins the files together, this file goes after MyUtils.ts */
 ///&lt;reference path='./MyUtils.ts' />
 
 /* This is the internal module definition */
@@ -76,17 +95,17 @@ module ag.grid {
 }</pre>
 
         <p>
-            Do not do any of this!! The above works great if you are not trying to distribute your code to
-            someone else. It lacks support for CommonJS or ECMA 6 modules. Instead you should use
+            Do not do any of this!! It lacks support for CommonJS or ECMA 6 modules. Instead you should use
             External Modules.
         </p>
 
-        <p><b>Do not use TypeScript internal modules, delete them from your code, forget they exists, and move
+        <p><b>Do not use TypeScript internal modules, delete them from your code, forget they exist, and move
             to TypeScript external modules.</b></p>
 
         <p>
-            External modules in TypeScript are what you see in ag-Grid and AngularJS code, and this is what
-            works best with CommonJS as it gets compiled down to CommonJS 'require' functions (what React uses).
+            External modules in TypeScript are what you see in ag-Grid and Angular 2 code and this is what
+            works best with CommonJS as it gets compiled down to CommonJS 'require' functions which is what
+            most of the rest of the work is using, incluing the React community.
         </p>
 
         <pre>
@@ -131,8 +150,8 @@ function tscTask() {
     ])
 }        </pre>
 
-        <p>The item to note above is <i><b>module: 'commonjs'</b></i>. TypeScript supports
-        the following Modules: commonjs, amd, system and umd. This is what we think about them:
+        <p>The item of interest for now is <i><b>module: 'commonjs'</b></i>. TypeScript supports
+        the following 4 Modules: commonjs, amd, system and umd. This is what we think about them:
             <ul>
             <li><b>commonjs:</b> This will allow our application to work with today's CommonJS (yeay for React and
                 other people using CommonJS) and the future ECMA 6 is also able to work with CommonJS files
@@ -142,17 +161,17 @@ function tscTask() {
             <li><b>umd:</b> Stands for Universal Module Definition. It's a combination of the two above. However
             because we don't care about amd, that means we don't care about the combination either.</li>
             <li><b>system:</b> System modules are the future. However they are still changing, which is difficult
-            to support. AngularJS is provided through ComomonJS - to me this is very telling as the
-            AngularJS guys collaborate with the TypeScript guys, pusing the boundaries of TypeScript,
-            and if the AngularJS guys think it's not ready, then me neither. Besides, CommonJS can
-            also be read in from SystemX, so why take the pain at this point?</li>
+            to support. Angular 2 is provided through CommonJS - to me this is very telling as the
+            Angular 2 guys collaborate with the TypeScript guys, pushing the boundaries of TypeScript,
+            and if the Angular 2 guys think System modules are not ready, then me neither. Besides, CommonJS can
+            also be read in from SystemX, so why take the risk and pain at this point? CommonJS works and is stable.</li>
         </ul>
-        I do not use tsconfig.json. There is no benefit to configuring everything in Gulp, it's just my personal
-        preference.
+        ag-Grid uses Gulp to configure TypeScript. Another popular way is to use tsconfig.json. There is no
+        benefit, both ways achieve the same result.
         </p>
         <p>
-        So from the above, commonjs modules is the one to go for as it an be used by all the other module
-        loader systems.
+        So from the above, commonjs modules is the one to go for as it is still popular and can be used by all
+        the other popular module loading systems.
         </p>
 
         <p>If we then want to include a 'non module' version of your component, you do that using
@@ -160,11 +179,11 @@ function tscTask() {
         all together and exposes them on the global scope. More on this later in the section on WebPack.</p>
 
         <p>
-            So keeping our small 'Grid' class example from above, the generated JavaScript file will be:
+            So keeping our small 'Grid' class example from above, the generated Typescript to JavaScript file will be:
             <pre>/* require gets used where we used import */
 var MyUtils = require("./MyUtils");
 
-/* class becomes a function */
+/* ECMA 6 class becomes a function in ECMA 5, how Typescript supports classes today */
 var Grid = (function () {
     function Grid() {
         ....
@@ -192,23 +211,23 @@ import {Grid} from 'ag-grid/dist/lib/grid';</pre>
         <p>This is great, it works, but it's long winded that the client has to include 'dist/lib' in
         each call. To get around this:
         <ul>
-            <li>Create a main Javascript file to include all your exports.</li>
+            <li>Create a main Javascript file in the root of your project to include all your exports. in ag-Grid, this file is called main.js</li>
             <li>Specify the main file in your package.json eg: "main": "./main.js"</li>
         </ul>
         Then in your main file, specify what you want to export.
         <pre>exports.Grid = require('./dist/lib/grid').Grid;</pre>
         Once this is done, then the client can access the module in the short-hand version of the above.
             <pre>// for CommonJS require
-var gridModule = require('ag-grid'); // if no file specified, it's picked up from package.json entry
-var Grid = gridModule.Grid;
+var Grid = require('ag-grid').Grid; // if no file specified, it's picked up from package.json entry
 
 // or for ECMA 6 import
 import {Grid} from 'ag-grid/main';</pre>
         </p>
 
-        <p>You can have many 'main' files as you like, giving you the option of splitting the modules out.
+        <p>You can have as many 'main' files as you like, giving you the option of splitting the modules out.
+            However this only makes sense for very large projects where splitting out helps.
             It is standard practice to put these main files in the root of your project.
-        However this only makes sense for very large projects.</p>
+        </p>
 
         <p>The use of the main files is optional, but highly recommend for the following reasons:
         <ul>
@@ -220,15 +239,14 @@ import {Grid} from 'ag-grid/main';</pre>
         <h3>TypeScript - Creating Definition Files</h3>
 
         <p>
-            There is a project called Definitely Typed on Github. It is assisted with
-            tsd.json file that stated what typings your project needed to download from Definitely Typed.
-            This project is for distrusting projects not written in TypeScript. <b>If you are writing your
-            project in TypeScript, then you don't need to use Definitely Typed. Instead distribute your
-            .d.ts files with your code.</b>
+            There is a project called Definitely Typed on Github that hosts definition files for JavaScript projects.
+            This project is for distributing definitions for projects not written in TypeScript. <b>If you are writing your
+            project for distribution in TypeScript, then you don't need to put your definitions in Definitely Typed. Instead distribute your
+            definition files with your code.</b>
         </p>
 
         <p>
-            Creating declaration files is done as part of the TypeScritp compile step via setting the property
+            Creating declaration files is done as part of the TypeScript compile step via setting the property
             'declarationFiles=true'. The declaration files then get put alongside the generated JavaScript files
             and be consumed directly by TypeScript clients.
         </p>
@@ -237,7 +255,8 @@ import {Grid} from 'ag-grid/main';</pre>
 
         <p>
             Similar to exposing the CommonJS modules, you should expose the definition files. Do this
-            by creating a definition file with the same name as the module file.
+            by creating a definition file with the same name as the module file. In ag-Grid, this file
+        is called main.d.ts and contains lines like the following:
             <pre>export * from './dist/lib/grid';</pre>
         </p>
 
@@ -247,13 +266,15 @@ import {Grid} from 'ag-grid/main';</pre>
         <h3>WebPack</h3>
 
         <p>The above CommonJS works great when the client is using CommonJS. It is probable that the client,
-        assuming it's browser based, will use Browserify or WebPack to bundle up the client application,
-        and it's dependencies (includes your module) into a single Javascript file.</p>
+        assuming it's browser based, will use Browserify or WebPack to bundle up the client application
+        and it's dependencies (including your module) into a single Self Contained Javascript Bundle file.</p>
 
-        <p>The problem with the above is it cannot be used without a module loading system. That is where
+        <p>The problem with the above is it assumes your client will be using a module loading system. That is where
         WebPack is to the rescue. It takes a CommonJS module and generates a bundle that exposes
-        the shared component on the global namespace. Like TypeScript, Webpack is also configured
-        inside the Gulp file.
+        the shared component on the global namespace. This will allow your clients to use your component 'the old way'
+        by just referencing your script directly from the HTML page. In the ag-Grid project, similar to TypeScript, Webpack is also configured
+        inside the Gulp file. You have the option of webpack.config.js instead of having the settings in Gulp, again
+        no advantage, it's just the preference of ag-Grid to keep the config inside the Gulp file.
 <pre>function webpackTask(minify, styles) {
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
@@ -270,12 +291,12 @@ import {Grid} from 'ag-grid/main';</pre>
         .pipe(gulp.dest('./dist/'));
 }</pre>
         The above is a cut down version of what ag-Grid uses, as ag-Grid also considers minified versions
-        and optionally includes CSS. See the ag-Grid project for the full workign version.
+        and optionally includes CSS. See the ag-Grid project for the full working version.
         </p>
         <p>
-            What you should not are the following options:
+            What you should note are the following options:
             <ul>
-            <li><b>entry:</b> Specifies the files to include in the result. Files referenced will also be included.
+            <li><b>entry:</b> Specifies the files to include in the result. Indirectly referenced files will also be included.
             This is the same file we use to expose the CommonJS library to the client.</li>
             <li><b>output.filename: </b>The resulting filename.</li>
             <li><b>output.library & output.libraryTarget: </b>The two of these settings combined tell WebPack to build
@@ -283,20 +304,7 @@ import {Grid} from 'ag-grid/main';</pre>
         </ul>
         </p>
 
-        <p>Dependencies for Other Libraries (eg Angular 2.0 and React)</p>
-
-        <p>AngularJS 2.0 and React components have dependencies on their associated libraries. If you want to use either
-        of these libraries, you have to make them as dependencies in your project. This has the following impacts:
-        <ul>
-            <li>Your project will bring these dependencies with it to your client. ag-Grid supports this by separating
-            out the dependent parts (eg ag-grid-react and ag-grid-ng2 projects). The client then only includes the
-            part (and the dependency) if it wants.</li>
-            <li>The dependent projects cannot be part of the self contained bundles. This is because the parts need
-                the said libraries at compile time (not run-time like for example Angular 1)
-            because your component classes extend (as in 'object oriented class' extend) classes from these libraries.
-            This means if you included these dependencies in your project, they would end up in your bundled files,
-            which would be bad.</li>
-        </ul></p>
+        <p>This technique, btw, is what Angular 2 uses to create it's UMD version of Angular 2.0.</p>
 
         <h3>CSS Styles</h3>
 
@@ -308,12 +316,13 @@ import {Grid} from 'ag-grid/main';</pre>
         <pre>require('ag-grid/dist/theme-fresh.css')</pre>
         while another can expect this:
         <pre>require('!ag-grid/dist/theme-fresh.css')</pre>
-        of maybe this:
+        or maybe this:
         <pre>require('css!ag-grid/dist/theme-fresh.css')</pre>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 
-        <p>ag-Grid provides four bundled versions:
+        <p>As for the Self Contained JavaScritp Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
+            the JavaScript code or not, so ag-Grid provides four bundled versions:
             <ul>
             <li>Normal no CSS</li>
             <li>Normal with CSS</li>
@@ -321,16 +330,48 @@ import {Grid} from 'ag-grid/main';</pre>
             <li>Minified with CSS</li>
         </ul>
 
+        <h3>Dependencies for Other Libraries (eg Angular 2.0 and React)</h3>
+
+        <p>AngularJS 2.0 and React components have dependencies on their associated libraries. If you want to use either
+            of these libraries, you have to make them as dependencies in your project. The best way to do this is as
+            peer dependencies (peerDependencies in package.json) so that the client can control what version of the library
+            to use and your component will use what's provided to it. This has the following impacts:
+        <ul>
+            <li>Your project will force these dependencies on your client. This would be bad if, for example, your client
+                uses Angular 2 and has no desire to have React as a dependency. ag-Grid supports this by separating
+                out the dependent parts into separate Github projects (eg ag-grid-react and ag-grid-ng2 projects).
+                The client then only includes ag-Grid and the additional project that it wants, thus only bringing in
+                the framework dependency that is relevant.</li>
+            <li>The dependent projects cannot be part of the Self Contained JavaScript Bundles described above
+                that you can build with WebPack for direct HTML inclusion. This is because the parts need
+                the said libraries at compile time (not run-time like for example Angular 1)
+                because your component classes extend (as in 'object oriented class' extend) classes from these libraries.
+                This means if you included these dependencies in your project, they would end up in your bundled files,
+                which would be bad.</li>
+        </ul></p>
+
+        <p>
+            One thing to note about the second point and Angular 2 - it says you cannot Webpack UMD bundle Angular 2
+            components, so how then can we write components that work with Angular 2's UMD distribution? The answer is
+            that you will also need to provide your component as compatible with Angular 2's UMD interface, ie you
+            will need to reference Angular 2 on the global scope and then use ECMA 5 JavaScript techniques instead of
+            ECMA 6 object oriented extends and decorators. This means you would have to either NOT use ECMA 6 at all
+            in your component's Angular 2 references,
+            or have two version of your library. Personally I don't see this catching on. I do not believe that the
+            majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspecting of some
+            popular Angular 2 components shows they are not supporting UMD.
+        </p>
+
         <h3>Summing Up</h3>
 
         <p>
             And that's it. The world of packaging is changing, so I don't know how long the above will be relevant for.
-            However you can take it from me, ag-Grid is used by thousands of people, the above system may not be the
-            best, but it does work.
+            However you can take it from me, ag-Grid is used by thousands of people, the above system is tried and
+            tested and is working for me.
         </p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/" data-text="Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -340,7 +381,7 @@ import {Grid} from 'ag-grid/main';</pre>
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/" data-text="Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 

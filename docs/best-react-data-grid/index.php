@@ -108,11 +108,10 @@ include '../documentation_header.php';
             "ag-grid-root" : __dirname + "/node_modules/ag-grid"
 }</code></pre>
     Once this is done, we can then access the two css files that we need as follows:
-    <pre><code>import 'ag-grid-root/styles/ag-grid.css';
-import 'ag-grid-root/styles/theme-fresh.css';</code></pre>
+    <pre><code>import 'ag-grid-root/dist/styles/ag-grid.css';
+import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
     You will also need to configure CSS loaders for Webpack.
     </p>
-
 
     <h2>Applying Theme</h2>
 
