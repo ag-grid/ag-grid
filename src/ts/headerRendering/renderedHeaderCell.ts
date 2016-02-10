@@ -11,6 +11,7 @@ import {DragService} from "./dragService";
 import HeaderRenderer from "./headerRenderer";
 import {MoveColumnController} from "./moveColumnController";
 import GridPanel from "../gridPanel/gridPanel";
+import {GridCore} from "../gridCore";
 
 export default class RenderedHeaderCell extends RenderedHeaderElement {
 
@@ -31,7 +32,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private filterManager: FilterManager;
     private columnController: ColumnController;
     private $compile: any;
-    private grid: Grid;
+    private gridCore: GridCore;
     private headerTemplateLoader: HeaderTemplateLoader;
     private headerRenderer: HeaderRenderer;
 
@@ -44,7 +45,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
 
     constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
                 parentScope: any, filterManager: FilterManager, columnController: ColumnController,
-                $compile: any, grid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
+                $compile: any, gridCore: GridCore, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
                 headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel) {
         super(gridOptionsWrapper);
         this.column = column;
@@ -52,7 +53,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         this.filterManager = filterManager;
         this.columnController = columnController;
         this.$compile = $compile;
-        this.grid = grid;
+        this.gridCore = gridCore;
         this.headerTemplateLoader = headerTemplateLoader;
         this.headerRenderer = headerRenderer;
 
@@ -394,7 +395,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
                 this.columnController.clearSortBarThisColumn(this.column);
             }
 
-            this.grid.onSortingChanged();
+            this.gridCore.onSortingChanged();
         });
     }
 

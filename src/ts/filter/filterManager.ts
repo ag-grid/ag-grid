@@ -9,7 +9,11 @@ import Column from "../entities/column";
 import TextFilter from "./textFilter";
 import NumberFilter from "./numberFilter";
 import SetFilter from "./setFilter";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
+@Bean('filterManager')
 export default class FilterManager {
 
     private $compile: any;
@@ -26,12 +30,17 @@ export default class FilterManager {
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
 
-    public init(grid: Grid, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any,
-                columnController: ColumnController, popupService: PopupService, valueService: ValueService) {
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('$compile') $compile: any,
+                @Qualifier('$scope') $scope: any,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('popupService') popupService: PopupService,
+                @Qualifier('valueService') valueService: ValueService) {
         this.$compile = $compile;
         this.$scope = $scope;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.grid = grid;
+        this.grid = gridCore;
         this.allFilters = {};
         this.columnController = columnController;
         this.popupService = popupService;
@@ -375,7 +384,7 @@ export default class FilterManager {
         return filterWrapper;
     }
 
-    public destroy() {
+    public agDestroy() {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
             if (filterWrapper.filter.destroy) {
                 filterWrapper.filter.destroy();

@@ -62,7 +62,7 @@ include('../mediaHeader.php');
         <h3>Folder Structure</h3>
 
         <p>
-            We are going to be generating a lot of files. To make this easy to work with, we define two
+            We are going to be generating a lot of files. To make this easy to world with, we define two
             core folders as follows:
             <ul>
             <li><b>src</b>: All the source files that we edit. This includes TypeScript and .styl files (for Stylus,

@@ -17,25 +17,65 @@ import {ColDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import Constants from "./constants";
 import Column from "./entities/column";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {GridCore} from "./gridCore";
+import {Context} from "./context/context";
 
+@Bean('gridApi')
 export class GridApi {
 
     private csvCreator: CsvCreator;
 
-    constructor(private grid: Grid,
-                private rowRenderer: RowRenderer,
-                private headerRenderer: HeaderRenderer,
-                private filterManager: FilterManager,
-                private columnController: ColumnController,
-                private inMemoryRowController: InMemoryRowController,
-                private selectionController: SelectionController,
-                private gridOptionsWrapper: GridOptionsWrapper,
-                private gridPanel: GridPanel,
-                private valueService: ValueService,
-                private masterSlaveService: MasterSlaveService,
-                private eventService: EventService,
-                private floatingRowModel: FloatingRowModel) {
-        this.csvCreator = new CsvCreator(this.inMemoryRowController, this.columnController, this.grid, this.valueService);
+    private gridCore: GridCore;
+    private rowRenderer: RowRenderer;
+    private headerRenderer: HeaderRenderer;
+    private filterManager: FilterManager;
+    private columnController: ColumnController;
+    private inMemoryRowController: InMemoryRowController;
+    private selectionController: SelectionController;
+    private gridOptionsWrapper: GridOptionsWrapper;
+    private gridPanel: GridPanel;
+    private valueService: ValueService;
+    private masterSlaveService: MasterSlaveService;
+    private eventService: EventService;
+    private floatingRowModel: FloatingRowModel;
+    private context: Context;
+
+    constructor() {
+    }
+
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
+                @Qualifier('headerRenderer') headerRenderer: HeaderRenderer,
+                @Qualifier('filterManager') filterManager: FilterManager,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('inMemoryRowController') inMemoryRowController: InMemoryRowController,
+                @Qualifier('selectionController') selectionController: SelectionController,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('gridPanel') gridPanel: GridPanel,
+                @Qualifier('valueService') valueService: ValueService,
+                @Qualifier('masterSlaveService') masterSlaveService: MasterSlaveService,
+                @Qualifier('eventService') eventService: EventService,
+                @Qualifier('csvCreator') csvCreator: CsvCreator,
+                @Qualifier('context') context: Context,
+                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
+
+        this.gridCore = gridCore;
+        this.rowRenderer = rowRenderer;
+        this.headerRenderer = headerRenderer;
+        this.filterManager = filterManager;
+        this.columnController = columnController;
+        this.inMemoryRowController = inMemoryRowController;
+        this.selectionController = selectionController;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+        this.gridPanel = gridPanel;
+        this.valueService = valueService;
+        this.masterSlaveService = masterSlaveService;
+        this.eventService = eventService;
+        this.floatingRowModel = floatingRowModel;
+        this.csvCreator = csvCreator;
+        this.context = context;
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -52,26 +92,26 @@ export class GridApi {
     }
 
     public setDatasource(datasource:any) {
-        this.grid.setDatasource(datasource);
+        this.gridCore.setDatasource(datasource);
     }
 
     public onNewDatasource() {
         console.log('ag-Grid: onNewDatasource deprecated, please use setDatasource()');
-        this.grid.setDatasource();
+        this.gridCore.setDatasource();
     }
 
     public setRowData(rowData:any) {
-        this.grid.setRowData(rowData);
+        this.gridCore.setRowData(rowData);
     }
 
     public setRows(rows:any) {
         console.log('ag-Grid: setRows deprecated, please use setRowData()');
-        this.grid.setRowData(rows);
+        this.gridCore.setRowData(rows);
     }
 
     public onNewRows() {
         console.log('ag-Grid: onNewRows deprecated, please use setRowData()');
-        this.grid.setRowData();
+        this.gridCore.setRowData();
     }
 
     public setFloatingTopRowData(rows: any[]): void {
@@ -88,11 +128,11 @@ export class GridApi {
 
     public onNewCols() {
         console.error("ag-Grid: deprecated, please call setColumnDefs instead providing a list of the defs");
-        this.grid.setColumnDefs();
+        this.gridCore.setColumnDefs();
     }
 
     public setColumnDefs(colDefs: ColDef[]) {
-        this.grid.setColumnDefs(colDefs);
+        this.gridCore.setColumnDefs(colDefs);
     }
 
     public unselectAll() {
@@ -143,32 +183,32 @@ export class GridApi {
     }
 
     public getModel() {
-        return this.grid.getRowModel();
+        return this.gridCore.getRowModel();
     }
 
     public onGroupExpandedOrCollapsed(refreshFromIndex:any) {
-        this.grid.updateModelAndRefresh(Constants.STEP_MAP, refreshFromIndex);
+        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP, refreshFromIndex);
     }
 
     public expandAll() {
         this.inMemoryRowController.expandOrCollapseAll(true, null);
-        this.grid.updateModelAndRefresh(Constants.STEP_MAP);
+        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP);
     }
 
     public collapseAll() {
         this.inMemoryRowController.expandOrCollapseAll(false, null);
-        this.grid.updateModelAndRefresh(Constants.STEP_MAP);
+        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
             console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, pleae check the documentation.');
         }
-        this.grid.addVirtualRowListener(eventName, rowIndex, callback);
+        this.gridCore.addVirtualRowListener(eventName, rowIndex, callback);
     }
 
     public setQuickFilter(newFilter:any) {
-        this.grid.onQuickFilterChanged(newFilter)
+        this.gridCore.onQuickFilterChanged(newFilter)
     }
 
     public selectIndex(index:any, tryMulti:any, suppressEvents:any) {
@@ -211,23 +251,23 @@ export class GridApi {
     }
 
     public showLoadingOverlay(): void {
-        this.grid.showLoadingOverlay();
+        this.gridCore.showLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        this.grid.showNoRowsOverlay();
+        this.gridCore.showNoRowsOverlay();
     }
 
     public hideOverlay(): void {
-        this.grid.hideOverlay();
+        this.gridCore.hideOverlay();
     }
 
     public showLoading(show: any) {
         console.warn('ag-Grid: showLoading is deprecated, please use api.showLoadingOverlay() and api.hideOverlay() instead');
         if (show) {
-            this.grid.showLoadingOverlay();
+            this.gridCore.showLoadingOverlay();
         } else {
-            this.grid.hideOverlay();
+            this.gridCore.hideOverlay();
         }
     }
 
@@ -268,7 +308,7 @@ export class GridApi {
     }
 
     public ensureNodeVisible(comparator:any) {
-        this.grid.ensureNodeVisible(comparator);
+        this.gridCore.ensureNodeVisible(comparator);
     }
 
     public forEachInMemory(callback: Function) {
@@ -277,15 +317,15 @@ export class GridApi {
     }
 
     public forEachNode(callback: Function) {
-        this.grid.getRowModel().forEachNode(callback);
+        this.gridCore.getRowModel().forEachNode(callback);
     }
 
     public forEachNodeAfterFilter(callback: Function) {
-        this.grid.getRowModel().forEachNodeAfterFilter(callback);
+        this.gridCore.getRowModel().forEachNodeAfterFilter(callback);
     }
 
     public forEachNodeAfterFilterAndSort(callback: Function) {
-        this.grid.getRowModel().forEachNodeAfterFilterAndSort(callback);
+        this.gridCore.getRowModel().forEachNodeAfterFilterAndSort(callback);
     }
 
     public getFilterApiForColDef(colDef:any) {
@@ -308,15 +348,15 @@ export class GridApi {
     }
 
     public onFilterChanged() {
-        this.grid.onFilterChanged();
+        this.gridCore.onFilterChanged();
     }
 
     public setSortModel(sortModel:any) {
-        this.grid.setSortModel(sortModel);
+        this.gridCore.setSortModel(sortModel);
     }
 
     public getSortModel() {
-        return this.grid.getSortModel();
+        return this.gridCore.getSortModel();
     }
 
     public setFilterModel(model:any) {
@@ -324,7 +364,7 @@ export class GridApi {
     }
 
     public getFilterModel() {
-        return this.grid.getFilterModel();
+        return this.gridCore.getFilterModel();
     }
 
     public getFocusedCell() {
@@ -332,7 +372,7 @@ export class GridApi {
     }
 
     public setFocusedCell(rowIndex:any, colId:any) {
-        this.grid.setFocusedCell(rowIndex, colId);
+        this.gridCore.setFocusedCell(rowIndex, colId);
     }
 
     public setHeaderHeight(headerHeight: number) {
@@ -341,15 +381,15 @@ export class GridApi {
     }
 
     public showToolPanel(show:any) {
-        this.grid.showToolPanel(show);
+        this.gridCore.showToolPanel(show);
     }
 
     public isToolPanelShowing() {
-        return this.grid.isToolPanelShowing();
+        return this.gridCore.isToolPanelShowing();
     }
 
     public doLayout() {
-        this.grid.doLayout();
+        this.gridCore.doLayout();
     }
 
     public getValue(colDef: ColDef, data: any, node: any): any {
@@ -377,10 +417,10 @@ export class GridApi {
     }
 
     public refreshRowGroup(): void {
-        this.grid.refreshRowGroup();
+        this.gridCore.refreshRowGroup();
     }
 
     public destroy(): void {
-        this.grid.destroy();
+        this.context.destroy();
     }
 }

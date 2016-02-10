@@ -1,5 +1,6 @@
 import _ from '../utils';
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Bean} from "../context/context";
 
 export interface DragServiceParams {
     eDraggableElement: Element,
@@ -10,6 +11,7 @@ export interface DragServiceParams {
     onDragging: (delta: number, finished: boolean)=>void
 }
 
+@Bean('dragService')
 export class DragService {
 
     public addDragHandling(params: DragServiceParams): void {

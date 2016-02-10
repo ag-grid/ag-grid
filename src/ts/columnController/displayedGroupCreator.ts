@@ -5,13 +5,16 @@ import GroupInstanceIdCreator from "./groupInstanceIdCreator";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import ColumnGroup from "../entities/columnGroup";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
+@Bean('displayedGroupCreator')
 export default class DisplayedGroupCreator {
 
     private columnUtils: ColumnUtils;
 
-    public init(columnUtils: ColumnUtils): void {
+    public agInit(@Qualifier('columnUtils') columnUtils: ColumnUtils): void {
         this.columnUtils = columnUtils;
     }
 

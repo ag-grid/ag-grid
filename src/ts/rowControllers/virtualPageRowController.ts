@@ -1,6 +1,9 @@
 import _ from '../utils';
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -9,6 +12,7 @@ import {RowNode} from "../entities/rowNode";
 
 var logging = false;
 
+@Bean('virtualPageRowController')
 export default class VirtualPageRowController {
 
     rowRenderer: any;
@@ -32,11 +36,13 @@ export default class VirtualPageRowController {
     pageSize: any;
     overflowSize: any;
 
-    init(rowRenderer: any, gridOptionsWrapper: any, angularGrid: any) {
+    agInit(@Qualifier('rowRenderer') rowRenderer: any,
+         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: any,
+         @Qualifier('gridCore') gridCore: GridCore) {
         this.rowRenderer = rowRenderer;
         this.datasourceVersion = 0;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+        this.angularGrid = gridCore;
     }
 
     setDatasource(datasource: any) {

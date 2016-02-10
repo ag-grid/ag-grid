@@ -7,7 +7,10 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import ColumnSelectionPanel from "./columnSelectionPanel";
 import ValuesSelectionPanel from "./valuesSelectionPanel";
 import GroupSelectionPanel from "./groupSelectionPanel";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
+@Bean('toolPanel')
 export default class ToolPanel {
 
     layout: any;
@@ -16,8 +19,12 @@ export default class ToolPanel {
         this.layout = new VerticalStack();
     }
 
-    public init(columnController: any, inMemoryRowController: any, gridOptionsWrapper: GridOptionsWrapper,
-         popupService: PopupService, eventService: EventService, dragAndDropService: DragAndDropService) {
+    public agInit(@Qualifier('columnController') columnController: any,
+                @Qualifier('inMemoryRowController') inMemoryRowController: any,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('popupService') popupService: PopupService,
+                @Qualifier('eventService') eventService: EventService,
+                @Qualifier('dragAndDropService') dragAndDropService: DragAndDropService) {
 
         var suppressGroupAndValues = gridOptionsWrapper.isToolPanelSuppressGroups();
         var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();

@@ -8,16 +8,20 @@ import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {ColGroupDef} from "../entities/colDef";
 import {ColDef} from "../entities/colDef";
 import Column from "../entities/column";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
+@Bean('balancedColumnTreeBuilder')
 export default class BalancedColumnTreeBuilder {
 
     private gridOptionsWrapper: GridOptionsWrapper;
     private logger: Logger;
     private columnUtils: ColumnUtils;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper, loggerFactory: LoggerFactory,
-                columnUtils: ColumnUtils) {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+                @Qualifier('columnUtils') columnUtils: ColumnUtils) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnUtils = columnUtils;
 

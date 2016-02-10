@@ -1,9 +1,13 @@
 import GridOptionsWrapper from "./gridOptionsWrapper";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+
+@Bean('loggerFactory')
 export class LoggerFactory {
 
     private logging: boolean;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper): void {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
         this.logging = gridOptionsWrapper.isDebug();
     }
 

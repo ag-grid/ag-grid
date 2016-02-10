@@ -1,6 +1,9 @@
 import _ from '../utils';
 import {Grid} from "../grid";
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
 var template =
         '<div class="ag-paging-panel">'+
@@ -23,6 +26,7 @@ var template =
             '</span>'+
         '</div>';
 
+@Bean('paginationController')
 export default class PaginationController {
 
     private eGui: any;
@@ -38,7 +42,7 @@ export default class PaginationController {
     private lbLastRowOnPage: any;
     private ePageRowSummaryPanel: any;
 
-    private angularGrid: Grid;
+    private gridCore: GridCore;
     private callVersion: number;
     private gridOptionsWrapper: GridOptionsWrapper;
     private datasource: any;
@@ -48,9 +52,10 @@ export default class PaginationController {
     private totalPages: number;
     private currentPage: number;
 
-    public init(angularGrid: any, gridOptionsWrapper: any) {
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: any) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+        this.gridCore = gridCore;
         this.setupComponents();
         this.callVersion = 0;
     }
@@ -119,7 +124,7 @@ export default class PaginationController {
 
     private pageLoaded(rows: any, lastRowIndex: any) {
         var firstId = this.currentPage * this.pageSize;
-        this.angularGrid.setRowData(rows, firstId);
+        this.gridCore.setRowData(rows, firstId);
         // see if we hit the last row
         if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
             this.foundMaxRow = true;
@@ -167,16 +172,16 @@ export default class PaginationController {
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
-        this.angularGrid.showLoadingOverlay();
+        this.gridCore.showLoadingOverlay();
 
         var sortModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.gridCore.getSortModel();
         }
 
         var filterModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.gridCore.getFilterModel();
         }
 
         var params = {
@@ -211,7 +216,7 @@ export default class PaginationController {
             // set in an empty set of rows, this will at
             // least get rid of the loading panel, and
             // stop blocking things
-            that.angularGrid.setRowData([]);
+            that.gridCore.setRowData([]);
         }
     }
 

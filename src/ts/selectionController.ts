@@ -6,6 +6,9 @@ import EventService from "./eventService";
 import GridPanel from "./gridPanel/gridPanel";
 import {Events} from "./events";
 import {RowNode} from "./entities/rowNode";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {GridCore} from "./gridCore";
 
 // these constants are used for determining if groups should
 // be selected or deselected when selecting groups, and the group
@@ -15,10 +18,11 @@ var UNSELECTED = 1;
 var MIXED = 2;
 var DO_NOT_CARE = 3;
 
+@Bean('selectionController')
 export default class SelectionController {
 
     private eParentsOfRows: HTMLElement[];
-    private angularGrid: Grid;
+    private gridCore: GridCore;
     private gridOptionsWrapper: GridOptionsWrapper;
     private $scope: any;
     private rowRenderer: RowRenderer;
@@ -26,18 +30,27 @@ export default class SelectionController {
     private selectedNodesById: any;
     private rowModel: any;
     private eventService: EventService;
+    private gridPanel: GridPanel;
 
-    public init(angularGrid: Grid, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper,
-                $scope: any, rowRenderer: RowRenderer, eventService: EventService) {
-        this.eParentsOfRows = gridPanel.getRowsParent();
-        this.angularGrid = angularGrid;
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('gridPanel') gridPanel: GridPanel,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('$scope') $scope: any,
+                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
+                @Qualifier('eventService') eventService: EventService) {
+        this.gridCore = gridCore;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.$scope = $scope;
         this.rowRenderer = rowRenderer;
         this.eventService = eventService;
+        this.gridPanel = gridPanel;
 
         this.initSelectedNodesById();
         this.selectedRows = [];
+    }
+
+    public agPostInit(): void {
+        this.eParentsOfRows = this.gridPanel.getRowsParent();
     }
 
     private initSelectedNodesById() {
@@ -256,7 +269,7 @@ export default class SelectionController {
             });
 
             // inform virtual row listener
-            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, true);
+            this.gridCore.onVirtualRowSelected(virtualRenderedRowIndex, true);
         }
     }
 
@@ -306,7 +319,7 @@ export default class SelectionController {
                 _.querySelectorAll_removeCssClass(rowContainer, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
             });
             // inform virtual row listener
-            this.angularGrid.onVirtualRowSelected(virtualRenderedRowIndex, false);
+            this.gridCore.onVirtualRowSelected(virtualRenderedRowIndex, false);
         }
     }
 
@@ -456,7 +469,7 @@ export default class SelectionController {
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node.group) {
                 var selected = this.isNodeSelected(node);
-                this.angularGrid.onVirtualRowSelected(rowIndex, selected);
+                this.gridCore.onVirtualRowSelected(rowIndex, selected);
 
                 this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
                     if (selected) {

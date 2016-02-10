@@ -7,6 +7,8 @@ import FloatingRowModel from "../rowControllers/floatingRowModel";
 import BorderLayout from "../layout/borderLayout";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -75,6 +77,7 @@ var mainOverlayTemplate =
 var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
 var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
+@Bean('gridPanel')
 export default class GridPanel {
 
     private masterSlaveService: MasterSlaveService;
@@ -121,8 +124,12 @@ export default class GridPanel {
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, rowRenderer: RowRenderer,
-                masterSlaveService: MasterSlaveService, loggerFactory: LoggerFactory, floatingRowModel: FloatingRowModel) {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
+                @Qualifier('masterSlaveService') masterSlaveService: MasterSlaveService,
+                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();

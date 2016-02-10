@@ -8,7 +8,6 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Grid} from "../grid";
 import SelectionRendererFactory from "../selectionRendererFactory";
 import ExpressionService from "../expressionService";
-import MasterSlaveService from "../masterSlaveService";
 import BalancedColumnTreeBuilder from "./balancedColumnTreeBuilder";
 import DisplayedGroupCreator from "./displayedGroupCreator";
 import AutoWidthCalculator from "../rendering/autoWidthCalculator";
@@ -23,6 +22,9 @@ import ColumnChangeEvent from "../columnChangeEvent";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import GroupInstanceIdCreator from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
 export class ColumnApi {
 
@@ -81,13 +83,13 @@ export class ColumnApi {
     }
 }
 
+@Bean('columnController')
 export class ColumnController {
 
     private gridOptionsWrapper: GridOptionsWrapper;
-    private angularGrid: Grid;
+    private angularGrid: GridCore;
     private selectionRendererFactory: SelectionRendererFactory;
     private expressionService: ExpressionService;
-    private masterSlaveController: MasterSlaveService;
     private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     private displayedGroupCreator: DisplayedGroupCreator;
     private autoWidthCalculator: AutoWidthCalculator;
@@ -132,18 +134,22 @@ export class ColumnController {
     constructor() {
     }
 
-    public init(angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory,
-                gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                valueService: ValueService, masterSlaveController: MasterSlaveService,
-                eventService: EventService, balancedColumnTreeBuilder: BalancedColumnTreeBuilder,
-                displayedGroupCreator: DisplayedGroupCreator, columnUtils: ColumnUtils,
-                autoWidthCalculator: AutoWidthCalculator, loggerFactory: LoggerFactory) {
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('selectionRendererFactory') selectionRendererFactory: SelectionRendererFactory,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('expressionService') expressionService: ExpressionService,
+                @Qualifier('valueService') valueService: ValueService,
+                @Qualifier('eventService') eventService: EventService,
+                @Qualifier('balancedColumnTreeBuilder') balancedColumnTreeBuilder: BalancedColumnTreeBuilder,
+                @Qualifier('displayedGroupCreator') displayedGroupCreator: DisplayedGroupCreator,
+                @Qualifier('columnUtils') columnUtils: ColumnUtils,
+                @Qualifier('autoWidthCalculator') autoWidthCalculator: AutoWidthCalculator,
+                @Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+        this.angularGrid = gridCore;
         this.selectionRendererFactory = selectionRendererFactory;
         this.expressionService = expressionService;
         this.valueService = valueService;
-        this.masterSlaveController = masterSlaveController;
         this.eventService = eventService;
         this.balancedColumnTreeBuilder = balancedColumnTreeBuilder;
         this.displayedGroupCreator = displayedGroupCreator;

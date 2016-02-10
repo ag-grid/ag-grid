@@ -2,12 +2,17 @@ import ValueService from "./valueService";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 import {RowNode} from "./entities/rowNode";
 import Column from "./entities/column";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+
+@Bean('groupCreator')
 export default class GroupCreator {
 
     private valueService: ValueService;
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    public init(valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper) {
+    public agInit(@Qualifier('valueService') valueService: ValueService,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper) {
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
     }

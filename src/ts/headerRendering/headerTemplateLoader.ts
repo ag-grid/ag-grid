@@ -2,9 +2,12 @@ import _ from '../utils';
 import SvgFactory from "../svgFactory";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import Column from "../entities/column";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
+@Bean('headerTemplateLoader')
 export default class HeaderTemplateLoader {
 
     private static HEADER_CELL_TEMPLATE =
@@ -22,7 +25,7 @@ export default class HeaderTemplateLoader {
 
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper): void {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 

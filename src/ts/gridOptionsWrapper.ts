@@ -5,6 +5,8 @@ import Constants from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef} from "./entities/colDef";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -12,6 +14,7 @@ function isTrue(value: any) {
     return value === true || value === 'true';
 }
 
+@Bean('gridOptionsWrapper')
 export default class GridOptionsWrapper {
 
     private static MIN_COL_WIDTH = 10;
@@ -20,7 +23,8 @@ export default class GridOptionsWrapper {
 
     private headerHeight: number;
 
-    public init(gridOptions: GridOptions, eventService: EventService): void {
+    public agInit(@Qualifier('gridOptions') gridOptions: GridOptions,
+                @Qualifier('eventService') eventService: EventService): void {
         this.gridOptions = gridOptions;
 
         this.headerHeight = gridOptions.headerHeight;

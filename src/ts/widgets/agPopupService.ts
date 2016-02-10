@@ -1,11 +1,14 @@
 import _ from '../utils';
 import Constants from "../constants";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
+@Bean('popupService')
 export default class PopupService {
 
     private ePopupParent: any;
 
-    public init(ePopupParent: any) {
+    public agInit(@Qualifier('ePopupParent') ePopupParent: any) {
         this.ePopupParent = ePopupParent;
     }
 

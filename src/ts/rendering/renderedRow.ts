@@ -14,6 +14,7 @@ import EventService from "../eventService";
 import Column from "../entities/column";
 import VHtmlElement from "../virtualDom/vHtmlElement";
 import {Events} from "../events";
+import {GridCore} from "../gridCore";
 
 export default class RenderedRow {
 
@@ -30,7 +31,7 @@ export default class RenderedRow {
 
     private gridOptionsWrapper: GridOptionsWrapper;
     private parentScope: any;
-    private angularGrid: Grid;
+    private gridCore: GridCore;
     private columnController: ColumnController;
     private expressionService: ExpressionService;
     private rowRenderer: RowRenderer;
@@ -49,7 +50,7 @@ export default class RenderedRow {
     constructor(gridOptionsWrapper: GridOptionsWrapper,
                 valueService: ValueService,
                 parentScope: any,
-                angularGrid: Grid,
+                gridCore: GridCore,
                 columnController: ColumnController,
                 expressionService: ExpressionService,
                 cellRendererMap: {[key: string]: any},
@@ -67,7 +68,7 @@ export default class RenderedRow {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.valueService = valueService;
         this.parentScope = parentScope;
-        this.angularGrid = angularGrid;
+        this.gridCore = gridCore;
         this.expressionService = expressionService;
         this.columnController = columnController;
         this.cellRendererMap = cellRendererMap;
@@ -434,7 +435,7 @@ export default class RenderedRow {
 
             // ctrlKey for windows, metaKey for Apple
             var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
-            that.angularGrid.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
+            that.gridCore.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
         });
         vRow.addEventListener("dblclick", function (event: any) {
             var agEvent = that.createEvent(event, this);

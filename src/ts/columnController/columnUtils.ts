@@ -5,13 +5,16 @@ import ColumnGroup from "../entities/columnGroup";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import Column from "../entities/column";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
+@Bean('columnUtils')
 export default class ColumnUtils {
 
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper): void {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 

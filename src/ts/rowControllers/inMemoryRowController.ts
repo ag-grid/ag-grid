@@ -11,14 +11,17 @@ import EventService from "../eventService";
 import {Events} from "../events";
 import Column from "../entities/column";
 import {ColDef} from "../entities/colDef";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
+@Bean('inMemoryRowController')
 export default class InMemoryRowController {
 
     private gridOptionsWrapper: GridOptionsWrapper;
     private columnController: ColumnController;
-    private angularGrid: Grid;
     private filterManager: FilterManager;
     private $scope: any;
 
@@ -39,12 +42,15 @@ export default class InMemoryRowController {
         this.createModel();
     }
 
-    init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, angularGrid: any,
-         filterManager: FilterManager, $scope: any, groupCreator: GroupCreator, valueService: ValueService,
-         eventService: EventService) {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('filterManager') filterManager: FilterManager,
+                @Qualifier('$scope') $scope: any,
+                @Qualifier('groupCreator') groupCreator: GroupCreator,
+                @Qualifier('valueService') valueService: ValueService,
+                @Qualifier('eventService') eventService: EventService) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnController = columnController;
-        this.angularGrid = angularGrid;
         this.filterManager = filterManager;
         this.$scope = $scope;
         this.groupCreator = groupCreator;

@@ -2,14 +2,19 @@ import GridOptionsWrapper from "./gridOptionsWrapper";
 import ExpressionService from "./expressionService";
 import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
 
+@Bean('valueService')
 export default class ValueService {
 
     private gridOptionsWrapper: GridOptionsWrapper;
     private expressionService: ExpressionService;
     private columnController: ColumnController;
 
-    public init(gridOptionsWrapper:GridOptionsWrapper, expressionService:ExpressionService, columnController:ColumnController):void {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('expressionService') expressionService: ExpressionService,
+                @Qualifier('columnController') columnController: ColumnController): void {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.expressionService = expressionService;
         this.columnController = columnController;

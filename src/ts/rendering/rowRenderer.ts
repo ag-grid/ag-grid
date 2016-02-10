@@ -17,12 +17,17 @@ import {Events} from "../events";
 import Constants from "../constants";
 import {ColDef} from "../entities/colDef";
 import RenderedCell from "./renderedCell";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
+import {ColumnController} from "../columnController/columnController";
 
+@Bean('rowRenderer')
 export default class RowRenderer {
 
-    private columnModel: any;
+    private columnController: ColumnController;
     private gridOptionsWrapper: GridOptionsWrapper;
-    private angularGrid: Grid;
+    private gridCore: GridCore;
     private selectionRendererFactory: SelectionRendererFactory;
     private gridPanel: GridPanel;
     private $compile: any;
@@ -66,14 +71,22 @@ export default class RowRenderer {
     private eFloatingBottomPinnedRightContainer: HTMLElement;
     private eParentsOfRows: HTMLElement[];
 
-    public init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel,
-                angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any,
-                selectionController: SelectionController, expressionService: ExpressionService,
-                templateService: TemplateService, valueService: ValueService, eventService: EventService,
-                floatingRowModel: FloatingRowModel) {
-        this.columnModel = columnModel;
+    public agInit(@Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('gridPanel') gridPanel: GridPanel,
+                @Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('selectionRendererFactory') selectionRendererFactory: SelectionRendererFactory,
+                @Qualifier('$compile') $compile: any,
+                @Qualifier('$scope') $scope: any,
+                @Qualifier('selectionController') selectionController: SelectionController,
+                @Qualifier('expressionService') expressionService: ExpressionService,
+                @Qualifier('templateService') templateService: TemplateService,
+                @Qualifier('valueService') valueService: ValueService,
+                @Qualifier('eventService') eventService: EventService,
+                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
+        this.columnController = columnController;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+        this.gridCore = gridCore;
         this.selectionRendererFactory = selectionRendererFactory;
         this.gridPanel = gridPanel;
         this.$compile = $compile;
@@ -82,7 +95,6 @@ export default class RowRenderer {
         this.expressionService = expressionService;
         this.templateService = templateService;
         this.valueService = valueService;
-        this.findAllElements(gridPanel);
         this.eventService = eventService;
         this.floatingRowModel = floatingRowModel;
 
@@ -120,7 +132,7 @@ export default class RowRenderer {
     }
 
     public setMainRowWidths() {
-        var mainRowWidth = this.columnModel.getBodyContainerWidth() + "px";
+        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
 
         this.eAllBodyContainers.forEach( function(container: HTMLElement) {
             var unpinnedRows: [any] = (<any>container).querySelectorAll(".ag-row");
@@ -130,21 +142,21 @@ export default class RowRenderer {
         });
     }
 
-    private findAllElements(gridPanel: any) {
-        this.eBodyContainer = gridPanel.getBodyContainer();
-        this.ePinnedLeftColsContainer = gridPanel.getPinnedLeftColsContainer();
-        this.ePinnedRightColsContainer = gridPanel.getPinnedRightColsContainer();
+    private agPostInit() {
+        this.eBodyContainer = this.gridPanel.getBodyContainer();
+        this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
+        this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();
 
-        this.eFloatingTopContainer = gridPanel.getFloatingTopContainer();
-        this.eFloatingTopPinnedLeftContainer = gridPanel.getPinnedLeftFloatingTop();
-        this.eFloatingTopPinnedRightContainer = gridPanel.getPinnedRightFloatingTop();
+        this.eFloatingTopContainer = this.gridPanel.getFloatingTopContainer();
+        this.eFloatingTopPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingTop();
+        this.eFloatingTopPinnedRightContainer = this.gridPanel.getPinnedRightFloatingTop();
 
-        this.eFloatingBottomContainer = gridPanel.getFloatingBottomContainer();
-        this.eFloatingBottomPinnedLeftContainer = gridPanel.getPinnedLeftFloatingBottom();
-        this.eFloatingBottomPinnedRightContainer = gridPanel.getPinnedRightFloatingBottom();
+        this.eFloatingBottomContainer = this.gridPanel.getFloatingBottomContainer();
+        this.eFloatingBottomPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingBottom();
+        this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
 
-        this.eBodyViewport = gridPanel.getBodyViewport();
-        this.eParentsOfRows = gridPanel.getRowsParent();
+        this.eBodyViewport = this.gridPanel.getBodyViewport();
+        this.eParentsOfRows = this.gridPanel.getRowsParent();
 
         this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
             this.eFloatingTopContainer];
@@ -183,7 +195,7 @@ export default class RowRenderer {
         renderedRows.length = 0;
 
         // if no cols, don't draw row - can we get rid of this???
-        var columns = this.columnModel.getAllDisplayedColumns();
+        var columns = this.columnController.getAllDisplayedColumns();
         if (!columns || columns.length == 0) {
             return;
         }
@@ -191,7 +203,7 @@ export default class RowRenderer {
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
                 var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
-                    this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+                    this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
                     this.selectionRendererFactory, this.$compile, this.templateService,
                     this.selectionController, this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
                     node, rowIndex, this.eventService);
@@ -269,7 +281,7 @@ export default class RowRenderer {
         this.drawVirtualRows();
     }
 
-    public destroy() {
+    public agDestroy() {
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove);
     }
@@ -323,7 +335,7 @@ export default class RowRenderer {
 
         var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
         this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
-        this.angularGrid.onVirtualRowRemoved(indexToRemove);
+        this.gridCore.onVirtualRowRemoved(indexToRemove);
 
         delete this.renderedRows[indexToRemove];
     }
@@ -385,7 +397,7 @@ export default class RowRenderer {
 
         //var start = new Date().getTime();
 
-        var mainRowWidth = this.columnModel.getBodyContainerWidth();
+        var mainRowWidth = this.columnController.getBodyContainerWidth();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -418,14 +430,14 @@ export default class RowRenderer {
     }
 
     private insertRow(node: any, rowIndex: any, mainRowWidth: any) {
-        var columns = this.columnModel.getAllDisplayedColumns();
+        var columns = this.columnController.getAllDisplayedColumns();
         // if no cols, don't draw row
         if (!columns || columns.length == 0) {
             return;
         }
 
         var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
-            this.angularGrid, this.columnModel, this.expressionService, this.cellRendererMap,
+            this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
             this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex, this.eventService);
@@ -534,7 +546,7 @@ export default class RowRenderer {
                 nextColumnToFocus = lastColumn;
                 break;
             case Constants.KEY_RIGHT :
-                var colToRight = this.columnModel.getDisplayedColAfter(lastColumn);
+                var colToRight = this.columnController.getDisplayedColAfter(lastColumn);
                 // if already on right, do nothing
                 if (!colToRight) {
                     return null;
@@ -543,7 +555,7 @@ export default class RowRenderer {
                 nextColumnToFocus = colToRight;
                 break;
             case Constants.KEY_LEFT :
-                var colToLeft = this.columnModel.getDisplayedColBefore(lastColumn);
+                var colToLeft = this.columnController.getDisplayedColBefore(lastColumn);
                 // if already on left, do nothing
                 if (!colToLeft) {
                     return null;
@@ -601,7 +613,7 @@ export default class RowRenderer {
     // called via API
     public setFocusedCell(rowIndex: any, colIndex: any) {
         var renderedRow = this.renderedRows[rowIndex];
-        var column = this.columnModel.getAllDisplayedColumns()[colIndex];
+        var column = this.columnController.getAllDisplayedColumns()[colIndex];
         if (renderedRow && column) {
             var eCell = renderedRow.getCellForCol(column);
             this.focusCell(eCell, rowIndex, colIndex, column.getColDef(), true);
@@ -615,7 +627,7 @@ export default class RowRenderer {
         var lastRowToCheck = this.lastVirtualRenderedRow;
         var currentRowIndex = rowIndex;
 
-        var visibleColumns = this.columnModel.getAllDisplayedColumns();
+        var visibleColumns = this.columnController.getAllDisplayedColumns();
         var currentCol = column;
 
         while (true) {

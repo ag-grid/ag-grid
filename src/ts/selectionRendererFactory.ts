@@ -1,12 +1,18 @@
 import {Grid} from "./grid";
+import {Bean} from "./context/context";
+import {GridCore} from "./gridCore";
+import {Qualifier} from "./context/context";
+import SelectionController from "./selectionController";
 
+@Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
 
-    private grid: Grid;
+    private grid: GridCore;
     private selectionController: any;
 
-    public init(grid: Grid, selectionController: any) {
-        this.grid = grid;
+    public agInit(@Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('selectionController') selectionController: SelectionController) {
+        this.grid = gridCore;
         this.selectionController = selectionController;
     }
 
@@ -32,7 +38,7 @@ export default class SelectionRendererFactory {
             }
         };
 
-        this.grid.addVirtualRowListener(Grid.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
+        this.grid.addVirtualRowListener(GridCore.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
             this.setCheckboxState(eCheckbox, selected);
         });
 

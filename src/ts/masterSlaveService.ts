@@ -9,6 +9,10 @@ import {GridOptions} from "./entities/gridOptions";
 import ColumnChangeEvent from "./columnChangeEvent";
 import Column from "./entities/column";
 import ColumnGroup from "./entities/columnGroup";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+
+@Bean('masterSlaveService')
 export default class MasterSlaveService {
 
     private gridOptionsWrapper: GridOptionsWrapper;
@@ -22,11 +26,11 @@ export default class MasterSlaveService {
     // we don't fire back any events.
     private consuming = false;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper,
-                columnController: ColumnController,
-                gridPanel: GridPanel,
-                loggerFactory: LoggerFactory,
-                eventService: EventService) {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('gridPanel') gridPanel: GridPanel,
+                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+                @Qualifier('eventService') eventService: EventService) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnController = columnController;
         this.gridPanel = gridPanel;

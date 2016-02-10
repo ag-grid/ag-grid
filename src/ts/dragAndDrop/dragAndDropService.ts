@@ -1,16 +1,19 @@
 import _ from '../utils';
 import {Logger, LoggerFactory} from "../logger";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 /** Functionality for internal DnD functionality between GUI widgets. Eg this service is used to drag columns
  * from the 'available columns' list and putting them into the 'grouped columns' in the tool panel.
  * This service is NOT used by the column headers for resizing and moving, that is a different use case. */
+@Bean('dragAndDropService')
 export default class DragAndDropService {
 
     private dragItem: any;
     private mouseUpEventListener: EventListener;
     private logger: Logger;
 
-    public init(loggerFactory: LoggerFactory) {
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
 
         // need to clean this up, add to 'finished' logic in grid
@@ -22,9 +25,8 @@ export default class DragAndDropService {
         this.logger.log('initialised');
     }
 
-    public destroy(): void {
+    public agDestroy(): void {
         document.removeEventListener('mouseup', this.mouseUpEventListener);
-        this.logger.log('destroyed');
     }
 
     private stopDragging() {

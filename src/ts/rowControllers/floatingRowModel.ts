@@ -1,7 +1,10 @@
 
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
+@Bean('floatingRowModel')
 export default class FloatingRowModel {
 
     private gridOptionsWrapper: GridOptionsWrapper;
@@ -9,11 +12,13 @@ export default class FloatingRowModel {
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
 
-    public init(gridOptionsWrapper: GridOptionsWrapper): void {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
         this.gridOptionsWrapper = gridOptionsWrapper;
+    }
 
-        this.setFloatingTopRowData(gridOptionsWrapper.getFloatingTopRowData());
-        this.setFloatingBottomRowData(gridOptionsWrapper.getFloatingBottomRowData());
+    public agPostInit() {
+        this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
+        this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
     }
 
     public setFloatingTopRowData(rowData: any[]): void {

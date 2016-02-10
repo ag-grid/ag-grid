@@ -2,7 +2,10 @@
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
 import _ from './utils';
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
 
+@Bean('eventService')
 export default class EventService {
 
     private allListeners: {[key: string]: Function[]} = {};
@@ -11,8 +14,13 @@ export default class EventService {
 
     private logger: Logger;
 
-    public init(loggerFactory: LoggerFactory) {
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+                @Qualifier('globalEventListener') globalEventListener: Function = null) {
         this.logger = loggerFactory.create('EventService');
+
+        if (globalEventListener) {
+            this.addGlobalListener(globalEventListener);
+        }
     }
 
     private getListenerList(eventType: string): Function[] {

@@ -12,13 +12,17 @@ import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import Column from "../entities/column";
 import RenderedHeaderCell from "./renderedHeaderCell";
 import {DragService} from "./dragService";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
+@Bean('headerRenderer')
 export default class HeaderRenderer {
 
     private headerTemplateLoader: HeaderTemplateLoader;
     private gridOptionsWrapper: GridOptionsWrapper;
     private columnController: ColumnController;
-    private grid: Grid;
+    private grid: GridCore;
     private filterManager: FilterManager;
     private $scope: any;
     private $compile: any;
@@ -34,22 +38,27 @@ export default class HeaderRenderer {
 
     private headerElements: RenderedHeaderElement[] = [];
 
-    public init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, gridPanel: GridPanel,
-                grid: Grid, filterManager: FilterManager, $scope: any, $compile: any,
-                headerTemplateLoader: HeaderTemplateLoader, dragService: DragService) {
+    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('gridPanel') gridPanel: GridPanel,
+                @Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('filterManager') filterManager: FilterManager,
+                @Qualifier('$scope') $scope: any,
+                @Qualifier('$compile') $compile: any,
+                @Qualifier('headerTemplateLoader') headerTemplateLoader: HeaderTemplateLoader,
+                @Qualifier('dragService') dragService: DragService) {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnController = columnController;
-        this.grid = grid;
+        this.grid = gridCore;
         this.filterManager = filterManager;
         this.$scope = $scope;
         this.$compile = $compile;
         this.headerTemplateLoader = headerTemplateLoader;
         this.dragService = dragService;
         this.gridPanel = gridPanel;
-        this.findAllElements();
     }
 
-    private findAllElements() {
+    private agPostInit() {
         this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();
         this.ePinnedRightHeader = this.gridPanel.getPinnedRightHeader();
         this.eHeaderContainer = this.gridPanel.getHeaderContainer();

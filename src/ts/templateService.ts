@@ -1,10 +1,14 @@
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+
+@Bean('templateService')
 export default class TemplateService {
 
     templateCache:any = {};
     waitingCallbacks:any = {};
     $scope: any;
 
-    init($scope: any) {
+    agInit(@Qualifier('$scope') $scope: any) {
         this.$scope = $scope;
     }
 

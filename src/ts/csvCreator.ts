@@ -4,6 +4,9 @@ import {Grid} from "./grid";
 import ValueService from "./valueService";
 import Column from "./entities/column";
 import {RowNode} from "./entities/rowNode";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {GridCore} from "./gridCore";
 var LINE_SEPARATOR = '\r\n';
 
 export interface CsvExportParams {
@@ -17,13 +20,22 @@ export interface CsvExportParams {
     columnSeparator?: string;
 }
 
+@Bean('csvCreator')
 export default class CsvCreator {
 
-    constructor(
-        private rowController: InMemoryRowController,
-        private columnController: ColumnController,
-        private grid: Grid,
-        private valueService: ValueService) {
+    private inMemoryRowController: InMemoryRowController;
+    private columnController: ColumnController;
+    private gridCore: GridCore;
+    private valueService: ValueService;
+
+    public agInit(@Qualifier('inMemoryRowController') inMemoryRowController: InMemoryRowController,
+                @Qualifier('columnController') columnController: ColumnController,
+                @Qualifier('gridCore') gridCore: GridCore,
+                @Qualifier('valueService') valueService: ValueService) {
+        this.inMemoryRowController = inMemoryRowController;
+        this.columnController = columnController;
+        this.gridCore = gridCore;
+        this.valueService = valueService;
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
@@ -51,7 +63,7 @@ export default class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (!this.grid.isUsingInMemoryModel()) {
+        if (!this.gridCore.isUsingInMemoryModel()) {
             console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
             return '';
         }
@@ -96,7 +108,7 @@ export default class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
-        this.rowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        this.inMemoryRowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }
