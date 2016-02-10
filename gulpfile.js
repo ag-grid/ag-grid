@@ -1,6 +1,4 @@
 var gulp = require('gulp');
-var rename = require("gulp-rename");
-var buffer = require('vinyl-buffer');
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 var header = require('gulp-header');

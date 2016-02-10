@@ -23,6 +23,12 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
+    "gulp": "3.9.0",
+    "gulp-typescript": "2.10.0",
+    "typescript": "1.7.5",
+    "gulp-header": "1.7.0",
+    "merge2": "0.3.6",
+
     "systemjs": "0.19.6",
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.33.3",
