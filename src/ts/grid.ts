@@ -42,6 +42,8 @@ export class Grid {
 
     public static VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
     public static VIRTUAL_ROW_SELECTED = 'virtualRowSelected';
+    
+    public lastSelectedRowIndex: number;
 
     private virtualRowListeners: { [key: string]: { [key: number]: Function[] } } = {
         virtualRowRemoved: {},
@@ -516,6 +518,23 @@ export class Grid {
             selectionController.selectNode(node, multiSelectKeyPressed);
         }
     }
+    
+    public onShiftSelectRows (endShiftSelectRowIndex) {
+		var gridOptionsWrapper = this.gridOptionsWrapper;
+		var that = this;
+		
+		if (that.lastSelectedRowIndex > endShiftSelectRowIndex){
+			var lastRowIndexTemp = that.lastSelectedRowIndex;
+			that.lastSelectedRowIndex = endShiftSelectRowIndex - 1;
+			endShiftSelectRowIndex = lastRowIndexTemp;
+		}
+		
+		gridOptionsWrapper.gridOptions.api.forEachNode(function(node){
+			if (node.childIndex > that.lastSelectedRowIndex && node.childIndex <= endShiftSelectRowIndex) {
+				that.onRowClicked(true, node.childIndex, node);
+			}
+		})
+	}
 
     public showLoadingOverlay(): void {
         this.gridPanel.showLoadingOverlay();
