@@ -49,7 +49,9 @@ export class AgGridNg2 {
     }
 
     public ngOnDestroy(): void {
-        this.api.destroy();
+        if (this._initialised) {
+            this.api.destroy();
+        }
     }
 
     private globalEventListener(eventType: string, event: any): void {

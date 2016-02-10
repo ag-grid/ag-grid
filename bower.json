@@ -1,11 +1,11 @@
 {
-  "name": "ag-grid-ng2",
-  "version": "3.3.0",
+  "name": "ag-grid-enterprise",
+  "version": "3.3.1",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
     "Niall Crosby <niall.crosby@gmail.com>"
   ],
-  "description": "Advanced Javascript Datagrid. Supports raw Javascript, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "description": "Enterprise features for ag-Grid",
   "main": [
     "./main.js"
   ],
@@ -15,8 +15,7 @@
   "keywords": [
     "grid",
     "data",
-    "table",
-    "angular2"
+    "table"
   ],
   "license": "MIT",
   "ignore": [
