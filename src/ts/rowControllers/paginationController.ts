@@ -29,6 +29,9 @@ var template =
 @Bean('paginationController')
 export default class PaginationController {
 
+    @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     private eGui: any;
     private btNext: any;
     private btPrevious: any;
@@ -42,9 +45,7 @@ export default class PaginationController {
     private lbLastRowOnPage: any;
     private ePageRowSummaryPanel: any;
 
-    private gridCore: GridCore;
     private callVersion: number;
-    private gridOptionsWrapper: GridOptionsWrapper;
     private datasource: any;
     private pageSize: number;
     private rowCount: number;
@@ -52,10 +53,7 @@ export default class PaginationController {
     private totalPages: number;
     private currentPage: number;
 
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: any) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.gridCore = gridCore;
+    public agInit() {
         this.setupComponents();
         this.callVersion = 0;
     }

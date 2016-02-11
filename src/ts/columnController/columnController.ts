@@ -86,13 +86,15 @@ export class ColumnApi {
 @Bean('columnController')
 export class ColumnController {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private angularGrid: GridCore;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private expressionService: ExpressionService;
-    private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
-    private displayedGroupCreator: DisplayedGroupCreator;
-    private autoWidthCalculator: AutoWidthCalculator;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Qualifier('expressionService') private expressionService: ExpressionService;
+    @Qualifier('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
+    @Qualifier('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
+    @Qualifier('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
+    @Qualifier('valueService') private valueColumns: Column[];
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -117,44 +119,14 @@ export class ColumnController {
     private displayedCenterColumns: Column[] = [];
 
     private headerRowCount = 0;
-
     private rowGroupColumns: Column[];
-    private valueColumns: Column[];
-
     private groupAutoColumn: Column;
-
     private setupComplete = false;
     private valueService: ValueService;
 
-    private eventService: EventService;
-    private columnUtils: ColumnUtils;
-
     private logger: Logger;
 
-    constructor() {
-    }
-
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('selectionRendererFactory') selectionRendererFactory: SelectionRendererFactory,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('expressionService') expressionService: ExpressionService,
-                @Qualifier('valueService') valueService: ValueService,
-                @Qualifier('eventService') eventService: EventService,
-                @Qualifier('balancedColumnTreeBuilder') balancedColumnTreeBuilder: BalancedColumnTreeBuilder,
-                @Qualifier('displayedGroupCreator') displayedGroupCreator: DisplayedGroupCreator,
-                @Qualifier('columnUtils') columnUtils: ColumnUtils,
-                @Qualifier('autoWidthCalculator') autoWidthCalculator: AutoWidthCalculator,
-                @Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = gridCore;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.expressionService = expressionService;
-        this.valueService = valueService;
-        this.eventService = eventService;
-        this.balancedColumnTreeBuilder = balancedColumnTreeBuilder;
-        this.displayedGroupCreator = displayedGroupCreator;
-        this.columnUtils = columnUtils;
-        this.autoWidthCalculator = autoWidthCalculator;
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
 

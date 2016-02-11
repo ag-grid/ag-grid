@@ -23,11 +23,7 @@ export default class HeaderTemplateLoader {
         '  </div>' +
         '</div>';
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public createHeaderElement(column: Column): HTMLElement {
 

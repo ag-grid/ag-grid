@@ -4,14 +4,16 @@ import {LoggerFactory} from "../logger";
 
 export interface ContextParams {
     seed: any,
-    beans: (new()=>Object)[],
+    beans: any[],
     debug: boolean
 }
 
 interface BeanEntry {
     beanInstance: any,
     beanName: any,
-    initParams: string[]
+    initParams: string[],
+    constructorParams: string[],
+    attributes: any
 }
 
 export class Context {
@@ -32,26 +34,48 @@ export class Context {
         this.logger.log('ag-Grid: STARTING UP GRID CONTEXT');
 
         this.createBeans();
+        this.setAttributesOnBeans();
         this.initBeans();
         this.postInitBeans();
+        this.initCompleteBeans();
     }
 
     private createBeans(): void {
         this.contextParams.beans.forEach( (Bean: new()=>Object) => {
-            var newInstance = new Bean();
 
-            if (!(<any>newInstance).__agGrid) {
-                console.error('context items ' + newInstance + ' is not a bean');
+            var metaData = Bean.prototype.__agBeanMetaData;
+
+            if (!metaData) {
+                var beanName: string;
+                if (Bean.prototype.constructor) {
+                    beanName = Bean.prototype.constructor.name;
+                } else {
+                    beanName = ''+Bean;
+                }
+                console.error('context item ' + beanName + ' is not a bean');
                 return;
             }
 
-            var metaData = (<any>newInstance).__agGrid;
-
-            this.beans[metaData.beanName] = {
-                beanInstance: newInstance,
+            var beanEntry = {
+                beanInstance: <any> null,
                 beanName: metaData.beanName,
-                initParams: metaData.agInit
+                initParams: metaData.agInit,
+                constructorParams: metaData.agConstructor,
+                attributes: metaData.agClassAttributes
             };
+
+            this.beans[metaData.beanName] = beanEntry;
+
+            var constructorParams = this.getBeansForParameters(beanEntry.constructorParams, beanEntry.beanName);
+            var newInstance = applyToConstructor(Bean, constructorParams);
+
+            beanEntry.beanInstance = newInstance;
+        });
+    }
+
+    private setAttributesOnBeans(): void {
+        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
+            this.setAttributesOnBean(beanEntry);
         });
     }
 
@@ -61,22 +85,45 @@ export class Context {
         });
     }
 
+    private setAttributesOnBean(beanEntry: BeanEntry): void {
+        // if no init method, mark bean as initialised
+        if (!beanEntry.attributes) {
+            return;
+        }
+
+        _.iterateObject(beanEntry.attributes, (attribute: string, otherBeanName: string) => {
+            var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
+            beanEntry.beanInstance[attribute] = otherBean;
+        });
+
+        this.logger.log('setting attributes ' + beanEntry.beanName);
+    }
+
     private initialiseBean(beanEntry: BeanEntry): void {
         // if no init method, mark bean as initialised
         if (!beanEntry.beanInstance.agInit || !beanEntry.initParams) {
             return;
         }
 
-        var initParams: any[] = [];
-        _.iterateObject(beanEntry.initParams, (paramIndex: string, otherBeanName: string) => {
-            var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
-            initParams[Number(paramIndex)] = otherBean;
-        });
+        var initParams = this.getBeansForParameters(beanEntry.initParams, beanEntry.beanName);
+        //_.iterateObject(beanEntry.initParams, (paramIndex: string, otherBeanName: string) => {
+        //    var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
+        //    initParams[Number(paramIndex)] = otherBean;
+        //});
 
-        if (this.contextParams.debug) {
-            this.logger.log('initialising ' + beanEntry.beanName);
-        }
+        this.logger.log('initialising ' + beanEntry.beanName);
         beanEntry.beanInstance.agInit.apply(beanEntry.beanInstance, initParams);
+    }
+
+    private getBeansForParameters(parameters: any, beanName: string): any[] {
+        var beansList: any[] = [];
+        if (parameters) {
+            _.iterateObject(parameters, (paramIndex: string, otherBeanName: string) => {
+                var otherBean = this.lookupBeanInstance(beanName, otherBeanName);
+                beansList[Number(paramIndex)] = otherBean;
+            });
+        }
+        return beansList;
     }
 
     private lookupBeanInstance(wiringBean: string, beanName: string): any {
@@ -102,10 +149,16 @@ export class Context {
         });
     }
 
+    private initCompleteBeans(): void {
+        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
+            if (beanEntry.beanInstance.agInitComplete) {
+                beanEntry.beanInstance.agInitComplete();
+            }
+        });
+    }
+
     public destroy(): void {
-        if (this.contextParams.debug) {
-            this.logger.log('SHUTTING DOWN GRID CONTEXT');
-        }
+        this.logger.log('SHUTTING DOWN GRID CONTEXT');
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             if (beanEntry.beanInstance.agDestroy) {
                 if (this.contextParams.debug) {
@@ -117,6 +170,14 @@ export class Context {
     }
 }
 
+// taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
+// allows calling 'apply' on a constructor
+function applyToConstructor(constructor: Function, argArray: any[]) {
+    var args = [null].concat(argArray);
+    var factoryFunction = constructor.bind.apply(constructor, args);
+    return new factoryFunction();
+}
+
 export function Bean(beanName: string): Function {
     return (classConstructor: any) => {
         var props = getOrCreateProps(classConstructor.prototype);
@@ -125,25 +186,46 @@ export function Bean(beanName: string): Function {
 }
 
 export function Qualifier(name: string): Function {
-    return (classPrototype: any, methodName: string, index: number) => {
+    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
 
-        var props = getOrCreateProps(classPrototype);
+        var props: any;
 
-        if (!props[methodName]) {
-            props[methodName] = {};
+        if (typeof index === 'number') {
+            // it's a parameter on a method
+            if (methodOrAttributeName!=='agInit') {
+                console.log('asf');
+            }
+            var methodName: string;
+            if (methodOrAttributeName) {
+                props = getOrCreateProps(classPrototype);
+                methodName = methodOrAttributeName;
+            } else {
+                props = getOrCreateProps(classPrototype.prototype);
+                methodName = 'agConstructor';
+            }
+            if (!props[methodName]) {
+                props[methodName] = {};
+            }
+            props[methodName][index] = name;
+        } else {
+            // it's an attribute on the class
+            var props = getOrCreateProps(classPrototype);
+            if (!props.agClassAttributes) {
+                props.agClassAttributes = {};
+            }
+            props.agClassAttributes[methodOrAttributeName] = name;
         }
 
-        props[methodName][index] = name;
     };
 }
 
 function getOrCreateProps(target: any): any {
 
-    var props = target.__agGrid;
+    var props = target.__agBeanMetaData;
 
     if (!props) {
         props = {};
-        target.__agGrid = props;
+        target.__agBeanMetaData = props;
     }
 
     return props;

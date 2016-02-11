@@ -19,44 +19,24 @@ import {GridCore} from "../gridCore";
 @Bean('headerRenderer')
 export default class HeaderRenderer {
 
-    private headerTemplateLoader: HeaderTemplateLoader;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private columnController: ColumnController;
-    private grid: GridCore;
-    private filterManager: FilterManager;
-    private $scope: any;
-    private $compile: any;
+    @Qualifier('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('gridCore') private grid: GridCore;
+    @Qualifier('filterManager') private filterManager: FilterManager;
+    @Qualifier('$scope') private $scope: any;
+    @Qualifier('$compile') private $compile: any;
+    @Qualifier('dragService') private dragService: DragService;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
+
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
     private eHeaderContainer: HTMLElement;
     private eHeaderViewport: HTMLElement;
     private eRoot: HTMLElement;
-    private dragService: DragService;
-    private gridPanel: GridPanel;
-
     private eHeaderOverlay: HTMLElement;
 
     private headerElements: RenderedHeaderElement[] = [];
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('filterManager') filterManager: FilterManager,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('$compile') $compile: any,
-                @Qualifier('headerTemplateLoader') headerTemplateLoader: HeaderTemplateLoader,
-                @Qualifier('dragService') dragService: DragService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.grid = gridCore;
-        this.filterManager = filterManager;
-        this.$scope = $scope;
-        this.$compile = $compile;
-        this.headerTemplateLoader = headerTemplateLoader;
-        this.dragService = dragService;
-        this.gridPanel = gridPanel;
-    }
 
     private agPostInit() {
         this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();

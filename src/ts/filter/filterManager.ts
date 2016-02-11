@@ -16,38 +16,20 @@ import {GridCore} from "../gridCore";
 @Bean('filterManager')
 export default class FilterManager {
 
-    private $compile: any;
-    private $scope: any;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private grid: any;
-    private allFilters: any;
+    @Qualifier('$compile') private $compile: any;
+    @Qualifier('$scope') private $scope: any;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridCore') private gridCore: any;
+    @Qualifier('popupService') private popupService: PopupService;
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('columnController') private columnController: ColumnController;
+
+    private allFilters: any = {};
+    private quickFilter: string = null;
     private rowModel: any;
-    private popupService: PopupService;
-    private valueService: ValueService;
-    private columnController: ColumnController;
-    private quickFilter: string;
 
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
-
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('$compile') $compile: any,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('popupService') popupService: PopupService,
-                @Qualifier('valueService') valueService: ValueService) {
-        this.$compile = $compile;
-        this.$scope = $scope;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.grid = gridCore;
-        this.allFilters = {};
-        this.columnController = columnController;
-        this.popupService = popupService;
-        this.valueService = valueService;
-        this.columnController = columnController;
-        this.quickFilter = null;
-    }
 
     public setFilterModel(model: any) {
         if (model) {
@@ -73,7 +55,7 @@ export default class FilterManager {
                 this.setModelOnFilterWrapper(filterWrapper.filter, null);
             });
         }
-        this.grid.onFilterChanged();
+        this.gridCore.onFilterChanged();
     }
 
     private setModelOnFilterWrapper(filter: { getApi: () => { setModel: Function }}, newModel: any) {
@@ -336,8 +318,8 @@ export default class FilterManager {
             filterWrapper.filter = new SetFilter();
         }
 
-        var filterChangedCallback = this.grid.onFilterChanged.bind(this.grid);
-        var filterModifiedCallback = this.grid.onFilterModified.bind(this.grid);
+        var filterChangedCallback = this.gridCore.onFilterChanged.bind(this.gridCore);
+        var filterModifiedCallback = this.gridCore.onFilterModified.bind(this.gridCore);
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var filterParams = colDef.filterParams;
 

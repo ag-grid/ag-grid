@@ -15,37 +15,29 @@ var logging = false;
 @Bean('virtualPageRowController')
 export default class VirtualPageRowController {
 
-    rowRenderer: any;
-    datasourceVersion: any;
-    gridOptionsWrapper: GridOptionsWrapper;
-    angularGrid: any;
-    datasource: any;
-    virtualRowCount: any;
-    foundMaxRow: any;
+    @Qualifier('rowRenderer') private rowRenderer: any;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridCore') private angularGrid: any;
 
-    pageCache: {[key: string]: RowNode[]};
-    pageCacheSize: any;
+    private datasourceVersion = 0;
+    private datasource: any;
+    private virtualRowCount: number;
+    private foundMaxRow: boolean;
 
-    pageLoadsInProgress: any;
-    pageLoadsQueued: any;
-    pageAccessTimes: any;
-    accessTime: any;
+    private pageCache: {[key: string]: RowNode[]};
+    private pageCacheSize: number;
 
-    maxConcurrentDatasourceRequests: any;
-    maxPagesInCache: any;
-    pageSize: any;
-    overflowSize: any;
+    private pageLoadsInProgress: any[];
+    private pageLoadsQueued: any[];
+    private pageAccessTimes: any;
+    private accessTime: number;
 
-    agInit(@Qualifier('rowRenderer') rowRenderer: any,
-         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: any,
-         @Qualifier('gridCore') gridCore: GridCore) {
-        this.rowRenderer = rowRenderer;
-        this.datasourceVersion = 0;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = gridCore;
-    }
+    private maxConcurrentDatasourceRequests: number;
+    private maxPagesInCache: number;
+    private pageSize: number;
+    private overflowSize: number;
 
-    setDatasource(datasource: any) {
+    public setDatasource(datasource: any) {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -56,7 +48,7 @@ export default class VirtualPageRowController {
         this.reset();
     }
 
-    reset() {
+    private reset() {
         // see if datasource knows how many rows there are
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
@@ -100,7 +92,7 @@ export default class VirtualPageRowController {
         this.doLoadOrQueue(0);
     }
 
-    createNodesFromRows(pageNumber: any, rows: any) {
+    private createNodesFromRows(pageNumber: any, rows: any) {
         var nodes: any = [];
         if (rows) {
             for (var i = 0, j = rows.length; i < j; i++) {
@@ -124,24 +116,24 @@ export default class VirtualPageRowController {
         return rowNode;
     }
 
-    removeFromLoading(pageNumber: any) {
+    private removeFromLoading(pageNumber: any) {
         var index = this.pageLoadsInProgress.indexOf(pageNumber);
         this.pageLoadsInProgress.splice(index, 1);
     }
 
-    pageLoadFailed(pageNumber: any) {
+    private pageLoadFailed(pageNumber: any) {
         this.removeFromLoading(pageNumber);
         this.checkQueueForNextLoad();
     }
 
-    pageLoaded(pageNumber: any, rows: any, lastRow: any) {
+    private pageLoaded(pageNumber: any, rows: any, lastRow: any) {
         this.putPageIntoCacheAndPurge(pageNumber, rows);
         this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
         this.removeFromLoading(pageNumber);
         this.checkQueueForNextLoad();
     }
 
-    putPageIntoCacheAndPurge(pageNumber: any, rows: any) {
+    private putPageIntoCacheAndPurge(pageNumber: any, rows: any) {
         this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
         this.pageCacheSize++;
         if (logging) {
@@ -162,7 +154,7 @@ export default class VirtualPageRowController {
 
     }
 
-    checkMaxRowAndInformRowRenderer(pageNumber: any, lastRow: any) {
+    private checkMaxRowAndInformRowRenderer(pageNumber: any, lastRow: any) {
         if (!this.foundMaxRow) {
             // if we know the last row, use if
             if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -182,12 +174,12 @@ export default class VirtualPageRowController {
         }
     }
 
-    isPageAlreadyLoading(pageNumber: any) {
+    private isPageAlreadyLoading(pageNumber: any) {
         var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0 || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
         return result;
     }
 
-    doLoadOrQueue(pageNumber: any) {
+    private doLoadOrQueue(pageNumber: any) {
         // if we already tried to load this page, then ignore the request,
         // otherwise server would be hit 50 times just to display one page, the
         // first row to find the page missing is enough.
@@ -205,7 +197,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    addToQueueAndPurgeQueue(pageNumber: any) {
+    private addToQueueAndPurgeQueue(pageNumber: any) {
         if (logging) {
             console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
         }
@@ -227,7 +219,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    findLeastRecentlyAccessedPage(pageIndexes: any) {
+    private findLeastRecentlyAccessedPage(pageIndexes: any) {
         var youngestPageIndex = -1;
         var youngestPageAccessTime = Number.MAX_VALUE;
         var that = this;
@@ -243,7 +235,7 @@ export default class VirtualPageRowController {
         return youngestPageIndex;
     }
 
-    checkQueueForNextLoad() {
+    private checkQueueForNextLoad() {
         if (this.pageLoadsQueued.length > 0) {
             // take from the front of the queue
             var pageToLoad = this.pageLoadsQueued[0];
@@ -257,7 +249,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    loadPage(pageNumber: any) {
+    private loadPage(pageNumber: any) {
 
         this.pageLoadsInProgress.push(pageNumber);
 
@@ -311,11 +303,11 @@ export default class VirtualPageRowController {
     }
 
 // check that the datasource has not changed since the lats time we did a request
-    requestIsDaemon(datasourceVersionCopy: any) {
+    private requestIsDaemon(datasourceVersionCopy: any) {
         return this.datasourceVersion !== datasourceVersionCopy;
     }
 
-    getVirtualRow(rowIndex: any) {
+    private getVirtualRow(rowIndex: any) {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
@@ -337,7 +329,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    forEachNode(callback: any) {
+    private forEachNode(callback: any) {
         var pageKeys = Object.keys(this.pageCache);
         for (var i = 0; i < pageKeys.length; i++) {
             var pageKey = pageKeys[i];
@@ -372,7 +364,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    getModel() {
+    public getModel() {
         var that = this;
         return {
             getRowAtPixel: function(pixel: number): number {

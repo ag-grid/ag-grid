@@ -12,11 +12,7 @@ import {Qualifier} from "../context/context";
 @Bean('columnUtils')
 export default class ColumnUtils {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public calculateColInitialWidth(colDef: any): number {
         if (!colDef.width) {

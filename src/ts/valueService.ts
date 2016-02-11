@@ -8,17 +8,9 @@ import {Qualifier} from "./context/context";
 @Bean('valueService')
 export default class ValueService {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private expressionService: ExpressionService;
-    private columnController: ColumnController;
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('expressionService') expressionService: ExpressionService,
-                @Qualifier('columnController') columnController: ColumnController): void {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.expressionService = expressionService;
-        this.columnController = columnController;
-    }
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('expressionService') private expressionService: ExpressionService;
+    @Qualifier('columnController') private columnController: ColumnController;
 
     public getValue(colDef: ColDef, data: any, node: any):any {
 

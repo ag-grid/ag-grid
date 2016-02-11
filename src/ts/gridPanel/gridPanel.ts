@@ -80,12 +80,13 @@ var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_
 @Bean('gridPanel')
 export default class GridPanel {
 
-    private masterSlaveService: MasterSlaveService;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private columnController: ColumnController;
-    private rowRenderer: RowRenderer;
+    @Qualifier('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
+    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
+
     private rowModel: any;
-    private floatingRowModel: FloatingRowModel;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -124,23 +125,12 @@ export default class GridPanel {
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
 
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
-                @Qualifier('masterSlaveService') masterSlaveService: MasterSlaveService,
-                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.setupComponents();
         this.scrollWidth = _.getScrollbarWidth();
-
-        this.columnController = columnController;
-        this.rowRenderer = rowRenderer;
-        this.masterSlaveService = masterSlaveService;
-        this.floatingRowModel = floatingRowModel;
         this.logger = loggerFactory.create('GridPanel');
+        this.setupComponents();
     }
 
     public getLayout(): BorderLayout {

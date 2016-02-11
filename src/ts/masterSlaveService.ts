@@ -15,33 +15,28 @@ import {Qualifier} from "./context/context";
 @Bean('masterSlaveService')
 export default class MasterSlaveService {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private columnController: ColumnController;
-    private gridPanel: GridPanel;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Qualifier('eventService') private eventService: EventService;
+
     private logger: Logger;
-    private eventService: EventService;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
     // we don't fire back any events.
     private consuming = false;
 
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-                @Qualifier('eventService') eventService: EventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.gridPanel = gridPanel;
-        this.eventService = eventService;
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
+    }
 
-        eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+    public agPostInit() {
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
     }
 
     // common logic across all the fire methods

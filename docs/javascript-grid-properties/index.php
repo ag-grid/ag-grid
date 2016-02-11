@@ -98,6 +98,15 @@ include '../documentation_header.php';
                 bar in the header will not auto-size the column.</td>
         </tr>
         <tr>
+            <th>suppressMovingCss</th>
+            <td>If true, the <i>ag-column-moving</i> class is not added to the grid while columns are moving.
+            In the default themes, this transpires to no animation for moving columns.</td>
+        </tr>
+        <tr>
+            <th>suppressMovableColumns</th>
+            <td>If true, you cannot drag the columns to move them.</td>
+        </tr>
+        <tr>
             <th>enableSorting, enableServerSideSorting</th>
             <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
                 sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks

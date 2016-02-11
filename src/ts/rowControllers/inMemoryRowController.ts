@@ -20,10 +20,14 @@ enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 @Bean('inMemoryRowController')
 export default class InMemoryRowController {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private columnController: ColumnController;
-    private filterManager: FilterManager;
-    private $scope: any;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('filterManager') private filterManager: FilterManager;
+    @Qualifier('$scope') private $scope: any;
+
+    @Qualifier('groupCreator') private groupCreator: GroupCreator;
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('eventService') private eventService: EventService;
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
@@ -34,34 +38,8 @@ export default class InMemoryRowController {
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
     private model: any;
 
-    private groupCreator: GroupCreator;
-    private valueService: ValueService;
-    private eventService: EventService;
-
     constructor() {
         this.createModel();
-    }
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('filterManager') filterManager: FilterManager,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('groupCreator') groupCreator: GroupCreator,
-                @Qualifier('valueService') valueService: ValueService,
-                @Qualifier('eventService') eventService: EventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.filterManager = filterManager;
-        this.$scope = $scope;
-        this.groupCreator = groupCreator;
-        this.valueService = valueService;
-        this.eventService = eventService;
-
-        this.allRows = null;
-        this.rowsAfterGroup = null;
-        this.rowsAfterFilter = null;
-        this.rowsAfterSort = null;
-        this.rowsToDisplay = null;
     }
 
     private createModel() {

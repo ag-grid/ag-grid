@@ -7,14 +7,8 @@ import SelectionController from "./selectionController";
 @Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
 
-    private grid: GridCore;
-    private selectionController: any;
-
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('selectionController') selectionController: SelectionController) {
-        this.grid = gridCore;
-        this.selectionController = selectionController;
-    }
+    @Qualifier('gridCore') private grid: GridCore;
+    @Qualifier('selectionController') private selectionController: any;
 
     public createSelectionCheckbox(node: any, rowIndex: any) {
 

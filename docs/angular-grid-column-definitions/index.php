@@ -171,6 +171,10 @@ include '../documentation_header.php';
             <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
         </tr>
         <tr>
+            <th>suppressMovable</th>
+            <td>Set to true if you do not want this column to be movable via dragging.</td>
+        </tr>
+        <tr>
             <th>suppressResize</th>
             <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
         </tr>

@@ -2,13 +2,17 @@ import _ from '../utils';
 import Constants from "../constants";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
 
 @Bean('popupService')
 export default class PopupService {
 
+
+    // really this should be using eGridDiv, not sure why it's not working.
+    // maybe popups in the future should be parent to the body??
     private ePopupParent: any;
 
-    public agInit(@Qualifier('ePopupParent') ePopupParent: any) {
+    public setPopupParent(ePopupParent: any): void {
         this.ePopupParent = ePopupParent;
     }
 

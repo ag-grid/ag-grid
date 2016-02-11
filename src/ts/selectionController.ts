@@ -22,39 +22,19 @@ var DO_NOT_CARE = 3;
 export default class SelectionController {
 
     private eParentsOfRows: HTMLElement[];
-    private gridCore: GridCore;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private $scope: any;
-    private rowRenderer: RowRenderer;
-    private selectedRows: any;
-    private selectedNodesById: any;
+    private selectedRows: any[] = [];
+    private selectedNodesById: any = {};
     private rowModel: any;
-    private eventService: EventService;
-    private gridPanel: GridPanel;
 
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
-                @Qualifier('eventService') eventService: EventService) {
-        this.gridCore = gridCore;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.$scope = $scope;
-        this.rowRenderer = rowRenderer;
-        this.eventService = eventService;
-        this.gridPanel = gridPanel;
-
-        this.initSelectedNodesById();
-        this.selectedRows = [];
-    }
+    @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('$scope') private $scope: any;
+    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
 
     public agPostInit(): void {
         this.eParentsOfRows = this.gridPanel.getRowsParent();
-    }
-
-    private initSelectedNodesById() {
-        this.selectedNodesById = {};
     }
 
     public getSelectedNodesById() {
@@ -120,11 +100,7 @@ export default class SelectionController {
     // this clears the selection, but doesn't clear down the css - when it is called, the
     // caller then gets the grid to refresh.
     public deselectAll() {
-        this.initSelectedNodesById();
-        //var keys = Object.keys(this.selectedNodesById);
-        //for (var i = 0; i < keys.length; i++) {
-        //    delete this.selectedNodesById[keys[i]];
-        //}
+        this.selectedNodesById = {};
         this.syncSelectedRowsAndCallListener();
     }
 
@@ -352,21 +328,20 @@ export default class SelectionController {
     // updates the selectedRows with the selectedNodes and calls selectionChanged listener
     private syncSelectedRowsAndCallListener(suppressEvents?: any) {
         // update selected rows
-        var selectedRows = this.selectedRows;
-        var oldCount = selectedRows.length;
+        var oldCount = this.selectedRows.length;
         // clear selected rows
-        selectedRows.length = 0;
+        this.selectedRows.length = 0;
         var keys = Object.keys(this.selectedNodesById);
         for (var i = 0; i < keys.length; i++) {
             if (this.selectedNodesById[keys[i]] !== undefined) {
                 var selectedNode = this.selectedNodesById[keys[i]];
-                selectedRows.push(selectedNode.data);
+                this.selectedRows.push(selectedNode.data);
             }
         }
 
         // this stop the event firing the very first the time grid is initialised. without this, the documentation
         // page had a popup in the 'selection' page as soon as the page was loaded!!
-        var nothingChangedMustBeInitialising = oldCount === 0 && selectedRows.length === 0;
+        var nothingChangedMustBeInitialising = oldCount === 0 && this.selectedRows.length === 0;
 
         if (!nothingChangedMustBeInitialising && !suppressEvents) {
             var event = {

@@ -12,11 +12,7 @@ import {Qualifier} from "../context/context";
 @Bean('displayedGroupCreator')
 export default class DisplayedGroupCreator {
 
-    private columnUtils: ColumnUtils;
-
-    public agInit(@Qualifier('columnUtils') columnUtils: ColumnUtils): void {
-        this.columnUtils = columnUtils;
-    }
+    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
 
     public createDisplayedGroups(sortedVisibleColumns: Column[],
                                  balancedColumnTree: OriginalColumnGroupChild[],

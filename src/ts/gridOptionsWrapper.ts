@@ -7,6 +7,7 @@ import {GridApi} from "./gridApi";
 import {ColDef} from "./entities/colDef";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {ColumnController} from "./columnController/columnController";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -19,19 +20,21 @@ export default class GridOptionsWrapper {
 
     private static MIN_COL_WIDTH = 10;
 
-    private gridOptions: GridOptions;
+    @Qualifier('gridOptions') private gridOptions: GridOptions;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('eventService') private eventService: EventService;
 
     private headerHeight: number;
 
-    public agInit(@Qualifier('gridOptions') gridOptions: GridOptions,
-                @Qualifier('eventService') eventService: EventService): void {
-        this.gridOptions = gridOptions;
-
-        this.headerHeight = gridOptions.headerHeight;
-
-        eventService.addGlobalListener(this.globalEventHandler.bind(this));
-
+    public agInit(@Qualifier('gridApi') gridApi: GridApi): void {
+        this.headerHeight = this.gridOptions.headerHeight;
+        this.gridOptions.api = gridApi;
         this.checkForDeprecated();
+    }
+
+    public agPostInit(): void {
+        this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
+        this.gridOptions.columnApi = this.columnController.getColumnApi();
     }
 
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }

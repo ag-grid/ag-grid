@@ -49,7 +49,7 @@ include('../mediaHeader.php');
         You can learn from them and benefit from what they bring to the community even if your a Babel and React guy.
         <ul>
             <li><b>Typescript</b> is written by Microsoft, a proper company with experience writing proper compilers
-            including C# and C++. This means I respect more their 'design on things' that I would open source
+            including C# and C++. This means I respect more their 'design on things' than I would open source
             community driven projects. Personally I learnt a lot by observing the different options of the Typescript
             compiler and how they changed the resultant JavaScript code.</li>
             <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be it's achilles heel,
@@ -62,7 +62,7 @@ include('../mediaHeader.php');
         <h3>Folder Structure</h3>
 
         <p>
-            We are going to be generating a lot of files. To make this easy to world with, we define two
+            We are going to be generating a lot of files. To make this easy to work with, we define two
             core folders as follows:
             <ul>
             <li><b>src</b>: All the source files that we edit. This includes TypeScript and .styl files (for Stylus,
@@ -321,7 +321,7 @@ import {Grid} from 'ag-grid/main';</pre>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 
-        <p>As for the Self Contained JavaScritp Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
+        <p>As for the Self Contained JavaScript Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
             the JavaScript code or not, so ag-Grid provides four bundled versions:
             <ul>
             <li>Normal no CSS</li>
@@ -357,17 +357,17 @@ import {Grid} from 'ag-grid/main';</pre>
             will need to reference Angular 2 on the global scope and then use ECMA 5 JavaScript techniques instead of
             ECMA 6 object oriented extends and decorators. This means you would have to either NOT use ECMA 6 at all
             in your component's Angular 2 references,
-            or have two version of your library. Personally I don't see this catching on. I do not believe that the
-            majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspecting of some
+            or have two versions of your library. Personally I don't see this catching on. I do not believe that the
+            majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspection of some
             popular Angular 2 components shows they are not supporting UMD.
         </p>
 
         <h3>Summing Up</h3>
 
         <p>
-            And that's it. The world of packaging is changing, so I don't know how long the above will be relevant for.
+            And that's it. The world of packaging is changing, so I don't know for how long the above will be relevant.
             However you can take it from me, ag-Grid is used by thousands of people, the above system is tried and
-            tested and is working for me.
+            tested and does work.
         </p>
 
         <div style="margin-top: 20px;">

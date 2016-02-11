@@ -554,7 +554,6 @@ PersonFilter.prototype.doesFilterPass = function (params) {
 
 PersonFilter.prototype.isFilterActive = function () {
     var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
-    console.log('person filter active = ' + isActive);
     return isActive;
 };
 

@@ -25,16 +25,16 @@ import {ColumnController} from "../columnController/columnController";
 @Bean('rowRenderer')
 export default class RowRenderer {
 
-    private columnController: ColumnController;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private gridCore: GridCore;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private gridPanel: GridPanel;
-    private $compile: any;
-    private $scope: any;
-    private selectionController: SelectionController;
-    private expressionService: ExpressionService;
-    private templateService: TemplateService;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Qualifier('$compile') private $compile: any;
+    @Qualifier('$scope') private $scope: any;
+    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Qualifier('expressionService') private expressionService: ExpressionService;
+    @Qualifier('templateService') private templateService: TemplateService;
     private cellRendererMap: {[key: string]: any};
     private rowModel: any;
     private firstVirtualRenderedRow: number;
@@ -47,11 +47,13 @@ export default class RowRenderer {
         colDef: ColDef
     };
 
-    private valueService: ValueService;
-    private eventService: EventService;
-    private floatingRowModel: FloatingRowModel;
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
 
-    private renderedRows: {[key: string]: RenderedRow};
+    // map of row ids to row objects. keeps track of which elements
+    // are rendered for which rows in the dom.
+    private renderedRows: {[key: string]: RenderedRow} = {};
     private renderedTopFloatingRows: RenderedRow[] = [];
     private renderedBottomFloatingRows: RenderedRow[] = [];
 
@@ -70,45 +72,6 @@ export default class RowRenderer {
     private eFloatingBottomPinnedLeftContainer: HTMLElement;
     private eFloatingBottomPinnedRightContainer: HTMLElement;
     private eParentsOfRows: HTMLElement[];
-
-    public agInit(@Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('selectionRendererFactory') selectionRendererFactory: SelectionRendererFactory,
-                @Qualifier('$compile') $compile: any,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('selectionController') selectionController: SelectionController,
-                @Qualifier('expressionService') expressionService: ExpressionService,
-                @Qualifier('templateService') templateService: TemplateService,
-                @Qualifier('valueService') valueService: ValueService,
-                @Qualifier('eventService') eventService: EventService,
-                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
-        this.columnController = columnController;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.gridCore = gridCore;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.gridPanel = gridPanel;
-        this.$compile = $compile;
-        this.$scope = $scope;
-        this.selectionController = selectionController;
-        this.expressionService = expressionService;
-        this.templateService = templateService;
-        this.valueService = valueService;
-        this.eventService = eventService;
-        this.floatingRowModel = floatingRowModel;
-
-        this.cellRendererMap = {
-            'group': groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService),
-            'default': function(params: any) {
-                return params.value;
-            }
-        };
-
-        // map of row ids to row objects. keeps track of which elements
-        // are rendered for which rows in the dom.
-        this.renderedRows = {};
-    }
 
     public setRowModel(rowModel: any) {
         this.rowModel = rowModel;
@@ -143,6 +106,13 @@ export default class RowRenderer {
     }
 
     private agPostInit() {
+        this.cellRendererMap = {
+            'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
+            'default': function(params: any) {
+                return params.value;
+            }
+        };
+
         this.eBodyContainer = this.gridPanel.getBodyContainer();
         this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
         this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();

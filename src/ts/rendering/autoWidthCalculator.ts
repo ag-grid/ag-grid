@@ -7,14 +7,8 @@ import {Qualifier} from "../context/context";
 @Bean('autoWidthCalculator')
 export default class AutoWidthCalculator {
 
-    private rowRenderer: RowRenderer;
-    private gridPanel: GridPanel;
-
-    public agInit(@Qualifier('rowRenderer') rowRenderer: RowRenderer,
-                @Qualifier('gridPanel') gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-        this.rowRenderer = rowRenderer;
-    }
+    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy

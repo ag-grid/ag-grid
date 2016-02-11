@@ -52,26 +52,29 @@ export class GridCore {
         virtualRowSelected: {}
     };
 
-    private gridOptions: GridOptions;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private inMemoryRowController: InMemoryRowController;
-    private doingVirtualPaging: boolean;
-    private paginationController: PaginationController;
-    private virtualPageRowController: VirtualPageRowController;
-    private floatingRowModel: FloatingRowModel;
-    private finished: boolean;
+    @Qualifier('gridOptions') private gridOptions: GridOptions;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Qualifier('paginationController') private paginationController: PaginationController;
+    @Qualifier('virtualPageRowController') private virtualPageRowController: VirtualPageRowController;
 
-    private selectionController: SelectionController;
-    private columnController: ColumnController;
-    private rowRenderer: RowRenderer;
-    private headerRenderer: HeaderRenderer;
-    private filterManager: FilterManager;
-    private valueService: ValueService;
-    private masterSlaveService: MasterSlaveService;
-    private eventService: EventService;
-    private dragAndDropService: DragAndDropService;
-    private toolPanel: any;
-    private gridPanel: GridPanel;
+    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
+    @Qualifier('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Qualifier('filterManager') private filterManager: FilterManager;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('toolPanel') private toolPanel: any;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
+
+    @Qualifier('eGridDiv') private eGridDiv: HTMLElement;
+    @Qualifier('$scope') private $scope: any;
+    @Qualifier('quickFilterOnScope') private quickFilterOnScope: string;
+    @Qualifier('popupService') private popupService: PopupService;
+
+    private finished: boolean;
+    private doingVirtualPaging: boolean;
+
     private eRootPanel: any;
     private toolPanelShowing: boolean;
     private doingPagination: boolean;
@@ -79,72 +82,17 @@ export class GridCore {
     private rowModel: any;
 
     private windowResizeListener: EventListener;
-    private eGridDiv: HTMLElement;
     private logger: Logger;
-    private $scope: any;
-    private quickFilterOnScope: string;
 
-    public agInit(@Qualifier('eGridDiv') eGridDiv: any,
-                @Qualifier('gridOptions') gridOptions: any,
-                @Qualifier('$scope') $scope: any,
-                @Qualifier('gridApi') gridApi: GridApi,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('toolPanel') toolPanel: ToolPanel,
-                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-                @Qualifier('selectionController') selectionController: SelectionController,
-                @Qualifier('filterManager') filterManager: FilterManager,
-                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('paginationController') paginationController: PaginationController,
-                @Qualifier('inMemoryRowController') inMemoryRowController: InMemoryRowController,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('virtualPageRowController') virtualPageRowController: VirtualPageRowController,
-                @Qualifier('headerRenderer') headerRenderer: HeaderRenderer,
-                @Qualifier('valueService') valueService: ValueService,
-                @Qualifier('masterSlaveService') masterSlaveService: MasterSlaveService,
-                @Qualifier('eventService') eventService: EventService,
-                @Qualifier('dragAndDropService') dragAndDropService: DragAndDropService,
-                @Qualifier('popupService') popupService: PopupService,
-                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel,
-                @Qualifier('quickFilterOnScope') quickFilterOnScope: string) {
-
-        this.gridOptions = gridOptions;
-        this.gridOptions.api = gridApi;
-        this.eGridDiv = eGridDiv;
-        this.quickFilterOnScope = quickFilterOnScope;
-        this.$scope = $scope;
-
-        this.selectionController = selectionController;
-        this.columnController = columnController;
-        this.inMemoryRowController = inMemoryRowController;
-        this.virtualPageRowController = virtualPageRowController;
-        this.rowRenderer = rowRenderer;
-        this.headerRenderer = headerRenderer;
-        this.paginationController = paginationController;
-        this.filterManager = filterManager;
-        this.toolPanel = toolPanel;
-        this.gridPanel = gridPanel;
-        this.valueService = valueService;
-        this.masterSlaveService = masterSlaveService;
-        this.eventService = eventService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.dragAndDropService = dragAndDropService;
-        this.floatingRowModel = floatingRowModel;
-        this.usingInMemoryModel = true;
-
+    constructor(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridCore');
+        this.usingInMemoryModel = true;
     }
 
     public agPostInit(): void {
         // this is a child bean, get a reference and pass it on
         // CAN WE DELETE THIS? it's done in the setDatasource section
-        this.rowModel = this.inMemoryRowController.getModel();
-        this.selectionController.setRowModel(this.rowModel);
-        this.filterManager.setRowModel(this.rowModel);
-        this.rowRenderer.setRowModel(this.rowModel);
-        this.gridPanel.setRowModel(this.rowModel);
-
-        this.gridOptions.columnApi = this.columnController.getColumnApi();
+        this.setRowModel(this.inMemoryRowController.getModel());
 
         // and the last bean, done in it's own section, as it's optional
         var paginationGui: any;
@@ -180,13 +128,9 @@ export class GridCore {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
 
-        var that = this;
-
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            this.$scope.$watch(this.quickFilterOnScope, function (newFilter: any) {
-                that.onQuickFilterChanged(newFilter);
-            });
+            this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.onQuickFilterChanged(newFilter) );
         }
 
         if (!this.gridOptionsWrapper.isForPrint()) {
@@ -209,8 +153,12 @@ export class GridCore {
         this.finished = false;
         this.periodicallyDoLayout();
 
-        this.logger.log('initialised');
+        this.popupService.setPopupParent(this.eRootPanel.getGui());
 
+        this.logger.log('initialised');
+    }
+
+    public agInitComplete(): void {
         var readyEvent = {
             api: this.gridOptions.api,
             columnApi: this.gridOptions.columnApi
@@ -327,27 +275,22 @@ export class GridCore {
         if (this.doingVirtualPaging) {
             this.paginationController.setDatasource(null);
             this.virtualPageRowController.setDatasource(datasourceToUse);
-            this.rowModel = this.virtualPageRowController.getModel();
+            this.setRowModel(this.virtualPageRowController.getModel());
             this.usingInMemoryModel = false;
             showPagingPanel = false;
         } else if (this.doingPagination) {
             this.paginationController.setDatasource(datasourceToUse);
             this.virtualPageRowController.setDatasource(null);
-            this.rowModel = this.inMemoryRowController.getModel();
+            this.setRowModel(this.inMemoryRowController.getModel());
             this.usingInMemoryModel = true;
             showPagingPanel = true;
         } else {
             this.paginationController.setDatasource(null);
             this.virtualPageRowController.setDatasource(null);
-            this.rowModel = this.inMemoryRowController.getModel();
+            this.setRowModel(this.inMemoryRowController.getModel());
             this.usingInMemoryModel = true;
             showPagingPanel = false;
         }
-
-        this.selectionController.setRowModel(this.rowModel);
-        this.filterManager.setRowModel(this.rowModel);
-        this.rowRenderer.setRowModel(this.rowModel);
-        this.gridPanel.setRowModel(this.rowModel);
 
         this.eRootPanel.setSouthVisible(showPagingPanel);
 
@@ -355,6 +298,14 @@ export class GridCore {
         this.rowRenderer.refreshView();
 
         this.doLayout();
+    }
+
+    private setRowModel(rowModel: any): void {
+        this.rowModel = rowModel;
+        this.selectionController.setRowModel(rowModel);
+        this.filterManager.setRowModel(rowModel);
+        this.rowRenderer.setRowModel(rowModel);
+        this.gridPanel.setRowModel(rowModel);
     }
 
     // gets called after columns are shown / hidden from groups expanding

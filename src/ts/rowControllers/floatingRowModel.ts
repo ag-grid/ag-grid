@@ -7,14 +7,10 @@ import {Qualifier} from "../context/context";
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
-
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
 
     public agPostInit() {
         this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());

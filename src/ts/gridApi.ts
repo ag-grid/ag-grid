@@ -25,58 +25,21 @@ import {Context} from "./context/context";
 @Bean('gridApi')
 export class GridApi {
 
-    private csvCreator: CsvCreator;
-
-    private gridCore: GridCore;
-    private rowRenderer: RowRenderer;
-    private headerRenderer: HeaderRenderer;
-    private filterManager: FilterManager;
-    private columnController: ColumnController;
-    private inMemoryRowController: InMemoryRowController;
-    private selectionController: SelectionController;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private gridPanel: GridPanel;
-    private valueService: ValueService;
-    private masterSlaveService: MasterSlaveService;
-    private eventService: EventService;
-    private floatingRowModel: FloatingRowModel;
-    private context: Context;
-
-    constructor() {
-    }
-
-    public agInit(@Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('rowRenderer') rowRenderer: RowRenderer,
-                @Qualifier('headerRenderer') headerRenderer: HeaderRenderer,
-                @Qualifier('filterManager') filterManager: FilterManager,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('inMemoryRowController') inMemoryRowController: InMemoryRowController,
-                @Qualifier('selectionController') selectionController: SelectionController,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('gridPanel') gridPanel: GridPanel,
-                @Qualifier('valueService') valueService: ValueService,
-                @Qualifier('masterSlaveService') masterSlaveService: MasterSlaveService,
-                @Qualifier('eventService') eventService: EventService,
-                @Qualifier('csvCreator') csvCreator: CsvCreator,
-                @Qualifier('context') context: Context,
-                @Qualifier('floatingRowModel') floatingRowModel: FloatingRowModel) {
-
-        this.gridCore = gridCore;
-        this.rowRenderer = rowRenderer;
-        this.headerRenderer = headerRenderer;
-        this.filterManager = filterManager;
-        this.columnController = columnController;
-        this.inMemoryRowController = inMemoryRowController;
-        this.selectionController = selectionController;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.gridPanel = gridPanel;
-        this.valueService = valueService;
-        this.masterSlaveService = masterSlaveService;
-        this.eventService = eventService;
-        this.floatingRowModel = floatingRowModel;
-        this.csvCreator = csvCreator;
-        this.context = context;
-    }
+    @Qualifier('csvCreator') private csvCreator: CsvCreator;
+    @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
+    @Qualifier('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Qualifier('filterManager') private filterManager: FilterManager;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Qualifier('context') private context: Context;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {

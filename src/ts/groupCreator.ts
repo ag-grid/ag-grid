@@ -8,14 +8,8 @@ import {Qualifier} from "./context/context";
 @Bean('groupCreator')
 export default class GroupCreator {
 
-    private valueService: ValueService;
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    public agInit(@Qualifier('valueService') valueService: ValueService,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper) {
-        this.valueService = valueService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 

@@ -15,16 +15,11 @@ import {Qualifier} from "../context/context";
 @Bean('balancedColumnTreeBuilder')
 export default class BalancedColumnTreeBuilder {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     private logger: Logger;
-    private columnUtils: ColumnUtils;
+    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
 
-    public agInit(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-                @Qualifier('columnUtils') columnUtils: ColumnUtils) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnUtils = columnUtils;
-
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
@@ -148,7 +143,5 @@ export default class BalancedColumnTreeBuilder {
     private isColumnGroup(abstractColDef: AbstractColDef): boolean {
         return (<ColGroupDef>abstractColDef).children !== undefined;
     }
-
-
 
 }

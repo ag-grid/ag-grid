@@ -23,20 +23,10 @@ export interface CsvExportParams {
 @Bean('csvCreator')
 export default class CsvCreator {
 
-    private inMemoryRowController: InMemoryRowController;
-    private columnController: ColumnController;
-    private gridCore: GridCore;
-    private valueService: ValueService;
-
-    public agInit(@Qualifier('inMemoryRowController') inMemoryRowController: InMemoryRowController,
-                @Qualifier('columnController') columnController: ColumnController,
-                @Qualifier('gridCore') gridCore: GridCore,
-                @Qualifier('valueService') valueService: ValueService) {
-        this.inMemoryRowController = inMemoryRowController;
-        this.columnController = columnController;
-        this.gridCore = gridCore;
-        this.valueService = valueService;
-    }
+    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Qualifier('columnController') private columnController: ColumnController;
+    @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('valueService') private valueService: ValueService;
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         var csvString = this.getDataAsCsv(params);

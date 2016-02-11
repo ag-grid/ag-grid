@@ -4,13 +4,10 @@ import {Qualifier} from "./context/context";
 @Bean('templateService')
 export default class TemplateService {
 
-    templateCache:any = {};
-    waitingCallbacks:any = {};
-    $scope: any;
+    @Qualifier('$scope') private $scope: any;
 
-    agInit(@Qualifier('$scope') $scope: any) {
-        this.$scope = $scope;
-    }
+    private templateCache:any = {};
+    private waitingCallbacks:any = {};
 
     // returns the template if it is loaded, or null if it is not loaded
     // but will call the callback when it is loaded
