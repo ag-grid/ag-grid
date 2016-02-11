@@ -147,7 +147,7 @@ export class GridCore {
 
         this.popupService.setPopupParent(this.eRootPanel.getGui());
 
-        this.logger.log('initialised');
+        this.logger.log('ready');
     }
 
     public agInitComplete(): void {
@@ -165,10 +165,10 @@ export class GridCore {
             var showLoading = !this.gridOptionsWrapper.getRowData();
             var showNoData = this.gridOptionsWrapper.getRowData() && this.gridOptionsWrapper.getRowData().length == 0;
             if (showLoading) {
-                this.showLoadingOverlay();
+                this.gridPanel.showLoadingOverlay();
             }
             if (showNoData) {
-                this.showNoRowsOverlay();
+                this.gridPanel.showNoRowsOverlay();
             }
         }
     }
@@ -357,56 +357,6 @@ export class GridCore {
         this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
     }
 
-    public onRowClicked(multiSelectKeyPressed: boolean, rowIndex: number, node: RowNode) {
-
-        // we do not allow selecting groups by clicking (as the click here expands the group)
-        // so return if it's a group row
-        if (node.group) {
-            return;
-        }
-
-        // we also don't allow selection of floating rows
-        if (node.floating) {
-            return;
-        }
-
-        // making local variables to make the below more readable
-        var gridOptionsWrapper = this.gridOptionsWrapper;
-        var selectionController = this.selectionController;
-
-        // if no selection method enabled, do nothing
-        if (!gridOptionsWrapper.isRowSelection()) {
-            return;
-        }
-
-        // if click selection suppressed, do nothing
-        if (gridOptionsWrapper.isSuppressRowClickSelection()) {
-            return;
-        }
-
-        var doDeselect = multiSelectKeyPressed
-            && selectionController.isNodeSelected(node)
-            && gridOptionsWrapper.isRowDeselection();
-
-        if (doDeselect) {
-            selectionController.deselectNode(node);
-        } else {
-            selectionController.selectNode(node, multiSelectKeyPressed);
-        }
-    }
-
-    public showLoadingOverlay(): void {
-        this.gridPanel.showLoadingOverlay();
-    }
-
-    public showNoRowsOverlay(): void {
-        this.gridPanel.showNoRowsOverlay();
-    }
-
-    public hideOverlay(): void {
-        this.gridPanel.hideOverlay();
-    }
-
     private setupColumns() {
         this.columnController.onColumnsChanged();
         this.gridPanel.showPinnedColContainersIfNeeded();
@@ -428,14 +378,15 @@ export class GridCore {
         }
         var rowData = this.gridOptionsWrapper.getRowData();
         this.inMemoryRowController.setAllRows(rowData, firstId);
-        this.selectionController.deselectAll();
+
+        //this.selectionController.deselectAll();
         this.filterManager.onNewRowsLoaded();
         this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
         this.headerRenderer.updateFilterIcons();
         if (rowData && rowData.length > 0) {
-            this.hideOverlay();
+            this.gridPanel.hideOverlay();
         } else {
-            this.showNoRowsOverlay();
+            this.gridPanel.showNoRowsOverlay();
         }
     }
 

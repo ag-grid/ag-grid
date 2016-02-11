@@ -31,13 +31,15 @@ export class Context {
         this.contextParams = params;
 
         this.logger = new Logger('Context', this.contextParams.debug);
-        this.logger.log('ag-Grid: STARTING UP GRID CONTEXT');
+        this.logger.log('STARTING UP GRID CONTEXT');
 
         this.createBeans();
         this.setAttributesOnBeans();
         this.initBeans();
         this.postInitBeans();
         this.initCompleteBeans();
+
+        this.logger.log('GRID CONTEXT INITIALISED');
     }
 
     private createBeans(): void {
@@ -96,22 +98,18 @@ export class Context {
             beanEntry.beanInstance[attribute] = otherBean;
         });
 
-        this.logger.log('setting attributes ' + beanEntry.beanName);
+        this.logger.log('auto-wiring ' + beanEntry.beanName);
     }
 
     private initialiseBean(beanEntry: BeanEntry): void {
-        // if no init method, mark bean as initialised
-        if (!beanEntry.beanInstance.agInit || !beanEntry.initParams) {
+        // if no init method, skip he bean
+        if (!beanEntry.beanInstance.agInit) {
             return;
         }
 
         var initParams = this.getBeansForParameters(beanEntry.initParams, beanEntry.beanName);
-        //_.iterateObject(beanEntry.initParams, (paramIndex: string, otherBeanName: string) => {
-        //    var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
-        //    initParams[Number(paramIndex)] = otherBean;
-        //});
 
-        this.logger.log('initialising ' + beanEntry.beanName);
+        this.logger.log('wiring ' + beanEntry.beanName);
         beanEntry.beanInstance.agInit.apply(beanEntry.beanInstance, initParams);
     }
 
@@ -192,9 +190,6 @@ export function Qualifier(name: string): Function {
 
         if (typeof index === 'number') {
             // it's a parameter on a method
-            if (methodOrAttributeName!=='agInit') {
-                console.log('asf');
-            }
             var methodName: string;
             if (methodOrAttributeName) {
                 props = getOrCreateProps(classPrototype);

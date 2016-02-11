@@ -4,20 +4,23 @@ import {RowNode} from "./entities/rowNode";
 import Column from "./entities/column";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import EventService from "./eventService";
+import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
 
 @Bean('groupCreator')
 export default class GroupCreator {
 
     @Qualifier('valueService') private valueService: ValueService;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
 
-    public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
+    public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number, rowModel: any) {
 
-        var topMostGroup: RowNode = {
-            level: -1,
-            children: [],
-            _childrenMap: {}
-        };
+        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, rowModel);
+        topMostGroup.level = -1;
+        topMostGroup.children = [];
+        topMostGroup._childrenMap = {};
 
         var allGroups: RowNode[] = [];
         allGroups.push(topMostGroup);
@@ -54,19 +57,20 @@ export default class GroupCreator {
                 // if group doesn't exist yet, create it
                 nextGroup = currentGroup._childrenMap[groupKey];
                 if (!nextGroup) {
-                    nextGroup = {
-                        group: true,
-                        field: groupColumn.getColDef().field,
-                        id: index--,
-                        key: groupKey,
-                        expanded: this.isExpanded(expandByDefault, currentLevel),
-                        children: [],
-                        // for top most level, parent is null
-                        parent: null,
-                        allChildrenCount: 0,
-                        level: currentGroup.level + 1,
-                        _childrenMap: {} //this is a temporary map, we remove at the end of this method
-                    };
+                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, rowModel);
+                    nextGroup.group = true;
+                    nextGroup.field = groupColumn.getColDef().field;
+                    nextGroup.id = index--;
+                    nextGroup.key = groupKey;
+                    nextGroup.expanded = this.isExpanded(expandByDefault, currentLevel);
+                    nextGroup.children = [];
+                    // for top most level, parent is null
+                    nextGroup.parent = null;
+                    nextGroup.allChildrenCount = 0;
+                    nextGroup.level = currentGroup.level + 1;
+                    // this is a temporary map, we remove at the end of this method
+                    nextGroup._childrenMap = {};
+
                     if (includeParents) {
                         nextGroup.parent = currentGroup === topMostGroup ? null : currentGroup;
                     }

@@ -8,7 +8,6 @@ import ExpressionService from "../expressionService";
 import RowRenderer from "./rowRenderer";
 import SelectionRendererFactory from "../selectionRendererFactory";
 import TemplateService from "../templateService";
-import SelectionController from "../selectionController";
 import ValueService from "../valueService";
 import EventService from "../eventService";
 import Column from "../entities/column";
@@ -18,13 +17,13 @@ import {GridCore} from "../gridCore";
 
 export default class RenderedRow {
 
-    public vPinnedLeftRow: any;
-    public vPinnedRightRow: any;
-    public vBodyRow: any;
+    public vPinnedLeftRow: VHtmlElement;
+    public vPinnedRightRow: VHtmlElement;
+    public vBodyRow: VHtmlElement;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
-    private node: RowNode;
+    private rowNode: RowNode;
     private rowIndex: number;
 
     private cellRendererMap: {[key: string]: any};
@@ -38,7 +37,6 @@ export default class RenderedRow {
     private selectionRendererFactory: SelectionRendererFactory;
     private $compile: any;
     private templateService: TemplateService;
-    private selectionController: SelectionController;
     private pinningLeft: boolean;
     private pinningRight: boolean;
     private eBodyContainer: HTMLElement;
@@ -46,6 +44,8 @@ export default class RenderedRow {
     private ePinnedRightContainer: HTMLElement;
     private valueService: ValueService;
     private eventService: EventService;
+
+    private destroyFunctions: Function[] = [];
 
     constructor(gridOptionsWrapper: GridOptionsWrapper,
                 valueService: ValueService,
@@ -57,7 +57,6 @@ export default class RenderedRow {
                 selectionRendererFactory: SelectionRendererFactory,
                 $compile: any,
                 templateService: TemplateService,
-                selectionController: SelectionController,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
@@ -75,7 +74,6 @@ export default class RenderedRow {
         this.selectionRendererFactory = selectionRendererFactory;
         this.$compile = $compile;
         this.templateService = templateService;
-        this.selectionController = selectionController;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
@@ -98,7 +96,7 @@ export default class RenderedRow {
         }
 
         this.rowIndex = rowIndex;
-        this.node = node;
+        this.rowNode = node;
         this.scope = this.createChildScopeOrNull(node.data);
 
         if (!rowIsHeaderThatSpans) {
@@ -109,9 +107,9 @@ export default class RenderedRow {
         this.addDynamicClasses();
 
         var rowStr = this.rowIndex.toString();
-        if (this.node.floatingBottom) {
+        if (this.rowNode.floatingBottom) {
             rowStr = 'fb-' + rowStr;
-        } else if (this.node.floatingTop) {
+        } else if (this.rowNode.floatingTop) {
             rowStr = 'ft-' + rowStr;
         }
 
@@ -124,7 +122,7 @@ export default class RenderedRow {
         }
 
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
-            var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
+            var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
                 this.vBodyRow.setAttribute('row-id', businessKey);
                 if (this.pinningLeft) {
@@ -138,7 +136,7 @@ export default class RenderedRow {
 
         // if showing scrolls, position on the container
         if (!this.gridOptionsWrapper.isForPrint()) {
-            var topPx = this.node.rowTop + "px";
+            var topPx = this.rowNode.rowTop + "px";
             this.vBodyRow.style.top = topPx;
             if (this.pinningLeft) {
                 this.vPinnedLeftRow.style.top = topPx;
@@ -147,7 +145,7 @@ export default class RenderedRow {
                 this.vPinnedRightRow.style.top = topPx;
             }
         }
-        var heightPx = this.node.rowHeight + 'px';
+        var heightPx = this.rowNode.rowHeight + 'px';
         this.vBodyRow.style.height = heightPx;
         if (this.pinningLeft) {
             this.vPinnedLeftRow.style.height = heightPx;
@@ -186,11 +184,28 @@ export default class RenderedRow {
         if (this.pinningRight) {
             this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
         }
+
+        var rowSelectedListener = this.onRowSelected.bind(this);
+        this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
+        this.destroyFunctions.push(()=> {
+            this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
+        });
     }
 
-    public onRowSelected(selected: boolean): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            renderedCell.setSelected(selected);
+    public onRowSelected(): void {
+
+        var vRows: VHtmlElement[] = [];
+        if (this.vPinnedLeftRow) { vRows.push(this.vPinnedLeftRow); }
+        if (this.vPinnedRightRow) { vRows.push(this.vPinnedRightRow); }
+        if (this.vBodyRow) { vRows.push(this.vBodyRow); }
+
+        var selected = this.rowNode.isSelected();
+        vRows.forEach( (vRow) => {
+            var element = vRow.getElement();
+            if (!element) {
+                throw 'element is not bound';
+            }
+            _.addOrRemoveCssClass(element, 'ag-row-selected', selected);
         });
     }
 
@@ -216,6 +231,9 @@ export default class RenderedRow {
     }
 
     public destroy(): void {
+
+        this.destroyFunctions.forEach( func => func() );
+
         this.destroyScope();
 
         if (this.pinningLeft) {
@@ -240,15 +258,15 @@ export default class RenderedRow {
     }
 
     public isDataInList(rows: any[]): boolean {
-        return rows.indexOf(this.node.data) >= 0;
+        return rows.indexOf(this.rowNode.data) >= 0;
     }
 
     public isNodeInList(nodes: RowNode[]): boolean {
-        return nodes.indexOf(this.node) >= 0;
+        return nodes.indexOf(this.rowNode) >= 0;
     }
 
     public isGroup(): boolean {
-        return this.node.group === true;
+        return this.rowNode.group === true;
     }
 
     private drawNormalRow() {
@@ -260,8 +278,8 @@ export default class RenderedRow {
 
             var renderedCell = new RenderedCell(firstRightPinnedCol, column,
                 this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
-                this.selectionRendererFactory, this.selectionController, this.templateService,
-                this.cellRendererMap, this.node, this.rowIndex, colIndex, this.scope, this.columnController,
+                this.selectionRendererFactory, this.templateService, this.cellRendererMap, this.rowNode,
+                this.rowIndex, colIndex, this.scope, this.columnController,
                 this.valueService, this.eventService);
 
             var vGridCell = renderedCell.getVGridCell();
@@ -316,8 +334,8 @@ export default class RenderedRow {
                 };
             }
             var params = {
-                node: this.node,
-                data: this.node.data,
+                node: this.rowNode,
+                data: this.rowNode.data,
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 colDef: {
@@ -349,7 +367,7 @@ export default class RenderedRow {
                 eRow = _.loadTemplate(resultFromRenderer);
             }
         }
-        if (this.node.footer) {
+        if (this.rowNode.footer) {
             _.addCssClass(eRow, 'ag-footer-cell-entire-row');
         } else {
             _.addCssClass(eRow, 'ag-group-cell-entire-row');
@@ -390,8 +408,8 @@ export default class RenderedRow {
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
         if (rowStyleFunc) {
             var params = {
-                data: this.node.data,
-                node: this.node,
+                data: this.rowNode.data,
+                node: this.rowNode,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 $scope: this.scope
@@ -409,8 +427,8 @@ export default class RenderedRow {
 
     private createParams(): any {
         var params = {
-            node: this.node,
-            data: this.node.data,
+            node: this.rowNode,
+            data: this.rowNode.data,
             rowIndex: this.rowIndex,
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
@@ -426,27 +444,61 @@ export default class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer() {
+    private createRowContainer(): VHtmlElement {
         var vRow = new VHtmlElement('div');
-        var that = this;
-        vRow.addEventListener("click", function (event: any) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
-
-            // ctrlKey for windows, metaKey for Apple
-            var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
-            that.gridCore.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
-        });
-        vRow.addEventListener("dblclick", function (event: any) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+        vRow.addEventListener("click", this.onRowClicked.bind(this));
+        vRow.addEventListener("dblclick", (event: any) => {
+            var agEvent = this.createEvent(event, this);
+            this.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
         });
 
         return vRow;
     }
 
+    public onRowClicked(event: MouseEvent) {
+
+        var agEvent = this.createEvent(event, this);
+        this.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
+
+        // ctrlKey for windows, metaKey for Apple
+        var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
+
+        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // so return if it's a group row
+        if (this.rowNode.group) {
+            return;
+        }
+
+        // we also don't allow selection of floating rows
+        if (this.rowNode.floating) {
+            return;
+        }
+
+        // making local variables to make the below more readable
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+
+        // if no selection method enabled, do nothing
+        if (!gridOptionsWrapper.isRowSelection()) {
+            return;
+        }
+
+        // if click selection suppressed, do nothing
+        if (gridOptionsWrapper.isSuppressRowClickSelection()) {
+            return;
+        }
+
+        if (this.rowNode.isSelected()) {
+            var deselectAllowed = multiSelectKeyPressed && gridOptionsWrapper.isRowDeselection();
+            if (deselectAllowed) {
+                this.rowNode.setSelected(false);
+            }
+        } else {
+            this.rowNode.setSelected(true, !multiSelectKeyPressed);
+        }
+    }
+
     public getRowNode(): any {
-        return this.node;
+        return this.rowNode;
     }
 
     public getRowIndex(): any {
@@ -475,29 +527,29 @@ export default class RenderedRow {
 
         classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
-        if (this.selectionController.isNodeSelected(this.node)) {
+        if (this.rowNode.isSelected()) {
             classes.push("ag-row-selected");
         }
 
-        if (this.node.group) {
+        if (this.rowNode.group) {
             classes.push("ag-row-group");
             // if a group, put the level of the group in
-            classes.push("ag-row-level-" + this.node.level);
+            classes.push("ag-row-level-" + this.rowNode.level);
 
-            if (!this.node.footer && this.node.expanded) {
+            if (!this.rowNode.footer && this.rowNode.expanded) {
                 classes.push("ag-row-group-expanded");
             }
-            if (!this.node.footer && !this.node.expanded) {
+            if (!this.rowNode.footer && !this.rowNode.expanded) {
                 // opposite of expanded is contracted according to the internet.
                 classes.push("ag-row-group-contracted");
             }
-            if (this.node.footer) {
+            if (this.rowNode.footer) {
                 classes.push("ag-row-footer");
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            if (this.node.parent) {
-                classes.push("ag-row-level-" + (this.node.parent.level + 1));
+            if (this.rowNode.parent) {
+                classes.push("ag-row-level-" + (this.rowNode.parent.level + 1));
             } else {
                 classes.push("ag-row-level-0");
             }
@@ -522,8 +574,8 @@ export default class RenderedRow {
         var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
         if (gridOptionsRowClassFunc) {
             var params = {
-                node: this.node,
-                data: this.node.data,
+                node: this.rowNode,
+                data: this.rowNode.data,
                 rowIndex: this.rowIndex,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()

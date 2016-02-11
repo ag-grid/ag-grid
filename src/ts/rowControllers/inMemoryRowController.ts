@@ -14,6 +14,7 @@ import {ColDef} from "../entities/colDef";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import {SelectedNodeMemory} from "./selectedNodeMemory";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -24,6 +25,7 @@ export default class InMemoryRowController {
     @Qualifier('columnController') private columnController: ColumnController;
     @Qualifier('filterManager') private filterManager: FilterManager;
     @Qualifier('$scope') private $scope: any;
+    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
 
     @Qualifier('groupCreator') private groupCreator: GroupCreator;
     @Qualifier('valueService') private valueService: ValueService;
@@ -457,7 +459,7 @@ export default class InMemoryRowController {
             } else {
                 expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
             }
-            rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
+            rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault, this.getModel());
         } else {
             rowsAfterGroup = this.allRows;
         }
@@ -534,7 +536,7 @@ export default class InMemoryRowController {
             var nodes: RowNode[] = [];
             if (rows) {
                 for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                    var node = <RowNode>{};
+                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.getModel());
                     node.data = rows[i];
                     nodes.push(node);
                 }
@@ -561,6 +563,7 @@ export default class InMemoryRowController {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             node.id = index++;
+            this.selectedNodeMemory.syncInRowNode(node);
             if (node.group && node.children) {
                 index = this.recursivelyAddIdToNodes(node.children, index);
             }
@@ -640,10 +643,10 @@ export default class InMemoryRowController {
         this.nextRowTop += rowNode.rowHeight;
     }
 
-    private createFooterNode(groupNode: any) {
-        var footerNode = <any>{};
+    private createFooterNode(groupNode: RowNode): RowNode {
+        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.model);
         Object.keys(groupNode).forEach(function (key) {
-            footerNode[key] = groupNode[key];
+            (<any>footerNode)[key] = (<any>groupNode)[key];
         });
         footerNode.footer = true;
         // get both header and footer to reference each other as siblings. this is never undone,

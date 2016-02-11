@@ -4,6 +4,8 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import GridPanel from "../gridPanel/gridPanel";
+import {SelectedNodeMemory} from "./selectedNodeMemory";
 
 var template =
         '<div class="ag-paging-panel">'+
@@ -30,7 +32,9 @@ var template =
 export default class PaginationController {
 
     @Qualifier('gridCore') private gridCore: GridCore;
+    @Qualifier('gridPanel') private gridPanel: GridPanel;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
 
     private eGui: any;
     private btNext: any;
@@ -69,7 +73,9 @@ export default class PaginationController {
         this.reset();
     }
 
-    public reset() {
+    private reset() {
+        this.selectedNodeMemory.reset();
+
         // copy pageSize, to guard against it changing the the datasource between calls
         if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
             console.warn('datasource.pageSize should be a number');
@@ -170,7 +176,7 @@ export default class PaginationController {
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
-        this.gridCore.showLoadingOverlay();
+        this.gridPanel.showLoadingOverlay();
 
         var sortModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {

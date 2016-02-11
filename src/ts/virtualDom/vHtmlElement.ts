@@ -10,7 +10,7 @@ export default class VHtmlElement extends VElement {
     private attributes: {[key: string]: string};
     private children: VElement[];
     private innerHtml: string;
-    private style = <any>{};
+    public style = <any>{};
 
     private bound: boolean;
     private element: HTMLElement;

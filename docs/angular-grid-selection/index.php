@@ -18,9 +18,7 @@ include '../documentation_header.php';
         API methods:
         <ul>
             <li><b>api.getSelectedNodes()</b>: Returns an array of the selected nodes.</li>
-            <li><b>api.getSelectedNodesById()</b>: Returns a map of node id's (node id's are
-                created by the grid) to selected nodes.</li>
-            <li><b>api.getSelectedRows()</b>: Returns a list of selected rows data.</li>
+            <li><b>api.getSelectedRows()</b>: Returns a array of selected rows data.</li>
         </ul>
     </p>
 
@@ -41,6 +39,33 @@ include '../documentation_header.php';
             example, when you want checkbox selection, and don't want to also select when the row
             is clicked.</li>
     </ul>
+
+    <h3>Selection API</h3>
+
+    <p>
+        To select rows programmatically, use the node.setSelected() method. This method takes two
+        parameters:
+        <ul>
+        <li><b>selected</b>: set to true to select, false to un-select.</li>
+        <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
+        Use this if you do not want multi selection and want this node to be exclusively selected.</li>
+    </ul>
+    <pre>// set selected, keep any other selections
+node.setSelected(true);
+
+// set selected, exclusively, remove any other selections
+node.setSelected(true, true);
+
+// un-select
+node.setSelected(false);
+
+// check status of node selection
+var selected = node.isSelected();</pre>
+
+        The selected status method returns true if the node is selected, or false if it is not selected. If the
+        node is a group node and the group selection is set to 'children', then this will return true if all child
+        (and grand child) nodes are selected, false if all unselected, or undefined if a mixture.
+        </p>
 
     <h3>Example - Single Row Selection</h3>
 
@@ -111,13 +136,14 @@ include '../documentation_header.php';
     <h3>Selection Events</h3>
 
     <p>
-        There are three events with regards selection:<br/>
+        There are two events with regards selection:<br/>
         <ul>
-            <li><b>rowSelected / rowDeselected</b>: Gets called when a row is selected deselected.
-                The event contains the node in question.</li>
-            <li><b>selectionChanged</b>: Gets called when a row is selected or deselected.
-                The event contains selectedNodesById and selectedRows (as per the grid api
-                methods of similar name).</li>
+            <li><b>rowSelected</b>: Gets called when a row is selected or deselected.
+                The event contains the node in question, so call the nodes 'isSelected()'
+                method to see if it was just selected or deselected.</li>
+            <li><b>selectionChanged</b>: Gets called when one or more rows are
+                selected or deselected. Use the grid API get a list of selected nodes
+                if you want them.</li>
         </ul>
     </p>
 

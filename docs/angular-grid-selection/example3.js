@@ -16,20 +16,16 @@ var gridOptions = {
     rowSelection: 'multiple',
     rowData: null,
     onRowSelected: rowSelectedFunc,
-    onRowDeselected: rowDeselectedFunc,
     onSelectionChanged: selectionChangedFunc
 };
 
-function rowDeselectedFunc(event) {
-    window.alert("row " + event.node.data.athlete + " de-selected");
-}
-
 function rowSelectedFunc(event) {
-    window.alert("row " + event.node.data.athlete + " selected");
+    window.alert("row " + event.node.data.athlete + " selected = " + event.node.selected);
 }
 
-function selectionChangedFunc(event) {
-    window.alert('selection changed, ' + event.selectedRows.length + ' rows selected');
+function selectionChangedFunc() {
+    var rowCount = gridOptions.api.getSelectedNodes().length;
+    window.alert('selection changed, ' + rowCount + ' rows selected');
 }
 
 // setup the grid after the page has finished loading

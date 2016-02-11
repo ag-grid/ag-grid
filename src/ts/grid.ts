@@ -41,6 +41,7 @@ import {Context} from './context/context';
 import CsvCreator from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {VirtualRowEventService} from "./rendering/virtualRowEventService";
+import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
 
 export class Grid {
 
@@ -62,8 +63,7 @@ export class Grid {
                 $scope: $scope,
                 $compile: $compile,
                 quickFilterOnScope: quickFilterOnScope,
-                globalEventListener: globalEventListener,
-                ePopupParent: eGridDiv // this was the gridPanel, check it doesn't break by changing it
+                globalEventListener: globalEventListener
             },
             beans: [DragService, HeaderTemplateLoader, FloatingRowModel, BalancedColumnTreeBuilder,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
@@ -71,7 +71,8 @@ export class Grid {
                 HeaderRenderer, InMemoryRowController, VirtualPageRowController, ExpressionService,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
-                PaginationController, PopupService, GridCore, ToolPanel, VirtualRowEventService],
+                PaginationController, PopupService, GridCore, ToolPanel, VirtualRowEventService,
+                SelectedNodeMemory],
             debug: !!gridOptions.debug
         });
     }

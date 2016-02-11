@@ -22,6 +22,7 @@ import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
 import {VirtualRowEventService} from "./rendering/virtualRowEventService";
+import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
 
 @Bean('gridApi')
 export class GridApi {
@@ -41,6 +42,7 @@ export class GridApi {
     @Qualifier('eventService') private eventService: EventService;
     @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Qualifier('context') private context: Context;
+    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
     @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -60,23 +62,9 @@ export class GridApi {
         this.gridCore.setDatasource(datasource);
     }
 
-    public onNewDatasource() {
-        console.log('ag-Grid: onNewDatasource deprecated, please use setDatasource()');
-        this.gridCore.setDatasource();
-    }
-
     public setRowData(rowData:any) {
+        this.selectedNodeMemory.reset();
         this.gridCore.setRowData(rowData);
-    }
-
-    public setRows(rows:any) {
-        console.log('ag-Grid: setRows deprecated, please use setRowData()');
-        this.gridCore.setRowData(rows);
-    }
-
-    public onNewRows() {
-        console.log('ag-Grid: onNewRows deprecated, please use setRowData()');
-        this.gridCore.setRowData();
     }
 
     public setFloatingTopRowData(rows: any[]): void {
@@ -91,18 +79,8 @@ export class GridApi {
         this.refreshView();
     }
 
-    public onNewCols() {
-        console.error("ag-Grid: deprecated, please call setColumnDefs instead providing a list of the defs");
-        this.gridCore.setColumnDefs();
-    }
-
     public setColumnDefs(colDefs: ColDef[]) {
         this.gridCore.setColumnDefs(colDefs);
-    }
-
-    public unselectAll() {
-        console.error("unselectAll deprecated, call deselectAll instead");
-        this.deselectAll();
     }
 
     public refreshRows(rowNodes: RowNode[]): void {
@@ -184,22 +162,22 @@ export class GridApi {
         this.selectionController.deselectIndex(index, suppressEvents);
     }
 
-    public selectNode(node:any, tryMulti: boolean = false, suppressEvents: boolean = false) {
-        this.selectionController.selectNode(node, tryMulti, suppressEvents);
+    public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
+        console.log('ag-Grid: api.selectNode is deprecated, use node.setSelected(value) instead');
+        node.setSelected(true, !tryMulti, suppressEvents);
     }
 
     public deselectNode(node:any, suppressEvents: boolean = false) {
-        this.selectionController.deselectNode(node, suppressEvents);
+        console.log('ag-Grid: api.selectNode is deprecated, use node.setSelected(value) instead');
+        node.setSelected(false, false, suppressEvents);
     }
 
     public selectAll() {
         this.selectionController.selectAll();
-        this.rowRenderer.refreshView();
     }
 
     public deselectAll() {
         this.selectionController.deselectAll();
-        this.rowRenderer.refreshView();
     }
 
     public recomputeAggregates() {
@@ -216,40 +194,42 @@ export class GridApi {
     }
 
     public showLoadingOverlay(): void {
-        this.gridCore.showLoadingOverlay();
+        this.gridPanel.showLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        this.gridCore.showNoRowsOverlay();
+        this.gridPanel.showNoRowsOverlay();
     }
 
     public hideOverlay(): void {
-        this.gridCore.hideOverlay();
+        this.gridPanel.hideOverlay();
     }
 
     public showLoading(show: any) {
         console.warn('ag-Grid: showLoading is deprecated, please use api.showLoadingOverlay() and api.hideOverlay() instead');
         if (show) {
-            this.gridCore.showLoadingOverlay();
+            this.gridPanel.showLoadingOverlay();
         } else {
-            this.gridCore.hideOverlay();
+            this.gridPanel.hideOverlay();
         }
     }
 
     public isNodeSelected(node:any) {
-        return this.selectionController.isNodeSelected(node);
+        console.log('ag-Grid: no need to call api.isNodeSelected(), just call node.isSelected() instead');
+        return node.isSelected();
     }
 
     public getSelectedNodesById(): {[nodeId: number]: RowNode;} {
-        return this.selectionController.getSelectedNodesById();
+        console.error('ag-Grid: since version 3.4, getSelectedNodesById no longer exists, use getSelectedNodes() instead');
+        return null;
     }
 
     public getSelectedNodes(): RowNode[] {
-        return this.selectionController.getSelectedNodes();
+        return this.selectedNodeMemory.getSelectedNodes();
     }
 
     public getSelectedRows(): any[] {
-        return this.selectionController.getSelectedRows();
+        return this.selectedNodeMemory.getSelectedRows();
     }
 
     public getBestCostNodeSelection() {

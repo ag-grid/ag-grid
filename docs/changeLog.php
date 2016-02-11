@@ -8,8 +8,23 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 3.4.0</h3>
+    <li>Event rowDeselected gone, now event rowSelected gets fired for both selected and deselected. Check node state
+        to see if row is selected or not.</li>
+
+    <li>Event selectionChanged no longer contains the selected rows or nodes. Use the API to look these up if needed.
+    Preparing these lists took CPU time, so it's best they are only prepared if needed.</li>
+
+    <li>Concept of 'suppressEvents' was dumped for row selection. No other event event typ had this feature, and it
+    was out of sync with out web components work in general. If you don't want to be notified of an event, then remove
+    your event listener.</li>
+
+    <li>RowNode now has method 'setSelected'. This is preferred over the gridApi.selectXXXX() methods.</li>
+
+    <li>api.getSelectedNodesById gone, use api.getSelectedNodes instead</li>
+
     <h3>Version 3.3.3</h3>
-    <li>Buf fix: Pinned rows were not colored correctly</li>
+    <li>Bug fix: Pinned rows were not colored correctly</li>
 
     <h3>Version 3.3.2</h3>
     <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with CommonJS</li>

@@ -4,38 +4,37 @@ import {GridCore} from "./gridCore";
 import {Qualifier} from "./context/context";
 import SelectionController from "./selectionController";
 import {VirtualRowEventService} from "./rendering/virtualRowEventService";
+import {RowNode} from "./entities/rowNode";
 
 @Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
 
-    @Qualifier('gridCore') private grid: GridCore;
-    @Qualifier('selectionController') private selectionController: any;
     @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
-    public createSelectionCheckbox(node: any, rowIndex: any) {
+    public createSelectionCheckbox(rowNode: RowNode, rowIndex: any) {
 
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
         eCheckbox.className = 'ag-selection-checkbox';
-        this.setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
+        this.setCheckboxState(eCheckbox, rowNode.isSelected());
 
-        var that = this;
-        eCheckbox.onclick = function (event) {
-            event.stopPropagation();
-        };
+        eCheckbox.addEventListener('click', event => event.stopPropagation() );
 
-        eCheckbox.onchange = function () {
+        eCheckbox.addEventListener('change', () => {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.selectionController.selectIndex(rowIndex, true);
+                rowNode.setSelected(newValue);
             } else {
-                that.selectionController.deselectIndex(rowIndex);
+                rowNode.setSelected(newValue);
             }
-        };
+        });
 
-        this.virtualRowEventService.addVirtualRowListener(VirtualRowEventService.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
-            this.setCheckboxState(eCheckbox, selected);
+        var selectionChangedCallback = ()=> this.setCheckboxState(eCheckbox, rowNode.isSelected());
+        rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+
+        this.virtualRowEventService.addVirtualRowListener(VirtualRowEventService.VIRTUAL_ROW_REMOVED, rowIndex, () => {
+            rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
         });
 
         return eCheckbox;

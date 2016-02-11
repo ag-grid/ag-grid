@@ -3,7 +3,6 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Grid} from "../grid";
 import SelectionRendererFactory from "../selectionRendererFactory";
 import GridPanel from "../gridPanel/gridPanel";
-import SelectionController from "../selectionController";
 import ExpressionService from "../expressionService";
 import TemplateService from "../templateService";
 import ValueService from "../valueService";
@@ -33,7 +32,6 @@ export default class RowRenderer {
     @Qualifier('gridPanel') private gridPanel: GridPanel;
     @Qualifier('$compile') private $compile: any;
     @Qualifier('$scope') private $scope: any;
-    @Qualifier('selectionController') private selectionController: SelectionController;
     @Qualifier('expressionService') private expressionService: ExpressionService;
     @Qualifier('templateService') private templateService: TemplateService;
     @Qualifier('valueService') private valueService: ValueService;
@@ -177,7 +175,7 @@ export default class RowRenderer {
                 var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
                     this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
                     this.selectionRendererFactory, this.$compile, this.templateService,
-                    this.selectionController, this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
+                    this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
                     node, rowIndex, this.eventService);
                 renderedRows.push(renderedRow);
             })
@@ -410,7 +408,7 @@ export default class RowRenderer {
 
         var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
             this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
-            this.selectionRendererFactory, this.$compile, this.templateService, this.selectionController,
+            this.selectionRendererFactory, this.$compile, this.templateService,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex, this.eventService);
         //renderedRow.setMainRowWidth(mainRowWidth);
@@ -541,12 +539,6 @@ export default class RowRenderer {
             rowIndex: nextRowToFocus,
             column: nextColumnToFocus
         };
-    }
-
-    public onRowSelected(rowIndex: number, selected: boolean) {
-        if (this.renderedRows[rowIndex]) {
-            this.renderedRows[rowIndex].onRowSelected(selected);
-        }
     }
 
     // called by the renderedRow

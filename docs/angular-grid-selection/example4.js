@@ -20,10 +20,10 @@ var gridOptions = {
 function selectAllAmerican() {
     gridOptions.api.forEachNode( function (node) {
         if (node.data.country === 'United States') {
-            gridOptions.api.selectNode(node, true);
+            node.setSelected(true);
         }
     });
-};
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

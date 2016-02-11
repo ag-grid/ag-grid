@@ -6,7 +6,6 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import ExpressionService from "../expressionService";
 import SelectionRendererFactory from "../selectionRendererFactory";
 import RowRenderer from "./rowRenderer";
-import SelectionController from "../selectionController";
 import TemplateService from "../templateService";
 import {ColumnController} from "../columnController/columnController";
 import ValueService from "../valueService";
@@ -22,8 +21,6 @@ export default class RenderedCell {
     private vCellWrapper: VHtmlElement;
     private vParentOfValue: VHtmlElement;
 
-    private checkboxOnChangeListener: EventListener;
-
     private column: Column;
     private data: any;
     private node: RowNode;
@@ -38,7 +35,6 @@ export default class RenderedCell {
     private expressionService: ExpressionService;
     private selectionRendererFactory: SelectionRendererFactory;
     private rowRenderer: RowRenderer;
-    private selectionController: SelectionController;
     private $compile: any;
     private templateService: TemplateService;
     private cellRendererMap: {[key: string]: Function};
@@ -54,7 +50,7 @@ export default class RenderedCell {
 
     constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
                 gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
+                selectionRendererFactory: SelectionRendererFactory,
                 templateService: TemplateService, cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
                 valueService: ValueService, eventService: EventService) {
@@ -65,7 +61,6 @@ export default class RenderedCell {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.expressionService = expressionService;
         this.selectionRendererFactory = selectionRendererFactory;
-        this.selectionController = selectionController;
         this.cellRendererMap = cellRendererMap;
         this.$compile = $compile;
         this.templateService = templateService;
@@ -153,9 +148,6 @@ export default class RenderedCell {
 
     private setLeftOnCell(): void {
         var leftChangedListener = () => {
-            //if (this.column.getColId()==='age') {
-            //    console.log('left changed: ' + this.column.getColId() + ' ' + this.column.getLeft());
-            //}
             this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
         };
 
@@ -205,10 +197,6 @@ export default class RenderedCell {
         this.createParentOfValue();
 
         this.populateCell();
-
-        if (this.eCheckbox) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
 
     }
 
@@ -559,11 +547,11 @@ export default class RenderedCell {
 
             var selectRow = key === Constants.KEY_SPACE;
             if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
-                var selected = that.selectionController.isNodeSelected(that.node);
+                var selected = that.node.isSelected();
                 if (selected) {
-                    that.selectionController.deselectNode(that.node);
+                    that.node.setSelected(false);
                 } else {
-                    that.selectionController.selectNode(that.node, true);
+                    that.node.setSelected(true);
                 }
                 event.preventDefault();
                 return;
@@ -575,52 +563,14 @@ export default class RenderedCell {
         return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
     }
 
-    public createSelectionCheckbox() {
-
-        this.eCheckbox = document.createElement('input');
-        this.eCheckbox.type = "checkbox";
-        this.eCheckbox.name = "name";
-        this.eCheckbox.className = 'ag-selection-checkbox';
-
-        this.eCheckbox.addEventListener('click', function (event) {
-            event.stopPropagation();
-        });
-
-        var that = this;
-        this.checkboxOnChangeListener = function() {
-            var newValue = that.eCheckbox.checked;
-            if (newValue) {
-                that.selectionController.selectIndex(that.rowIndex, true);
-            } else {
-                that.selectionController.deselectIndex(that.rowIndex);
-            }
-        };
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
-    }
-
-    public setSelected(state: boolean) {
-        if (!this.eCheckbox) {
-            return;
-        }
-        this.eCheckbox.onchange = null;
-        if (typeof state === 'boolean') {
-            this.eCheckbox.checked = state;
-            this.eCheckbox.indeterminate = false;
-        } else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            this.eCheckbox.indeterminate = true;
-        }
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
-    }
-
     private createParentOfValue() {
         if (this.checkboxSelection) {
             this.vCellWrapper = new VHtmlElement('span');
             this.vCellWrapper.addClass('ag-cell-wrapper');
             this.vGridCell.appendChild(this.vCellWrapper);
 
-            this.createSelectionCheckbox();
+            //this.createSelectionCheckbox();
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex);
             this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
@@ -646,10 +596,6 @@ export default class RenderedCell {
         this.value = this.getValue();
 
         this.populateCell();
-
-        if (this.checkboxSelection) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
 
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.gridOptionsWrapper.isAngularCompileRows()) {

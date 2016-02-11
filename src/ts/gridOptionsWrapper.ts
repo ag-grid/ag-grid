@@ -35,6 +35,14 @@ export default class GridOptionsWrapper {
     public agPostInit(): void {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
         this.gridOptions.columnApi = this.columnController.getColumnApi();
+
+        if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
+            console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
+        }
+
+        if (this.isGroupSelectsChildren() && !this.isRowSelectionMulti()) {
+            console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
+        }
     }
 
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
@@ -194,6 +202,9 @@ export default class GridOptionsWrapper {
         }
         if (typeof options.groupDefaultExpanded === 'boolean') {
             console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
+        }
+        if (options.onRowDeselected || options.rowDeselected) {
+            console.warn('ag-grid: since version 3.4 event rowDeselected no longer exists, please check the docs');
         }
     }
 

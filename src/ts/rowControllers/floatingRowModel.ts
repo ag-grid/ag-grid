@@ -3,11 +3,13 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import EventService from "../eventService";
 
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
 
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Qualifier('eventService') private eventService: EventService;
 
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
@@ -30,15 +32,14 @@ export default class FloatingRowModel {
         if (allData) {
             var nextRowTop = 0;
             allData.forEach( (dataItem) => {
-                var rowNode: RowNode = {
-                    data: dataItem,
-                    floating: true,
-                    floatingTop: isTop,
-                    floatingBottom: !isTop,
-                    rowTop: nextRowTop,
-                    rowHeight: null
-                };
+                var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null, null);
+                rowNode.data = dataItem;
+                rowNode.floating = true;
+                rowNode.floatingTop = isTop;
+                rowNode.floatingBottom = !isTop;
+                rowNode.rowTop = nextRowTop;
                 rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);
             });

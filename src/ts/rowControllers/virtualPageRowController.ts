@@ -4,6 +4,8 @@ import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import {SelectedNodeMemory} from "./selectedNodeMemory";
+import EventService from "../eventService";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -18,6 +20,8 @@ export default class VirtualPageRowController {
     @Qualifier('rowRenderer') private rowRenderer: any;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Qualifier('gridCore') private angularGrid: any;
+    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
+    @Qualifier('eventService') private eventService: EventService;
 
     private datasourceVersion = 0;
     private datasource: any;
@@ -37,6 +41,12 @@ export default class VirtualPageRowController {
     private pageSize: number;
     private overflowSize: number;
 
+    private rowModel: any;
+
+    constructor() {
+        this.initModel();
+    }
+
     public setDatasource(datasource: any) {
         this.datasource = datasource;
 
@@ -49,6 +59,8 @@ export default class VirtualPageRowController {
     }
 
     private reset() {
+        this.selectedNodeMemory.reset();
+
         // see if datasource knows how many rows there are
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
@@ -97,22 +109,37 @@ export default class VirtualPageRowController {
         if (rows) {
             for (var i = 0, j = rows.length; i < j; i++) {
                 var virtualRowIndex = (pageNumber * this.pageSize) + i;
-                var node = this.createNode(rows[i], virtualRowIndex);
+                var node = this.createNode(rows[i], virtualRowIndex, true);
                 nodes.push(node);
             }
         }
         return nodes;
     }
 
-    private createNode(data: any, virtualRowIndex: number): RowNode {
+    private createNode(data: any, virtualRowIndex: number, realNode: boolean): RowNode {
         var rowHeight = this.getRowHeightAsNumber();
         var top = rowHeight * virtualRowIndex;
-        var rowNode = <RowNode> {
-            data: data,
-            id: virtualRowIndex,
-            rowTop: top,
-            rowHeight: rowHeight
-        };
+
+        var rowNode: RowNode;
+        if (realNode) {
+            // if a real node, then always create a new one
+            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.rowModel);
+            rowNode.id = virtualRowIndex;
+            rowNode.data = data;
+            // and see if the previous one was selected, and if yes, swap it out
+            this.selectedNodeMemory.syncInRowNode(rowNode);
+        } else {
+            // if creating a proxy node, see if there is a copy in selected memory that we can use
+            var rowNode = this.selectedNodeMemory.getNodeForIdIfSelected(virtualRowIndex);
+            if (!rowNode) {
+                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.rowModel);
+                rowNode.id = virtualRowIndex;
+                rowNode.data = data;
+            }
+        }
+        rowNode.rowTop = top;
+        rowNode.rowHeight = rowHeight;
+
         return rowNode;
     }
 
@@ -321,7 +348,7 @@ export default class VirtualPageRowController {
         if (!page) {
             this.doLoadOrQueue(pageNumber);
             // return back an empty row, so table can at least render empty cells
-            var dummyNode = this.createNode({}, rowIndex);
+            var dummyNode = this.createNode(null, rowIndex, false);
             return dummyNode;
         } else {
             var indexInThisPage = rowIndex % this.pageSize;
@@ -365,8 +392,12 @@ export default class VirtualPageRowController {
     }
 
     public getModel() {
+        return this.rowModel;
+    }
+
+    private initModel() {
         var that = this;
-        return {
+        this.rowModel = {
             getRowAtPixel: function(pixel: number): number {
                 return that.getRowAtPixel(pixel);
             },
