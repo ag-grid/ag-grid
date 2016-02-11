@@ -3,12 +3,14 @@ import {Bean} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Qualifier} from "./context/context";
 import SelectionController from "./selectionController";
+import {VirtualRowEventService} from "./rendering/virtualRowEventService";
 
 @Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
 
     @Qualifier('gridCore') private grid: GridCore;
     @Qualifier('selectionController') private selectionController: any;
+    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
     public createSelectionCheckbox(node: any, rowIndex: any) {
 
@@ -32,7 +34,7 @@ export default class SelectionRendererFactory {
             }
         };
 
-        this.grid.addVirtualRowListener(GridCore.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
+        this.virtualRowEventService.addVirtualRowListener(VirtualRowEventService.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
             this.setCheckboxState(eCheckbox, selected);
         });
 

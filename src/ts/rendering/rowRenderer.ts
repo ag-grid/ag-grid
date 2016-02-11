@@ -21,6 +21,7 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
+import {VirtualRowEventService} from "./virtualRowEventService";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -35,6 +36,11 @@ export default class RowRenderer {
     @Qualifier('selectionController') private selectionController: SelectionController;
     @Qualifier('expressionService') private expressionService: ExpressionService;
     @Qualifier('templateService') private templateService: TemplateService;
+    @Qualifier('valueService') private valueService: ValueService;
+    @Qualifier('eventService') private eventService: EventService;
+    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
+
     private cellRendererMap: {[key: string]: any};
     private rowModel: any;
     private firstVirtualRenderedRow: number;
@@ -46,10 +52,6 @@ export default class RowRenderer {
         node: RowNode,
         colDef: ColDef
     };
-
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
@@ -305,7 +307,7 @@ export default class RowRenderer {
 
         var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
         this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
-        this.gridCore.onVirtualRowRemoved(indexToRemove);
+        this.virtualRowEventService.onVirtualRowRemoved(indexToRemove);
 
         delete this.renderedRows[indexToRemove];
     }

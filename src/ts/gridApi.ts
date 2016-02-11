@@ -21,6 +21,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
+import {VirtualRowEventService} from "./rendering/virtualRowEventService";
 
 @Bean('gridApi')
 export class GridApi {
@@ -40,6 +41,7 @@ export class GridApi {
     @Qualifier('eventService') private eventService: EventService;
     @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Qualifier('context') private context: Context;
+    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -167,7 +169,7 @@ export class GridApi {
         if (typeof eventName !== 'string') {
             console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, pleae check the documentation.');
         }
-        this.gridCore.addVirtualRowListener(eventName, rowIndex, callback);
+        this.virtualRowEventService.addVirtualRowListener(eventName, rowIndex, callback);
     }
 
     public setQuickFilter(newFilter:any) {

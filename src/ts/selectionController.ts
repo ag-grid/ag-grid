@@ -9,6 +9,7 @@ import {RowNode} from "./entities/rowNode";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
+import {VirtualRowEventService} from "./rendering/virtualRowEventService";
 
 // these constants are used for determining if groups should
 // be selected or deselected when selecting groups, and the group
@@ -21,17 +22,18 @@ var DO_NOT_CARE = 3;
 @Bean('selectionController')
 export default class SelectionController {
 
-    private eParentsOfRows: HTMLElement[];
-    private selectedRows: any[] = [];
-    private selectedNodesById: any = {};
-    private rowModel: any;
-
     @Qualifier('gridCore') private gridCore: GridCore;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Qualifier('$scope') private $scope: any;
     @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
     @Qualifier('eventService') private eventService: EventService;
     @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
+
+    private eParentsOfRows: HTMLElement[];
+    private selectedRows: any[] = [];
+    private selectedNodesById: any = {};
+    private rowModel: any;
 
     public agPostInit(): void {
         this.eParentsOfRows = this.gridPanel.getRowsParent();
@@ -245,7 +247,7 @@ export default class SelectionController {
             });
 
             // inform virtual row listener
-            this.gridCore.onVirtualRowSelected(virtualRenderedRowIndex, true);
+            this.virtualRowEventService.onVirtualRowSelected(virtualRenderedRowIndex, true);
         }
     }
 
@@ -295,7 +297,7 @@ export default class SelectionController {
                 _.querySelectorAll_removeCssClass(rowContainer, '[row="' + virtualRenderedRowIndex + '"]', 'ag-row-selected');
             });
             // inform virtual row listener
-            this.gridCore.onVirtualRowSelected(virtualRenderedRowIndex, false);
+            this.virtualRowEventService.onVirtualRowSelected(virtualRenderedRowIndex, false);
         }
     }
 
@@ -444,7 +446,7 @@ export default class SelectionController {
             var node = this.rowModel.getVirtualRow(rowIndex);
             if (node.group) {
                 var selected = this.isNodeSelected(node);
-                this.gridCore.onVirtualRowSelected(rowIndex, selected);
+                this.virtualRowEventService.onVirtualRowSelected(rowIndex, selected);
 
                 this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
                     if (selected) {
