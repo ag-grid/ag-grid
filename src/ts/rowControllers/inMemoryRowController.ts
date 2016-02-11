@@ -284,6 +284,11 @@ export default class InMemoryRowController {
                     }
 
                 }
+                if(aggFunc == Column.AGG_FIRST){
+                	if (resultForColumn === null) {
+                       resultForColumn = thisColumnValue;
+                    }
+                }
             }
             return resultForColumn;
         }
