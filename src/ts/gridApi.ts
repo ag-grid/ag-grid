@@ -22,7 +22,6 @@ import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
 import {VirtualRowEventService} from "./rendering/virtualRowEventService";
-import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
 
 @Bean('gridApi')
 export class GridApi {
@@ -42,7 +41,6 @@ export class GridApi {
     @Qualifier('eventService') private eventService: EventService;
     @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Qualifier('context') private context: Context;
-    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
     @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -63,7 +61,7 @@ export class GridApi {
     }
 
     public setRowData(rowData:any) {
-        this.selectedNodeMemory.reset();
+        this.selectionController.reset();
         this.gridCore.setRowData(rowData);
     }
 
@@ -145,7 +143,7 @@ export class GridApi {
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
-            console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, pleae check the documentation.');
+            console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, please check the documentation.');
         }
         this.virtualRowEventService.addVirtualRowListener(eventName, rowIndex, callback);
     }
@@ -155,29 +153,31 @@ export class GridApi {
     }
 
     public selectIndex(index:any, tryMulti:any, suppressEvents:any) {
+        console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
         this.selectionController.selectIndex(index, tryMulti, suppressEvents);
     }
 
     public deselectIndex(index: number, suppressEvents: boolean = false) {
+        console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
         this.selectionController.deselectIndex(index, suppressEvents);
     }
 
     public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
-        console.log('ag-Grid: api.selectNode is deprecated, use node.setSelected(value) instead');
+        console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         node.setSelected(true, !tryMulti, suppressEvents);
     }
 
     public deselectNode(node:any, suppressEvents: boolean = false) {
-        console.log('ag-Grid: api.selectNode is deprecated, use node.setSelected(value) instead');
+        console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         node.setSelected(false, false, suppressEvents);
     }
 
     public selectAll() {
-        this.selectionController.selectAll();
+        this.selectionController.selectAllRowNodes();
     }
 
     public deselectAll() {
-        this.selectionController.deselectAll();
+        this.selectionController.deselectAllRowNodes();
     }
 
     public recomputeAggregates() {
@@ -225,11 +225,11 @@ export class GridApi {
     }
 
     public getSelectedNodes(): RowNode[] {
-        return this.selectedNodeMemory.getSelectedNodes();
+        return this.selectionController.getSelectedNodes();
     }
 
     public getSelectedRows(): any[] {
-        return this.selectedNodeMemory.getSelectedRows();
+        return this.selectionController.getSelectedRows();
     }
 
     public getBestCostNodeSelection() {

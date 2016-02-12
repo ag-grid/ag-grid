@@ -14,7 +14,7 @@ import {ColDef} from "../entities/colDef";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {SelectedNodeMemory} from "./selectedNodeMemory";
+import SelectionController from "../selectionController";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -25,7 +25,7 @@ export default class InMemoryRowController {
     @Qualifier('columnController') private columnController: ColumnController;
     @Qualifier('filterManager') private filterManager: FilterManager;
     @Qualifier('$scope') private $scope: any;
-    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
+    @Qualifier('selectionController') private selectionController: SelectionController;
 
     @Qualifier('groupCreator') private groupCreator: GroupCreator;
     @Qualifier('valueService') private valueService: ValueService;
@@ -138,7 +138,7 @@ export default class InMemoryRowController {
     }
 
     public forEachInMemory(callback: Function) {
-        console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, I just renamed it, forEachInMemory is deprecated');
+        console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, just renamed, forEachInMemory is deprecated');
         this.forEachNode(callback);
     }
 
@@ -451,6 +451,10 @@ export default class InMemoryRowController {
 
         var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
 
+        // remove old groups from the selection model, as we are about to replace them
+        // with new groups
+        this.selectionController.removeGroupsFromSelection();
+
         if (doingGrouping) {
             var expandByDefault: number;
             if (this.gridOptionsWrapper.isGroupSuppressRow()) {
@@ -464,6 +468,10 @@ export default class InMemoryRowController {
             rowsAfterGroup = this.allRows;
         }
         this.rowsAfterGroup = rowsAfterGroup;
+
+        if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
+            this.selectionController.updateGroupsFromChildrenSelections();
+        }
     }
 
     private doFilter() {
@@ -536,7 +544,7 @@ export default class InMemoryRowController {
             var nodes: RowNode[] = [];
             if (rows) {
                 for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.getModel());
+                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.getModel());
                     node.data = rows[i];
                     nodes.push(node);
                 }
@@ -563,7 +571,7 @@ export default class InMemoryRowController {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             node.id = index++;
-            this.selectedNodeMemory.syncInRowNode(node);
+            this.selectionController.syncInRowNode(node);
             if (node.group && node.children) {
                 index = this.recursivelyAddIdToNodes(node.children, index);
             }
@@ -644,7 +652,7 @@ export default class InMemoryRowController {
     }
 
     private createFooterNode(groupNode: RowNode): RowNode {
-        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.model);
+        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.model);
         Object.keys(groupNode).forEach(function (key) {
             (<any>footerNode)[key] = (<any>groupNode)[key];
         });

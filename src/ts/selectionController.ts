@@ -2,11 +2,101 @@ import _ from './utils';
 import {RowNode} from "./entities/rowNode";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {Logger} from "./logger";
+import {LoggerFactory} from "./logger";
+import EventService from "./eventService";
+import {Events} from "./events";
 
 @Bean('selectionController')
 export default class SelectionController {
 
+    @Qualifier('eventService') private eventService: EventService;
+
     private rowModel: any;
+
+    private selectedNodes: {[key: string]: RowNode};
+    private logger: Logger;
+
+    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('SelectionController');
+        this.reset();
+    }
+
+    public agPostInit() {
+        this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+    }
+
+    public getSelectedNodes() {
+        var selectedNodes: RowNode[] = [];
+        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+            if (rowNode) {
+                selectedNodes.push(rowNode);
+            }
+        });
+        return selectedNodes;
+    }
+
+    public getSelectedRows() {
+        var selectedRows: any[] = [];
+        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+            if (rowNode) {
+                selectedRows.push(rowNode.data);
+            }
+        });
+        return selectedRows;
+    }
+
+    public removeGroupsFromSelection(): void {
+        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+            if (rowNode) {
+                this.selectedNodes[rowNode.id] = undefined;
+            }
+        });
+    }
+
+    // should only be called if groupSelectsChildren=true
+    public updateGroupsFromChildrenSelections(): void {
+        this.rowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
+            rowNode.deptFirstSearch( (rowNode)=> {
+                if (rowNode.group) {
+                    rowNode.calculateSelectedFromChildren();
+                }
+            });
+        });
+    }
+
+    public getNodeForIdIfSelected(id: number): RowNode {
+        return this.selectedNodes[id];
+    }
+
+    public clearOtherNodes(rowNodeToKeepSelected: RowNode): void {
+        _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
+            if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
+                this.selectedNodes[otherRowNode.id].setSelected(false, false, true);
+            }
+        });
+    }
+
+    private onRowSelected(event: any): void {
+        var rowNode = event.node;
+        if (rowNode.isSelected()) {
+            this.selectedNodes[rowNode.id] = rowNode;
+        } else {
+            this.selectedNodes[rowNode.id] = undefined;
+        }
+    }
+
+    public syncInRowNode(rowNode: RowNode): void {
+        if (this.selectedNodes[rowNode.id] !== undefined) {
+            rowNode.setSelectedInitialValue(true);
+            this.selectedNodes[rowNode.id] = rowNode;
+        }
+    }
+
+    public reset(): void {
+        this.logger.log('reset');
+        this.selectedNodes = {};
+    }
 
     // returns a list of all nodes at 'best cost' - a feature to be used
     // with groups / trees. if a group has all it's children selected,
@@ -48,46 +138,47 @@ export default class SelectionController {
         this.rowModel = rowModel;
     }
 
-    // deselects all nodes without firing any events
-    public deselectAll() {
-        if (typeof this.rowModel.getTopLevelNodes !== 'function') {
-            throw 'deselectAll not available when rows are on the server';
-        }
-
-        this.rowModel.forEachNode( (rowNode: RowNode) => {
-            rowNode.setSelected(false, false, true);
+    public deselectAllRowNodes() {
+        _.iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
+            if (rowNode) {
+                rowNode.selectThisNode(false);
+            }
         });
+        // we should not have to do this, as deselecting the nodes fires events
+        // that we pick up, however it's good to clean it down, as we are still
+        // left with entries pointing to 'undefined'
+        this.selectedNodes = {};
     }
 
-    // this selects everything, but doesn't clear down the css - when it is called, the
-    // caller then gets the grid to refresh.
-    public selectAll() {
-
+    public selectAllRowNodes() {
         if (typeof this.rowModel.getTopLevelNodes !== 'function') {
-            throw 'selectAll not available when rows are on the server';
+            throw 'selectAll not available when doing virtual pagination';
         }
-
         this.rowModel.forEachNode( (rowNode: RowNode) => {
-            rowNode.setSelected(true);
+            rowNode.setSelected(true, false, true);
         });
+        // because we passed in 'false' as third parameter above, the
+        // eventSelectionChanged event was not fired.
+        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
     }
 
+    // Deprecated method
     public selectNode(rowNode: RowNode, tryMulti: boolean, suppressEvents?: boolean) {
         rowNode.setSelected(true, !tryMulti, suppressEvents);
     }
 
-    // used by selectionRendererFactory
+    // Deprecated method
     public deselectIndex(rowIndex: number, suppressEvents: boolean = false) {
         var node = this.rowModel.getVirtualRow(rowIndex);
         this.deselectNode(node, suppressEvents);
     }
 
-    // used by api
+    // Deprecated method
     public deselectNode(rowNode: RowNode, suppressEvents: boolean = false) {
         rowNode.setSelected(false, false, suppressEvents);
     }
 
-    // used by selectionRendererFactory & api
+    // Deprecated method
     public selectIndex(index: any, tryMulti: boolean, suppressEvents: boolean = false) {
         var node = this.rowModel.getVirtualRow(index);
         this.selectNode(node, tryMulti, suppressEvents);

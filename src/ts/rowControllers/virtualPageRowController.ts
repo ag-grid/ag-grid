@@ -4,8 +4,8 @@ import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {SelectedNodeMemory} from "./selectedNodeMemory";
 import EventService from "../eventService";
+import SelectionController from "../selectionController";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -20,7 +20,7 @@ export default class VirtualPageRowController {
     @Qualifier('rowRenderer') private rowRenderer: any;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Qualifier('gridCore') private angularGrid: any;
-    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
+    @Qualifier('selectionController') private selectionController: SelectionController;
     @Qualifier('eventService') private eventService: EventService;
 
     private datasourceVersion = 0;
@@ -59,7 +59,7 @@ export default class VirtualPageRowController {
     }
 
     private reset() {
-        this.selectedNodeMemory.reset();
+        this.selectionController.reset();
 
         // see if datasource knows how many rows there are
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
@@ -123,16 +123,16 @@ export default class VirtualPageRowController {
         var rowNode: RowNode;
         if (realNode) {
             // if a real node, then always create a new one
-            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.rowModel);
+            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.rowModel);
             rowNode.id = virtualRowIndex;
             rowNode.data = data;
             // and see if the previous one was selected, and if yes, swap it out
-            this.selectedNodeMemory.syncInRowNode(rowNode);
+            this.selectionController.syncInRowNode(rowNode);
         } else {
             // if creating a proxy node, see if there is a copy in selected memory that we can use
-            var rowNode = this.selectedNodeMemory.getNodeForIdIfSelected(virtualRowIndex);
+            var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
             if (!rowNode) {
-                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, this.rowModel);
+                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.rowModel);
                 rowNode.id = virtualRowIndex;
                 rowNode.data = data;
             }

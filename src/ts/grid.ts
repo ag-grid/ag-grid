@@ -41,7 +41,6 @@ import {Context} from './context/context';
 import CsvCreator from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {VirtualRowEventService} from "./rendering/virtualRowEventService";
-import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
 
 export class Grid {
 
@@ -71,8 +70,7 @@ export class Grid {
                 HeaderRenderer, InMemoryRowController, VirtualPageRowController, ExpressionService,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
-                PaginationController, PopupService, GridCore, ToolPanel, VirtualRowEventService,
-                SelectedNodeMemory],
+                PaginationController, PopupService, GridCore, ToolPanel, VirtualRowEventService],
             debug: !!gridOptions.debug
         });
     }

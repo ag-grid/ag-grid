@@ -203,6 +203,44 @@ include '../documentation_header.php';
     </ul>
     </p>
 
+    <h4>Node Methods</h4>
+
+    <p>
+    <ul>
+        <li><b>setSelected(newValue: boolean, clearSelection: boolean):</b> Select (or deselect) the node. newValue=true for selection,
+            newValue=false for deselection. If selecting, then passing true for clearSelection will select the
+            node exclusively (ie NOT do multi select). If doing deselection, clearSelection has no impact.</li>
+        <li><b>addEventListener(eventType: string, listener: Function):</b> Add an event listener. Currently only
+            rowSelected event supported.</li>
+        <li><b>removeEventListener(eventType: string, listener: Function)</b> Remove event listener.</li>
+    </ul>
+
+    <p>
+        When adding event listeners to a row, they will stay with the row until the row is destroyed. So if the row
+        is taken out of memory (pagination or virtual paging) then the listener will be removed. Likewise if you set
+        new data into the grid, all listeners on the old data will be removed.
+    </p>
+
+    <p>
+        Be careful adding listeners to rowNods in cellRenderers that you remove the listener when the rendered
+        row in destroyed due to row virtualisation. You can cater for this as follows:
+        <pre>var renderer = function(params) {
+    // add listener
+    var selectionChangedCallback = function () {
+        // some logic on selection changed here
+        console.log('node selected = ' + params.node.isSelected());
+    };
+    params.node.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+
+    // remove listener on destroy
+    params.api.addVirtualRowListener('virtualRowRemoved', params.rowIndex function() {
+        params.node.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+    }
+
+    return params.value;
+}</pre>
+    </p>
+
     <h2>Example API</h2>
 
     <p>

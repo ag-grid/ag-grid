@@ -5,7 +5,7 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import GridPanel from "../gridPanel/gridPanel";
-import {SelectedNodeMemory} from "./selectedNodeMemory";
+import SelectionController from "../selectionController";
 
 var template =
         '<div class="ag-paging-panel">'+
@@ -34,7 +34,7 @@ export default class PaginationController {
     @Qualifier('gridCore') private gridCore: GridCore;
     @Qualifier('gridPanel') private gridPanel: GridPanel;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
+    @Qualifier('selectionController') private selectionController: SelectionController;
 
     private eGui: any;
     private btNext: any;
@@ -74,7 +74,7 @@ export default class PaginationController {
     }
 
     private reset() {
-        this.selectedNodeMemory.reset();
+        this.selectionController.reset();
 
         // copy pageSize, to guard against it changing the the datasource between calls
         if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {

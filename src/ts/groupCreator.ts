@@ -5,7 +5,7 @@ import Column from "./entities/column";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import EventService from "./eventService";
-import {SelectedNodeMemory} from "./rowControllers/selectedNodeMemory";
+import SelectionController from "./selectionController";
 
 @Bean('groupCreator')
 export default class GroupCreator {
@@ -13,11 +13,11 @@ export default class GroupCreator {
     @Qualifier('valueService') private valueService: ValueService;
     @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('selectedNodeMemory') private selectedNodeMemory: SelectedNodeMemory;
+    @Qualifier('selectionController') private selectionController: SelectionController;
 
     public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number, rowModel: any) {
 
-        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, rowModel);
+        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, rowModel);
         topMostGroup.level = -1;
         topMostGroup.children = [];
         topMostGroup._childrenMap = {};
@@ -57,7 +57,7 @@ export default class GroupCreator {
                 // if group doesn't exist yet, create it
                 nextGroup = currentGroup._childrenMap[groupKey];
                 if (!nextGroup) {
-                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectedNodeMemory, rowModel);
+                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, rowModel);
                     nextGroup.group = true;
                     nextGroup.field = groupColumn.getColDef().field;
                     nextGroup.id = index--;

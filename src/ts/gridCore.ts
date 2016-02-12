@@ -377,9 +377,9 @@ export class GridCore {
             this.gridOptions.rowData = rows;
         }
         var rowData = this.gridOptionsWrapper.getRowData();
+        this.selectionController.reset();
         this.inMemoryRowController.setAllRows(rowData, firstId);
 
-        //this.selectionController.deselectAll();
         this.filterManager.onNewRowsLoaded();
         this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
         this.headerRenderer.updateFilterIcons();

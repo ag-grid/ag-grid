@@ -1,7 +1,7 @@
 import EventService from "../eventService";
 import {Events} from "../events";
 import GridOptionsWrapper from "../gridOptionsWrapper";
-import {SelectedNodeMemory} from "../rowControllers/selectedNodeMemory";
+import SelectionController from "../selectionController";
 
 export class RowNode {
 
@@ -61,15 +61,15 @@ export class RowNode {
     private eventService: EventService;
     private mainEventService: EventService;
     private gridOptionsWrapper: GridOptionsWrapper;
-    private selectedNodeMemory: SelectedNodeMemory;
+    private selectionController: SelectionController;
     private rowModel: any;
 
     constructor(mainEventService: EventService, gridOptionsWrapper: GridOptionsWrapper,
-                selectedNodeMemory: SelectedNodeMemory, rowModel: any) {
+                selectionController: SelectionController, rowModel: any) {
         this.mainEventService = mainEventService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.rowModel = rowModel;
-        this.selectedNodeMemory = selectedNodeMemory;
+        this.selectionController = selectionController ;
     }
 
     public isSelected(): boolean {
@@ -81,18 +81,34 @@ export class RowNode {
         return this.selected;
     }
 
-    private calculateSelectedFromChildren(): void {
+    public deptFirstSearch( callback: (rowNode: RowNode) => void ): void {
+        if (this.children) {
+            this.children.forEach( child => child.deptFirstSearch(callback) );
+        }
+        callback(this);
+    }
+
+    // + rowController.updateGroupsInSelection()
+    public calculateSelectedFromChildren(): void {
         var atLeastOneSelected = false;
         var atLeastOneDeSelected = false;
         var atLeastOneMixed = false;
 
-        var newSelectedValue: boolean;
-        for (var i = 0; i<this.children.length; i++) {
-            var childState = this.children[i].isSelected();
-            switch (childState) {
-                case true: atLeastOneSelected = true; break;
-                case false: atLeastOneDeSelected = true; break;
-                default: atLeastOneMixed = true; break;
+        var newSelectedValue:boolean;
+        if (this.children) {
+            for (var i = 0; i < this.children.length; i++) {
+                var childState = this.children[i].isSelected();
+                switch (childState) {
+                    case true:
+                        atLeastOneSelected = true;
+                        break;
+                    case false:
+                        atLeastOneDeSelected = true;
+                        break;
+                    default:
+                        atLeastOneMixed = true;
+                        break;
+                }
             }
         }
         if (atLeastOneMixed) {
@@ -105,7 +121,10 @@ export class RowNode {
             newSelectedValue = undefined;
         }
         this.selectThisNode(newSelectedValue);
+    }
 
+    private calculateSelectedFromChildrenBubbleUp(): void {
+        this.calculateSelectedFromChildren();
         if (this.parent) {
             this.parent.calculateSelectedFromChildren();
         }
@@ -142,11 +161,11 @@ export class RowNode {
         if (actionWasOnThisNode) {
 
             if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
-                this.clearOtherNodesSelection();
+                this.selectionController.clearOtherNodes(this);
             }
 
             if (groupSelectsChildren && this.parent) {
-                this.parent.calculateSelectedFromChildren();
+                this.parent.calculateSelectedFromChildrenBubbleUp();
             }
 
             // this is the very end of the 'action node', so we are finished all the updates,
@@ -156,18 +175,7 @@ export class RowNode {
         }
     }
 
-    private clearOtherNodesSelection(): void {
-        this.selectedNodeMemory.clearOtherNodes(this);
-        this.rowModel.forEachNode( (rowNodeToDeselect: RowNode)=> {
-            // skip the 'just selected' row
-            if (rowNodeToDeselect === this) {
-                return;
-            }
-            rowNodeToDeselect.setSelected(false, false, true);
-        });
-    }
-
-    private selectThisNode(newValue: boolean): void {
+    public selectThisNode(newValue: boolean): void {
         if (this.selected !== newValue) {
             this.selected = newValue;
 
