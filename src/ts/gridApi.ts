@@ -21,7 +21,6 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
-import {VirtualRowEventService} from "./rendering/virtualRowEventService";
 
 @Bean('gridApi')
 export class GridApi {
@@ -41,7 +40,6 @@ export class GridApi {
     @Qualifier('eventService') private eventService: EventService;
     @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Qualifier('context') private context: Context;
-    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -143,9 +141,21 @@ export class GridApi {
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
-            console.log('ag-Grid: addVirtualRowListener has changed, the first parameter should be the event name, please check the documentation.');
+            console.log('ag-Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
         }
-        this.virtualRowEventService.addVirtualRowListener(eventName, rowIndex, callback);
+        this.addRenderedRowListener(eventName, rowIndex, callback);
+    }
+
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
+        if (eventName==='virtualRowRemoved') {
+            console.log('ag-Grid: event virtualRowRemoved is deprecated, now called renderedRowRemoved');
+            eventName = 'renderedRowRemoved';
+        }
+        if (eventName==='virtualRowSelected') {
+            console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +
+                'selection events, add a listener directly to the row node.');
+        }
+        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
     public setQuickFilter(newFilter:any) {

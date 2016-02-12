@@ -26,7 +26,7 @@ export default function groupCellRendererFactory(gridOptionsWrapper: GridOptions
 
         var checkboxNeeded = params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.checkbox && !node.footer;
         if (checkboxNeeded) {
-            var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex);
+            var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex, params.addRenderedRowListener);
             eGroupCell.appendChild(eCheckbox);
         }
 

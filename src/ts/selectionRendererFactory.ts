@@ -3,15 +3,13 @@ import {Bean} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Qualifier} from "./context/context";
 import SelectionController from "./selectionController";
-import {VirtualRowEventService} from "./rendering/virtualRowEventService";
 import {RowNode} from "./entities/rowNode";
+import RenderedRow from "./rendering/renderedRow";
 
 @Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
 
-    @Qualifier('virtualRowEventService') private virtualRowEventService: VirtualRowEventService;
-
-    public createSelectionCheckbox(rowNode: RowNode, rowIndex: any) {
+    public createSelectionCheckbox(rowNode: RowNode, rowIndex: any, addRenderedRowEventListener: Function) {
 
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
@@ -33,7 +31,7 @@ export default class SelectionRendererFactory {
         var selectionChangedCallback = ()=> this.setCheckboxState(eCheckbox, rowNode.isSelected());
         rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
 
-        this.virtualRowEventService.addVirtualRowListener(VirtualRowEventService.VIRTUAL_ROW_REMOVED, rowIndex, () => {
+        addRenderedRowEventListener(RenderedRow.EVENT_RENDERED_ROW_REMOVED, () => {
             rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
         });
 

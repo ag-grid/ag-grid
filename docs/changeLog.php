@@ -19,9 +19,12 @@ include 'documentation_header.php';
     was out of sync with out web components work in general. If you don't want to be notified of an event, then remove
     your event listener.</li>
 
-    <li>RowNode now has method 'setSelected'. This is preferred over the gridApi.selectXXXX() methods.</li>
+    <li>RowNode now has method 'setSelected'. This should now be used for row selection over the gridApi.selectXXXX() methods.</li>
 
     <li>api.getSelectedNodesById gone, use api.getSelectedNodes instead</li>
+
+    <li>api.addVirtualRowListener is gone. Instead for row selection/deselection listening, use node.addEventListener(),
+        and for virtual row removed, use api.addRenderedRowListener()</li>
 
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>

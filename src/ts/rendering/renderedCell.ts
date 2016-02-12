@@ -13,6 +13,7 @@ import EventService from "../eventService";
 import Constants from "../constants";
 import {Events} from "../events";
 import VWrapperElement from "../virtualDom/vWrapperElement";
+import RenderedRow from "./renderedRow";
 
 export default class RenderedCell {
 
@@ -45,6 +46,7 @@ export default class RenderedCell {
 
     private value: any;
     private checkboxSelection: boolean;
+    private renderedRow: RenderedRow;
 
     private destroyMethods: Function[] = [];
 
@@ -53,7 +55,7 @@ export default class RenderedCell {
                 selectionRendererFactory: SelectionRendererFactory,
                 templateService: TemplateService, cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
-                valueService: ValueService, eventService: EventService) {
+                valueService: ValueService, eventService: EventService, renderedRow: RenderedRow) {
 
         this.firstRightPinnedColumn = firstRightPinnedCol;
         this.column = column;
@@ -76,6 +78,7 @@ export default class RenderedCell {
         this.value = this.getValue();
 
         this.checkboxSelection = this.calculateCheckboxSelection();
+        this.renderedRow = renderedRow;
 
         this.setupComponents();
     }
@@ -570,7 +573,7 @@ export default class RenderedCell {
             this.vGridCell.appendChild(this.vCellWrapper);
 
             //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex);
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
             this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
@@ -641,7 +644,8 @@ export default class RenderedCell {
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.vGridCell,
-            eParentOfValue: this.vParentOfValue
+            eParentOfValue: this.vParentOfValue,
+            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
         // start duplicated code
         var actualCellRenderer: Function;

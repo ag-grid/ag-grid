@@ -9,13 +9,15 @@ import RowRenderer from "./rowRenderer";
 import SelectionRendererFactory from "../selectionRendererFactory";
 import TemplateService from "../templateService";
 import ValueService from "../valueService";
-import EventService from "../eventService";
 import Column from "../entities/column";
 import VHtmlElement from "../virtualDom/vHtmlElement";
 import {Events} from "../events";
 import {GridCore} from "../gridCore";
+import EventService from "../eventService";
 
 export default class RenderedRow {
+
+    public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 
     public vPinnedLeftRow: VHtmlElement;
     public vPinnedRightRow: VHtmlElement;
@@ -43,9 +45,11 @@ export default class RenderedRow {
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
     private valueService: ValueService;
-    private eventService: EventService;
 
     private destroyFunctions: Function[] = [];
+
+    private mainEventService: EventService;
+    private renderedRowEventService: EventService;
 
     constructor(gridOptionsWrapper: GridOptionsWrapper,
                 valueService: ValueService,
@@ -82,7 +86,7 @@ export default class RenderedRow {
         this.pinningLeft = columnController.isPinningLeft();
         this.pinningRight = columnController.isPinningRight();
 
-        this.eventService = eventService;
+        this.mainEventService = eventService;
 
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
         var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
@@ -192,6 +196,15 @@ export default class RenderedRow {
         });
     }
 
+    public addEventListener(eventType: string, listener: Function): void {
+        if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
+        this.renderedRowEventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.renderedRowEventService.removeEventListener(eventType, listener);
+    }
+
     public onRowSelected(): void {
 
         var vRows: VHtmlElement[] = [];
@@ -248,6 +261,9 @@ export default class RenderedRow {
             renderedCell.destroy();
         });
 
+        if (this.renderedRowEventService) {
+            this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
+        }
     }
 
     private destroyScope(): void {
@@ -280,7 +296,7 @@ export default class RenderedRow {
                 this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
                 this.selectionRendererFactory, this.templateService, this.cellRendererMap, this.rowNode,
                 this.rowIndex, colIndex, this.scope, this.columnController,
-                this.valueService, this.eventService);
+                this.valueService, this.mainEventService, this);
 
             var vGridCell = renderedCell.getVGridCell();
 
@@ -449,7 +465,7 @@ export default class RenderedRow {
         vRow.addEventListener("click", this.onRowClicked.bind(this));
         vRow.addEventListener("dblclick", (event: any) => {
             var agEvent = this.createEvent(event, this);
-            this.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+            this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
         });
 
         return vRow;
@@ -458,7 +474,7 @@ export default class RenderedRow {
     public onRowClicked(event: MouseEvent) {
 
         var agEvent = this.createEvent(event, this);
-        this.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
 
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = event.ctrlKey || event.metaKey;

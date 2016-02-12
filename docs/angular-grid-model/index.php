@@ -233,7 +233,7 @@ include '../documentation_header.php';
     params.node.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
 
     // remove listener on destroy
-    params.api.addVirtualRowListener('virtualRowRemoved', params.rowIndex function() {
+    params.addRenderedRowEventListener('renderedRowRemoved', function() {
         params.node.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
     }
 
