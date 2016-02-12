@@ -149,7 +149,7 @@ var selected = node.isSelected();</pre>
 
     <show-example example="example3" example-height="450px"></show-example>
 
-    <h3>Deep Drive Example - Using <i>forEachNode</i></h3>
+    <h3>Deep Dive Example - Using <i>forEachNode</i></h3>
 
     <p>
         There is an api function <i>forEachNode</i>. This is useful for doing group selections
