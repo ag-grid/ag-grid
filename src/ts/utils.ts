@@ -176,10 +176,10 @@ export default class Utils {
      * loads the template and returns it as an element. makes up for no simple way in
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
-    static loadTemplate(template: string) {
+    static loadTemplate(template: string): HTMLElement {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
-        return tempDiv.firstChild;
+        return <HTMLElement> tempDiv.firstChild;
     }
 
     static querySelectorAll_addCssClass(eParent: any, selector: string, cssClass: string) {

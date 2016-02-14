@@ -27,11 +27,11 @@ export default class MasterSlaveService {
     // we don't fire back any events.
     private consuming = false;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
     }
 
-    public agPostInit() {
+    public agPostWire() {
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));

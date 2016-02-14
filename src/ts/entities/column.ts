@@ -5,6 +5,7 @@ import {ColDef} from "./colDef";
 import {AbstractColDef} from "./colDef";
 import EventService from "../eventService";
 import ColumnGroup from "./columnGroup";
+import {ColumnController} from "../columnController/columnController";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -136,6 +137,14 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public isPinned(): boolean {
         return this.pinned === Column.PINNED_LEFT || this.pinned === Column.PINNED_RIGHT;
+    }
+
+    public isPinnedLeft(): boolean {
+        return this.pinned === Column.PINNED_LEFT;
+    }
+
+    public isPinnedRight(): boolean {
+        return this.pinned === Column.PINNED_RIGHT;
     }
 
     public getPinned(): string {

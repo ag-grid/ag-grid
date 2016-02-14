@@ -280,7 +280,7 @@ export default class FilterManager {
         }
     }
 
-    private getOrCreateFilterWrapper(column: Column) {
+    public getOrCreateFilterWrapper(column: Column): FilterWrapper {
         var filterWrapper = this.allFilters[column.getColId()];
 
         if (!filterWrapper) {
@@ -291,10 +291,10 @@ export default class FilterManager {
         return filterWrapper;
     }
 
-    private createFilterWrapper(column: Column) {
+    private createFilterWrapper(column: Column): FilterWrapper {
         var colDef = column.getColDef();
 
-        var filterWrapper = {
+        var filterWrapper: FilterWrapper = {
             column: column,
             filter: <any> null,
             scope: <any> null,
@@ -382,21 +382,11 @@ export default class FilterManager {
         }
     }
 
-    public showFilter(column: Column, eventSource: any) {
+}
 
-        var filterWrapper = this.getOrCreateFilterWrapper(column);
-
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(filterWrapper.gui, true);
-        this.popupService.positionPopup(eventSource, filterWrapper.gui, true);
-
-        if (filterWrapper.filter.afterGuiAttached) {
-            var params = {
-                hidePopup: hidePopup,
-                eventSource: eventSource
-            };
-            filterWrapper.filter.afterGuiAttached(params);
-        }
-    }
+export interface FilterWrapper {
+    column: Column,
+    filter: any,
+    scope: any,
+    gui: HTMLElement
 }

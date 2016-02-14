@@ -13,7 +13,7 @@ export default class DragAndDropService {
     private mouseUpEventListener: EventListener;
     private logger: Logger;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
 
         // need to clean this up, add to 'finished' logic in grid

@@ -125,7 +125,7 @@ export default class GridPanel {
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.scrollWidth = _.getScrollbarWidth();

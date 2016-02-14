@@ -40,6 +40,8 @@ import {DragService} from "./headerRendering/dragService";
 import {Context} from './context/context';
 import CsvCreator from "./csvCreator";
 import {GridCore} from "./gridCore";
+import {StandardMenuFactory} from "./headerRendering/standardMenu";
+import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 
 export class Grid {
 
@@ -55,6 +57,8 @@ export class Grid {
         }
 
         this.context = new Context({
+            //overrideBeans: null,
+            overrideBeans: [EnterpriseMenuFactory],
             seed: {
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
@@ -69,7 +73,7 @@ export class Grid {
                 HeaderRenderer, InMemoryRowController, VirtualPageRowController, ExpressionService,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
-                PaginationController, PopupService, GridCore, ToolPanel],
+                PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory],
             debug: !!gridOptions.debug
         });
     }

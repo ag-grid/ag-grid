@@ -81,7 +81,7 @@ export class GridCore {
         this.usingInMemoryModel = true;
     }
 
-    public agPostInit(): void {
+    public agPostWire(): void {
         // this is a child bean, get a reference and pass it on
         // CAN WE DELETE THIS? it's done in the setDatasource section
         this.setRowModel(this.inMemoryRowController.getModel());
@@ -150,7 +150,7 @@ export class GridCore {
         this.logger.log('ready');
     }
 
-    public agInitComplete(): void {
+    public agApplicationBoot(): void {
         var readyEvent = {
             api: this.gridOptions.api,
             columnApi: this.gridOptions.columnApi

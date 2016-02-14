@@ -15,6 +15,8 @@ import {DragService} from "./dragService";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
+import PopupService from "../widgets/agPopupService";
 
 @Bean('headerRenderer')
 export default class HeaderRenderer {
@@ -28,6 +30,8 @@ export default class HeaderRenderer {
     @Qualifier('$compile') private $compile: any;
     @Qualifier('dragService') private dragService: DragService;
     @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Qualifier('menuFactory') private menuFactory: IMenuFactory;
+    @Qualifier('popupService') private popupService: PopupService;
 
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
@@ -38,7 +42,7 @@ export default class HeaderRenderer {
 
     private headerElements: RenderedHeaderElement[] = [];
 
-    private agPostInit() {
+    private agPostWire() {
         this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();
         this.ePinnedRightHeader = this.gridPanel.getPinnedRightHeader();
         this.eHeaderContainer = this.gridPanel.getHeaderContainer();
@@ -160,7 +164,7 @@ export default class HeaderRenderer {
             return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
                 this.$scope, this.filterManager, this.columnController, this.$compile,
                 this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService,
-                this.gridPanel);
+                this.gridPanel, this.menuFactory, this.popupService);
         }
     }
 

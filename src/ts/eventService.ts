@@ -14,7 +14,7 @@ export default class EventService {
 
     private logger: Logger;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
                   @Qualifier('globalEventListener') globalEventListener: Function = null) {
         this.logger = loggerFactory.create('EventService');
 

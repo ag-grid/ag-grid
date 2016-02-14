@@ -5,13 +5,15 @@ import {LoggerFactory} from "../logger";
 export interface ContextParams {
     seed: any,
     beans: any[],
+    overrideBeans: any[],
     debug: boolean
 }
 
 interface BeanEntry {
+    bean: any,
     beanInstance: any,
     beanName: any,
-    initParams: string[],
+    wireParams: string[],
     constructorParams: string[],
     attributes: any
 }
@@ -31,86 +33,97 @@ export class Context {
         this.contextParams = params;
 
         this.logger = new Logger('Context', this.contextParams.debug);
-        this.logger.log('STARTING UP GRID CONTEXT');
+        this.logger.log('>> creating ag-Application Context');
 
         this.createBeans();
-        this.setAttributesOnBeans();
-        this.initBeans();
-        this.postInitBeans();
-        this.initCompleteBeans();
+        this.autoWireBeans();
+        this.wireBeans();
+        this.postWire();
+        this.wireCompleteBeans();
 
-        this.logger.log('GRID CONTEXT INITIALISED');
+        this.logger.log('>> ag-Application Context ready - component is alive');
     }
 
     private createBeans(): void {
-        this.contextParams.beans.forEach( (Bean: new()=>Object) => {
 
-            var metaData = Bean.prototype.__agBeanMetaData;
+        // register all normal beans
+        this.contextParams.beans.forEach(this.createBeanEntry.bind(this));
+        // register override beans, these will overwrite beans above of same name
+        if (this.contextParams.overrideBeans) {
+            this.contextParams.overrideBeans.forEach(this.createBeanEntry.bind(this));
+        }
 
-            if (!metaData) {
-                var beanName: string;
-                if (Bean.prototype.constructor) {
-                    beanName = Bean.prototype.constructor.name;
-                } else {
-                    beanName = ''+Bean;
-                }
-                console.error('context item ' + beanName + ' is not a bean');
-                return;
-            }
-
-            var beanEntry = {
-                beanInstance: <any> null,
-                beanName: metaData.beanName,
-                initParams: metaData.agInit,
-                constructorParams: metaData.agConstructor,
-                attributes: metaData.agClassAttributes
-            };
-
-            this.beans[metaData.beanName] = beanEntry;
-
+        // instantiate all beans - overridden beans will be left out
+        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             var constructorParams = this.getBeansForParameters(beanEntry.constructorParams, beanEntry.beanName);
-            var newInstance = applyToConstructor(Bean, constructorParams);
-
+            var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
             beanEntry.beanInstance = newInstance;
         });
     }
 
-    private setAttributesOnBeans(): void {
+    private createBeanEntry(Bean: new()=>Object): void {
+
+        var metaData = Bean.prototype.__agBeanMetaData;
+
+        if (!metaData) {
+            var beanName: string;
+            if (Bean.prototype.constructor) {
+                beanName = Bean.prototype.constructor.name;
+            } else {
+                beanName = ''+Bean;
+            }
+            console.error('context item ' + beanName + ' is not a bean');
+            return;
+        }
+
+        var beanEntry = {
+            bean: Bean,
+            beanInstance: <any> null,
+            beanName: metaData.beanName,
+            wireParams: metaData.agWire,
+            constructorParams: metaData.agConstructor,
+            attributes: metaData.agClassAttributes
+        };
+
+        this.beans[metaData.beanName] = beanEntry;
+    }
+
+    private autoWireBeans(): void {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            this.setAttributesOnBean(beanEntry);
+            this.autoWireBean(beanEntry);
         });
     }
 
-    private initBeans(): void {
+    private wireBeans(): void {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            this.initialiseBean(beanEntry);
+            this.wireBean(beanEntry);
         });
     }
 
-    private setAttributesOnBean(beanEntry: BeanEntry): void {
+    private autoWireBean(beanEntry: BeanEntry): void {
         // if no init method, mark bean as initialised
         if (!beanEntry.attributes) {
             return;
         }
 
+        this.logger.log('auto-wiring ' + beanEntry.beanName);
+
         _.iterateObject(beanEntry.attributes, (attribute: string, otherBeanName: string) => {
             var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
             beanEntry.beanInstance[attribute] = otherBean;
         });
-
-        this.logger.log('auto-wiring ' + beanEntry.beanName);
     }
 
-    private initialiseBean(beanEntry: BeanEntry): void {
+    private wireBean(beanEntry: BeanEntry): void {
         // if no init method, skip he bean
-        if (!beanEntry.beanInstance.agInit) {
+        if (!beanEntry.beanInstance.agWire) {
             return;
         }
 
-        var initParams = this.getBeansForParameters(beanEntry.initParams, beanEntry.beanName);
+        var initParams = this.getBeansForParameters(beanEntry.wireParams, beanEntry.beanName);
 
         this.logger.log('wiring ' + beanEntry.beanName);
-        beanEntry.beanInstance.agInit.apply(beanEntry.beanInstance, initParams);
+        beanEntry.beanInstance.agWire.apply(beanEntry.beanInstance, initParams);
     }
 
     private getBeansForParameters(parameters: any, beanName: string): any[] {
@@ -139,24 +152,26 @@ export class Context {
         }
     }
 
-    private postInitBeans(): void {
+    private postWire(): void {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agPostInit) {
-                beanEntry.beanInstance.agPostInit();
+            if (beanEntry.beanInstance.agPostWire) {
+                this.logger.log('post-wire ' + beanEntry.beanName);
+                beanEntry.beanInstance.agPostWire();
             }
         });
     }
 
-    private initCompleteBeans(): void {
+    private wireCompleteBeans(): void {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agInitComplete) {
-                beanEntry.beanInstance.agInitComplete();
+            if (beanEntry.beanInstance.agApplicationBoot) {
+                this.logger.log('application-boot ' + beanEntry.beanName);
+                beanEntry.beanInstance.agApplicationBoot();
             }
         });
     }
 
     public destroy(): void {
-        this.logger.log('SHUTTING DOWN GRID CONTEXT');
+        this.logger.log('>> Shutting down ag-Application Context');
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             if (beanEntry.beanInstance.agDestroy) {
                 if (this.contextParams.debug) {
@@ -165,6 +180,7 @@ export class Context {
                 beanEntry.beanInstance.agDestroy();
             }
         });
+        this.logger.log('>> ag-Application Context shut down - component is dead');
     }
 }
 

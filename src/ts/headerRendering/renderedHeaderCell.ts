@@ -12,6 +12,8 @@ import HeaderRenderer from "./headerRenderer";
 import {MoveColumnController} from "./moveColumnController";
 import GridPanel from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
+import PopupService from "../widgets/agPopupService";
 
 export default class RenderedHeaderCell extends RenderedHeaderElement {
 
@@ -35,6 +37,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private gridCore: GridCore;
     private headerTemplateLoader: HeaderTemplateLoader;
     private headerRenderer: HeaderRenderer;
+    private menuFactory: IMenuFactory;
+    private popupService: PopupService;
 
     private startWidth: number;
 
@@ -46,7 +50,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
                 parentScope: any, filterManager: FilterManager, columnController: ColumnController,
                 $compile: any, gridCore: GridCore, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
-                headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel) {
+                headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel, menuFactory: IMenuFactory,
+                popupService: PopupService) {
         super(gridOptionsWrapper);
         this.column = column;
         this.parentGroup = parentGroup;
@@ -56,6 +61,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         this.gridCore = gridCore;
         this.headerTemplateLoader = headerTemplateLoader;
         this.headerRenderer = headerRenderer;
+        this.menuFactory = menuFactory;
+        this.popupService = popupService;
 
         this.setupComponents(eRoot, parentScope, dragService, gridPanel);
     }
@@ -101,8 +108,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         }
 
         var that = this;
-        eMenu.addEventListener('click',function () {
-            that.filterManager.showFilter(that.column, this);
+        eMenu.addEventListener('click', function () {
+            that.showMenu(this);
         });
 
         if (!this.getGridOptionsWrapper().isSuppressMenuHide()) {
@@ -117,6 +124,24 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         var style = <any> eMenu.style;
         style['transition'] = 'opacity 0.5s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';
+    }
+
+    public showMenu(eventSource: HTMLElement) {
+
+        var menuResult = this.menuFactory.createMenu(this.column);
+
+        // need to show filter before positioning, as only after filter
+        // is visible can we find out what the width of it is
+        var hidePopup = this.popupService.addAsModalPopup(menuResult.menuGui, true);
+        this.popupService.positionPopup(eventSource, menuResult.menuGui, true);
+
+        if (menuResult.afterGuiAttached) {
+            var params = {
+                hidePopup: hidePopup,
+                eventSource: eventSource
+            };
+            menuResult.afterGuiAttached(params);
+        }
     }
 
     private removeSortIcons(): void {

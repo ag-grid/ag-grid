@@ -30,7 +30,7 @@ var countries = [
     {country: "Uruguay", continent: "South America", language: "Spanish"}
 ];
 
-var games = ["Chess","Cross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+var games = ["Chess","Cross and Circle","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
     "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
     "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
     "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",

@@ -8,7 +8,7 @@ export default class ExpressionService {
     private expressionToFunctionCache = <any>{};
     private logger: Logger;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     }
 

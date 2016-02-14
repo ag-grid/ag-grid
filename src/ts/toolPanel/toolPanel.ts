@@ -13,13 +13,13 @@ import {Qualifier} from "../context/context";
 @Bean('toolPanel')
 export default class ToolPanel {
 
-    layout: any;
+    private layout: any;
 
     constructor() {
         this.layout = new VerticalStack();
     }
 
-    public agInit(@Qualifier('columnController') columnController: any,
+    public agWire(@Qualifier('columnController') columnController: any,
                 @Qualifier('inMemoryRowController') inMemoryRowController: any,
                 @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
                 @Qualifier('popupService') popupService: PopupService,

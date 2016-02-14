@@ -19,7 +19,7 @@ export default class BalancedColumnTreeBuilder {
     private logger: Logger;
     @Qualifier('columnUtils') private columnUtils: ColumnUtils;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 

@@ -57,7 +57,7 @@ export default class PaginationController {
     private totalPages: number;
     private currentPage: number;
 
-    public agInit() {
+    public agWire() {
         this.setupComponents();
         this.callVersion = 0;
     }

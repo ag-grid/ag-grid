@@ -126,7 +126,7 @@ export class ColumnController {
 
     private logger: Logger;
 
-    public agInit(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
 
@@ -144,6 +144,11 @@ export class ColumnController {
 
     public autoSizeColumn(key: Column|String|ColDef): void {
         this.autoSizeColumns([key]);
+    }
+
+    public autoSizeAllColumns(): void {
+        var allDisplayedColumns = this.getAllDisplayedColumns();
+        this.autoSizeColumns(allDisplayedColumns);
     }
 
     private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
@@ -378,6 +383,10 @@ export class ColumnController {
     // + toolPanel
     public getRowGroupColumns(): Column[] {
         return this.rowGroupColumns;
+    }
+
+    public isColumnRowGrouped(column: Column): boolean {
+        return this.rowGroupColumns.indexOf(column) >= 0;
     }
 
     // + rowController -> while inserting rows

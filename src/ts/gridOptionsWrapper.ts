@@ -26,13 +26,13 @@ export default class GridOptionsWrapper {
 
     private headerHeight: number;
 
-    public agInit(@Qualifier('gridApi') gridApi: GridApi): void {
+    public agWire(@Qualifier('gridApi') gridApi: GridApi): void {
         this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
         this.checkForDeprecated();
     }
 
-    public agPostInit(): void {
+    public agPostWire(): void {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
         this.gridOptions.columnApi = this.columnController.getColumnApi();
 

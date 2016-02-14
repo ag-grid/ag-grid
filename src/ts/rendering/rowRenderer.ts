@@ -103,7 +103,7 @@ export default class RowRenderer {
         });
     }
 
-    private agPostInit() {
+    private agPostWire() {
         this.cellRendererMap = {
             'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
             'default': function(params: any) {

@@ -14,7 +14,7 @@ export default class FloatingRowModel {
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
 
-    public agPostInit() {
+    public agPostWire() {
         this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
         this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
     }
