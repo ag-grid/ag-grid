@@ -148,7 +148,6 @@ export class MoveColumnController {
         // we only look to scroll if the column is not pinned, as pinned columns are always visible
         if (!this.column.isPinned()) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
-            //var hoveringOverPixelScrollAdjusted = this.startLeftPosition + this.clickPositionOnHeaderScrollAdjusted + delta;
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
             var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
             var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();

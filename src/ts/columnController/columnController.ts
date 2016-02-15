@@ -205,6 +205,14 @@ export class ColumnController {
         return this.displayedCentreColumnTree;
     }
 
+    public getDisplayedColumnGroups(type: string): ColumnGroupChild[] {
+        switch (type) {
+            case Column.PINNED_LEFT: return this.getLeftDisplayedColumnGroups();
+            case Column.PINNED_LEFT: return this.getRightDisplayedColumnGroups();
+            default: return this.getCenterDisplayedColumnGroups();
+        }
+    }
+
     // gridPanel -> ensureColumnVisible
     public isColumnDisplayed(column: Column): boolean {
         return this.getAllDisplayedColumns().indexOf(column) >= 0;
@@ -392,14 +400,22 @@ export class ColumnController {
 
     // + rowController -> while inserting rows
     public getDisplayedCenterColumns(): Column[] {
-        return this.displayedCenterColumns;
+        return this.displayedCenterColumns.slice(0);
     }
     // + rowController -> while inserting rows
     public getDisplayedLeftColumns(): Column[] {
-        return this.displayedLeftColumns;
+        return this.displayedLeftColumns.slice(0);
     }
     public getDisplayedRightColumns(): Column[] {
-        return this.displayedRightColumns;
+        return this.displayedRightColumns.slice(0);
+    }
+
+    public getDisplayedColumns(type: string): Column[] {
+        switch (type) {
+            case Column.PINNED_LEFT: return this.getDisplayedLeftColumns();
+            case Column.PINNED_RIGHT: return this.getDisplayedRightColumns();
+            default: return this.getDisplayedCenterColumns();
+        }
     }
 
     // used by:

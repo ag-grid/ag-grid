@@ -8,21 +8,45 @@ import Column from "../entities/column";
 import {Context} from "../context/context";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import RenderedHeaderCell from "./renderedHeaderCell";
+import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {MoveColumnController2} from "./moveColumnController2";
+import {ColumnController} from "../columnController/columnController";
 
 export class HeaderContainer {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
     @Autowired('$scope') private $scope: any;
+    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('moveColumnController2') private moveColumnController2: MoveColumnController2;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private eContainer: HTMLElement;
     private eRoot: HTMLElement;
 
+    private pinned: string;
+
     private headerElements: IRenderedHeaderElement[] = [];
 
-    constructor(eContainer: HTMLElement, eRoot: HTMLElement) {
+    constructor(eContainer: HTMLElement, eRoot: HTMLElement, pinned: string) {
         this.eContainer = eContainer;
         this.eRoot = eRoot;
+        this.pinned = pinned;
+    }
+
+    public agPostWire(): void {
+        this.dragAndDropService2.addDropTarget(
+            {eElement: this.eContainer, onDragCallback: this.onDrag.bind(this)}
+        );
+    }
+
+    private onDrag(params: any): void {
+        this.moveColumnController2.dragOver(params.x, this.pinned, params.dragItem, params.direction);
+        //if (params.dragSource===this) {
+        //    console.log('internal drag');
+        //} else {
+        //    console.log('external drag');
+        //}
     }
 
     public removeAllChildren(): void {
@@ -33,7 +57,9 @@ export class HeaderContainer {
         _.removeAllChildren(this.eContainer);
     }
 
-    public insertHeaderRowsIntoContainer(cellTree: ColumnGroupChild[]): void {
+    public insertHeaderRowsIntoContainer(): void {
+
+        var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
 
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
@@ -93,7 +119,7 @@ export class HeaderContainer {
         if (columnGroupChild instanceof ColumnGroup) {
             result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.$scope);
         } else {
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot);
+            result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot, this);
         }
         this.context.wireBean(result);
         return result;

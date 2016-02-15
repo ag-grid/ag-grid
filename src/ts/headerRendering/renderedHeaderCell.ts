@@ -17,6 +17,7 @@ import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
@@ -31,6 +32,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('dragService') private dragService: DragService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
 
     private eHeaderCell: HTMLElement;
     private eSortAsc: HTMLElement;
@@ -46,16 +48,18 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private startWidth: number;
     private parentScope: any;
+    private dragSource: any;
 
     // for better structured code, anything we need to do when this column gets destroyed,
     // we put a function in here. otherwise we would have a big destroy function with lots
     // of 'if / else' mapping to things that got created.
     private destroyFunctions: (()=>void)[] = [];
 
-    constructor(column: Column, parentScope: any, eRoot: HTMLElement) {
+    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSource: any) {
         this.column = column;
         this.parentScope = parentScope;
         this.eRoot = eRoot;
+        this.dragSource = dragSource;
     }
 
     public getGui(): HTMLElement {
@@ -243,8 +247,10 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         }
 
         if (this.eHeaderCellLabel) {
-            var moveColumnController = new MoveColumnController(this.column, this.eHeaderCellLabel, this.eRoot, this.eHeaderCell);
-            this.context.wireBean(moveColumnController);
+            //var moveColumnController = new MoveColumnController(this.column, this.eHeaderCellLabel, this.eRoot, this.eHeaderCell);
+            //this.context.wireBean(moveColumnController);
+
+            this.dragAndDropService2.addDragSource( {eElement: this.eHeaderCellLabel, dragItem: this.column, dragSource: this.dragSource} );
         }
     }
 

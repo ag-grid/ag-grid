@@ -42,6 +42,8 @@ import CsvCreator from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
+import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
+import {MoveColumnController2} from "./headerRendering/moveColumnController2";
 
 export class Grid {
 
@@ -73,7 +75,8 @@ export class Grid {
                 HeaderRenderer, InMemoryRowController, VirtualPageRowController, ExpressionService,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
-                PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory],
+                PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
+                DragAndDropService2, MoveColumnController2],
             debug: !!gridOptions.debug
         });
     }
