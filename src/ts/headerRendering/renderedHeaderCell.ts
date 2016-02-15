@@ -1,5 +1,4 @@
 import _ from '../utils';
-import RenderedHeaderElement from "./renderedHeaderElement";
 import Column from "../entities/column";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import FilterManager from "../filter/filterManager";
@@ -14,12 +13,25 @@ import GridPanel from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import PopupService from "../widgets/agPopupService";
+import {Autowired} from "../context/context";
+import {Context} from "../context/context";
+import {CssClassApplier} from "./cssClassApplier";
+import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 
-export default class RenderedHeaderCell extends RenderedHeaderElement {
+export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
 
-    private parentGroup: RenderedHeaderGroupCell;
+    @Autowired('context') private context: Context;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
+    @Autowired('dragService') private dragService: DragService;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     private eHeaderCell: HTMLElement;
     private eSortAsc: HTMLElement;
     private eSortDesc: HTMLElement;
@@ -27,44 +39,23 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     private eFilterIcon: HTMLElement;
     private eText: HTMLElement;
     private eHeaderCellLabel: HTMLElement;
+    private eRoot: HTMLElement;
 
     private column: Column;
     private childScope: any;
 
-    private filterManager: FilterManager;
-    private columnController: ColumnController;
-    private $compile: any;
-    private gridCore: GridCore;
-    private headerTemplateLoader: HeaderTemplateLoader;
-    private headerRenderer: HeaderRenderer;
-    private menuFactory: IMenuFactory;
-    private popupService: PopupService;
-
     private startWidth: number;
+    private parentScope: any;
 
     // for better structured code, anything we need to do when this column gets destroyed,
     // we put a function in here. otherwise we would have a big destroy function with lots
     // of 'if / else' mapping to things that got created.
     private destroyFunctions: (()=>void)[] = [];
 
-    constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper,
-                parentScope: any, filterManager: FilterManager, columnController: ColumnController,
-                $compile: any, gridCore: GridCore, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader,
-                headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel, menuFactory: IMenuFactory,
-                popupService: PopupService) {
-        super(gridOptionsWrapper);
+    constructor(column: Column, parentScope: any, eRoot: HTMLElement) {
         this.column = column;
-        this.parentGroup = parentGroup;
-        this.filterManager = filterManager;
-        this.columnController = columnController;
-        this.$compile = $compile;
-        this.gridCore = gridCore;
-        this.headerTemplateLoader = headerTemplateLoader;
-        this.headerRenderer = headerRenderer;
-        this.menuFactory = menuFactory;
-        this.popupService = popupService;
-
-        this.setupComponents(eRoot, parentScope, dragService, gridPanel);
+        this.parentScope = parentScope;
+        this.eRoot = eRoot;
     }
 
     public getGui(): HTMLElement {
@@ -78,7 +69,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private createScope(parentScope: any): void {
-        if (this.getGridOptionsWrapper().isAngularCompileHeaders()) {
+        if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
             this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
@@ -101,7 +92,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             return;
         }
 
-        var weWantMenu = this.getGridOptionsWrapper().isEnableFilter() && !this.column.getColDef().suppressMenu;
+        var weWantMenu = this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressMenu;
         if (!weWantMenu) {
             _.removeFromParent(eMenu);
             return;
@@ -112,7 +103,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             that.showMenu(this);
         });
 
-        if (!this.getGridOptionsWrapper().isSuppressMenuHide()) {
+        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
             eMenu.style.opacity = '0';
             this.eHeaderCell.addEventListener('mouseenter', function () {
                 eMenu.style.opacity = '1';
@@ -148,7 +139,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             this.eSortDesc.style.display = 'none';
         }
 
-        var showingNoSortIcon = this.column.getColDef().unSortIcon || this.getGridOptionsWrapper().isUnSortIcon();
+        var showingNoSortIcon = this.column.getColDef().unSortIcon || this.gridOptionsWrapper.isUnSortIcon();
         // 'no sort' icon
         if (!showingNoSortIcon) {
             _.removeFromParent(this.eSortNone);
@@ -174,14 +165,14 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         });
     }
 
-    private setupComponents(eRoot: HTMLElement, parentScope: any, dragService: DragService, gridPanel: GridPanel): void {
+    public agPostWire(): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
 
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 
-        this.createScope(parentScope);
+        this.createScope(this.parentScope);
         this.addAttributes();
-        this.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell);
+        CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
 
         this.addMovingCss();
 
@@ -196,8 +187,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
         this.eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
 
-        this.addResize(eRoot, dragService);
-        this.addMove(eRoot, dragService, gridPanel);
+        this.addResize();
+        this.addMove();
         this.addMenu();
 
         // add in sort icons
@@ -210,8 +201,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         var headerCellRenderer: any;
         if (colDef.headerCellRenderer) { // first look for a renderer in col def
             headerCellRenderer = colDef.headerCellRenderer;
-        } else if (this.getGridOptionsWrapper().getHeaderCellRenderer()) { // second look for one in grid options
-            headerCellRenderer = this.getGridOptionsWrapper().getHeaderCellRenderer();
+        } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
+            headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
         }
 
         var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
@@ -233,7 +224,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
     }
 
     private addSort(): void {
-        var enableSorting = this.getGridOptionsWrapper().isEnableSorting() && !this.column.getColDef().suppressSorting;
+        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
         if (enableSorting) {
             this.addSortIcons();
             this.addSortHandling();
@@ -242,21 +233,22 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         }
     }
 
-    private addMove(eRoot: HTMLElement, dragService: DragService, gridPanel: GridPanel): void {
-        if (this.getGridOptionsWrapper().isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
+    private addMove(): void {
+        if (this.gridOptionsWrapper.isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
             return;
         }
-        if (this.getGridOptionsWrapper().isForPrint()) {
+        if (this.gridOptionsWrapper.isForPrint()) {
             // don't allow moving of headers when forPrint, as the header overlay doesn't exist
             return;
         }
 
         if (this.eHeaderCellLabel) {
-            new MoveColumnController(this.column, this.eHeaderCellLabel, eRoot, this.eHeaderCell, this.headerRenderer, this.columnController, dragService, gridPanel, this.getGridOptionsWrapper());
+            var moveColumnController = new MoveColumnController(this.column, this.eHeaderCellLabel, this.eRoot, this.eHeaderCell);
+            this.context.wireBean(moveColumnController);
         }
     }
 
-    private addResize(eRoot: HTMLElement, dragService: DragService): void {
+    private addResize(): void {
         var colDef = this.column.getColDef();
         var eResize = this.eHeaderCell.querySelector('#agResizeBar');
 
@@ -265,22 +257,22 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             return;
         }
 
-        var weWantResize = this.getGridOptionsWrapper().isEnableColResize() && !colDef.suppressResize;
+        var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
         if (!weWantResize) {
             _.removeFromParent(eResize);
             return;
         }
 
-        dragService.addDragHandling({
+        this.dragService.addDragHandling({
             eDraggableElement: eResize,
-            eBody: eRoot,
+            eBody: this.eRoot,
             cursor: 'col-resize',
             startAfterPixels: 0,
             onDragStart: this.onDragStart.bind(this),
             onDragging: this.onDragging.bind(this)
         });
 
-        var weWantAutoSize = !this.getGridOptionsWrapper().isSuppressAutoSize() && !colDef.suppressAutoSize;
+        var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             eResize.addEventListener('dblclick', (event: MouseEvent) => {
                 this.columnController.autoSizeColumn(this.column);
@@ -293,9 +285,9 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         var cellRendererParams = {
             colDef: this.column.getColDef(),
             $scope: this.childScope,
-            context: this.getGridOptionsWrapper().getContext(),
+            context: this.gridOptionsWrapper.getContext(),
             value: headerNameValue,
-            api: this.getGridOptionsWrapper().getApi(),
+            api: this.gridOptionsWrapper.getApi(),
             eHeaderCell: this.eHeaderCell
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);
@@ -310,7 +302,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             childToAppend = eTextSpan;
         }
         // angular compile header if option is turned on
-        if (this.getGridOptionsWrapper().isAngularCompileHeaders()) {
+        if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
             var childToAppendCompiled = this.$compile(childToAppend)(this.childScope)[0];
             this.eText.appendChild(childToAppendCompiled);
         } else {
@@ -353,8 +345,8 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
         var sortingOrder: string[];
         if (this.column.getColDef().sortingOrder) {
             sortingOrder = this.column.getColDef().sortingOrder;
-        } else if (this.getGridOptionsWrapper().getSortingOrder()) {
-            sortingOrder = this.getGridOptionsWrapper().getSortingOrder();
+        } else if (this.gridOptionsWrapper.getSortingOrder()) {
+            sortingOrder = this.gridOptionsWrapper.getSortingOrder();
         } else {
             sortingOrder = RenderedHeaderCell.DEFAULT_SORTING_ORDER;
         }
@@ -399,7 +391,7 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
                 this.column.setSortedAt(null);
             }
 
-            var doingMultiSort = !this.getGridOptionsWrapper().isSuppressMultiSort() && event.shiftKey;
+            var doingMultiSort = !this.gridOptionsWrapper.isSuppressMultiSort() && event.shiftKey;
 
             // clear sort on all columns except this one, and update the icons
             if (!doingMultiSort) {

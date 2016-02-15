@@ -5,8 +5,15 @@ import _ from '../utils';
 import Column from "../entities/column";
 import GridPanel from "../gridPanel/gridPanel";
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Autowired} from "../context/context";
 
 export class MoveColumnController {
+
+    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('dragService') private dragService: DragService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private column: Column;
     private lastDelta = 0;
@@ -19,11 +26,7 @@ export class MoveColumnController {
     private eFloatingCloneCell: HTMLElement;
     private eHeaderCell: HTMLElement;
 
-    private headerRenderer: HeaderRenderer;
-    private columnController: ColumnController;
-
     private floatPadding: number;
-    private gridPanel: GridPanel;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -32,20 +35,24 @@ export class MoveColumnController {
 
     private centreWidth: number;
     private addMovingCssToGrid: boolean;
+    private eDraggableElement: HTMLElement;
+    private eRoot: HTMLElement;
 
-    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement, headerRenderer: HeaderRenderer, columnController: ColumnController, dragService: DragService, gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper) {
-
+    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement) {
+        this.eDraggableElement = eDraggableElement;
         this.eHeaderCell = eHeaderCell;
-        this.headerRenderer = headerRenderer;
-        this.columnController = columnController;
         this.column = column;
-        this.gridPanel = gridPanel;
-        this.addMovingCssToGrid = !gridOptionsWrapper.isSuppressMovingCss();
-        this.centreWidth = gridPanel.getCenterWidth();
+        this.eRoot = eRoot;
+    }
 
-        dragService.addDragHandling({
-            eDraggableElement: eDraggableElement,
-            eBody: eRoot,
+    public agPostWire(): void {
+
+        this.centreWidth = this.gridPanel.getCenterWidth();
+        this.addMovingCssToGrid = !this.gridOptionsWrapper.isSuppressMovingCss();
+
+        this.dragService.addDragHandling({
+            eDraggableElement: this.eDraggableElement,
+            eBody: this.eRoot,
             cursor: 'move',
             // we only want to start dragging if the user moves at least 4px, otherwise we will loose
             // the ability for the user to click on the cell (eg for sorting)

@@ -4,7 +4,6 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
 import FilterManager from "../filter/filterManager";
-import RenderedHeaderElement from "./renderedHeaderElement";
 import GridPanel from "../gridPanel/gridPanel";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import ColumnGroup from "../entities/columnGroup";
@@ -18,6 +17,8 @@ import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import PopupService from "../widgets/agPopupService";
 import {Autowired} from "../context/context";
+import {Context} from "../context/context";
+import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 
 @Bean('headerRenderer')
 export default class HeaderRenderer {
@@ -33,6 +34,7 @@ export default class HeaderRenderer {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('context') private context: Context;
 
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
@@ -41,7 +43,7 @@ export default class HeaderRenderer {
     private eRoot: HTMLElement;
     private eHeaderOverlay: HTMLElement;
 
-    private headerElements: RenderedHeaderElement[] = [];
+    private headerElements: IRenderedHeaderElement[] = [];
 
     private agPostWire() {
         this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();
@@ -57,7 +59,7 @@ export default class HeaderRenderer {
         _.removeAllChildren(this.ePinnedRightHeader);
         _.removeAllChildren(this.eHeaderContainer);
 
-        this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
+        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.destroy();
         });
         this.headerElements = [];
@@ -144,7 +146,8 @@ export default class HeaderRenderer {
 
                 var renderedHeaderElement = this.createHeaderElement(child);
                 this.headerElements.push(renderedHeaderElement);
-                eRow.appendChild(renderedHeaderElement.getGui());
+                var eGui = renderedHeaderElement.getGui();
+                eRow.appendChild(eGui);
             });
 
             eContainerToAddTo.appendChild(eRow);
@@ -157,32 +160,31 @@ export default class HeaderRenderer {
         }
     }
 
-    private createHeaderElement(columnGroupChild: ColumnGroupChild): RenderedHeaderElement {
+    private createHeaderElement(columnGroupChild: ColumnGroupChild): IRenderedHeaderElement {
+        var result: IRenderedHeaderElement;
         if (columnGroupChild instanceof ColumnGroup) {
-            return new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.gridOptionsWrapper,
-                this.columnController, this.eRoot, this.$scope,  this.filterManager, this.$compile, this.dragService);
+            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.$scope);
         } else {
-            return new RenderedHeaderCell(<Column> columnGroupChild, null, this.gridOptionsWrapper,
-                this.$scope, this.filterManager, this.columnController, this.$compile,
-                this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService,
-                this.gridPanel, this.menuFactory, this.popupService);
+            result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot);
         }
+        this.context.wireBean(result);
+        return result;
     }
 
     public updateSortIcons() {
-        this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
+        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.refreshSortIcon();
         });
     }
 
     public updateFilterIcons() {
-        this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
+        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.refreshFilterIcon();
         });
     }
 
     public onIndividualColumnResized(column: Column): void {
-        this.headerElements.forEach( (headerElement: RenderedHeaderElement) => {
+        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.onIndividualColumnResized(column);
         });
     }
