@@ -14,16 +14,20 @@ import {ColumnPinnedPanel} from "./columnPinnedPanel";
 import {MenuPanel} from "./menuPanel";
 import {MenuPanelItems} from "./menuPanel";
 import {Autowired} from "../context/context";
+import SvgFactory from "../svgFactory";
+import {Context} from "../context/context";
+
+var svgFactory = SvgFactory.getInstance();
 
 @Bean('menuFactory')
 export class EnterpriseMenuFactory implements IMenuFactory {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('context') private context: Context;
 
     public createMenu(column: Column): ICreateMenuResult {
 
-        var menu = new EnterpriseMenu(this.filterManager, column, this.columnController);
+        var menu = new EnterpriseMenu(column);
+        this.context.wireBean(menu);
 
         return {
             afterGuiAttached: menu.afterGuiAttached.bind(menu),
@@ -37,27 +41,22 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 export class EnterpriseMenu {
 
     private tabbedLayout: TabbedLayout;
-
     private hidePopupFunc: Function;
-    private columnController: ColumnController;
     private column: Column;
 
-    constructor(filterManager: FilterManager, column: Column, columnController: ColumnController) {
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
+    constructor(column: Column) {
         this.column = column;
-        this.columnController = columnController;
+    }
 
+    public agPostWire(): void {
         var tabItems: TabbedItem[] = [
             this.createGeneralPanel(),
-            this.createFilterPanel(filterManager, column),
+            this.createFilterPanel(),
             {
-                title: 'S',
-                //title: '<i class="fa fa-sort"></i>',
-                body: this.createOtherPanel()
-            },
-            {
-                title: 'A',
-                //title: '<i class="fa fa-sitemap"></i>',
+                title: svgFactory.createColumnHiddenSvg(),
                 body: this.createOtherPanel()
             }
         ];
@@ -135,8 +134,7 @@ export class EnterpriseMenu {
         ePanel.appendChild(eRowGroupPanel.getGui());
 
         return {
-            //title: '<i class="fa fa-cog"></i>',
-            title: 'C',
+            title: svgFactory.createMenuSvg(),
             body: ePanel
         };
     }
@@ -145,9 +143,9 @@ export class EnterpriseMenu {
         this.hidePopupFunc();
     }
 
-    private createFilterPanel(filterManager: FilterManager, column: Column): TabbedItem {
+    private createFilterPanel(): TabbedItem {
 
-        var filterWrapper = filterManager.getOrCreateFilterWrapper(column);
+        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
         var afterFilterAttachedCallback: Function;
         if (filterWrapper.filter.afterGuiAttached) {
@@ -155,8 +153,7 @@ export class EnterpriseMenu {
         }
 
         return {
-            //title: '<i class="fa fa-filter"></i>',
-            title: 'F',
+            title: svgFactory.createFilterSvg(),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback
         };

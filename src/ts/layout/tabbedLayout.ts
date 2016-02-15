@@ -38,7 +38,7 @@ export class TabbedLayout {
     private addItem(item: TabbedItem): void {
 
         var eHeaderButton = document.createElement('span');
-        eHeaderButton.innerHTML = item.title;
+        eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
 
@@ -82,7 +82,7 @@ export interface TabbedLayoutParams {
 }
 
 export interface TabbedItem {
-    title: string,
+    title: Element,
     body: HTMLElement,
     afterAttachedCallback?: Function
 }

@@ -30,7 +30,7 @@ export default class SvgFactory {
         return createCircle(false);
     }
 
-    public createMenuSvg() {
+    public createMenuSvg(): Element {
         var eSvg = document.createElementNS(SVG_NS, "svg");
         var size = "12";
         eSvg.setAttribute("width", size);
