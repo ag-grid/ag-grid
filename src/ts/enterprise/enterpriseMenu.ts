@@ -1,21 +1,18 @@
-import VerticalStack from "../layout/verticalStack";
 import {Bean} from "../context/context";
 import {IMenuFactory} from "../interfaces/IMenuFactory";
 import {IMenu} from "../interfaces/iMenu";
 import Column from "../entities/column";
-import {ICreateMenuResult} from "../interfaces/iMenuFactory";
 import _ from '../utils';
 import {TabbedLayout} from "../layout/tabbedLayout";
-import {Qualifier} from "../context/context";
 import FilterManager from "../filter/filterManager";
 import {TabbedItem} from "../layout/tabbedLayout";
 import {ColumnController} from "../columnController/columnController";
-import {ColumnPinnedPanel} from "./columnPinnedPanel";
 import {MenuPanel} from "./menuPanel";
 import {MenuPanelItems} from "./menuPanel";
 import {Autowired} from "../context/context";
 import SvgFactory from "../svgFactory";
 import {Context} from "../context/context";
+import PopupService from "../widgets/agPopupService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -23,17 +20,29 @@ var svgFactory = SvgFactory.getInstance();
 export class EnterpriseMenuFactory implements IMenuFactory {
 
     @Autowired('context') private context: Context;
+    @Autowired('popupService') private popupService: PopupService;
 
-    public createMenu(column: Column): ICreateMenuResult {
+    public showMenu(column: Column, eventSource: HTMLElement): void {
 
         var menu = new EnterpriseMenu(column);
         this.context.wireBean(menu);
 
-        return {
-            afterGuiAttached: menu.afterGuiAttached.bind(menu),
-            menuGui: menu.getGui()
-        };
+        var eMenuGui =  menu.getGui();
 
+        // need to show filter before positioning, as only after filter
+        // is visible can we find out what the width of it is
+        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true);
+        this.popupService.positionPopup({eventSource: eventSource,
+            ePopup: eMenuGui,
+            nudgeX: -9,
+            nudgeY: -26,
+            keepWithinBounds: true
+        });
+
+        menu.afterGuiAttached({
+            hidePopup: hidePopup,
+            eventSource: eventSource
+        });
     }
 
 }
@@ -63,7 +72,8 @@ export class EnterpriseMenu {
 
         this.tabbedLayout = new TabbedLayout({
             items: tabItems,
-            cssClass: 'ag-menu'
+            cssClass: 'ag-menu',
+            onActiveItemClicked: this.onHidePopup.bind(this)
         });
     }
 

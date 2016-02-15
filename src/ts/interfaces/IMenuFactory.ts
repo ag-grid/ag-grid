@@ -4,11 +4,11 @@ import {ColumnController} from "../columnController/columnController";
 
 export interface IMenuFactory {
 
-    createMenu(column: Column): ICreateMenuResult;
+    showMenu(column: Column, eventSource: HTMLElement): void;
 
 }
 
-export interface ICreateMenuResult {
-    menuGui: HTMLElement,
-    afterGuiAttached?: Function
-}
+//export interface ICreateMenuResult {
+//    menuGui: HTMLElement,
+//    afterGuiAttached?: Function
+//}

@@ -7,7 +7,6 @@ import {GridCore} from "../gridCore";
 @Bean('popupService')
 export default class PopupService {
 
-
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
     private ePopupParent: any;
@@ -16,18 +15,30 @@ export default class PopupService {
         this.ePopupParent = ePopupParent;
     }
 
-    public positionPopup(eventSource: any, ePopup: any, keepWithinBounds: boolean) {
-        var sourceRect = eventSource.getBoundingClientRect();
+    public positionPopup(params: {eventSource: any,
+                            ePopup: HTMLElement,
+                            nudgeX?: number,
+                            nudgeY?: number,
+                            keepWithinBounds?: boolean}) {
+
+        var sourceRect = params.eventSource.getBoundingClientRect();
         var parentRect = this.ePopupParent.getBoundingClientRect();
 
         var x = sourceRect.left - parentRect.left;
         var y = sourceRect.top - parentRect.top + sourceRect.height;
 
+        if (params.nudgeX) {
+            x += params.nudgeX;
+        }
+        if (params.nudgeY) {
+            y += params.nudgeY;
+        }
+
         // if popup is overflowing to the right, move it left
-        if (keepWithinBounds) {
+        if (params.keepWithinBounds) {
             var minWidth: number;
-            if (ePopup.clientWidth>0) {
-                minWidth = ePopup.clientWidth;
+            if (params.ePopup.clientWidth>0) {
+                minWidth = params.ePopup.clientWidth;
             } else {
                 minWidth = 200;
             }
@@ -42,8 +53,8 @@ export default class PopupService {
             }
         }
 
-        ePopup.style.left = x + "px";
-        ePopup.style.top = y + "px";
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
     }
 
     //adds an element to a div, but also listens to background checking for clicks,

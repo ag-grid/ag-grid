@@ -220,6 +220,12 @@ export default class Utils {
         }
     }
 
+    static callIfPresent(func: Function): void {
+        if (func) {
+            func();
+        }
+    }
+
     static addCssClass(element: HTMLElement, className: string) {
         if (element.className && element.className.length > 0) {
             var cssClasses = element.className.split(' ');

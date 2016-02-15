@@ -122,26 +122,12 @@ export default class RenderedHeaderCell extends RenderedHeaderElement {
             });
         }
         var style = <any> eMenu.style;
-        style['transition'] = 'opacity 0.5s, border 0.2s';
-        style['-webkit-transition'] = 'opacity 0.5s, border 0.2s';
+        style['transition'] = 'opacity 0.2s, border 0.2s';
+        style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
 
     public showMenu(eventSource: HTMLElement) {
-
-        var menuResult = this.menuFactory.createMenu(this.column);
-
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(menuResult.menuGui, true);
-        this.popupService.positionPopup(eventSource, menuResult.menuGui, true);
-
-        if (menuResult.afterGuiAttached) {
-            var params = {
-                hidePopup: hidePopup,
-                eventSource: eventSource
-            };
-            menuResult.afterGuiAttached(params);
-        }
+        this.menuFactory.showMenu(this.column, eventSource);
     }
 
     private removeSortIcons(): void {

@@ -5,6 +5,7 @@ export class TabbedLayout {
     private eGui: HTMLElement;
     private eHeader: HTMLElement;
     private eBody: HTMLElement;
+    private params: TabbedLayoutParams;
 
     private static TEMPLATE =
         '<div>'+
@@ -16,6 +17,7 @@ export class TabbedLayout {
     private activeItem: TabbedItemWrapper;
 
     constructor(params: TabbedLayoutParams) {
+        this.params = params;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = TabbedLayout.TEMPLATE;
 
@@ -53,6 +55,7 @@ export class TabbedLayout {
 
     private showItem(wrapper: TabbedItemWrapper): void {
         if (this.activeItem === wrapper) {
+            _.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
         _.removeAllChildren(this.eBody);
@@ -78,7 +81,8 @@ export class TabbedLayout {
 
 export interface TabbedLayoutParams {
     items: TabbedItem[],
-    cssClass?: string
+    cssClass?: string,
+    onActiveItemClicked?: Function
 }
 
 export interface TabbedItem {
