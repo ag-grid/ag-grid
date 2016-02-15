@@ -4,12 +4,13 @@ import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import EventService from "../eventService";
+import {Autowired} from "../context/context";
 
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];

@@ -25,6 +25,7 @@ import {defaultGroupComparator} from "../functions";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import {Autowired} from "../context/context";
 
 export class ColumnApi {
 
@@ -86,15 +87,15 @@ export class ColumnApi {
 @Bean('columnController')
 export class ColumnController {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
-    @Qualifier('expressionService') private expressionService: ExpressionService;
-    @Qualifier('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
-    @Qualifier('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
-    @Qualifier('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Qualifier('valueService') private valueColumns: Column[];
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
+    @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
+    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
+    @Autowired('valueService') private valueColumns: Column[];
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client

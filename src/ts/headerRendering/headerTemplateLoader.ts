@@ -4,6 +4,7 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import Column from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -23,7 +24,7 @@ export default class HeaderTemplateLoader {
         '  </div>' +
         '</div>';
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public createHeaderElement(column: Column): HTMLElement {
 

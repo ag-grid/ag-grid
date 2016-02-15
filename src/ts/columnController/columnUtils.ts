@@ -7,12 +7,13 @@ import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import Column from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
 export default class ColumnUtils {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public calculateColInitialWidth(colDef: any): number {
         if (!colDef.width) {

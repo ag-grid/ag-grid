@@ -7,12 +7,13 @@ import ColumnGroup from "../entities/columnGroup";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
 export default class DisplayedGroupCreator {
 
-    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     public createDisplayedGroups(sortedVisibleColumns: Column[],
                                  balancedColumnTree: OriginalColumnGroupChild[],

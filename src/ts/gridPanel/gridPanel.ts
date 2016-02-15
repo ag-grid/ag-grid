@@ -9,6 +9,7 @@ import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -80,11 +81,11 @@ var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_
 @Bean('gridPanel')
 export default class GridPanel {
 
-    @Qualifier('masterSlaveService') private masterSlaveService: MasterSlaveService;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
-    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
 
     private rowModel: any;
 

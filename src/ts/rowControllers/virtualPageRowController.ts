@@ -6,6 +6,7 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import EventService from "../eventService";
 import SelectionController from "../selectionController";
+import {Autowired} from "../context/context";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -17,11 +18,11 @@ var logging = false;
 @Bean('virtualPageRowController')
 export default class VirtualPageRowController {
 
-    @Qualifier('rowRenderer') private rowRenderer: any;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('gridCore') private angularGrid: any;
-    @Qualifier('selectionController') private selectionController: SelectionController;
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('rowRenderer') private rowRenderer: any;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private angularGrid: any;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('eventService') private eventService: EventService;
 
     private datasourceVersion = 0;
     private datasource: any;

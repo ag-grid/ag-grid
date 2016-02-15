@@ -7,6 +7,7 @@ import {RowNode} from "./entities/rowNode";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
+import {Autowired} from "./context/context";
 var LINE_SEPARATOR = '\r\n';
 
 export interface CsvExportParams {
@@ -23,10 +24,10 @@ export interface CsvExportParams {
 @Bean('csvCreator')
 export default class CsvCreator {
 
-    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('gridCore') private gridCore: GridCore;
-    @Qualifier('valueService') private valueService: ValueService;
+    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('valueService') private valueService: ValueService;
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         var csvString = this.getDataAsCsv(params);

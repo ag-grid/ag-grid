@@ -14,6 +14,9 @@ import VHtmlElement from "../virtualDom/vHtmlElement";
 import {Events} from "../events";
 import {GridCore} from "../gridCore";
 import EventService from "../eventService";
+import {Qualifier} from "../context/context";
+import {Context} from "../context/context";
+import {Autowired} from "../context/context";
 
 export default class RenderedRow {
 
@@ -30,66 +33,49 @@ export default class RenderedRow {
 
     private cellRendererMap: {[key: string]: any};
 
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('eventService') private mainEventService: EventService;
+    @Autowired('context') private context: Context;
+
     private parentScope: any;
-    private gridCore: GridCore;
-    private columnController: ColumnController;
-    private expressionService: ExpressionService;
     private rowRenderer: RowRenderer;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private $compile: any;
-    private templateService: TemplateService;
     private pinningLeft: boolean;
     private pinningRight: boolean;
     private eBodyContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
-    private valueService: ValueService;
 
     private destroyFunctions: Function[] = [];
 
-    private mainEventService: EventService;
     private renderedRowEventService: EventService;
 
-    constructor(gridOptionsWrapper: GridOptionsWrapper,
-                valueService: ValueService,
-                parentScope: any,
-                gridCore: GridCore,
-                columnController: ColumnController,
-                expressionService: ExpressionService,
+    constructor(parentScope: any,
                 cellRendererMap: {[key: string]: any},
-                selectionRendererFactory: SelectionRendererFactory,
-                $compile: any,
-                templateService: TemplateService,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
                 ePinnedRightContainer: HTMLElement,
                 node: RowNode,
-                rowIndex: number,
-                eventService: EventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.valueService = valueService;
+                rowIndex: number) {
         this.parentScope = parentScope;
-        this.gridCore = gridCore;
-        this.expressionService = expressionService;
-        this.columnController = columnController;
         this.cellRendererMap = cellRendererMap;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.$compile = $compile;
-        this.templateService = templateService;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
         this.ePinnedRightContainer = ePinnedRightContainer;
 
-        this.pinningLeft = columnController.isPinningLeft();
-        this.pinningRight = columnController.isPinningRight();
+        this.rowIndex = rowIndex;
+        this.rowNode = node;
+    }
 
-        this.mainEventService = eventService;
+    public agPostWire(): void {
+        this.pinningLeft = this.columnController.isPinningLeft();
+        this.pinningRight = this.columnController.isPinningRight();
 
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
-        var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
+        var rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
 
         this.vBodyRow = this.createRowContainer();
         if (this.pinningLeft) {
@@ -99,9 +85,7 @@ export default class RenderedRow {
             this.vPinnedRightRow = this.createRowContainer();
         }
 
-        this.rowIndex = rowIndex;
-        this.rowNode = node;
-        this.scope = this.createChildScopeOrNull(node.data);
+        this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
         if (!rowIsHeaderThatSpans) {
             this.drawNormalRow();
@@ -293,10 +277,9 @@ export default class RenderedRow {
             var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
 
             var renderedCell = new RenderedCell(firstRightPinnedCol, column,
-                this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
-                this.selectionRendererFactory, this.templateService, this.cellRendererMap, this.rowNode,
-                this.rowIndex, colIndex, this.scope, this.columnController,
-                this.valueService, this.mainEventService, this);
+                this.cellRendererMap, this.rowNode,
+                this.rowIndex, colIndex, this.scope, this);
+            this.context.wireBean(renderedCell);
 
             var vGridCell = renderedCell.getVGridCell();
 

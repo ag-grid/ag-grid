@@ -42,6 +42,14 @@ export default class Utils {
         return result;
     }
 
+    static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
+        var result: TResult[] = [];
+        Utils.iterateObject(object, (key: string, value: any)=> {
+            result.push(callback(value));
+        });
+        return result;
+    }
+
     static forEach<T>(array: T[], callback: (item: T, index: number) => void) {
         if (!array) {
             return;

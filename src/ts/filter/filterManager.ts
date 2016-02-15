@@ -12,17 +12,18 @@ import SetFilter from "./setFilter";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
+import {Autowired} from "../context/context";
 
 @Bean('filterManager')
 export default class FilterManager {
 
-    @Qualifier('$compile') private $compile: any;
-    @Qualifier('$scope') private $scope: any;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('gridCore') private gridCore: any;
-    @Qualifier('popupService') private popupService: PopupService;
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('columnController') private columnController: ColumnController;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('$scope') private $scope: any;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private gridCore: any;
+    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private allFilters: any = {};
     private quickFilter: string = null;

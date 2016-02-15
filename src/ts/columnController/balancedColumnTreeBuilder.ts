@@ -10,14 +10,16 @@ import {ColDef} from "../entities/colDef";
 import Column from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('balancedColumnTreeBuilder')
 export default class BalancedColumnTreeBuilder {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
+
     private logger: Logger;
-    @Qualifier('columnUtils') private columnUtils: ColumnUtils;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');

@@ -12,10 +12,7 @@ export interface ContextParams {
 interface BeanEntry {
     bean: any,
     beanInstance: any,
-    beanName: any,
-    wireParams: string[],
-    constructorParams: string[],
-    attributes: any
+    beanName: any
 }
 
 export class Context {
@@ -23,6 +20,8 @@ export class Context {
     private beans: {[key: string]: BeanEntry} = {};
     private contextParams: ContextParams;
     private logger: Logger;
+
+    private destroyed = false;
 
     public constructor(params: ContextParams) {
 
@@ -36,12 +35,23 @@ export class Context {
         this.logger.log('>> creating ag-Application Context');
 
         this.createBeans();
-        this.autoWireBeans();
-        this.wireBeans();
-        this.postWire();
-        this.wireCompleteBeans();
+
+        var beans = _.mapObject(this.beans, (beanEntry: BeanEntry) => beanEntry.beanInstance);
+
+        this.wireBeans(beans);
 
         this.logger.log('>> ag-Application Context ready - component is alive');
+    }
+
+    public wireBean(bean: any): void {
+        this.wireBeans([bean]);
+    }
+
+    private wireBeans(beans: any[]): void {
+        this.autoWireBeans(beans);
+        this.methodWireBeans(beans);
+        this.postWire(beans);
+        this.wireCompleteBeans(beans);
     }
 
     private createBeans(): void {
@@ -55,9 +65,16 @@ export class Context {
 
         // instantiate all beans - overridden beans will be left out
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            var constructorParams = this.getBeansForParameters(beanEntry.constructorParams, beanEntry.beanName);
+            var constructorParamsMeta: any;
+            if (beanEntry.bean.prototype.__agBeanMetaData
+                && beanEntry.bean.prototype.__agBeanMetaData.agConstructor) {
+                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.agConstructor;
+            }
+            var constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.beanName);
             var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
             beanEntry.beanInstance = newInstance;
+
+            this.logger.log('bean ' + this.getBeanName(newInstance) + ' created');
         });
     }
 
@@ -79,51 +96,59 @@ export class Context {
         var beanEntry = {
             bean: Bean,
             beanInstance: <any> null,
-            beanName: metaData.beanName,
-            wireParams: metaData.agWire,
-            constructorParams: metaData.agConstructor,
-            attributes: metaData.agClassAttributes
+            beanName: metaData.beanName
         };
 
         this.beans[metaData.beanName] = beanEntry;
     }
 
-    private autoWireBeans(): void {
-        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            this.autoWireBean(beanEntry);
-        });
+    private autoWireBeans(beans: any[]): void {
+        beans.forEach( bean => this.autoWireBean(bean) );
     }
 
-    private wireBeans(): void {
-        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            this.wireBean(beanEntry);
-        });
+    private methodWireBeans(beans: any[]): void {
+        beans.forEach( bean => this.methodWireBean(bean) );
     }
 
-    private autoWireBean(beanEntry: BeanEntry): void {
-        // if no init method, mark bean as initialised
-        if (!beanEntry.attributes) {
+    private autoWireBean(bean: any): void {
+        if (!bean
+            || !bean.__agBeanMetaData
+            || !bean.__agBeanMetaData.agClassAttributes) {
             return;
         }
+        var attributes = bean.__agBeanMetaData.agClassAttributes;
 
-        this.logger.log('auto-wiring ' + beanEntry.beanName);
+        var beanName = this.getBeanName(bean);
 
-        _.iterateObject(beanEntry.attributes, (attribute: string, otherBeanName: string) => {
-            var otherBean = this.lookupBeanInstance(beanEntry.beanName, otherBeanName);
-            beanEntry.beanInstance[attribute] = otherBean;
+        _.iterateObject(attributes, (attribute: string, otherBeanName: string) => {
+            var otherBean = this.lookupBeanInstance(beanName, otherBeanName);
+            bean[attribute] = otherBean;
         });
     }
 
-    private wireBean(beanEntry: BeanEntry): void {
+    private getBeanName(bean: any): string {
+        var constructorString = bean.constructor.toString();
+        var beanName = constructorString.substring(9, constructorString.indexOf('('));
+        return beanName;
+    }
+
+    private methodWireBean(bean: any): void {
+        var beanName = this.getBeanName(bean);
+
         // if no init method, skip he bean
-        if (!beanEntry.beanInstance.agWire) {
+        if (!bean.agWire) {
             return;
         }
 
-        var initParams = this.getBeansForParameters(beanEntry.wireParams, beanEntry.beanName);
+        var wireParams: any;
+        if (bean.__agBeanMetaData
+            && bean.__agBeanMetaData.agWire) {
+            wireParams = bean.__agBeanMetaData.agWire;
+        }
 
-        this.logger.log('wiring ' + beanEntry.beanName);
-        beanEntry.beanInstance.agWire.apply(beanEntry.beanInstance, initParams);
+        var initParams = this.getBeansForParameters(wireParams, beanName);
+
+        bean.agWire.apply(bean, initParams);
     }
 
     private getBeansForParameters(parameters: any, beanName: string): any[] {
@@ -152,25 +177,27 @@ export class Context {
         }
     }
 
-    private postWire(): void {
-        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agPostWire) {
-                this.logger.log('post-wire ' + beanEntry.beanName);
-                beanEntry.beanInstance.agPostWire();
+    private postWire(beans: any): void {
+        beans.forEach( (bean: any) => {
+            if (bean.agPostWire) {
+                bean.agPostWire();
             }
-        });
+        } );
     }
 
-    private wireCompleteBeans(): void {
-        _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agApplicationBoot) {
-                this.logger.log('application-boot ' + beanEntry.beanName);
-                beanEntry.beanInstance.agApplicationBoot();
+    private wireCompleteBeans(beans: any[]): void {
+        beans.forEach( (bean)=> {
+            if (bean.agApplicationBoot) {
+                bean.agApplicationBoot();
             }
-        });
+        } );
     }
 
     public destroy(): void {
+        // should only be able to destroy once
+        if (this.destroyed) {
+            return;
+        }
         this.logger.log('>> Shutting down ag-Application Context');
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             if (beanEntry.beanInstance.agDestroy) {
@@ -179,7 +206,9 @@ export class Context {
                 }
                 beanEntry.beanInstance.agDestroy();
             }
+            this.logger.log('bean ' + this.getBeanName(beanEntry.beanInstance) + ' destroyed');
         });
+        this.destroyed = true;
         this.logger.log('>> ag-Application Context shut down - component is dead');
     }
 }
@@ -196,6 +225,21 @@ export function Bean(beanName: string): Function {
     return (classConstructor: any) => {
         var props = getOrCreateProps(classConstructor.prototype);
         props.beanName = beanName;
+    };
+}
+
+export function Autowired(name: string): Function {
+    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
+
+        if (typeof index !== 'number') {
+            // it's an attribute on the class
+            var props = getOrCreateProps(classPrototype);
+            if (!props.agClassAttributes) {
+                props.agClassAttributes = {};
+            }
+            props.agClassAttributes[methodOrAttributeName] = name;
+        }
+
     };
 }
 
@@ -218,13 +262,6 @@ export function Qualifier(name: string): Function {
                 props[methodName] = {};
             }
             props[methodName][index] = name;
-        } else {
-            // it's an attribute on the class
-            var props = getOrCreateProps(classPrototype);
-            if (!props.agClassAttributes) {
-                props.agClassAttributes = {};
-            }
-            props.agClassAttributes[methodOrAttributeName] = name;
         }
 
     };

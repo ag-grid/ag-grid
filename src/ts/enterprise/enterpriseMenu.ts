@@ -13,12 +13,13 @@ import {ColumnController} from "../columnController/columnController";
 import {ColumnPinnedPanel} from "./columnPinnedPanel";
 import {MenuPanel} from "./menuPanel";
 import {MenuPanelItems} from "./menuPanel";
+import {Autowired} from "../context/context";
 
 @Bean('menuFactory')
 export class EnterpriseMenuFactory implements IMenuFactory {
 
-    @Qualifier('filterManager') private filterManager: FilterManager;
-    @Qualifier('columnController') private columnController: ColumnController;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public createMenu(column: Column): ICreateMenuResult {
 

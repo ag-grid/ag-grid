@@ -21,25 +21,26 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
+import {Autowired} from "./context/context";
 
 @Bean('gridApi')
 export class GridApi {
 
-    @Qualifier('csvCreator') private csvCreator: CsvCreator;
-    @Qualifier('gridCore') private gridCore: GridCore;
-    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
-    @Qualifier('headerRenderer') private headerRenderer: HeaderRenderer;
-    @Qualifier('filterManager') private filterManager: FilterManager;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
-    @Qualifier('selectionController') private selectionController: SelectionController;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('masterSlaveService') private masterSlaveService: MasterSlaveService;
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
-    @Qualifier('context') private context: Context;
+    @Autowired('csvCreator') private csvCreator: CsvCreator;
+    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('context') private context: Context;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {

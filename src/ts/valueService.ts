@@ -4,13 +4,14 @@ import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
 
 @Bean('valueService')
 export default class ValueService {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('expressionService') private expressionService: ExpressionService;
-    @Qualifier('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public getValue(colDef: ColDef, data: any, node: any):any {
 

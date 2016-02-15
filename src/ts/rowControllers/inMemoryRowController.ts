@@ -15,21 +15,22 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import SelectionController from "../selectionController";
+import {Autowired} from "../context/context";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
 @Bean('inMemoryRowController')
 export default class InMemoryRowController {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('filterManager') private filterManager: FilterManager;
-    @Qualifier('$scope') private $scope: any;
-    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('$scope') private $scope: any;
+    @Autowired('selectionController') private selectionController: SelectionController;
 
-    @Qualifier('groupCreator') private groupCreator: GroupCreator;
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('groupCreator') private groupCreator: GroupCreator;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.

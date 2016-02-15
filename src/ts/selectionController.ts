@@ -6,11 +6,12 @@ import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
 import EventService from "./eventService";
 import {Events} from "./events";
+import {Autowired} from "./context/context";
 
 @Bean('selectionController')
 export default class SelectionController {
 
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('eventService') private eventService: EventService;
 
     private rowModel: any;
 

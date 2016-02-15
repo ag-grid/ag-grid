@@ -51,10 +51,12 @@ include '../documentation_header.php';
         <pre>&lt;script src="pathToGrid/ag-grid.js">&lt;/script></pre>
 
     <p>
-        There are two bundle files in the distribution:
+        There are four bundle files in the distribution:
         <ul>
         <li>dist/ag-grid.js -> standard bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid-min.js -> minified bundle containing JavaScript and CSS</li>
+        <li>dist/ag-grid.min.js -> minified bundle containing JavaScript and CSS</li>
+        <li>dist/ag-grid.noStyle.js -> standard bundle containing JavaScript without CSS</li>
+        <li>dist/ag-grid.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
     </ul>
     </p>
 
@@ -82,7 +84,18 @@ import {Grid} from 'ag-grid/main';
     <h3>Bundled vs CommonJS & Frameworks Summary</h3>
 
     <p>
-        The table below summarises bundles vs CommonJS with respect to the frameworks.
+        If you want to use the Angular 2 or React component of ag-Grid, then you have to
+        use the commonjs distribution (not the bundled). You will also need to include
+        the additional ag-Grid project for these components.
+    </p>
+
+    <p>
+        If you are using the plain Javascript, Angular 1 or Web Components version
+        of ag-Grid, you can use the bundled version or the commonjs version.
+    </p>
+
+    <p>
+        The table below summarises these details.
     </p>
 
     <style>
@@ -106,47 +119,36 @@ import {Grid} from 'ag-grid/main';
         </tr>
         <tr>
             <td>Pure JavaScript</td>
-            <td>Works</td>
-            <td>Works</td>
+            <td>Yes</td>
+            <td>Yes</td>
             <td>-</td>
         </tr>
         <tr>
             <td>React</td>
             <td>No</td>
-            <td>Works</td>
+            <td>Yes</td>
             <td>ag-grid-react</td>
         </tr>
         <tr>
             <td>Angular 1</td>
-            <td>Works</td>
-            <td>Works</td>
+            <td>Yes</td>
+            <td>Yes</td>
             <td>-</td>
         </tr>
         <tr>
             <td>Angular 2</td>
             <td>No</td>
-            <td>Works</td>
+            <td>Yes</td>
             <td>ag-grid-ng2</td>
         </tr>
         <tr>
             <td>Web Components</td>
-            <td>Works</td>
-            <td>Works</td>
+            <td>Yes</td>
+            <td>Yes</td>
             <td>-</td>
         </tr>
     </table>
 
-    <p>
-        The 'odd ones out' above are Angular 2 and React. Both of these modules have dependencies
-        on their associated frameworks (eg ag-grid-ng2 has a dependency on Angular 2). To provide
-        these dependencies, CommonJS is used, thus you need CommonJS packaging for them to work.
-        In other words, the bundled ag-Grid, doesn't have a reference to the Angular 2 or React
-        libraries, so you can't use it in these scenarios.
-    </p>
-    <p>
-        Also to keep these Angular 2 and React dependencies out of the core grid (you don't want Angular 2 dependency
-        if using React for example) they are separated out into separate projects.
-    </p>
 
     <h3>List of Loading / Building Examples</h3>
 

@@ -3,12 +3,13 @@ import GridPanel from "../gridPanel/gridPanel";
 import Column from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 @Bean('autoWidthCalculator')
 export default class AutoWidthCalculator {
 
-    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy

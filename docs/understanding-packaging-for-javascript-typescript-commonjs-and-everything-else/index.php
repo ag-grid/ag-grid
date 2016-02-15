@@ -105,7 +105,7 @@ module ag.grid {
         <p>
             External modules in TypeScript are what you see in ag-Grid and Angular 2 code and this is what
             works best with CommonJS as it gets compiled down to CommonJS 'require' functions which is what
-            most of the rest of the work is using, incluing the React community.
+            most of the rest of the world is using, incluing the React community.
         </p>
 
         <pre>
@@ -345,19 +345,24 @@ import {Grid} from 'ag-grid/main';</pre>
             <li>The dependent projects cannot be part of the Self Contained JavaScript Bundles described above
                 that you can build with WebPack for direct HTML inclusion. This is because the parts need
                 the said libraries at compile time (not run-time like for example Angular 1)
-                because your component classes extend (as in 'object oriented class' extend) classes from these libraries.
-                This means if you included these dependencies in your project, they would end up in your bundled files,
-                which would be bad.</li>
+                because your component classes have compile time linked dependencies on the frameworks
+                (React components 'object oriented class' extend React classes, and Angular 2 components
+                use ECMA 6 decorators) from these libraries.
+                This means if you included these dependencies in your project they would
+                be dragged into your bundled files. This would be bad, as the client will need
+                to be providing the framework.</li>
         </ul></p>
 
         <p>
             One thing to note about the second point and Angular 2 - it says you cannot Webpack UMD bundle Angular 2
             components, so how then can we write components that work with Angular 2's UMD distribution? The answer is
             that you will also need to provide your component as compatible with Angular 2's UMD interface, ie you
-            will need to reference Angular 2 on the global scope and then use ECMA 5 JavaScript techniques instead of
-            ECMA 6 object oriented extends and decorators. This means you would have to either NOT use ECMA 6 at all
+            will need to reference Angular 2 on the global scope (or have the client give you a reference to the library
+            somehow) and then use ECMA 5 JavaScript techniques instead of
+            ECMA 6 decorators. This means you would have to either NOT use ECMA 6 at all
             in your component's Angular 2 references,
-            or have two versions of your library. Personally I don't see this catching on. I do not believe that the
+            or have two versions of your library, one using ECMA 5 and one using ECMA 6.
+            Personally I don't see this catching on. I do not believe that the
             majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspection of some
             popular Angular 2 components shows they are not supporting UMD.
         </p>

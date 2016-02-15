@@ -14,8 +14,19 @@ import Constants from "../constants";
 import {Events} from "../events";
 import VWrapperElement from "../virtualDom/vWrapperElement";
 import RenderedRow from "./renderedRow";
+import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
 export default class RenderedCell {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('templateService') private templateService: TemplateService;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
 
     private vGridCell: VHtmlElement; // the outer cell
     private vSpanWithValue: VHtmlElement; // inner cell
@@ -32,17 +43,8 @@ export default class RenderedCell {
     private scope: any;
     private firstRightPinnedColumn: boolean;
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private expressionService: ExpressionService;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private rowRenderer: RowRenderer;
-    private $compile: any;
-    private templateService: TemplateService;
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
-    private columnController: ColumnController;
-    private valueService: ValueService;
-    private eventService: EventService;
 
     private value: any;
     private checkboxSelection: boolean;
@@ -50,35 +52,26 @@ export default class RenderedCell {
 
     private destroyMethods: Function[] = [];
 
-    constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
-                gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                selectionRendererFactory: SelectionRendererFactory,
-                templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
-                valueService: ValueService, eventService: EventService, renderedRow: RenderedRow) {
+    constructor(firstRightPinnedCol: boolean, column: any,
+                cellRendererMap: {[key: string]: any},
+                node: any, rowIndex: number, colIndex: number, scope: any,
+                renderedRow: RenderedRow) {
 
         this.firstRightPinnedColumn = firstRightPinnedCol;
         this.column = column;
-        this.rowRenderer = rowRenderer;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.expressionService = expressionService;
-        this.selectionRendererFactory = selectionRendererFactory;
         this.cellRendererMap = cellRendererMap;
-        this.$compile = $compile;
-        this.templateService = templateService;
-        this.columnController = columnController;
-        this.valueService = valueService;
-        this.eventService = eventService;
 
         this.node = node;
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
         this.scope = scope;
+        this.renderedRow = renderedRow;
+    }
+
+    public agPostWire(): void {
         this.data = this.getDataForRow();
         this.value = this.getValue();
-
         this.checkboxSelection = this.calculateCheckboxSelection();
-        this.renderedRow = renderedRow;
 
         this.setupComponents();
     }

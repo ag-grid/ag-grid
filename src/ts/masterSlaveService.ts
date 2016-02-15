@@ -11,14 +11,15 @@ import Column from "./entities/column";
 import ColumnGroup from "./entities/columnGroup";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
 
 @Bean('masterSlaveService')
 export default class MasterSlaveService {
 
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('eventService') private eventService: EventService;
 
     private logger: Logger;
 

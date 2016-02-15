@@ -40,29 +40,30 @@ import {DragService} from "./headerRendering/dragService";
 import {Context} from './context/context';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
 
 @Bean('gridCore')
 export class GridCore {
 
-    @Qualifier('gridOptions') private gridOptions: GridOptions;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
-    @Qualifier('paginationController') private paginationController: PaginationController;
-    @Qualifier('virtualPageRowController') private virtualPageRowController: VirtualPageRowController;
+    @Autowired('gridOptions') private gridOptions: GridOptions;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Autowired('paginationController') private paginationController: PaginationController;
+    @Autowired('virtualPageRowController') private virtualPageRowController: VirtualPageRowController;
 
-    @Qualifier('selectionController') private selectionController: SelectionController;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('rowRenderer') private rowRenderer: RowRenderer;
-    @Qualifier('headerRenderer') private headerRenderer: HeaderRenderer;
-    @Qualifier('filterManager') private filterManager: FilterManager;
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('toolPanel') private toolPanel: any;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('toolPanel') private toolPanel: any;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
-    @Qualifier('eGridDiv') private eGridDiv: HTMLElement;
-    @Qualifier('$scope') private $scope: any;
-    @Qualifier('quickFilterOnScope') private quickFilterOnScope: string;
-    @Qualifier('popupService') private popupService: PopupService;
+    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    @Autowired('$scope') private $scope: any;
+    @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
+    @Autowired('popupService') private popupService: PopupService;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;

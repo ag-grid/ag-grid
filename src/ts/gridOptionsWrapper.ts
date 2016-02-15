@@ -8,6 +8,7 @@ import {ColDef} from "./entities/colDef";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
+import {Autowired} from "./context/context";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -20,9 +21,9 @@ export default class GridOptionsWrapper {
 
     private static MIN_COL_WIDTH = 10;
 
-    @Qualifier('gridOptions') private gridOptions: GridOptions;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('eventService') private eventService: EventService;
+    @Autowired('gridOptions') private gridOptions: GridOptions;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
 
     private headerHeight: number;
 

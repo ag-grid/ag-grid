@@ -6,14 +6,15 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import EventService from "./eventService";
 import SelectionController from "./selectionController";
+import {Autowired} from "./context/context";
 
 @Bean('groupCreator')
 export default class GroupCreator {
 
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('selectionController') private selectionController: SelectionController;
 
     public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number, rowModel: any) {
 

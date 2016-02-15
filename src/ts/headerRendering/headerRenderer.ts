@@ -17,21 +17,22 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import PopupService from "../widgets/agPopupService";
+import {Autowired} from "../context/context";
 
 @Bean('headerRenderer')
 export default class HeaderRenderer {
 
-    @Qualifier('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('gridCore') private grid: GridCore;
-    @Qualifier('filterManager') private filterManager: FilterManager;
-    @Qualifier('$scope') private $scope: any;
-    @Qualifier('$compile') private $compile: any;
-    @Qualifier('dragService') private dragService: DragService;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
-    @Qualifier('menuFactory') private menuFactory: IMenuFactory;
-    @Qualifier('popupService') private popupService: PopupService;
+    @Autowired('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridCore') private grid: GridCore;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('$scope') private $scope: any;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('dragService') private dragService: DragService;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('popupService') private popupService: PopupService;
 
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;

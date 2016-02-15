@@ -20,22 +20,25 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
+import {Context} from "../context/context";
+import {Autowired} from "../context/context";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
 
-    @Qualifier('columnController') private columnController: ColumnController;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('gridCore') private gridCore: GridCore;
-    @Qualifier('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
-    @Qualifier('$compile') private $compile: any;
-    @Qualifier('$scope') private $scope: any;
-    @Qualifier('expressionService') private expressionService: ExpressionService;
-    @Qualifier('templateService') private templateService: TemplateService;
-    @Qualifier('valueService') private valueService: ValueService;
-    @Qualifier('eventService') private eventService: EventService;
-    @Qualifier('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('$scope') private $scope: any;
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('templateService') private templateService: TemplateService;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('context') private context: Context;
 
     private cellRendererMap: {[key: string]: any};
     private rowModel: any;
@@ -170,11 +173,14 @@ export default class RowRenderer {
 
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
-                var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
-                    this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
-                    this.selectionRendererFactory, this.$compile, this.templateService,
-                    this, bodyContainer, pinnedLeftContainer, pinnedRightContainer,
-                    node, rowIndex, this.eventService);
+                var renderedRow = new RenderedRow(this.$scope,
+                    this.cellRendererMap,
+                    this,
+                    bodyContainer,
+                    pinnedLeftContainer,
+                    pinnedRightContainer,
+                    node, rowIndex);
+                this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
         }
@@ -408,12 +414,12 @@ export default class RowRenderer {
             return;
         }
 
-        var renderedRow = new RenderedRow(this.gridOptionsWrapper, this.valueService, this.$scope,
-            this.gridCore, this.columnController, this.expressionService, this.cellRendererMap,
-            this.selectionRendererFactory, this.$compile, this.templateService,
+        var renderedRow = new RenderedRow(this.$scope,
+            this.cellRendererMap,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
-            node, rowIndex, this.eventService);
+            node, rowIndex);
         //renderedRow.setMainRowWidth(mainRowWidth);
+        this.context.wireBean(renderedRow);
 
         this.renderedRows[rowIndex] = renderedRow;
     }

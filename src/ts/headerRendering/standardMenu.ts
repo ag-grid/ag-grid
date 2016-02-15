@@ -7,11 +7,12 @@ import Column from "../entities/column";
 import {ICreateMenuResult} from "../interfaces/iMenuFactory";
 import _ from '../utils';
 import {ColumnController} from "../columnController/columnController";
+import {Autowired} from "../context/context";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
 
-    @Qualifier('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     public createMenu(column: Column): ICreateMenuResult {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);

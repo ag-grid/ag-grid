@@ -1,10 +1,11 @@
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
 
 @Bean('templateService')
 export default class TemplateService {
 
-    @Qualifier('$scope') private $scope: any;
+    @Autowired('$scope') private $scope: any;
 
     private templateCache:any = {};
     private waitingCallbacks:any = {};

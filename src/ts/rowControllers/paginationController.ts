@@ -6,6 +6,7 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import GridPanel from "../gridPanel/gridPanel";
 import SelectionController from "../selectionController";
+import {Autowired} from "../context/context";
 
 var template =
         '<div class="ag-paging-panel">'+
@@ -31,10 +32,10 @@ var template =
 @Bean('paginationController')
 export default class PaginationController {
 
-    @Qualifier('gridCore') private gridCore: GridCore;
-    @Qualifier('gridPanel') private gridPanel: GridPanel;
-    @Qualifier('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Qualifier('selectionController') private selectionController: SelectionController;
+    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
 
     private eGui: any;
     private btNext: any;
