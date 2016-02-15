@@ -1,31 +1,28 @@
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused16"></script>
-    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused16">
-    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused16">
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
     <script src="exampleFilterApi.js"></script>
 </head>
-<body ng-app="example" ng-controller="exampleCtrl">
+<body>
 
 <div>
     <span style="padding-bottom: 4px; display: inline-block;">
-        <button ng-click="irelandAndUk()">Ireland & UK</button>
-        <button ng-click="endingStan()">Countries Ending 'stan'</button>
-        <button ng-click="setCountryModel()">Set Model ['Algeria','Argentina']</button>
-        <button ng-click="printCountryModel()">Print Country Model</button>
-        <button ng-click="clearCountryFilter()">Clear Country Filter</button>
+        <button onclick="irelandAndUk()">Ireland & UK</button>
+        <button onclick="endingStan()">Countries Ending 'stan'</button>
+        <button onclick="setCountryModel()">Set Model ['Algeria','Argentina']</button>
+        <button onclick="printCountryModel()">Print Country Model</button>
+        <button onclick="clearCountryFilter()">Clear Country Filter</button>
     </span>
     <br/>
     <span style="padding-bottom: 4px; display: inline-block;">
-        <button ng-click="ageBelow25()">Age Below 25</button>
-        <button ng-click="ageAbove30()">Age Above 30</button>
-        <button ng-click="clearAgeFilter()">Clear Age Filter</button>
+        <button onclick="ageBelow25()">Age Below 25</button>
+        <button onclick="ageAbove30()">Age Above 30</button>
+        <button onclick="clearAgeFilter()">Clear Age Filter</button>
     </span>
 
 </div>
-<div ag-grid="gridOptions" class="ag-fresh" style="height: 400px;"></div>
+<div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
 
 </body>
 </html>

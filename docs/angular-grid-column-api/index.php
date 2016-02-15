@@ -58,6 +58,15 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Use the column API passed to you via the onGridReady callback of the React component. You can also
+        use the columnApi placed inside gridOptions by the grid during initialisation.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>
@@ -154,15 +163,23 @@ include '../documentation_header.php';
             <td>Sets the column pinned / unpinned. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnsPinned(key, pinned)</th>
+            <th>setColumnsPinned(keys, pinned)</th>
             <td>Same as setColumnPinned, but provide a list of column keys.</td>
+        </tr>
+        <tr>
+            <th>autoSizeColumn(key)</th>
+            <td>Auto-sizes a column based on it's contents.</td>
+        </tr>
+        <tr>
+            <th>autoSizeColumns(keys)</th>
+            <td>Same as autoSizeColumn, but provide a list of column keys.</td>
         </tr>
         <tr>
             <th>getAllColumns()</th>
             <td>Returns all the columns, regardless of visible or not.</td>
         </tr>
         <tr>
-            <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns()</th>
+            <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns(), getAllDisplayedColumns()</th>
             <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
                 the columns) for the pinned left, center and pinned right portions of the grid.</td>
         </tr>

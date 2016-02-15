@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- to support old browsers, we use webcomponents-lite.js to polyfill -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.10/webcomponents-lite.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="html5grid.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+
+    <script src="webComponentDataGrid.js"></script>
+
+    <style>
+        .toolbar button { margin: 2px; padding: 0px; }
+        button:disabled { color: #a0a0a0; }
+    </style>
+</head>
+
+<body>
+
+    <div style="width: 800px;">
+        <div style="padding: 4px">
+            <div style="float: right;">
+                <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+            </div>
+            <div style="padding: 4px;">
+                <b>Employees Skills and Contact Details</b> <span id="rowCount"/>
+            </div>
+        <div style="clear: both;"/>
+        <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button onclick="document.querySelector('#myGrid').api.selectAll()">Select All</button>
+                <button onclick="document.querySelector('#myGrid').api.deselectAll()">Clear Selection</button>
+            </span>
+            <span style="margin-left: 20px;">
+                Column API:
+                <button onclick="document.querySelector('#myGrid').columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button onclick="document.querySelector('#myGrid').columnApi.setColumnVisible('country', true)">Show Country Column</button>
+            </span>
+        </div>
+        <div style="float: right;" class="toolbar">
+            <button id="btDestroyGrid">Destroy Grid</button>
+        </div>
+        <div style="padding: 4px;" class="toolbar">
+            <label>
+                <input type="checkbox" onchange="document.querySelector('#myGrid').showToolPanel=this.checked"/>
+                Show Tool Panel
+            </label>
+            <button id="btRefreshDataViaApi">Refresh Data via API</button>
+            <button id="btRefreshDataViaElement">Refresh Data via Element</button>
+        </div>
+        <div style="clear: both;"/>
+
+        <!-- Putting the width and height on a wrapped element, as couldn't get web component to accept css -->
+        <div style="height: 350px; width: 800px;">
+            <ag-grid id="myGrid" class="ag-fresh ag-basic"
+
+                     enable-col-resize
+                     enable-sorting
+                     enable-filter
+                     group-headers
+                     suppress-row-click-selection
+                     tool-panel-suppress-groups
+                     tool-panel-suppress-values
+                     row-height="22"
+                     row-selection="multiple"
+                     pinned-column-count="3"
+
+                    ></ag-grid>
+        </div>
+    </div>
+
+</body>
+</html>

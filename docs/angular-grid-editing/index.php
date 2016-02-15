@@ -10,17 +10,22 @@ include '../documentation_header.php';
 
     <h2>Editing</h2>
 
-    You have two options for editing, one is use the default built-in editor (easy but limited),
-    or bake your own custom cell editors (powerful but more difficult).
+    <p>
+        You have two options for editing, one is use the default built-in editor (easy but limited),
+        or bake your own custom cell editors (powerful but more difficult).
+    </p>
 
     <div class="bigTitle">Default Editing</div>
 
-    ag-Grid provides functionality for editing text values out of the box. To enable
-    editing for a column, set the value 'editable' to 'true' in the column definition.
+    <p>
+        ag-Grid provides functionality for editing text values out of the box. To enable
+        editing for a column, set the value 'editable' to 'true' in the column definition.
+    </p>
 
-    <p/>
-    By default, the grid will treat values as string values, and update the row with the
-    new string.
+    <p>
+        By default, the grid will treat values as string values, and update the row with the
+        new string.
+    </p>
 
     <h4>Callback: New Value Handlers</h4>
 
@@ -60,12 +65,17 @@ include '../documentation_header.php';
 
     <div class="bigTitle">Custom Editing</div>
 
-    For more details editing, beyond a simple text editor, you need to provide the cell
-    editing yourself (in which case, do not set 'editable' to true for the column, as
-    your renderer will do the editing).
+    <p>
+        For more details editing, beyond a simple text editor, you need to provide the cell
+        editing yourself (in which case, do not set 'editable' to true for the column, as
+        your renderer will do the editing).
+    </p>
 
     <h4>Example</h4>
-    The example below shows editing in the following ways:<br/>
+
+    <p>
+        The example below shows editing in the following ways:
+    </p>
 
     <table class="table">
         <tr>
@@ -88,15 +98,8 @@ include '../documentation_header.php';
                 is used to convert the string to a number before attaching to the row.</td>
         </tr>
         <tr>
-            <th>Custom with Angular</th>
-            <td>Custom editing using a cell renderer. AngularJS is used for the
-                cell rendering. 'angularCompileRows' is set to true in grid options to support angular in
-                cell renderers.</td>
-        </tr>
-        <tr>
-            <th>Custom no Angular</th>
-            <td>Custom editing using a cell renderer. Native Javascript (no angular
-                JS) is used for the editing.</td>
+            <th>Custom</th>
+            <td>Custom editing. The cellRenderer provides a drop down selection.</td>
         </tr>
     </table>
 
@@ -104,11 +107,13 @@ include '../documentation_header.php';
 
     <h4>Advanced Pop Editing</h4>
 
-    If you need an advanced popup for editing (for example, providing a complex user search), then
-    you will soon realise that the cell renderer is restricted to the cell, overflow will be clipped.
-    To get around this, have the cell renderer create a GUI widget who's parent is outside the table,
-    and hence not restricted by the cell bounding box. The renderer can work out the best place to
-    display the popup using the screen coordinates of the cell.
+    <p>
+        If you need an advanced popup for editing (for example, providing a complex user search), then
+        you will soon realise that the cell renderer is restricted to the cell, overflow will be clipped.
+        To get around this, have the cell renderer create a GUI widget who's parent is outside the table,
+        and hence not restricted by the cell bounding box. The renderer can work out the best place to
+        display the popup using the screen coordinates of the cell.
+    </p>
 
 </div>
 

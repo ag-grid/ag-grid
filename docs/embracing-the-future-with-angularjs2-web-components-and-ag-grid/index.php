@@ -169,7 +169,7 @@ include('../mediaHeader.php');
 <hr/>
 
 <footer class="license">
-    © Niall Crosby 2015
+    © ag-Grid Ltd 2015-2016
 </footer>
 
 <?php

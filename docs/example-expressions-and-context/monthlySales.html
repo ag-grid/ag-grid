@@ -11,12 +11,9 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused16"></script>
-    <link rel="stylesheet" type="text/css" href="../dist/ag-grid.css?ignore=notused16">
-    <link rel="stylesheet" type="text/css" href="../dist/theme-fresh.css?ignore=notused16">
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
 
     <script src="monthlySales.js"></script>
 
@@ -58,21 +55,22 @@
 
 </head>
 
-<body ng-app="monthlySales" style="height: 100%">
+<body style="height: 100%">
 
-    <div ng-controller="monthlySalesController" style="width: 100%; height: 100%;">
+    <div style="width: 100%; height: 100%;">
         <div style="height: 10%; padding: 10px;">
 
-            <input type="text" style="width: 100px;" ng-model="gridOptions.quickFilterText" placeholder="Filter..."/>
+            <input type="text" style="width: 100px;" oninput="onQuickFilterChanged(this.value)" placeholder="Filter..."/>
 
             <span style="padding-left: 20px;">
-                <b>Rows (visible / total):</b> {{rowCount}}
+                <b>Rows (visible / total):</b> <span id="rowCount"></span>
             </span>
 
             <span style="padding-left: 20px;">
-                <b>Period:</b> {{monthName}}
-                <button ng-click="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
-                <button ng-click="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>
+                <b>Period:</b>
+                <button onclick="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
+                <button onclick="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>
+                <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
             </span>
 
             <span style="padding-left: 20px;">
@@ -88,7 +86,7 @@
             </span>
         </div>
         <div style="width: 100%; height: 90%; padding: 10px;"
-             ag-grid="gridOptions"
+             id="myGrid"
              class="ag-fresh">
         </div>
     </div>

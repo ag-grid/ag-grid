@@ -1,42 +1,38 @@
-module ag.grid {
+export default class VerticalStack {
 
-    export class VerticalStack {
+    isLayoutPanel: any;
+    childPanels: any;
+    eGui: any;
 
-        isLayoutPanel: any;
-        childPanels: any;
-        eGui: any;
+    constructor() {
+        this.isLayoutPanel = true;
+        this.childPanels = [];
+        this.eGui = document.createElement('div');
+        this.eGui.style.height = '100%';
+    }
 
-        constructor() {
-            this.isLayoutPanel = true;
-            this.childPanels = [];
-            this.eGui = document.createElement('div');
-            this.eGui.style.height = '100%';
+    addPanel(panel: any, height: any) {
+        var component: any;
+        if (panel.isLayoutPanel) {
+            this.childPanels.push(panel);
+            component = panel.getGui();
+        } else {
+            component = panel;
         }
 
-        addPanel(panel: any, height: any) {
-            var component: any;
-            if (panel.isLayoutPanel) {
-                this.childPanels.push(panel);
-                component = panel.getGui();
-            } else {
-                component = panel;
-            }
-
-            if (height) {
-                component.style.height = height;
-            }
-            this.eGui.appendChild(component);
+        if (height) {
+            component.style.height = height;
         }
+        this.eGui.appendChild(component);
+    }
 
-        getGui() {
-            return this.eGui;
-        }
+    getGui() {
+        return this.eGui;
+    }
 
-        doLayout() {
-            for (var i = 0; i < this.childPanels.length; i++) {
-                this.childPanels[i].doLayout();
-            }
+    doLayout() {
+        for (var i = 0; i < this.childPanels.length; i++) {
+            this.childPanels[i].doLayout();
         }
     }
 }
-

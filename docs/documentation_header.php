@@ -47,10 +47,10 @@ if (strcmp($version , 'latest') == 0) {
                             <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test Drive</a>
+                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Documentation</a>
+                            <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
@@ -87,12 +87,6 @@ if (strcmp($version , 'latest') == 0) {
                     The Basics
                 </h4>
 
-                <?php if ($key == "Install") { ?>
-                    <span class="sidebarLinkSelected">Install</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-install/index.php">Install</a>
-                <?php } ?>
-
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>
                 <?php } else { ?>
@@ -102,25 +96,31 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Getting Started Javascript") { ?>
                     <span class="sidebarLinkSelected childItem"><img src="/images/javascript.png" width="20px">Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-grid/index.php"><img src="/images/javascript.png" width="20px">Javascript</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php"><img src="/images/javascript.png" width="20px">Javascript</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started React") { ?>
+                    <span class="sidebarLinkSelected childItem"><img src="/images/react.png" width="20px">React</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php"><img src="/images/react.png" width="20px">React</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
                     <span class="sidebarLinkSelected childItem"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-grid/index.php"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img src="/images/angularjs.png" width="20px">AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
                     <span class="sidebarLinkSelected childItem"><img src="/images/angular2.png" width="20px">AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-2-grid/index.php"><img src="/images/angular2.png" width="20px">AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img src="/images/angular2.png" width="20px">AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
                     <span class="sidebarLinkSelected childItem"><img src="/images/webComponents.png" width="20px">Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-grid/index.php"><img src="/images/webComponents.png" width="20px">Web Components</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php"><img src="/images/webComponents.png" width="20px">Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>

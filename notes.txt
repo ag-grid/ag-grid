@@ -6,3 +6,5 @@ Doing releases:
 4. gulp release
 -- build
 5. Push to node npm: npm publish ./
+
+6. update bower, package, and dependency versions in component

@@ -1,29 +1,48 @@
+var columnDefs = [
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Gold", field: "gold", width: 100},
+    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Total", field: "total", width: 100}
+];
 
-var module = angular.module("example", ["agGrid"]);
+var gridOptions = {
+    columnDefs: columnDefs,
+    rowSelection: 'multiple',
+    onSelectionChanged: onSelectionChanged
+};
 
-module.controller("exampleCtrl", function($scope, $http) {
+function onSelectionChanged() {
+    var selectedRows = gridOptions.api.getSelectedRows();
+    var selectedRowsString = '';
+    selectedRows.forEach( function(selectedRow, index) {
+        if (index!=0) {
+            selectedRowsString += ', ';
+        }
+        selectedRowsString += selectedRow.athlete;
+    });
+    document.querySelector('#selectedRows').innerHTML = selectedRowsString;
+}
 
-    var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90},
-        {headerName: "Country", field: "country", width: 120},
-        {headerName: "Year", field: "year", width: 90},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
-    ];
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
 
-    $scope.gridOptions = {
-        columnDefs: columnDefs,
-        rowSelection: 'multiple',
-        rowData: null
+    // do http request to get our sample data - not using any framework to keep the example self contained.
+    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            gridOptions.api.setRowData(httpResult);
+        }
     };
-
-    $http.get("../olympicWinners.json")
-        .then(function(res){
-            $scope.gridOptions.api.setRowData(res.data);
-        });
 });

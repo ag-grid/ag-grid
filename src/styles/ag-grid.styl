@@ -70,6 +70,10 @@ ag-grid-ng2
 .ag-no-scrolls .ag-header-container
     white-space: nowrap
 
+.ag-header-overlay
+    display: block
+    position: absolute
+
 .ag-header-cell
     box-sizing: border-box
     vertical-align: bottom
@@ -79,6 +83,7 @@ ag-grid-ng2
     //float: left // safari doesn't align if we don't float
 
 .ag-header-group-cell
+    height: 100%
     display: inline-block
     box-sizing: border-box
     text-overflow: ellipsis
@@ -88,7 +93,7 @@ ag-grid-ng2
 // we needed to have display of table-cell below,
 // as with inline-block, the layout messed up in Safari (not problems in the others).
 .ag-header-group-cell-label
-    display table-cell
+    //display table-cell
     text-overflow: ellipsis
     overflow: hidden
 
@@ -225,6 +230,10 @@ ag-grid-ng2
     position: absolute
     width: 100%
 
+.ag-no-scrolls .ag-row
+//    white-space: nowrap
+    position: relative // need at least some position for the cell height to work
+
 .agile-gird-row:hover
     background-color: aliceblue
 
@@ -237,7 +246,8 @@ ag-grid-ng2
     overflow: hidden
     // this float was needed for layout in safari, without it, when images were used (eg country flags),
     // then the layout was broken
-    float: left
+    //float: left
+    position absolute
 
 .ag-group-cell-entire-row
     //position: absolute // took this out because of https://github.com/ceolter/angular-grid/issues/115

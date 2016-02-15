@@ -47,8 +47,9 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>groupDefaultExpanded</th>
-            <td>If grouping, set to true, false or a number (default is false). If true, when data is loaded, groups will be expanded by default.
-            If false, they won't. If a number, then the first n levels will be expanded, eg 0 for none, 1 first level only, etc.
+            <td>If grouping, set to the number of levels to expand by default.
+                Eg 0 for none, 1 first level only, etc. Default is 0 (expand none).
+                Set to -1 for expand everything.
             </td>
         </tr>
         <tr>

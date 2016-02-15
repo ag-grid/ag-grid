@@ -18,7 +18,7 @@
             ]
         };
 
-        new ag.grid.Grid(gridDiv, gridOptions);
+        new agGrid.Grid(gridDiv, gridOptions);
 
         jsonLoad( function(data) {
             gridOptions.api.setRowData(data);

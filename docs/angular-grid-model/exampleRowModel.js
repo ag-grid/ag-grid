@@ -1,57 +1,61 @@
+var columnDefs = [
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 120},
+    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Gold", field: "gold", width: 100},
+    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Total", field: "total", width: 100}
+];
 
-var module = angular.module("example", ["agGrid"]);
+var gridOptions = {
+    columnDefs: columnDefs,
+    enableFilter: true,
+    enableSorting: true,
+    showToolPanel: true
+};
 
-module.controller("exampleCtrl", function($scope, $http) {
+function onBtForEachNode() {
+    console.log('### api.forEachNode() ###');
+    gridOptions.api.forEachNode(printNode);
+}
 
-    var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90},
-        {headerName: "Country", field: "country", width: 120},
-        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 120},
-        {headerName: "Year", field: "year", width: 90},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
-    ];
+function onBtForEachNodeAfterFilter() {
+    console.log('### api.forEachNodeAfterFilter() ###');
+    gridOptions.api.forEachNodeAfterFilter(printNode);
+}
 
-    $scope.gridOptions = {
-        columnDefs: columnDefs,
-        enableFilter: true,
-        enableSorting: true,
-        showToolPanel: true
-    };
+function onBtForEachNodeAfterFilterAndSort() {
+    console.log('### api.forEachNodeAfterFilterAndSort() ###');
+    gridOptions.api.forEachNodeAfterFilterAndSort(printNode);
+}
 
-    $scope.onBtForEachNode = function() {
-        console.log('### api.forEachNode() ###');
-        $scope.gridOptions.api.forEachNode(printNode);
-    };
-
-    $scope.onBtForEachNodeAfterFilter = function() {
-        console.log('### api.forEachNodeAfterFilter() ###');
-        $scope.gridOptions.api.forEachNodeAfterFilter(printNode);
-    };
-
-    $scope.onBtForEachNodeAfterFilterAndSort = function() {
-        console.log('### api.forEachNodeAfterFilterAndSort() ###');
-        $scope.gridOptions.api.forEachNodeAfterFilterAndSort(printNode);
-    };
-
-    function printNode(node, index) {
-        if (node.data) {
-            console.log(index + ' -> data: ' + node.data.country + ', ' + node.data.athlete);
-        } else {
-            console.log(index + ' -> group: ' + node.key);
-        }
+function printNode(node, index) {
+    if (node.data) {
+        console.log(index + ' -> data: ' + node.data.country + ', ' + node.data.athlete);
+    } else {
+        console.log(index + ' -> group: ' + node.key);
     }
+}
 
-    $http.get("../olympicWinners.json")
-        .then(function(res){
-            // because we are printing to the console,
-            // we only use 50 rows
-            var subsetOfRows = res.data.slice(0,50);
-            $scope.gridOptions.api.setRowData(subsetOfRows);
-        });
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
+
+    // do http request to get our sample data - not using any framework to keep the example self contained.
+    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            gridOptions.api.setRowData(httpResult);
+        }
+    };
 });

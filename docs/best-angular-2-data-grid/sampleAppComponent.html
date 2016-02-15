@@ -1,0 +1,89 @@
+<div style="width: 800px;">
+
+    <div style="padding: 4px;">
+        <div style="float: right;">
+            <input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+            <button [disabled]="!showGrid" (click)="showGrid=false">Destroy Grid</button>
+            <button [disabled]="showGrid" (click)="showGrid=true">Create Grid</button>
+        </div>
+        <div>
+            <b>Employees Skills and Contact Details</b>
+            {{rowCount}}
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div *ngIf="showGrid">
+
+        <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use
+             that marker inside the same ng-if as the grid -->
+
+        <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button (click)="agGrid.api.selectAll()">Select All</button>
+                <button (click)="agGrid.api.deselectAll()">Clear Selection</button>
+            </span>
+            <span style="margin-left: 20px;">
+                Column API:
+                <button (click)="agGrid.columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button (click)="agGrid.columnApi.setColumnVisible('country', true)">Show Country Column</button>
+            </span>
+        </div>
+        <div style="clear: both;"></div>
+        <div style="padding: 4px;" class="toolbar">
+            <label>
+                <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
+                Show Tool Panel
+            </label>
+            <button (click)="createRowData()">Refresh Data</button>
+        </div>
+        <div style="clear: both;"></div>
+
+        <ag-grid-ng2 #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
+
+                     [gridOptions]="gridOptions"
+                     [columnDefs]="columnDefs"
+                     [showToolPanel]="showToolPanel"
+                     [rowData]="rowData"
+
+                     enableColResize
+                     enableSorting
+                     enableFilter
+                     groupHeaders
+                     suppressRowClickSelection
+                     toolPanelSuppressGroups
+                     toolPanelSuppressValues
+                     debug
+                     rowHeight="22"
+                     rowSelection="multiple"
+
+                     (modelUpdated)="onModelUpdated()"
+                     (cellClicked)="onCellClicked($event)"
+                     (cellDoubleClicked)="onCellDoubleClicked($event)"
+                     (cellContextMenu)="onCellContextMenu($event)"
+                     (cellValueChanged)="onCellValueChanged($event)"
+                     (cellFocused)="onCellFocused($event)"
+                     (rowSelected)="onRowSelected($event)"
+                     (selectionChanged)="onSelectionChanged()"
+                     (beforeFilterChanged)="onBeforeFilterChanged()"
+                     (afterFilterChanged)="onAfterFilterChanged()"
+                     (filterModified)="onFilterModified()"
+                     (beforeSortChanged)="onBeforeSortChanged()"
+                     (afterSortChanged)="onAfterSortChanged()"
+                     (virtualRowRemoved)="onVirtualRowRemoved($event)"
+                     (rowClicked)="onRowClicked($event)"
+                     (gridReady)="onGridReady($event)"
+
+                     (columnEverythingChanged)="onColumnEvent($event)"
+                     (columnRowGroupChanged)="onColumnEvent($event)"
+                     (columnValueChanged)="onColumnEvent($event)"
+                     (columnMoved)="onColumnEvent($event)"
+                     (columnVisible)="onColumnEvent($event)"
+                     (columnGroupOpened)="onColumnEvent($event)"
+                     (columnResized)="onColumnEvent($event)"
+                     (columnPinnedCountChanged)="onColumnEvent($event)">
+        </ag-grid-ng2>
+    </div>
+
+</div>

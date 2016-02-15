@@ -33,6 +33,7 @@ include '../documentation_header.php';
 
     <h2>
         <img src="/images/javascript.png" height="50"/>
+        <img src="/images/react.png" height="50px"/>
         <img src="/images/angularjs.png" height="50px"/>
         <img src="/images/angular2.png" height="50px"/>
         <img src="/images/webComponents.png" height="50px"/>
@@ -42,7 +43,7 @@ include '../documentation_header.php';
     <p>
         The gridOptions is a 'one stop shop' for the entire interface into the grid. The
         grid options can be used regardless of the framework you are using, however if you
-        are using AngularJS 2 or Web Components, you can achieve what grid options
+        are using React, AngularJS 2 or Web Components, you can achieve what grid options
         provides you with in other ways.
     </p>
 
@@ -52,7 +53,7 @@ include '../documentation_header.php';
     <pre><code>var gridOptions = {
     // PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application
     rowData: myRowData,
-    colDef: myColDefs,
+    columnDefs: myColDefs,
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
@@ -63,7 +64,7 @@ include '../documentation_header.php';
     // EVENTS - add event callback handlers
     onRowClicked: function(event) { console.log('a row was clicked'); },
     onColumnResized: function(event) { console.log('a column was resized'); },
-    onReady: function(event) { console.log('the grid is now ready'); },
+    onGridReady: function(event) { console.log('the grid is now ready'); },
 
     // CALLBACKS
     isScrollLag: function() { return false; }
@@ -79,7 +80,7 @@ gridOptions.api.refreshView();
 gridOptions.columnApi.sizeColumnsToFit();
 </code></pre>
 
-    <h3>Two Ways of Event Binding</h3>
+    <h3>Two Ways of Event Listening</h3>
 
     <p>
         In addition to adding event listeners directly onto the gridOptions, it is possible
@@ -116,6 +117,55 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         If you are using plain Javascript or AngularJS 1.x, then all of your interaction
         with ag-Grid will be through the gridOptions.
     </p>
+
+
+    <h2>
+        <img src="/images/react.png" height="50px"/>
+        React
+    </h2>
+
+    <p>
+        The gridOptions are fully available as stated above for React. However you can take
+        advantage of React's properties and events provided by ag-Grids React Component.
+        This is done as follows:
+    </p>
+
+    <ul>
+        <li><b>Properties</b>: Properties are defined by passing React props down to ag-Grid.</li>
+        <li><b>Callbacks</b>: Callbacks are also placed as React Props.</li>
+        <li><b>Event Handlers</b>: Event handlers are again placed as React Props.</li>
+        <li><b>API</b>: The grid API and column API are provided to you via the onGridReady() event callback.</li>
+    </ul>
+
+    <p>
+        So in summary, in React, everything is done via React Props. Here is an example:
+    </p>
+
+    <pre><code>&lt;ag-grid-react-component
+    // these are simple attributes, not bound to any state or prop
+    rowHeight="22"
+    rowSelection="multiple"
+
+    // these are bound props, so can use anything in React state or props
+    columnDefs={this.props.columnDefs}
+    showToolPanel]={this.state.showToolPanel}
+
+    // this is a callback
+    isScrollLag={this.myIsScrollLagFunction.bind(this)}
+
+    // these are registering event callbacks
+    onCellClicked={this.onCellClicked.bind(this)}"
+    onColumnResized={this.onColumnEvent.bind(this)}"
+    onGridReady={this.onGridReady.bind(this)}" // inside onGridReady, you receive the grid API's if you want them
+/></code></pre>
+
+    <p>
+        The API's are accessible through the component. This is useful in two situations.
+        The first us by using an AngularJS 2 ID. In the example above, the ID is given
+        as '#myGrid' which then allows something like this:
+    </p>
+
+    <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
 
     <h2>
         <img src="/images/angular2.png" height="50px"/>

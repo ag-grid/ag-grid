@@ -1,8 +1,3 @@
-
-var module = angular.module("example", ["agGrid"]);
-
-module.controller("exampleCtrl", function($scope, $http) {
-
     var listOfCountries = ['United States','Russia','Australia','Canada','Norway','China','Zimbabwe','Netherlands','South Korea','Croatia',
         'France','Japan','Hungary','Germany','Poland','South Africa','Sweden','Ukraine','Italy','Czech Republic','Austria','Finland','Romania',
         'Great Britain','Jamaica','Singapore','Belarus','Chile','Spain','Tunisia','Brazil','Slovakia','Costa Rica','Bulgaria','Switzerland',
@@ -36,7 +31,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         {headerName: "Total", field: "total", width: 100, suppressMenu: true}
     ];
 
-    $scope.gridOptions = {
+    var gridOptions = {
         enableServerSideSorting: true,
         enableServerSideFilter: true,
         enableColResize: true,
@@ -46,36 +41,34 @@ module.controller("exampleCtrl", function($scope, $http) {
         columnDefs: columnDefs
     };
 
-    $http.get("../olympicWinners.json")
-        .then(function(result){
-            var allOfTheData = result.data;
-            var dataSource = {
-                rowCount: null, // behave as infinite scroll
-                pageSize: 100,
-                overflowSize: 100,
-                maxConcurrentRequests: 2,
-                maxPagesInCache: 2,
-                getRows: function (params) {
-                    console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-                    // At this point in your code, you would call the server, using $http if in AngularJS.
-                    // To make the demo look real, wait for 500ms before returning
-                    setTimeout( function() {
-                        // take a slice of the total rows
-                        var dataAfterSortingAndFiltering = sortAndFilter(allOfTheData, params.sortModel, params.filterModel);
-                        var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
-                        // if on or after the last page, work out the last row.
-                        var lastRow = -1;
-                        if (dataAfterSortingAndFiltering.length <= params.endRow) {
-                            lastRow = dataAfterSortingAndFiltering.length;
-                        }
-                        // call the success callback
-                        params.successCallback(rowsThisPage, lastRow);
-                    }, 500);
-                }
-            };
+    function setRowData(allOfTheData) {
+        var dataSource = {
+            rowCount: null, // behave as infinite scroll
+            pageSize: 100,
+            overflowSize: 100,
+            maxConcurrentRequests: 2,
+            maxPagesInCache: 2,
+            getRows: function (params) {
+                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                // At this point in your code, you would call the server, using $http if in AngularJS.
+                // To make the demo look real, wait for 500ms before returning
+                setTimeout(function () {
+                    // take a slice of the total rows
+                    var dataAfterSortingAndFiltering = sortAndFilter(allOfTheData, params.sortModel, params.filterModel);
+                    var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
+                    // if on or after the last page, work out the last row.
+                    var lastRow = -1;
+                    if (dataAfterSortingAndFiltering.length <= params.endRow) {
+                        lastRow = dataAfterSortingAndFiltering.length;
+                    }
+                    // call the success callback
+                    params.successCallback(rowsThisPage, lastRow);
+                }, 500);
+            }
+        };
 
-            $scope.gridOptions.api.setDatasource(dataSource);
-        });
+        gridOptions.api.setDatasource(dataSource);
+    }
 
     function sortAndFilter(allOfTheData, sortModel, filterModel) {
         return sortData(sortModel, filterData(filterModel, allOfTheData))
@@ -161,4 +154,20 @@ module.controller("exampleCtrl", function($scope, $http) {
         return resultOfFilter;
     }
 
-});
+    // setup the grid after the page has finished loading
+    document.addEventListener('DOMContentLoaded', function() {
+        var gridDiv = document.querySelector('#myGrid');
+        new agGrid.Grid(gridDiv, gridOptions);
+
+        // do http request to get our sample data - not using any framework to keep the example self contained.
+        // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', '../olympicWinners.json');
+        httpRequest.send();
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var httpResponse = JSON.parse(httpRequest.responseText);
+                setRowData(httpResponse);
+            }
+        };
+    });

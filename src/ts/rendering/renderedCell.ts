@@ -1,705 +1,741 @@
-/// <reference path='../columnController/columnController.ts' />
-/// <reference path='../utils.ts' />
-/// <reference path="../gridOptionsWrapper.ts" />
-/// <reference path="../expressionService.ts" />
-/// <reference path="../selectionRendererFactory.ts" />
-/// <reference path="rowRenderer.ts" />
-/// <reference path="../selectionController.ts" />
-/// <reference path="../templateService.ts" />
-/// <reference path="../virtualDom/vHtmlElement.ts" />
-/// <reference path="../virtualDom/vWrapperElement.ts" />
+import _ from '../utils';
+import VHtmlElement from "../virtualDom/vHtmlElement";
+import Column from "../entities/column";
+import {RowNode} from "../entities/rowNode";
+import GridOptionsWrapper from "../gridOptionsWrapper";
+import ExpressionService from "../expressionService";
+import SelectionRendererFactory from "../selectionRendererFactory";
+import RowRenderer from "./rowRenderer";
+import SelectionController from "../selectionController";
+import TemplateService from "../templateService";
+import {ColumnController} from "../columnController/columnController";
+import ValueService from "../valueService";
+import EventService from "../eventService";
+import Constants from "../constants";
+import {Events} from "../events";
+import VWrapperElement from "../virtualDom/vWrapperElement";
 
-module ag.grid {
+export default class RenderedCell {
 
-    var _ = Utils;
+    private vGridCell: VHtmlElement; // the outer cell
+    private vSpanWithValue: VHtmlElement; // inner cell
+    private vCellWrapper: VHtmlElement;
+    private vParentOfValue: VHtmlElement;
 
-    export class RenderedCell {
+    private checkboxOnChangeListener: EventListener;
 
-        private vGridCell: ag.vdom.VHtmlElement; // the outer cell
-        private vSpanWithValue: ag.vdom.VHtmlElement; // inner cell
-        private vCellWrapper: ag.vdom.VHtmlElement;
-        private vParentOfValue: ag.vdom.VHtmlElement;
+    private column: Column;
+    private data: any;
+    private node: RowNode;
+    private rowIndex: number;
+    private colIndex: number;
+    private editingCell: boolean;
 
-        private checkboxOnChangeListener: EventListener;
+    private scope: any;
+    private firstRightPinnedColumn: boolean;
 
-        private column: Column;
-        private data: any;
-        private node: RowNode;
-        private rowIndex: number;
-        private colIndex: number;
-        private editingCell: boolean;
+    private gridOptionsWrapper: GridOptionsWrapper;
+    private expressionService: ExpressionService;
+    private selectionRendererFactory: SelectionRendererFactory;
+    private rowRenderer: RowRenderer;
+    private selectionController: SelectionController;
+    private $compile: any;
+    private templateService: TemplateService;
+    private cellRendererMap: {[key: string]: Function};
+    private eCheckbox: HTMLInputElement;
+    private columnController: ColumnController;
+    private valueService: ValueService;
+    private eventService: EventService;
 
-        private scope: any;
-        private firstRightPinnedColumn: boolean;
+    private value: any;
+    private checkboxSelection: boolean;
 
-        private gridOptionsWrapper: GridOptionsWrapper;
-        private expressionService: ExpressionService;
-        private selectionRendererFactory: SelectionRendererFactory;
-        private rowRenderer: RowRenderer;
-        private selectionController: SelectionController;
-        private $compile: any;
-        private templateService: TemplateService;
-        private cellRendererMap: {[key: string]: Function};
-        private eCheckbox: HTMLInputElement;
-        private columnController: ColumnController;
-        private valueService: ValueService;
-        private eventService: EventService;
+    private destroyMethods: Function[] = [];
 
-        private value: any;
-        private checkboxSelection: boolean;
+    constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
+                gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
+                selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
+                templateService: TemplateService, cellRendererMap: {[key: string]: any},
+                node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
+                valueService: ValueService, eventService: EventService) {
 
-        constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
-                    gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                    selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
-                    templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                    node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
-                    valueService: ValueService, eventService: EventService) {
+        this.firstRightPinnedColumn = firstRightPinnedCol;
+        this.column = column;
+        this.rowRenderer = rowRenderer;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+        this.expressionService = expressionService;
+        this.selectionRendererFactory = selectionRendererFactory;
+        this.selectionController = selectionController;
+        this.cellRendererMap = cellRendererMap;
+        this.$compile = $compile;
+        this.templateService = templateService;
+        this.columnController = columnController;
+        this.valueService = valueService;
+        this.eventService = eventService;
 
-            this.firstRightPinnedColumn = firstRightPinnedCol;
-            this.column = column;
-            this.rowRenderer = rowRenderer;
-            this.gridOptionsWrapper = gridOptionsWrapper;
-            this.expressionService = expressionService;
-            this.selectionRendererFactory = selectionRendererFactory;
-            this.selectionController = selectionController;
-            this.cellRendererMap = cellRendererMap;
-            this.$compile = $compile;
-            this.templateService = templateService;
-            this.columnController = columnController;
-            this.valueService = valueService;
-            this.eventService = eventService;
+        this.node = node;
+        this.rowIndex = rowIndex;
+        this.colIndex = colIndex;
+        this.scope = scope;
+        this.data = this.getDataForRow();
+        this.value = this.getValue();
 
-            this.node = node;
-            this.rowIndex = rowIndex;
-            this.colIndex = colIndex;
-            this.scope = scope;
-            this.data = this.getDataForRow();
-            this.value = this.getValue();
+        this.checkboxSelection = this.calculateCheckboxSelection();
 
-            this.checkboxSelection = this.calculateCheckboxSelection();
+        this.setupComponents();
+    }
 
-            this.setupComponents();
-        }
+    public destroy(): void {
+        this.destroyMethods.forEach( theFunction => {
+            theFunction();
+        });
+    }
 
-        public calculateCheckboxSelection() {
-            // never allow selection on floating rows
-            if (this.node.floating) {
-                return false;
-            }
-
-            // if boolean set, then just use it
-            var colDef = this.column.getColDef();
-            if (typeof colDef.checkboxSelection === 'boolean') {
-                return colDef.checkboxSelection;
-            }
-
-            // if function, then call the function to find out. we first check colDef for
-            // a function, and if missing then check gridOptions, so colDef has precedence
-            var selectionFunc: Function;
-            if (typeof colDef.checkboxSelection === 'function') {
-                selectionFunc = <Function>colDef.checkboxSelection;
-            }
-            if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
-                selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
-            }
-            if (selectionFunc) {
-                var params = this.createParams();
-                return selectionFunc(params);
-            }
-
+    public calculateCheckboxSelection() {
+        // never allow selection on floating rows
+        if (this.node.floating) {
             return false;
         }
 
-        public getColumn(): Column {
-            return this.column;
+        // if boolean set, then just use it
+        var colDef = this.column.getColDef();
+        if (typeof colDef.checkboxSelection === 'boolean') {
+            return colDef.checkboxSelection;
         }
 
-        private getValue(): any {
-            return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
+        // if function, then call the function to find out. we first check colDef for
+        // a function, and if missing then check gridOptions, so colDef has precedence
+        var selectionFunc: Function;
+        if (typeof colDef.checkboxSelection === 'function') {
+            selectionFunc = <Function>colDef.checkboxSelection;
+        }
+        if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
+            selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
+        }
+        if (selectionFunc) {
+            var params = this.createParams();
+            return selectionFunc(params);
         }
 
-        public getVGridCell(): ag.vdom.VHtmlElement {
-            return this.vGridCell;
-        }
+        return false;
+    }
 
-        private getDataForRow() {
-            if (this.node.footer) {
-                // if footer, we always show the data
-                return this.node.data;
-            } else if (this.node.group) {
-                // if header and header is expanded, we show data in footer only
-                var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
-                var suppressHideHeader = this.gridOptionsWrapper.isGroupSuppressBlankHeader();
-                if (this.node.expanded && footersEnabled && !suppressHideHeader) {
-                    return undefined;
-                } else {
-                    return this.node.data;
-                }
+    public getColumn(): Column {
+        return this.column;
+    }
+
+    private getValue(): any {
+        return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
+    }
+
+    public getVGridCell(): VHtmlElement {
+        return this.vGridCell;
+    }
+
+    private getDataForRow() {
+        if (this.node.footer) {
+            // if footer, we always show the data
+            return this.node.data;
+        } else if (this.node.group) {
+            // if header and header is expanded, we show data in footer only
+            var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
+            var suppressHideHeader = this.gridOptionsWrapper.isGroupSuppressBlankHeader();
+            if (this.node.expanded && footersEnabled && !suppressHideHeader) {
+                return undefined;
             } else {
-                // otherwise it's a normal node, just return data as normal
                 return this.node.data;
             }
+        } else {
+            // otherwise it's a normal node, just return data as normal
+            return this.node.data;
         }
+    }
 
-        private setupComponents() {
-            this.vGridCell = new ag.vdom.VHtmlElement("div");
-            this.vGridCell.setAttribute("col", (this.column.getIndex() !== undefined && this.column.getIndex() !== null) ? this.column.getIndex().toString() : '');
+    private setLeftOnCell(): void {
+        var leftChangedListener = () => {
+            //if (this.column.getColId()==='age') {
+            //    console.log('left changed: ' + this.column.getColId() + ' ' + this.column.getLeft());
+            //}
+            this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
+        };
 
-            this.vGridCell.setAttribute("colId", this.column.getColId());
+        this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+        });
 
-            // only set tab index if cell selection is enabled
-            if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
-                this.vGridCell.setAttribute("tabindex", "-1");
-            }
+        leftChangedListener();
+    }
 
-            // these are the grid styles, don't change between soft refreshes
-            this.addClasses();
-
-            this.addCellClickedHandler();
-            this.addCellDoubleClickedHandler();
-            this.addCellContextMenuHandler();
-
-            if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
-                this.addCellNavigationHandler();
-            }
-
+    private setWidthOnCell(): void {
+        var widthChangedListener = () => {
             this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
+        };
 
-            this.createParentOfValue();
+        this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        });
 
-            this.populateCell();
+        widthChangedListener();
+    }
 
-            if (this.eCheckbox) {
-                this.setSelected(this.selectionController.isNodeSelected(this.node));
-            }
+    private setupComponents() {
+        this.vGridCell = new VHtmlElement("div");
 
+        this.setLeftOnCell();
+        this.setWidthOnCell();
+
+        // only set tab index if cell selection is enabled
+        if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
+            this.vGridCell.setAttribute("tabindex", "-1");
         }
 
-        // called by rowRenderer when user navigates via tab key
-        public startEditing(key?: number) {
-            var that = this;
-            this.editingCell = true;
-            _.removeAllChildren(this.vGridCell.getElement());
-            var eInput = document.createElement('input');
-            eInput.type = 'text';
-            _.addCssClass(eInput, 'ag-cell-edit-input');
+        // these are the grid styles, don't change between soft refreshes
+        this.addClasses();
 
-            var startWithOldValue = key !== Constants.KEY_BACKSPACE && key !== Constants.KEY_DELETE;
-            var value = this.getValue();
-            if (startWithOldValue && value !== null && value !== undefined) {
-                eInput.value = value;
+        this.addCellClickedHandler();
+        this.addCellDoubleClickedHandler();
+        this.addCellContextMenuHandler();
+
+        if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
+            this.addCellNavigationHandler();
+        }
+
+        this.createParentOfValue();
+
+        this.populateCell();
+
+        if (this.eCheckbox) {
+            this.setSelected(this.selectionController.isNodeSelected(this.node));
+        }
+
+    }
+
+    // called by rowRenderer when user navigates via tab key
+    public startEditing(key?: number) {
+        var that = this;
+        this.editingCell = true;
+        _.removeAllChildren(this.vGridCell.getElement());
+        var eInput = document.createElement('input');
+        eInput.type = 'text';
+        _.addCssClass(eInput, 'ag-cell-edit-input');
+
+        var startWithOldValue = key !== Constants.KEY_BACKSPACE && key !== Constants.KEY_DELETE;
+        var value = this.getValue();
+        if (startWithOldValue && value !== null && value !== undefined) {
+            eInput.value = value;
+        }
+
+        eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
+        this.vGridCell.appendChild(eInput);
+        eInput.focus();
+        eInput.select();
+
+        var blurListener = function () {
+            that.stopEditing(eInput, blurListener);
+        };
+
+        //stop entering if we loose focus
+        eInput.addEventListener("blur", blurListener);
+
+        //stop editing if enter pressed
+        eInput.addEventListener('keypress', (event: any) => {
+            var key = event.which || event.keyCode;
+            if (key === Constants.KEY_ENTER) {
+                this.stopEditing(eInput, blurListener);
+                this.focusCell(true);
             }
+        });
 
-            eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-            this.vGridCell.appendChild(eInput);
-            eInput.focus();
-            eInput.select();
+        //stop editing if enter pressed
+        eInput.addEventListener('keydown', (event: any) => {
+            var key = event.which || event.keyCode;
+            if (key === Constants.KEY_ESCAPE) {
+                this.stopEditing(eInput, blurListener, true);
+                this.focusCell(true);
+            }
+        });
 
-            var blurListener = function () {
+        // tab key doesn't generate keypress, so need keydown to listen for that
+        eInput.addEventListener('keydown', function (event:any) {
+            var key = event.which || event.keyCode;
+            if (key == Constants.KEY_TAB) {
                 that.stopEditing(eInput, blurListener);
-            };
-
-            //stop entering if we loose focus
-            eInput.addEventListener("blur", blurListener);
-
-            //stop editing if enter pressed
-            eInput.addEventListener('keypress', (event: any) => {
-                var key = event.which || event.keyCode;
-                if (key === Constants.KEY_ENTER) {
-                    this.stopEditing(eInput, blurListener);
-                    this.focusCell(true);
-                }
-            });
-
-            //stop editing if enter pressed
-            eInput.addEventListener('keydown', (event: any) => {
-                var key = event.which || event.keyCode;
-                if (key === Constants.KEY_ESCAPE) {
-                    this.stopEditing(eInput, blurListener, true);
-                    this.focusCell(true);
-                }
-            });
-
-            // tab key doesn't generate keypress, so need keydown to listen for that
-            eInput.addEventListener('keydown', function (event:any) {
-                var key = event.which || event.keyCode;
-                if (key == Constants.KEY_TAB) {
-                    that.stopEditing(eInput, blurListener);
-                    that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, event.shiftKey);
-                    // we don't want the default tab action, so return false, this stops the event from bubbling
-                    event.preventDefault();
-                    return false;
-                }
-            });
-        }
-
-        public focusCell(forceBrowserFocus: boolean): void {
-            this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getIndex(), this.column.getColDef(), forceBrowserFocus);
-        }
-
-        private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
-            this.editingCell = false;
-            var newValue = eInput.value;
-            var colDef = this.column.getColDef();
-
-            //If we don't remove the blur listener first, we get:
-            //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
-            eInput.removeEventListener('blur', blurListener);
-
-            if (!reset) {
-                var paramsForCallbacks = {
-                    node: this.node,
-                    data: this.node.data,
-                    oldValue: this.node.data[colDef.field],
-                    newValue: newValue,
-                    rowIndex: this.rowIndex,
-                    colDef: colDef,
-                    api: this.gridOptionsWrapper.getApi(),
-                    context: this.gridOptionsWrapper.getContext()
-                };
-
-                if (colDef.newValueHandler) {
-                    colDef.newValueHandler(paramsForCallbacks);
-                } else {
-                    this.node.data[colDef.field] = newValue;
-                }
-
-                // at this point, the value has been updated
-                this.value = this.getValue();
-
-                paramsForCallbacks.newValue = this.value;
-                if (typeof colDef.onCellValueChanged === 'function') {
-                    colDef.onCellValueChanged(paramsForCallbacks);
-                }
-                this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, event.shiftKey);
+                // we don't want the default tab action, so return false, this stops the event from bubbling
+                event.preventDefault();
+                return false;
             }
+        });
+    }
 
-            _.removeAllChildren(this.vGridCell.getElement());
-            if (this.checkboxSelection) {
-                this.vGridCell.appendChild(this.vCellWrapper.getElement());
-            }
-            this.refreshCell();
-        }
+    public focusCell(forceBrowserFocus: boolean): void {
+        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
+    }
 
-        private createParams(): any {
-            var params = {
+    private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
+        this.editingCell = false;
+        var newValue = eInput.value;
+        var colDef = this.column.getColDef();
+
+        //If we don't remove the blur listener first, we get:
+        //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
+        eInput.removeEventListener('blur', blurListener);
+
+        if (!reset) {
+            var paramsForCallbacks = {
                 node: this.node,
                 data: this.node.data,
-                value: this.value,
+                oldValue: this.node.data[colDef.field],
+                newValue: newValue,
                 rowIndex: this.rowIndex,
-                colIndex: this.colIndex,
-                colDef: this.column.getColDef(),
-                $scope: this.scope,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()
+                colDef: colDef,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
-            return params;
-        }
 
-        private createEvent(event: any, eventSource: any): any {
-            var agEvent = this.createParams();
-            agEvent.event = event;
-            agEvent.eventSource = eventSource;
-            return agEvent;
-        }
-
-        private addCellDoubleClickedHandler() {
-            var that = this;
-            var colDef = this.column.getColDef();
-            this.vGridCell.addEventListener('dblclick', function (event: any) {
-                // always dispatch event to eventService
-                var agEvent: any = that.createEvent(event, this);
-                that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
-
-                // check if colDef also wants to handle event
-                if (typeof colDef.onCellDoubleClicked === 'function') {
-                    colDef.onCellDoubleClicked(agEvent);
-                }
-
-                if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                    that.startEditing();
-                }
-            });
-        }
-
-        private addCellContextMenuHandler() {
-            var that = this;
-            var colDef = this.column.getColDef();
-            this.vGridCell.addEventListener('contextmenu', function (event: any) {
-                var agEvent: any = that.createEvent(event, this);
-                that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
-
-                if (colDef.onCellContextMenu) {
-                    colDef.onCellContextMenu(agEvent);
-                }
-            });
-        }
-
-        public isCellEditable() {
-            if (this.editingCell) {
-                return false;
+            if (colDef.newValueHandler) {
+                colDef.newValueHandler(paramsForCallbacks);
+            } else {
+                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
             }
 
-            // never allow editing of groups
-            if (this.node.group) {
-                return false;
+            // at this point, the value has been updated
+            this.value = this.getValue();
+
+            paramsForCallbacks.newValue = this.value;
+            if (typeof colDef.onCellValueChanged === 'function') {
+                colDef.onCellValueChanged(paramsForCallbacks);
+            }
+            this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+        }
+
+        _.removeAllChildren(this.vGridCell.getElement());
+        if (this.checkboxSelection) {
+            this.vGridCell.appendChild(this.vCellWrapper.getElement());
+        }
+        this.refreshCell();
+    }
+
+    private createParams(): any {
+        var params = {
+            node: this.node,
+            data: this.node.data,
+            value: this.value,
+            rowIndex: this.rowIndex,
+            colIndex: this.colIndex,
+            colDef: this.column.getColDef(),
+            $scope: this.scope,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi()
+        };
+        return params;
+    }
+
+    private createEvent(event: any, eventSource: any): any {
+        var agEvent = this.createParams();
+        agEvent.event = event;
+        agEvent.eventSource = eventSource;
+        return agEvent;
+    }
+
+    private addCellDoubleClickedHandler() {
+        var that = this;
+        var colDef = this.column.getColDef();
+        this.vGridCell.addEventListener('dblclick', function (event: any) {
+            // always dispatch event to eventService
+            var agEvent: any = that.createEvent(event, this);
+            that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+
+            // check if colDef also wants to handle event
+            if (typeof colDef.onCellDoubleClicked === 'function') {
+                colDef.onCellDoubleClicked(agEvent);
             }
 
-            // if boolean set, then just use it
-            var colDef = this.column.getColDef();
-            if (typeof colDef.editable === 'boolean') {
-                return colDef.editable;
+            if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
+                that.startEditing();
             }
+        });
+    }
 
-            // if function, then call the function to find out
-            if (typeof colDef.editable === 'function') {
-                var params = this.createParams();
-                var editableFunc = <Function>colDef.editable;
-                return editableFunc(params);
+    private addCellContextMenuHandler() {
+        var that = this;
+        var colDef = this.column.getColDef();
+        this.vGridCell.addEventListener('contextmenu', function (event: any) {
+            var agEvent: any = that.createEvent(event, this);
+            that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
+
+            if (colDef.onCellContextMenu) {
+                colDef.onCellContextMenu(agEvent);
             }
+        });
+    }
 
+    public isCellEditable() {
+        if (this.editingCell) {
             return false;
         }
 
-        private addCellClickedHandler() {
-            var colDef = this.column.getColDef();
-            var that = this;
-            this.vGridCell.addEventListener("click", function (event: any) {
-                // we pass false to focusCell, as we don't want the cell to focus
-                // also get the browser focus. if we did, then the cellRenderer could
-                // have a text field in it, for example, and as the user clicks on the
-                // text field, the text field, the focus doesn't get to the text
-                // field, instead to goes to the div behind, making it impossible to
-                // select the text field.
-                if (!that.node.floating) {
-                    that.focusCell(false);
-                }
-                var agEvent = that.createEvent(event, this);
-                that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
-                if (colDef.onCellClicked) {
-                    colDef.onCellClicked(agEvent);
-                }
-
-                if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                    that.startEditing();
-                }
-            });
+        // never allow editing of groups
+        if (this.node.group) {
+            return false;
         }
 
-        private populateCell() {
-            // populate
-            this.putDataIntoCell();
-            // style
-            this.addStylesFromCollDef();
-            this.addClassesFromCollDef();
-            this.addClassesFromRules();
+        // if boolean set, then just use it
+        var colDef = this.column.getColDef();
+        if (typeof colDef.editable === 'boolean') {
+            return colDef.editable;
         }
 
-        private addStylesFromCollDef() {
-            var colDef = this.column.getColDef();
-            if (colDef.cellStyle) {
-                var cssToUse: any;
-                if (typeof colDef.cellStyle === 'function') {
-                    var cellStyleParams = {
-                        value: this.value,
-                        data: this.node.data,
-                        node: this.node,
-                        colDef: colDef,
-                        column: this.column,
-                        $scope: this.scope,
-                        context: this.gridOptionsWrapper.getContext(),
-                        api: this.gridOptionsWrapper.getApi()
-                  };             
-                    var cellStyleFunc = <Function>colDef.cellStyle;     
-                    cssToUse = cellStyleFunc(cellStyleParams);
-                } else {
-                    cssToUse = colDef.cellStyle;
-                }
+        // if function, then call the function to find out
+        if (typeof colDef.editable === 'function') {
+            var params = this.createParams();
+            var editableFunc = <Function>colDef.editable;
+            return editableFunc(params);
+        }
 
-                if (cssToUse) {
-                    this.vGridCell.addStyles(cssToUse);
-                }
+        return false;
+    }
+
+    private addCellClickedHandler() {
+        var colDef = this.column.getColDef();
+        var that = this;
+        this.vGridCell.addEventListener("click", function (event: any) {
+            // we pass false to focusCell, as we don't want the cell to focus
+            // also get the browser focus. if we did, then the cellRenderer could
+            // have a text field in it, for example, and as the user clicks on the
+            // text field, the text field, the focus doesn't get to the text
+            // field, instead to goes to the div behind, making it impossible to
+            // select the text field.
+            if (!that.node.floating) {
+                that.focusCell(false);
             }
-        }
-
-        private addClassesFromCollDef() {
-            var colDef = this.column.getColDef();
-            if (colDef.cellClass) {
-              var classToUse: any;
-
-                if (typeof colDef.cellClass === 'function') {
-                    var cellClassParams = {
-                        value: this.value,
-                        data: this.node.data,
-                        node: this.node,
-                        colDef: colDef,
-                        $scope: this.scope,
-                        context: this.gridOptionsWrapper.getContext(),
-                        api: this.gridOptionsWrapper.getApi()
-                    };
-                    var cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
-                    classToUse = cellClassFunc(cellClassParams);
-                } else {
-                    classToUse = colDef.cellClass;
-                }
-
-                if (typeof classToUse === 'string') {
-                    this.vGridCell.addClass(classToUse);
-                } else if (Array.isArray(classToUse)) {
-                    classToUse.forEach( (cssClassItem: string)=> {
-                        this.vGridCell.addClass(cssClassItem);
-                    });
-                }
+            var agEvent = that.createEvent(event, this);
+            that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
+            if (colDef.onCellClicked) {
+                colDef.onCellClicked(agEvent);
             }
-        }
 
-        private addClassesFromRules() {
-            var colDef = this.column.getColDef();
-            var classRules = colDef.cellClassRules;
-            if (typeof classRules === 'object' && classRules !== null) {
+            if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
+                that.startEditing();
+            }
+        });
+    }
 
-                var params = {
+    private populateCell() {
+        // populate
+        this.putDataIntoCell();
+        // style
+        this.addStylesFromCollDef();
+        this.addClassesFromCollDef();
+        this.addClassesFromRules();
+    }
+
+    private addStylesFromCollDef() {
+        var colDef = this.column.getColDef();
+        if (colDef.cellStyle) {
+            var cssToUse: any;
+            if (typeof colDef.cellStyle === 'function') {
+                var cellStyleParams = {
                     value: this.value,
                     data: this.node.data,
                     node: this.node,
                     colDef: colDef,
-                    rowIndex: this.rowIndex,
-                    api: this.gridOptionsWrapper.getApi(),
-                    context: this.gridOptionsWrapper.getContext()
+                    column: this.column,
+                    $scope: this.scope,
+                    context: this.gridOptionsWrapper.getContext(),
+                    api: this.gridOptionsWrapper.getApi()
+              };
+                var cellStyleFunc = <Function>colDef.cellStyle;
+                cssToUse = cellStyleFunc(cellStyleParams);
+            } else {
+                cssToUse = colDef.cellStyle;
+            }
+
+            if (cssToUse) {
+                this.vGridCell.addStyles(cssToUse);
+            }
+        }
+    }
+
+    private addClassesFromCollDef() {
+        var colDef = this.column.getColDef();
+        if (colDef.cellClass) {
+          var classToUse: any;
+
+            if (typeof colDef.cellClass === 'function') {
+                var cellClassParams = {
+                    value: this.value,
+                    data: this.node.data,
+                    node: this.node,
+                    colDef: colDef,
+                    $scope: this.scope,
+                    context: this.gridOptionsWrapper.getContext(),
+                    api: this.gridOptionsWrapper.getApi()
                 };
-
-                var classNames = Object.keys(classRules);
-                for (var i = 0; i < classNames.length; i++) {
-                    var className = classNames[i];
-                    var rule = classRules[className];
-                    var resultOfRule: any;
-                    if (typeof rule === 'string') {
-                        resultOfRule = this.expressionService.evaluate(rule, params);
-                    } else if (typeof rule === 'function') {
-                        resultOfRule = rule(params);
-                    }
-                    if (resultOfRule) {
-                        this.vGridCell.addClass(className);
-                    } else {
-                        this.vGridCell.removeClass(className);
-                    }
-                }
-            }
-        }
-
-        // rename this to 'add key event listener
-        private addCellNavigationHandler() {
-            var that = this;
-            this.vGridCell.addEventListener('keydown', function (event: any) {
-                if (that.editingCell) {
-                    return;
-                }
-                // only interested on key presses that are directly on this element, not any children elements. this
-                // stops navigation if the user is in, for example, a text field inside the cell, and user hits
-                // on of the keys we are looking for.
-                if (event.target !== that.vGridCell.getElement()) {
-                    return;
-                }
-
-                var key = event.which || event.keyCode;
-
-                var startNavigation = key === Constants.KEY_DOWN || key === Constants.KEY_UP
-                    || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
-                if (startNavigation) {
-                    event.preventDefault();
-                    that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
-                    return;
-                }
-
-                var startEdit = that.isKeycodeForStartEditing(key);
-                if (startEdit && that.isCellEditable()) {
-                    that.startEditing(key);
-                    // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
-                    // press, and stops editing immediately, hence giving he user experience that nothing happened
-                    event.preventDefault();
-                    return;
-                }
-
-                var selectRow = key === Constants.KEY_SPACE;
-                if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
-                    var selected = that.selectionController.isNodeSelected(that.node);
-                    if (selected) {
-                        that.selectionController.deselectNode(that.node);
-                    } else {
-                        that.selectionController.selectNode(that.node, true);
-                    }
-                    event.preventDefault();
-                    return;
-                }
-            });
-        }
-
-        private isKeycodeForStartEditing(key: number): boolean {
-            return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
-        }
-
-        public createSelectionCheckbox() {
-
-            this.eCheckbox = document.createElement('input');
-            this.eCheckbox.type = "checkbox";
-            this.eCheckbox.name = "name";
-            this.eCheckbox.className = 'ag-selection-checkbox';
-
-            this.eCheckbox.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-
-            var that = this;
-            this.checkboxOnChangeListener = function() {
-                var newValue = that.eCheckbox.checked;
-                if (newValue) {
-                    that.selectionController.selectIndex(that.rowIndex, true);
-                } else {
-                    that.selectionController.deselectIndex(that.rowIndex);
-                }
-            };
-            this.eCheckbox.onchange = this.checkboxOnChangeListener;
-        }
-
-        public setSelected(state: boolean) {
-            if (!this.eCheckbox) {
-                return;
-            }
-            this.eCheckbox.onchange = null;
-            if (typeof state === 'boolean') {
-                this.eCheckbox.checked = state;
-                this.eCheckbox.indeterminate = false;
+                var cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
+                classToUse = cellClassFunc(cellClassParams);
             } else {
-                // isNodeSelected returns back undefined if it's a group and the children
-                // are a mix of selected and unselected
-                this.eCheckbox.indeterminate = true;
-            }
-            this.eCheckbox.onchange = this.checkboxOnChangeListener;
-        }
-
-        private createParentOfValue() {
-            if (this.checkboxSelection) {
-                this.vCellWrapper = new ag.vdom.VHtmlElement('span');
-                this.vCellWrapper.addClass('ag-cell-wrapper');
-                this.vGridCell.appendChild(this.vCellWrapper);
-
-                this.createSelectionCheckbox();
-                this.vCellWrapper.appendChild(new ag.vdom.VWrapperElement(this.eCheckbox));
-
-                // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-                this.vSpanWithValue = new ag.vdom.VHtmlElement('span');
-                this.vSpanWithValue.addClass('ag-cell-value');
-
-                this.vCellWrapper.appendChild(this.vSpanWithValue);
-
-                this.vParentOfValue = this.vSpanWithValue;
-            } else {
-                this.vGridCell.addClass('ag-cell-value');
-                this.vParentOfValue = this.vGridCell;
-            }
-        }
-
-        public isVolatile() {
-            return this.column.getColDef().volatile;
-        }
-
-        public refreshCell() {
-
-            _.removeAllChildren(this.vParentOfValue.getElement());
-            this.value = this.getValue();
-
-            this.populateCell();
-
-            if (this.checkboxSelection) {
-                this.setSelected(this.selectionController.isNodeSelected(this.node));
+                classToUse = colDef.cellClass;
             }
 
-            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (this.gridOptionsWrapper.isAngularCompileRows()) {
-                this.$compile(this.vGridCell.getElement())(this.scope);
+            if (typeof classToUse === 'string') {
+                this.vGridCell.addClass(classToUse);
+            } else if (Array.isArray(classToUse)) {
+                classToUse.forEach( (cssClassItem: string)=> {
+                    this.vGridCell.addClass(cssClassItem);
+                });
             }
         }
+    }
 
-        private putDataIntoCell() {
-            // template gets preference, then cellRenderer, then do it ourselves
-            var colDef = this.column.getColDef();
-            if (colDef.template) {
-                this.vParentOfValue.setInnerHtml(colDef.template);
-            } else if (colDef.templateUrl) {
-                var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
-                if (template) {
-                    this.vParentOfValue.setInnerHtml(template);
-                }
-            } else if (colDef.floatingCellRenderer && this.node.floating) {
-                this.useCellRenderer(colDef.floatingCellRenderer);
-            } else if (colDef.cellRenderer) {
-                this.useCellRenderer(colDef.cellRenderer);
-            } else {
-                // if we insert undefined, then it displays as the string 'undefined', ugly!
-                if (this.value !== undefined && this.value !== null && this.value !== '') {
-                    this.vParentOfValue.setInnerHtml(this.value.toString());
-                }
-            }
-        }
+    private addClassesFromRules() {
+        var colDef = this.column.getColDef();
+        var classRules = colDef.cellClassRules;
+        if (typeof classRules === 'object' && classRules !== null) {
 
-        private useCellRenderer(cellRenderer: Function | {}) {
-            var colDef = this.column.getColDef();
-
-            var rendererParams = {
+            var params = {
                 value: this.value,
-                valueGetter: this.getValue,
                 data: this.node.data,
                 node: this.node,
                 colDef: colDef,
-                column: this.column,
-                $scope: this.scope,
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext(),
-                refreshCell: this.refreshCell.bind(this),
-                eGridCell: this.vGridCell
+                context: this.gridOptionsWrapper.getContext()
             };
-            // start duplicated code
-            var actualCellRenderer: Function;
-            if (typeof cellRenderer === 'object' && cellRenderer !== null) {
-                var cellRendererObj = <{ renderer: string }> cellRenderer;
-                actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-                if (!actualCellRenderer) {
-                    throw 'Cell renderer ' + cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
+
+            var classNames = Object.keys(classRules);
+            for (var i = 0; i < classNames.length; i++) {
+                var className = classNames[i];
+                var rule = classRules[className];
+                var resultOfRule: any;
+                if (typeof rule === 'string') {
+                    resultOfRule = this.expressionService.evaluate(rule, params);
+                } else if (typeof rule === 'function') {
+                    resultOfRule = rule(params);
                 }
-            } else if (typeof cellRenderer === 'function') {
-                actualCellRenderer = <Function>cellRenderer;
-            } else {
-                throw 'Cell Renderer must be String or Function';
-            }
-            var resultFromRenderer = actualCellRenderer(rendererParams);
-            // end duplicated code
-            if (_.isNodeOrElement(resultFromRenderer)) {
-                // a dom node or element was returned, so add child
-                this.vParentOfValue.appendChild(resultFromRenderer);
-            } else {
-                // otherwise assume it was html, so just insert
-                this.vParentOfValue.setInnerHtml(resultFromRenderer);
+                if (resultOfRule) {
+                    this.vGridCell.addClass(className);
+                } else {
+                    this.vGridCell.removeClass(className);
+                }
             }
         }
+    }
 
-        private addClasses() {
-            this.vGridCell.addClass('ag-cell');
-            this.vGridCell.addClass('ag-cell-no-focus');
-            this.vGridCell.addClass('cell-col-' + this.column.getIndex());
+    // rename this to 'add key event listener
+    private addCellNavigationHandler() {
+        var that = this;
+        this.vGridCell.addEventListener('keydown', function (event: any) {
+            if (that.editingCell) {
+                return;
+            }
+            // only interested on key presses that are directly on this element, not any children elements. this
+            // stops navigation if the user is in, for example, a text field inside the cell, and user hits
+            // on of the keys we are looking for.
+            if (event.target !== that.vGridCell.getElement()) {
+                return;
+            }
 
-            if (this.node.group && this.node.footer) {
-                this.vGridCell.addClass('ag-footer-cell');
-            }
-            if (this.node.group && !this.node.footer) {
-                this.vGridCell.addClass('ag-group-cell');
+            var key = event.which || event.keyCode;
+
+            var startNavigation = key === Constants.KEY_DOWN || key === Constants.KEY_UP
+                || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
+            if (startNavigation) {
+                event.preventDefault();
+                that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                return;
             }
 
-            if (this.firstRightPinnedColumn) {
-                this.vGridCell.addClass('ag-cell-first-right-pinned');
+            var startEdit = that.isKeycodeForStartEditing(key);
+            if (startEdit && that.isCellEditable()) {
+                that.startEditing(key);
+                // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
+                // press, and stops editing immediately, hence giving he user experience that nothing happened
+                event.preventDefault();
+                return;
             }
+
+            var selectRow = key === Constants.KEY_SPACE;
+            if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
+                var selected = that.selectionController.isNodeSelected(that.node);
+                if (selected) {
+                    that.selectionController.deselectNode(that.node);
+                } else {
+                    that.selectionController.selectNode(that.node, true);
+                }
+                event.preventDefault();
+                return;
+            }
+        });
+    }
+
+    private isKeycodeForStartEditing(key: number): boolean {
+        return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
+    }
+
+    public createSelectionCheckbox() {
+
+        this.eCheckbox = document.createElement('input');
+        this.eCheckbox.type = "checkbox";
+        this.eCheckbox.name = "name";
+        this.eCheckbox.className = 'ag-selection-checkbox';
+
+        this.eCheckbox.addEventListener('click', function (event) {
+            event.stopPropagation();
+        });
+
+        var that = this;
+        this.checkboxOnChangeListener = function() {
+            var newValue = that.eCheckbox.checked;
+            if (newValue) {
+                that.selectionController.selectIndex(that.rowIndex, true);
+            } else {
+                that.selectionController.deselectIndex(that.rowIndex);
+            }
+        };
+        this.eCheckbox.onchange = this.checkboxOnChangeListener;
+    }
+
+    public setSelected(state: boolean) {
+        if (!this.eCheckbox) {
+            return;
+        }
+        this.eCheckbox.onchange = null;
+        if (typeof state === 'boolean') {
+            this.eCheckbox.checked = state;
+            this.eCheckbox.indeterminate = false;
+        } else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            this.eCheckbox.indeterminate = true;
+        }
+        this.eCheckbox.onchange = this.checkboxOnChangeListener;
+    }
+
+    private createParentOfValue() {
+        if (this.checkboxSelection) {
+            this.vCellWrapper = new VHtmlElement('span');
+            this.vCellWrapper.addClass('ag-cell-wrapper');
+            this.vGridCell.appendChild(this.vCellWrapper);
+
+            this.createSelectionCheckbox();
+            this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
+
+            // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
+            this.vSpanWithValue = new VHtmlElement('span');
+            this.vSpanWithValue.addClass('ag-cell-value');
+
+            this.vCellWrapper.appendChild(this.vSpanWithValue);
+
+            this.vParentOfValue = this.vSpanWithValue;
+        } else {
+            this.vGridCell.addClass('ag-cell-value');
+            this.vParentOfValue = this.vGridCell;
+        }
+    }
+
+    public isVolatile() {
+        return this.column.getColDef().volatile;
+    }
+
+    public refreshCell() {
+
+        _.removeAllChildren(this.vParentOfValue.getElement());
+        this.value = this.getValue();
+
+        this.populateCell();
+
+        if (this.checkboxSelection) {
+            this.setSelected(this.selectionController.isNodeSelected(this.node));
         }
 
+        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(this.vGridCell.getElement())(this.scope);
+        }
+    }
+
+    private putDataIntoCell() {
+        // template gets preference, then cellRenderer, then do it ourselves
+        var colDef = this.column.getColDef();
+        if (colDef.template) {
+            this.vParentOfValue.setInnerHtml(colDef.template);
+        } else if (colDef.templateUrl) {
+            var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
+            if (template) {
+                this.vParentOfValue.setInnerHtml(template);
+            }
+        } else if (colDef.floatingCellRenderer && this.node.floating) {
+            this.useCellRenderer(colDef.floatingCellRenderer);
+        } else if (colDef.cellRenderer) {
+            this.useCellRenderer(colDef.cellRenderer);
+        } else {
+            // if we insert undefined, then it displays as the string 'undefined', ugly!
+            if (this.value !== undefined && this.value !== null && this.value !== '') {
+                this.vParentOfValue.setInnerHtml(this.value.toString());
+            }
+        }
+    }
+
+    private useCellRenderer(cellRenderer: Function | {}) {
+        var colDef = this.column.getColDef();
+
+        var rendererParams = {
+            value: this.value,
+            valueGetter: this.getValue,
+            data: this.node.data,
+            node: this.node,
+            colDef: colDef,
+            column: this.column,
+            $scope: this.scope,
+            rowIndex: this.rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            refreshCell: this.refreshCell.bind(this),
+            eGridCell: this.vGridCell,
+            eParentOfValue: this.vParentOfValue
+        };
+        // start duplicated code
+        var actualCellRenderer: Function;
+        if (typeof cellRenderer === 'object' && cellRenderer !== null) {
+            var cellRendererObj = <{ renderer: string }> cellRenderer;
+            actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
+            if (!actualCellRenderer) {
+                throw 'Cell renderer ' + cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
+            }
+        } else if (typeof cellRenderer === 'function') {
+            actualCellRenderer = <Function>cellRenderer;
+        } else {
+            throw 'Cell Renderer must be String or Function';
+        }
+        var resultFromRenderer = actualCellRenderer(rendererParams);
+        // end duplicated code
+        if (_.isNodeOrElement(resultFromRenderer)) {
+            // a dom node or element was returned, so add child
+            this.vParentOfValue.appendChild(resultFromRenderer);
+        } else {
+            // otherwise assume it was html, so just insert
+            this.vParentOfValue.setInnerHtml(resultFromRenderer);
+        }
+    }
+
+    private addClasses() {
+        this.vGridCell.addClass('ag-cell');
+        this.vGridCell.addClass('ag-cell-no-focus');
+        this.vGridCell.setAttribute("colId", this.column.getColId());
+
+        if (this.node.group && this.node.footer) {
+            this.vGridCell.addClass('ag-footer-cell');
+        }
+        if (this.node.group && !this.node.footer) {
+            this.vGridCell.addClass('ag-group-cell');
+        }
+
+        if (this.firstRightPinnedColumn) {
+            this.vGridCell.addClass('ag-cell-first-right-pinned');
+        }
     }
 
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="basic.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+
+    <script src="basic.js"></script>
+
+</head>
+
+<body ng-app="basic">
+
+    <div ng-controller="basicController" style="width: 800px;">
+        <div style="padding: 4px">
+            <div style="float: right;">
+                <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Type text to filter..."/>
+            </div>
+            <div style="padding: 4px;">
+                <b>Employees Skills and Contact Details</b> ({{rowCount}})
+            </div>
+            <div style="clear: both;"/>
+        </div>
+        <div style="width: 100%; height: 400px;"
+             ag-grid="gridOptions"
+             class="ag-fresh ag-basic">
+        </div>
+    </div>
+
+</body>
+</html>

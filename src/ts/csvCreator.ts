@@ -1,157 +1,158 @@
-module ag.grid {
+import InMemoryRowController from "./rowControllers/inMemoryRowController";
+import {ColumnController} from "./columnController/columnController";
+import {Grid} from "./grid";
+import ValueService from "./valueService";
+import Column from "./entities/column";
+import {RowNode} from "./entities/rowNode";
+var LINE_SEPARATOR = '\r\n';
 
-    var LINE_SEPARATOR = '\r\n';
+export interface CsvExportParams {
+    skipHeader?: boolean;
+    skipFooters?: boolean;
+    skipGroups?: boolean;
+    fileName?: string;
+    customHeader?: string;
+    customFooter?: string;
+    allColumns?: boolean;
+    columnSeparator?: string;
+}
 
-    export interface CsvExportParams {
-        skipHeader?: boolean;
-        skipFooters?: boolean;
-        skipGroups?: boolean;
-        fileName?: string;
-        customHeader?: string;
-        customFooter?: string;
-        allColumns?: boolean;
-        columnSeparator?: string;
+export default class CsvCreator {
 
+    constructor(
+        private rowController: InMemoryRowController,
+        private columnController: ColumnController,
+        private grid: Grid,
+        private valueService: ValueService) {
     }
 
-    export class CsvCreator {
+    public exportDataAsCsv(params?: CsvExportParams): void {
+        var csvString = this.getDataAsCsv(params);
+        var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
+        var fileName = fileNamePresent ? params.fileName : 'export.csv';
+        // for Excel, we need \ufeff at the start
+        // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
+        var blobObject = new Blob(["\ufeff", csvString], {
+            type: "text/csv;charset=utf-8;"
+        });
+        // Internet Explorer
+        if (window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blobObject, fileName);
+        } else {
+            // Chrome
+            var downloadLink = document.createElement("a");
+            downloadLink.href = (<any>window).URL.createObjectURL(blobObject);
+            (<any>downloadLink).download = fileName;
 
-        constructor(
-            private rowController: InMemoryRowController,
-            private columnController: ColumnController,
-            private grid: Grid,
-            private valueService: ValueService) {
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    }
+
+    public getDataAsCsv(params?: CsvExportParams): string {
+        if (!this.grid.isUsingInMemoryModel()) {
+            console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
+            return '';
         }
 
-        public exportDataAsCsv(params?: CsvExportParams): void {
-            var csvString = this.getDataAsCsv(params);
-            var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
-            var fileName = fileNamePresent ? params.fileName : 'export.csv';
-            // for Excel, we need \ufeff at the start
-            // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-            var blobObject = new Blob(["\ufeff", csvString], {
-                type: "text/csv;charset=utf-8;"
+        var result = '';
+
+        var skipGroups = params && params.skipGroups;
+        var skipHeader = params && params.skipHeader;
+        var skipFooters = params && params.skipFooters;
+        var includeCustomHeader = params && params.customHeader;
+        var includeCustomFooter = params && params.customFooter;
+        var allColumns = params && params.allColumns;
+        var columnSeparator = (params && params.columnSeparator) || ',';
+
+        var columnsToExport: Column[];
+        if (allColumns) {
+            columnsToExport = this.columnController.getAllColumns();
+        } else {
+            columnsToExport = this.columnController.getAllDisplayedColumns();
+        }
+
+        if (!columnsToExport || columnsToExport.length === 0) {
+            return '';
+        }
+
+        if (includeCustomHeader) {
+            result += params.customHeader;
+        }
+
+        // first pass, put in the header names of the cols
+        if (!skipHeader) {
+            columnsToExport.forEach( (column: Column, index: number)=> {
+                var nameForCol = this.columnController.getDisplayNameForCol(column);
+                if (nameForCol === null || nameForCol === undefined) {
+                    nameForCol = '';
+                }
+                if (index != 0) {
+                    result += columnSeparator;
+                }
+                result += '"' + this.escape(nameForCol) + '"';
             });
-            // Internet Explorer
-            if (window.navigator.msSaveOrOpenBlob) {
-                window.navigator.msSaveOrOpenBlob(blobObject, fileName);
-            } else {
-                // Chrome
-                var downloadLink = document.createElement("a");
-                downloadLink.href = (<any>window).URL.createObjectURL(blobObject);
-                (<any>downloadLink).download = fileName;
-
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            }
+            result += LINE_SEPARATOR;
         }
 
-        public getDataAsCsv(params?: CsvExportParams): string {
-            if (!this.grid.isUsingInMemoryModel()) {
-                console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
-                return '';
-            }
+        this.rowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+            if (skipGroups && node.group) { return; }
 
-            var result = '';
+            if (skipFooters && node.footer) { return; }
 
-            var skipGroups = params && params.skipGroups;
-            var skipHeader = params && params.skipHeader;
-            var skipFooters = params && params.skipFooters;
-            var includeCustomHeader = params && params.customHeader;
-            var includeCustomFooter = params && params.customFooter;
-            var allColumns = params && params.allColumns;
-            var columnSeparator = (params && params.columnSeparator) || ',';
-
-            var columnsToExport: Column[];
-            if (allColumns) {
-                columnsToExport = this.columnController.getAllColumns();
-            } else {
-                columnsToExport = this.columnController.getAllDisplayedColumns();
-            }
-
-            if (!columnsToExport || columnsToExport.length === 0) {
-                return '';
-            }
-
-            if (includeCustomHeader) {
-                result += params.customHeader;
-            }
-
-            // first pass, put in the header names of the cols
-            if (!skipHeader) {
-                columnsToExport.forEach( (column: Column, index: number)=> {
-                    var nameForCol = this.columnController.getDisplayNameForCol(column);
-                    if (nameForCol === null || nameForCol === undefined) {
-                        nameForCol = '';
-                    }
-                    if (index != 0) {
-                        result += columnSeparator;
-                    }
-                    result += '"' + this.escape(nameForCol) + '"';
-                });
-                result += LINE_SEPARATOR;
-            }
-
-            this.rowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
-                if (skipGroups && node.group) { return; }
-
-                if (skipFooters && node.footer) { return; }
-
-                columnsToExport.forEach( (column: Column, index: number)=> {
-                    var valueForCell: any;
-                    if (node.group && index === 0) {
-                        valueForCell =  this.createValueForGroupNode(node);
-                    } else {
-                        valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
-                    }
-                    if (valueForCell === null || valueForCell === undefined) {
-                        valueForCell = '';
-                    }
-                    if (index != 0) {
-                        result += columnSeparator;
-                    }
-                    result += '"' + this.escape(valueForCell) + '"';
-                });
-
-                result += LINE_SEPARATOR;
+            columnsToExport.forEach( (column: Column, index: number)=> {
+                var valueForCell: any;
+                if (node.group && index === 0) {
+                    valueForCell =  this.createValueForGroupNode(node);
+                } else {
+                    valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
+                }
+                if (valueForCell === null || valueForCell === undefined) {
+                    valueForCell = '';
+                }
+                if (index != 0) {
+                    result += columnSeparator;
+                }
+                result += '"' + this.escape(valueForCell) + '"';
             });
 
-            if (includeCustomFooter) {
-                result += params.customFooter;
-            }
+            result += LINE_SEPARATOR;
+        });
 
-            return result;
+        if (includeCustomFooter) {
+            result += params.customFooter;
         }
 
-        private createValueForGroupNode(node: RowNode): string {
-            var keys = [node.key];
-            while (node.parent) {
-                node = node.parent;
-                keys.push(node.key);
-            }
-            return keys.reverse().join(' -> ');
+        return result;
+    }
+
+    private createValueForGroupNode(node: RowNode): string {
+        var keys = [node.key];
+        while (node.parent) {
+            node = node.parent;
+            keys.push(node.key);
+        }
+        return keys.reverse().join(' -> ');
+    }
+
+    // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
+    private escape(value: any): string {
+        if (value === null || value === undefined) {
+            return '';
         }
 
-        // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        private escape(value: any): string {
-            if (value === null || value === undefined) {
-                return '';
-            }
-
-            var stringValue: string;
-            if (typeof value === 'string') {
-                stringValue = value;
-            } else if (typeof value.toString === 'function') {
-                stringValue = value.toString();
-            } else {
-                console.warn('known value type during csv conversio');
-                stringValue = '';
-            }
-
-            return stringValue.replace(/"/g, "\"\"");
+        var stringValue: string;
+        if (typeof value === 'string') {
+            stringValue = value;
+        } else if (typeof value.toString === 'function') {
+            stringValue = value.toString();
+        } else {
+            console.warn('known value type during csv conversio');
+            stringValue = '';
         }
 
+        return stringValue.replace(/"/g, "\"\"");
     }
 
 }

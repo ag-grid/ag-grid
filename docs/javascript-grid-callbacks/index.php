@@ -25,6 +25,14 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Add callbacks to the gridOptions or set as React JSX props.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>
@@ -37,7 +45,7 @@ include '../documentation_header.php';
         Web Components
     </h4>
     <p>
-        Add callbacks to the gridOptions or set as AngularJS properties.
+        Add callbacks to the gridOptions or set as component properties.
     </p>
 
     <h2>List of Callbacks</h2>

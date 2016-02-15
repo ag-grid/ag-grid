@@ -8,9 +8,47 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 4.0.0</h3>
+    <h3>Version 3.3.3</h3>
+    <li>Buf fix: Pinned rows were not colored correctly</li>
+
+    <h3>Version 3.3.2</h3>
+    <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with CommonJS</li>
+    <li>Buf fix: Period in fields (ie address.line1) was not working for editing.</li>
+
+    <h3>Version 3.3.0</h3>
+    <li>Minor: headerClass (column definition) can now be provided for column groups.</li>
+    <li>Major: If using Pure JavaScript "new ag.grid.Grid()", it's now "new agGrid.Grid()".</li>
+    <li>Major: Event 'ready' is now called 'gridReady'</li>
+    <li>Major: Angular 1 - you now need to initialise the grid via agGrid.initialiseAgGridWithAngular1(angular)</li>
+    <li>Major: Web Components - you now need to initialise the grid via agGrid.initialiseAgGridWithWebComponents()</li>
+    <li>Major: Angular 2 - Dropped support for UMD version of Angular</li>
+    <li>Major: Angular 2 - Now supports CommonJS and ECMA 6 module loading</li>
+    <li>Minor: BugFix: forPrint was not sizing headers correctly when doing grouped columns.</li>
+    <li>Major: Added sorting to groups</li>
+    <li>Minor: Added minColWidth and maxColWidth grid properties. Impacts all columns if set.</li>
+    <li>Major: Column no longer has 'index' attribute, as the columns moving now has no meaning. Use 'colId' to identify columns.</li>
+    <li>Major: api.ensureColIndexVisible(index) replace with api.ensureColumnVisible(colKey)</li>
+    <li>Major: Focused cell not longer has attribute colIndex, instead has attribute colId.</li>
+    <li>Major: Movable columns via dragging the column header.</li>
+
+    <li>Major Build Changes:
+        <ul>
+            <li>CSS now bundled in ag-Grid.js file</li>
+            <li>Took out TypeScript internal modules</li>
+            <li>Moved to ECMA 6 style imports (instead of require)</li>
+            <li>Moved to WebPack for bundling</li>
+            <li>Moved Angular 2 component to new project</li>
+        </ul>
+    </li>
+
+    <h3>Version 3.2.0</h3>
     <li>Minor: New event rowGroupOpened, for when row groups are opened / closed.</li>
     <li>Minor: Bug fix - pinning was not saved during columnApi.getState()</li>
+    <li>Minor: Added 'typings' to package.json, so TypeScript can pick up typings from node module</li>
+    <li>Minor: groupDefaultExpanded must be number (used to be number or boolean). Set to -1 instead of 'true' for same effect.</li>
+    <li>Minor: addVirtualRowListener - now takes an event type and a function, so has similar pattern to normal event listeners.</li>
+    <li>Minor: New method 'destroy' added to custom filters. If you need to do cleanup, put it in the destroy method.</li>
+    <li>Minor: Took out 'agGridGlobalFunc()', should use ag.grid.Grid() instead.</li>
 
     <h3>Version 3.1.2</h3>
     <li>Minor: New column API methods: getLeftDisplayedColumnGroups(), getCenterDisplayedColumnGroups(), getRightDisplayedColumnGroups(), getAllDisplayedColumnGroups()</li>
@@ -19,7 +57,7 @@ include 'documentation_header.php';
 
     <li>Minor: Added 'columnSeparator' to CSV Export</li>
     <li>Minor: Added starting character of '\ufeff' to CSV Export (for Excel compatibility)</li>
-    <li>Minor: Bugfix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
+    <li>Minor: Bug fix - gridOptions.isEnableSorting && colDef.suppressSorting were not used in 3.1.0, fixed.</li>
 
     <h3>Version 3.1.0</h3>
 

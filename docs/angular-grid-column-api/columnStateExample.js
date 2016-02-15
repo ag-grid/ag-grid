@@ -1,76 +1,84 @@
+var columnDefs = [
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Gold", field: "gold", width: 100, hide: true},
+    {headerName: "Silver", field: "silver", width: 100, hide: true},
+    {headerName: "Bronze", field: "bronze", width: 100, hide: true},
+    {headerName: "Total", field: "total", width: 100}
+];
 
-var module = angular.module("example", ["agGrid"]);
-
-module.controller("exampleCtrl", function($scope, $http) {
-
-    var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90},
-        {headerName: "Country", field: "country", width: 120},
-        {headerName: "Year", field: "year", width: 90},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100, hide: true},
-        {headerName: "Silver", field: "silver", width: 100, hide: true},
-        {headerName: "Bronze", field: "bronze", width: 100, hide: true},
-        {headerName: "Total", field: "total", width: 100}
-    ];
-
-    $scope.gridOptions = {
-        debug: true,
-        columnDefs: columnDefs,
-        rowData: null,
-        enableSorting: true,
-        enableColResize: true,
-        showToolPanel: true,
-        onReady: function() {
-            $scope.gridOptions.api.addGlobalListener(function(type, event) {
-                if (type.indexOf('column') >= 0) {
-                    console.log('Got column event: ' + event);
-                }
-            });
-        }
-    };
-
-    $http.get("../olympicWinners.json")
-        .then(function(res){
-            $scope.gridOptions.api.setRowData(res.data);
+var gridOptions = {
+    debug: true,
+    columnDefs: columnDefs,
+    rowData: null,
+    enableSorting: true,
+    enableColResize: true,
+    showToolPanel: true,
+    onGridReady: function() {
+        gridOptions.api.addGlobalListener(function(type, event) {
+            if (type.indexOf('column') >= 0) {
+                console.log('Got column event: ' + event);
+            }
         });
+    }
+};
 
-    $scope.printState = function() {
-        var state = $scope.gridOptions.columnApi.getState();
-        console.log(state);
-    };
 
-    var savedState;
+var savedState;
 
-    $scope.saveState = function() {
-        savedState = $scope.gridOptions.columnApi.getState();
-        console.log('column state saved');
-    };
+function printState() {
+    var state = gridOptions.columnApi.getState();
+    console.log(state);
+}
 
-    $scope.restoreState = function() {
-        $scope.gridOptions.columnApi.setState(savedState);
-        console.log('column state restored');
-    };
+function saveState() {
+    savedState = gridOptions.columnApi.getState();
+    console.log('column state saved');
+}
 
-    $scope.resetState = function() {
-        $scope.gridOptions.columnApi.resetState();
-    };
+function restoreState() {
+    gridOptions.columnApi.setState(savedState);
+    console.log('column state restored');
+}
 
-    $scope.showAthlete = function(show) {
-        $scope.gridOptions.columnApi.setColumnVisible('athlete', show);
-    };
+function resetState() {
+    gridOptions.columnApi.resetState();
+}
 
-    $scope.showMedals = function(show) {
-        $scope.gridOptions.columnApi.setColumnsVisible(['gold','silver','bronze'], show);
-    };
+function showAthlete(show) {
+    gridOptions.columnApi.setColumnVisible('athlete', show);
+}
 
-    $scope.pinAthlete = function(pin) {
-        $scope.gridOptions.columnApi.setColumnPinned('athlete', pin);
-    };
+function showMedals(show) {
+    gridOptions.columnApi.setColumnsVisible(['gold','silver','bronze'], show);
+}
 
-    $scope.pinAge = function(pin) {
-        $scope.gridOptions.columnApi.setColumnPinned('age', pin);
+function pinAthlete(pin) {
+    gridOptions.columnApi.setColumnPinned('athlete', pin);
+}
+
+function pinAge(pin) {
+    gridOptions.columnApi.setColumnPinned('age', pin);
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
+
+    // do http request to get our sample data - not using any framework to keep the example self contained.
+    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            gridOptions.api.setRowData(httpResult);
+        }
     };
 });

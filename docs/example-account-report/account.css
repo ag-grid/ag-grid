@@ -28,10 +28,6 @@
     background-color: aliceblue;
 }
 
-.ag-account .ag-cell:not(.cell-col-0) {
-    text-align: right;
-}
-
 .ag-account .ag-group-cell {
     font-weight: bold;
 }

@@ -38,6 +38,10 @@ include '../documentation_header.php';
             <th>columnGroupShow</th>
             <td>Whether to show the column when the group is open / closed.</td>
         </tr>
+        <tr>
+            <th>headerClass</th>
+            <td>Class to use for the header cell. Can be string, array of strings, or function.</td>
+        </tr>
     </table>
 
     <h2>Properties for Columns</h2>
@@ -74,10 +78,6 @@ include '../documentation_header.php';
         <tr>
             <th>headerTooltip</th>
             <td>Tooltip for the column header</td>
-        </tr>
-        <tr>
-            <th>headerClass</th>
-            <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>
         <tr>
             <th>valueGetter(params)</th>

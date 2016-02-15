@@ -10,6 +10,9 @@
         border-right: 1px solid grey;
         padding: 4px;
 
+    .ag-column-moving .ag-cell
+        transition: left 0.2s;
+
     .ag-header
         background-color: #430000;
         border-bottom: 1px solid grey;
@@ -20,6 +23,17 @@
 
     .ag-header-cell
         border-right: 1px solid grey;
+
+    .ag-header-cell-moving .ag-header-cell-label
+        opacity: 0.0;
+
+    .ag-header-cell-moving-clone
+        border-right: 1px solid grey;
+        border-left: 1px solid grey;
+        background-color:rgba(43, 0, 0, 0.8);
+
+    .ag-header-cell-moving
+        background-color grey;
 
     .ag-pinned-right-header
         border-left: 1px solid grey;

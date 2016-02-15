@@ -25,11 +25,19 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>
     <p>
-        Add properties to the gridOptions object, or you can also add as HTML attributes or AngularJS 2 bound properties.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or AngularJS 2 bound properties.
     </p>
 
     <h4>
@@ -37,7 +45,7 @@ include '../documentation_header.php';
         Web Components
     </h4>
     <p>
-        Add properties to the gridOptions object, or you can also add as HTML attributes or set directly onto the DOM element.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the DOM element.
     </p>
 
     <h2>List of Properties</h2>
@@ -157,6 +165,14 @@ include '../documentation_header.php';
             <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
         </tr>
         <tr>
+            <th>colMinWidth</th>
+            <td>The default min width for each col. Min widths specified in column definitions get preference, otherwise 20px is the default.</td>
+        </tr>
+        <tr>
+            <th>colMaxWidth</th>
+            <td>The default max width for each col. Max widths specified in column definitions get preference, otherwise no max is set.</td>
+        </tr>
+        <tr>
             <th>rowClass</th>
             <td>The class to give a particular row. Provide either a string (class name) or array of string (array
                 of class names). If you want a different class per row, then use the callback getRowClass(params) instead.</td>
@@ -202,6 +218,15 @@ include '../documentation_header.php';
             <th>suppressMenuHide</th>
             <td>Set to true to always show the column menu button, rather than only showing when the mouse is
                 over the column header.</td>
+        </tr>
+        <tr>
+            <th>suppressMovableColumns</th>
+            <td>Set to true to disallow moving of columns by dragging their headers.</td>
+        </tr>
+        <tr>
+            <th>suppressMovingInCss</th>
+            <td>Does not apply 'ag-column-moving' class into grid when dragging columns. For the provided themes,
+                this stops the animation while moving columns via dragging their headers.</td>
         </tr>
         <tr>
             <th>suppressLoadingOverlay</th>

@@ -1,35 +1,31 @@
+import GridOptionsWrapper from "./gridOptionsWrapper";
+export class LoggerFactory {
 
-module ag.grid {
+    private logging: boolean;
 
-    export class LoggerFactory {
-
-        private logging: boolean;
-
-        public init(gridOptionsWrapper: GridOptionsWrapper): void {
-            this.logging = gridOptionsWrapper.isDebug();
-        }
-
-        public create(name: string) {
-            return new Logger(name, this.logging);
-        }
+    public init(gridOptionsWrapper: GridOptionsWrapper): void {
+        this.logging = gridOptionsWrapper.isDebug();
     }
 
-    export class Logger {
+    public create(name: string) {
+        return new Logger(name, this.logging);
+    }
+}
 
-        private logging: boolean;
-        private name: string;
+export class Logger {
 
-        constructor(name: string, logging: boolean) {
-            this.name = name;
-            this.logging = logging;
+    private logging: boolean;
+    private name: string;
+
+    constructor(name: string, logging: boolean) {
+        this.name = name;
+        this.logging = logging;
+    }
+
+    public log(message: string) {
+        if (this.logging) {
+            console.log('ag-Grid.' + this.name + ': ' + message);
         }
-
-        public log(message: string) {
-            if (this.logging) {
-                console.log('ag-Grid.' + this.name + ': ' + message);
-            }
-        }
-
     }
 
 }

@@ -1,107 +1,104 @@
-/// <reference path="../utils.ts" />
+import _ from '../utils';
+import {Logger, LoggerFactory} from "../logger";
 
-module ag.grid {
+/** Functionality for internal DnD functionality between GUI widgets. Eg this service is used to drag columns
+ * from the 'available columns' list and putting them into the 'grouped columns' in the tool panel.
+ * This service is NOT used by the column headers for resizing and moving, that is a different use case. */
+export default class DragAndDropService {
 
-    var _ = Utils;
+    private dragItem: any;
+    private mouseUpEventListener: EventListener;
+    private logger: Logger;
 
-    export class DragAndDropService {
+    public init(loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('DragAndDropService');
 
-        private dragItem: any;
-        private mouseUpEventListener: EventListener;
-        private logger: Logger;
+        // need to clean this up, add to 'finished' logic in grid
+        var that = this;
+        this.mouseUpEventListener = function listener() {
+            that.stopDragging();
+        };
+        document.addEventListener('mouseup', this.mouseUpEventListener);
+        this.logger.log('initialised');
+    }
 
-        public init(loggerFactory: LoggerFactory) {
-            this.logger = loggerFactory.create('DragAndDropService');
+    public destroy(): void {
+        document.removeEventListener('mouseup', this.mouseUpEventListener);
+        this.logger.log('destroyed');
+    }
 
-            // need to clean this up, add to 'finished' logic in grid
-            var that = this;
-            this.mouseUpEventListener = function listener() {
-                that.stopDragging();
-            };
-            document.addEventListener('mouseup', this.mouseUpEventListener);
-            this.logger.log('initialised');
+    private stopDragging() {
+        if (this.dragItem) {
+            this.setDragCssClasses(this.dragItem.eDragSource, false);
+            this.dragItem = null;
+        }
+    }
+
+    private setDragCssClasses(eListItem: any, dragging: any) {
+        _.addOrRemoveCssClass(eListItem, 'ag-dragging', dragging);
+        _.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
+    }
+
+    public addDragSource(eDragSource: any, dragSourceCallback: any) {
+
+        this.setDragCssClasses(eDragSource, false);
+
+        eDragSource.addEventListener('mousedown',
+            this.onMouseDownDragSource.bind(this, eDragSource, dragSourceCallback));
+    }
+
+    private onMouseDownDragSource(eDragSource: any, dragSourceCallback: any) {
+        if (this.dragItem) {
+            this.stopDragging();
+        }
+        var data: any;
+        if (dragSourceCallback.getData) {
+            data = dragSourceCallback.getData();
+        }
+        var containerId: any;
+        if (dragSourceCallback.getContainerId) {
+            containerId = dragSourceCallback.getContainerId();
         }
 
-        public destroy(): void {
-            document.removeEventListener('mouseup', this.mouseUpEventListener);
-            this.logger.log('destroyed');
-        }
+        this.dragItem = {
+            eDragSource: eDragSource,
+            data: data,
+            containerId: containerId
+        };
+        this.setDragCssClasses(this.dragItem.eDragSource, true);
+    }
 
-        private stopDragging() {
-            if (this.dragItem) {
-                this.setDragCssClasses(this.dragItem.eDragSource, false);
-                this.dragItem = null;
-            }
-        }
+    public addDropTarget(eDropTarget: any, dropTargetCallback: any) {
+        var mouseIn = false;
+        var acceptDrag = false;
+        var that = this;
 
-        private setDragCssClasses(eListItem: any, dragging: any) {
-            _.addOrRemoveCssClass(eListItem, 'ag-dragging', dragging);
-            _.addOrRemoveCssClass(eListItem, 'ag-not-dragging', !dragging);
-        }
-
-        public addDragSource(eDragSource: any, dragSourceCallback: any) {
-
-            this.setDragCssClasses(eDragSource, false);
-
-            eDragSource.addEventListener('mousedown',
-                this.onMouseDownDragSource.bind(this, eDragSource, dragSourceCallback));
-        }
-
-        private onMouseDownDragSource(eDragSource: any, dragSourceCallback: any) {
-            if (this.dragItem) {
-                this.stopDragging();
-            }
-            var data: any;
-            if (dragSourceCallback.getData) {
-                data = dragSourceCallback.getData();
-            }
-            var containerId: any;
-            if (dragSourceCallback.getContainerId) {
-                containerId = dragSourceCallback.getContainerId();
-            }
-
-            this.dragItem = {
-                eDragSource: eDragSource,
-                data: data,
-                containerId: containerId
-            };
-            this.setDragCssClasses(this.dragItem.eDragSource, true);
-        }
-
-        public addDropTarget(eDropTarget: any, dropTargetCallback: any) {
-            var mouseIn = false;
-            var acceptDrag = false;
-            var that = this;
-
-            eDropTarget.addEventListener('mouseover', function() {
-                if (!mouseIn) {
-                    mouseIn = true;
-                    if (that.dragItem) {
-                        acceptDrag = dropTargetCallback.acceptDrag(that.dragItem);
-                    } else {
-                        acceptDrag = false;
-                    }
+        eDropTarget.addEventListener('mouseover', function() {
+            if (!mouseIn) {
+                mouseIn = true;
+                if (that.dragItem) {
+                    acceptDrag = dropTargetCallback.acceptDrag(that.dragItem);
+                } else {
+                    acceptDrag = false;
                 }
-            });
+            }
+        });
 
-            eDropTarget.addEventListener('mouseout', function() {
-                if (acceptDrag) {
-                    dropTargetCallback.noDrop();
-                }
-                mouseIn = false;
-                acceptDrag = false;
-            });
+        eDropTarget.addEventListener('mouseout', function() {
+            if (acceptDrag) {
+                dropTargetCallback.noDrop();
+            }
+            mouseIn = false;
+            acceptDrag = false;
+        });
 
-            eDropTarget.addEventListener('mouseup', function() {
-                // dragItem should never be null, checking just in case
-                if (acceptDrag && that.dragItem) {
-                    dropTargetCallback.drop(that.dragItem);
-                }
-            });
-
-        }
+        eDropTarget.addEventListener('mouseup', function() {
+            // dragItem should never be null, checking just in case
+            if (acceptDrag && that.dragItem) {
+                dropTargetCallback.drop(that.dragItem);
+            }
+        });
 
     }
 
 }
-

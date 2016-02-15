@@ -27,6 +27,16 @@ include '../documentation_header.php';
     </p>
 
     <h4>
+        <img src="/images/react.png" height="20px"/>
+        React
+    </h4>
+    <p>
+        Add the relevant onXXX() method to the gridOptions or register a method
+        via api.addEventListener(eventName, handler). You can also register events
+        using React props in your JSX eg <i>eventName={this.myEventHandler.bind(this)}</i>.
+    </p>
+
+    <h4>
         <img src="/images/angular2.png" height="20px"/>
         AngularJS 2
     </h4>

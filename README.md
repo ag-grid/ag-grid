@@ -37,6 +37,20 @@ If you are doing a Pull Request:
 - Discard all changes to `dist/`
 - Create Pull Request
 
+Folder Structure
+==============
+The new build has the following structure:
+- **\src** -> contains source files (TypeScript and CSS), don't touch these!
+- **\dist** -> contains distribution files
+- **\dist\ag-grid.js and \dist\ag-grid.min.js** -> use these if not using a package manager and put ag-Grid on
+the global scope. The new JavaScript distribution files contain the CSS for the grid, no need to reference
+separately.
+- **\dist\styles** -> contains CSS files, used if doing your own bundling.
+- **\dist\lib** -> contains compiles JavaScript files in CommonJS format.
+- **\main.js** -> CommonJS root file, reference this file if importing project via CommonJS.
+- **\main.d.ts** -> CommonJS root definition file.
+
+
 Asking Questions
 ==============
 
@@ -47,10 +61,9 @@ Please do not use GitHub issues to ask questions. Ask questions on the
 Contributing
 ==============
 
-ag-Grid is not looking for contributors for the project. If you have ideas, feel free to
-get in touch and let me know. Or if you want to suggest something, feel free to
-create a pull request with your ideas.
+ag-Grid is not looking for contributors. It is not intended to be developed
+by an online community.
 
-If you would like to help, then please provide me with guidance and advice.
-I don't claim to know everything, so welcome others opinions on the direction
-of the project.
+PR's on new features **are not** generally accepted. 
+
+PR's on small bug fixes **are** generally accepted.

@@ -115,6 +115,39 @@ colDef.comparator = function (value1, value2, data1, data2, isInverted) {
 
     <show-example example="sortingApi"></show-example>
 
+    <h4>Sorting Groups</h4>
+
+    <p>
+        The grid sorts columns ignoring the groups, even if the column is displaying group data. This
+        decoupling, although good design, has the fallback that the column doesn't realise it also
+        needs to sort the groups. To get a column to sort the groups when sorting, you have to
+        provide a custom comparator to the column. A custom comparator for groups is provided
+        by agGrid and can be configured like the following:
+    </p>
+
+    <pre>// when using the ag-Grid bundle with global agGrid variable:
+var groupColumn = {
+    headerName: "Group",
+    comparator: agGrid.defaultGroupComparator, // this is the important bit
+    cellRenderer: {
+        renderer: "group",
+    }
+};
+
+// when using CommmonJS
+import {defaultGroupComparator} from 'ag-grid/main';
+var groupColumn = {
+    headerName: "Group",
+    comparator: defaultGroupComparator, // this is the important bit
+    cellRenderer: {
+        renderer: "group",
+    }
+};
+    </pre>
+
+    <p>You only need to worry about this if you are providing your own grouping column. If using
+    the grid auto-group column, this comparator is used by default.</p>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

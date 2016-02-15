@@ -19,7 +19,7 @@
             ]
         };
 
-        new ag.grid.Grid(gridDiv, gridOptions);
+        new agGrid.Grid(gridDiv, gridOptions);
     });
 
 })();

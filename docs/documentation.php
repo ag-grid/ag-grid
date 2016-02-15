@@ -39,49 +39,123 @@ include 'documentation_header.php';
 
 </div>
 
-<div style="text-align: center; margin: 50px;">
-    <div style="border: 1px solid lightgrey; display: inline-block; padding: 10px;">
-        <div style="padding-bottom: 10px">
-            Has the grid helped? Please donate to show your support and appreciation. Thanks.
-        </div>
-        <div>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick">
-                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-                <input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal � The safer, easier way to pay online.">
-                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-            </form>
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
+        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+                Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
+            </a>
         </div>
     </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Supporting all the frameworks and build systems took days of research and practicing.
+        This article goes through lessons learnt and how to structure a project while supporting
+        all the frameworks and build systems around today.
+    </div>
+
 </div>
 
-<div style="border: 2px solid darkred; background-color: #eee; padding: 10px; margin: 5px;">
-    Note: Version 3.1.1 has some problems because I messed up the release process. Please move to 3.1.2.
-</div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
-            <img src="images/react_large.png"/>
+            <img src="images/panda.png"/>
+        </div>
+        <div style="font-size: 25px; float: left; padding-left: 10px">
+            ag-Grid v3.3 Released
         </div>
         <div style="float: right;  color: #767676;">
-            22th January 2016
-        </div>
-        <div style="margin-left: 130px;">
-            <div style="font-size: 25px;">
-                React is coming...
-            </div>
-            <p>
-                I am currently working on React integration. Having spent the last few days working
-                through it I'm excited. The current interface of ag-Grid, based on web standards,
-                maps perfectly onto the React philosophy, even down to using React in custom
-                cellRenderers. In a few days I'll have the next release demonstrating ag-Grid
-                working alongside a full React application using Babel and Webpack.
-            </p>
+            08th February 2016
         </div>
     </div>
 
+    <div style="padding-top: 20px;">
+        <p>
+            The <a href="changeLog.php">change log</a> has a full set of changes. The
+            highlights are as follows:
+        </p>
+        <p>
+        <ul>
+            <li>
+                <b>Column Drag Reordering</b> to reorder your columns by dragging the headers.
+            </li>
+            <li>
+                <b>'ready' event now 'gridReady'</b> (because it was clashing with another ready event in Angular 2)
+            </li>
+            <li>
+                <b>Moved to proper CommonJS</b> so now everything bundles nicely, including accessing ag-Grid
+                via ECMA 6 modules (great for Angular 2, no more global scope).
+            </li>
+            <li>
+                <b>Row Group Sorting</b> so now you can sort your groups.
+            </li>
+        </ul>
+        </p>
+        <h3>Examples on Github:</h3>
+        <p>
+
+        <ul>
+            <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
+            <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
+            <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a> - Project on Github</li>
+        </ul>
+        </p>
+        <h3>New ag-Grid Directory Structure (only for those interested)</h3>
+        <p>
+            The new build has the following structure:<br/>
+            <b>\src</b> -> contains source files (TypeScript and CSS), don't touch these!<br/>
+            <b>\dist</b> -> contains distribution files<br/>
+            <b>\dist\ag-grid.js and \dist\ag-grid.min.js</b> -> use these if not using a package manager and put ag-Grid on
+            the global scope. The new JavaScript distribution files contain the CSS for the grid, no need to reference
+            separately.<br/>
+            <b>\dist\styles</b> -> contains CSS files, used if doing your own bundling.<br/>
+            <b>\dist\lib</b> -> contains compiles JavaScript files in CommonJS format.<br/>
+            <b>\main.js</b> -> CommonJS root file, reference this file if importing project via CommonJS.<br/>
+            <b>\main.d.ts</b> -> CommonJS root definition file.<br/>
+        </p>
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
+        <a href="react-and-ag-grid/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="react-and-ag-grid/">
+                React and ag-Grid - the Perfect Match
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            28th January 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Article announcing ag-Grids support for React. Not only do they work together,
+        they play together very well indeed!
+    </div>
+
+</div>
+
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <b>Version 3.2.0 released</b>. Minor changes, see the <a href="changeLog.php">change log</a>. This release
+    was mostly to support the 'React Component' which I'm going to release as soon as I get the
+    documentation updated.
 </div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
@@ -163,22 +237,6 @@ include 'documentation_header.php';
         </p>
     </div>
 
-
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <p>
-        Thank you Mohan for your thumbs up. Great other people understand where I am
-        going with framework agnostic. If things don't work out for you in React,
-        you can always try things out in Angular 2 or something else!!!
-    </p>
-
-    <img src="images/quote.jpg" style="padding-top: 10px; padding-bottom: 10px;"/>
-
-    <p>
-        This was left on <a href="ag-grid-in-2016"> ag-Grid in 2016</a>.
-    </p>
 
 </div>
 
