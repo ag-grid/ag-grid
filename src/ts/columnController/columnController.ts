@@ -845,6 +845,28 @@ export class ColumnController {
         return result;
     }
 
+    public getColumnDept(): number {
+
+        var dept = 0;
+        getDept(this.getAllDisplayedColumnGroups(), 1);
+        return dept;
+
+        function getDept(children: ColumnGroupChild[], currentDept: number) {
+            if (dept < currentDept) {
+                dept = currentDept;
+            }
+            if (dept > currentDept) {
+                return;
+            }
+            children.forEach( (child: ColumnGroupChild) => {
+                if (child instanceof ColumnGroup) {
+                    var columnGroup = <ColumnGroup> child;
+                    getDept(columnGroup.getChildren(), currentDept+1);
+                }
+            });
+        }
+    }
+
     // called by angularGrid
     public onColumnsChanged() {
         var columnDefs = this.gridOptionsWrapper.getColumnDefs();

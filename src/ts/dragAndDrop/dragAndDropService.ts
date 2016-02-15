@@ -12,20 +12,19 @@ export default class DragAndDropService {
     private dragItem: any;
     private mouseUpEventListener: EventListener;
     private logger: Logger;
+    private destroyFunctions: Function[] = [];
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
 
         // need to clean this up, add to 'finished' logic in grid
-        var that = this;
-        this.mouseUpEventListener = function listener() {
-            that.stopDragging();
-        };
-        document.addEventListener('mouseup', this.mouseUpEventListener);
-        this.logger.log('initialised');
+        var mouseUpListener = this.stopDragging.bind(this);
+        document.addEventListener('mouseup', mouseUpListener);
+        this.destroyFunctions.push( () => { document.removeEventListener('mouseup', mouseUpListener); } );
     }
 
     public agDestroy(): void {
+        this.destroyFunctions.forEach( func => func() );
         document.removeEventListener('mouseup', this.mouseUpEventListener);
     }
 
@@ -73,20 +72,19 @@ export default class DragAndDropService {
     public addDropTarget(eDropTarget: any, dropTargetCallback: any) {
         var mouseIn = false;
         var acceptDrag = false;
-        var that = this;
 
-        eDropTarget.addEventListener('mouseover', function() {
+        eDropTarget.addEventListener('mouseover', () => {
             if (!mouseIn) {
                 mouseIn = true;
-                if (that.dragItem) {
-                    acceptDrag = dropTargetCallback.acceptDrag(that.dragItem);
+                if (this.dragItem) {
+                    acceptDrag = dropTargetCallback.acceptDrag(this.dragItem);
                 } else {
                     acceptDrag = false;
                 }
             }
         });
 
-        eDropTarget.addEventListener('mouseout', function() {
+        eDropTarget.addEventListener('mouseout', () => {
             if (acceptDrag) {
                 dropTargetCallback.noDrop();
             }
@@ -94,10 +92,10 @@ export default class DragAndDropService {
             acceptDrag = false;
         });
 
-        eDropTarget.addEventListener('mouseup', function() {
+        eDropTarget.addEventListener('mouseup', () => {
             // dragItem should never be null, checking just in case
-            if (acceptDrag && that.dragItem) {
-                dropTargetCallback.drop(that.dragItem);
+            if (acceptDrag && this.dragItem) {
+                dropTargetCallback.drop(this.dragItem);
             }
         });
 
