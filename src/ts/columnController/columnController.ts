@@ -26,6 +26,7 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {Autowired} from "../context/context";
+import GridPanel from "../gridPanel/gridPanel";
 
 export class ColumnApi {
 
@@ -96,6 +97,7 @@ export class ColumnController {
     @Autowired('valueService') private valueColumns: Column[];
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -126,6 +128,8 @@ export class ColumnController {
     private valueService: ValueService;
 
     private logger: Logger;
+
+    private animationThreadCount = 0;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
@@ -208,7 +212,7 @@ export class ColumnController {
     public getDisplayedColumnGroups(type: string): ColumnGroupChild[] {
         switch (type) {
             case Column.PINNED_LEFT: return this.getLeftDisplayedColumnGroups();
-            case Column.PINNED_LEFT: return this.getRightDisplayedColumnGroups();
+            case Column.PINNED_RIGHT: return this.getRightDisplayedColumnGroups();
             default: return this.getCenterDisplayedColumnGroups();
         }
     }
@@ -229,9 +233,11 @@ export class ColumnController {
 
     // used by:
     // + angularGrid -> setting pinned body width
+    // todo: this needs to be cached
     public getPinnedLeftContainerWidth() {
         return this.getWithOfColsInList(this.displayedLeftColumns);
     }
+    // todo: this needs to be cached
     public getPinnedRightContainerWidth() {
         return this.getWithOfColsInList(this.displayedRightColumns);
     }
@@ -379,6 +385,7 @@ export class ColumnController {
     // used by:
     // + angularGrid -> for setting body width
     // + rowController -> setting main row widths (when inserting and resizing)
+    // need to cache this
     public getBodyContainerWidth(): number {
         var result = this.getWithOfColsInList(this.displayedCenterColumns);
         return result;
@@ -920,9 +927,21 @@ export class ColumnController {
         if (!groupToUse) { return; }
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
+        this.turnOnAnimationForABit();
         this.updateGroupsAndDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
+    }
+
+    private turnOnAnimationForABit(): void {
+        this.animationThreadCount++;
+        var animationThreadCountCopy = this.animationThreadCount;
+        this.gridPanel.setMovingCss(true);
+        setTimeout( ()=> {
+            if (this.animationThreadCount===animationThreadCountCopy) {
+                this.gridPanel.setMovingCss(false);
+            }
+        }, 300);
     }
 
     // used by updateModel
@@ -986,12 +1005,20 @@ export class ColumnController {
 
     private setLeftValues(): void {
         // go through each list of displayed columns
+        var allColumns = this.allColumns.slice(0);
         [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
             var left = 0;
             columns.forEach( column => {
                 column.setLeft(left);
                 left += column.getActualWidth();
+                _.removeFromArray(allColumns, column);
             });
+        });
+        // items left in allColumns are columns not displayed, so remove the left position. this is
+        // important for the rows, as if a col is made visible, then taken out, then made visible again,
+        // we don't want the animation of the cell floating in from the old position, whatever that was.
+        allColumns.forEach( (column: Column) => {
+            column.setLeft(null);
         });
     }
 

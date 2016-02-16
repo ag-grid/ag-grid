@@ -22,6 +22,8 @@ import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
+import {Logger} from "../logger";
+import {LoggerFactory} from "../logger";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -39,6 +41,7 @@ export default class RowRenderer {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('context') private context: Context;
+    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
 
     private cellRendererMap: {[key: string]: any};
     private rowModel: any;
@@ -74,39 +77,11 @@ export default class RowRenderer {
     private eFloatingBottomPinnedRightContainer: HTMLElement;
     private eParentsOfRows: HTMLElement[];
 
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
-    }
-
-    public getAllCellsForColumn(column: Column): HTMLElement[] {
-        var eCells: HTMLElement[] = [];
-
-        _.iterateObject(this.renderedRows, callback);
-        _.iterateObject(this.renderedBottomFloatingRows, callback);
-        _.iterateObject(this.renderedBottomFloatingRows, callback);
-
-        function callback(key: any, renderedRow: RenderedRow) {
-            var eCell = renderedRow.getCellForCol(column);
-            if (eCell) {
-                eCells.push(eCell);
-            }
-        }
-
-        return eCells;
-    }
-
-    public setMainRowWidths() {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
-
-        this.eAllBodyContainers.forEach( function(container: HTMLElement) {
-            var unpinnedRows: [any] = (<any>container).querySelectorAll(".ag-row");
-            for (var i = 0; i < unpinnedRows.length; i++) {
-                unpinnedRows[i].style.width = mainRowWidth;
-            }
-        });
-    }
+    private logger: Logger;
 
     private agPostWire() {
+        this.logger = this.loggerFactory.create('RowRenderer');
+
         this.cellRendererMap = {
             'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
             'default': function(params: any) {
@@ -139,6 +114,38 @@ export default class RowRenderer {
             this.ePinnedRightColsContainer,
             this.eFloatingBottomPinnedRightContainer,
             this.eFloatingTopPinnedRightContainer];
+    }
+
+    public setRowModel(rowModel: any) {
+        this.rowModel = rowModel;
+    }
+
+    public getAllCellsForColumn(column: Column): HTMLElement[] {
+        var eCells: HTMLElement[] = [];
+
+        _.iterateObject(this.renderedRows, callback);
+        _.iterateObject(this.renderedBottomFloatingRows, callback);
+        _.iterateObject(this.renderedBottomFloatingRows, callback);
+
+        function callback(key: any, renderedRow: RenderedRow) {
+            var eCell = renderedRow.getCellForCol(column);
+            if (eCell) {
+                eCells.push(eCell);
+            }
+        }
+
+        return eCells;
+    }
+
+    public setMainRowWidths() {
+        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
+
+        this.eAllBodyContainers.forEach( function(container: HTMLElement) {
+            var unpinnedRows: [any] = (<any>container).querySelectorAll(".ag-row");
+            for (var i = 0; i < unpinnedRows.length; i++) {
+                unpinnedRows[i].style.width = mainRowWidth;
+            }
+        });
     }
 
     public refreshAllFloatingRows(): void {
@@ -187,6 +194,7 @@ export default class RowRenderer {
     }
 
     public refreshView(refreshFromIndex?: any) {
+        this.logger.log('refreshView');
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getVirtualRowCombinedHeight();
             this.eBodyContainer.style.height = containerHeight + "px";

@@ -31,6 +31,9 @@ export default class RenderedCell {
     private eCellWrapper: HTMLElement;
     private eParentOfValue: HTMLElement;
 
+    // we do not use this in this class, however the renderedRow wants to konw this
+    private eParentRow: HTMLElement;
+
     private column: Column;
     private data: any;
     private node: RowNode;
@@ -64,6 +67,14 @@ export default class RenderedCell {
         this.colIndex = colIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
+    }
+
+    public getParentRow(): HTMLElement {
+        return this.eParentRow;
+    }
+
+    public setParentRow(eParentRow: HTMLElement): void {
+        this.eParentRow = eParentRow;
     }
 
     public agPostWire(): void {
@@ -117,7 +128,7 @@ export default class RenderedCell {
         return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
     }
 
-    public getVGridCell(): HTMLElement {
+    public getGui(): HTMLElement {
         return this.eGridCell;
     }
 
@@ -142,7 +153,12 @@ export default class RenderedCell {
 
     private setLeftOnCell(): void {
         var leftChangedListener = () => {
-            this.eGridCell.style.left = this.column.getLeft() + 'px';
+            var newLeft = this.column.getLeft();
+            if (_.exists(newLeft)) {
+                this.eGridCell.style.left = this.column.getLeft() + 'px';
+            } else {
+                this.eGridCell.style.left = '';
+            }
         };
 
         this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
@@ -306,7 +322,6 @@ export default class RenderedCell {
             data: this.node.data,
             value: this.value,
             rowIndex: this.rowIndex,
-            colIndex: this.colIndex,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),

@@ -36,8 +36,9 @@ export class MoveColumnController2 {
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
-        this.columnController.setColumnPinned(draggingEvent.dragItem, this.pinned);
+        // we do dummy drag, so make sure column appears in the right location when first placed
         this.columnController.setColumnVisible(draggingEvent.dragItem, true);
+        this.columnController.setColumnPinned(draggingEvent.dragItem, this.pinned);
         this.onDragging(draggingEvent);
     }
 
@@ -50,20 +51,21 @@ export class MoveColumnController2 {
         this.ensureIntervalCleared();
     }
 
-    private adjustXForScroll(draggingParams: DraggingEvent): number {
+    private adjustXForScroll(draggingEvent: DraggingEvent): number {
         if (this.centerContainer) {
-            return draggingParams.x + this.gridPanel.getHorizontalScrollPosition();
+            return draggingEvent.x + this.gridPanel.getHorizontalScrollPosition();
         } else {
-            return draggingParams.x;
+            return draggingEvent.x;
         }
 
     }
 
-    private workOutNewIndex(columns: Column[], allColumns: Column[], draggingParams: DraggingEvent, xAdjustedForScroll: number) {
-        if (draggingParams.direction === DragAndDropService2.DIRECTION_LEFT) {
-            return this.getNewIndexForColMovingLeft(columns, allColumns, draggingParams.dragItem, xAdjustedForScroll);
+    private workOutNewIndex(columns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
+        var allColumns = this.columnController.getAllColumns();
+        if (draggingEvent.direction === DragAndDropService2.DIRECTION_LEFT) {
+            return this.getNewIndexForColMovingLeft(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         } else {
-            return this.getNewIndexForColMovingRight(columns, allColumns, draggingParams.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingRight(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         }
     }
 
@@ -85,34 +87,36 @@ export class MoveColumnController2 {
         }
     }
 
-    public onDragging(draggingParams: DraggingEvent): void {
+    public onDragging(draggingEvent: DraggingEvent): void {
 
-        this.lastDraggingEvent = draggingParams;
+        this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (!draggingParams.direction) {
+        if (!draggingEvent.direction) {
             return;
         }
 
-        var xAdjustedForScroll = this.adjustXForScroll(draggingParams);
+        var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
         this.checkCenterForScrolling(xAdjustedForScroll);
 
         // find out what the correct position is for this column
+        this.checkColIndexAndMove(draggingEvent, xAdjustedForScroll);
+    }
+
+    private checkColIndexAndMove(draggingEvent: DraggingEvent, xAdjustedForScroll: number): void {
         var columns = this.columnController.getDisplayedColumns(this.pinned);
-        var allColumns = this.columnController.getAllColumns();
 
-        var newIndex = this.workOutNewIndex(columns, allColumns, draggingParams, xAdjustedForScroll);
-
+        var newIndex = this.workOutNewIndex(columns, draggingEvent, xAdjustedForScroll);
         var oldColumn = columns[newIndex];
 
         // if col already at required location, do nothing
-        if (oldColumn === draggingParams.dragItem) {
+        if (oldColumn === draggingEvent.dragItem) {
             return;
         }
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        var columnsToMove = this.getColumnsAndOrphans(draggingParams.dragItem);
+        var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragItem);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
     }
 
@@ -220,7 +224,6 @@ export class MoveColumnController2 {
             pixelsToMove = 100;
         }
 
-        var pixelsMoved = 0;
         if (this.needToMoveLeft) {
             this.gridPanel.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {

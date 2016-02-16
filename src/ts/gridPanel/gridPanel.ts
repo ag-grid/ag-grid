@@ -10,6 +10,8 @@ import {LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
+import EventService from "../eventService";
+import {Events} from "../events";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -86,6 +88,7 @@ export default class GridPanel {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('eventService') private eventService: EventService;
 
     private rowModel: any;
 
@@ -131,7 +134,18 @@ export default class GridPanel {
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.scrollWidth = _.getScrollbarWidth();
         this.logger = loggerFactory.create('GridPanel');
-        this.setupComponents();
+        this.setupComponents(); // other beans use this bean in agPostWire, so need this configured first
+    }
+
+    public agPostWire(): void {
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
     }
 
     public getLayout(): BorderLayout {
@@ -534,20 +548,17 @@ export default class GridPanel {
         return false;
     }
 
-    public setBodyContainerWidth() {
+    public onColumnsChanged() {
         var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = mainRowWidth;
-        if (!this.forPrint) {
-            this.eFloatingBottomContainer.style.width = mainRowWidth;
-            this.eFloatingTopContainer.style.width = mainRowWidth;
-        }
-    }
 
-    public setPinnedColContainerWidth() {
         if (this.forPrint) {
             // pinned col doesn't exist when doing forPrint
             return;
         }
+
+        this.eFloatingBottomContainer.style.width = mainRowWidth;
+        this.eFloatingTopContainer.style.width = mainRowWidth;
 
         var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth() + 'px';
         this.ePinnedLeftColsContainer.style.width = pinnedLeftWidth;
@@ -724,14 +735,12 @@ export default class GridPanel {
     }
 
     private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any) {
-        // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
         this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
     }
 
     private verticallyScrollLeftPinned(bodyTopPosition: any) {
-        // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
     }
 

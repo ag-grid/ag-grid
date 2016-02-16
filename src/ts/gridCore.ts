@@ -211,7 +211,8 @@ export class GridCore {
 
         if (event.isIndividualColumnResized()) {
             this.onIndividualColumnResized(event.getColumn());
-        } else if (event.getType()===Events.EVENT_COLUMN_MOVED) {
+        } else if (event.getType()===Events.EVENT_COLUMN_MOVED || event.getType()===Events.EVENT_COLUMN_GROUP_OPENED
+            || event.getType()===Events.EVENT_COLUMN_VISIBLE  || event.getType()===Events.EVENT_COLUMN_PINNED) {
             this.refreshHeader();
         } else {
             this.refreshHeaderAndBody();
@@ -316,8 +317,8 @@ export class GridCore {
     }
 
     private refreshBody() {
-        this.gridPanel.setBodyContainerWidth();
-        this.gridPanel.setPinnedColContainerWidth();
+        //this.gridPanel.setBodyContainerWidth();
+        //this.gridPanel.setPinnedColContainerWidth();
         this.rowRenderer.refreshView();
     }
 
@@ -468,11 +469,11 @@ export class GridCore {
 
     public updateBodyContainerWidthAfterColResize() {
         this.rowRenderer.setMainRowWidths();
-        this.gridPanel.setBodyContainerWidth();
+        //this.gridPanel.setBodyContainerWidth();
     }
 
     public updatePinnedColContainerWidthAfterColResize() {
-        this.gridPanel.setPinnedColContainerWidth();
+        //this.gridPanel.setPinnedColContainerWidth();
         this.headerRenderer.setPinnedColContainerWidth();
     }
 
