@@ -17,10 +17,11 @@ export interface DragSource {
 }
 
 export interface DropTarget {
-    eElement: HTMLElement,
+    eContainer: HTMLElement,
     onDragEnter?: (params: DraggingEvent)=>void,
     onDragLeave?: (params: DraggingEvent)=>void,
-    onDragging?: (params: DraggingEvent)=>void
+    onDragging?: (params: DraggingEvent)=>void,
+    onDragStop?: ()=>void
 }
 
 export interface DraggingEvent {
@@ -81,31 +82,6 @@ export class DragAndDropService2 {
         this.dropTargets.push(dropTarget);
     }
 
-    //public informDropTarget(dropTarget: DropTarget, event: MouseEvent): void {
-    //    //localise x and y to the target component
-    //    var rect = dropTarget.eElement.getBoundingClientRect();
-    //    var x = event.x - rect.left;
-    //    var y = event.y - rect.top;
-    //
-    //    var direction: string;
-    //    if (this.eventXLastTime > event.x) {
-    //        direction = DragAndDropService2.DIRECTION_LEFT;
-    //    } else if (this.eventXLastTime < event.x) {
-    //        direction = DragAndDropService2.DIRECTION_RIGHT;
-    //    } else {
-    //        direction = null;
-    //    }
-    //
-    //    dropTarget.onDragging({
-    //        event: event,
-    //        x: x,
-    //        y: y,
-    //        direction: direction,
-    //        dragItem: this.dragItem,
-    //        dragSource: this.dragSource
-    //    });
-    //}
-
     public workOutDirection(event: MouseEvent): string {
         var direction: string;
         if (this.eventXLastTime > event.x) {
@@ -125,7 +101,8 @@ export class DragAndDropService2 {
 
         // localise x and y to the target component
 
-        var rect = dropTarget.eElement.getBoundingClientRect();
+        var rect = dropTarget.eContainer.getBoundingClientRect();
+
         var x = event.x - rect.left;
         var y = event.y - rect.top;
 
@@ -163,9 +140,14 @@ export class DragAndDropService2 {
         this.positionGhost(event);
 
         var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
-            var rect = dropTarget.eElement.getBoundingClientRect();
+            var rect = dropTarget.eContainer.getBoundingClientRect();
+            // if element is not visible, then width and height are zero
+            if (rect.width===0 || rect.height===0) {
+                return;
+            }
             var horizontalFit = event.x > rect.left && event.x < rect.right;
             var verticalFit = event.y > rect.top && event.y < rect.bottom;
+
             return horizontalFit && verticalFit;
         });
 
@@ -173,15 +155,18 @@ export class DragAndDropService2 {
 
         if (dropTarget!==this.lastDropTarget) {
             if (this.lastDropTarget) {
+                this.logger.log('onDragLeave');
                 var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, event, direction);
                 this.lastDropTarget.onDragLeave(dragLeaveEvent);
             }
             if (dropTarget) {
+                this.logger.log('onDragEnter');
                 var dragEnterEvent = this.createDropTargetEvent(dropTarget, event, direction);
                 dropTarget.onDragEnter(dragEnterEvent);
             }
             this.lastDropTarget = dropTarget;
         } else if (dropTarget) {
+            this.logger.log('onDragging');
             var draggingEvent = this.createDropTargetEvent(dropTarget, event, direction);
             dropTarget.onDragging(draggingEvent);
         }
@@ -253,6 +238,10 @@ export class DragAndDropService2 {
         this.logger.log('onMouseUp');
         this.dragItem.setMoving(false);
         this.dragging = false;
+        if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
+            this.lastDropTarget.onDragStop();
+        }
+        this.lastDropTarget = null;
         this.dragItem = null;
         if (this.addMovingCssToGrid) {
             this.gridPanel.setMovingCss(false);

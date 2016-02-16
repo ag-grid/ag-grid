@@ -76,7 +76,7 @@ export class Grid {
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService2, MoveColumnController2],
+                DragAndDropService2],
             debug: !!gridOptions.debug
         });
     }

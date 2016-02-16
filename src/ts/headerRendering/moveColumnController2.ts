@@ -7,54 +7,106 @@ import Column from "../entities/column";
 import _ from '../utils';
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
+import GridPanel from "../gridPanel/gridPanel";
 
-@Bean('moveColumnController2')
 export class MoveColumnController2 {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+
+    private needToMoveLeft = false;
+    private needToMoveRight = false;
+    private movingIntervalId: number;
+    private intervalCount: number;
 
     private logger: Logger;
+    private pinned: string;
+    private centerContainer: boolean;
+
+    private lastDraggingEvent: DraggingEvent;
+
+    public constructor(pinned: string) {
+        this.pinned = pinned;
+        this.centerContainer = !_.exists(pinned);
+    }
 
     public agPostWire(): void {
         this.logger = this.loggerFactory.create('MoveColumnController2');
     }
 
-    public onDragEnter(container: string, draggingParams: DraggingEvent): void {
-        this.columnController.setColumnPinned(draggingParams.dragItem, container);
-        this.columnController.setColumnVisible(draggingParams.dragItem, true);
+    public onDragEnter(draggingEvent: DraggingEvent): void {
+        this.columnController.setColumnPinned(draggingEvent.dragItem, this.pinned);
+        this.columnController.setColumnVisible(draggingEvent.dragItem, true);
+        this.onDragging(draggingEvent);
     }
 
-    public onDragLeave(container: string, draggingParams: DraggingEvent): void {
-        this.columnController.setColumnVisible(draggingParams.dragItem, false);
+    public onDragLeave(draggingEvent: DraggingEvent): void {
+        this.columnController.setColumnVisible(draggingEvent.dragItem, false);
+        this.ensureIntervalCleared();
     }
 
-    public onDragging(container: string, draggingParams: DraggingEvent): void {
+    public onDragStop(): void {
+        this.ensureIntervalCleared();
+    }
+
+    private adjustXForScroll(draggingParams: DraggingEvent): number {
+        if (this.centerContainer) {
+            return draggingParams.x + this.gridPanel.getHorizontalScrollPosition();
+        } else {
+            return draggingParams.x;
+        }
+
+    }
+
+    private workOutNewIndex(columns: Column[], allColumns: Column[], draggingParams: DraggingEvent, xAdjustedForScroll: number) {
+        if (draggingParams.direction === DragAndDropService2.DIRECTION_LEFT) {
+            return this.getNewIndexForColMovingLeft(columns, allColumns, draggingParams.dragItem, xAdjustedForScroll);
+        } else {
+            return this.getNewIndexForColMovingRight(columns, allColumns, draggingParams.dragItem, xAdjustedForScroll);
+        }
+    }
+
+    private checkCenterForScrolling(xAdjustedForScroll: number): void {
+        if (this.centerContainer) {
+            // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
+            // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
+            var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
+            var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
+
+            this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
+            this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+
+            if (this.needToMoveLeft || this.needToMoveRight) {
+                this.ensureIntervalStarted();
+            } else {
+                this.ensureIntervalCleared();
+            }
+        }
+    }
+
+    public onDragging(draggingParams: DraggingEvent): void {
+
+        this.lastDraggingEvent = draggingParams;
 
         // if moving up or down (ie not left or right) then do nothing
         if (!draggingParams.direction) {
             return;
         }
 
-        // if column in wrong container, move it here
-
-        // from here on, assuming column is in the right container
+        var xAdjustedForScroll = this.adjustXForScroll(draggingParams);
+        this.checkCenterForScrolling(xAdjustedForScroll);
 
         // find out what the correct position is for this column
-        var columns = this.columnController.getDisplayedColumns(container);
+        var columns = this.columnController.getDisplayedColumns(this.pinned);
         var allColumns = this.columnController.getAllColumns();
 
-        var newIndex: number;
-        if (draggingParams.direction==DragAndDropService2.DIRECTION_LEFT) {
-            newIndex = this.getNewIndexForColMovingLeft(columns, allColumns, draggingParams.dragItem, draggingParams.x);
-        } else {
-            newIndex = this.getNewIndexForColMovingRight(columns, allColumns, draggingParams.dragItem, draggingParams.x);
-        }
+        var newIndex = this.workOutNewIndex(columns, allColumns, draggingParams, xAdjustedForScroll);
 
         var oldColumn = columns[newIndex];
 
         // if col already at required location, do nothing
-        if (oldColumn===draggingParams.dragItem) {
+        if (oldColumn === draggingParams.dragItem) {
             return;
         }
 
@@ -62,61 +114,6 @@ export class MoveColumnController2 {
         // of a group, in which case we move the whole group.
         var columnsToMove = this.getColumnsAndOrphans(draggingParams.dragItem);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
-
-/*
-        // the while loop keeps going until there are no more columns to move. this caters for the user
-        // moving the mouse very fast and we need to swap the column twice or more
-        var checkForAnotherColumn = true;
-        while (checkForAnotherColumn) {
-
-            var dragOverLeftColumn = this.column.getLeft() > hoveringOverPixel;
-            var dragOverRightColumn = (this.column.getLeft() + this.column.getActualWidth()) < hoveringOverPixel;
-
-            var wantToMoveLeft = dragOverLeftColumn && dragMovingLeft;
-            var wantToMoveRight = dragOverRightColumn && dragMovingRight;
-
-            checkForAnotherColumn = false;
-
-            var colToSwapWith: Column = null;
-
-            if (wantToMoveLeft) {
-                colToSwapWith = this.columnController.getDisplayedColBeforeForMoving(this.column);
-            }
-            if (wantToMoveRight) {
-                colToSwapWith = this.columnController.getDisplayedColAfterForMoving(this.column);
-            }
-
-            // if we are a closed group, we need to move all the columns, not just this one
-            if (colToSwapWith) {
-                var newIndex = this.columnController.getColumnIndex(colToSwapWith);
-
-                // we move one column, UNLESS the column is the only visible column
-                // of a group, in which case we move the whole group.
-                var columnsToMove = this.getColumnsAndOrphans(this.column);
-                this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
-
-                checkForAnotherColumn = true;
-            }
-        }
-
-        // we only look to scroll if the column is not pinned, as pinned columns are always visible
-        if (!this.column.isPinned()) {
-            // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
-            //var hoveringOverPixelScrollAdjusted = this.startLeftPosition + this.clickPositionOnHeaderScrollAdjusted + delta;
-            // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
-            var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
-            this.needToMoveLeft = hoveringOverPixel < (firstVisiblePixel + 50);
-            this.needToMoveRight = hoveringOverPixel > (lastVisiblePixel - 50);
-            if (this.needToMoveLeft || this.needToMoveRight) {
-                this.ensureIntervalStarted();
-            } else {
-                this.ensureIntervalCleared();
-            }
-        }
-
-        this.lastDelta = delta;
-        */
     }
 
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
@@ -201,4 +198,35 @@ export class MoveColumnController2 {
         return [column];
     }
 
+    private ensureIntervalStarted(): void {
+        if (!this.movingIntervalId) {
+            this.intervalCount = 0;
+            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+        }
+    }
+
+    private ensureIntervalCleared(): void {
+        if (this.moveInterval) {
+            clearInterval(this.movingIntervalId);
+            this.movingIntervalId = null;
+        }
+    }
+
+    private moveInterval(): void {
+        var pixelsToMove: number;
+        this.intervalCount++;
+        pixelsToMove = 10 + (this.intervalCount * 5);
+        if (pixelsToMove > 100) {
+            pixelsToMove = 100;
+        }
+
+        var pixelsMoved = 0;
+        if (this.needToMoveLeft) {
+            this.gridPanel.scrollHorizontally(-pixelsToMove);
+        } else if (this.needToMoveRight) {
+            this.gridPanel.scrollHorizontally(pixelsToMove);
+        }
+
+        this.onDragging(this.lastDraggingEvent);
+    }
 }

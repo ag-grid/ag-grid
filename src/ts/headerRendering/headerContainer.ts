@@ -19,10 +19,10 @@ export class HeaderContainer {
     @Autowired('context') private context: Context;
     @Autowired('$scope') private $scope: any;
     @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
-    @Autowired('moveColumnController2') private moveColumnController2: MoveColumnController2;
     @Autowired('columnController') private columnController: ColumnController;
 
     private eContainer: HTMLElement;
+    private eViewport: HTMLElement;
     private eRoot: HTMLElement;
 
     private pinned: string;
@@ -31,18 +31,23 @@ export class HeaderContainer {
 
     private dropTarget: DropTarget;
 
-    constructor(eContainer: HTMLElement, eRoot: HTMLElement, pinned: string) {
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement, eRoot: HTMLElement, pinned: string) {
         this.eContainer = eContainer;
         this.eRoot = eRoot;
         this.pinned = pinned;
+        this.eViewport = eViewport;
     }
 
     public agPostWire(): void {
+        var moveColumnController = new MoveColumnController2(this.pinned);
+        this.context.wireBean(moveColumnController);
+
         this.dropTarget = {
-            eElement: this.eContainer,
-            onDragging: this.moveColumnController2.onDragging.bind(this.moveColumnController2, this.pinned),
-            onDragEnter: this.moveColumnController2.onDragEnter.bind(this.moveColumnController2, this.pinned),
-            onDragLeave: this.moveColumnController2.onDragLeave.bind(this.moveColumnController2, this.pinned)
+            eContainer: this.eViewport ? this.eViewport : this.eContainer,
+            onDragging: moveColumnController.onDragging.bind(moveColumnController),
+            onDragEnter: moveColumnController.onDragEnter.bind(moveColumnController),
+            onDragLeave: moveColumnController.onDragLeave.bind(moveColumnController),
+            onDragStop: moveColumnController.onDragStop.bind(moveColumnController)
         };
         this.dragAndDropService2.addDropTarget(this.dropTarget);
     }

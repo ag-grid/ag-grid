@@ -169,6 +169,14 @@ export default class Utils {
         }
     }
 
+    static exists(value: any): boolean {
+        if (value===null || value===undefined || value==='') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     static removeAllChildren(node: HTMLElement) {
         if (node) {
             while (node.hasChildNodes()) {

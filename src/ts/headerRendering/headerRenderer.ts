@@ -49,9 +49,9 @@ export default class HeaderRenderer {
         this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
 
-        this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), this.eRoot, Column.PINNED_LEFT);
-        this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), this.eRoot, Column.PINNED_RIGHT);
-        this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.eRoot, null);
+        this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, Column.PINNED_LEFT);
+        this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, Column.PINNED_RIGHT);
+        this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), this.eRoot, null);
 
         this.context.wireBean(this.pinnedLeftContainer);
         this.context.wireBean(this.pinnedRightContainer);
@@ -62,10 +62,6 @@ export default class HeaderRenderer {
         this.pinnedLeftContainer.removeAllChildren();
         this.pinnedRightContainer.removeAllChildren();
         this.centerContainer.removeAllChildren();
-
-        //this.pinnedLeftContainer.insertHeaderRowsIntoContainer(this.columnController.getLeftDisplayedColumnGroups());
-        //this.pinnedRightContainer.insertHeaderRowsIntoContainer(this.columnController.getRightDisplayedColumnGroups());
-        //this.centerContainer.insertHeaderRowsIntoContainer(this.columnController.getCenterDisplayedColumnGroups());
 
         this.pinnedLeftContainer.insertHeaderRowsIntoContainer();
         this.pinnedRightContainer.insertHeaderRowsIntoContainer();
