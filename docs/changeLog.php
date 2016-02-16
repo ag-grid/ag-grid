@@ -28,6 +28,8 @@ include 'documentation_header.php';
 
     <li>New API methods: getFirstRenderedRow() getFirstVirtualRenderedRow()</li>
 
+    <li>Took out virtual dom. It only made an improvement on IE, and now that we are using delayed scrolling, IE is working fast enough now.</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

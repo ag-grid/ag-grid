@@ -17,6 +17,7 @@ import EventService from "../eventService";
 import {Qualifier} from "../context/context";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
+import ColumnChangeEvent from "../columnChangeEvent";
 
 export default class RenderedRow {
 
@@ -70,6 +71,10 @@ export default class RenderedRow {
         this.rowNode = node;
     }
 
+    private onColumnChanged(event: ColumnChangeEvent): void {
+
+    }
+
     public agPostWire(): void {
         this.pinningLeft = this.columnController.isPinningLeft();
         this.pinningRight = this.columnController.isPinningRight();
@@ -78,12 +83,8 @@ export default class RenderedRow {
         var rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
 
         this.vBodyRow = this.createRowContainer();
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow = this.createRowContainer();
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow = this.createRowContainer();
-        }
+        this.vPinnedLeftRow = this.createRowContainer();
+        this.vPinnedRightRow = this.createRowContainer();
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
@@ -102,23 +103,15 @@ export default class RenderedRow {
         }
 
         this.vBodyRow.setAttribute('row', rowStr);
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.setAttribute('row', rowStr);
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.setAttribute('row', rowStr);
-        }
+        this.vPinnedLeftRow.setAttribute('row', rowStr);
+        this.vPinnedRightRow.setAttribute('row', rowStr);
 
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
             var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
                 this.vBodyRow.setAttribute('row-id', businessKey);
-                if (this.pinningLeft) {
-                    this.vPinnedLeftRow.setAttribute('row-id', businessKey);
-                }
-                if (this.pinningRight) {
-                    this.vPinnedRightRow.setAttribute('row-id', businessKey);
-                }
+                this.vPinnedLeftRow.setAttribute('row-id', businessKey);
+                this.vPinnedRightRow.setAttribute('row-id', businessKey);
             }
         }
 
@@ -126,21 +119,13 @@ export default class RenderedRow {
         if (!this.gridOptionsWrapper.isForPrint()) {
             var topPx = this.rowNode.rowTop + "px";
             this.vBodyRow.style.top = topPx;
-            if (this.pinningLeft) {
-                this.vPinnedLeftRow.style.top = topPx;
-            }
-            if (this.pinningRight) {
-                this.vPinnedRightRow.style.top = topPx;
-            }
+            this.vPinnedLeftRow.style.top = topPx;
+            this.vPinnedRightRow.style.top = topPx;
         }
         var heightPx = this.rowNode.rowHeight + 'px';
         this.vBodyRow.style.height = heightPx;
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.style.height = heightPx;
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.style.height = heightPx;
-        }
+        this.vPinnedLeftRow.style.height = heightPx;
+        this.vPinnedRightRow.style.height = heightPx;
 
         // if group item, insert the first row
         if (rowIsHeaderThatSpans) {
@@ -148,30 +133,18 @@ export default class RenderedRow {
         }
 
         this.bindVirtualElement(this.vBodyRow);
-        if (this.pinningLeft) {
-            this.bindVirtualElement(this.vPinnedLeftRow);
-        }
-        if (this.pinningRight) {
-            this.bindVirtualElement(this.vPinnedRightRow);
-        }
+        this.bindVirtualElement(this.vPinnedLeftRow);
+        this.bindVirtualElement(this.vPinnedRightRow);
 
         if (this.scope) {
             this.$compile(this.vBodyRow.getElement())(this.scope);
-            if (this.pinningLeft) {
-                this.$compile(this.vPinnedLeftRow.getElement())(this.scope);
-            }
-            if (this.pinningRight) {
-                this.$compile(this.vPinnedRightRow.getElement())(this.scope);
-            }
+            this.$compile(this.vPinnedLeftRow.getElement())(this.scope);
+            this.$compile(this.vPinnedRightRow.getElement())(this.scope);
         }
 
         this.eBodyContainer.appendChild(this.vBodyRow.getElement());
-        if (this.pinningLeft) {
-            this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
-        }
-        if (this.pinningRight) {
-            this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
-        }
+        this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
+        this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
 
         var rowSelectedListener = this.onRowSelected.bind(this);
         this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
