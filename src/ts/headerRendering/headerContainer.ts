@@ -11,6 +11,7 @@ import RenderedHeaderCell from "./renderedHeaderCell";
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {MoveColumnController2} from "./moveColumnController2";
 import {ColumnController} from "../columnController/columnController";
+import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 
 export class HeaderContainer {
 
@@ -28,6 +29,8 @@ export class HeaderContainer {
 
     private headerElements: IRenderedHeaderElement[] = [];
 
+    private dropTarget: DropTarget;
+
     constructor(eContainer: HTMLElement, eRoot: HTMLElement, pinned: string) {
         this.eContainer = eContainer;
         this.eRoot = eRoot;
@@ -35,18 +38,13 @@ export class HeaderContainer {
     }
 
     public agPostWire(): void {
-        this.dragAndDropService2.addDropTarget(
-            {eElement: this.eContainer, onDragCallback: this.onDrag.bind(this)}
-        );
-    }
-
-    private onDrag(params: any): void {
-        this.moveColumnController2.dragOver(params.x, this.pinned, params.dragItem, params.direction);
-        //if (params.dragSource===this) {
-        //    console.log('internal drag');
-        //} else {
-        //    console.log('external drag');
-        //}
+        this.dropTarget = {
+            eElement: this.eContainer,
+            onDragging: this.moveColumnController2.onDragging.bind(this.moveColumnController2, this.pinned),
+            onDragEnter: this.moveColumnController2.onDragEnter.bind(this.moveColumnController2, this.pinned),
+            onDragLeave: this.moveColumnController2.onDragLeave.bind(this.moveColumnController2, this.pinned)
+        };
+        this.dragAndDropService2.addDropTarget(this.dropTarget);
     }
 
     public removeAllChildren(): void {
@@ -119,7 +117,7 @@ export class HeaderContainer {
         if (columnGroupChild instanceof ColumnGroup) {
             result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.$scope);
         } else {
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot, this);
+            result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot, this.dropTarget);
         }
         this.context.wireBean(result);
         return result;

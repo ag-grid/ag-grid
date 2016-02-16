@@ -6,6 +6,7 @@ import {ColumnController} from "../columnController/columnController";
 import Column from "../entities/column";
 import _ from '../utils';
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
 
 @Bean('moveColumnController2')
 export class MoveColumnController2 {
@@ -19,10 +20,19 @@ export class MoveColumnController2 {
         this.logger = this.loggerFactory.create('MoveColumnController2');
     }
 
-    public dragOver(x: number, container: string, dragItem: Column, direction: string): void {
+    public onDragEnter(container: string, draggingParams: DraggingEvent): void {
+        this.columnController.setColumnPinned(draggingParams.dragItem, container);
+        this.columnController.setColumnVisible(draggingParams.dragItem, true);
+    }
+
+    public onDragLeave(container: string, draggingParams: DraggingEvent): void {
+        this.columnController.setColumnVisible(draggingParams.dragItem, false);
+    }
+
+    public onDragging(container: string, draggingParams: DraggingEvent): void {
 
         // if moving up or down (ie not left or right) then do nothing
-        if (!direction) {
+        if (!draggingParams.direction) {
             return;
         }
 
@@ -35,22 +45,22 @@ export class MoveColumnController2 {
         var allColumns = this.columnController.getAllColumns();
 
         var newIndex: number;
-        if (direction==DragAndDropService2.DIRECTION_LEFT) {
-            newIndex = this.getNewIndexForColMovingLeft(columns, allColumns, dragItem, x);
+        if (draggingParams.direction==DragAndDropService2.DIRECTION_LEFT) {
+            newIndex = this.getNewIndexForColMovingLeft(columns, allColumns, draggingParams.dragItem, draggingParams.x);
         } else {
-            newIndex = this.getNewIndexForColMovingRight(columns, allColumns, dragItem, x);
+            newIndex = this.getNewIndexForColMovingRight(columns, allColumns, draggingParams.dragItem, draggingParams.x);
         }
 
         var oldColumn = columns[newIndex];
 
         // if col already at required location, do nothing
-        if (oldColumn===dragItem) {
+        if (oldColumn===draggingParams.dragItem) {
             return;
         }
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        var columnsToMove = this.getColumnsAndOrphans(dragItem);
+        var columnsToMove = this.getColumnsAndOrphans(draggingParams.dragItem);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
 
 /*

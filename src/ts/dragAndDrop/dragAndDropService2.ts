@@ -8,22 +8,35 @@ import HeaderTemplateLoader from "../headerRendering/headerTemplateLoader";
 import _ from '../utils';
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
+import GridPanel from "../gridPanel/gridPanel";
 
 export interface DragSource {
     eElement: HTMLElement,
     dragItem: Column,
-    dragSource: any
+    dragSourceDropTarget: DropTarget
 }
 
 export interface DropTarget {
     eElement: HTMLElement,
-    onDragCallback: Function
+    onDragEnter?: (params: DraggingEvent)=>void,
+    onDragLeave?: (params: DraggingEvent)=>void,
+    onDragging?: (params: DraggingEvent)=>void
+}
+
+export interface DraggingEvent {
+    event: MouseEvent,
+    x: number,
+    y: number,
+    direction: string,
+    dragItem: Column,
+    dragSource: DragSource
 }
 
 @Bean('dragAndDropService2')
 export class DragAndDropService2 {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     public static DIRECTION_LEFT = 'left';
     public static DIRECTION_RIGHT = 'right';
@@ -33,7 +46,7 @@ export class DragAndDropService2 {
     private dragging = false;
     private dragItem: Column;
 
-    private dragSource: any;
+    private dragSource: DragSource;
     private eventXLastTime: number;
 
     private onMouseUpListener = this.onMouseUp.bind(this);
@@ -43,9 +56,13 @@ export class DragAndDropService2 {
     private eBody: HTMLElement;
 
     private dropTargets: DropTarget[] = [];
+    private lastDropTarget: DropTarget;
+
+    private addMovingCssToGrid: boolean;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
+        this.addMovingCssToGrid = !this.gridOptionsWrapper.isSuppressMovingCss();
         this.eBody = <HTMLElement> document.querySelector('body');
         if (!this.eBody) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
@@ -64,12 +81,32 @@ export class DragAndDropService2 {
         this.dropTargets.push(dropTarget);
     }
 
-    public informDropTarget(dropTarget: DropTarget, event: MouseEvent): void {
-        //localise x and y to the target component
-        var rect = dropTarget.eElement.getBoundingClientRect();
-        var x = event.x - rect.left;
-        var y = event.y - rect.top;
+    //public informDropTarget(dropTarget: DropTarget, event: MouseEvent): void {
+    //    //localise x and y to the target component
+    //    var rect = dropTarget.eElement.getBoundingClientRect();
+    //    var x = event.x - rect.left;
+    //    var y = event.y - rect.top;
+    //
+    //    var direction: string;
+    //    if (this.eventXLastTime > event.x) {
+    //        direction = DragAndDropService2.DIRECTION_LEFT;
+    //    } else if (this.eventXLastTime < event.x) {
+    //        direction = DragAndDropService2.DIRECTION_RIGHT;
+    //    } else {
+    //        direction = null;
+    //    }
+    //
+    //    dropTarget.onDragging({
+    //        event: event,
+    //        x: x,
+    //        y: y,
+    //        direction: direction,
+    //        dragItem: this.dragItem,
+    //        dragSource: this.dragSource
+    //    });
+    //}
 
+    public workOutDirection(event: MouseEvent): string {
         var direction: string;
         if (this.eventXLastTime > event.x) {
             direction = DragAndDropService2.DIRECTION_LEFT;
@@ -79,16 +116,29 @@ export class DragAndDropService2 {
             direction = null;
         }
 
-        dropTarget.onDragCallback({
+        this.eventXLastTime = event.x;
+
+        return direction;
+    }
+
+    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string): DraggingEvent {
+
+        // localise x and y to the target component
+
+        var rect = dropTarget.eElement.getBoundingClientRect();
+        var x = event.x - rect.left;
+        var y = event.y - rect.top;
+
+        var dropTargetEvent = {
             event: event,
             x: x,
             y: y,
             direction: direction,
             dragItem: this.dragItem,
             dragSource: this.dragSource
-        });
+        };
 
-        this.eventXLastTime = event.x;
+        return dropTargetEvent;
     }
 
     public startDrag(dragSource: DragSource, mouseEvent: MouseEvent): void {
@@ -99,6 +149,12 @@ export class DragAndDropService2 {
         this.dragItem = dragSource.dragItem;
         this.dragSource = dragSource;
         document.addEventListener('mouseup', this.onMouseUpListener);
+
+        if (this.addMovingCssToGrid) {
+            this.gridPanel.setMovingCss(true);
+        }
+
+        this.lastDropTarget = dragSource.dragSourceDropTarget;
 
         this.createGhost(dragSource.dragItem);
     }
@@ -113,9 +169,23 @@ export class DragAndDropService2 {
             return horizontalFit && verticalFit;
         });
 
-        if (dropTarget) {
-            this.informDropTarget(dropTarget, event);
+        var direction = this.workOutDirection(event);
+
+        if (dropTarget!==this.lastDropTarget) {
+            if (this.lastDropTarget) {
+                var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, event, direction);
+                this.lastDropTarget.onDragLeave(dragLeaveEvent);
+            }
+            if (dropTarget) {
+                var dragEnterEvent = this.createDropTargetEvent(dropTarget, event, direction);
+                dropTarget.onDragEnter(dragEnterEvent);
+            }
+            this.lastDropTarget = dropTarget;
+        } else if (dropTarget) {
+            var draggingEvent = this.createDropTargetEvent(dropTarget, event, direction);
+            dropTarget.onDragging(draggingEvent);
         }
+
     }
 
     private positionGhost(event: MouseEvent): void {
@@ -184,6 +254,9 @@ export class DragAndDropService2 {
         this.dragItem.setMoving(false);
         this.dragging = false;
         this.dragItem = null;
+        if (this.addMovingCssToGrid) {
+            this.gridPanel.setMovingCss(false);
+        }
         this.removeGhost();
         document.removeEventListener('mouseup', this.onMouseUpListener);
     }

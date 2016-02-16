@@ -18,6 +18,8 @@ import {Context} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {DropTarget} from "../dragAndDrop/dragAndDropService2";
+import {DragSource} from "../dragAndDrop/dragAndDropService2";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
@@ -48,18 +50,18 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private startWidth: number;
     private parentScope: any;
-    private dragSource: any;
+    private dragSourceDropTarget: any;
 
     // for better structured code, anything we need to do when this column gets destroyed,
     // we put a function in here. otherwise we would have a big destroy function with lots
     // of 'if / else' mapping to things that got created.
     private destroyFunctions: (()=>void)[] = [];
 
-    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSource: any) {
+    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
         this.column = column;
         this.parentScope = parentScope;
         this.eRoot = eRoot;
-        this.dragSource = dragSource;
+        this.dragSourceDropTarget = dragSourceDropTarget;
     }
 
     public getGui(): HTMLElement {
@@ -247,10 +249,12 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         }
 
         if (this.eHeaderCellLabel) {
-            //var moveColumnController = new MoveColumnController(this.column, this.eHeaderCellLabel, this.eRoot, this.eHeaderCell);
-            //this.context.wireBean(moveColumnController);
-
-            this.dragAndDropService2.addDragSource( {eElement: this.eHeaderCellLabel, dragItem: this.column, dragSource: this.dragSource} );
+            var dragSource: DragSource = {
+                eElement: this.eHeaderCellLabel,
+                dragItem: this.column,
+                dragSourceDropTarget: this.dragSourceDropTarget
+            };
+            this.dragAndDropService2.addDragSource(dragSource);
         }
     }
 
