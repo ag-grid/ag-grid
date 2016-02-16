@@ -111,10 +111,10 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
             eMenu.style.opacity = '0';
-            this.eHeaderCell.addEventListener('mouseenter', function () {
+            this.eHeaderCell.addEventListener('mouseover', function () {
                 eMenu.style.opacity = '1';
             });
-            this.eHeaderCell.addEventListener('mouseleave', function () {
+            this.eHeaderCell.addEventListener('mouseout', function () {
                 eMenu.style.opacity = '0';
             });
         }
