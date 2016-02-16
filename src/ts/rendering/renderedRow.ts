@@ -10,7 +10,6 @@ import SelectionRendererFactory from "../selectionRendererFactory";
 import TemplateService from "../templateService";
 import ValueService from "../valueService";
 import Column from "../entities/column";
-import VHtmlElement from "../virtualDom/vHtmlElement";
 import {Events} from "../events";
 import {GridCore} from "../gridCore";
 import EventService from "../eventService";
@@ -23,9 +22,9 @@ export default class RenderedRow {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 
-    public vPinnedLeftRow: VHtmlElement;
-    public vPinnedRightRow: VHtmlElement;
-    public vBodyRow: VHtmlElement;
+    public ePinnedLeftRow: HTMLElement;
+    public ePinnedRightRow: HTMLElement;
+    public eBodyRow: HTMLElement;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
@@ -82,9 +81,9 @@ export default class RenderedRow {
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
         var rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
 
-        this.vBodyRow = this.createRowContainer();
-        this.vPinnedLeftRow = this.createRowContainer();
-        this.vPinnedRightRow = this.createRowContainer();
+        this.eBodyRow = this.createRowContainer();
+        this.ePinnedLeftRow = this.createRowContainer();
+        this.ePinnedRightRow = this.createRowContainer();
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
@@ -102,49 +101,45 @@ export default class RenderedRow {
             rowStr = 'ft-' + rowStr;
         }
 
-        this.vBodyRow.setAttribute('row', rowStr);
-        this.vPinnedLeftRow.setAttribute('row', rowStr);
-        this.vPinnedRightRow.setAttribute('row', rowStr);
+        this.eBodyRow.setAttribute('row', rowStr);
+        this.ePinnedLeftRow.setAttribute('row', rowStr);
+        this.ePinnedRightRow.setAttribute('row', rowStr);
 
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
             var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
-                this.vBodyRow.setAttribute('row-id', businessKey);
-                this.vPinnedLeftRow.setAttribute('row-id', businessKey);
-                this.vPinnedRightRow.setAttribute('row-id', businessKey);
+                this.eBodyRow.setAttribute('row-id', businessKey);
+                this.ePinnedLeftRow.setAttribute('row-id', businessKey);
+                this.ePinnedRightRow.setAttribute('row-id', businessKey);
             }
         }
 
         // if showing scrolls, position on the container
         if (!this.gridOptionsWrapper.isForPrint()) {
             var topPx = this.rowNode.rowTop + "px";
-            this.vBodyRow.style.top = topPx;
-            this.vPinnedLeftRow.style.top = topPx;
-            this.vPinnedRightRow.style.top = topPx;
+            this.eBodyRow.style.top = topPx;
+            this.ePinnedLeftRow.style.top = topPx;
+            this.ePinnedRightRow.style.top = topPx;
         }
         var heightPx = this.rowNode.rowHeight + 'px';
-        this.vBodyRow.style.height = heightPx;
-        this.vPinnedLeftRow.style.height = heightPx;
-        this.vPinnedRightRow.style.height = heightPx;
+        this.eBodyRow.style.height = heightPx;
+        this.ePinnedLeftRow.style.height = heightPx;
+        this.ePinnedRightRow.style.height = heightPx;
 
         // if group item, insert the first row
         if (rowIsHeaderThatSpans) {
             this.createGroupRow();
         }
 
-        this.bindVirtualElement(this.vBodyRow);
-        this.bindVirtualElement(this.vPinnedLeftRow);
-        this.bindVirtualElement(this.vPinnedRightRow);
-
         if (this.scope) {
-            this.$compile(this.vBodyRow.getElement())(this.scope);
-            this.$compile(this.vPinnedLeftRow.getElement())(this.scope);
-            this.$compile(this.vPinnedRightRow.getElement())(this.scope);
+            this.$compile(this.eBodyRow)(this.scope);
+            this.$compile(this.ePinnedLeftRow)(this.scope);
+            this.$compile(this.ePinnedRightRow)(this.scope);
         }
 
-        this.eBodyContainer.appendChild(this.vBodyRow.getElement());
-        this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
-        this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
+        this.eBodyContainer.appendChild(this.eBodyRow);
+        this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
+        this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
 
         var rowSelectedListener = this.onRowSelected.bind(this);
         this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
@@ -164,19 +159,13 @@ export default class RenderedRow {
 
     public onRowSelected(): void {
 
-        var vRows: VHtmlElement[] = [];
-        if (this.vPinnedLeftRow) { vRows.push(this.vPinnedLeftRow); }
-        if (this.vPinnedRightRow) { vRows.push(this.vPinnedRightRow); }
-        if (this.vBodyRow) { vRows.push(this.vBodyRow); }
+        var vRows: HTMLElement[] = [];
+        if (this.ePinnedLeftRow) { vRows.push(this.ePinnedLeftRow); }
+        if (this.ePinnedRightRow) { vRows.push(this.ePinnedRightRow); }
+        if (this.eBodyRow) { vRows.push(this.eBodyRow); }
 
         var selected = this.rowNode.isSelected();
-        vRows.forEach( (vRow) => {
-            var element = vRow.getElement();
-            if (!element) {
-                throw 'element is not bound';
-            }
-            _.addOrRemoveCssClass(element, 'ag-row-selected', selected);
-        });
+        vRows.forEach( (vRow) => _.addOrRemoveCssClass(vRow, 'ag-row-selected', selected) );
     }
 
     public softRefresh(): void {
@@ -194,7 +183,7 @@ export default class RenderedRow {
     public getCellForCol(column: Column): HTMLElement {
         var renderedCell = this.renderedCells[column.getColId()];
         if (renderedCell) {
-            return renderedCell.getVGridCell().getElement();
+            return renderedCell.getVGridCell();
         } else {
             return null;
         }
@@ -207,12 +196,12 @@ export default class RenderedRow {
         this.destroyScope();
 
         if (this.pinningLeft) {
-            this.ePinnedLeftContainer.removeChild(this.vPinnedLeftRow.getElement());
+            this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
         }
         if (this.pinningRight) {
-            this.ePinnedRightContainer.removeChild(this.vPinnedRightRow.getElement());
+            this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
         }
-        this.eBodyContainer.removeChild(this.vBodyRow.getElement());
+        this.eBodyContainer.removeChild(this.eBodyRow);
 
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
             renderedCell.destroy();
@@ -257,37 +246,31 @@ export default class RenderedRow {
             var vGridCell = renderedCell.getVGridCell();
 
             if (column.getPinned() === Column.PINNED_LEFT) {
-                this.vPinnedLeftRow.appendChild(vGridCell);
+                this.ePinnedLeftRow.appendChild(vGridCell);
             } else if (column.getPinned()=== Column.PINNED_RIGHT) {
-                this.vPinnedRightRow.appendChild(vGridCell);
+                this.ePinnedRightRow.appendChild(vGridCell);
             } else {
-                this.vBodyRow.appendChild(vGridCell);
+                this.eBodyRow.appendChild(vGridCell);
             }
 
             this.renderedCells[column.getColId()] = renderedCell;
         }
     }
 
-    private bindVirtualElement(vElement: VHtmlElement): void {
-        var html = vElement.toHtmlString();
-        var element: Element = <Element> _.loadTemplate(html);
-        vElement.elementAttached(element);
-    }
-
     private createGroupRow() {
         var eGroupRow = this.createGroupSpanningEntireRowCell(false);
 
         if (this.pinningLeft) {
-            this.vPinnedLeftRow.appendChild(eGroupRow);
+            this.ePinnedLeftRow.appendChild(eGroupRow);
             var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-            this.vBodyRow.appendChild(eGroupRowPadding);
+            this.eBodyRow.appendChild(eGroupRowPadding);
         } else {
-            this.vBodyRow.appendChild(eGroupRow);
+            this.eBodyRow.appendChild(eGroupRow);
         }
 
         if (this.pinningRight) {
             var ePinnedRightPadding = this.createGroupSpanningEntireRowCell(true);
-            this.vPinnedRightRow.appendChild(ePinnedRightPadding);
+            this.ePinnedRightRow.appendChild(ePinnedRightPadding);
         }
     }
 
@@ -366,15 +349,11 @@ export default class RenderedRow {
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (rowStyle) {
             if (typeof rowStyle === 'function') {
-                console.log('ag-Grid: rowStyle should be a string or an array, not be a function, use getRowStyle() instead');
+                console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             } else {
-                this.vBodyRow.addStyles(rowStyle);
-                if (this.pinningLeft) {
-                    this.vPinnedLeftRow.addStyles(rowStyle);
-                }
-                if (this.pinningRight) {
-                    this.vPinnedRightRow.addStyles(rowStyle);
-                }
+                _.addStylesToElement(this.eBodyRow, rowStyle);
+                _.addStylesToElement(this.pinningLeft, rowStyle);
+                _.addStylesToElement(this.ePinnedRightRow, rowStyle);
             }
         }
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
@@ -387,13 +366,9 @@ export default class RenderedRow {
                 $scope: this.scope
             };
             var cssToUseFromFunc = rowStyleFunc(params);
-            this.vBodyRow.addStyles(cssToUseFromFunc);
-            if (this.pinningLeft) {
-                this.vPinnedLeftRow.addStyles(cssToUseFromFunc);
-            }
-            if (this.pinningRight) {
-                this.vPinnedRightRow.addStyles(cssToUseFromFunc);
-            }
+            _.addStylesToElement(this.eBodyRow, cssToUseFromFunc);
+            _.addStylesToElement(this.pinningLeft, cssToUseFromFunc);
+            _.addStylesToElement(this.ePinnedRightRow, cssToUseFromFunc);
         }
     }
 
@@ -416,8 +391,8 @@ export default class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer(): VHtmlElement {
-        var vRow = new VHtmlElement('div');
+    private createRowContainer(): HTMLElement {
+        var vRow = document.createElement('div');
         vRow.addEventListener("click", this.onRowClicked.bind(this));
         vRow.addEventListener("dblclick", (event: any) => {
             var agEvent = this.createEvent(event, this);
@@ -564,12 +539,10 @@ export default class RenderedRow {
             }
         }
 
-        this.vBodyRow.addClasses(classes);
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.addClasses(classes);
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.addClasses(classes);
-        }
+        classes.forEach( (classStr: string) => {
+            _.addCssClass(this.eBodyRow, classStr);
+            _.addCssClass(this.ePinnedLeftRow, classStr);
+            _.addCssClass(this.ePinnedRightRow, classStr);
+        });
     }
 }

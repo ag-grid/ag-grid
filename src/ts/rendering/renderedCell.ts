@@ -1,5 +1,4 @@
 import _ from '../utils';
-import VHtmlElement from "../virtualDom/vHtmlElement";
 import Column from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import GridOptionsWrapper from "../gridOptionsWrapper";
@@ -12,7 +11,6 @@ import ValueService from "../valueService";
 import EventService from "../eventService";
 import Constants from "../constants";
 import {Events} from "../events";
-import VWrapperElement from "../virtualDom/vWrapperElement";
 import RenderedRow from "./renderedRow";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
@@ -28,10 +26,10 @@ export default class RenderedCell {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
 
-    private vGridCell: VHtmlElement; // the outer cell
-    private vSpanWithValue: VHtmlElement; // inner cell
-    private vCellWrapper: VHtmlElement;
-    private vParentOfValue: VHtmlElement;
+    private eGridCell: HTMLElement; // the outer cell
+    private eSpanWithValue: HTMLElement; // inner cell
+    private eCellWrapper: HTMLElement;
+    private eParentOfValue: HTMLElement;
 
     private column: Column;
     private data: any;
@@ -119,8 +117,8 @@ export default class RenderedCell {
         return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
     }
 
-    public getVGridCell(): VHtmlElement {
-        return this.vGridCell;
+    public getVGridCell(): HTMLElement {
+        return this.eGridCell;
     }
 
     private getDataForRow() {
@@ -144,7 +142,7 @@ export default class RenderedCell {
 
     private setLeftOnCell(): void {
         var leftChangedListener = () => {
-            this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
+            this.eGridCell.style.left = this.column.getLeft() + 'px';
         };
 
         this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
@@ -157,7 +155,7 @@ export default class RenderedCell {
 
     private setWidthOnCell(): void {
         var widthChangedListener = () => {
-            this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
+            this.eGridCell.style.width = this.column.getActualWidth() + "px";
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
@@ -169,14 +167,14 @@ export default class RenderedCell {
     }
 
     private setupComponents() {
-        this.vGridCell = new VHtmlElement("div");
+        this.eGridCell = document.createElement('div');
 
         this.setLeftOnCell();
         this.setWidthOnCell();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
-            this.vGridCell.setAttribute("tabindex", "-1");
+            this.eGridCell.setAttribute("tabindex", "-1");
         }
 
         // these are the grid styles, don't change between soft refreshes
@@ -200,7 +198,7 @@ export default class RenderedCell {
     public startEditing(key?: number) {
         var that = this;
         this.editingCell = true;
-        _.removeAllChildren(this.vGridCell.getElement());
+        _.removeAllChildren(this.eGridCell);
         var eInput = document.createElement('input');
         eInput.type = 'text';
         _.addCssClass(eInput, 'ag-cell-edit-input');
@@ -212,7 +210,7 @@ export default class RenderedCell {
         }
 
         eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-        this.vGridCell.appendChild(eInput);
+        this.eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();
 
@@ -255,7 +253,7 @@ export default class RenderedCell {
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
-        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
+        this.rowRenderer.focusCell(this.eGridCell, this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
     }
 
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
@@ -295,9 +293,9 @@ export default class RenderedCell {
             this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
         }
 
-        _.removeAllChildren(this.vGridCell.getElement());
+        _.removeAllChildren(this.eGridCell);
         if (this.checkboxSelection) {
-            this.vGridCell.appendChild(this.vCellWrapper.getElement());
+            this.eGridCell.appendChild(this.eCellWrapper);
         }
         this.refreshCell();
     }
@@ -327,7 +325,7 @@ export default class RenderedCell {
     private addCellDoubleClickedHandler() {
         var that = this;
         var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('dblclick', function (event: any) {
+        this.eGridCell.addEventListener('dblclick', function (event: any) {
             // always dispatch event to eventService
             var agEvent: any = that.createEvent(event, this);
             that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
@@ -346,7 +344,7 @@ export default class RenderedCell {
     private addCellContextMenuHandler() {
         var that = this;
         var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('contextmenu', function (event: any) {
+        this.eGridCell.addEventListener('contextmenu', function (event: any) {
             var agEvent: any = that.createEvent(event, this);
             that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
 
@@ -385,7 +383,7 @@ export default class RenderedCell {
     private addCellClickedHandler() {
         var colDef = this.column.getColDef();
         var that = this;
-        this.vGridCell.addEventListener("click", function (event: any) {
+        this.eGridCell.addEventListener("click", function (event: any) {
             // we pass false to focusCell, as we don't want the cell to focus
             // also get the browser focus. if we did, then the cellRenderer could
             // have a text field in it, for example, and as the user clicks on the
@@ -438,7 +436,7 @@ export default class RenderedCell {
             }
 
             if (cssToUse) {
-                this.vGridCell.addStyles(cssToUse);
+                _.addStylesToElement(this.eGridCell, cssToUse);
             }
         }
     }
@@ -465,10 +463,10 @@ export default class RenderedCell {
             }
 
             if (typeof classToUse === 'string') {
-                this.vGridCell.addClass(classToUse);
+                _.addCssClass(this.eGridCell, classToUse);
             } else if (Array.isArray(classToUse)) {
                 classToUse.forEach( (cssClassItem: string)=> {
-                    this.vGridCell.addClass(cssClassItem);
+                    _.addCssClass(this.eGridCell, cssClassItem);
                 });
             }
         }
@@ -500,9 +498,9 @@ export default class RenderedCell {
                     resultOfRule = rule(params);
                 }
                 if (resultOfRule) {
-                    this.vGridCell.addClass(className);
+                    _.addCssClass(this.eGridCell, className);
                 } else {
-                    this.vGridCell.removeClass(className);
+                    _.removeCssClass(this.eGridCell, className);
                 }
             }
         }
@@ -511,14 +509,14 @@ export default class RenderedCell {
     // rename this to 'add key event listener
     private addCellNavigationHandler() {
         var that = this;
-        this.vGridCell.addEventListener('keydown', function (event: any) {
+        this.eGridCell.addEventListener('keydown', function (event: any) {
             if (that.editingCell) {
                 return;
             }
             // only interested on key presses that are directly on this element, not any children elements. this
             // stops navigation if the user is in, for example, a text field inside the cell, and user hits
             // on of the keys we are looking for.
-            if (event.target !== that.vGridCell.getElement()) {
+            if (event.target !== that.eGridCell) {
                 return;
             }
 
@@ -561,24 +559,24 @@ export default class RenderedCell {
 
     private createParentOfValue() {
         if (this.checkboxSelection) {
-            this.vCellWrapper = new VHtmlElement('span');
-            this.vCellWrapper.addClass('ag-cell-wrapper');
-            this.vGridCell.appendChild(this.vCellWrapper);
+            this.eCellWrapper = document.createElement('span');
+            _.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
+            this.eGridCell.appendChild(this.eCellWrapper);
 
             //this.createSelectionCheckbox();
             this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
-            this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
+            this.eCellWrapper.appendChild(this.eCheckbox);
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.vSpanWithValue = new VHtmlElement('span');
-            this.vSpanWithValue.addClass('ag-cell-value');
+            this.eSpanWithValue = document.createElement('span');
+            _.addCssClass(this.eSpanWithValue, 'ag-cell-value');
 
-            this.vCellWrapper.appendChild(this.vSpanWithValue);
+            this.eCellWrapper.appendChild(this.eSpanWithValue);
 
-            this.vParentOfValue = this.vSpanWithValue;
+            this.eParentOfValue = this.eSpanWithValue;
         } else {
-            this.vGridCell.addClass('ag-cell-value');
-            this.vParentOfValue = this.vGridCell;
+            _.addCssClass(this.eGridCell, 'ag-cell-value');
+            this.eParentOfValue = this.eGridCell;
         }
     }
 
@@ -588,14 +586,14 @@ export default class RenderedCell {
 
     public refreshCell() {
 
-        _.removeAllChildren(this.vParentOfValue.getElement());
+        _.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
 
         this.populateCell();
 
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.vGridCell.getElement())(this.scope);
+            this.$compile(this.eGridCell)(this.scope);
         }
     }
 
@@ -603,11 +601,11 @@ export default class RenderedCell {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
         if (colDef.template) {
-            this.vParentOfValue.setInnerHtml(colDef.template);
+            this.eParentOfValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
             var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
-                this.vParentOfValue.setInnerHtml(template);
+                this.eParentOfValue.innerHTML = template;
             }
         } else if (colDef.floatingCellRenderer && this.node.floating) {
             this.useCellRenderer(colDef.floatingCellRenderer);
@@ -616,7 +614,7 @@ export default class RenderedCell {
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (this.value !== undefined && this.value !== null && this.value !== '') {
-                this.vParentOfValue.setInnerHtml(this.value.toString());
+                this.eParentOfValue.innerHTML = this.value.toString();
             }
         }
     }
@@ -636,8 +634,8 @@ export default class RenderedCell {
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
-            eGridCell: this.vGridCell,
-            eParentOfValue: this.vParentOfValue,
+            eGridCell: this.eGridCell,
+            eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
         // start duplicated code
@@ -657,27 +655,27 @@ export default class RenderedCell {
         // end duplicated code
         if (_.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
-            this.vParentOfValue.appendChild(resultFromRenderer);
+            this.eParentOfValue.appendChild(resultFromRenderer);
         } else {
             // otherwise assume it was html, so just insert
-            this.vParentOfValue.setInnerHtml(resultFromRenderer);
+            this.eParentOfValue.innerHTML = resultFromRenderer;
         }
     }
 
     private addClasses() {
-        this.vGridCell.addClass('ag-cell');
-        this.vGridCell.addClass('ag-cell-no-focus');
-        this.vGridCell.setAttribute("colId", this.column.getColId());
+        _.addCssClass(this.eGridCell, 'ag-cell');
+        _.addCssClass(this.eGridCell, 'ag-cell-no-focus');
+        this.eGridCell.setAttribute("colId", this.column.getColId());
 
         if (this.node.group && this.node.footer) {
-            this.vGridCell.addClass('ag-footer-cell');
+            _.addCssClass(this.eGridCell, 'ag-footer-cell');
         }
         if (this.node.group && !this.node.footer) {
-            this.vGridCell.addClass('ag-group-cell');
+            _.addCssClass(this.eGridCell, 'ag-group-cell');
         }
 
         if (this.firstRightPinnedColumn) {
-            this.vGridCell.addClass('ag-cell-first-right-pinned');
+            _.addCssClass(this.eGridCell, 'ag-cell-first-right-pinned');
         }
     }
 
