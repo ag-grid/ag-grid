@@ -26,6 +26,8 @@ include 'documentation_header.php';
     <li>api.addVirtualRowListener is gone. Instead for row selection/deselection listening, use node.addEventListener(),
         and for virtual row removed, use api.addRenderedRowListener()</li>
 
+    <li>New API methods: getFirstRenderedRow() getFirstVirtualRenderedRow()</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

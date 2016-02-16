@@ -87,16 +87,27 @@ export default class Utils {
         }
     }
 
-    static find(collection: any, predicate: any, value: any) {
+    static find<T>(collection: T[], predicate: string |((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
+        var firstMatchingItem: T;
         for (var i = 0; i < collection.length; i++) {
-            if (collection[i][predicate] === value) {
-                return collection[i];
+            var item: T = collection[i];
+            if (typeof predicate === 'string') {
+                if ((<any>item)[predicate] === value) {
+                    firstMatchingItem = item;
+                    break;
+                }
+            } else {
+                var callback = <(item: T) => void> predicate;
+                if (callback(item)) {
+                    firstMatchingItem = item;
+                    break;
+                }
             }
         }
-        return null;
+        return firstMatchingItem;
     }
 
     static toStrings<T>(array: T[]): string[] {
@@ -411,5 +422,38 @@ export default class Utils {
         return this.isSafari;
     }
 
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    static getBrowserWidth(): number {
+        if (window.innerHeight) {
+            return window.innerWidth;
+        }
+
+        if (document.documentElement && document.documentElement.clientWidth) {
+            return document.documentElement.clientWidth;
+        }
+
+        if (document.body) {
+            return document.body.clientWidth;
+        }
+
+        return -1;
+    }
+
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    static getBrowserHeight(): number {
+        if (window.innerHeight) {
+            return window.innerHeight;
+        }
+
+        if (document.documentElement && document.documentElement.clientHeight) {
+            return document.documentElement.clientHeight;
+        }
+
+        if (document.body) {
+            return document.body.clientHeight;
+        }
+
+        return -1;
+    }
 }
 

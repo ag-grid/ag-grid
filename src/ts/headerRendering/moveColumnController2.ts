@@ -143,10 +143,6 @@ export class MoveColumnController2 {
 
     private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
 
-        //if (x < dragItem.getActualWidth()) {
-        //    return 0;
-        //}
-
         var usedX = dragItem.getActualWidth();
         var leftColumn: Column = null;
 

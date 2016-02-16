@@ -47,6 +47,14 @@ export class GridApi {
         return this.masterSlaveService;
     }
 
+    public getFirstRenderedRow(): number {
+        return this.rowRenderer.getFirstVirtualRenderedRow();
+    }
+
+    public getLastRenderedRow(): number {
+        return this.rowRenderer.getLastVirtualRenderedRow();
+    }
+
     public getDataAsCsv(params?: CsvExportParams): string {
         return this.csvCreator.getDataAsCsv(params);
     }

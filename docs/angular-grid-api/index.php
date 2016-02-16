@@ -350,6 +350,10 @@ include '../documentation_header.php';
             are using Web Components or native Javascript, you do need to call this, to avoid a memory
             leak in your application.</td>
         </tr>
+        <tr>
+            <th>getFirstRenderedRow() getFirstVirtualRenderedRow()</th>
+            <td>Gets the index of the first and last rendered rows.</td>
+        </tr>
     </table>
 
 </div>

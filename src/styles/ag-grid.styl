@@ -82,6 +82,18 @@ ag-grid-ng2
     height: 100%
     //float: left // safari doesn't align if we don't float
 
+// the ghost header cell doesn't live inside the grid, it's parent is the body element,
+// so we cannot style using standard themes. hence we break the rules, and style it here
+.ag-header-cell-ghost
+    position: absolute
+    background: #e5e5e5
+    border: 1px solid black
+    cursor: move;
+    user-select: none;
+    box-sizing border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
 .ag-header-group-cell
     height: 100%
     display: inline-block
