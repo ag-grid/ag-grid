@@ -1,175 +1,205 @@
-import {DragService} from "./dragService";
-import HeaderRenderer from "./headerRenderer";
-import {ColumnController} from "../columnController/columnController";
-import _ from '../utils';
-import Column from "../entities/column";
-import GridPanel from "../gridPanel/gridPanel";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Bean} from "../context/context";
 import {Autowired} from "../context/context";
+import {LoggerFactory} from "../logger";
+import {Logger} from "../logger";
+import {ColumnController} from "../columnController/columnController";
+import Column from "../entities/column";
+import _ from '../utils';
+import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
+import GridPanel from "../gridPanel/gridPanel";
 
 export class MoveColumnController {
 
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-
-    private column: Column;
-    private lastDelta = 0;
-    private clickPositionOnHeader: number;
-    private startLeftPosition: number;
-    private scrollSinceStart: number;
-
-    private hoveringOverPixelLastTime: number;
-
-    private eFloatingCloneCell: HTMLElement;
-    private eHeaderCell: HTMLElement;
-
-    private floatPadding: number;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
     private movingIntervalId: number;
     private intervalCount: number;
 
-    private centreWidth: number;
-    private addMovingCssToGrid: boolean;
-    private eDraggableElement: HTMLElement;
-    private eRoot: HTMLElement;
+    private logger: Logger;
+    private pinned: string;
+    private centerContainer: boolean;
 
-    constructor(column: Column, eDraggableElement: HTMLElement, eRoot: HTMLElement, eHeaderCell: HTMLElement) {
-        this.eDraggableElement = eDraggableElement;
-        this.eHeaderCell = eHeaderCell;
-        this.column = column;
-        this.eRoot = eRoot;
+    private lastDraggingEvent: DraggingEvent;
+
+    public constructor(pinned: string) {
+        this.pinned = pinned;
+        this.centerContainer = !_.exists(pinned);
     }
 
     public agPostWire(): void {
-
-        this.centreWidth = this.gridPanel.getCenterWidth();
-        this.addMovingCssToGrid = !this.gridOptionsWrapper.isSuppressMovingCss();
-
-        this.dragService.addDragHandling({
-            eDraggableElement: this.eDraggableElement,
-            eBody: this.eRoot,
-            cursor: 'move',
-            // we only want to start dragging if the user moves at least 4px, otherwise we will loose
-            // the ability for the user to click on the cell (eg for sorting)
-            startAfterPixels: 4,
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDragging.bind(this)
-        });
+        this.logger = this.loggerFactory.create('MoveColumnController');
     }
 
-    private onDragStart(event: MouseEvent): void {
-        // the overlay spans all three (left, right, center), so we need to
-        // pad the floating clone so it appears over the right container
-        if (this.column.getPinned()===Column.PINNED_LEFT) {
-            this.floatPadding = 0;
-        } else if (this.column.getPinned()===Column.PINNED_RIGHT) {
-            this.floatPadding = this.headerRenderer.getRightPinnedStartPixel();
+    public onDragEnter(draggingEvent: DraggingEvent): void {
+        // we do dummy drag, so make sure column appears in the right location when first placed
+        this.columnController.setColumnVisible(draggingEvent.dragItem, true);
+        this.columnController.setColumnPinned(draggingEvent.dragItem, this.pinned);
+        this.onDragging(draggingEvent);
+    }
+
+    public onDragLeave(draggingEvent: DraggingEvent): void {
+        this.columnController.setColumnVisible(draggingEvent.dragItem, false);
+        this.ensureIntervalCleared();
+    }
+
+    public onDragStop(): void {
+        this.ensureIntervalCleared();
+    }
+
+    private adjustXForScroll(draggingEvent: DraggingEvent): number {
+        if (this.centerContainer) {
+            return draggingEvent.x + this.gridPanel.getHorizontalScrollPosition();
         } else {
-            this.floatPadding = this.columnController.getPinnedLeftContainerWidth();
-            this.floatPadding -= this.gridPanel.getHorizontalScrollPosition();
+            return draggingEvent.x;
         }
 
-        // make clone of header cell for the 'floating ghost'
-        this.eFloatingCloneCell = <HTMLElement> this.eHeaderCell.cloneNode(true);
-        this.headerRenderer.addChildToOverlay(this.eFloatingCloneCell);
-        this.startLeftPosition = this.columnController.getPixelsBeforeConsideringPinned(this.column);
-        _.addCssClass(this.eFloatingCloneCell, 'ag-header-cell-moving-clone');
-        this.eFloatingCloneCell.style.position = 'absolute';
-        this.eFloatingCloneCell.style.top = 0 + 'px';
-        this.eFloatingCloneCell.style.left = this.floatPadding + this.startLeftPosition + 'px';
-
-        // showing menu while hovering looks ugly, so hide header
-        var cloneMenu = <HTMLElement> this.eFloatingCloneCell.querySelector('#agMenu');
-        if (cloneMenu) {
-            cloneMenu.style.display = 'none';
-        }
-
-        // see how many pixels to the edge of the column we are
-        var headerCellLeft = this.eHeaderCell.getBoundingClientRect().left;
-        this.clickPositionOnHeader = event.clientX - headerCellLeft;
-        this.column.setMoving(true);
-        if (this.addMovingCssToGrid) {
-            this.gridPanel.setMovingCss(true);
-        }
-
-        this.scrollSinceStart = 0;
-        this.hoveringOverPixelLastTime = this.startLeftPosition + this.clickPositionOnHeader + this.scrollSinceStart;
     }
 
-    private onDragging(delta: number, finished: boolean): void {
-        this.eFloatingCloneCell.style.left = this.floatPadding + (this.startLeftPosition + delta) + 'px';
-
-        // get current pixel position
-        var hoveringOverPixel = this.startLeftPosition + this.clickPositionOnHeader + delta + this.scrollSinceStart;
-        var dragMovingRight = hoveringOverPixel > this.hoveringOverPixelLastTime;
-        var dragMovingLeft = hoveringOverPixel < this.hoveringOverPixelLastTime;
-        this.hoveringOverPixelLastTime = hoveringOverPixel;
-
-        // the while loop keeps going until there are no more columns to move. this caters for the user
-        // moving the mouse very fast and we need to swap the column twice or more
-        var checkForAnotherColumn = true;
-        while (checkForAnotherColumn) {
-
-            var dragOverLeftColumn = this.column.getLeft() > hoveringOverPixel;
-            var dragOverRightColumn = (this.column.getLeft() + this.column.getActualWidth()) < hoveringOverPixel;
-
-            var wantToMoveLeft = dragOverLeftColumn && dragMovingLeft;
-            var wantToMoveRight = dragOverRightColumn && dragMovingRight;
-
-            checkForAnotherColumn = false;
-
-            var colToSwapWith: Column = null;
-
-            if (wantToMoveLeft) {
-                colToSwapWith = this.columnController.getDisplayedColBeforeForMoving(this.column);
-            }
-            if (wantToMoveRight) {
-                colToSwapWith = this.columnController.getDisplayedColAfterForMoving(this.column);
-            }
-
-            // if we are a closed group, we need to move all the columns, not just this one
-            if (colToSwapWith) {
-                var newIndex = this.columnController.getColumnIndex(colToSwapWith);
-
-                // we move one column, UNLESS the column is the only visible column
-                // of a group, in which case we move the whole group.
-                var columnsToMove = this.getColumnsAndOrphans(this.column);
-                this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
-
-                checkForAnotherColumn = true;
-            }
+    private workOutNewIndex(columns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
+        var allColumns = this.columnController.getAllColumns();
+        if (draggingEvent.direction === DragAndDropService2.DIRECTION_LEFT) {
+            return this.getNewIndexForColMovingLeft(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
+        } else {
+            return this.getNewIndexForColMovingRight(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         }
+    }
 
-        // we only look to scroll if the column is not pinned, as pinned columns are always visible
-        if (!this.column.isPinned()) {
+    private checkCenterForScrolling(xAdjustedForScroll: number): void {
+        if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
             var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
             var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
-            this.needToMoveLeft = hoveringOverPixel < (firstVisiblePixel + 50);
-            this.needToMoveRight = hoveringOverPixel > (lastVisiblePixel - 50);
+
+            this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
+            this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+
             if (this.needToMoveLeft || this.needToMoveRight) {
                 this.ensureIntervalStarted();
             } else {
                 this.ensureIntervalCleared();
             }
         }
+    }
 
-        if (finished) {
-            this.column.setMoving(false);
-            this.headerRenderer.removeChildFromOverlay(this.eFloatingCloneCell);
-            if (this.addMovingCssToGrid) {
-                this.gridPanel.setMovingCss(false);
-            }
-            this.ensureIntervalCleared();
+    public onDragging(draggingEvent: DraggingEvent): void {
+
+        this.lastDraggingEvent = draggingEvent;
+
+        // if moving up or down (ie not left or right) then do nothing
+        if (!draggingEvent.direction) {
+            return;
         }
 
-        this.lastDelta = delta;
+        var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
+        this.checkCenterForScrolling(xAdjustedForScroll);
+
+        // find out what the correct position is for this column
+        this.checkColIndexAndMove(draggingEvent, xAdjustedForScroll);
+    }
+
+    private checkColIndexAndMove(draggingEvent: DraggingEvent, xAdjustedForScroll: number): void {
+        var columns = this.columnController.getDisplayedColumns(this.pinned);
+
+        var newIndex = this.workOutNewIndex(columns, draggingEvent, xAdjustedForScroll);
+        var oldColumn = columns[newIndex];
+
+        // if col already at required location, do nothing
+        if (oldColumn === draggingEvent.dragItem) {
+            return;
+        }
+
+        // we move one column, UNLESS the column is the only visible column
+        // of a group, in which case we move the whole group.
+        var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragItem);
+        this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
+    }
+
+    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
+
+        var usedX = 0;
+        var leftColumn: Column = null;
+
+        for (var i = 0; i < displayedColumns.length; i++) {
+
+            var currentColumn = displayedColumns[i];
+            if (currentColumn === dragItem) { continue; }
+            usedX += currentColumn.getActualWidth();
+
+            if (usedX > x) {
+                break;
+            }
+
+            leftColumn = currentColumn;
+        }
+
+        var newIndex: number;
+        if (leftColumn) {
+            newIndex = allColumns.indexOf(leftColumn) + 1;
+            var oldIndex = allColumns.indexOf(dragItem);
+            if (oldIndex<newIndex) {
+                newIndex--;
+            }
+        } else {
+            newIndex = 0;
+        }
+
+        return newIndex;
+    }
+
+    private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
+
+        var usedX = dragItem.getActualWidth();
+        var leftColumn: Column = null;
+
+        for (var i = 0; i < displayedColumns.length; i++) {
+
+            if (usedX > x) {
+                break;
+            }
+
+            var currentColumn = displayedColumns[i];
+            if (currentColumn === dragItem) { continue; }
+            usedX += currentColumn.getActualWidth();
+
+            leftColumn = currentColumn;
+        }
+
+        var newIndex: number;
+        if (leftColumn) {
+            newIndex = allColumns.indexOf(leftColumn) + 1;
+            var oldIndex = allColumns.indexOf(dragItem);
+            if (oldIndex<newIndex) {
+                newIndex--;
+            }
+        } else {
+            newIndex = 0;
+        }
+
+        return newIndex;
+    }
+
+    private getColumnsAndOrphans(column: Column): Column[] {
+        // if this column was to move, how many children would be left without a parent
+        var pathToChild = this.columnController.getPathForColumn(column);
+
+        for (var i = pathToChild.length - 1; i>=0; i--) {
+            var columnGroup = pathToChild[i];
+            var onlyDisplayedChild = columnGroup.getDisplayedChildren().length === 1;
+            var moreThanOneChild = columnGroup.getChildren().length > 1;
+            if (onlyDisplayedChild && moreThanOneChild) {
+                // return total columns below here, not including the column under inspection
+                var leafColumns = columnGroup.getLeafColumns();
+                return leafColumns;
+            }
+        }
+
+        return [column];
     }
 
     private ensureIntervalStarted(): void {
@@ -194,32 +224,12 @@ export class MoveColumnController {
             pixelsToMove = 100;
         }
 
-        var pixelsMoved = 0;
         if (this.needToMoveLeft) {
-            pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
+            this.gridPanel.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
-            pixelsMoved = this.gridPanel.scrollHorizontally(pixelsToMove);
-        }
-        this.scrollSinceStart += pixelsMoved;
-
-        this.onDragging(this.lastDelta, false);
-    }
-
-    private getColumnsAndOrphans(column: Column): Column[] {
-        // if this column was to move, how many children would be left without a parent
-        var pathToChild = this.columnController.getPathForColumn(column);
-
-        for (var i = pathToChild.length - 1; i>=0; i--) {
-            var columnGroup = pathToChild[i];
-            var onlyDisplayedChild = columnGroup.getDisplayedChildren().length === 1;
-            var moreThanOneChild = columnGroup.getChildren().length > 1;
-            if (onlyDisplayedChild && moreThanOneChild) {
-                // return total columns below here, not including the column under inspection
-                var leafColumns = columnGroup.getLeafColumns();
-                return leafColumns;
-            }
+            this.gridPanel.scrollHorizontally(pixelsToMove);
         }
 
-        return [column];
+        this.onDragging(this.lastDraggingEvent);
     }
 }

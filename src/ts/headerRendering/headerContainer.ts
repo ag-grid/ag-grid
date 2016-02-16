@@ -9,7 +9,7 @@ import {Context} from "../context/context";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import RenderedHeaderCell from "./renderedHeaderCell";
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
-import {MoveColumnController2} from "./moveColumnController2";
+import {MoveColumnController} from "./moveColumnController";
 import {ColumnController} from "../columnController/columnController";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 
@@ -39,7 +39,7 @@ export class HeaderContainer {
     }
 
     public agPostWire(): void {
-        var moveColumnController = new MoveColumnController2(this.pinned);
+        var moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
 
         this.dropTarget = {

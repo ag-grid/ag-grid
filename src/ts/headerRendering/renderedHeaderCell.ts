@@ -8,7 +8,6 @@ import HeaderTemplateLoader from "./headerTemplateLoader";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {DragService} from "./dragService";
 import HeaderRenderer from "./headerRenderer";
-import {MoveColumnController} from "./moveColumnController";
 import GridPanel from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
@@ -22,7 +21,6 @@ import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import {DragSource} from "../dragAndDrop/dragAndDropService2";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
-
     private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
 
     @Autowired('context') private context: Context;

@@ -84,15 +84,15 @@ export class DragAndDropService2 {
 
     public workOutDirection(event: MouseEvent): string {
         var direction: string;
-        if (this.eventXLastTime > event.x) {
+        if (this.eventXLastTime > event.clientX) {
             direction = DragAndDropService2.DIRECTION_LEFT;
-        } else if (this.eventXLastTime < event.x) {
+        } else if (this.eventXLastTime < event.clientX) {
             direction = DragAndDropService2.DIRECTION_RIGHT;
         } else {
             direction = null;
         }
 
-        this.eventXLastTime = event.x;
+        this.eventXLastTime = event.clientX;
 
         return direction;
     }
@@ -100,11 +100,9 @@ export class DragAndDropService2 {
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string): DraggingEvent {
 
         // localise x and y to the target component
-
         var rect = dropTarget.eContainer.getBoundingClientRect();
-
-        var x = event.x - rect.left;
-        var y = event.y - rect.top;
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
 
         var dropTargetEvent = {
             event: event,
@@ -119,8 +117,9 @@ export class DragAndDropService2 {
     }
 
     public startDrag(dragSource: DragSource, mouseEvent: MouseEvent): void {
+
         this.logger.log('startDrag');
-        this.eventXLastTime = mouseEvent.x;
+        this.eventXLastTime = mouseEvent.clientX;
         dragSource.dragItem.setMoving(true);
         this.dragging = true;
         this.dragItem = dragSource.dragItem;
@@ -145,8 +144,8 @@ export class DragAndDropService2 {
             if (rect.width===0 || rect.height===0) {
                 return;
             }
-            var horizontalFit = event.x > rect.left && event.x < rect.right;
-            var verticalFit = event.y > rect.top && event.y < rect.bottom;
+            var horizontalFit = event.clientX > rect.left && event.clientX < rect.right;
+            var verticalFit = event.clientY > rect.top && event.clientY < rect.bottom;
 
             return horizontalFit && verticalFit;
         });
@@ -184,8 +183,8 @@ export class DragAndDropService2 {
         var browserHeight = _.getBrowserHeight() - 2;
 
         // put ghost in middle of cursor
-        var left = event.x - (ghostWidth / 2);
-        var top = event.y - (ghostHeight / 2);
+        var left = event.clientX - (ghostWidth / 2);
+        var top = event.clientY - (ghostHeight / 2);
 
         // check ghost is not positioned outside of the browser
         if (browserWidth>0) {

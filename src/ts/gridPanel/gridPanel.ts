@@ -12,6 +12,7 @@ import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
 import EventService from "../eventService";
 import {Events} from "../events";
+import {MoveColumnController} from "../headerRendering/moveColumnController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap

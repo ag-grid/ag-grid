@@ -295,7 +295,7 @@ months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        hide: true,
+        //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',
             'bad-score': 'x < 10000'

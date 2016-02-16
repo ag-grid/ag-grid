@@ -43,7 +43,6 @@ import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
-import {MoveColumnController2} from "./headerRendering/moveColumnController2";
 
 export class Grid {
 
