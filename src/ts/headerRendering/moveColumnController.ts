@@ -25,6 +25,10 @@ export class MoveColumnController {
     private centerContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
+    // this counts how long the user has been trying to scroll by dragging and failing,
+    // if they fail x amount of times, then the column will get pinned. this is what gives
+    // the 'hold and pin' functionality
+    private failedMoveAttempts: number;
 
     public constructor(pinned: string) {
         this.pinned = pinned;
@@ -205,6 +209,7 @@ export class MoveColumnController {
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
+            this.failedMoveAttempts = 0;
             this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
         }
     }
@@ -224,12 +229,25 @@ export class MoveColumnController {
             pixelsToMove = 100;
         }
 
+        var pixelsMoved: number;
         if (this.needToMoveLeft) {
-            this.gridPanel.scrollHorizontally(-pixelsToMove);
+            pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
-            this.gridPanel.scrollHorizontally(pixelsToMove);
+            pixelsMoved = this.gridPanel.scrollHorizontally(pixelsToMove);
         }
 
-        this.onDragging(this.lastDraggingEvent);
+        if (pixelsMoved > 0) {
+            this.onDragging(this.lastDraggingEvent);
+            this.failedMoveAttempts = 0;
+        } else {
+            this.failedMoveAttempts++;
+            if (this.failedMoveAttempts > 10) {
+                if (this.needToMoveLeft) {
+                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_LEFT);
+                } else {
+                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_RIGHT);
+                }
+            }
+        }
     }
 }

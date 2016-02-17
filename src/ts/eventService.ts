@@ -59,6 +59,13 @@ export default class EventService {
             event = {};
         }
         //this.logger.log('dispatching: ' + event);
+
+        // this allows the columnController to get events before anyone else
+        var p1ListenerList = this.getListenerList(eventType + '-P1');
+        p1ListenerList.forEach( (listener)=> {
+            listener(event);
+        });
+
         var listenerList = this.getListenerList(eventType);
         listenerList.forEach( (listener)=> {
             listener(event);

@@ -129,11 +129,20 @@ export class ColumnController {
 
     private logger: Logger;
 
-    private animationThreadCount = 0;
-
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
+
+    //public agPostWire(): void {
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
+    //    this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
+    //}
 
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnColumns(keys, (column: Column)=> {
@@ -363,6 +372,7 @@ export class ColumnController {
     }
 
     public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
+        this.gridPanel.turnOnAnimationForABit();
         this.actionOnColumns(keys, (column: Column)=> {
             var fromIndex = this.allColumns.indexOf(column);
             this.allColumns.splice(fromIndex, 1);
@@ -437,6 +447,7 @@ export class ColumnController {
     }
 
     public setColumnsVisible(keys: (Column|ColDef|String)[], visible: boolean): void {
+        this.gridPanel.turnOnAnimationForABit();
         this.actionOnColumns(keys, (column: Column)=> {
             column.setVisible(visible);
         }, ()=> {
@@ -449,6 +460,7 @@ export class ColumnController {
     }
 
     public setColumnsPinned(keys: (Column|ColDef|String)[], pinned: string|boolean): void {
+        this.gridPanel.turnOnAnimationForABit();
         var actualPinned: string;
         if (pinned === true || pinned === Column.PINNED_LEFT) {
             actualPinned = Column.PINNED_LEFT;
@@ -927,21 +939,10 @@ export class ColumnController {
         if (!groupToUse) { return; }
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
-        this.turnOnAnimationForABit();
+        this.gridPanel.turnOnAnimationForABit();
         this.updateGroupsAndDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
-    }
-
-    private turnOnAnimationForABit(): void {
-        this.animationThreadCount++;
-        var animationThreadCountCopy = this.animationThreadCount;
-        this.gridPanel.setMovingCss(true);
-        setTimeout( ()=> {
-            if (this.animationThreadCount===animationThreadCountCopy) {
-                this.gridPanel.setMovingCss(false);
-            }
-        }, 300);
     }
 
     // used by updateModel

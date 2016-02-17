@@ -127,10 +127,6 @@ export class DragAndDropService2 {
         this.dragSource = dragSource;
         document.addEventListener('mouseup', this.onMouseUpListener);
 
-        if (this.addMovingCssToGrid) {
-            this.gridPanel.setMovingCss(true);
-        }
-
         this.lastDropTarget = dragSource.dragSourceDropTarget;
 
         this.createGhost(dragSource.dragItem);
@@ -138,8 +134,6 @@ export class DragAndDropService2 {
 
     private onMouseMove(event: MouseEvent): void {
         this.positionGhost(event);
-
-        var i = 0;
 
         // check if mouseEvent intersects with any of the drop targets
         var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
@@ -149,21 +143,17 @@ export class DragAndDropService2 {
             }
             var gotMatch: boolean = false;
             targetsToCheck.forEach( (eContainer: HTMLElement) => {
-                if (!eContainer) {
-                    console.log('no container');
-                    return;
-                } // secondary can be missing
+                if (!eContainer) { return; } // secondary can be missing
                 var rect = eContainer.getBoundingClientRect();
-                // if element is not visible, then width and height are zero
 
+                // if element is not visible, then width and height are zero
                 if (rect.width===0 || rect.height===0) {
-                    console.log('skipping');
                     return;
                 }
                 var horizontalFit = event.clientX >= rect.left && event.clientX <= rect.right;
                 var verticalFit = event.clientY >= rect.top && event.clientY <= rect.bottom;
 
-                console.log(`${i++} rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
+                //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
 
                 if (horizontalFit && verticalFit) {
                     gotMatch = true;
@@ -263,9 +253,6 @@ export class DragAndDropService2 {
         }
         this.lastDropTarget = null;
         this.dragItem = null;
-        if (this.addMovingCssToGrid) {
-            this.gridPanel.setMovingCss(false);
-        }
         this.removeGhost();
         document.removeEventListener('mouseup', this.onMouseUpListener);
     }

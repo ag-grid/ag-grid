@@ -132,6 +132,8 @@ export default class GridPanel {
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
 
+    private animationThreadCount = 0;
+
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
@@ -184,10 +186,6 @@ export default class GridPanel {
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
         }
-    }
-
-    public setMovingCss(moving: boolean): void {
-        _.addOrRemoveCssClass(this.eRoot, 'ag-column-moving', moving);
     }
 
     public getPinnedLeftFloatingTop(): HTMLElement {
@@ -685,6 +683,17 @@ export default class GridPanel {
 
     public getHorizontalScrollPosition(): number {
         return this.eBodyViewport.scrollLeft;
+    }
+
+    public turnOnAnimationForABit(): void {
+        this.animationThreadCount++;
+        var animationThreadCountCopy = this.animationThreadCount;
+        _.addCssClass(this.eRoot, 'ag-column-moving');
+        setTimeout( ()=> {
+            if (this.animationThreadCount===animationThreadCountCopy) {
+                _.removeCssClass(this.eRoot, 'ag-column-moving');
+            }
+        }, 300);
     }
 
     private addScrollListener() {

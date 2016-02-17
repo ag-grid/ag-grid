@@ -228,9 +228,13 @@ export function Bean(beanName: string): Function {
     };
 }
 
-export function Autowired(name: string): Function {
+export function Autowired(name?: string): Function {
     return (classPrototype: any, methodOrAttributeName: string, index: number) => {
 
+        if (name===null) {
+            console.log('got it');
+            return;
+        }
         if (typeof index !== 'number') {
             // it's an attribute on the class
             var props = getOrCreateProps(classPrototype);
