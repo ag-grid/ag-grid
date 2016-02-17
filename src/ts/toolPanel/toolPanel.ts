@@ -1,16 +1,37 @@
-import _ from '../utils';
-import VerticalStack from "../layout/verticalStack";
-import PopupService from "../widgets/agPopupService";
-import EventService from "../eventService";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import ColumnSelectionPanel from "./columnSelectionPanel";
-import ValuesSelectionPanel from "./valuesSelectionPanel";
-import GroupSelectionPanel from "./groupSelectionPanel";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
+import {ColumnSelectPanel} from "../enterprise/columnSelectPanel";
+import {Context} from "../context/context";
+import {Autowired} from "../context/context";
+import _ from '../utils';
 
 @Bean('toolPanel')
+export default class ToolPanel {
+
+    private static TEMPLATE = '<div class="ag-tool-panel"></div>';
+
+    @Autowired('context') private context: Context;
+
+    private eGui: HTMLElement;
+    private columnSelectPanel: ColumnSelectPanel;
+
+    public agWire(): void {
+        this.columnSelectPanel = new ColumnSelectPanel();
+        this.eGui = _.loadTemplate(ToolPanel.TEMPLATE);
+    }
+
+    public agPostWire(): void {
+        this.context.wireBean(this.columnSelectPanel);
+        this.eGui.appendChild(this.columnSelectPanel.getGui());
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+}
+
+
+/*
 export default class ToolPanel {
 
     private layout: any;
@@ -20,11 +41,11 @@ export default class ToolPanel {
     }
 
     public agWire(@Qualifier('columnController') columnController: any,
-                @Qualifier('inMemoryRowController') inMemoryRowController: any,
-                @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                @Qualifier('popupService') popupService: PopupService,
-                @Qualifier('eventService') eventService: EventService,
-                @Qualifier('dragAndDropService') dragAndDropService: DragAndDropService) {
+                  @Qualifier('inMemoryRowController') inMemoryRowController: any,
+                  @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+                  @Qualifier('popupService') popupService: PopupService,
+                  @Qualifier('eventService') eventService: EventService,
+                  @Qualifier('dragAndDropService') dragAndDropService: DragAndDropService) {
 
         var suppressGroupAndValues = gridOptionsWrapper.isToolPanelSuppressGroups();
         var suppressValues = gridOptionsWrapper.isToolPanelSuppressValues();
@@ -57,4 +78,4 @@ export default class ToolPanel {
 
         _.addCssClass(eGui, 'ag-tool-panel-container');
     }
-}
+}*/

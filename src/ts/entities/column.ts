@@ -49,6 +49,7 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     public static EVENT_WIDTH_CHANGED = 'widthChanged';
     public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
     public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
     private eventService: EventService = new EventService();
 
@@ -179,7 +180,11 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setVisible(visible: boolean): void {
-        this.visible = visible===true;
+        var newValue = visible===true;
+        if (this.visible !== newValue) {
+            this.visible = newValue;
+            this.eventService.dispatchEvent(Column.EVENT_VISIBLE_CHANGED);
+        }
     }
 
     public isVisible(): boolean {

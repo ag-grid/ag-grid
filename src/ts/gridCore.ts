@@ -91,10 +91,12 @@ export class GridCore {
 
         // and the last bean, done in it's own section, as it's optional
         var paginationGui: any;
-        var toolPanelLayout: any;
+        //var toolPanelLayout: any;
+        var toolPanelGui: HTMLElement;
         if (!this.gridOptionsWrapper.isForPrint()) {
             paginationGui = this.paginationController.getGui();
-            toolPanelLayout = this.toolPanel.layout;
+            //toolPanelLayout = this.toolPanel.layout;
+            toolPanelGui = this.toolPanel.getGui();
         }
 
         var rowGroupGui: HTMLElement;
@@ -104,7 +106,7 @@ export class GridCore {
 
         this.eRootPanel = new BorderLayout({
             center: this.gridPanel.getLayout(),
-            east: toolPanelLayout,
+            east: toolPanelGui,
             north: rowGroupGui,
             south: paginationGui,
             dontFill: this.gridOptionsWrapper.isForPrint(),

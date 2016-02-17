@@ -17,10 +17,6 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 @Bean('rowGroupPanel')
 export class RowGroupPanel {
 
-    private static EMPTY_MESSAGE_TEMPLATE =
-        '<span class="ag-row-group-cell">' +
-        '</span>';
-
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('eventService') eventService: EventService;
     @Autowired('context') context: Context;
@@ -71,9 +67,18 @@ export class RowGroupPanel {
     }
 
     private onColumnChanged(): void {
-        var columns = this.columnController.getRowGroupColumns();
         _.removeAllChildren(this.eGui);
 
+        var columns = this.columnController.getRowGroupColumns();
+
+        if (columns.length > 0) {
+            this.addColumnsToGui(columns);
+        } else {
+            this.addEmptyMessageToGui();
+        }
+    }
+
+    private addColumnsToGui(columns: Column[]): void {
         columns.forEach( (column: Column, index: number) => {
             if (index > 0) {
                 var eArrow = document.createElement('span');
@@ -84,23 +89,21 @@ export class RowGroupPanel {
             this.context.wireBean(cell);
             this.eGui.appendChild(cell.getGui());
         });
-
-        if (columns.length==0) {
-            this.eGui.appendChild(this.createEmptyMessage());
-        }
     }
 
-    private createEmptyMessage(): HTMLElement {
+    private addEmptyMessageToGui(): void {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var rowGroupColumnsEmptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag columns here to group');
         var eMessage = document.createElement('span');
         eMessage.innerHTML = rowGroupColumnsEmptyMessage;
         _.addCssClass(eMessage, 'ag-row-group-empty-message');
-        return eMessage;
+
+        this.eGui.appendChild(eMessage);
     }
 
     private setupComponents(): void {
         this.eGui = _.loadTemplate('<div class="ag-row-group-panel ag-font-style"></div>');
+        this.addEmptyMessageToGui();
     }
 
     public getGui(): HTMLElement {

@@ -13,7 +13,7 @@ import GridPanel from "../gridPanel/gridPanel";
 export interface DragSource {
     eElement: HTMLElement,
     dragItem: Column,
-    dragSourceDropTarget: DropTarget
+    dragSourceDropTarget?: DropTarget
 }
 
 export interface DropTarget {

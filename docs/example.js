@@ -85,7 +85,7 @@ var gridOptions = {
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
     //groupSuppressBlankHeader: true,
-    suppressMovingCss: true,
+    //suppressMovingCss: true,
     //suppressMovableColumns: true,
     //groupIncludeFooter: true,
     groupHideGroupColumns: true,
@@ -458,8 +458,15 @@ function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
 }
 
+var filterCount = 0;
 function onFilterChanged(newFilter) {
-    gridOptions.api.setQuickFilter(newFilter);
+    filterCount++;
+    var filterCountCopy = filterCount;
+    setTimeout( function() {
+        if (filterCount === filterCountCopy) {
+            gridOptions.api.setQuickFilter(newFilter);
+        }
+    }, 300);
 }
 
 var COUNTRY_CODES = {
