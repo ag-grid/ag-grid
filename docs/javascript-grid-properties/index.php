@@ -113,6 +113,11 @@ include '../documentation_header.php';
                 and show sort icons, but the sorting will be deferred to your datasource.</td>
         </tr>
         <tr>
+            <td>suppressFieldDotNotation</td>
+            <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
+            Allows you to use dots in your field name if you prefer.</td>
+        </tr>
+        <tr>
             <th>enableCellExpressions</th>
             <td>Set to true to allow cells to contain expressions.</td>
         </tr>
