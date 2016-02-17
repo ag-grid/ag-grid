@@ -98,6 +98,7 @@ var gridOptions = {
     rowDeselection: true,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+    //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
