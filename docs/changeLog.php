@@ -32,6 +32,8 @@ include 'documentation_header.php';
 
     <li>Added new property: suppressFieldDotNotation</li>
 
+    <li>Took out property groupHideGroupColumns, if you don't want a column to be shown, just hide it. This feature was not necessary and caused complexity in the design.</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

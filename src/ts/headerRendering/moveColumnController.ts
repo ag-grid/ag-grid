@@ -64,12 +64,11 @@ export class MoveColumnController {
 
     }
 
-    private workOutNewIndex(columns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
-        var allColumns = this.columnController.getAllColumns();
+    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
         if (draggingEvent.direction === DragAndDropService2.DIRECTION_LEFT) {
-            return this.getNewIndexForColMovingLeft(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         } else {
-            return this.getNewIndexForColMovingRight(columns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         }
     }
 
@@ -108,10 +107,10 @@ export class MoveColumnController {
     }
 
     private checkColIndexAndMove(draggingEvent: DraggingEvent, xAdjustedForScroll: number): void {
-        var columns = this.columnController.getDisplayedColumns(this.pinned);
-
-        var newIndex = this.workOutNewIndex(columns, draggingEvent, xAdjustedForScroll);
-        var oldColumn = columns[newIndex];
+        var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
+        var allColumns = this.columnController.getAllColumns();
+        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, draggingEvent, xAdjustedForScroll);
+        var oldColumn = allColumns[newIndex];
 
         // if col already at required location, do nothing
         if (oldColumn === draggingEvent.dragItem) {
@@ -153,6 +152,8 @@ export class MoveColumnController {
             newIndex = 0;
         }
 
+        console.log(` <<< leftColumn = ${leftColumn?leftColumn.getColId():null}, newIndex = ${newIndex}`);
+
         return newIndex;
     }
 
@@ -183,6 +184,11 @@ export class MoveColumnController {
             }
         } else {
             newIndex = 0;
+        }
+
+        console.log(` >>> leftColumn = ${leftColumn?leftColumn.getColId():null}, newIndex = ${newIndex}`);
+        if (newIndex==1) {
+            console.log('its 1');
         }
 
         return newIndex;

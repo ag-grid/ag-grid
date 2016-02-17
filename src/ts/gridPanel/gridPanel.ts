@@ -161,10 +161,10 @@ export default class GridPanel {
 
         if (this.forPrint) {
             this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
+            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-no-scrolls');
         } else {
             this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-scrolls');
+            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-scrolls');
         }
 
         this.findElements();
@@ -686,6 +686,9 @@ export default class GridPanel {
     }
 
     public turnOnAnimationForABit(): void {
+        if (this.gridOptionsWrapper.isSuppressMovingCss()) {
+            return;
+        }
         this.animationThreadCount++;
         var animationThreadCountCopy = this.animationThreadCount;
         _.addCssClass(this.eRoot, 'ag-column-moving');

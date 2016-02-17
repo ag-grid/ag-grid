@@ -48,7 +48,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private startWidth: number;
     private parentScope: any;
-    private dragSourceDropTarget: any;
+    private dragSourceDropTarget: DropTarget;
 
     // for better structured code, anything we need to do when this column gets destroyed,
     // we put a function in here. otherwise we would have a big destroy function with lots

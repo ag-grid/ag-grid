@@ -41,6 +41,7 @@ import {Context} from './context/context';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
+import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 
 @Bean('gridCore')
 export class GridCore {
@@ -64,6 +65,7 @@ export class GridCore {
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('rowGroupPanel') private rowGroupPanel: RowGroupPanel;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -95,9 +97,15 @@ export class GridCore {
             toolPanelLayout = this.toolPanel.layout;
         }
 
+        var rowGroupGui: HTMLElement;
+        if (this.rowGroupPanel) {
+            rowGroupGui = this.rowGroupPanel.getGui();
+        }
+
         this.eRootPanel = new BorderLayout({
             center: this.gridPanel.getLayout(),
             east: toolPanelLayout,
+            north: rowGroupGui,
             south: paginationGui,
             dontFill: this.gridOptionsWrapper.isForPrint(),
             name: 'eRootPanel'

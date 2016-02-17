@@ -18,11 +18,11 @@ export interface DragSource {
 
 export interface DropTarget {
     eContainer: HTMLElement,
-    eSecondaryContainers: HTMLElement[],
+    eSecondaryContainers?: HTMLElement[],
     onDragEnter?: (params: DraggingEvent)=>void,
     onDragLeave?: (params: DraggingEvent)=>void,
     onDragging?: (params: DraggingEvent)=>void,
-    onDragStop?: ()=>void
+    onDragStop?: (params: DraggingEvent)=>void
 }
 
 export interface DraggingEvent {
@@ -73,6 +73,9 @@ export class DragAndDropService2 {
         }
     }
 
+    // we do not need to clean up drag sources, as we are just adding a listener to the element.
+    // when the element is disposed, the drag source is also disposed, even though this service
+    // remains. this is a bit different to normal 'addListener' methods
     public addDragSource(params: DragSource): void {
         params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
     }
@@ -82,7 +85,7 @@ export class DragAndDropService2 {
         this.eventXLastTime = mouseEvent.clientX;
         this.dragging = false;
         this.dragStartEvent = mouseEvent;
-        document.addEventListener('mousemove', this.onMouseMoveListener)
+        document.addEventListener('mousemove', this.onMouseMoveListener);
         document.addEventListener('mouseup', this.onMouseUpListener);
     }
 
@@ -260,11 +263,11 @@ export class DragAndDropService2 {
         this.eBody.appendChild(this.eGhost);
     }
 
-    public onMouseUp(): void {
+    public onMouseUp(mouseEvent: MouseEvent): void {
         this.logger.log('onMouseUp');
 
         document.removeEventListener('mouseup', this.onMouseUpListener);
-        document.removeEventListener('mousemove', this.onMouseMoveListener)
+        document.removeEventListener('mousemove', this.onMouseMoveListener);
 
         this.dragStartEvent = null;
 
@@ -272,7 +275,8 @@ export class DragAndDropService2 {
             this.dragItem.setMoving(false);
             this.dragging = false;
             if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-                this.lastDropTarget.onDragStop();
+                var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
+                this.lastDropTarget.onDragStop(draggingEvent);
             }
             this.lastDropTarget = null;
             this.dragItem = null;

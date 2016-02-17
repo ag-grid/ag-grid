@@ -696,6 +696,9 @@ export default class RenderedCell {
         }
         var resultFromRenderer = actualCellRenderer(rendererParams);
         // end duplicated code
+        if (resultFromRenderer===null || resultFromRenderer==='') {
+            return;
+        }
         if (_.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
             this.eParentOfValue.appendChild(resultFromRenderer);

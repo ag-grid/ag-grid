@@ -516,54 +516,6 @@ export class ColumnController {
         this.eventService.dispatchEvent(event.getType(), event);
     }
 
-    // same as getDisplayColBefore, but stays in current container,
-    // so if column is pinned left, will only return pinned left columns
-    public getDisplayedColBeforeForMoving(col: any): Column {
-        if (col===this.groupAutoColumn) {
-            return null;
-        }
-        var beforeCol = this.getDisplayedColBefore(col);
-        if (beforeCol===this.groupAutoColumn) {
-            return null;
-        }
-        if (beforeCol && beforeCol.getPinned()===col.getPinned()) {
-            return beforeCol;
-        } else {
-            return null;
-        }
-    }
-
-    public getPixelsBeforeConsideringPinned(column: Column): number {
-        var allDisplayedColumns = this.getAllDisplayedColumns();
-        var result = 0;
-        for (var i = 0; i<allDisplayedColumns.length; i++) {
-            var colToConsider = allDisplayedColumns[i];
-            if (colToConsider===column) {
-                return result;
-            }
-            if (colToConsider.getPinned()===column.getPinned()) {
-                result += colToConsider.getActualWidth();
-            }
-        }
-        // this should never happen, we should of come across our col in the above loop
-        return null;
-    }
-
-    public getDisplayedColAfterForMoving(col: any): Column {
-        if (col===this.groupAutoColumn) {
-            return null;
-        }
-        var afterCol = this.getDisplayedColAfter(col);
-        if (afterCol===this.groupAutoColumn) {
-            return null;
-        }
-        if (afterCol && afterCol.getPinned()===col.getPinned()) {
-            return afterCol;
-        } else {
-            return null;
-        }
-    }
-
     public getDisplayedColBefore(col: any): Column {
         var allDisplayedColumns = this.getAllDisplayedColumns();
         var oldIndex = allDisplayedColumns.indexOf(col);
@@ -1199,9 +1151,9 @@ export class ColumnController {
 
         for (var i = 0; i < this.allColumns.length; i++) {
             var column = this.allColumns[i];
-            var hideBecauseOfRowGroup = this.rowGroupColumns.indexOf(column) >= 0
-                && this.gridOptionsWrapper.isGroupHideGroupColumns();
-            if (column.isVisible() && !hideBecauseOfRowGroup) {
+            //var hideBecauseOfRowGroup = this.rowGroupColumns.indexOf(column) >= 0
+            //    && this.gridOptionsWrapper.isGroupHideGroupColumns();
+            if (column.isVisible()) {
                 visibleColumns.push(this.allColumns[i]);
             }
         }

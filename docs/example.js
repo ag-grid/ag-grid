@@ -85,7 +85,7 @@ var gridOptions = {
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
     //groupSuppressBlankHeader: true,
-    //suppressMovingCss: true,
+    suppressMovingCss: true,
     //suppressMovableColumns: true,
     //groupIncludeFooter: true,
     groupHideGroupColumns: true,

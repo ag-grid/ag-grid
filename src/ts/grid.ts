@@ -43,6 +43,7 @@ import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
+import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 
 export class Grid {
 
@@ -59,7 +60,7 @@ export class Grid {
 
         this.context = new Context({
             //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory],
+            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel],
             seed: {
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,

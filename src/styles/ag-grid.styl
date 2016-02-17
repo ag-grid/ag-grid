@@ -6,15 +6,17 @@ ag-grid-ng2
     display: inline-block
 
 .ag-root
-    font-size: 14px
-    cursor: default
     /* set to relative, so absolute popups appear relative to this */
     position: relative
-    /* disable user mouse selection */
-    user-select: none
     box-sizing: border-box
     /* was getting some 'should be there' scrolls, this sorts it out */
     overflow: hidden
+
+.ag-font-style
+    cursor: default
+    font-size: 14px
+    /* disable user mouse selection */
+    user-select: none
 
 .ag-no-scrolls
     white-space: nowrap
@@ -85,6 +87,8 @@ ag-grid-ng2
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
 // so we cannot style using standard themes. hence we break the rules, and style it here
 .ag-header-cell-ghost
+    font-size: 14px
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     position: absolute
     background: #e5e5e5
     border: 1px solid black
@@ -248,6 +252,9 @@ ag-grid-ng2
 
 .agile-gird-row:hover
     background-color: aliceblue
+
+.ag-row-group-panel
+    width: 100%;
 
 .ag-cell
     display: inline-block
