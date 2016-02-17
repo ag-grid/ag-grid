@@ -121,11 +121,13 @@ export default class GridPanel {
     private ePinnedLeftFloatingTop: HTMLElement;
     private ePinnedRightFloatingTop: HTMLElement;
     private eFloatingTopContainer: HTMLElement;
+    private eFloatingTopViewport: HTMLElement;
 
     private eFloatingBottom: HTMLElement;
     private ePinnedLeftFloatingBottom: HTMLElement;
     private ePinnedRightFloatingBottom: HTMLElement;
     private eFloatingBottomContainer: HTMLElement;
+    private eFloatingBottomViewport: HTMLElement;
 
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
@@ -412,20 +414,44 @@ export default class GridPanel {
         this.rowModel = rowModel;
     }
 
-    public getBodyContainer() {
+    public getBodyContainer(): HTMLElement {
         return this.eBodyContainer;
+    }
+
+    public getDropTargetBodyContainers(): HTMLElement[] {
+        if (this.forPrint) {
+            return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
+        } else {
+            return [this.eBodyViewport, this.eFloatingTopViewport, this.eFloatingBottomViewport];
+        }
     }
 
     public getBodyViewport() {
         return this.eBodyViewport;
     }
 
-    public getPinnedLeftColsContainer() {
+    public getPinnedLeftColsContainer(): HTMLElement {
         return this.ePinnedLeftColsContainer;
     }
 
-    public getPinnedRightColsContainer() {
+    public getDropTargetLeftContainers(): HTMLElement[] {
+        if (this.forPrint) {
+            return [];
+        } else {
+            return [this.ePinnedLeftColsViewport, this.ePinnedLeftFloatingBottom, this.ePinnedLeftFloatingTop];
+        }
+    }
+
+    public getPinnedRightColsContainer(): HTMLElement {
         return this.ePinnedRightColsContainer;
+    }
+
+    public getDropTargetPinnedRightContainers(): HTMLElement[] {
+        if (this.forPrint) {
+            return [];
+        } else {
+            return [this.ePinnedRightColsViewport, this.ePinnedRightFloatingBottom, this.ePinnedRightFloatingTop];
+        }
     }
 
     public getHeaderContainer() {
@@ -484,11 +510,13 @@ export default class GridPanel {
             this.ePinnedLeftFloatingTop = this.queryHtmlElement('.ag-pinned-left-floating-top');
             this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
+            this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
 
             this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
             this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
             this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
+            this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
 
             // for scrolls, all rows live in eBody (containing pinned and normal body)
             this.eParentsOfRows = [this.eBody, this.eFloatingTop, this.eFloatingBottom];

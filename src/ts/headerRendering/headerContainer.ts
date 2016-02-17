@@ -12,6 +12,7 @@ import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {MoveColumnController} from "./moveColumnController";
 import {ColumnController} from "../columnController/columnController";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
+import GridPanel from "../gridPanel/gridPanel";
 
 export class HeaderContainer {
 
@@ -20,6 +21,7 @@ export class HeaderContainer {
     @Autowired('$scope') private $scope: any;
     @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
@@ -42,8 +44,16 @@ export class HeaderContainer {
         var moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
 
+        var secondaryContainers: HTMLElement[];
+        switch (this.pinned) {
+            case Column.PINNED_LEFT: secondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
+            case Column.PINNED_RIGHT: secondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers(); break;
+            default: secondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
+        }
+
         this.dropTarget = {
             eContainer: this.eViewport ? this.eViewport : this.eContainer,
+            eSecondaryContainers: secondaryContainers,
             onDragging: moveColumnController.onDragging.bind(moveColumnController),
             onDragEnter: moveColumnController.onDragEnter.bind(moveColumnController),
             onDragLeave: moveColumnController.onDragLeave.bind(moveColumnController),

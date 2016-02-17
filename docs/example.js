@@ -143,7 +143,8 @@ var gridOptions = {
     },
     // isScrollLag: function() { return false; },
     //suppressScrollLag: true,
-
+    //floatingTopRowData: [{},{},{}],
+    //floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
         console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);

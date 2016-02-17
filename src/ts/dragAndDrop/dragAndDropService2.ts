@@ -18,6 +18,7 @@ export interface DragSource {
 
 export interface DropTarget {
     eContainer: HTMLElement,
+    eSecondaryContainers: HTMLElement[],
     onDragEnter?: (params: DraggingEvent)=>void,
     onDragLeave?: (params: DraggingEvent)=>void,
     onDragging?: (params: DraggingEvent)=>void,
@@ -138,16 +139,37 @@ export class DragAndDropService2 {
     private onMouseMove(event: MouseEvent): void {
         this.positionGhost(event);
 
-        var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
-            var rect = dropTarget.eContainer.getBoundingClientRect();
-            // if element is not visible, then width and height are zero
-            if (rect.width===0 || rect.height===0) {
-                return;
-            }
-            var horizontalFit = event.clientX > rect.left && event.clientX < rect.right;
-            var verticalFit = event.clientY > rect.top && event.clientY < rect.bottom;
+        var i = 0;
 
-            return horizontalFit && verticalFit;
+        // check if mouseEvent intersects with any of the drop targets
+        var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
+            var targetsToCheck = [dropTarget.eContainer];
+            if (dropTarget.eSecondaryContainers) {
+                targetsToCheck = targetsToCheck.concat(dropTarget.eSecondaryContainers);
+            }
+            var gotMatch: boolean = false;
+            targetsToCheck.forEach( (eContainer: HTMLElement) => {
+                if (!eContainer) {
+                    console.log('no container');
+                    return;
+                } // secondary can be missing
+                var rect = eContainer.getBoundingClientRect();
+                // if element is not visible, then width and height are zero
+
+                if (rect.width===0 || rect.height===0) {
+                    console.log('skipping');
+                    return;
+                }
+                var horizontalFit = event.clientX >= rect.left && event.clientX <= rect.right;
+                var verticalFit = event.clientY >= rect.top && event.clientY <= rect.bottom;
+
+                console.log(`${i++} rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
+
+                if (horizontalFit && verticalFit) {
+                    gotMatch = true;
+                }
+            });
+            return gotMatch;
         });
 
         var direction = this.workOutDirection(event);
@@ -165,7 +187,6 @@ export class DragAndDropService2 {
             }
             this.lastDropTarget = dropTarget;
         } else if (dropTarget) {
-            this.logger.log('onDragging');
             var draggingEvent = this.createDropTargetEvent(dropTarget, event, direction);
             dropTarget.onDragging(draggingEvent);
         }
