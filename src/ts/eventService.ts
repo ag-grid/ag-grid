@@ -14,6 +14,8 @@ export default class EventService {
 
     private logger: Logger;
 
+    private static PRIORITY = '-P1';
+
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
                   @Qualifier('globalEventListener') globalEventListener: Function = null) {
         this.logger = loggerFactory.create('EventService');
@@ -39,6 +41,10 @@ export default class EventService {
         }
     }
 
+    public addPriorityEventListener(eventType: string, listener: Function): void {
+        this.addEventListener(eventType + EventService.PRIORITY, listener);
+    }
+
     public addGlobalListener(listener: Function): void {
         this.globalListeners.push(listener);
     }
@@ -61,7 +67,7 @@ export default class EventService {
         //this.logger.log('dispatching: ' + event);
 
         // this allows the columnController to get events before anyone else
-        var p1ListenerList = this.getListenerList(eventType + '-P1');
+        var p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY);
         p1ListenerList.forEach( (listener)=> {
             listener(event);
         });

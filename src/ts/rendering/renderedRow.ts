@@ -140,12 +140,11 @@ export default class RenderedRow {
         var columns = this.columnController.getAllDisplayedColumns();
 
         var renderedCellKeys = Object.keys(this.renderedCells);
-        var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
 
         columns.forEach( (column: Column, colIndex: number) => {
-            var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
-            var renderedCell = this.getOrCreateCell(column, colIndex, firstRightPinnedCol);
+            var renderedCell = this.getOrCreateCell(column, colIndex);
             this.ensureCellInCorrectRow(renderedCell);
+            renderedCell.checkPinnedClasses();
             _.removeFromArray(renderedCellKeys, column.getColId());
         });
 
@@ -190,45 +189,18 @@ export default class RenderedRow {
         }
     }
 
-    private getOrCreateCell(column: Column, colIndex: number, firstRightPinnedCol: boolean): RenderedCell {
+    private getOrCreateCell(column: Column, colIndex: number): RenderedCell {
 
         var colId = column.getColId();
         if (this.renderedCells[colId]) {
             return this.renderedCells[colId];
         } else {
-            var renderedCell = new RenderedCell(firstRightPinnedCol, column,
+            var renderedCell = new RenderedCell(column,
                 this.cellRendererMap, this.rowNode,
                 this.rowIndex, colIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             return renderedCell;
-        }
-    }
-
-    private refreshCellsIntoRow2() {
-        var columns = this.columnController.getAllDisplayedColumns();
-        var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
-
-        for (var colIndex = 0; colIndex<columns.length; colIndex++) {
-            var column = columns[colIndex];
-            var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
-
-            var renderedCell = new RenderedCell(firstRightPinnedCol, column,
-                this.cellRendererMap, this.rowNode,
-                this.rowIndex, colIndex, this.scope, this);
-            this.context.wireBean(renderedCell);
-
-            var vGridCell = renderedCell.getGui();
-
-            if (column.getPinned() === Column.PINNED_LEFT) {
-                this.ePinnedLeftRow.appendChild(vGridCell);
-            } else if (column.getPinned()=== Column.PINNED_RIGHT) {
-                this.ePinnedRightRow.appendChild(vGridCell);
-            } else {
-                this.eBodyRow.appendChild(vGridCell);
-            }
-
-            this.renderedCells[column.getColId()] = renderedCell;
         }
     }
 

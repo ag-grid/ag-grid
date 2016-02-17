@@ -25,6 +25,7 @@ export default class RenderedCell {
     @Autowired('templateService') private templateService: TemplateService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -42,7 +43,6 @@ export default class RenderedCell {
     private editingCell: boolean;
 
     private scope: any;
-    private firstRightPinnedColumn: boolean;
 
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
@@ -53,12 +53,14 @@ export default class RenderedCell {
 
     private destroyMethods: Function[] = [];
 
-    constructor(firstRightPinnedCol: boolean, column: any,
+    private firstRightPinned = false;
+    private lastLeftPinned = false;
+
+    constructor(column: any,
                 cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, colIndex: number, scope: any,
                 renderedRow: RenderedRow) {
 
-        this.firstRightPinnedColumn = firstRightPinnedCol;
         this.column = column;
         this.cellRendererMap = cellRendererMap;
 
@@ -67,6 +69,32 @@ export default class RenderedCell {
         this.colIndex = colIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
+    }
+
+    public checkPinnedClasses(): void {
+    }
+
+    private setPinnedClasses(): void {
+        var firstPinnedChangedListener = () => {
+            if (this.firstRightPinned !== this.column.isFirstRightPinned()) {
+                this.firstRightPinned = this.column.isFirstRightPinned();
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-first-right-pinned', this.firstRightPinned);
+            }
+
+            if (this.lastLeftPinned !== this.column.isLastLeftPinned()) {
+                this.lastLeftPinned = this.column.isLastLeftPinned();
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-last-left-pinned', this.lastLeftPinned);
+            }
+        };
+
+        this.column.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.column.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+            this.column.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        });
+
+        firstPinnedChangedListener();
     }
 
     public getParentRow(): HTMLElement {
@@ -187,6 +215,7 @@ export default class RenderedCell {
 
         this.setLeftOnCell();
         this.setWidthOnCell();
+        this.setPinnedClasses();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
@@ -207,7 +236,6 @@ export default class RenderedCell {
         this.createParentOfValue();
 
         this.populateCell();
-
     }
 
     // called by rowRenderer when user navigates via tab key
@@ -687,10 +715,6 @@ export default class RenderedCell {
         }
         if (this.node.group && !this.node.footer) {
             _.addCssClass(this.eGridCell, 'ag-group-cell');
-        }
-
-        if (this.firstRightPinnedColumn) {
-            _.addCssClass(this.eGridCell, 'ag-cell-first-right-pinned');
         }
     }
 

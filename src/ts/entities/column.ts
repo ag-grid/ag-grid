@@ -38,12 +38,17 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt: number;
     private moving = false;
 
+    private lastLeftPinned: boolean;
+    private firstRightPinned: boolean;
+
     private minWidth: number;
     private maxWidth: number;
 
     public static EVENT_MOVING_CHANGED = 'movingChanged';
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_WIDTH_CHANGED = 'widthChanged';
+    public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
+    public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
 
     private eventService: EventService = new EventService();
 
@@ -133,6 +138,28 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         } else {
             this.pinned = null;
         }
+    }
+
+    public setFirstRightPinned(firstRightPinned: boolean): void {
+        if (this.firstRightPinned !== firstRightPinned) {
+            this.firstRightPinned = firstRightPinned;
+            this.eventService.dispatchEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED);
+        }
+    }
+
+    public setLastLeftPinned(lastLeftPinned: boolean): void {
+        if (this.lastLeftPinned !== lastLeftPinned) {
+            this.lastLeftPinned = lastLeftPinned;
+            this.eventService.dispatchEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED);
+        }
+    }
+
+    public isFirstRightPinned(): boolean {
+        return this.firstRightPinned;
+    }
+
+    public isLastLeftPinned(): boolean {
+        return this.lastLeftPinned;
     }
 
     public isPinned(): boolean {

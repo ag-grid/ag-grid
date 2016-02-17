@@ -134,15 +134,27 @@ export class ColumnController {
     }
 
     //public agPostWire(): void {
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
-    //    this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
+    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
     //}
+
+    private setFirstRightAndLastLeft(): void {
+        var lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
+        var firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
+
+        this.allColumns.forEach( (column: Column) => {
+            column.setLastLeftPinned(column === lastLeft);
+            column.setFirstRightPinned(column === firstRight);
+        } );
+
+        //console.log(`firstRightDisplayedPinnedCol = ${this.firstRightDisplayedPinnedCol?this.firstRightDisplayedPinnedCol.getColId():'null'}`);
+    }
 
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnColumns(keys, (column: Column)=> {
@@ -304,10 +316,6 @@ export class ColumnController {
         _.removeFromArray(this.valueColumns, column);
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGE);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
-    }
-
-    public getFirstRightPinnedColIndex(): number {
-        return this.displayedLeftColumns.length + this.displayedCenterColumns.length;
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
@@ -975,7 +983,6 @@ export class ColumnController {
         });
     }
 
-    // after:
     private updateModel() {
         // save opened / closed state
         var oldGroupState = this.getColumnGroupState();
@@ -990,6 +997,11 @@ export class ColumnController {
 
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();
+
+        // in the future, i want update model to be called as a result of
+        // priority model change events. onColumnChanged was an attempt
+        // at start this
+        this.setFirstRightAndLastLeft();
     }
 
     private updateGroupsAndDisplayedColumns() {

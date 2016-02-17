@@ -236,12 +236,12 @@ export class MoveColumnController {
             pixelsMoved = this.gridPanel.scrollHorizontally(pixelsToMove);
         }
 
-        if (pixelsMoved > 0) {
+        if (pixelsMoved !== 0) {
             this.onDragging(this.lastDraggingEvent);
             this.failedMoveAttempts = 0;
         } else {
             this.failedMoveAttempts++;
-            if (this.failedMoveAttempts > 10) {
+            if (this.failedMoveAttempts > 7) {
                 if (this.needToMoveLeft) {
                     this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_LEFT);
                 } else {
