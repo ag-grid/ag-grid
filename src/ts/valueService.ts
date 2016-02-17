@@ -13,6 +13,12 @@ export default class ValueService {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
 
+    private suppressDotNotation: boolean;
+
+    public agPostWire(): void {
+        this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+    }
+
     public getValue(colDef: ColDef, data: any, node: any):any {
 
         var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
@@ -43,7 +49,7 @@ export default class ValueService {
             return;
         }
         // if no '.', then it's not a deep value
-        if (field.indexOf('.')<0) {
+        if (this.suppressDotNotation || field.indexOf('.')<0) {
             return data[field];
         } else {
             // otherwise it is a deep value, so need to dig for it
@@ -64,7 +70,7 @@ export default class ValueService {
             return;
         }
         // if no '.', then it's not a deep value
-        if (field.indexOf('.')<0) {
+        if (this.suppressDotNotation || field.indexOf('.')<0) {
             data[field] = newValue;
         } else {
             // otherwise it is a deep value, so need to dig for it

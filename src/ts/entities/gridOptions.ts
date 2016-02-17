@@ -45,6 +45,7 @@ export interface GridOptions {
     suppressMovingCss?: boolean;
     suppressMovableColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
+    suppressFieldDotNotation?: boolean;
 
     // just set once
     localeText?: any;

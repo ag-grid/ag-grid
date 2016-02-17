@@ -37,7 +37,8 @@ export class ComponentUtil {
         'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
         'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
         'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
-        'suppressParentsInRowNodes','showToolPanel','suppressMovingCss','suppressMovableColumns'
+        'suppressParentsInRowNodes','showToolPanel','suppressMovingCss','suppressMovableColumns',
+        'suppressFieldDotNotation'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
