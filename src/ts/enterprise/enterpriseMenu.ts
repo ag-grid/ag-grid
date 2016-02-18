@@ -131,9 +131,22 @@ export class EnterpriseMenu {
         return eAutoSizePanel;
     }
 
+    private createMiscGroupPanel(): MenuPanel {
+        var items: MenuPanelItems[] = [];
+
+        items.push({
+            name: 'Reset Columns',
+            action: ()=> this.columnController.resetState()
+        });
+
+        var eMiscPanel = new MenuPanel(items, this.onHidePopup.bind(this));
+        return eMiscPanel;
+    }
+
     private createGeneralPanel(): TabbedItem {
 
         var ePanel = document.createElement('div');
+
         var ePinnedPanel = this.createPinnedMenuPanel();
         ePanel.appendChild(ePinnedPanel.getGui());
 
@@ -142,6 +155,9 @@ export class EnterpriseMenu {
 
         var eRowGroupPanel = this.createRowGroupPanel();
         ePanel.appendChild(eRowGroupPanel.getGui());
+
+        var eRowMiscPanel = this.createMiscGroupPanel();
+        ePanel.appendChild(eRowMiscPanel.getGui());
 
         return {
             title: svgFactory.createMenuSvg(),

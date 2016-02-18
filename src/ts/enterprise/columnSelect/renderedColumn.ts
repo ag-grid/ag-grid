@@ -5,15 +5,17 @@ import {DragAndDropService2} from "../../dragAndDrop/dragAndDropService2";
 import Column from "../../entities/column";
 import _ from '../../utils';
 import {DragSource} from "../../dragAndDrop/dragAndDropService2";
+import {RenderedItem} from "./renderedItem";
 
-export class RenderedColumn {
+export class RenderedColumn extends RenderedItem {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
-        '<label>' +
-        '  <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
-        '  <span id="eText" class="ag-column-select-label"></span>' +
-        '</label>' +
+        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
+        '  <label>' +
+        '    <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
+        '    <span id="eText" class="ag-column-select-label"></span>' +
+        '  </label>' +
         '</div>';
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -22,22 +24,19 @@ export class RenderedColumn {
     private column: Column;
     private columnDept: number;
 
-    private eGui: HTMLElement;
     private eCheckbox: HTMLInputElement;
 
-    private destroyFunctions: Function[] = [];
-
     constructor(column: Column, columnDept: number) {
+        super(RenderedColumn.TEMPLATE);
         this.column = column;
-        this.eGui = _.loadTemplate(RenderedColumn.TEMPLATE);
         this.columnDept = columnDept;
     }
 
     public agPostWire(): void {
-        var eText = <HTMLElement> this.eGui.querySelector('#eText');
+        var eText = <HTMLElement> this.queryForHtmlElement('#eText');
         eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
 
-        this.eCheckbox = <HTMLInputElement> this.eGui.querySelector('#eCheckbox');
+        this.eCheckbox = <HTMLInputElement> this.queryForHtmlElement('#eCheckbox');
         this.eCheckbox.checked = this.column.isVisible();
         var changeEventListener = () => {
             if (this.column.isVisible()!==this.eCheckbox.checked) {
@@ -48,16 +47,17 @@ export class RenderedColumn {
 
         var columnStateChangedListener = this.onColumnStateChanged.bind(this);
         this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        this.destroyFunctions.push( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
+        this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
 
-        this.eGui.style.marginLeft = (this.columnDept * 10) + 'px';
+        var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
+        eIndent.style.width = (this.columnDept * 10) + 'px';
 
         this.addDragSource();
     }
 
     private addDragSource(): void {
         var dragSource: DragSource = {
-            eElement: this.eGui,
+            eElement: this.getGui(),
             dragItem: this.column
         };
         this.dragAndDropService2.addDragSource(dragSource);
@@ -69,11 +69,4 @@ export class RenderedColumn {
         }
     }
 
-    public destroy(): void {
-        this.destroyFunctions.forEach( func => func() );
-    }
-
-    public getGui(): HTMLElement {
-        return this.eGui;
-    }
 }

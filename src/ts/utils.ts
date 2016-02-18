@@ -471,5 +471,16 @@ export default class Utils {
 
         return -1;
     }
+
+    static setCheckboxState(eCheckbox: any, state: any) {
+        if (typeof state === 'boolean') {
+            eCheckbox.checked = state;
+            eCheckbox.indeterminate = false;
+        } else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            eCheckbox.indeterminate = true;
+        }
+    }
 }
 

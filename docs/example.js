@@ -102,7 +102,7 @@ var gridOptions = {
     groupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
-    showToolPanel: false,
+    showToolPanel: true,
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
     //groupSuppressAutoColumn: true,
@@ -251,6 +251,50 @@ var defaultCols = [
                 cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
+        ]
+    },
+    {
+        // column group 'Game of Choice'
+        headerName: 'Game of Choice',
+        children: [
+            {
+                headerName: 'Game of Choice',
+                children: [
+                    {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                        cellClass: function() { return 'alphabet'; },
+                        //pinned: 'right',
+                        icons: {
+                            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                        }
+                    },
+                    {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                        //pinned: 'right',
+                        cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                        floatCell: true,
+                        filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
+                ]
+
+            },
+            {
+                headerName: 'Game of Choice',
+                children: [
+                    {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                        cellClass: function() { return 'alphabet'; },
+                        //pinned: 'right',
+                        icons: {
+                            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                        }
+                    },
+                    {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                        //pinned: 'right',
+                        cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                        floatCell: true,
+                        filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
+                ]
+
+            }
         ]
     },
     {

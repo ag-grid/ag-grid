@@ -5,6 +5,7 @@ import {Qualifier} from "./context/context";
 import SelectionController from "./selectionController";
 import {RowNode} from "./entities/rowNode";
 import RenderedRow from "./rendering/renderedRow";
+import _ from './utils';
 
 @Bean('selectionRendererFactory')
 export default class SelectionRendererFactory {
@@ -15,7 +16,7 @@ export default class SelectionRendererFactory {
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
         eCheckbox.className = 'ag-selection-checkbox';
-        this.setCheckboxState(eCheckbox, rowNode.isSelected());
+        _.setCheckboxState(eCheckbox, rowNode.isSelected());
 
         eCheckbox.addEventListener('click', event => event.stopPropagation() );
 
@@ -28,7 +29,7 @@ export default class SelectionRendererFactory {
             }
         });
 
-        var selectionChangedCallback = ()=> this.setCheckboxState(eCheckbox, rowNode.isSelected());
+        var selectionChangedCallback = ()=> _.setCheckboxState(eCheckbox, rowNode.isSelected());
         rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
 
         addRenderedRowEventListener(RenderedRow.EVENT_RENDERED_ROW_REMOVED, () => {
@@ -38,15 +39,6 @@ export default class SelectionRendererFactory {
         return eCheckbox;
     }
 
-    private setCheckboxState(eCheckbox: any, state: any) {
-        if (typeof state === 'boolean') {
-            eCheckbox.checked = state;
-            eCheckbox.indeterminate = false;
-        } else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            eCheckbox.indeterminate = true;
-        }
-    }
+
 
 }
