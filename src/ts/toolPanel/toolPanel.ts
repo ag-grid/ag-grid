@@ -1,6 +1,6 @@
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
-import {ColumnSelectPanel} from "../enterprise/columnSelectPanel";
+import {ColumnSelectPanel} from "../enterprise/columnSelect/columnSelectPanel";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import _ from '../utils';

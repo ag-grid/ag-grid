@@ -208,6 +208,10 @@ export class ColumnController {
         return new ColumnApi(this);
     }
 
+    public getOriginalColumnTree(): OriginalColumnGroupChild[] {
+        return this.originalBalancedTree;
+    }
+
     public isSetupComplete(): boolean {
         return this.setupComplete;
     }

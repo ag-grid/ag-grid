@@ -203,6 +203,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         return this.colId;
     }
 
+    public getId(): string {
+        return this.getColId();
+    }
+
     public getDefinition(): AbstractColDef {
         return this.colDef;
     }

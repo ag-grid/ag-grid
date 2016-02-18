@@ -44,7 +44,7 @@ import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
-import {ColumnSelectPanel} from "./enterprise/columnSelectPanel";
+import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 
 export class Grid {
 

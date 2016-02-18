@@ -32,6 +32,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
         return this.groupId;
     }
 
+    public getId(): string {
+        return this.getGroupId();
+    }
+
     public setChildren(children: OriginalColumnGroupChild[]): void {
         this.children = children;
     }

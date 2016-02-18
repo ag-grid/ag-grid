@@ -169,6 +169,10 @@ export default class Utils {
         }
     }
 
+    static missing(value: any): boolean {
+        return !this.exists(value);
+    }
+
     static exists(value: any): boolean {
         if (value===null || value===undefined || value==='') {
             return false;
@@ -408,9 +412,13 @@ export default class Utils {
         return pressedKey === keyToCheck;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean) {
+    static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string) {
         if (visible) {
-            element.style.display = 'inline';
+            if (this.exists(visibleStyle)) {
+                element.style.display = visibleStyle;
+            } else {
+                element.style.display = 'inline';
+            }
         } else {
             element.style.display = 'none';
         }
