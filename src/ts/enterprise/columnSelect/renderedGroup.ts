@@ -8,6 +8,7 @@ import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import SvgFactory from "../../svgFactory";
 import GridOptionsWrapper from "../../gridOptionsWrapper";
 import {RenderedItem} from "./renderedItem";
+import GridPanel from "../../gridPanel/gridPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -15,12 +16,19 @@ export class RenderedGroup extends RenderedItem {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
         '  <span id="eIndent" class="ag-column-select-indent"></span>' +
-        '  <span id="eExpand" class="ag-column-select-column-group-expand"></span>' +
-        '  <span id="eContract" class="ag-column-select-column-group-contract"></span>' +
+        '  <span class="ag-column-group-arrows">' +
+        '    <span id="eGroupClosedArrow" class="ag-column-group-closed-arrow"></span>' +
+        '    <span id="eGroupOpenedArrow" class="ag-column-group-opened-arrow"></span>' +
+        '  </span>' +
+        '  <span class="ag-column-group-icons">' +
+        '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
+        '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
+        '  </span>' +
         '  <label>' +
         '    <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
         '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
@@ -31,8 +39,11 @@ export class RenderedGroup extends RenderedItem {
     private expanded = true;
     private columnDept: number;
 
-    private eExpand: HTMLElement;
-    private eContract: HTMLElement;
+    private eGroupClosedIcon: HTMLElement;
+    private eGroupClosedArrow: HTMLElement;
+    private eGroupOpenedIcon: HTMLElement;
+    private eGroupOpenedArrow: HTMLElement;
+
     private eCheckbox: HTMLInputElement;
     private expandedCallback: ()=>void;
 
@@ -69,20 +80,32 @@ export class RenderedGroup extends RenderedItem {
 
         var changeEventListener = () => {
             var columns = this.columnGroup.getLeafColumns();
-            this.columnController.setColumnsVisible(columns, this.eCheckbox.checked);
+            var newState = this.eCheckbox.checked;
+            this.columnController.setColumnsVisible(columns, newState);
+            //if (newState) {
+            //    var lastColumn = columns[columns.length-1];
+            //    this.gridPanel.ensureColumnVisible(lastColumn);
+            //}
+
         };
         this.eCheckbox.addEventListener('change', changeEventListener);
     }
 
     private setupExpandContract(): void {
-        this.eExpand = this.queryForHtmlElement('#eExpand');
-        this.eContract = this.queryForHtmlElement('#eContract');
+        this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
+        this.eGroupClosedArrow = this.queryForHtmlElement('#eGroupClosedArrow');
+        this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
+        this.eGroupOpenedArrow = this.queryForHtmlElement('#eGroupOpenedArrow');
 
-        this.eContract.appendChild(_.createIcon('groupContracted', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg));
-        this.eExpand.appendChild(_.createIcon('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createArrowDownSvg));
+        this.eGroupClosedArrow.appendChild(svgFactory.createSmallArrowRightSvg());
+        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null, svgFactory.createFolderClosed));
+        this.eGroupOpenedArrow.appendChild(svgFactory.createSmallArrowDownSvg());
+        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
 
-        this.eExpand.addEventListener('click', this.onExpandOrContractClicked.bind(this, false));
-        this.eContract.addEventListener('click', this.onExpandOrContractClicked.bind(this, true));
+        this.eGroupClosedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this, true));
+        this.eGroupClosedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this, true));
+        this.eGroupOpenedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this, false));
+        this.eGroupOpenedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this, false));
     }
 
     private addListenerToAllChildColumns(): void {
@@ -123,8 +146,11 @@ export class RenderedGroup extends RenderedItem {
     }
 
     private setIconVisibility(): void {
-        _.setVisible(this.eExpand, this.expanded);
-        _.setVisible(this.eContract, !this.expanded);
+        var folderOpen = this.expanded;
+        _.setVisible(this.eGroupClosedArrow, !folderOpen);
+        _.setVisible(this.eGroupClosedIcon, !folderOpen);
+        _.setVisible(this.eGroupOpenedArrow, folderOpen);
+        _.setVisible(this.eGroupOpenedIcon, folderOpen);
     }
 
     public isExpanded(): boolean {

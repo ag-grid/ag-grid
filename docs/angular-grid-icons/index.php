@@ -22,8 +22,7 @@ include '../documentation_header.php';
             <li>Menu icon on header</li>
             <li>Group open / close icon in headers</li>
             <li>Group expand / contact icon in rows</li>
-            <li>Tool panel show / hide column</li>
-            <li>Tool panel remove from group</li>
+            <li>Column select panel expand / contact column group</li>
         </ul>
     </p>
 
@@ -50,9 +49,8 @@ gridOptions.icons = {
     groupContracted: myGroupContractedIcon,
     columnGroupOpened: myGroupExpandedIcon,
     columnGroupClosed: myGroupContractedIcon,
-    columnVisible: myColumnVisibleIcon,
-    columnHidden: myColumnHiddenIcon,
-    columnRemoveFromGroup: myColumnRemoveFromGroupIcon
+    columnSelectOpen: myColumnSelectOpen,
+    columnSelectClosed: myColumnSelectClosed,
 }
 </pre>
 

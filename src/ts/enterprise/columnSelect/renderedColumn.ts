@@ -1,4 +1,3 @@
-
 import {Autowired} from "../../context/context";
 import {ColumnController} from "../../columnController/columnController";
 import {DragAndDropService2} from "../../dragAndDrop/dragAndDropService2";
@@ -6,12 +5,19 @@ import Column from "../../entities/column";
 import _ from '../../utils';
 import {DragSource} from "../../dragAndDrop/dragAndDropService2";
 import {RenderedItem} from "./renderedItem";
+import SvgFactory from "../../svgFactory";
+import GridPanel from "../../gridPanel/gridPanel";
+
+var svgFactory = SvgFactory.getInstance();
 
 export class RenderedColumn extends RenderedItem {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
         '  <span id="eIndent" class="ag-column-select-indent"></span>' +
+        '  <span class="ag-column-group-icons">' +
+        '    <span id="eColumnIcon" class="ag-column-icon"></span>' +
+        '  </span>' +
         '  <label>' +
         '    <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
         '    <span id="eText" class="ag-column-select-label"></span>' +
@@ -20,6 +26,7 @@ export class RenderedColumn extends RenderedItem {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private column: Column;
     private columnDept: number;
@@ -39,8 +46,12 @@ export class RenderedColumn extends RenderedItem {
         this.eCheckbox = <HTMLInputElement> this.queryForHtmlElement('#eCheckbox');
         this.eCheckbox.checked = this.column.isVisible();
         var changeEventListener = () => {
-            if (this.column.isVisible()!==this.eCheckbox.checked) {
-                this.columnController.setColumnVisible(this.column, this.eCheckbox.checked);
+            var newState = this.eCheckbox.checked;
+            if (this.column.isVisible()!==newState) {
+                this.columnController.setColumnVisible(this.column, newState);
+                //if (newState) {
+                //    this.gridPanel.ensureColumnVisible(this.column);
+                //}
             }
         };
         this.eCheckbox.addEventListener('change', changeEventListener);
@@ -51,6 +62,9 @@ export class RenderedColumn extends RenderedItem {
 
         var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
+
+        var eColumnIcon = this.queryForHtmlElement('#eColumnIcon');
+        eColumnIcon.appendChild(svgFactory.createColumnIcon());
 
         this.addDragSource();
     }
