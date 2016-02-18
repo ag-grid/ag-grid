@@ -51,8 +51,11 @@ export class HeaderContainer {
             default: secondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
         }
 
+        var icon = this.pinned ? DragAndDropService2.ICON_PINNED : DragAndDropService2.ICON_MOVE;
+
         this.dropTarget = {
             eContainer: this.eViewport ? this.eViewport : this.eContainer,
+            iconName: icon,
             eSecondaryContainers: secondaryContainers,
             onDragging: moveColumnController.onDragging.bind(moveColumnController),
             onDragEnter: moveColumnController.onDragEnter.bind(moveColumnController),

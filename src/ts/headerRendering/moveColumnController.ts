@@ -14,6 +14,7 @@ export class MoveColumnController {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -152,8 +153,6 @@ export class MoveColumnController {
             newIndex = 0;
         }
 
-        console.log(` <<< leftColumn = ${leftColumn?leftColumn.getColId():null}, newIndex = ${newIndex}`);
-
         return newIndex;
     }
 
@@ -186,7 +185,6 @@ export class MoveColumnController {
             newIndex = 0;
         }
 
-        console.log(` >>> leftColumn = ${leftColumn?leftColumn.getColId():null}, newIndex = ${newIndex}`);
         if (newIndex==1) {
             console.log('its 1');
         }
@@ -253,6 +251,7 @@ export class MoveColumnController {
                 } else {
                     this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_RIGHT);
                 }
+                this.dragAndDropService2.nudge();
             }
         }
     }

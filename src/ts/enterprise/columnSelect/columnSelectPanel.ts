@@ -31,7 +31,6 @@ export class ColumnSelectPanel extends Component {
     }
 
     public agPostWire(): void {
-        console.log('ColumnSelectPanel is alive!!');
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
     }
 
