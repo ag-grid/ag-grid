@@ -112,7 +112,7 @@ export default class Utils {
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     static isNode(o: any) {
         return (
-            typeof Node === "object" ? o instanceof Node :
+            typeof Node === "function" ? o instanceof Node :
             o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
@@ -121,7 +121,7 @@ export default class Utils {
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     static isElement(o: any) {
         return (
-            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+            typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
             o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
         );
     }
