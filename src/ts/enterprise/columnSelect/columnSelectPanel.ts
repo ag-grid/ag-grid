@@ -23,8 +23,7 @@ export class ColumnSelectPanel extends Component {
 
     private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
 
-    private treeNodes: TreeNode[];
-
+    private renderedItems: {[key: string]: RenderedItem};
     private columnTree: OriginalColumnGroupChild[];
 
     constructor() {
@@ -38,19 +37,18 @@ export class ColumnSelectPanel extends Component {
 
     public onColumnsChanged(): void {
         _.removeAllChildren(this.getGui());
-        if (this.treeNodes) {
-            this.treeNodes.forEach( treeNode => treeNode.search( treeNode => treeNode.getRenderedItem().destroy() ) );
+        if (this.renderedItems) {
+            _.iterateObject(this.renderedItems, (key: string, renderedItem: RenderedItem) => renderedItem.destroy() );
         }
-        this.treeNodes = [];
+        this.renderedItems = {};
 
         this.columnTree = this.columnController.getOriginalColumnTree();
-        this.recursivelyRenderComponents(this.columnTree, 0, this.treeNodes);
+        this.recursivelyRenderComponents(this.columnTree, 0);
     }
 
-    private recursivelyRenderGroupComponent(columnGroup: OriginalColumnGroup, dept: number, treeNodes: TreeNode[]): void {
+    private recursivelyRenderGroupComponent(columnGroup: OriginalColumnGroup, dept: number): void {
         // only render group if user provided the definition
         var newDept: number;
-        var newChildren: TreeNode[];
 
         if (columnGroup.getColGroupDef()) {
             var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this));
@@ -59,87 +57,62 @@ export class ColumnSelectPanel extends Component {
             // we want to indent on the gui for the children
             newDept = dept + 1;
 
-            var groupTreeNode = new TreeNode(columnGroup);
-            groupTreeNode.setRenderedItem(renderedGroup);
-            treeNodes.push(groupTreeNode);
-            newChildren = groupTreeNode.getChildren();
-
+            this.renderedItems[columnGroup.getId()] = renderedGroup;
         } else {
             // no children, so no indent
             newDept = dept;
-            newChildren = treeNodes;
         }
 
-        this.recursivelyRenderComponents(columnGroup.getChildren(), newDept, newChildren);
+        this.recursivelyRenderComponents(columnGroup.getChildren(), newDept);
     }
 
-    private recursivelyRenderColumnComponent(column: Column, dept: number, treeNodes: TreeNode[]): void {
+    private recursivelyRenderColumnComponent(column: Column, dept: number): void {
         var renderedColumn = new RenderedColumn(column, dept);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());
 
-        var columnTreeNode = new TreeNode(column);
-        columnTreeNode.setRenderedItem(renderedColumn);
-        treeNodes.push(columnTreeNode);
+        this.renderedItems[column.getId()] = renderedColumn;
     }
 
-    private recursivelyRenderComponents(tree: OriginalColumnGroupChild[], dept: number, treeNodes: TreeNode[]): void {
+    private recursivelyRenderComponents(tree: OriginalColumnGroupChild[], dept: number): void {
         tree.forEach( child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyRenderGroupComponent(<OriginalColumnGroup> child, dept, treeNodes);
+                this.recursivelyRenderGroupComponent(<OriginalColumnGroup> child, dept);
             } else {
-                this.recursivelyRenderColumnComponent(<Column> child, dept, treeNodes);
+                this.recursivelyRenderColumnComponent(<Column> child, dept);
             }
         });
     }
 
-    private recursivelySetVisibility(tree: TreeNode[], visible: boolean): void {
+    private recursivelySetVisibility(columnTree: OriginalColumnGroupChild[], visible: boolean): void {
 
-        tree.forEach( treeNode => {
+        columnTree.forEach( child => {
 
-            var component = treeNode.getRenderedItem();
-            component.setVisible(visible);
+            var component = this.renderedItems[child.getId()];
+            if (component) {
+                component.setVisible(visible);
+            }
 
-            if (component instanceof RenderedGroup) {
-                var renderedGroup = <RenderedGroup> component;
+            if (child instanceof OriginalColumnGroup) {
+                var columnGroup = <OriginalColumnGroup> child;
 
-                var newVisible = visible ? renderedGroup.isExpanded() : false;
-                var newLevelChildren = treeNode.getChildren();
-                this.recursivelySetVisibility(newLevelChildren, newVisible);
+                var newVisible: boolean;
+                if (component) {
+                    var expanded = (<RenderedGroup>component).isExpanded();
+                    newVisible = visible ? expanded : false;
+                } else {
+                    newVisible = visible;
+                }
+
+                var newChildren = columnGroup.getChildren();
+                this.recursivelySetVisibility(newChildren, newVisible);
+
             }
 
         });
     }
 
     public onGroupExpanded(): void {
-        this.recursivelySetVisibility(this.treeNodes, true);
-    }
-}
-
-class TreeNode {
-
-    private columnNode: OriginalColumnGroupChild;
-    private children: TreeNode[] = [];
-    private renderedItem: RenderedItem;
-
-    constructor(columnNode: OriginalColumnGroupChild) {
-        this.columnNode = columnNode;
-    }
-
-    public search(callback: (treeNode: TreeNode)=>void ): void {
-        callback(this);
-        this.children.forEach( treeNode => treeNode.search(callback) );
-    }
-
-    public getChildren(): TreeNode[] {
-        return this.children;
-    }
-
-    public setRenderedItem(renderedItem: RenderedItem): void {
-        this.renderedItem = renderedItem;
-    }
-
-    public getRenderedItem(): RenderedItem {
-        return this.renderedItem;
+        this.recursivelySetVisibility(this.columnTree, true);
     }
 }
