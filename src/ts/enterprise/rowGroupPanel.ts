@@ -13,6 +13,9 @@ import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
 import {DragSource} from "../dragAndDrop/dragAndDropService2";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import SvgFactory from "../svgFactory";
+
+var svgFactory = SvgFactory.getInstance();
 
 @Bean('rowGroupPanel')
 export class RowGroupPanel {
@@ -43,6 +46,7 @@ export class RowGroupPanel {
     private setupDropTarget(): void {
         this.dropTarget = {
             eContainer: this.eGui,
+            iconName: DragAndDropService2.ICON_GROUP,
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
@@ -66,6 +70,7 @@ export class RowGroupPanel {
         // someplace else, then we don't, as it was only 'asking'
         if (draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget) {
             this.columnController.removeRowGroupColumn(draggingEvent.dragItem);
+            this.columnController.setColumnVisible(draggingEvent.dragItem, true);
         }
         if (this.ePotentialDropGui) {
             this.removePotentialDropFromGui();
@@ -108,6 +113,9 @@ export class RowGroupPanel {
         if (this.columnController.getRowGroupColumns().length === 0) {
             // if no groupings, need to remove the empty message
             _.removeAllChildren(this.eGui);
+            var eGroupIcon = svgFactory.createGroupIcon();
+            _.addCssClass(eGroupIcon, 'ag-faded ag-row-group-icon');
+            this.ePotentialDropGui.appendChild(eGroupIcon);
         } else {
             // otherwise we need to add an arrow
             var eArrow = document.createElement('span');
@@ -122,6 +130,10 @@ export class RowGroupPanel {
     }
 
     private addColumnsToGui(columns: Column[]): void {
+        var eGroupIcon = svgFactory.createGroupIcon();
+        _.addCssClass(eGroupIcon, 'ag-row-group-icon');
+        this.eGui.appendChild(eGroupIcon);
+
         columns.forEach( (column: Column, index: number) => {
             if (index > 0) {
                 var eArrow = document.createElement('span');
@@ -135,6 +147,12 @@ export class RowGroupPanel {
     }
 
     private addEmptyMessageToGui(): void {
+        // add in faded group icon
+        var eGroupIcon = svgFactory.createGroupIcon();
+        _.addCssClass(eGroupIcon, 'ag-faded ag-row-group-icon');
+        this.eGui.appendChild(eGroupIcon);
+
+        // add in message
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var rowGroupColumnsEmptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag columns here to group');
         var eMessage = document.createElement('span');
@@ -202,6 +220,7 @@ class RenderedGroupedColumnCell {
         eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
         btRemove.addEventListener('click', ()=> {
             this.columnController.removeRowGroupColumn(this.column);
+            this.columnController.setColumnVisible(this.column, true);
         });
 
         if (this.ghost) {

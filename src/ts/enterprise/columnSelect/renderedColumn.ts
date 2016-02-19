@@ -55,8 +55,8 @@ export class RenderedColumn extends RenderedItem {
         this.eColumnHiddenIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnHiddenIcon');
         this.eColumnVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnVisibleIcon');
 
-        this.eColumnHiddenIcon.appendChild(svgFactory.createColumnHidden());
-        this.eColumnVisibleIcon.appendChild(svgFactory.createColumnVisible());
+        this.eColumnHiddenIcon.appendChild(svgFactory.createColumnHiddenIcon());
+        this.eColumnVisibleIcon.appendChild(svgFactory.createColumnVisibleIcon());
 
         this.eColumnHiddenIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
         this.eColumnVisibleIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));

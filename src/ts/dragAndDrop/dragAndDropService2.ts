@@ -51,6 +51,7 @@ export class DragAndDropService2 {
     public static ICON_MOVE = 'move';
     public static ICON_LEFT = 'left';
     public static ICON_RIGHT = 'right';
+    public static ICON_GROUP = 'group';
 
     private logger: Logger;
 
@@ -79,6 +80,7 @@ export class DragAndDropService2 {
     private eMoveIcon = svgFactory.createMoveIcon();
     private eLeftIcon = svgFactory.createLeftIcon();
     private eRightIcon = svgFactory.createRightIcon();
+    private eGroupIcon = svgFactory.createGroupIcon();
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
@@ -301,6 +303,7 @@ export class DragAndDropService2 {
             case DragAndDropService2.ICON_MOVE: eIcon = this.eMoveIcon; break;
             case DragAndDropService2.ICON_LEFT: eIcon = this.eLeftIcon; break;
             case DragAndDropService2.ICON_RIGHT: eIcon = this.eRightIcon; break;
+            case DragAndDropService2.ICON_GROUP: eIcon = this.eGroupIcon; break;
             default: eIcon = this.eMinusIcon; break;
         }
         this.eGhostIcon.appendChild(eIcon);

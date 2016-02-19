@@ -47,8 +47,8 @@ export default class ColumnSelectionPanel {
 
         var eVisibleIcons = document.createElement('span');
         _.addCssClass(eVisibleIcons, 'ag-visible-icons');
-        var eShowing = _.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnVisible);
-        var eHidden = _.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHidden);
+        var eShowing = _.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnVisibleIcon);
+        var eHidden = _.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenIcon);
         eVisibleIcons.appendChild(eShowing);
         eVisibleIcons.appendChild(eHidden);
         eShowing.style.display = column.visible ? '' : 'none';
