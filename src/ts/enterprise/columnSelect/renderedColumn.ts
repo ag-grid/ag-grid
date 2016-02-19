@@ -16,12 +16,10 @@ export class RenderedColumn extends RenderedItem {
         '<div class="ag-column-select-column">' +
         '  <span id="eIndent" class="ag-column-select-indent"></span>' +
         '  <span class="ag-column-group-icons">' +
-        '    <span id="eColumnIcon" class="ag-column-icon"></span>' +
+        '    <span id="eColumnVisibleIcon" class="ag-column-visible-icon"></span>' +
+        '    <span id="eColumnHiddenIcon" class="ag-column-hidden-icon"></span>' +
         '  </span>' +
-        '  <label>' +
-        '    <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
         '    <span id="eText" class="ag-column-select-label"></span>' +
-        '  </label>' +
         '</div>';
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -31,7 +29,8 @@ export class RenderedColumn extends RenderedItem {
     private column: Column;
     private columnDept: number;
 
-    private eCheckbox: HTMLInputElement;
+    private eColumnVisibleIcon: HTMLInputElement;
+    private eColumnHiddenIcon: HTMLInputElement;
 
     constructor(column: Column, columnDept: number) {
         super(RenderedColumn.TEMPLATE);
@@ -42,31 +41,31 @@ export class RenderedColumn extends RenderedItem {
     public agPostWire(): void {
         var eText = <HTMLElement> this.queryForHtmlElement('#eText');
         eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
+        eText.addEventListener('dblclick', this.onColumnVisibilityChanged.bind(this));
 
-        this.eCheckbox = <HTMLInputElement> this.queryForHtmlElement('#eCheckbox');
-        this.eCheckbox.checked = this.column.isVisible();
-        var changeEventListener = () => {
-            var newState = this.eCheckbox.checked;
-            if (this.column.isVisible()!==newState) {
-                this.columnController.setColumnVisible(this.column, newState);
-                //if (newState) {
-                //    this.gridPanel.ensureColumnVisible(this.column);
-                //}
-            }
-        };
-        this.eCheckbox.addEventListener('change', changeEventListener);
-
-        var columnStateChangedListener = this.onColumnStateChanged.bind(this);
-        this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
+        this.setupVisibleIcons();
 
         var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
 
-        var eColumnIcon = this.queryForHtmlElement('#eColumnIcon');
-        eColumnIcon.appendChild(svgFactory.createColumnIcon());
-
         this.addDragSource();
+    }
+
+    private setupVisibleIcons(): void {
+        this.eColumnHiddenIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnHiddenIcon');
+        this.eColumnVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnVisibleIcon');
+
+        this.eColumnHiddenIcon.appendChild(svgFactory.createColumnHidden());
+        this.eColumnVisibleIcon.appendChild(svgFactory.createColumnVisible());
+
+        this.eColumnHiddenIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
+        this.eColumnVisibleIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
+
+        var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
+        this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
+        this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
+
+        this.setIconVisibility();
     }
 
     private addDragSource(): void {
@@ -77,10 +76,19 @@ export class RenderedColumn extends RenderedItem {
         this.dragAndDropService2.addDragSource(dragSource);
     }
 
-    public onColumnStateChanged(): void {
-        if (this.column.isVisible()!==this.eCheckbox.checked) {
-            this.eCheckbox.checked = this.column.isVisible();
-        }
+    private onColumnStateChangedListener(): void {
+        this.setIconVisibility();
+    }
+
+    private setIconVisibility(): void {
+        var visible = this.column.isVisible();
+        _.setVisible(this.eColumnVisibleIcon, visible);
+        _.setVisible(this.eColumnHiddenIcon, !visible);
+    }
+
+    public onColumnVisibilityChanged(): void {
+        var newValue = !this.column.isVisible();
+        this.columnController.setColumnVisible(this.column, newValue);
     }
 
 }

@@ -65,7 +65,7 @@ export class EnterpriseMenu {
             this.createGeneralPanel(),
             this.createFilterPanel(),
             {
-                title: svgFactory.createColumnHiddenSvg(),
+                title: svgFactory.createColumnsIcon(),
                 body: this.createOtherPanel()
             }
         ];

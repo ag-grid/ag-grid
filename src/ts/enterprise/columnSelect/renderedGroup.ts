@@ -29,10 +29,7 @@ export class RenderedGroup extends RenderedItem {
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
         '  </span>' +
-        '  <label>' +
-        '    <input id="eCheckbox" type="checkbox" class="ag-column-select-checkbox"/>' +
         '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
-        '  </label>' +
         '</div>';
 
     private columnGroup: OriginalColumnGroup;
@@ -44,7 +41,6 @@ export class RenderedGroup extends RenderedItem {
     private eGroupOpenedIcon: HTMLElement;
     private eGroupOpenedArrow: HTMLElement;
 
-    private eCheckbox: HTMLInputElement;
     private expandedCallback: ()=>void;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void ) {
@@ -63,32 +59,13 @@ export class RenderedGroup extends RenderedItem {
         }
 
         eText.innerHTML = headerName;
+        eText.addEventListener('dblclick', this.onExpandOrContractClicked.bind(this));
         this.setupExpandContract();
-        this.setupCheckbox();
 
         var eIndent = this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
 
-        this.addListenerToAllChildColumns();
-
         this.setIconVisibility();
-    }
-
-    private setupCheckbox(): void {
-        this.eCheckbox = this.queryForHtmlInputElement('#eCheckbox');
-        this.setSelectedBasedOnChildren();
-
-        var changeEventListener = () => {
-            var columns = this.columnGroup.getLeafColumns();
-            var newState = this.eCheckbox.checked;
-            this.columnController.setColumnsVisible(columns, newState);
-            //if (newState) {
-            //    var lastColumn = columns[columns.length-1];
-            //    this.gridPanel.ensureColumnVisible(lastColumn);
-            //}
-
-        };
-        this.eCheckbox.addEventListener('change', changeEventListener);
     }
 
     private setupExpandContract(): void {
@@ -102,45 +79,14 @@ export class RenderedGroup extends RenderedItem {
         this.eGroupOpenedArrow.appendChild(svgFactory.createSmallArrowDownSvg());
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
 
-        this.eGroupClosedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this, true));
-        this.eGroupClosedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this, true));
-        this.eGroupOpenedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this, false));
-        this.eGroupOpenedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this, false));
+        this.eGroupClosedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this));
+        this.eGroupClosedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this));
+        this.eGroupOpenedIcon.addEventListener('click', this.onExpandOrContractClicked.bind(this));
+        this.eGroupOpenedArrow.addEventListener('click', this.onExpandOrContractClicked.bind(this));
     }
 
-    private addListenerToAllChildColumns(): void {
-        var columnSelectedListener = this.setSelectedBasedOnChildren.bind(this);
-        this.columnGroup.getLeafColumns().forEach( column => {
-            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnSelectedListener);
-            this.addDestroyFunc( ()=> column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnSelectedListener) );
-        });
-    }
-
-    private setSelectedBasedOnChildren(): void {
-
-        var foundVisible = false;
-        var foundNotVisible = false;
-
-        this.columnGroup.getLeafColumns().forEach( column => {
-            if (column.isVisible()) {
-                foundVisible = true;
-            } else {
-                foundNotVisible = true;
-            }
-        });
-
-        var selected: boolean;
-        if (foundVisible && foundNotVisible) {
-            selected = undefined;
-        } else {
-            selected = foundVisible;
-        }
-
-        _.setCheckboxState(this.eCheckbox, selected);
-    }
-
-    private onExpandOrContractClicked(newValue: boolean): void {
-        this.expanded = newValue;
+    private onExpandOrContractClicked(): void {
+        this.expanded = !this.expanded;
         this.setIconVisibility();
         this.expandedCallback();
     }

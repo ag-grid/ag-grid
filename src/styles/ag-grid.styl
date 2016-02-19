@@ -366,3 +366,19 @@ ag-grid-ng2
 //    user-select: none;
 //    cursor: default;
 //    width: 200px;
+
+// setting shake class to an item will give it a left ot right animation
+// used for the 'left' and 'rigth' arrows when dragging columns and scrolling
+.ag-shake-left-to-right
+    animation-name: ag-shake-left-to-right;
+    animation-duration: 0.2s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+
+@keyframes ag-shake-left-to-right
+    from
+        padding-left: 6px;
+        padding-right: 2px;
+    to
+        padding-left: 2px;
+        padding-right: 6px;

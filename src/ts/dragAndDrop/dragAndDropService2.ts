@@ -49,6 +49,8 @@ export class DragAndDropService2 {
     public static ICON_PINNED = 'pinned';
     public static ICON_ADD = 'add';
     public static ICON_MOVE = 'move';
+    public static ICON_LEFT = 'left';
+    public static ICON_RIGHT = 'right';
 
     private logger: Logger;
 
@@ -75,6 +77,8 @@ export class DragAndDropService2 {
     private ePlusIcon = svgFactory.createPlusIcon();
     private eMinusIcon = svgFactory.createMinusIcon();
     private eMoveIcon = svgFactory.createMoveIcon();
+    private eLeftIcon = svgFactory.createLeftIcon();
+    private eRightIcon = svgFactory.createRightIcon();
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
@@ -270,7 +274,11 @@ export class DragAndDropService2 {
         var dragItem = this.dragSource.dragItem;
         this.eGhost = _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('#eGhostIcon');
-        this.setGhostIcon(this.lastDropTarget.iconName);
+
+        if (this.lastDropTarget) {
+            this.setGhostIcon(this.lastDropTarget.iconName);
+        }
+
         var eText = <HTMLElement> this.eGhost.querySelector('#agText');
         if (dragItem.getColDef().headerName) {
             eText.innerHTML = dragItem.getColDef().headerName;
@@ -284,17 +292,19 @@ export class DragAndDropService2 {
         this.eBody.appendChild(this.eGhost);
     }
 
-    private setGhostIcon(iconName: string): void {
+    public setGhostIcon(iconName: string, shake = false): void {
         _.removeAllChildren(this.eGhostIcon);
-        console.log(`iconName = ${iconName}`);
         var eIcon: HTMLElement;
         switch (iconName) {
             case DragAndDropService2.ICON_ADD: eIcon = this.ePlusIcon; break;
             case DragAndDropService2.ICON_PINNED: eIcon = this.ePinnedIcon; break;
             case DragAndDropService2.ICON_MOVE: eIcon = this.eMoveIcon; break;
+            case DragAndDropService2.ICON_LEFT: eIcon = this.eLeftIcon; break;
+            case DragAndDropService2.ICON_RIGHT: eIcon = this.eRightIcon; break;
             default: eIcon = this.eMinusIcon; break;
         }
         this.eGhostIcon.appendChild(eIcon);
+        _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
     }
 
     public onMouseUp(mouseEvent: MouseEvent): void {

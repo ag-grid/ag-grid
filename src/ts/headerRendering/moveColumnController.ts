@@ -62,7 +62,6 @@ export class MoveColumnController {
         } else {
             return draggingEvent.x;
         }
-
     }
 
     private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
@@ -215,6 +214,11 @@ export class MoveColumnController {
             this.intervalCount = 0;
             this.failedMoveAttempts = 0;
             this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            if (this.needToMoveLeft) {
+                this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_LEFT, true);
+            } else {
+                this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_RIGHT, true);
+            }
         }
     }
 
@@ -222,6 +226,7 @@ export class MoveColumnController {
         if (this.moveInterval) {
             clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
+            this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_MOVE);
         }
     }
 

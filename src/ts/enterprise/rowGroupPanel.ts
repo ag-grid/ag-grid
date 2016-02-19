@@ -27,6 +27,7 @@ export class RowGroupPanel {
     private logger: Logger;
     private eGui: HTMLElement;
     private dropTarget: DropTarget;
+    private ePotentialDropGui: HTMLElement;
 
     public agWire(): void {
         this.setupComponents();
@@ -51,19 +52,34 @@ export class RowGroupPanel {
     }
 
     private onDragging(): void {
-        this.logger.log('onDragging');
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        this.columnController.addRowGroupColumn(draggingEvent.dragItem);
+        // is if column is already grouped, if it is, ignore it
+        if (!this.columnController.isColumnRowGrouped(draggingEvent.dragItem)) {
+            this.addPotentialDropToGui(draggingEvent.dragItem);
+        }
     }
 
     private onDragLeave(draggingEvent: DraggingEvent): void {
-        this.columnController.removeRowGroupColumn(draggingEvent.dragItem);
+        // if the dragging started from us, we remove the group, however if it started
+        // someplace else, then we don't, as it was only 'asking'
+        if (draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget) {
+            this.columnController.removeRowGroupColumn(draggingEvent.dragItem);
+        }
+        if (this.ePotentialDropGui) {
+            this.removePotentialDropFromGui();
+        }
     }
 
     private onDragStop(draggingEvent: DraggingEvent): void {
         //this.columnController.addRowGroupColumn(draggingEvent.dragItem);
+        if (this.ePotentialDropGui) {
+            // not necessary to remove it, as the change to rowGroups results in
+            // this panel refreshing, however my brain will be more at peace if we do
+            this.removePotentialDropFromGui();
+            this.columnController.addRowGroupColumn(draggingEvent.dragItem);
+        }
     }
 
     private onColumnChanged(): void {
@@ -76,6 +92,33 @@ export class RowGroupPanel {
         } else {
             this.addEmptyMessageToGui();
         }
+    }
+
+    private removePotentialDropFromGui(): void {
+        this.eGui.removeChild(this.ePotentialDropGui);
+        this.ePotentialDropGui = null;
+        // if no groupings, need to add the empty message back in
+        if (this.columnController.getRowGroupColumns().length === 0) {
+            this.addEmptyMessageToGui();
+        }
+    }
+
+    private addPotentialDropToGui(column: Column): void {
+        this.ePotentialDropGui = document.createElement('span');
+        if (this.columnController.getRowGroupColumns().length === 0) {
+            // if no groupings, need to remove the empty message
+            _.removeAllChildren(this.eGui);
+        } else {
+            // otherwise we need to add an arrow
+            var eArrow = document.createElement('span');
+            eArrow.innerHTML = '&#8594;';
+            this.ePotentialDropGui.appendChild(eArrow);
+        }
+        var cell = new RenderedGroupedColumnCell(column, this.dropTarget, true);
+        this.context.wireBean(cell);
+        this.ePotentialDropGui.appendChild(cell.getGui());
+
+        this.eGui.appendChild(this.ePotentialDropGui);
     }
 
     private addColumnsToGui(columns: Column[]): void {
@@ -126,15 +169,19 @@ class RenderedGroupedColumnCell {
     private eGui: HTMLElement;
     private column: Column;
     private dragSourceDropTarget: DropTarget;
+    private ghost: boolean;
 
-    constructor(column: Column, dragSourceDropTarget: DropTarget) {
+    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost = false) {
         this.column = column;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.ghost = ghost;
     }
 
     public agPostWire(): void {
         this.setupComponents();
-        this.addDragSource();
+        if (!this.ghost) {
+            this.addDragSource();
+        }
     }
 
     private addDragSource(): void {
@@ -156,6 +203,10 @@ class RenderedGroupedColumnCell {
         btRemove.addEventListener('click', ()=> {
             this.columnController.removeRowGroupColumn(this.column);
         });
+
+        if (this.ghost) {
+            _.addCssClass(this.eGui, 'ag-row-group-cell-ghost');
+        }
     }
 
     public getGui(): HTMLElement {
