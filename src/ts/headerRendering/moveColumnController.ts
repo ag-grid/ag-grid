@@ -184,10 +184,6 @@ export class MoveColumnController {
             newIndex = 0;
         }
 
-        if (newIndex==1) {
-            console.log('its 1');
-        }
-
         return newIndex;
     }
 

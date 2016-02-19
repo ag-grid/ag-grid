@@ -41,7 +41,10 @@ export default class EventService {
         }
     }
 
-    public addPriorityEventListener(eventType: string, listener: Function): void {
+    // for some events, it's important that the model gets to hear about them before the view,
+    // as the model may need to update before the view works on the info. if you register
+    // via this method, you get notified before the view parts
+    public addModalPriorityEventListener(eventType: string, listener: Function): void {
         this.addEventListener(eventType + EventService.PRIORITY, listener);
     }
 

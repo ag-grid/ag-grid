@@ -98,7 +98,7 @@ include '../documentation_header.php';
                 bar in the header will not auto-size the column.</td>
         </tr>
         <tr>
-            <th>suppressMovingCss</th>
+            <th>suppressColumnMoveAnimation</th>
             <td>If true, the <i>ag-column-moving</i> class is not added to the grid while columns are moving.
             In the default themes, this transpires to no animation for moving columns.</td>
         </tr>

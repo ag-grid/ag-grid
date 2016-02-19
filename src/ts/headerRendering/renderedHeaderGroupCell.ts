@@ -29,6 +29,7 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
     private parentScope: any;
+    private destroyFunctions: (()=>void)[] = [];
 
     private eRoot: HTMLElement;
 
@@ -39,8 +40,6 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.parentScope = parentScope;
     }
 
-    // required by interface, but we don't use
-    public destroy(): void {}
     // required by interface, but we don't use
     public refreshFilterIcon(): void {}
     // required by interface, but we don't use
@@ -125,8 +124,25 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.setWidthOfGroupHeaderCell();
     }
 
-    private setWidthOfGroupHeaderCell() {
-        this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.getActualWidth());
+    private setWidthOfGroupHeaderCell(): void {
+        var widthChangedListener = () => {
+            this.eHeaderGroupCell.style.width = this.columnGroup.getActualWidth() + 'px';
+        };
+
+        this.columnGroup.getLeafColumns().forEach( column => {
+            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            this.destroyFunctions.push( () => {
+                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            });
+        });
+
+        widthChangedListener();
+    }
+
+    public destroy(): void {
+        this.destroyFunctions.forEach( (func)=> {
+            func();
+        });
     }
 
     private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {

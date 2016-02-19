@@ -46,10 +46,10 @@ export default class InMemoryRowController {
     }
 
     public agPostWire(): void {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.doAggregate.bind(this));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.doAggregate.bind(this));
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, ()=> {
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, ()=> {
             this.onRowGroupChanged();
             this.doAggregate();
         });

@@ -19,6 +19,7 @@ import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import {DragSource} from "../dragAndDrop/dragAndDropService2";
+import EventService from "../eventService";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
     private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
@@ -60,6 +61,76 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         this.parentScope = parentScope;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+    }
+
+    public agPostWire(): void {
+        this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
+
+        _.addCssClass(this.eHeaderCell, 'ag-header-cell');
+
+        this.createScope(this.parentScope);
+        this.addAttributes();
+        CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
+
+        this.addMovingCss();
+
+        var colDef = this.column.getColDef();
+
+        // add tooltip if exists
+        if (colDef.headerTooltip) {
+            this.eHeaderCell.title = colDef.headerTooltip;
+        }
+
+        // label div
+        this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
+        this.eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
+
+        this.addResize();
+        this.addMove();
+        this.addMenu();
+
+        // add in sort icons
+        this.addSort();
+
+        // add in filter icon
+        this.eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
+
+        // render the cell, use a renderer if one is provided
+        var headerCellRenderer: any;
+        if (colDef.headerCellRenderer) { // first look for a renderer in col def
+            headerCellRenderer = colDef.headerCellRenderer;
+        } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
+            headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
+        }
+
+        var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
+
+        if (this.eText) {
+            if (headerCellRenderer) {
+                this.useRenderer(headerNameValue, headerCellRenderer);
+            } else {
+                // no renderer, default text render
+                this.eText.className = 'ag-header-cell-text';
+                this.eText.innerHTML = headerNameValue;
+            }
+        }
+
+        this.setWidthOnCell();
+        this.refreshFilterIcon();
+        this.refreshSortIcon();
+    }
+
+    private setWidthOnCell(): void {
+        var widthChangedListener = () => {
+            this.eHeaderCell.style.width = this.column.getActualWidth() + 'px';
+        };
+
+        this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        this.destroyFunctions.push( () => {
+            this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+        });
+
+        widthChangedListener();
     }
 
     public getGui(): HTMLElement {
@@ -167,64 +238,6 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         this.destroyFunctions.push(()=> {
             this.column.removeEventListener(Column.EVENT_MOVING_CHANGED, addMovingCssFunc);
         });
-    }
-
-    public agPostWire(): void {
-        this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
-
-        _.addCssClass(this.eHeaderCell, 'ag-header-cell');
-
-        this.createScope(this.parentScope);
-        this.addAttributes();
-        CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
-
-        this.addMovingCss();
-
-        var colDef = this.column.getColDef();
-
-        // add tooltip if exists
-        if (colDef.headerTooltip) {
-            this.eHeaderCell.title = colDef.headerTooltip;
-        }
-
-        // label div
-        this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
-        this.eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-
-        this.addResize();
-        this.addMove();
-        this.addMenu();
-
-        // add in sort icons
-        this.addSort();
-
-        // add in filter icon
-        this.eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
-
-        // render the cell, use a renderer if one is provided
-        var headerCellRenderer: any;
-        if (colDef.headerCellRenderer) { // first look for a renderer in col def
-            headerCellRenderer = colDef.headerCellRenderer;
-        } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
-            headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
-        }
-
-        var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
-
-        if (this.eText) {
-            if (headerCellRenderer) {
-                this.useRenderer(headerNameValue, headerCellRenderer);
-            } else {
-                // no renderer, default text render
-                this.eText.className = 'ag-header-cell-text';
-                this.eText.innerHTML = headerNameValue;
-            }
-        }
-
-        this.eHeaderCell.style.width = _.formatWidth(this.column.getActualWidth());
-
-        this.refreshFilterIcon();
-        this.refreshSortIcon();
     }
 
     private addSort(): void {

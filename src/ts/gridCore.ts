@@ -122,15 +122,6 @@ export class GridCore {
         this.eGridDiv.appendChild(this.eRootPanel.getGui());
         this.logger.log('grid DOM added');
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
-
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
             this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.onQuickFilterChanged(newFilter) );
@@ -208,15 +199,6 @@ export class GridCore {
                 that.gridPanel.periodicallyCheck();
                 that.periodicallyDoLayout();
             }, 500);
-        }
-    }
-
-    private onColumnChanged(event: ColumnChangeEvent): void {
-        if (event.isIndividualColumnResized()) {
-        } else if (event.getType()===Events.EVENT_COLUMN_MOVED || event.getType()===Events.EVENT_COLUMN_GROUP_OPENED
-            || event.getType()===Events.EVENT_COLUMN_VISIBLE  || event.getType()===Events.EVENT_COLUMN_PINNED) {
-        } else {
-            this.rowRenderer.refreshView();
         }
     }
 
@@ -332,7 +314,6 @@ export class GridCore {
 
     private setupColumns() {
         this.columnController.onColumnsChanged();
-        //this.gridPanel.showPinnedColContainersIfNeeded();
         this.gridPanel.onBodyHeightChange();
     }
 
@@ -342,6 +323,8 @@ export class GridCore {
     // remain.
     public updateModelAndRefresh(step: any, refreshFromIndex?: any) {
         this.inMemoryRowController.updateModel(step);
+        // the second line here should happen automatically after a change in the model,
+        // need to do an event somehow?
         this.rowRenderer.refreshView(refreshFromIndex);
     }
 
@@ -437,16 +420,6 @@ export class GridCore {
         // found that adding pinned column can upset the layout
         this.doLayout();
     }
-
-    //public updateBodyContainerWidthAfterColResize() {
-    //    this.rowRenderer.setMainRowWidths();
-    //    //this.gridPanel.setBodyContainerWidth();
-    //}
-
-    //public updatePinnedColContainerWidthAfterColResize() {
-    //    //this.gridPanel.setPinnedColContainerWidth();
-    //    this.headerRenderer.setPinnedColContainerWidth();
-    //}
 
     public doLayout() {
         // need to do layout first, as drawVirtualRows and setPinnedColHeight

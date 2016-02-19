@@ -72,8 +72,6 @@ export class DragAndDropService2 {
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget;
 
-    private addMovingCssToGrid: boolean;
-
     private ePinnedIcon = svgFactory.createPinIcon();
     private ePlusIcon = svgFactory.createPlusIcon();
     private eHiddenIcon = svgFactory.createColumnHiddenIcon();
@@ -84,7 +82,6 @@ export class DragAndDropService2 {
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('DragAndDropService');
-        this.addMovingCssToGrid = !this.gridOptionsWrapper.isSuppressMovingCss();
         this.eBody = <HTMLElement> document.querySelector('body');
         if (!this.eBody) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');

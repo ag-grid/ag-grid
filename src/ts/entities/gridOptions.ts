@@ -42,7 +42,7 @@ export interface GridOptions {
     suppressLoadingOverlay?: boolean;
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
-    suppressMovingCss?: boolean;
+    suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;

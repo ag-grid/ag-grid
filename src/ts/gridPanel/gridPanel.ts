@@ -701,7 +701,7 @@ export default class GridPanel {
     }
 
     public turnOnAnimationForABit(): void {
-        if (this.gridOptionsWrapper.isSuppressMovingCss()) {
+        if (this.gridOptionsWrapper.isSuppressColumnMoveAnimation()) {
             return;
         }
         this.animationThreadCount++;

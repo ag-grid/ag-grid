@@ -83,6 +83,17 @@ var groupColumn = {
 //    console.log('end ' + (end - start));
 //}, 5000);
 
+// the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
+function suppressColumnMoveAnimation() {
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+    return isFirefox || isSafari || isIE;
+}
+
 var gridOptions = {
     debug: true,
     //minColWidth: 50,
@@ -102,6 +113,7 @@ var gridOptions = {
     //suppressMovableColumns: true,
     //groupIncludeFooter: true,
     groupHideGroupColumns: true,
+    suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
     enableColResize: true, //one of [true, false]
