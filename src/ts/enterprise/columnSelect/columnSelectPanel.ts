@@ -26,23 +26,35 @@ export class ColumnSelectPanel extends Component {
     private renderedItems: {[key: string]: RenderedItem};
     private columnTree: OriginalColumnGroupChild[];
 
-    constructor() {
+    private allowDragging: boolean;
+
+    constructor(allowDragging: boolean) {
         super(ColumnSelectPanel.TEMPLATE);
+        this.allowDragging = allowDragging;
     }
 
     public agPostWire(): void {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.onColumnsChanged();
     }
 
     public onColumnsChanged(): void {
+        this.destroyAllRenderedElements();
+        this.columnTree = this.columnController.getOriginalColumnTree();
+        this.recursivelyRenderComponents(this.columnTree, 0);
+    }
+
+    public destroy(): void {
+        super.destroy();
+        this.destroyAllRenderedElements();
+    }
+
+    private destroyAllRenderedElements(): void {
         _.removeAllChildren(this.getGui());
         if (this.renderedItems) {
             _.iterateObject(this.renderedItems, (key: string, renderedItem: RenderedItem) => renderedItem.destroy() );
         }
         this.renderedItems = {};
-
-        this.columnTree = this.columnController.getOriginalColumnTree();
-        this.recursivelyRenderComponents(this.columnTree, 0);
     }
 
     private recursivelyRenderGroupComponent(columnGroup: OriginalColumnGroup, dept: number): void {
@@ -66,7 +78,7 @@ export class ColumnSelectPanel extends Component {
     }
 
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
-        var renderedColumn = new RenderedColumn(column, dept);
+        var renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());
 

@@ -31,11 +31,13 @@ export class RenderedColumn extends RenderedItem {
 
     private eColumnVisibleIcon: HTMLInputElement;
     private eColumnHiddenIcon: HTMLInputElement;
+    private allowDragging: boolean;
 
-    constructor(column: Column, columnDept: number) {
+    constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
         this.column = column;
         this.columnDept = columnDept;
+        this.allowDragging = allowDragging;
     }
 
     public agPostWire(): void {
@@ -48,7 +50,9 @@ export class RenderedColumn extends RenderedItem {
         var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
 
-        this.addDragSource();
+        if (this.allowDragging) {
+            this.addDragSource();
+        }
     }
 
     private setupVisibleIcons(): void {

@@ -16,7 +16,7 @@ export default class ToolPanel {
     private columnSelectPanel: ColumnSelectPanel;
 
     public agWire(): void {
-        this.columnSelectPanel = new ColumnSelectPanel();
+        this.columnSelectPanel = new ColumnSelectPanel(true);
         this.eGui = _.loadTemplate(ToolPanel.TEMPLATE);
     }
 

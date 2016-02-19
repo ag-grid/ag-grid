@@ -1,4 +1,5 @@
 import _ from '../utils';
+import EventService from "../eventService";
 
 export class Component {
 
@@ -34,10 +35,19 @@ export class Component {
         this.destroyFunctions.forEach( func => func() );
     }
 
-    public addDestroyableEventListener(eElement: HTMLElement, event: string, listener: ()=>void): void {
-        eElement.addEventListener(event, listener);
+    public addDestroyableEventListener(eElement: HTMLElement|EventService, event: string, listener: ()=>void): void {
+        if (eElement instanceof EventService) {
+            (<EventService>eElement).addEventListener(event, listener);
+        } else {
+            (<HTMLElement>eElement).addEventListener(event, listener);
+        }
+
         this.destroyFunctions.push( ()=> {
-            eElement.removeEventListener(event, listener);
+            if (eElement instanceof EventService) {
+                (<EventService>eElement).removeEventListener(event, listener);
+            } else {
+                (<HTMLElement>eElement).removeEventListener(event, listener);
+            }
         });
     }
 

@@ -13,6 +13,7 @@ import {Autowired} from "../context/context";
 import SvgFactory from "../svgFactory";
 import {Context} from "../context/context";
 import PopupService from "../widgets/agPopupService";
+import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -31,7 +32,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true);
+        var hidePopup = this.popupService.addAsModalPopup(
+            eMenuGui,
+            true,
+            ()=> menu.destroy()
+        );
         this.popupService.positionPopup({eventSource: eventSource,
             ePopup: eMenuGui,
             nudgeX: -9,
@@ -49,12 +54,15 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
 export class EnterpriseMenu {
 
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('context') private context: Context;
+
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
     private column: Column;
 
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    private columnSelectPanel: ColumnSelectPanel;
 
     constructor(column: Column) {
         this.column = column;
@@ -64,10 +72,7 @@ export class EnterpriseMenu {
         var tabItems: TabbedItem[] = [
             this.createGeneralPanel(),
             this.createFilterPanel(),
-            {
-                title: svgFactory.createColumnsIcon(),
-                body: this.createOtherPanel()
-            }
+            this.createColumnsPanel()
         ];
 
         this.tabbedLayout = new TabbedLayout({
@@ -75,6 +80,10 @@ export class EnterpriseMenu {
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this)
         });
+    }
+
+    public destroy(): void {
+        this.columnSelectPanel.destroy();
     }
 
     private createPinnedMenuPanel(): MenuPanel {
@@ -200,10 +209,20 @@ export class EnterpriseMenu {
         };
     }
 
-    private createOtherPanel(): HTMLElement {
-        var eDiv = document.createElement('div');
-        eDiv.innerHTML = 'hello there';
-        return eDiv;
+    private createColumnsPanel(): TabbedItem {
+
+        var eWrapperDiv = document.createElement('div');
+        _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+
+        this.columnSelectPanel = new ColumnSelectPanel(false);
+        this.context.wireBean(this.columnSelectPanel);
+
+        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+
+        return {
+            title: svgFactory.createColumnsIcon(),
+            body: eWrapperDiv
+        };
     }
 
     public afterGuiAttached(params: any): void {
