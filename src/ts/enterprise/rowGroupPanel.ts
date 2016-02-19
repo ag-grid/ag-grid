@@ -14,6 +14,7 @@ import {DragSource} from "../dragAndDrop/dragAndDropService2";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import SvgFactory from "../svgFactory";
+import GridPanel from "../gridPanel/gridPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -26,6 +27,7 @@ export class RowGroupPanel {
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService2') dragAndDropService2: DragAndDropService2;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridPanel') gridPanel: GridPanel;
 
     private logger: Logger;
     private eGui: HTMLElement;
@@ -69,6 +71,7 @@ export class RowGroupPanel {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
         if (draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget) {
+            this.gridPanel.turnOnAnimationForABit();
             this.columnController.removeRowGroupColumn(draggingEvent.dragItem);
             this.columnController.setColumnVisible(draggingEvent.dragItem, true);
         }
@@ -183,6 +186,7 @@ class RenderedGroupedColumnCell {
 
     @Autowired('dragAndDropService2') dragAndDropService2: DragAndDropService2;
     @Autowired('columnController') columnController: ColumnController;
+    @Autowired('gridPanel') gridPanel: GridPanel;
 
     private eGui: HTMLElement;
     private column: Column;
@@ -219,6 +223,7 @@ class RenderedGroupedColumnCell {
 
         eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
         btRemove.addEventListener('click', ()=> {
+            this.gridPanel.turnOnAnimationForABit();
             this.columnController.removeRowGroupColumn(this.column);
             this.columnController.setColumnVisible(this.column, true);
         });

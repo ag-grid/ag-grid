@@ -212,13 +212,6 @@ export class GridCore {
     }
 
     private onColumnChanged(event: ColumnChangeEvent): void {
-        if (event.isRowGroupChanged()) {
-            this.inMemoryRowController.onRowGroupChanged();
-        }
-        if (event.isValueChanged()) {
-            this.inMemoryRowController.doAggregate();
-        }
-
         if (event.isIndividualColumnResized()) {
             if (event.getColumn().isPinned()) {
                 this.updatePinnedColContainerWidthAfterColResize();
@@ -233,11 +226,6 @@ export class GridCore {
         }
 
         this.gridPanel.showPinnedColContainersIfNeeded();
-    }
-
-    public refreshRowGroup(): void {
-        this.inMemoryRowController.onRowGroupChanged();
-        this.refreshHeaderAndBody();
     }
 
     public showToolPanel(show: any) {

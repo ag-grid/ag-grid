@@ -95,13 +95,13 @@ export default class ColumnChangeEvent {
         return this.columnGroup;
     }
 
-    public isRowGroupChanged(): boolean {
-        return this.type === Events.EVENT_COLUMN_ROW_GROUP_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
-    }
+    //public isRowGroupChanged(): boolean {
+    //    return this.type === Events.EVENT_COLUMN_ROW_GROUP_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
+    //}
 
-    public isValueChanged(): boolean {
-        return this.type === Events.EVENT_COLUMN_VALUE_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
-    }
+    //public isValueChanged(): boolean {
+    //    return this.type === Events.EVENT_COLUMN_VALUE_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
+    //}
 
     public isIndividualColumnResized(): boolean {
         return this.type === Events.EVENT_COLUMN_RESIZED && this.column !== undefined && this.column !== null;

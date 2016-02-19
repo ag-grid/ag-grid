@@ -379,10 +379,6 @@ export class GridApi {
         this.eventService.dispatchEvent(eventType, event);
     }
 
-    public refreshRowGroup(): void {
-        this.gridCore.refreshRowGroup();
-    }
-
     public destroy(): void {
         this.context.destroy();
     }
