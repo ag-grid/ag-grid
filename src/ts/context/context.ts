@@ -230,6 +230,22 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
     return new factoryFunction();
 }
 
+export function ModelInit(): Function {
+    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
+
+        if (typeof index !== 'number') {
+            // it's an attribute on the class
+            var props = getOrCreateProps(classPrototype);
+            console.log(props);
+            //if (!props.agClassAttributes) {
+            //    props.agClassAttributes = {};
+            //}
+            //props.agClassAttributes[methodOrAttributeName] = name;
+        }
+
+    };
+}
+
 export function Bean(beanName: string): Function {
     return (classConstructor: any) => {
         var props = getOrCreateProps(classConstructor.prototype);
@@ -241,7 +257,7 @@ export function Autowired(name?: string): Function {
     return (classPrototype: any, methodOrAttributeName: string, index: number) => {
 
         if (name===null) {
-            console.log('got it');
+            console.error('ag-Grid: Autowired name should not be null');
             return;
         }
         if (typeof index !== 'number') {

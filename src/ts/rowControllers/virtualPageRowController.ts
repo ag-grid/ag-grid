@@ -335,7 +335,7 @@ export default class VirtualPageRowController {
         return this.datasourceVersion !== datasourceVersionCopy;
     }
 
-    private getVirtualRow(rowIndex: any) {
+    private getRow(rowIndex: any) {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
@@ -405,10 +405,10 @@ export default class VirtualPageRowController {
             getVirtualRowCombinedHeight: function(): number {
                 return that.getVirtualRowCombinedHeight();
             },
-            getVirtualRow: function (index: any) {
-                return that.getVirtualRow(index);
+            getRow: function (index: any) {
+                return that.getRow(index);
             },
-            getVirtualRowCount: function () {
+            getRowCount: function () {
                 return that.virtualRowCount;
             },
             forEachInMemory: function (callback: any) {

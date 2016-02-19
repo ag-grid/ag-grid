@@ -170,7 +170,7 @@ export default class SelectionController {
 
     // Deprecated method
     public deselectIndex(rowIndex: number, suppressEvents: boolean = false) {
-        var node = this.rowModel.getVirtualRow(rowIndex);
+        var node = this.rowModel.getRow(rowIndex);
         this.deselectNode(node, suppressEvents);
     }
 
@@ -181,7 +181,7 @@ export default class SelectionController {
 
     // Deprecated method
     public selectIndex(index: any, tryMulti: boolean, suppressEvents: boolean = false) {
-        var node = this.rowModel.getVirtualRow(index);
+        var node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti, suppressEvents);
     }
 

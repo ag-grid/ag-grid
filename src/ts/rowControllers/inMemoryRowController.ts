@@ -64,10 +64,10 @@ export default class InMemoryRowController {
             getTopLevelNodes: function () {
                 return that.rowsAfterGroup;
             },
-            getVirtualRow: function (index: any): RowNode {
+            getRow: function (index: any): RowNode {
                 return that.rowsToDisplay[index];
             },
-            getVirtualRowCount: function (): number {
+            getRowCount: function (): number {
                 if (that.rowsToDisplay) {
                     return that.rowsToDisplay.length;
                 } else {

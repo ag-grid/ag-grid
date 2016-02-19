@@ -258,13 +258,13 @@ export default class GridPanel {
 
     public ensureIndexVisible(index: any) {
         this.logger.log('ensureIndexVisible: ' + index);
-        var lastRow = this.rowModel.getVirtualRowCount();
+        var lastRow = this.rowModel.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
-        var nodeAtIndex = this.rowModel.getVirtualRow(index);
+        var nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = nodeAtIndex.rowTop;
         var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
 

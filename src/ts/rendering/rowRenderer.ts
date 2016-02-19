@@ -354,7 +354,7 @@ export default class RowRenderer {
 
     public workOutFirstAndLastRowsToRender(): void {
 
-        var rowCount = this.rowModel.getVirtualRowCount();
+        var rowCount = this.rowModel.getRowCount();
 
         if (rowCount===0) {
             this.firstVirtualRenderedRow = 0;
@@ -417,7 +417,7 @@ export default class RowRenderer {
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.rowModel.getVirtualRow(rowIndex);
+            var node = this.rowModel.getRow(rowIndex);
             if (node) {
                 this.insertRow(node, rowIndex, mainRowWidth);
             }
@@ -596,7 +596,7 @@ export default class RowRenderer {
             _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
         });
 
-        this.focusedCell = {rowIndex: rowIndex, colId: colId, node: this.rowModel.getVirtualRow(rowIndex), colDef: colDef};
+        this.focusedCell = {rowIndex: rowIndex, colId: colId, node: this.rowModel.getRow(rowIndex), colDef: colDef};
 
         // this puts the browser focus on the cell (so it gets key presses)
         if (forceBrowserFocus) {
