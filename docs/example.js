@@ -70,6 +70,19 @@ var groupColumn = {
     }
 };
 
+//var aVisible = true;
+//setTimeout( function() {
+//    var start = new Date().getTime();
+//    console.log('start');
+//    aVisible = !aVisible;
+//    gridOptions.columnApi.setColumnsVisible(gridOptions.columnApi.getAllColumns(), aVisible);
+//    //gridOptions.columnApi.getAllColumns().forEach( function(column) {
+//    //    gridOptions.columnApi.setColumnVisible(column, aVisible);
+//    //});
+//    var end = new Date().getTime();
+//    console.log('end ' + (end - start));
+//}, 5000);
+
 var gridOptions = {
     debug: true,
     //minColWidth: 50,
@@ -231,48 +244,6 @@ var defaultCols = [
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
-            }
-        ]
-    },
-    {
-        // column group 'Game of Choice'
-        headerName: 'Game of Choice',
-        children: [
-            {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
-                cellClass: function() { return 'alphabet'; },
-                //pinned: 'right',
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
-            },
-            {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
-                //pinned: 'right',
-                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-                floatCell: true,
-                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
-        ]
-    },
-    {
-        // column group 'Game of Choice'
-        headerName: 'Transaction Details',
-        children: [
-            {
-                headerName: 'Identifiers',
-                children: [
-                    {headerName: "ISIN", field: "game", width: 180, editable: true, filter: 'set'},
-                    {headerName: "CUSIP", field: "game", width: 180, editable: true, filter: 'set'},
-                    {headerName: "MIC", field: "game", width: 180, editable: true, filter: 'set'}
-                ]
-
-            },
-            {
-                headerName: 'Counterparties',
-                children: [
-                    {headerName: "Buy Side", field: "game", width: 180, editable: true, filter: 'set'},
-                    {headerName: "Sell Side", field: "game", width: 180, editable: true, filter: 'set'}
-                ]
-
             }
         ]
     },

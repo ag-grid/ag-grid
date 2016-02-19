@@ -2,6 +2,15 @@ import _ from '../utils';
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 
+// steps in booting up:
+// 1. create all beans
+// 2. autowire all attributes
+// 3. wire all beans
+// 4. initialise the model
+// 5. initialise the view
+// 6. boot??? (not sure if this is needed)
+// each bean is responsible for initialising itself, taking items from the gridOptionsWrapper
+
 export interface ContextParams {
     seed: any,
     beans: any[],

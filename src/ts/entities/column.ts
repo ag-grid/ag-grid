@@ -15,6 +15,18 @@ import {ColumnController} from "../columnController/columnController";
 // can only appear in OriginalColumn tree).
 export default class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
+    // + renderedHeaderCell - for making header cell transparent when moving
+    public static EVENT_MOVING_CHANGED = 'movingChanged';
+    // + renderedCell - changing left position
+    public static EVENT_LEFT_CHANGED = 'leftChanged';
+    // + renderedCell - changing width
+    public static EVENT_WIDTH_CHANGED = 'widthChanged';
+    // + renderedCell - for changing pinned classes
+    public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
+    public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    // + renderedColumn - for changing visibility icon
+    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
@@ -43,13 +55,6 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     private minWidth: number;
     private maxWidth: number;
-
-    public static EVENT_MOVING_CHANGED = 'movingChanged';
-    public static EVENT_LEFT_CHANGED = 'leftChanged';
-    public static EVENT_WIDTH_CHANGED = 'widthChanged';
-    public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
-    public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
-    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
     private eventService: EventService = new EventService();
 

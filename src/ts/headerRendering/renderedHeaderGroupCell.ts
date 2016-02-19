@@ -39,11 +39,11 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.parentScope = parentScope;
     }
 
-    // requied by interface, but we don't use
+    // required by interface, but we don't use
     public destroy(): void {}
-    // requied by interface, but we don't use
+    // required by interface, but we don't use
     public refreshFilterIcon(): void {}
-    // requied by interface, but we don't use
+    // required by interface, but we don't use
     public refreshSortIcon(): void {}
 
     public getGui(): HTMLElement {

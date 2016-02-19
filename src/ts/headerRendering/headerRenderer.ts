@@ -20,6 +20,9 @@ import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {HeaderContainer} from "./headerContainer";
+import EventService from "../eventService";
+import {Events} from "../events";
+import ColumnChangeEvent from "../columnChangeEvent";
 
 @Bean('headerRenderer')
 export default class HeaderRenderer {
@@ -35,6 +38,7 @@ export default class HeaderRenderer {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('context') private context: Context;
+    @Autowired('eventService') private eventService: EventService;
 
     private pinnedLeftContainer: HeaderContainer;
     private pinnedRightContainer: HeaderContainer;
@@ -56,6 +60,22 @@ export default class HeaderRenderer {
         this.context.wireBean(this.pinnedLeftContainer);
         this.context.wireBean(this.pinnedRightContainer);
         this.context.wireBean(this.centerContainer);
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, (event: ColumnChangeEvent)=> {
+            if (event.isIndividualColumnResized()) {
+                this.onIndividualColumnResized(event.getColumn());
+            } else {
+                this.refreshHeader();
+            }
+        });
+
     }
 
     public refreshHeader() {
@@ -76,18 +96,10 @@ export default class HeaderRenderer {
             this.eHeaderOverlay.style.height = rowHeight + 'px';
             this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
         }
-    }
 
-    public addChildToOverlay(child: HTMLElement): void {
-        if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.appendChild(child);
-        }
-    }
-
-    public removeChildFromOverlay(child: HTMLElement): void {
-        if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.removeChild(child);
-        }
+        this.updateFilterIcons();
+        this.updateSortIcons();
+        this.setPinnedColContainerWidth();
     }
 
     public setPinnedColContainerWidth() {

@@ -115,7 +115,6 @@ export class GridApi {
     public refreshHeader() {
         // need to review this - the refreshHeader should also refresh all icons in the header
         this.headerRenderer.refreshHeader();
-        this.headerRenderer.updateFilterIcons();
     }
 
     public isAnyFilterPresent(): boolean {

@@ -134,10 +134,25 @@ export class EnterpriseMenu {
     private createMiscGroupPanel(): MenuPanel {
         var items: MenuPanelItems[] = [];
 
-        items.push({
-            name: 'Reset Columns',
-            action: ()=> this.columnController.resetState()
-        });
+        items.push(
+            {
+                name: 'Reset Columns',
+                action: ()=> this.columnController.resetState()
+            },
+            {
+                name: 'Sum',
+                action: ()=> {
+                    this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
+                    this.columnController.addValueColumn(this.column);
+                }
+            },
+            {
+                name: 'Remove Sum',
+                action: ()=> {
+                    //this.columnController.setColumnAggFunction(this.column, null);
+                    this.columnController.removeValueColumn(this.column);
+                }
+            });
 
         var eMiscPanel = new MenuPanel(items, this.onHidePopup.bind(this));
         return eMiscPanel;

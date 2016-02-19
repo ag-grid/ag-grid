@@ -133,6 +133,13 @@ export class ColumnController {
         this.logger = loggerFactory.create('ColumnController');
     }
 
+    // column on dispatches local events, never uses global event service, left, width, visible - controller is not updated
+
+    // for global events, controller is updated before the event is sent
+
+    // get column to also fire global events, then,
+    // for each global event, have column controller listen for the event as P1, and make model changes
+
     //public agPostWire(): void {
     //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
     //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
@@ -144,7 +151,12 @@ export class ColumnController {
     //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
     //}
 
-    private setFirstRightAndLastLeft(): void {
+    // two steps
+    // 1 - clean up what we have
+    // 2 - allow calling setXXX on columns themselves, by adding a second parameter to each setXXX method to allow suppressing of global events,
+    //     then have controller listen for these events
+
+    private setFirstRightAndLastLeftPinned(): void {
         var lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
         var firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
 
@@ -152,8 +164,6 @@ export class ColumnController {
             column.setLastLeftPinned(column === lastLeft);
             column.setFirstRightPinned(column === firstRight);
         } );
-
-        //console.log(`firstRightDisplayedPinnedCol = ${this.firstRightDisplayedPinnedCol?this.firstRightDisplayedPinnedCol.getColId():'null'}`);
     }
 
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
@@ -373,10 +383,6 @@ export class ColumnController {
         this.rowGroupColumns.splice(toIndex, 0, column);
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
-    }
-
-    public getColumnIndex(column: Column): number {
-        return this.allColumns.indexOf(column);
     }
 
     public getPathForColumn(column: Column): ColumnGroup[] {
@@ -954,10 +960,7 @@ export class ColumnController {
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();
 
-        // in the future, i want update model to be called as a result of
-        // priority model change events. onColumnChanged was an attempt
-        // at start this
-        this.setFirstRightAndLastLeft();
+        this.setFirstRightAndLastLeftPinned();
     }
 
     private updateGroupsAndDisplayedColumns() {

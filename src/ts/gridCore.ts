@@ -220,12 +220,16 @@ export class GridCore {
         }
 
         if (event.isIndividualColumnResized()) {
-            this.onIndividualColumnResized(event.getColumn());
+            if (event.getColumn().isPinned()) {
+                this.updatePinnedColContainerWidthAfterColResize();
+            } else {
+                this.updateBodyContainerWidthAfterColResize();
+            }
         } else if (event.getType()===Events.EVENT_COLUMN_MOVED || event.getType()===Events.EVENT_COLUMN_GROUP_OPENED
             || event.getType()===Events.EVENT_COLUMN_VISIBLE  || event.getType()===Events.EVENT_COLUMN_PINNED) {
-            this.refreshHeader();
+            //this.headerRenderer.refreshHeader();
         } else {
-            this.refreshHeaderAndBody();
+            this.rowRenderer.refreshView();
         }
 
         this.gridPanel.showPinnedColContainersIfNeeded();
@@ -234,16 +238,6 @@ export class GridCore {
     public refreshRowGroup(): void {
         this.inMemoryRowController.onRowGroupChanged();
         this.refreshHeaderAndBody();
-    }
-
-    private onIndividualColumnResized(column: Column): void {
-        this.headerRenderer.onIndividualColumnResized(column);
-        //this.rowRenderer.onIndividualColumnResized(column);
-        if (column.isPinned()) {
-            this.updatePinnedColContainerWidthAfterColResize();
-        } else {
-            this.updateBodyContainerWidthAfterColResize();
-        }
     }
 
     public showToolPanel(show: any) {
@@ -315,20 +309,7 @@ export class GridCore {
     // gets called after columns are shown / hidden from groups expanding
     private refreshHeaderAndBody() {
         this.logger.log('refreshHeaderAndBody');
-        this.refreshHeader();
-        this.refreshBody();
-    }
-
-    private refreshHeader() {
         this.headerRenderer.refreshHeader();
-        this.headerRenderer.updateFilterIcons();
-        this.headerRenderer.updateSortIcons();
-        this.headerRenderer.setPinnedColContainerWidth();
-    }
-
-    private refreshBody() {
-        //this.gridPanel.setBodyContainerWidth();
-        //this.gridPanel.setPinnedColContainerWidth();
         this.rowRenderer.refreshView();
     }
 
