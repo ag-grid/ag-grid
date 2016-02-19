@@ -21,11 +21,11 @@ export class Events {
     /** A column group was opened / closed */
     public static EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
 
-    /** A column group was opened / closed */
-    public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
-
     /** One or more columns was resized. If just one, the column in the event is set. */
     public static EVENT_COLUMN_RESIZED = 'columnResized';
+
+    /** A row group was opened / closed */
+    public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
     public static EVENT_CELL_CLICKED = 'cellClicked';

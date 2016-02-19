@@ -225,7 +225,7 @@ export class GridCore {
             this.rowRenderer.refreshView();
         }
 
-        this.gridPanel.showPinnedColContainersIfNeeded();
+        //this.gridPanel.showPinnedColContainersIfNeeded();
     }
 
     public showToolPanel(show: any) {
@@ -340,7 +340,7 @@ export class GridCore {
 
     private setupColumns() {
         this.columnController.onColumnsChanged();
-        this.gridPanel.showPinnedColContainersIfNeeded();
+        //this.gridPanel.showPinnedColContainersIfNeeded();
         this.gridPanel.onBodyHeightChange();
     }
 

@@ -13,6 +13,7 @@ import {Autowired} from "../context/context";
 import EventService from "../eventService";
 import {Events} from "../events";
 import {MoveColumnController} from "../headerRendering/moveColumnController";
+import ColumnChangeEvent from "../columnChangeEvent";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -575,7 +576,20 @@ export default class GridPanel {
         return false;
     }
 
-    public onColumnsChanged() {
+    public onColumnsChanged(event: ColumnChangeEvent) {
+
+        if (event.isContainerWidthImpacted()) {
+            this.setWidthsOfContainers();
+        }
+
+        if (event.isPinnedPanelVisibilityImpacted()) {
+            this.showPinnedColContainersIfNeeded();
+        }
+    }
+
+    private setWidthsOfContainers(): void {
+        this.showPinnedColContainersIfNeeded();
+
         var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = mainRowWidth;
 
@@ -600,7 +614,8 @@ export default class GridPanel {
         this.eBodyViewportWrapper.style.marginRight = pinnedRightWidth;
     }
 
-    public showPinnedColContainersIfNeeded() {
+
+    private showPinnedColContainersIfNeeded() {
         // no need to do this if not using scrolls
         if (this.forPrint) {
             return;

@@ -95,13 +95,21 @@ export default class ColumnChangeEvent {
         return this.columnGroup;
     }
 
-    //public isRowGroupChanged(): boolean {
-    //    return this.type === Events.EVENT_COLUMN_ROW_GROUP_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
-    //}
+    public isPinnedPanelVisibilityImpacted(): boolean {
+        return this.type ===  Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
+            this.type ===  Events.EVENT_COLUMN_GROUP_OPENED ||
+            this.type ===  Events.EVENT_COLUMN_VISIBLE ||
+            this.type ===  Events.EVENT_COLUMN_PINNED
+    }
 
-    //public isValueChanged(): boolean {
-    //    return this.type === Events.EVENT_COLUMN_VALUE_CHANGE || this.type === Events.EVENT_COLUMN_EVERYTHING_CHANGED;
-    //}
+    public isContainerWidthImpacted(): boolean {
+        return this.type ===  Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
+            this.type ===  Events.EVENT_COLUMN_GROUP_OPENED ||
+            this.type ===  Events.EVENT_COLUMN_VISIBLE ||
+            this.type ===  Events.EVENT_COLUMN_RESIZED ||
+            this.type ===  Events.EVENT_COLUMN_PINNED ||
+            this.type ===  Events.EVENT_COLUMN_ROW_GROUP_CHANGE;
+    }
 
     public isIndividualColumnResized(): boolean {
         return this.type === Events.EVENT_COLUMN_RESIZED && this.column !== undefined && this.column !== null;
