@@ -24,6 +24,7 @@ import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
+import ColumnChangeEvent from "../columnChangeEvent";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -89,6 +90,22 @@ export default class RowRenderer {
             }
         };
 
+        this.getContainersFromGridPanel();
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnEvent.bind(this));
+    }
+
+    public onColumnEvent(event: ColumnChangeEvent): void {
+        if (event.isContainerWidthImpacted()) {
+            this.setMainRowWidths();
+        }
+    }
+
+    public getContainersFromGridPanel(): void {
         this.eBodyContainer = this.gridPanel.getBodyContainer();
         this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
         this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();

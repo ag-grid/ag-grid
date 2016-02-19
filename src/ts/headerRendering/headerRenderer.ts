@@ -71,6 +71,7 @@ export default class HeaderRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, (event: ColumnChangeEvent)=> {
             if (event.isIndividualColumnResized()) {
                 this.onIndividualColumnResized(event.getColumn());
+                this.setPinnedColContainerWidth();
             } else {
                 this.refreshHeader();
             }
@@ -78,6 +79,8 @@ export default class HeaderRenderer {
 
     }
 
+    // this is called from the API and refreshes everything, should be broken out
+    // into refresh everything vs just something changed
     public refreshHeader() {
         this.pinnedLeftContainer.removeAllChildren();
         this.pinnedRightContainer.removeAllChildren();
@@ -113,12 +116,6 @@ export default class HeaderRenderer {
 
         var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
         this.eHeaderViewport.style.marginRight = pinnedRightWidth;
-    }
-
-    public getRightPinnedStartPixel(): number {
-        var rightStart = this.pinnedRightContainer.getBoundingLeft();
-        var parentStart = this.eHeaderOverlay.getBoundingClientRect().left;
-        return rightStart - parentStart;
     }
 
     public updateSortIcons() {

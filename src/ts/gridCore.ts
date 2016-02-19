@@ -213,19 +213,11 @@ export class GridCore {
 
     private onColumnChanged(event: ColumnChangeEvent): void {
         if (event.isIndividualColumnResized()) {
-            if (event.getColumn().isPinned()) {
-                this.updatePinnedColContainerWidthAfterColResize();
-            } else {
-                this.updateBodyContainerWidthAfterColResize();
-            }
         } else if (event.getType()===Events.EVENT_COLUMN_MOVED || event.getType()===Events.EVENT_COLUMN_GROUP_OPENED
             || event.getType()===Events.EVENT_COLUMN_VISIBLE  || event.getType()===Events.EVENT_COLUMN_PINNED) {
-            //this.headerRenderer.refreshHeader();
         } else {
             this.rowRenderer.refreshView();
         }
-
-        //this.gridPanel.showPinnedColContainersIfNeeded();
     }
 
     public showToolPanel(show: any) {
@@ -446,15 +438,15 @@ export class GridCore {
         this.doLayout();
     }
 
-    public updateBodyContainerWidthAfterColResize() {
-        this.rowRenderer.setMainRowWidths();
-        //this.gridPanel.setBodyContainerWidth();
-    }
+    //public updateBodyContainerWidthAfterColResize() {
+    //    this.rowRenderer.setMainRowWidths();
+    //    //this.gridPanel.setBodyContainerWidth();
+    //}
 
-    public updatePinnedColContainerWidthAfterColResize() {
-        //this.gridPanel.setPinnedColContainerWidth();
-        this.headerRenderer.setPinnedColContainerWidth();
-    }
+    //public updatePinnedColContainerWidthAfterColResize() {
+    //    //this.gridPanel.setPinnedColContainerWidth();
+    //    this.headerRenderer.setPinnedColContainerWidth();
+    //}
 
     public doLayout() {
         // need to do layout first, as drawVirtualRows and setPinnedColHeight
