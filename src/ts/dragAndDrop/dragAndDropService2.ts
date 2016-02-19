@@ -76,7 +76,7 @@ export class DragAndDropService2 {
 
     private ePinnedIcon = svgFactory.createPinIcon();
     private ePlusIcon = svgFactory.createPlusIcon();
-    private eMinusIcon = svgFactory.createMinusIcon();
+    private eHiddenIcon = svgFactory.createColumnHiddenIcon();
     private eMoveIcon = svgFactory.createMoveIcon();
     private eLeftIcon = svgFactory.createLeftIcon();
     private eRightIcon = svgFactory.createRightIcon();
@@ -304,7 +304,7 @@ export class DragAndDropService2 {
             case DragAndDropService2.ICON_LEFT: eIcon = this.eLeftIcon; break;
             case DragAndDropService2.ICON_RIGHT: eIcon = this.eRightIcon; break;
             case DragAndDropService2.ICON_GROUP: eIcon = this.eGroupIcon; break;
-            default: eIcon = this.eMinusIcon; break;
+            default: eIcon = this.eHiddenIcon; break;
         }
         this.eGhostIcon.appendChild(eIcon);
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
