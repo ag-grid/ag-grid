@@ -1,7 +1,9 @@
 export class Events {
 
+
     /** A new set of columns has been entered, everything has potentially changed. */
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
+    public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
 
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';

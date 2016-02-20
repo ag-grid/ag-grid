@@ -789,6 +789,7 @@ export class ColumnController {
         this.ready = true;
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        this.eventService.dispatchEvent(Events.EVENT_NEW_COLUMNS_LOADED);
     }
 
     public isReady(): boolean {

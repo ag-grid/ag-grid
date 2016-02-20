@@ -16,6 +16,7 @@ import {Autowired} from "../context/context";
 import {IRowModel} from "../rowControllers/iRowModel";
 import EventService from "../eventService";
 import {Events} from "../events";
+import {PostConstruct} from "../context/context";
 
 @Bean('filterManager')
 export default class FilterManager {
@@ -36,8 +37,10 @@ export default class FilterManager {
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
+        this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
     }
 
     public setFilterModel(model: any) {
@@ -126,19 +129,6 @@ export default class FilterManager {
         return this.isQuickFilterPresent() || this.advancedFilterPresent || this.externalFilterPresent;
     }
 
-    // returns true if given col has a filter active
-    public isFilterPresentForCol(colId: any) {
-        var filterWrapper = this.allFilters[colId];
-        if (!filterWrapper) {
-            return false;
-        }
-        if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
-            console.error('Filter is missing method isFilterActive');
-        }
-        var filterPresent = filterWrapper.filter.isFilterActive();
-        return filterPresent;
-    }
-
     private doesFilterPass(node: RowNode, filterToSkip?: any) {
         var data = node.data;
         var colKeys = Object.keys(this.allFilters);
@@ -198,18 +188,6 @@ export default class FilterManager {
             this.onFilterChanged();
         }
     }
-
-    //public onFilterChanged() {
-        //this.headerRenderer.updateFilterIcons();
-        //if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-        //    // if doing server side filtering, changing the sort has the impact
-        //    // of resetting the datasource
-        //    this.setDatasource();
-        //} else {
-        //    // if doing in memory filtering, we just update the in memory data
-        //    this.updateModelAndRefresh(Constants.STEP_FILTER);
-        //}
-    //}
 
     public onFilterChanged(): void {
         this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
@@ -389,6 +367,10 @@ export default class FilterManager {
         }
 
         return filterWrapper;
+    }
+
+    private onNewColumnsLoaded(): void {
+        this.agDestroy();
     }
 
     public agDestroy() {
