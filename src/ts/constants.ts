@@ -1,6 +1,8 @@
 export default class Constants {
+
     static STEP_EVERYTHING = 0;
     static STEP_FILTER = 1;
+    static STEP_AGGREGATE = 4;
     static STEP_SORT = 2;
     static STEP_MAP = 3;
 
@@ -16,4 +18,7 @@ export default class Constants {
     static KEY_UP = 38;
     static KEY_LEFT = 37;
     static KEY_RIGHT = 39;
+
+    static ROW_MODEL_TYPE_PAGINATION = 'pagination';
+    static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
 }

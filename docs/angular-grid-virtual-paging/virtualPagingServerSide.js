@@ -35,10 +35,10 @@
         enableServerSideSorting: true,
         enableServerSideFilter: true,
         enableColResize: true,
-        virtualPaging: true, // this is important, if not set, normal paging will be done
         rowSelection: 'single',
         rowDeselection: true,
-        columnDefs: columnDefs
+        columnDefs: columnDefs,
+        rowModelType: 'virtual'
     };
 
     function setRowData(allOfTheData) {

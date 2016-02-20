@@ -25,6 +25,7 @@ import {Autowired} from "../context/context";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 import ColumnChangeEvent from "../columnChangeEvent";
+import {IRowModel} from "../rowControllers/iRowModel";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -43,9 +44,9 @@ export default class RowRenderer {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     private cellRendererMap: {[key: string]: any};
-    private rowModel: any;
     private firstVirtualRenderedRow: number;
     private lastVirtualRenderedRow: number;
 
@@ -98,9 +99,13 @@ export default class RowRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnEvent.bind(this));
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshView.bind(this, null));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshView.bind(this, null));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshView.bind(this, null));
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.refreshView.bind(this, null));
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.refreshView.bind(this, null));
+
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshView.bind(this, null));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshView.bind(this, null));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshView.bind(this, null));
+
     }
 
     public onColumnEvent(event: ColumnChangeEvent): void {
@@ -217,7 +222,7 @@ export default class RowRenderer {
     public refreshView(refreshFromIndex?: any) {
         this.logger.log('refreshView');
         if (!this.gridOptionsWrapper.isForPrint()) {
-            var containerHeight = this.rowModel.getVirtualRowCombinedHeight();
+            var containerHeight = this.rowModel.getRowCombinedHeight();
             this.eBodyContainer.style.height = containerHeight + "px";
             this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
@@ -354,13 +359,13 @@ export default class RowRenderer {
 
     public workOutFirstAndLastRowsToRender(): void {
 
-        var rowCount = this.rowModel.getRowCount();
-
-        if (rowCount===0) {
+        if (this.rowModel.isEmpty()) {
             this.firstVirtualRenderedRow = 0;
             this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
             return;
         }
+
+        var rowCount = this.rowModel.getRowCount();
 
         if (this.gridOptionsWrapper.isForPrint()) {
             this.firstVirtualRenderedRow = 0;

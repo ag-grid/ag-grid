@@ -44,12 +44,12 @@ include '../documentation_header.php';
     <h4>Turning On Virtual Paging</h4>
 
     <p>
-        To turn on virtual paging, you must a) set the gridOptions attribute virtualPaging to true and b) provide a datasource.
+        To turn on virtual paging, you must a) set the grid property rowModelType to virtual and b) provide a datasource.
     </p>
 
     <pre>
 // before grid initialised
-gridOptions.virtualPaging = true;
+gridOptions.rowModelType = 'virtual';
 gridOptions.datasource = myDataSource;
 
 // after grid initialised, you can set or change the datasource

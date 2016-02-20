@@ -13,6 +13,9 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {Autowired} from "../context/context";
+import {IRowModel} from "../rowControllers/iRowModel";
+import EventService from "../eventService";
+import {Events} from "../events";
 
 @Bean('filterManager')
 export default class FilterManager {
@@ -24,13 +27,18 @@ export default class FilterManager {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('eventService') private eventService: EventService;
 
     private allFilters: any = {};
     private quickFilter: string = null;
-    private rowModel: any;
 
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
+
+    public agPostWire(): void {
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
+    }
 
     public setFilterModel(model: any) {
         if (model) {
@@ -56,7 +64,7 @@ export default class FilterManager {
                 this.setModelOnFilterWrapper(filterWrapper.filter, null);
             });
         }
-        this.gridCore.onFilterChanged();
+        this.onFilterChanged();
     }
 
     private setModelOnFilterWrapper(filter: { getApi: () => { setModel: Function }}, newModel: any) {
@@ -94,10 +102,6 @@ export default class FilterManager {
         return result;
     }
 
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
-    }
-
     // returns true if any advanced filter (ie not quick filter) active
     public isAdvancedFilterPresent() {
         var atLeastOneActive = false;
@@ -108,6 +112,9 @@ export default class FilterManager {
             }
             if (filterWrapper.filter.isFilterActive()) {
                 atLeastOneActive = true;
+                filterWrapper.column.setFilterActive(true);
+            } else {
+                filterWrapper.column.setFilterActive(false);
             }
         });
 
@@ -174,7 +181,7 @@ export default class FilterManager {
             newFilter = null;
         }
         if (this.quickFilter !== newFilter) {
-            if (this.gridOptionsWrapper.isVirtualPaging()) {
+            if (this.gridOptionsWrapper.isRowModelVirtual()) {
                 console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
                 return;
             }
@@ -187,13 +194,26 @@ export default class FilterManager {
                 newFilter = newFilter.toUpperCase();
             }
             this.quickFilter = newFilter;
-            return true;
-        } else {
-            return false;
+
+            this.onFilterChanged();
         }
     }
 
+    //public onFilterChanged() {
+        //this.headerRenderer.updateFilterIcons();
+        //if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        //    // if doing server side filtering, changing the sort has the impact
+        //    // of resetting the datasource
+        //    this.setDatasource();
+        //} else {
+        //    // if doing in memory filtering, we just update the in memory data
+        //    this.updateModelAndRefresh(Constants.STEP_FILTER);
+        //}
+    //}
+
     public onFilterChanged(): void {
+        this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
+
         this.advancedFilterPresent = this.isAdvancedFilterPresent();
         this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
 
@@ -202,6 +222,10 @@ export default class FilterManager {
                 filterWrapper.filter.onAnyFilterChanged();
             }
         });
+
+        this.eventService.dispatchEvent(Events.EVENT_FILTER_CHANGED);
+
+        this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
     }
 
     public isQuickFilterPresent(): boolean {
@@ -255,7 +279,7 @@ export default class FilterManager {
         node.quickFilterAggregateText = aggregatedText;
     }
 
-    public onNewRowsLoaded() {
+    private onNewRowsLoaded() {
         var that = this;
         Object.keys(this.allFilters).forEach(function (field) {
             var filter = that.allFilters[field].filter;
@@ -319,8 +343,8 @@ export default class FilterManager {
             filterWrapper.filter = new SetFilter();
         }
 
-        var filterChangedCallback = this.gridCore.onFilterChanged.bind(this.gridCore);
-        var filterModifiedCallback = this.gridCore.onFilterModified.bind(this.gridCore);
+        var filterChangedCallback = this.onFilterChanged.bind(this);
+        var filterModifiedCallback = () => this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var filterParams = colDef.filterParams;
 
@@ -371,8 +395,10 @@ export default class FilterManager {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
             if (filterWrapper.filter.destroy) {
                 filterWrapper.filter.destroy();
+                filterWrapper.column.setFilterActive(false);
             }
         });
+        this.allFilters = {};
     }
 
     private assertMethodHasNoParameters(theMethod: any) {

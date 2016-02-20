@@ -27,6 +27,8 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {Autowired} from "../context/context";
 import GridPanel from "../gridPanel/gridPanel";
+import {AbstractColDef} from "../entities/colDef";
+import {PostConstruct} from "../context/context";
 
 export class ColumnApi {
 
@@ -124,37 +126,21 @@ export class ColumnController {
     private headerRowCount = 0;
     private rowGroupColumns: Column[];
     private groupAutoColumn: Column;
-    private setupComplete = false;
     private valueService: ValueService;
 
+    private ready = false;
     private logger: Logger;
+
+    @PostConstruct
+    public init(): void {
+        if (this.gridOptionsWrapper.getColumnDefs()) {
+            this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
+        }
+    }
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
-
-    // column on dispatches local events, never uses global event service, left, width, visible - controller is not updated
-
-    // for global events, controller is updated before the event is sent
-
-    // get column to also fire global events, then,
-    // for each global event, have column controller listen for the event as P1, and make model changes
-
-    //public agPostWire(): void {
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnChanged.bind(this));
-    //    this.eventService.addPriorityEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnChanged.bind(this));
-    //}
-
-    // two steps
-    // 1 - clean up what we have
-    // 2 - allow calling setXXX on columns themselves, by adding a second parameter to each setXXX method to allow suppressing of global events,
-    //     then have controller listen for these events
 
     private setFirstRightAndLastLeftPinned(): void {
         var lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
@@ -220,10 +206,6 @@ export class ColumnController {
 
     public getOriginalColumnTree(): OriginalColumnGroupChild[] {
         return this.originalBalancedTree;
-    }
-
-    public isSetupComplete(): boolean {
-        return this.setupComplete;
     }
 
     // + gridPanel -> for resizing the body and setting top margin
@@ -556,89 +538,12 @@ export class ColumnController {
         return this.displayedRightColumns.length > 0;
     }
 
-    public clearSortBarThisColumn(columnToSkip: Column): void {
-        this.getAllColumnsIncludingAuto().forEach( (columnToClear: any)=> {
-            // Do not clear if either holding shift, or if column in question was clicked
-            if (!(columnToClear === columnToSkip)) {
-                columnToClear.sort = null;
-            }
-        });
-    }
-
-    private getAllColumnsIncludingAuto(): Column[] {
+    public getAllColumnsIncludingAuto(): Column[] {
         var result = this.allColumns.slice(0);
         if (this.groupAutoColumn) {
             result.push(this.groupAutoColumn);
         }
         return result;
-    }
-
-    public getColumnsWithSortingOrdered(): Column[] {
-        // pull out all the columns that have sorting set
-        var columnsWithSorting = <Column[]> _.filter(this.getAllColumnsIncludingAuto(), (column:Column) => { return !!column.getSort();} );
-
-        // put the columns in order of which one got sorted first
-        columnsWithSorting.sort( (a: any, b: any) => { return a.sortedAt - b.sortedAt} );
-
-        return columnsWithSorting;
-    }
-
-    // used by row controller, when doing the sorting
-    public getSortForRowController(): any[] {
-        var columnsWithSorting = this.getColumnsWithSortingOrdered();
-
-        return _.map(columnsWithSorting, (column: Column) => {
-            var ascending = column.getSort() === Column.SORT_ASC;
-            return {
-                inverter: ascending ? 1 : -1,
-                column: column
-            }
-        });
-    }
-
-    // used by the public api, for saving the sort model
-    public getSortModel() {
-        var columnsWithSorting = this.getColumnsWithSortingOrdered();
-
-        return _.map(columnsWithSorting, (column: Column) => {
-            return {
-                colId: column.getColId(),
-                sort: column.getSort()
-            }
-        });
-    }
-
-    public setSortModel(sortModel: any) {
-        if (!this.gridOptionsWrapper.isEnableSorting()) {
-            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
-            return;
-        }
-        // first up, clear any previous sort
-        var sortModelProvided = sortModel && sortModel.length > 0;
-
-        this.getAllColumnsIncludingAuto().forEach( (column: Column)=> {
-            var sortForCol: any = null;
-            var sortedAt = -1;
-            if (sortModelProvided && !column.getColDef().suppressSorting) {
-                for (var j = 0; j < sortModel.length; j++) {
-                    var sortModelEntry = sortModel[j];
-                    if (typeof sortModelEntry.colId === 'string'
-                        && typeof column.getColId() === 'string'
-                        && sortModelEntry.colId === column.getColId()) {
-                        sortForCol = sortModelEntry.sort;
-                        sortedAt = j;
-                    }
-                }
-            }
-
-            if (sortForCol) {
-                column.setSort(sortForCol);
-                column.setSortedAt(sortedAt);
-            } else {
-                column.setSort(null);
-                column.setSortedAt(null);
-            }
-        });
     }
 
     public getState(): [any] {
@@ -872,10 +777,7 @@ export class ColumnController {
         }
     }
 
-    // called by angularGrid
-    public onColumnsChanged() {
-        var columnDefs = this.gridOptionsWrapper.getColumnDefs();
-
+    public setColumnDefs(columnDefs: AbstractColDef[]) {
         var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs);
         this.originalBalancedTree = balancedTreeResult.balancedTree;
         this.headerRowCount = balancedTreeResult.treeDept + 1;
@@ -884,9 +786,13 @@ export class ColumnController {
         this.extractRowGroupColumns();
         this.createValueColumns();
         this.updateModel();
+        this.ready = true;
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
-        this.setupComplete = true;
+    }
+
+    public isReady(): boolean {
+        return this.ready;
     }
 
     private extractRowGroupColumns(): void {

@@ -24,7 +24,8 @@ var gridOptions = {
     debug: true,
     rowSelection: 'multiple',
     enableColResize: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowModelType: 'pagination'
 };
 
 function onPageSizeChanged(newPageSize) {

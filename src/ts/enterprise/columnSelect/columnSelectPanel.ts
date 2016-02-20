@@ -14,6 +14,7 @@ import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {RenderedGroup} from "./renderedGroup";
 import {RenderedItem} from "./renderedItem";
 import {Component} from "../../widgets/component";
+import {PostConstruct} from "../../context/context";
 
 export class ColumnSelectPanel extends Component {
 
@@ -33,9 +34,12 @@ export class ColumnSelectPanel extends Component {
         this.allowDragging = allowDragging;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.onColumnsChanged();
+        if (this.columnController.isReady()) {
+            this.onColumnsChanged();
+        }
     }
 
     public onColumnsChanged(): void {

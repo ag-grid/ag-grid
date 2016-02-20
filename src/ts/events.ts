@@ -27,6 +27,11 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 
+    public static EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
+
+    public static EVENT_FLOATING_ROW_DATA_CHANGED = 'floatingRowDataChanged';
+
+    public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
@@ -36,9 +41,11 @@ export class Events {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
     public static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
+    public static EVENT_FILTER_CHANGED = 'filterChanged';
     public static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
     public static EVENT_FILTER_MODIFIED = 'filterModified';
     public static EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+    public static EVENT_SORT_CHANGED = 'sortChanged';
     public static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
     public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
     public static EVENT_ROW_CLICKED = 'rowClicked';

@@ -1,4 +1,3 @@
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
 import {ColumnController} from "./columnController/columnController";
 import {Grid} from "./grid";
 import ValueService from "./valueService";
@@ -8,6 +7,8 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Autowired} from "./context/context";
+import {IRowModel} from "./rowControllers/iRowModel";
+import GridOptionsWrapper from "./gridOptionsWrapper";
 var LINE_SEPARATOR = '\r\n';
 
 export interface CsvExportParams {
@@ -24,10 +25,10 @@ export interface CsvExportParams {
 @Bean('csvCreator')
 export default class CsvCreator {
 
-    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         var csvString = this.getDataAsCsv(params);
@@ -54,7 +55,7 @@ export default class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (!this.gridCore.isUsingInMemoryModel()) {
+        if (this.gridOptionsWrapper.isRowModelVirtual()) {
             console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
             return '';
         }
@@ -99,7 +100,7 @@ export default class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
-        this.inMemoryRowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        this.rowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }

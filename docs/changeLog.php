@@ -36,6 +36,9 @@ include 'documentation_header.php';
 
     <li>Removed api.refreshRowGroup() -> it wasn't documented, and I can't remember why I put it in, refreshing the grid has the same effect.</li>
 
+    <li>Introduced property modelType, set to 'pagination' or 'virtual' for pagination and virtual pagination. This replaces virtualPaging, as virtual was a boolean when in fact we need to distinctly model three modes of operation: Normal, Pagination and Virtual Pagination.</li>
+
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

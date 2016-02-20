@@ -13,7 +13,7 @@ export class ComponentUtil {
 
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText'];
+        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource'
@@ -29,7 +29,7 @@ export class ComponentUtil {
     ];
 
     public static BOOLEAN_PROPERTIES = [
-        'virtualPaging','toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
+        'toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
         'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
         'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
         'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
@@ -37,7 +37,7 @@ export class ComponentUtil {
         'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
         'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
         'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
-        'suppressParentsInRowNodes','showToolPanel','suppressMovingCss','suppressMovableColumns',
+        'suppressParentsInRowNodes','showToolPanel','suppressColumnMoveAnimation','suppressMovableColumns',
         'suppressFieldDotNotation'
     ];
 

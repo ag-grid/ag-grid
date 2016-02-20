@@ -191,6 +191,12 @@ export class Context {
             if (bean.agPostWire) {
                 bean.agPostWire();
             }
+
+            // try calling init methods
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData.postConstructMethods) {
+                bean.__agBeanMetaData.postConstructMethods.forEach( (methodName: string) => bean[methodName]() );
+            }
+
         } );
     }
 
@@ -230,20 +236,13 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
     return new factoryFunction();
 }
 
-export function ModelInit(): Function {
-    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
-
-        if (typeof index !== 'number') {
-            // it's an attribute on the class
-            var props = getOrCreateProps(classPrototype);
-            console.log(props);
-            //if (!props.agClassAttributes) {
-            //    props.agClassAttributes = {};
-            //}
-            //props.agClassAttributes[methodOrAttributeName] = name;
-        }
-
-    };
+export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
+    // it's an attribute on the class
+    var props = getOrCreateProps(target);
+    if (!props.postConstructMethods) {
+        props.postConstructMethods = [];
+    }
+    props.postConstructMethods.push(methodName);
 }
 
 export function Bean(beanName: string): Function {

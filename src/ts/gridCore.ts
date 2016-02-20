@@ -42,15 +42,15 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
+import {IRowModel} from "./rowControllers/iRowModel";
 
 @Bean('gridCore')
 export class GridCore {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
     @Autowired('paginationController') private paginationController: PaginationController;
-    @Autowired('virtualPageRowController') private virtualPageRowController: VirtualPageRowController;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
@@ -72,30 +72,21 @@ export class GridCore {
 
     private eRootPanel: any;
     private toolPanelShowing: boolean;
-    private doingPagination: boolean;
-    private usingInMemoryModel: boolean;
-    private rowModel: any;
 
     private windowResizeListener: EventListener;
     private logger: Logger;
 
     constructor(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridCore');
-        this.usingInMemoryModel = true;
     }
 
     public agPostWire(): void {
-        // this is a child bean, get a reference and pass it on
-        // CAN WE DELETE THIS? it's done in the setDatasource section
-        this.setRowModel(this.inMemoryRowController.getModel());
 
         // and the last bean, done in it's own section, as it's optional
         var paginationGui: any;
-        //var toolPanelLayout: any;
         var toolPanelGui: HTMLElement;
         if (!this.gridOptionsWrapper.isForPrint()) {
             paginationGui = this.paginationController.getGui();
-            //toolPanelLayout = this.toolPanel.layout;
             toolPanelGui = this.toolPanel.getGui();
         }
 
@@ -113,29 +104,21 @@ export class GridCore {
             name: 'eRootPanel'
         });
 
-        // default is we don't show paging panel, this is set to true when datasource is set
-        this.eRootPanel.setSouthVisible(false);
+        this.eRootPanel.setSouthVisible(this.gridOptionsWrapper.isRowModelPagination());
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
 
         this.eGridDiv.appendChild(this.eRootPanel.getGui());
-        this.logger.log('grid DOM added');
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.onQuickFilterChanged(newFilter) );
+            this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter) );
         }
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addWindowResizeListener();
         }
-
-        this.inMemoryRowController.setAllRows(this.gridOptionsWrapper.getRowData());
-        this.setupColumns();
-        this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
-
-        this.decideStartingOverlay();
 
         // if datasource provided, use it
         if (this.gridOptionsWrapper.getDatasource()) {
@@ -160,21 +143,6 @@ export class GridCore {
         this.eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
     }
 
-    private decideStartingOverlay() {
-        // if not virtual paging, then we might need to show an overlay if no data
-        var notDoingVirtualPaging = !this.gridOptionsWrapper.isVirtualPaging();
-        if (notDoingVirtualPaging) {
-            var showLoading = !this.gridOptionsWrapper.getRowData();
-            var showNoData = this.gridOptionsWrapper.getRowData() && this.gridOptionsWrapper.getRowData().length == 0;
-            if (showLoading) {
-                this.gridPanel.showLoadingOverlay();
-            }
-            if (showNoData) {
-                this.gridPanel.showNoRowsOverlay();
-            }
-        }
-    }
-
     private addWindowResizeListener(): void {
         var that = this;
         // putting this into a function, so when we remove the function,
@@ -185,10 +153,6 @@ export class GridCore {
             that.doLayout();
         };
         window.addEventListener('resize', this.windowResizeListener);
-    }
-
-    public getRowModel(): any {
-        return this.rowModel;
     }
 
     private periodicallyDoLayout() {
@@ -216,11 +180,8 @@ export class GridCore {
         return this.toolPanelShowing;
     }
 
-    public isUsingInMemoryModel(): boolean {
-        return this.usingInMemoryModel;
-    }
-
     public setDatasource(datasource?: any) {
+        /*
         // if datasource provided, then set it
         if (datasource) {
             this.gridOptions.datasource = datasource;
@@ -258,21 +219,7 @@ export class GridCore {
         this.rowRenderer.refreshView();
 
         this.doLayout();
-    }
-
-    private setRowModel(rowModel: any): void {
-        this.rowModel = rowModel;
-        this.selectionController.setRowModel(rowModel);
-        this.filterManager.setRowModel(rowModel);
-        this.rowRenderer.setRowModel(rowModel);
-        this.gridPanel.setRowModel(rowModel);
-    }
-
-    // gets called after columns are shown / hidden from groups expanding
-    private refreshHeaderAndBody() {
-        this.logger.log('refreshHeaderAndBody');
-        this.headerRenderer.refreshHeader();
-        this.rowRenderer.refreshView();
+        */
     }
 
     public agDestroy() {
@@ -284,66 +231,6 @@ export class GridCore {
 
         this.eGridDiv.removeChild(this.eRootPanel.getGui());
         this.logger.log('Grid DOM removed');
-    }
-
-    public onQuickFilterChanged(newFilter: any) {
-        var actuallyChanged = this.filterManager.setQuickFilter(newFilter);
-        if (actuallyChanged) {
-            this.onFilterChanged();
-        }
-    }
-
-    public onFilterModified() {
-        this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
-    }
-
-    public onFilterChanged() {
-        this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
-        this.filterManager.onFilterChanged();
-        this.headerRenderer.updateFilterIcons();
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            // if doing server side filtering, changing the sort has the impact
-            // of resetting the datasource
-            this.setDatasource();
-        } else {
-            // if doing in memory filtering, we just update the in memory data
-            this.updateModelAndRefresh(Constants.STEP_FILTER);
-        }
-        this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
-    }
-
-    private setupColumns() {
-        this.columnController.onColumnsChanged();
-        this.gridPanel.onBodyHeightChange();
-    }
-
-    // rowsToRefresh is at what index to start refreshing the rows. the assumption is
-    // if we are expanding or collapsing a group, then only he rows below the group
-    // need to be refresh. this allows the context (eg focus) of the other cells to
-    // remain.
-    public updateModelAndRefresh(step: any, refreshFromIndex?: any) {
-        this.inMemoryRowController.updateModel(step);
-        // the second line here should happen automatically after a change in the model,
-        // need to do an event somehow?
-        this.rowRenderer.refreshView(refreshFromIndex);
-    }
-
-    public setRowData(rows?: any, firstId?: any) {
-        if (rows) {
-            this.gridOptions.rowData = rows;
-        }
-        var rowData = this.gridOptionsWrapper.getRowData();
-        this.selectionController.reset();
-        this.inMemoryRowController.setAllRows(rowData, firstId);
-
-        this.filterManager.onNewRowsLoaded();
-        this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
-        this.headerRenderer.updateFilterIcons();
-        if (rowData && rowData.length > 0) {
-            this.gridPanel.hideOverlay();
-        } else {
-            this.gridPanel.showNoRowsOverlay();
-        }
     }
 
     public ensureNodeVisible(comparator: any) {
@@ -375,10 +262,6 @@ export class GridCore {
         }
     }
 
-    public getFilterModel() {
-        return this.filterManager.getFilterModel();
-    }
-
     public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
         this.gridPanel.ensureIndexVisible(rowIndex);
         this.gridPanel.ensureColumnVisible(colKey);
@@ -388,37 +271,28 @@ export class GridCore {
         }, 10);
     }
 
-    public getSortModel() {
-        return this.columnController.getSortModel();
-    }
-
-    public setSortModel(sortModel: any) {
-        this.columnController.setSortModel(sortModel);
-        this.onSortingChanged();
-    }
-
     public onSortingChanged() {
-        this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
-        this.headerRenderer.updateSortIcons();
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            // if doing server side sorting, changing the sort has the impact
-            // of resetting the datasource
-            this.setDatasource();
-        } else {
-            // if doing in memory sorting, we just update the in memory data
-            this.updateModelAndRefresh(Constants.STEP_SORT);
-        }
-        this.eventService.dispatchEvent(Events.EVENT_AFTER_SORT_CHANGED);
+        //this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
+        //this.headerRenderer.updateSortIcons();
+        //if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        //    // if doing server side sorting, changing the sort has the impact
+        //    // of resetting the datasource
+        //    this.setDatasource();
+        //} else {
+        //    // if doing in memory sorting, we just update the in memory data
+        //    this.updateModelAndRefresh(Constants.STEP_SORT);
+        //}
+        //this.eventService.dispatchEvent(Events.EVENT_AFTER_SORT_CHANGED);
     }
 
     public setColumnDefs(colDefs?: ColDef[]) {
-        if (colDefs) {
-            this.gridOptions.columnDefs = colDefs;
-        }
-        this.setupColumns();
-        this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
-        // found that adding pinned column can upset the layout
-        this.doLayout();
+        //if (colDefs) {
+        //    this.gridOptions.columnDefs = colDefs;
+        //}
+        //this.setupColumns();
+        //this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
+        //// found that adding pinned column can upset the layout
+        //this.doLayout();
     }
 
     public doLayout() {

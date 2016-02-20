@@ -45,12 +45,13 @@ import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
+import {SortController} from "./sortController";
 
 export class Grid {
 
     private context: Context;
 
-    constructor(eGridDiv: any, gridOptions: any, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
+    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
         if (!eGridDiv) {
             console.warn('ag-Grid: no div element provided to the grid');
@@ -58,6 +59,9 @@ export class Grid {
         if (!gridOptions) {
             console.warn('ag-Grid: no gridOptions provided to the grid');
         }
+
+        var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
+        var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
 
         this.context = new Context({
             //overrideBeans: null,
@@ -70,14 +74,14 @@ export class Grid {
                 quickFilterOnScope: quickFilterOnScope,
                 globalEventListener: globalEventListener
             },
-            beans: [DragService, HeaderTemplateLoader, FloatingRowModel, BalancedColumnTreeBuilder,
+            beans: [rowModelClass, DragService, HeaderTemplateLoader, FloatingRowModel,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
-                HeaderRenderer, InMemoryRowController, VirtualPageRowController, ExpressionService,
+                HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
-                LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi, CsvCreator,
+                LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService2],
+                DragAndDropService2, SortController],
             debug: !!gridOptions.debug
         });
     }

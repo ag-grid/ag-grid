@@ -7,6 +7,11 @@ import {GridCore} from "../gridCore";
 import EventService from "../eventService";
 import SelectionController from "../selectionController";
 import {Autowired} from "../context/context";
+import {IRowModel} from "./iRowModel";
+import {PostConstruct} from "../context/context";
+import {Events} from "../events";
+import {SortController} from "../sortController";
+import FilterManager from "../filter/filterManager";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -15,12 +20,13 @@ import {Autowired} from "../context/context";
 
 var logging = false;
 
-@Bean('virtualPageRowController')
-export default class VirtualPageRowController {
+@Bean('rowModel')
+export default class VirtualPageRowController implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: any;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private angularGrid: any;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
 
@@ -42,13 +48,32 @@ export default class VirtualPageRowController {
     private pageSize: number;
     private overflowSize: number;
 
-    private rowModel: any;
+    @PostConstruct
+    public init(): void {
+        var virtualEnabled = this.gridOptionsWrapper.isRowModelVirtual();
 
-    constructor() {
-        this.initModel();
+        this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
+            if (virtualEnabled && this.gridOptionsWrapper.isEnableServerSideFilter()) {
+                this.reset();
+            }
+        });
+
+        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, ()=> {
+            if (virtualEnabled && this.gridOptionsWrapper.isEnableServerSideSorting()) {
+                this.reset();
+            }
+        });
+
+        if (virtualEnabled && this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        }
     }
 
-    public setDatasource(datasource: any) {
+    public getTopLevelNodes(): RowNode[] {
+        return null;
+    }
+
+    public setDatasource(datasource: any): void {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -57,6 +82,10 @@ export default class VirtualPageRowController {
         }
 
         this.reset();
+    }
+
+    public isEmpty(): boolean {
+        return !this.datasource;
     }
 
     private reset() {
@@ -103,6 +132,7 @@ export default class VirtualPageRowController {
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
 
         this.doLoadOrQueue(0);
+        this.rowRenderer.refreshView();
     }
 
     private createNodesFromRows(pageNumber: any, rows: any) {
@@ -124,7 +154,7 @@ export default class VirtualPageRowController {
         var rowNode: RowNode;
         if (realNode) {
             // if a real node, then always create a new one
-            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.rowModel);
+            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
             rowNode.id = virtualRowIndex;
             rowNode.data = data;
             // and see if the previous one was selected, and if yes, swap it out
@@ -133,7 +163,7 @@ export default class VirtualPageRowController {
             // if creating a proxy node, see if there is a copy in selected memory that we can use
             var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
             if (!rowNode) {
-                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.rowModel);
+                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
                 rowNode.id = virtualRowIndex;
                 rowNode.data = data;
             }
@@ -289,12 +319,12 @@ export default class VirtualPageRowController {
 
         var sortModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.sortController.getSortModel();
         }
 
         var filterModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.filterManager.getFilterModel();
         }
 
         var params = {
@@ -330,12 +360,16 @@ export default class VirtualPageRowController {
         }
     }
 
-// check that the datasource has not changed since the lats time we did a request
+    public expandOrCollapseAll(expand: boolean): void {
+        console.warn('ag-Grid: can not expand or collapse all when doing virtual pagination');
+    }
+
+    // check that the datasource has not changed since the lats time we did a request
     private requestIsDaemon(datasourceVersionCopy: any) {
         return this.datasourceVersion !== datasourceVersionCopy;
     }
 
-    private getRow(rowIndex: any) {
+    public getRow(rowIndex: number): RowNode {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
@@ -357,7 +391,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    private forEachNode(callback: any) {
+    public forEachNode(callback: (rowNode: RowNode)=> void): void {
         var pageKeys = Object.keys(this.pageCache);
         for (var i = 0; i < pageKeys.length; i++) {
             var pageKey = pageKeys[i];
@@ -379,7 +413,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    public getVirtualRowCombinedHeight(): number {
+    public getRowCombinedHeight(): number {
         return this.virtualRowCount * this.getRowHeightAsNumber();
     }
 
@@ -392,37 +426,24 @@ export default class VirtualPageRowController {
         }
     }
 
-    public getModel() {
-        return this.rowModel;
+    public getRowCount(): number {
+        return this.virtualRowCount;
     }
 
-    private initModel() {
-        var that = this;
-        this.rowModel = {
-            getRowAtPixel: function(pixel: number): number {
-                return that.getRowAtPixel(pixel);
-            },
-            getVirtualRowCombinedHeight: function(): number {
-                return that.getVirtualRowCombinedHeight();
-            },
-            getRow: function (index: any) {
-                return that.getRow(index);
-            },
-            getRowCount: function () {
-                return that.virtualRowCount;
-            },
-            forEachInMemory: function (callback: any) {
-                that.forEachNode(callback);
-            },
-            forEachNode: function (callback: any) {
-                that.forEachNode(callback);
-            },
-            forEachNodeAfterFilter: function (callback: any) {
-                console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
-            },
-            forEachNodeAfterFilterAndSort: function (callback: any) {
-                console.warn('forEachNodeAfterFilterAndSort - does not work with virtual pagination');
-            }
-        };
+    public setRowData(rows: any[], refresh: boolean, firstId?: number): void {
+        console.warn('setRowData - does not work with virtual pagination');
     }
+
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode)=> void): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=> void): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public refreshModel(): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
 }

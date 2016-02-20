@@ -99,9 +99,14 @@ var gridOptions = {
     //minColWidth: 50,
     //maxColWidth: 300,
     //rowsBuffer: 1,
-    columnDefs: [],
+    //columnDefs: [],
     //singleClickEdit: true,
-    rowData: null,
+    //rowData: [
+    //    {name: 'Niall'},
+    //    {name: 'Eamon'},
+    //    {name: 'Kevin'},
+    //    {name: 'Brian'}
+    //],
     rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
     groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
@@ -313,7 +318,7 @@ months.forEach(function(month) {
         cellStyle: {"text-align": "right"}})
 });
 
-gridOptions.columnDefs = createCols();
+//gridOptions.columnDefs = createCols();
 
 function filterDoubleClicked(event) {
     setInterval(function() {
@@ -452,9 +457,10 @@ function selectionChanged(event) {
 }
 
 function rowSelected(event) {
-    // this clogs the console, when to many rows displayed, and use selected 'select all'.
-    // so check 'not to many rows'
-    if (gridOptions.rowData.length <= 100) {
+    // the number of rows selected could be huge, if the user is grouping and selects a group, so
+    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
+    // the node id's are assigned from 0 upwards)
+    if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint);
     }

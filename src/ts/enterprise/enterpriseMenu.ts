@@ -14,6 +14,7 @@ import SvgFactory from "../svgFactory";
 import {Context} from "../context/context";
 import PopupService from "../widgets/agPopupService";
 import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
+import {GridApi} from "../gridApi";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -57,6 +58,7 @@ export class EnterpriseMenu {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('context') private context: Context;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -158,8 +160,19 @@ export class EnterpriseMenu {
             {
                 name: 'Remove Sum',
                 action: ()=> {
-                    //this.columnController.setColumnAggFunction(this.column, null);
                     this.columnController.removeValueColumn(this.column);
+                }
+            },
+            {
+                name: 'Expand All',
+                action: ()=> {
+                    this.gridApi.expandAll();
+                }
+            },
+            {
+                name: 'Collapse All',
+                action: ()=> {
+                    this.gridApi.collapseAll();
                 }
             });
 

@@ -62,13 +62,11 @@ export class RowNode {
     private mainEventService: EventService;
     private gridOptionsWrapper: GridOptionsWrapper;
     private selectionController: SelectionController;
-    private rowModel: any;
 
     constructor(mainEventService: EventService, gridOptionsWrapper: GridOptionsWrapper,
-                selectionController: SelectionController, rowModel: any) {
+                selectionController: SelectionController) {
         this.mainEventService = mainEventService;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.rowModel = rowModel;
         this.selectionController = selectionController ;
     }
 

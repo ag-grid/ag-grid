@@ -20,9 +20,9 @@ import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import {DragSource} from "../dragAndDrop/dragAndDropService2";
 import EventService from "../eventService";
+import {SortController} from "../sortController";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
-    private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
 
     @Autowired('context') private context: Context;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -34,14 +34,9 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('sortController') private sortController: SortController;
 
     private eHeaderCell: HTMLElement;
-    private eSortAsc: HTMLElement;
-    private eSortDesc: HTMLElement;
-    private eSortNone: HTMLElement;
-    private eFilterIcon: HTMLElement;
-    private eText: HTMLElement;
-    private eHeaderCellLabel: HTMLElement;
     private eRoot: HTMLElement;
 
     private column: Column;
@@ -65,36 +60,37 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
     public agPostWire(): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
-
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 
         this.createScope(this.parentScope);
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
 
-        this.addMovingCss();
+        // label div
+        var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
 
+        this.setupMovingCss();
+        this.setupTooltip();
+        this.setupResize();
+        this.setupMove(eHeaderCellLabel);
+        this.setupMenu();
+        this.setupSort(eHeaderCellLabel);
+        this.setupFilterIcon();
+        this.setupText();
+        this.setupWidth();
+    }
+
+    private setupTooltip(): void {
         var colDef = this.column.getColDef();
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
             this.eHeaderCell.title = colDef.headerTooltip;
         }
+    }
 
-        // label div
-        this.eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
-        this.eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
-
-        this.addResize();
-        this.addMove();
-        this.addMenu();
-
-        // add in sort icons
-        this.addSort();
-
-        // add in filter icon
-        this.eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
-
+    private setupText(): void {
+        var colDef = this.column.getColDef();
         // render the cell, use a renderer if one is provided
         var headerCellRenderer: any;
         if (colDef.headerCellRenderer) { // first look for a renderer in col def
@@ -105,22 +101,40 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
         var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
 
-        if (this.eText) {
+        var eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
+        if (eText) {
             if (headerCellRenderer) {
-                this.useRenderer(headerNameValue, headerCellRenderer);
+                this.useRenderer(headerNameValue, headerCellRenderer, eText);
             } else {
                 // no renderer, default text render
-                this.eText.className = 'ag-header-cell-text';
-                this.eText.innerHTML = headerNameValue;
+                eText.className = 'ag-header-cell-text';
+                eText.innerHTML = headerNameValue;
             }
         }
-
-        this.setWidthOnCell();
-        this.refreshFilterIcon();
-        this.refreshSortIcon();
     }
 
-    private setWidthOnCell(): void {
+    private setupFilterIcon(): void {
+        var eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
+
+        if (!eFilterIcon) {
+            return;
+        }
+
+        var filterChangedListener = () => {
+            var filterPresent = this.column.isFilterActive();
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-filtered', filterPresent);
+            _.addOrRemoveCssClass(eFilterIcon, 'ag-hidden', !filterPresent);
+        };
+
+        this.column.addEventListener(Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+        this.destroyFunctions.push( () => {
+            this.column.removeEventListener(Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+        });
+
+        filterChangedListener();
+    }
+
+    private setupWidth(): void {
         var widthChangedListener = () => {
             this.eHeaderCell.style.width = this.column.getActualWidth() + 'px';
         };
@@ -159,7 +173,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         this.eHeaderCell.setAttribute("colId", this.column.getColId());
     }
 
-    private addMenu(): void {
+    private setupMenu(): void {
         var eMenu = <HTMLElement> this.eHeaderCell.querySelector('#agMenu');
 
         // if no menu provided in template, do nothing
@@ -196,32 +210,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         this.menuFactory.showMenu(this.column, eventSource);
     }
 
-    private removeSortIcons(): void {
-        _.removeFromParent(this.eHeaderCell.querySelector('#agSortAsc'));
-        _.removeFromParent(this.eHeaderCell.querySelector('#agSortDesc'));
-        _.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
-    }
-
-    private addSortIcons(): void {
-        this.eSortAsc = <HTMLElement> this.eHeaderCell.querySelector('#agSortAsc');
-        this.eSortDesc = <HTMLElement> this.eHeaderCell.querySelector('#agSortDesc');
-        this.eSortNone = <HTMLElement> this.eHeaderCell.querySelector('#agNoSort');
-
-        if (this.eSortAsc) {
-            this.eSortAsc.style.display = 'none';
-        }
-        if (this.eSortDesc) {
-            this.eSortDesc.style.display = 'none';
-        }
-
-        var showingNoSortIcon = this.column.getColDef().unSortIcon || this.gridOptionsWrapper.isUnSortIcon();
-        // 'no sort' icon
-        if (!showingNoSortIcon) {
-            _.removeFromParent(this.eSortNone);
-        }
-    }
-
-    private addMovingCss(): void {
+    private setupMovingCss(): void {
         // this function adds or removes the moving css, based on if the col is moving
         var addMovingCssFunc = ()=> {
             if (this.column.isMoving()) {
@@ -240,17 +229,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         });
     }
 
-    private addSort(): void {
-        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        if (enableSorting) {
-            this.addSortIcons();
-            this.addSortHandling();
-        } else {
-            this.removeSortIcons();
-        }
-    }
-
-    private addMove(): void {
+    private setupMove(eHeaderCellLabel: HTMLElement): void {
         if (this.gridOptionsWrapper.isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
             return;
         }
@@ -259,9 +238,9 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
-        if (this.eHeaderCellLabel) {
+        if (eHeaderCellLabel) {
             var dragSource: DragSource = {
-                eElement: this.eHeaderCellLabel,
+                eElement: eHeaderCellLabel,
                 dragItem: this.column,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
@@ -269,7 +248,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         }
     }
 
-    private addResize(): void {
+    private setupResize(): void {
         var colDef = this.column.getColDef();
         var eResize = this.eHeaderCell.querySelector('#agResizeBar');
 
@@ -295,13 +274,13 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
         var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
-            eResize.addEventListener('dblclick', (event: MouseEvent) => {
+            eResize.addEventListener('dblclick', () => {
                 this.columnController.autoSizeColumn(this.column);
             });
         }
     }
 
-    private useRenderer(headerNameValue: string, headerCellRenderer: Function): void {
+    private useRenderer(headerNameValue: string, headerCellRenderer: Function, eText: HTMLElement): void {
         // renderer provided, use it
         var cellRendererParams = {
             colDef: this.column.getColDef(),
@@ -325,102 +304,60 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         // angular compile header if option is turned on
         if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
             var childToAppendCompiled = this.$compile(childToAppend)(this.childScope)[0];
-            this.eText.appendChild(childToAppendCompiled);
+            eText.appendChild(childToAppendCompiled);
         } else {
-            this.eText.appendChild(childToAppend);
+            eText.appendChild(childToAppend);
         }
     }
 
-    public refreshFilterIcon(): void {
-        var filterPresent = this.filterManager.isFilterPresentForCol(this.column.getColId());
-
-        if (this.eFilterIcon) {
-            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-filtered', filterPresent);
-            this.eFilterIcon.style.display = filterPresent ? 'inline' : 'none';
-        }
-    }
-
-    public refreshSortIcon(): void {
-        // update visibility of icons
-        var sortAscending = this.column.getSort() === Column.SORT_ASC;
-        var sortDescending = this.column.getSort() === Column.SORT_DESC;
-        var sortNone = this.column.getSort() !== Column.SORT_DESC && this.column.getSort() !== Column.SORT_ASC;
-
-        if (this.eSortAsc) {
-            _.setVisible(this.eSortAsc, sortAscending);
-        }
-        if (this.eSortDesc) {
-            _.setVisible(this.eSortDesc, sortDescending);
-        }
-        if (this.eSortNone) {
-            _.setVisible(this.eSortNone, sortNone);
-        }
-
-        _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-asc', sortAscending);
-        _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-desc', sortDescending);
-        _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-none', sortNone);
-    }
-
-    private getNextSortDirection(): string {
-
-        var sortingOrder: string[];
-        if (this.column.getColDef().sortingOrder) {
-            sortingOrder = this.column.getColDef().sortingOrder;
-        } else if (this.gridOptionsWrapper.getSortingOrder()) {
-            sortingOrder = this.gridOptionsWrapper.getSortingOrder();
-        } else {
-            sortingOrder = RenderedHeaderCell.DEFAULT_SORTING_ORDER;
-        }
-
-        if ( !Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn('ag-grid: sortingOrder must be an array with at least one element, currently it\'s ' + sortingOrder);
+    public setupSort(eHeaderCellLabel: HTMLElement): void {
+        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        if (!enableSorting) {
+            _.removeFromParent(this.eHeaderCell.querySelector('#agSortAsc'));
+            _.removeFromParent(this.eHeaderCell.querySelector('#agSortDesc'));
+            _.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
             return;
         }
 
-        var currentIndex = sortingOrder.indexOf(this.column.getSort());
-        var notInArray = currentIndex < 0;
-        var lastItemInArray = currentIndex == sortingOrder.length - 1;
-        var result: string;
-        if (notInArray || lastItemInArray) {
-            result = sortingOrder[0];
-        } else {
-            result = sortingOrder[currentIndex + 1];
+        // add the event on the header, so when clicked, we do sorting
+        if (eHeaderCellLabel) {
+            eHeaderCellLabel.addEventListener("click", (event:MouseEvent) => {
+                this.sortController.progressSort(this.column, event.shiftKey);
+            });
         }
 
-        // verify the sort type exists, as the user could provide the sortOrder, need to make sure it's valid
-        if (RenderedHeaderCell.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            console.warn('ag-grid: invalid sort type ' + result);
-            return null;
-        }
+        // add listener for sort changing, and update the icons accordingly
+        var eSortAsc = <HTMLElement> this.eHeaderCell.querySelector('#agSortAsc');
+        var eSortDesc = <HTMLElement> this.eHeaderCell.querySelector('#agSortDesc');
+        var eSortNone = <HTMLElement> this.eHeaderCell.querySelector('#agNoSort');
 
-        return result;
-    }
+        var sortChangedListener = () => {
 
-    private addSortHandling() {
-        if (!this.eHeaderCellLabel) {
-            return;
-        }
-        this.eHeaderCellLabel.addEventListener("click", (event: any) => {
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-none', this.column.isSortNone());
 
-            // update sort on current col
-            this.column.setSort(this.getNextSortDirection());
-
-            // sortedAt used for knowing order of cols when multi-col sort
-            if (this.column.getSort()) {
-                this.column.setSortedAt(new Date().valueOf());
-            } else {
-                this.column.setSortedAt(null);
+            if (eSortAsc) {
+                _.addOrRemoveCssClass(eSortAsc, 'ag-hidden', !this.column.isSortAscending());
             }
 
-            var doingMultiSort = !this.gridOptionsWrapper.isSuppressMultiSort() && event.shiftKey;
-
-            // clear sort on all columns except this one, and update the icons
-            if (!doingMultiSort) {
-                this.columnController.clearSortBarThisColumn(this.column);
+            if (eSortDesc) {
+                _.addOrRemoveCssClass(eSortDesc, 'ag-hidden', !this.column.isSortDescending());
             }
 
-            this.gridCore.onSortingChanged();
+            if (eSortNone) {
+                var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+                _.addOrRemoveCssClass(eSortNone, 'ag-hidden', alwaysHideNoSort || !this.column.isSortNone());
+            }
+
+        };
+
+        this.column.addEventListener(Column.EVENT_SORT_CHANGED, sortChangedListener);
+        this.destroyFunctions.push( () => {
+            this.column.removeEventListener(Column.EVENT_SORT_CHANGED, sortChangedListener);
         });
+
+        sortChangedListener();
     }
 
     public onDragStart(): void {

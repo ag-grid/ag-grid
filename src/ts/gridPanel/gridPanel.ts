@@ -14,6 +14,8 @@ import EventService from "../eventService";
 import {Events} from "../events";
 import {MoveColumnController} from "../headerRendering/moveColumnController";
 import ColumnChangeEvent from "../columnChangeEvent";
+import {IRowModel} from "../rowControllers/iRowModel";
+import {PostConstruct} from "../context/context";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -91,8 +93,7 @@ export default class GridPanel {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
-
-    private rowModel: any;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -140,7 +141,7 @@ export default class GridPanel {
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.scrollWidth = _.getScrollbarWidth();
         this.logger = loggerFactory.create('GridPanel');
-        this.setupComponents(); // other beans use this bean in agPostWire, so need this configured first
+        this.findElements();
     }
 
     public agPostWire(): void {
@@ -152,23 +153,27 @@ export default class GridPanel {
         //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+    }
+
+    private onRowDataChanged(): void {
+        if (this.rowModel.isEmpty()) {
+            this.showNoRowsOverlay();
+        } else {
+            this.hideOverlay();
+        }
     }
 
     public getLayout(): BorderLayout {
         return this.layout;
     }
 
-    private setupComponents() {
-
-        if (this.forPrint) {
-            this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-no-scrolls');
-        } else {
-            this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-scrolls');
-        }
-
-        this.findElements();
+    @PostConstruct
+    private init() {
 
         this.layout = new BorderLayout({
             overlays: {
@@ -180,12 +185,16 @@ export default class GridPanel {
             name: 'eGridPanel'
         });
 
-        this.layout.addSizeChangeListener(this.onBodyHeightChange.bind(this));
+        this.layout.addSizeChangeListener(this.sizeHeaderAndBody.bind(this));
 
         this.addScrollListener();
 
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
+        }
+
+        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
+            this.showLoadingOverlay();
         }
     }
 
@@ -409,10 +418,6 @@ export default class GridPanel {
         }
     }
 
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
-    }
-
     public getBodyContainer(): HTMLElement {
         return this.eBodyContainer;
     }
@@ -482,6 +487,14 @@ export default class GridPanel {
     }
 
     private findElements() {
+        if (this.forPrint) {
+            this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
+            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-no-scrolls');
+        } else {
+            this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
+            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-scrolls');
+        }
+
         if (this.forPrint) {
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -585,6 +598,10 @@ export default class GridPanel {
         if (event.isPinnedPanelVisibilityImpacted()) {
             this.showPinnedColContainersIfNeeded();
         }
+
+        if (event.getType()===Events.EVENT_COLUMN_EVERYTHING_CHANGED) {
+            this.sizeHeaderAndBody();
+        }
     }
 
     private setWidthsOfContainers(): void {
@@ -640,10 +657,6 @@ export default class GridPanel {
             this.ePinnedRightColsViewport.style.display = 'none';
             this.eBodyViewport.style.overflowY = 'auto';
         }
-    }
-
-    public onBodyHeightChange(): void {
-        this.sizeHeaderAndBody();
     }
 
     private sizeHeaderAndBody(): void {

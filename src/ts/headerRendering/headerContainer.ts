@@ -141,25 +141,10 @@ export class HeaderContainer {
         return result;
     }
 
-    public updateSortIcons() {
-        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
-            headerElement.refreshSortIcon();
-        });
-    }
-
-    public updateFilterIcons() {
-        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
-            headerElement.refreshFilterIcon();
-        });
-    }
-
     public onIndividualColumnResized(column: Column): void {
         this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.onIndividualColumnResized(column);
         });
     }
 
-    public getBoundingLeft(): number {
-        return this.eContainer.getBoundingClientRect().left;
-    }
 }

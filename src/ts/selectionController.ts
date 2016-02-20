@@ -7,13 +7,15 @@ import {LoggerFactory} from "./logger";
 import EventService from "./eventService";
 import {Events} from "./events";
 import {Autowired} from "./context/context";
+import {IRowModel} from "./rowControllers/iRowModel";
+import GridOptionsWrapper from "./gridOptionsWrapper";
 
 @Bean('selectionController')
 export default class SelectionController {
 
     @Autowired('eventService') private eventService: EventService;
-
-    private rowModel: any;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
@@ -21,6 +23,13 @@ export default class SelectionController {
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
+
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
+        } else {
+            this.logger.log('dont know what to do here');
+        }
+
     }
 
     public agPostWire() {
@@ -106,11 +115,12 @@ export default class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        if (typeof this.rowModel.getTopLevelNodes !== 'function') {
-            throw 'selectAll not available when rows are on the server';
-        }
-
         var topLevelNodes = this.rowModel.getTopLevelNodes();
+
+        if (topLevelNodes===null) {
+            console.warn('selectAll not available doing rowModel=virtual');
+            return;
+        }
 
         var result: any = [];
 
@@ -152,7 +162,7 @@ export default class SelectionController {
     }
 
     public selectAllRowNodes() {
-        if (typeof this.rowModel.getTopLevelNodes !== 'function') {
+        if (this.rowModel.getTopLevelNodes() === null) {
             throw 'selectAll not available when doing virtual pagination';
         }
         this.rowModel.forEachNode( (rowNode: RowNode) => {

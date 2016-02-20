@@ -9,6 +9,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Autowired} from "./context/context";
+import {Events} from "./events";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -50,7 +51,11 @@ export default class GridOptionsWrapper {
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
     public getContext() { return this.gridOptions.context; }
-    public isVirtualPaging() { return isTrue(this.gridOptions.virtualPaging); }
+
+    public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
+    public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
+    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual()); }
+
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
@@ -123,7 +128,10 @@ export default class GridOptionsWrapper {
             return 25;
         }
     }
-    public setHeaderHeight(headerHeight: number): void { this.headerHeight = headerHeight; }
+    public setHeaderHeight(headerHeight: number): void {
+        this.headerHeight = headerHeight;
+        this.eventService.dispatchEvent(Events.EVENT_HEADER_HEIGHT_CHANGED);
+    }
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {

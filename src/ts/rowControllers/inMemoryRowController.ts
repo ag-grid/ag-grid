@@ -16,14 +16,19 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import SelectionController from "../selectionController";
 import {Autowired} from "../context/context";
+import {IRowModel} from "./iRowModel";
+import Constants from "../constants";
+import {SortController} from "../sortController";
+import {PostConstruct} from "../context/context";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
-@Bean('inMemoryRowController')
-export default class InMemoryRowController {
+@Bean('rowModel')
+export default class InMemoryRowController implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
@@ -34,65 +39,78 @@ export default class InMemoryRowController {
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
-    private allRows: RowNode[]; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
+    private allRows: RowNode[] = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
     private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
     private rowsAfterFilter: RowNode[]; // after filtering
     private rowsAfterSort: RowNode[]; // after sorting
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
-    private model: any;
+    private nextRowTop: number;
 
-    constructor() {
-        this.createModel();
+    @PostConstruct
+    public init(): void {
+
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+
+        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
+
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
+        }
+
     }
 
-    public agPostWire(): void {
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.doAggregate.bind(this));
+    public refreshModel(step: number): void {
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, ()=> {
-            this.onRowGroupChanged();
-            this.doAggregate();
-        });
+        // fallthrough in below switch is on purpose,
+        // eg if STEP_FILTER, then all steps below this
+        // step get done
+        switch (step) {
+            case constants.STEP_EVERYTHING:
+                this.doRowGrouping();
+            case constants.STEP_FILTER:
+                this.doFilter();
+            case constants.STEP_AGGREGATE:
+                this.doAggregate();
+            case constants.STEP_SORT:
+                this.doSort();
+            case constants.STEP_MAP:
+                this.doRowsToDisplay();
+        }
+
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+
+        if (this.$scope) {
+            setTimeout( () => {
+                this.$scope.$apply();
+            }, 0);
+        }
     }
 
-    private createModel() {
-        var that = this;
-        this.model = {
-            // this method is implemented by the inMemory model only,
-            // it gives the top level of the selection. used by the selection
-            // controller, when it needs to do a full traversal
-            getTopLevelNodes: function () {
-                return that.rowsAfterGroup;
-            },
-            getRow: function (index: any): RowNode {
-                return that.rowsToDisplay[index];
-            },
-            getRowCount: function (): number {
-                if (that.rowsToDisplay) {
-                    return that.rowsToDisplay.length;
-                } else {
-                    return 0;
-                }
-            },
-            getRowAtPixel: function(pixel: number): number {
-                return that.getRowAtPixel(pixel);
-            },
-            getVirtualRowCombinedHeight: function (): number {
-                return that.getVirtualRowCombinedHeight();
-            },
-            forEachInMemory: function (callback: any) {
-                that.forEachInMemory(callback);
-            },
-            forEachNode: function (callback: any) {
-                that.forEachNode(callback);
-            },
-            forEachNodeAfterFilter: function (callback: any) {
-                that.forEachNodeAfterFilter(callback);
-            },
-            forEachNodeAfterFilterAndSort: function (callback: any) {
-                that.forEachNodeAfterFilterAndSort(callback);
-            }
-        };
+    public isEmpty(): boolean {
+        return this.allRows === null || this.allRows.length === 0 || !this.columnController.isReady();
+    }
+
+    public setDatasource(datasource: any): void {
+        console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
+    }
+
+    public getTopLevelNodes() {
+        return this.rowsAfterGroup;
+    }
+
+    public getRow(index: number): RowNode {
+        return this.rowsToDisplay[index];
+    }
+
+    public getRowCount(): number {
+        if (this.rowsToDisplay) {
+            return this.rowsToDisplay.length;
+        } else {
+            return 0;
+        }
     }
 
     public getRowAtPixel(pixelToMatch: number): number {
@@ -134,7 +152,7 @@ export default class InMemoryRowController {
         return pixelInRow;
     }
 
-    public getVirtualRowCombinedHeight(): number {
+    public getRowCombinedHeight(): number {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
             var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
             var lastPixel = lastRow.rowTop + lastRow.rowHeight;
@@ -142,10 +160,6 @@ export default class InMemoryRowController {
         } else {
             return 0;
         }
-    }
-
-    public getModel() {
-        return this.model;
     }
 
     public forEachInMemory(callback: Function) {
@@ -191,32 +205,6 @@ export default class InMemoryRowController {
             }
         }
         return index;
-    }
-
-    public updateModel(step: any) {
-
-        // fallthrough in below switch is on purpose
-        switch (step) {
-            case constants.STEP_EVERYTHING:
-            case constants.STEP_FILTER:
-                this.doFilter();
-                this.doAggregate();
-            case constants.STEP_SORT:
-                this.doSort();
-            case constants.STEP_MAP:
-                this.doRowsToDisplay();
-        }
-
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
-        if (this.$scope) {
-            setTimeout( () => {
-                this.$scope.$apply();
-            }, 0);
-        }
-    }
-
-    private ensureRowHasHeight(rowNode: RowNode): void {
-
     }
 
     private defaultGroupAggFunctionFactory(valueColumns: Column[]) {
@@ -287,6 +275,7 @@ export default class InMemoryRowController {
     }
 
     // it's possible to recompute the aggregate without doing the other parts
+    // + gridApi.recomputeAggregates()
     public doAggregate() {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
@@ -310,22 +299,23 @@ export default class InMemoryRowController {
         }
     }
 
-    public expandOrCollapseAll(expand: boolean, rowNodes: RowNode[]) {
-        // if first call in recursion, we set list to parent list
-        if (rowNodes === null) {
-            rowNodes = this.rowsAfterGroup;
+    // + gridApi.expandAll()
+    // + gridApi.collapseAll()
+    public expandOrCollapseAll(expand: boolean): void {
+
+        recursiveExpandOrCollapse(this.rowsAfterGroup);
+
+        function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
+            if (!rowNodes) { return; }
+            rowNodes.forEach( rowNode => {
+                if (rowNode.group) {
+                    rowNode.expanded = expand;
+                    recursiveExpandOrCollapse(rowNode.children);
+                }
+            });
         }
 
-        if (!rowNodes) {
-            return;
-        }
-
-        rowNodes.forEach( (node: RowNode) => {
-            if (node.group) {
-                node.expanded = expand;
-                this.expandOrCollapseAll(expand, node.children);
-            }
-        });
+        this.refreshModel(Constants.STEP_MAP);
     }
 
     private recursivelyClearAggData(nodes: RowNode[]) {
@@ -365,7 +355,7 @@ export default class InMemoryRowController {
             sorting = false;
         } else {
             //see if there is a col we are sorting by
-            var sortingOptions = this.columnController.getSortForRowController();
+            var sortingOptions = this.sortController.getSortForRowController();
             sorting = sortingOptions.length > 0;
         }
 
@@ -449,12 +439,6 @@ export default class InMemoryRowController {
         }
     }
 
-    // called by grid when row group cols change
-    public onRowGroupChanged(): void {
-        this.doRowGrouping();
-        this.updateModel(constants.STEP_EVERYTHING);
-    }
-
     private doRowGrouping() {
         var rowsAfterGroup: any;
         var groupedCols = this.columnController.getRowGroupColumns();
@@ -474,7 +458,7 @@ export default class InMemoryRowController {
             } else {
                 expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
             }
-            rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault, this.getModel());
+            rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
         } else {
             rowsAfterGroup = this.allRows;
         }
@@ -545,32 +529,38 @@ export default class InMemoryRowController {
 
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
-    public setAllRows(rows: RowNode[], firstId?: number) {
-        var nodes: RowNode[];
+    public setRowData(rows: any[], refresh: boolean, firstId?: number) {
+
         if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
-            nodes = rows;
-            this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
+            console.error('ag-Grid: need to change this');
+            //this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
+            this.allRows = null;
         } else {
             // place each row into a wrapper
-            var nodes: RowNode[] = [];
+            this.allRows = [];
             if (rows) {
                 for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.getModel());
+                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
                     node.data = rows[i];
-                    nodes.push(node);
+                    this.allRows.push(node);
                 }
             }
         }
 
         // if firstId provided, use it, otherwise start at 0
         var firstIdToUse = firstId ? firstId : 0;
-        this.recursivelyAddIdToNodes(nodes, firstIdToUse);
-        this.allRows = nodes;
+        this.recursivelyAddIdToNodes(this.allRows, firstIdToUse);
+
+        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
+
+        if (refresh) {
+            this.refreshModel(Constants.STEP_EVERYTHING);
+        }
 
         // group here, so filters have the agg data ready
-        if (this.columnController.isSetupComplete()) {
-            this.doRowGrouping();
-        }
+        //if (this.columnController.isSetupComplete()) {
+        //    this.doRowGrouping();
+        //}
     }
 
     // add in index - this is used by the selectionController - so quick
@@ -621,8 +611,6 @@ export default class InMemoryRowController {
         return count;
     }
 
-    private nextRowTop: number;
-
     private doRowsToDisplay() {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
@@ -663,7 +651,7 @@ export default class InMemoryRowController {
     }
 
     private createFooterNode(groupNode: RowNode): RowNode {
-        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, this.model);
+        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
         Object.keys(groupNode).forEach(function (key) {
             (<any>footerNode)[key] = (<any>groupNode)[key];
         });

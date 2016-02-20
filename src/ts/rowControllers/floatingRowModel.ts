@@ -5,6 +5,7 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import EventService from "../eventService";
 import {Autowired} from "../context/context";
+import {Events} from "../events";
 
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
@@ -22,10 +23,12 @@ export default class FloatingRowModel {
 
     public setFloatingTopRowData(rowData: any[]): void {
         this.floatingTopRows = this.createNodesFromData(rowData, false);
+        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
     }
 
     public setFloatingBottomRowData(rowData: any[]): void {
         this.floatingBottomRows = this.createNodesFromData(rowData, false);
+        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
@@ -33,7 +36,7 @@ export default class FloatingRowModel {
         if (allData) {
             var nextRowTop = 0;
             allData.forEach( (dataItem) => {
-                var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null, null);
+                var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null);
                 rowNode.data = dataItem;
                 rowNode.floating = true;
                 rowNode.floatingTop = isTop;

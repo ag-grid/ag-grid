@@ -23,6 +23,7 @@ import {HeaderContainer} from "./headerContainer";
 import EventService from "../eventService";
 import {Events} from "../events";
 import ColumnChangeEvent from "../columnChangeEvent";
+import {PostConstruct} from "../context/context";
 
 @Bean('headerRenderer')
 export default class HeaderRenderer {
@@ -48,7 +49,8 @@ export default class HeaderRenderer {
     private eRoot: HTMLElement;
     private eHeaderOverlay: HTMLElement;
 
-    private agPostWire() {
+    @PostConstruct
+    private init() {
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
         this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
@@ -74,9 +76,14 @@ export default class HeaderRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
 
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
+
+        if (this.columnController.isReady()) {
+            this.refreshHeader();
+        }
     }
 
     // this is called from the API and refreshes everything, should be broken out
@@ -100,8 +107,6 @@ export default class HeaderRenderer {
             this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
         }
 
-        this.updateFilterIcons();
-        this.updateSortIcons();
         this.setPinnedColContainerWidth();
     }
 
@@ -116,18 +121,6 @@ export default class HeaderRenderer {
 
         var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
         this.eHeaderViewport.style.marginRight = pinnedRightWidth;
-    }
-
-    public updateSortIcons() {
-        this.pinnedLeftContainer.updateSortIcons();
-        this.pinnedRightContainer.updateSortIcons();
-        this.centerContainer.updateSortIcons();
-    }
-
-    public updateFilterIcons() {
-        this.pinnedLeftContainer.updateFilterIcons();
-        this.pinnedRightContainer.updateFilterIcons();
-        this.centerContainer.updateFilterIcons();
     }
 
     public onIndividualColumnResized(column: Column): void {

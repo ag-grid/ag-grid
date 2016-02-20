@@ -3,16 +3,15 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 
 /****************************************************************
- ****************************************************************
- *                                                              *
  * Don't forget to update ComponentUtil if changing this class. *
- *                                                              *
- ****************************************************************
  ****************************************************************/
 export interface GridOptions {
 
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
+
     // set once in init, can never change
-    virtualPaging?: boolean;
     toolPanelSuppressGroups?: boolean;
     toolPanelSuppressValues?: boolean;
     rowsAlreadyGrouped?: boolean;
@@ -46,11 +45,20 @@ export interface GridOptions {
     suppressMovableColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
+    rowModelType?: string;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // just set once
     localeText?: any;
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
@@ -61,6 +69,10 @@ export interface GridOptions {
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: any; // change to typed
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // changeable, but no immediate impact
     context?: any;
@@ -76,6 +88,10 @@ export interface GridOptions {
     rowHeight?: number;
     headerCellTemplate?: string;
 
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
+
     // changeable with impact
     rowData?: any[]; // should this be immutable for ag2?
     floatingTopRowData?: any[]; // should this be immutable ag2?
@@ -85,6 +101,10 @@ export interface GridOptions {
     datasource?: any; // should be typed
     // in properties
     headerHeight?: number;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // callbacks
     groupRowInnerRenderer?(params: any): void;
@@ -99,6 +119,10 @@ export interface GridOptions {
     groupAggFunction?(nodes: any[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // events
     onGridReady?(params: any): void;
@@ -120,6 +144,10 @@ export interface GridOptions {
     onRowClicked?(params: any): void;
     onRowDoubleClicked?(params: any): void;
     onGridSizeChanged?(params: any): void;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // apis, set by the grid on init
     api?: GridApi; // change to typed

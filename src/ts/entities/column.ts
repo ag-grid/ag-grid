@@ -6,6 +6,7 @@ import {AbstractColDef} from "./colDef";
 import EventService from "../eventService";
 import ColumnGroup from "./columnGroup";
 import {ColumnController} from "../columnController/columnController";
+import _ from '../utils';
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -26,6 +27,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
     // + renderedColumn - for changing visibility icon
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    // + renderedHeaderCell - marks the header with filter icon
+    public static EVENT_FILTER_ACTIVE_CHANGED = 'filterChanged';
+    // + renderedHeaderCell - marks the header with sort icon
+    public static EVENT_SORT_CHANGED = 'filterChanged';
 
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
@@ -55,6 +60,8 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     private minWidth: number;
     private maxWidth: number;
+
+    private filterActive = false;
 
     private eventService: EventService = new EventService();
 
@@ -106,7 +113,22 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setSort(sort: string): void {
-        this.sort = sort;
+        if (this.sort !== sort) {
+            this.sort = sort;
+            this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
+        }
+    }
+
+    public isSortAscending(): boolean {
+        return this.sort === Column.SORT_ASC;
+    }
+
+    public isSortDescending(): boolean {
+        return this.sort === Column.SORT_DESC;
+    }
+
+    public isSortNone(): boolean {
+        return _.missing(this.sort);
     }
 
     public getSortedAt(): number {
@@ -133,6 +155,17 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         if (this.left !== left) {
             this.left = left;
             this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);
+        }
+    }
+
+    public isFilterActive(): boolean {
+        return this.filterActive;
+    }
+
+    public setFilterActive(active: boolean): void {
+        if (this.filterActive !== active) {
+            this.filterActive = active;
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
         }
     }
 

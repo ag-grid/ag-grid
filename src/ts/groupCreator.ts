@@ -16,9 +16,9 @@ export default class GroupCreator {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
 
-    public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number, rowModel: any) {
+    public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 
-        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, rowModel);
+        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
         topMostGroup.level = -1;
         topMostGroup.children = [];
         topMostGroup._childrenMap = {};
@@ -58,7 +58,7 @@ export default class GroupCreator {
                 // if group doesn't exist yet, create it
                 nextGroup = currentGroup._childrenMap[groupKey];
                 if (!nextGroup) {
-                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController, rowModel);
+                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
                     nextGroup.group = true;
                     nextGroup.field = groupColumn.getColDef().field;
                     nextGroup.id = index--;

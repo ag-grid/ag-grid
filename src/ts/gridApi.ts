@@ -22,6 +22,9 @@ import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
 import {Autowired} from "./context/context";
+import {IRowModel} from "./rowControllers/iRowModel";
+import {SortController} from "./sortController";
+import PaginationController from "./rowControllers/paginationController";
 
 @Bean('gridApi')
 export class GridApi {
@@ -32,7 +35,6 @@ export class GridApi {
     @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('inMemoryRowController') private inMemoryRowController: InMemoryRowController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -41,6 +43,9 @@ export class GridApi {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('context') private context: Context;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('paginationController') private paginationController: PaginationController;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -64,28 +69,29 @@ export class GridApi {
     }
 
     public setDatasource(datasource:any) {
-        this.gridCore.setDatasource(datasource);
+        if (this.gridOptionsWrapper.isRowModelPagination()) {
+            this.paginationController.setDatasource(datasource);
+        } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
+            this.rowModel.setDatasource(datasource);
+        } else {
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
+        }
     }
 
-    public setRowData(rowData:any) {
-        this.selectionController.reset();
-        this.gridCore.setRowData(rowData);
+    public setRowData(rowData: any[]) {
+        this.rowModel.setRowData(rowData, true);
     }
 
     public setFloatingTopRowData(rows: any[]): void {
         this.floatingRowModel.setFloatingTopRowData(rows);
-        this.gridPanel.onBodyHeightChange();
-        this.refreshView();
     }
 
     public setFloatingBottomRowData(rows: any[]): void {
         this.floatingRowModel.setFloatingBottomRowData(rows);
-        this.gridPanel.onBodyHeightChange();
-        this.refreshView();
     }
 
     public setColumnDefs(colDefs: ColDef[]) {
-        this.gridCore.setColumnDefs(colDefs);
+        this.columnController.setColumnDefs(colDefs);
     }
 
     public refreshRows(rowNodes: RowNode[]): void {
@@ -130,21 +136,19 @@ export class GridApi {
     }
 
     public getModel() {
-        return this.gridCore.getRowModel();
+        return this.rowModel;
     }
 
-    public onGroupExpandedOrCollapsed(refreshFromIndex:any) {
-        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP, refreshFromIndex);
+    public onGroupExpandedOrCollapsed(refreshFromIndex: any) {
+        this.rowModel.refreshModel(Constants.STEP_MAP);
     }
 
     public expandAll() {
-        this.inMemoryRowController.expandOrCollapseAll(true, null);
-        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP);
+        this.rowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        this.inMemoryRowController.expandOrCollapseAll(false, null);
-        this.gridCore.updateModelAndRefresh(Constants.STEP_MAP);
+        this.rowModel.expandOrCollapseAll(false);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -167,7 +171,7 @@ export class GridApi {
     }
 
     public setQuickFilter(newFilter:any) {
-        this.gridCore.onQuickFilterChanged(newFilter)
+        this.filterManager.setQuickFilter(newFilter)
     }
 
     public selectIndex(index:any, tryMulti:any, suppressEvents:any) {
@@ -198,9 +202,8 @@ export class GridApi {
         this.selectionController.deselectAllRowNodes();
     }
 
-    public recomputeAggregates() {
-        this.inMemoryRowController.doAggregate();
-        this.rowRenderer.refreshGroupRows();
+    public recomputeAggregates(): void {
+        this.rowModel.refreshModel(Constants.STEP_AGGREGATE);
     }
 
     public sizeColumnsToFit() {
@@ -221,15 +224,6 @@ export class GridApi {
 
     public hideOverlay(): void {
         this.gridPanel.hideOverlay();
-    }
-
-    public showLoading(show: any) {
-        console.warn('ag-Grid: showLoading is deprecated, please use api.showLoadingOverlay() and api.hideOverlay() instead');
-        if (show) {
-            this.gridPanel.showLoadingOverlay();
-        } else {
-            this.gridPanel.hideOverlay();
-        }
     }
 
     public isNodeSelected(node:any) {
@@ -274,21 +268,16 @@ export class GridApi {
         this.gridCore.ensureNodeVisible(comparator);
     }
 
-    public forEachInMemory(callback: Function) {
-        console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, I just renamed it, forEachInMemory is deprecated');
-        this.forEachNode(callback);
+    public forEachNode(callback: (rowNode: RowNode)=>void ) {
+        this.rowModel.forEachNode(callback);
     }
 
-    public forEachNode(callback: Function) {
-        this.gridCore.getRowModel().forEachNode(callback);
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
+        this.rowModel.forEachNodeAfterFilter(callback);
     }
 
-    public forEachNodeAfterFilter(callback: Function) {
-        this.gridCore.getRowModel().forEachNodeAfterFilter(callback);
-    }
-
-    public forEachNodeAfterFilterAndSort(callback: Function) {
-        this.gridCore.getRowModel().forEachNodeAfterFilterAndSort(callback);
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
+        this.rowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
     public getFilterApiForColDef(colDef:any) {
@@ -311,15 +300,15 @@ export class GridApi {
     }
 
     public onFilterChanged() {
-        this.gridCore.onFilterChanged();
+        this.filterManager.onFilterChanged();
     }
 
     public setSortModel(sortModel:any) {
-        this.gridCore.setSortModel(sortModel);
+        this.sortController.setSortModel(sortModel);
     }
 
     public getSortModel() {
-        return this.gridCore.getSortModel();
+        return this.sortController.getSortModel();
     }
 
     public setFilterModel(model:any) {
@@ -327,7 +316,7 @@ export class GridApi {
     }
 
     public getFilterModel() {
-        return this.gridCore.getFilterModel();
+        return this.filterManager.getFilterModel();
     }
 
     public getFocusedCell() {
@@ -340,7 +329,6 @@ export class GridApi {
 
     public setHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setHeaderHeight(headerHeight);
-        this.gridPanel.onBodyHeightChange();
     }
 
     public showToolPanel(show:any) {

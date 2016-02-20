@@ -21,7 +21,8 @@ var gridOptions = {
     debug: true,
     rowSelection: 'multiple',
     rowDeselection: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowModelType: 'virtual'
 };
 
 function setRowData(allOfTheData) {
