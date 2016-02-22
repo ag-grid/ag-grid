@@ -23,7 +23,7 @@ export interface CsvExportParams {
 }
 
 @Bean('csvCreator')
-export default class CsvCreator {
+export class CsvCreator {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;

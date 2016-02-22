@@ -29,7 +29,7 @@ export class ComponentUtil {
     ];
 
     public static BOOLEAN_PROPERTIES = [
-        'toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
+        'toolPanelSuppressGroups','toolPanelSuppressValues',
         'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
         'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
         'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
@@ -43,7 +43,7 @@ export class ComponentUtil {
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
-        'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate'];
+        'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)

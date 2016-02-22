@@ -1,115 +1,124 @@
 var rowData = [
     {
-        group: true,
-        expanded: true,
-        data: {name: 'C:'},
+        folder: true,
+        open: true,
+        name: 'C:',
         children: [
-            {group: true,
-                data: {name: 'Windows', size: '', type: 'File Folder', dateModified: '27/02/2014 04:12'},
+            {folder: true,
+                name: 'Windows',
+                size: '',
+                type: 'File Folder',
+                dateModified: '27/02/2014 04:12',
                 children: [
-                    {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                    {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                    {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                    {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                    {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                    {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                 ]
             },
-            {group: true,
-                data: {name: 'Program Files', size: '', type: 'File Folder', dateModified: '11/09/2013 02:11'},
-                expanded: true,
+            {folder: true,
+                name: 'Program Files',
+                size: '',
+                type: 'File Folder',
+                dateModified: '11/09/2013 02:11',
+                open: true,
                 children: [
-                    {group: true,
-                        data: {name: 'ASUS', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'ASUS',
+                        size: '',
+                        type: 'File Folder',
+                        dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Classic Shell', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'Classic Shell', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Common Files', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'Common Files', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'DisplayLink Core Software', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'DisplayLink Core Software', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Intel', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'Intel', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Internet Explorer', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'Internet Explorer', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Intel Corporation', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                    {folder: true,
+                        name: 'Intel Corporation', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                         children: [
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     },
-                    {group: true,
-                        data: {name: 'Java', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
-                        expanded: true,
+                    {folder: true,
+                        name: 'Java', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
+                        open: true,
                         children: [
-                            {group: true,
-                                data: {name: 'jdk1.8.0', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                            {folder: true,
+                                name: 'jdk1.8.0', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                                 children: [
-                                    {group: false, data: {name: 'java.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                                    {group: false, data: {name: 'javac.exe', size: '1 kb', type: 'Application', dateModified: '27/11/2012 04:12'}},
-                                    {group: false, data: {name: 'weblaunch.exe', size: '21 kb', type: 'Application', dateModified: '18/03/2014 00:56'}}
+                                    {name: 'java.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                                    {name: 'javac.exe', size: '1 kb', type: 'Application', dateModified: '27/11/2012 04:12'},
+                                    {name: 'weblaunch.exe', size: '21 kb', type: 'Application', dateModified: '18/03/2014 00:56'}
                                 ]
                             },
-                            {group: true,
-                                data: {name: 'jre1.8.0_31', size: '', type: 'File Folder', dateModified: '13/03/2014 1014'},
+                            {folder: true,
+                                name: 'jre1.8.0_31', size: '', type: 'File Folder', dateModified: '13/03/2014 1014',
                                 children: [
-                                    {group: false, data: {name: 'java.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                                    {group: false, data: {name: 'javac.exe', size: '1 kb', type: 'Application', dateModified: '27/11/2012 04:12'}},
-                                    {group: false, data: {name: 'weblaunch.exe', size: '21 kb', type: 'Application', dateModified: '18/03/2014 00:56'}}
+                                    {name: 'java.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                                    {name: 'javac.exe', size: '1 kb', type: 'Application', dateModified: '27/11/2012 04:12'},
+                                    {name: 'weblaunch.exe', size: '21 kb', type: 'Application', dateModified: '18/03/2014 00:56'}
                                 ]
                             },
-                            {group: false, data: {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'}},
-                            {group: false, data: {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-                            {group: false, data: {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}}
+                            {name: 'bfsve.exe', size: '56 kb', type: 'Application', dateModified: '13/03/2014 10:14'},
+                            {name: 'csup.txt', size: '1 kb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+                            {name: 'diagwrn.xml', size: '21 kb', type: 'XML File', dateModified: '18/03/2014 00:56'}
                         ]
                     }
                 ]},
-            {group: false, data: {name: 'boot.ini', size: '16 kb', type: 'Boot File', dateModified: '27/11/2012 04:12'}},
-            {group: false, data: {name: 'system.cfg', size: '13 kb', type: 'System File', dateModified: '18/03/2014 00:56'}}
+            {group: false, name: 'boot.ini', size: '16 kb', type: 'Boot File', dateModified: '27/11/2012 04:12'},
+            {group: false, name: 'system.cfg', size: '13 kb', type: 'System File', dateModified: '18/03/2014 00:56'}
         ]
     },
     {
-        group: true,
-        data: {name: 'D:'},
+        folder: true,
+        name: 'D:',
         children: [
-            {group: false, data: {name: 'Game of Thrones s05e01.avi', size: '1034 mb', type: 'Movie', dateModified: '13/03/2014 10:14'}},
-            {group: false, data: {name: 'The Knick s01e01', size: '523 mb', type: 'Text Document', dateModified: '27/11/2012 04:12'}},
-            {group: false, data: {name: 'musicbackup1.zip', size: '25 mb', type: 'Compressed Zip File', dateModified: '18/03/2014 00:56'}},
-            {group: false, data: {name: 'musicbackup2.zip', size: '25 mb', type: 'Compressed Zip File', dateModified: '18/03/2014 00:56'}}
+            {name: 'Game of Thrones s05e01.avi', size: '1034 mb', type: 'Movie', dateModified: '13/03/2014 10:14'},
+            {name: 'The Knick s01e01', size: '523 mb', type: 'Text Document', dateModified: '27/11/2012 04:12'},
+            {name: 'musicbackup1.zip', size: '25 mb', type: 'Compressed Zip File', dateModified: '18/03/2014 00:56'},
+            {name: 'musicbackup2.zip', size: '25 mb', type: 'Compressed Zip File', dateModified: '18/03/2014 00:56'}
         ]
     }
 ];
@@ -129,10 +138,20 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     rowSelection: 'multiple',
-    rowsAlreadyGrouped: true,
     enableColResize: true,
     enableSorting: true,
     rowHeight: 20,
+    getNodeChildDetails: function(file) {
+        if (file.folder) {
+            return {
+                group: true,
+                children: file.children,
+                expanded: file.open
+            };
+        } else {
+            return null;
+        }
+    },
     icons: {
         groupExpanded: '<i class="fa fa-minus-square-o"/>',
         groupContracted: '<i class="fa fa-plus-square-o"/>'

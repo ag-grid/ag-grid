@@ -11,6 +11,7 @@ exports.initialiseAgGridWithWebComponents = require('./dist/lib/components/agGri
 exports.defaultGroupComparator = require('./dist/lib/functions').defaultGroupComparator;
 
 exports.GridOptions = require('./dist/lib/entities/gridOptions').GridOptions;
+exports.NodeChildDetails = require('./dist/lib/entities/gridOptions').NodeChildDetails;
 exports.AbstractColDef = require('./dist/lib/entities/colDef').AbstractColDef;
 exports.ColDef = require('./dist/lib/entities/colDef').ColDef;
 exports.ColGroupDef = require('./dist/lib/entities/colDef').ColGroupDef;

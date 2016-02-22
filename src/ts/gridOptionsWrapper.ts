@@ -10,6 +10,7 @@ import {Qualifier} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Autowired} from "./context/context";
 import {Events} from "./events";
+import {NodeChildDetails} from "./entities/gridOptions";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -59,7 +60,6 @@ export default class GridOptionsWrapper {
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
-    public isRowsAlreadyGrouped() { return isTrue(this.gridOptions.rowsAlreadyGrouped); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
@@ -119,6 +119,7 @@ export default class GridOptionsWrapper {
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
+    public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
 
     // properties
     public getHeaderHeight(): number {
@@ -215,6 +216,9 @@ export default class GridOptionsWrapper {
         }
         if (options.onRowDeselected || options.rowDeselected) {
             console.warn('ag-grid: since version 3.4 event rowDeselected no longer exists, please check the docs');
+        }
+        if (options.rowsAlreadyGrouped) {
+            console.warn('ag-grid: since version 3.4 rowsAlreadyGrouped no longer exists, please use getNodeChildDetails() instead');
         }
     }
 

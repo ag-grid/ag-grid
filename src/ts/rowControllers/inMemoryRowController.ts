@@ -20,6 +20,7 @@ import {IRowModel} from "./iRowModel";
 import Constants from "../constants";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
+import {NodeChildDetails} from "../entities/gridOptions";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -293,7 +294,7 @@ export default class InMemoryRowController implements IRowModel {
             // if use is creating / removing columns using the tool panel.
             // one exception - don't do this if already grouped, as this breaks the File Explorer example!!
             // to fix another day - how to we reset when the user provided the data??
-            if (!this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
+            if (_.missing(this.gridOptionsWrapper.getNodeChildDetailsFunc())) {
                 this.recursivelyClearAggData(this.rowsAfterFilter);
             }
         }
@@ -442,7 +443,7 @@ export default class InMemoryRowController implements IRowModel {
     private doRowGrouping() {
         var rowsAfterGroup: any;
         var groupedCols = this.columnController.getRowGroupColumns();
-        var rowsAlreadyGrouped = this.gridOptionsWrapper.isRowsAlreadyGrouped();
+        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
 
         var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
 
@@ -529,73 +530,64 @@ export default class InMemoryRowController implements IRowModel {
 
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
-    public setRowData(rows: any[], refresh: boolean, firstId?: number) {
+    public setRowData(rowData: any[], refresh: boolean, firstId?: number) {
 
-        if (this.gridOptionsWrapper.isRowsAlreadyGrouped()) {
-            console.error('ag-Grid: need to change this');
-            //this.recursivelyCheckUserProvidedNodes(nodes, null, 0);
-            this.allRows = null;
-        } else {
-            // place each row into a wrapper
-            this.allRows = [];
-            if (rows) {
-                for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                    var node = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
-                    node.data = rows[i];
-                    this.allRows.push(node);
-                }
-            }
-        }
+        // place each row into a wrapper
+        this.allRows = this.createRowNodesFromData(rowData, firstId);
 
         // if firstId provided, use it, otherwise start at 0
-        var firstIdToUse = firstId ? firstId : 0;
-        this.recursivelyAddIdToNodes(this.allRows, firstIdToUse);
+        //this.recursivelyAddIdToNodes(this.allRows, firstIdToUse);
 
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {
             this.refreshModel(Constants.STEP_EVERYTHING);
         }
-
-        // group here, so filters have the agg data ready
-        //if (this.columnController.isSetupComplete()) {
-        //    this.doRowGrouping();
-        //}
     }
 
-    // add in index - this is used by the selectionController - so quick
-    // to look up selected rows
-    private recursivelyAddIdToNodes(nodes: RowNode[], index: number) {
-        if (!nodes) {
-            return;
+    private createRowNodesFromData(rowData: any[], firstId?: number): RowNode[] {
+        if (!rowData) {
+            return [];
         }
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
-            node.id = index++;
-            this.selectionController.syncInRowNode(node);
-            if (node.group && node.children) {
-                index = this.recursivelyAddIdToNodes(node.children, index);
-            }
-        }
-        return index;
-    }
 
-    // add in index - this is used by the selectionController - so quick
-    // to look up selected rows
-    private recursivelyCheckUserProvidedNodes(nodes: RowNode[], parent: RowNode, level: number) {
-        if (!nodes) {
-            return;
+        var rowNodeId = _.exists(firstId) ? firstId : 0;
+
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        var nodeChildDetailsFunc = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        var suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        var eventService = this.eventService;
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+        var selectionController = this.selectionController;
+
+        // kick off recursion
+        var result = recursiveFunction(rowData, null, 0);
+        return result;
+
+        function recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
+            var rowNodes: RowNode[] = [];
+            rowData.forEach( (dataItem)=> {
+                var node = new RowNode(eventService, gridOptionsWrapper, selectionController);
+                var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
+                if (nodeChildDetails && nodeChildDetails.group) {
+                    node.group = true;
+                    node.children = recursiveFunction(nodeChildDetails.children, node, level + 1);
+                    node.expanded = nodeChildDetails.expanded === true;
+                    node.field = nodeChildDetails.field;
+                    node.key = nodeChildDetails.key;
+                }
+
+                if (parent && !suppressParentsInRowNodes) {
+                    node.parent = parent;
+                }
+                node.level = level;
+                node.id = rowNodeId++;
+                node.data = dataItem;
+
+                rowNodes.push(node);
+            });
+            return rowNodes;
         }
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
-            if (parent && !this.gridOptionsWrapper.isSuppressParentsInRowNodes()) {
-                node.parent = parent;
-            }
-            node.level = level;
-            if (node.group && node.children) {
-                this.recursivelyCheckUserProvidedNodes(node.children, node, level + 1);
-            }
-        }
+
     }
 
     private getTotalChildCount(rowNodes: any) {

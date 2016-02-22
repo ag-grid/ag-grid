@@ -107,7 +107,6 @@ var gridOptions = {
     //    {name: 'Kevin'},
     //    {name: 'Brian'}
     //],
-    rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
     groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1

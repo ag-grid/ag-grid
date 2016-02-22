@@ -38,7 +38,7 @@ import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
 import {DragService} from "./headerRendering/dragService";
 import {Context} from './context/context';
-import CsvCreator from "./csvCreator";
+import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";

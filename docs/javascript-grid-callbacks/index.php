@@ -108,6 +108,10 @@ include '../documentation_header.php';
             <th>getHeaderCellTemplate</th>
             <td>Function to use instead of headerCellTemplate, should return string or html DOM element.</td>
         </tr>
+        <tr>
+            <th>getNodeChildDetails(callback)</th>
+            <td>Allows you to pass tree structure data to the grid, or row data that is already grouped.</td>
+        </tr>
 
     </table>
 

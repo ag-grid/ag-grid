@@ -1,4 +1,4 @@
-import CsvCreator from "./csvCreator";
+import {CsvCreator} from "./csvCreator";
 import {Grid} from "./grid";
 import RowRenderer from "./rendering/rowRenderer";
 import HeaderRenderer from "./headerRendering/headerRenderer";
@@ -12,7 +12,7 @@ import ValueService from "./valueService";
 import MasterSlaveService from "./masterSlaveService";
 import EventService from "./eventService";
 import FloatingRowModel from "./rowControllers/floatingRowModel";
-import CsvExportParams from "./csvCreator";
+import {CsvExportParams} from "./csvCreator";
 import {ColDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import Constants from "./constants";

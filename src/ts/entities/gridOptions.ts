@@ -14,7 +14,6 @@ export interface GridOptions {
     // set once in init, can never change
     toolPanelSuppressGroups?: boolean;
     toolPanelSuppressValues?: boolean;
-    rowsAlreadyGrouped?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
@@ -119,6 +118,7 @@ export interface GridOptions {
     groupAggFunction?(nodes: any[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
+    getNodeChildDetails?(dataItem: any): NodeChildDetails;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -152,4 +152,12 @@ export interface GridOptions {
     // apis, set by the grid on init
     api?: GridApi; // change to typed
     columnApi?: ColumnApi; // change to typed
+}
+
+export interface NodeChildDetails {
+    group: boolean;
+    children?: any[];
+    expanded?: boolean;
+    field?: string;
+    key?: any;
 }

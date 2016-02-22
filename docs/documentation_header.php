@@ -215,6 +215,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
                 <?php } ?>
 
+                <?php if ($key == "Tree Data") { ?>
+                    <span class="sidebarLinkSelected">Tree Data</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-tree/index.php">Tree Data</a>
+                <?php } ?>
+
                 <?php if ($key == "Row Height") { ?>
                     <span class="sidebarLinkSelected">Row Height</span>
                 <?php } else { ?>

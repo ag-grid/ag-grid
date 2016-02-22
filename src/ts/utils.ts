@@ -377,6 +377,7 @@ export default class Utils {
     }
 
     static addStylesToElement(eElement: any, styles: any) {
+        if (!styles) { return; }
         Object.keys(styles).forEach(function (key) {
             eElement.style[key] = styles[key];
         });

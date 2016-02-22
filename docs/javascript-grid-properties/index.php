@@ -197,11 +197,6 @@ include '../documentation_header.php';
             If you a different style per row, then use the callback getRowStyle(params) instead.</td>
         </tr>
         <tr>
-            <th>rowsAlreadyGrouped</th>
-            <td>Set to true if data provided to the grid is already in node structure (this is for passing
-                already aggregated data to the grid).</td>
-        </tr>
-        <tr>
             <th>rowBuffer</th>
             <td>The number of rows rendered outside the scrollable viewable area the grid renders. Defaults to 20.
                 Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.</td>

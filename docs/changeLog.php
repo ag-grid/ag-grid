@@ -38,6 +38,7 @@ include 'documentation_header.php';
 
     <li>Introduced property modelType, set to 'pagination' or 'virtual' for pagination and virtual pagination. This replaces virtualPaging, as virtual was a boolean when in fact we need to distinctly model three modes of operation: Normal, Pagination and Virtual Pagination.</li>
 
+    <li>rowsAlreadyGrouped replaced with getNodeChildDetails</li>
 
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
