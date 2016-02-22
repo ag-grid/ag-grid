@@ -46,6 +46,7 @@ import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
+import {ColumnApi} from "./columnController/columnController";
 
 export class Grid {
 
@@ -81,7 +82,7 @@ export class Grid {
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService2, SortController],
+                DragAndDropService2, SortController, ColumnApi],
             debug: !!gridOptions.debug
         });
     }

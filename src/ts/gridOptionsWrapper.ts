@@ -11,6 +11,8 @@ import {ColumnController} from "./columnController/columnController";
 import {Autowired} from "./context/context";
 import {Events} from "./events";
 import {NodeChildDetails} from "./entities/gridOptions";
+import {ColumnApi} from "./columnController/columnController";
+import {PostConstruct} from "./context/context";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -29,15 +31,16 @@ export default class GridOptionsWrapper {
 
     private headerHeight: number;
 
-    public agWire(@Qualifier('gridApi') gridApi: GridApi): void {
+    public agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
+        this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
-        this.gridOptions.columnApi = this.columnController.getColumnApi();
 
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');

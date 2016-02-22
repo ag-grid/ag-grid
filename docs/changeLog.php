@@ -40,6 +40,10 @@ include 'documentation_header.php';
 
     <li>rowsAlreadyGrouped replaced with getNodeChildDetails</li>
 
+    <li>New features: Enterprise menu, new column management via menu and sidebar.</li>
+
+    <li>Toolpanel gone. Replaced with enterprise features.</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

@@ -30,9 +30,11 @@ import GridPanel from "../gridPanel/gridPanel";
 import {AbstractColDef} from "../entities/colDef";
 import {PostConstruct} from "../context/context";
 
+@Bean('columnApi')
 export class ColumnApi {
 
-    constructor(private _columnController: ColumnController) {}
+    @Autowired('columnController') private _columnController: ColumnController;
+
     public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
     public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean, instanceId?: number): void { this._columnController.setColumnGroupOpened(group, newValue, instanceId); }
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
@@ -198,10 +200,6 @@ export class ColumnController {
         } else {
             return null;
         }
-    }
-
-    public getColumnApi(): ColumnApi {
-        return new ColumnApi(this);
     }
 
     public getOriginalColumnTree(): OriginalColumnGroupChild[] {
@@ -1001,6 +999,16 @@ export class ColumnController {
             return column.getPinned() !== 'left' && column.getPinned() !== 'right';
         });
 
+        //// if pinning left, then group column is also always pinned left. if not
+        //// pinning, then group column is either pinned left or center.
+        //if (this.groupAutoColumn) {
+        //    if (leftVisibleColumns.length > 0 || this.groupAutoColumn.isPinnedLeft()) {
+        //        leftVisibleColumns.unshift(this.groupAutoColumn);
+        //    } else {
+        //        centerVisibleColumns.unshift(this.groupAutoColumn);
+        //    }
+        //}
+
         var groupInstanceIdCreator = new GroupInstanceIdCreator();
         this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
             leftVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
@@ -1055,19 +1063,10 @@ export class ColumnController {
     }
 
     private updateVisibleColumns(): Column[] {
-        var visibleColumns: Column[] = [];
+        var visibleColumns = _.filter(this.allColumns, column => column.isVisible() );
 
         if (this.groupAutoColumn) {
-            visibleColumns.push(this.groupAutoColumn);
-        }
-
-        for (var i = 0; i < this.allColumns.length; i++) {
-            var column = this.allColumns[i];
-            //var hideBecauseOfRowGroup = this.rowGroupColumns.indexOf(column) >= 0
-            //    && this.gridOptionsWrapper.isGroupHideGroupColumns();
-            if (column.isVisible()) {
-                visibleColumns.push(this.allColumns[i]);
-            }
+            visibleColumns.unshift(this.groupAutoColumn);
         }
 
         return visibleColumns;

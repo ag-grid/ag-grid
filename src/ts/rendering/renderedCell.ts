@@ -14,9 +14,13 @@ import {Events} from "../events";
 import RenderedRow from "./renderedRow";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 export default class RenderedCell {
 
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
@@ -353,7 +357,8 @@ export default class RenderedCell {
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         return params;
     }

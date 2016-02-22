@@ -41,6 +41,35 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
+    <div style="float: left; width: 40px;">
+        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <img src="images/lab.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+                What's cooking in the next version....
+            </a>
+        </div>
+    </div>
+
+    <div style="color: #767676; padding-top: 20px; padding-bottom: 20px;">
+        It's going to be a week or two before the next version is ready as I am making some large
+        changes. I've reworked all the column management to include proper drag and drop of columns
+        (so you can drag columns from the sidebar into the grid, drag columns into the 'group' bar
+        at the top, drag columns to the edge to make them pinned etc). It's working very well, but
+        not ready for general consumption yet! Oh, and also a cool menu.
+    </div>
+
+    <div>
+        <img src="images/nextVersion.png"/>
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
     <div style="float: left; width: 240px;">
         <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
             <img src="images/agGridDaily.png"/>

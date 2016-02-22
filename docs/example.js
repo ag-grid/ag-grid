@@ -216,6 +216,10 @@ var firstColumn = {
     width: 200,
     editable: true,
     filter: PersonFilter,
+    checkboxSelection: function(params) {
+        // we put checkbox on the name if we are not doing no grouping
+        return params.columnApi.getRowGroupColumns().length === 0;
+    },
     icons: {
         sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
         sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -261,6 +265,25 @@ var defaultCols = [
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             }
+        ]
+    },
+    {
+        // column group 'Game of Choice'
+        headerName: 'Game of Choice',
+        children: [
+            {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+                cellClass: function() { return 'alphabet'; },
+                //pinned: 'right',
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
+            },
+            {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+                //pinned: 'right',
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                floatCell: true,
+                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
         ]
     },
     {
