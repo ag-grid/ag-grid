@@ -7,8 +7,23 @@ export class Component {
 
     private destroyFunctions: (()=>void)[] = [];
 
+    private eventService: EventService;
+
     constructor(template: string) {
         this.eGui = _.loadTemplate(template);
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
+        if (!this.eventService) {
+            this.eventService = new EventService();
+        }
+        this.eventService.addEventListener(eventType, listener);
+    }
+
+    public dispatchEvent(eventType: string, event?: any): void {
+        if (this.eventService) {
+            this.eventService.dispatchEvent(eventType, event);
+        }
     }
 
     public getGui(): HTMLElement {

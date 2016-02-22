@@ -19,7 +19,7 @@ import {PostConstruct} from "../../context/context";
 export class ColumnSelectPanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
+    @Autowired('eventService') private globalEventService: EventService;
     @Autowired('context') private context: Context;
 
     private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
@@ -36,7 +36,7 @@ export class ColumnSelectPanel extends Component {
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }

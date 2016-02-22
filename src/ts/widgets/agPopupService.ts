@@ -15,6 +15,35 @@ export default class PopupService {
         this.ePopupParent = ePopupParent;
     }
 
+    public positionPopupForMenu(params: {eventSource: any, ePopup: HTMLElement}) {
+
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var parentRect = this.ePopupParent.getBoundingClientRect();
+
+        var x = sourceRect.right - parentRect.left - 2;
+        var y = sourceRect.top - parentRect.top;
+
+        // if popup is overflowing to the right, move it left
+        //var minWidth: number;
+        //if (params.ePopup.clientWidth>0) {
+        //    minWidth = params.ePopup.clientWidth;
+        //} else {
+        //    minWidth = 200;
+        //}
+
+        //var widthOfParent = parentRect.right - parentRect.left;
+        //var maxX = widthOfParent - minWidth;
+        //if (x > maxX) { // move position left, back into view
+        //    x = maxX;
+        //}
+        //if (x < 0) { // in case the popup has a negative value
+        //    x = 0;
+        //}
+
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
+    }
+
     public positionPopup(params: {eventSource: any,
                             ePopup: HTMLElement,
                             nudgeX?: number,

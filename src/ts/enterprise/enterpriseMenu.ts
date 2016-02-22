@@ -7,14 +7,14 @@ import {TabbedLayout} from "../layout/tabbedLayout";
 import FilterManager from "../filter/filterManager";
 import {TabbedItem} from "../layout/tabbedLayout";
 import {ColumnController} from "../columnController/columnController";
-import {MenuPanel} from "./menuPanel";
-import {MenuPanelItems} from "./menuPanel";
 import {Autowired} from "../context/context";
 import SvgFactory from "../svgFactory";
 import {Context} from "../context/context";
 import PopupService from "../widgets/agPopupService";
 import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
 import {GridApi} from "../gridApi";
+import {MenuList} from "./menuList";
+import {MenuItem} from "./menuItem";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -88,117 +88,111 @@ export class EnterpriseMenu {
         this.columnSelectPanel.destroy();
     }
 
-    private createPinnedMenuPanel(): MenuPanel {
-        var ePinnedPanel = new MenuPanel([
-            {
-                name: 'Pin Left',
-                action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
-                checked: this.column.isPinnedLeft()
-            },
-            {
-                name: 'Pin Right',
-                action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
-                checked: this.column.isPinnedRight()
-            },
-            {
-                name: 'No Pin',
-                action: ()=> this.columnController.setColumnPinned(this.column, null),
-                checked: !this.column.isPinned()
-            }
-        ], this.onHidePopup.bind(this));
-        return ePinnedPanel;
-    }
+    private createPinnedSubMenu(): MenuList {
+        var cMenuList = new MenuList();
+        this.context.wireBean(cMenuList);
 
-    private createAutoSizePanel(): MenuPanel {
-        var eAutoSizePanel = new MenuPanel([
-            {
-                name: 'Autosize This Column',
-                action: ()=> this.columnController.autoSizeColumn(this.column)
-            },
-            {
-                name: 'Autosize All Columns',
-                action: ()=> this.columnController.autoSizeAllColumns()
-            }
-        ], this.onHidePopup.bind(this));
-        return eAutoSizePanel;
-    }
+        cMenuList.addItem({
+            name: 'Pin Left',
+            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
+            checked: this.column.isPinnedLeft()
+        });
+        cMenuList.addItem({
+            name: 'Pin Right',
+            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
+            checked: this.column.isPinnedRight()
+        });
+        cMenuList.addItem({
+            name: 'No Pin',
+            action: ()=> this.columnController.setColumnPinned(this.column, null),
+            checked: !this.column.isPinned()
+        });
 
-    private createRowGroupPanel(): MenuPanel {
-        var items: MenuPanelItems[] = [];
-
-        if (this.columnController.isColumnRowGrouped(this.column)) {
-            items.push({
-                name: 'Un-Group by ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.removeRowGroupColumn(this.column)
-            });
-        } else {
-            items.push({
-                name: 'Group by ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.addRowGroupColumn(this.column)
-            });
-        }
-
-        var eAutoSizePanel = new MenuPanel(items, this.onHidePopup.bind(this));
-        return eAutoSizePanel;
-    }
-
-    private createMiscGroupPanel(): MenuPanel {
-        var items: MenuPanelItems[] = [];
-
-        items.push(
-            {
-                name: 'Reset Columns',
-                action: ()=> this.columnController.resetState()
-            },
-            {
-                name: 'Sum',
-                action: ()=> {
-                    this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
-                    this.columnController.addValueColumn(this.column);
-                }
-            },
-            {
-                name: 'Remove Sum',
-                action: ()=> {
-                    this.columnController.removeValueColumn(this.column);
-                }
-            },
-            {
-                name: 'Expand All',
-                action: ()=> {
-                    this.gridApi.expandAll();
-                }
-            },
-            {
-                name: 'Collapse All',
-                action: ()=> {
-                    this.gridApi.collapseAll();
-                }
-            });
-
-        var eMiscPanel = new MenuPanel(items, this.onHidePopup.bind(this));
-        return eMiscPanel;
+        return cMenuList;
     }
 
     private createGeneralPanel(): TabbedItem {
 
-        var ePanel = document.createElement('div');
+        var cMenuList = new MenuList();
+        this.context.wireBean(cMenuList);
 
-        var ePinnedPanel = this.createPinnedMenuPanel();
-        ePanel.appendChild(ePinnedPanel.getGui());
+        cMenuList.addItem({
+            name: 'Pin Left',
+            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
+            checked: this.column.isPinnedLeft()
+        });
+        cMenuList.addItem({
+            name: 'Pin Right',
+            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
+            checked: this.column.isPinnedRight()
+        });
+        cMenuList.addItem({
+            name: 'No Pin',
+            action: ()=> this.columnController.setColumnPinned(this.column, null),
+            checked: !this.column.isPinned()
+        });
 
-        var eAutoSizePanel = this.createAutoSizePanel();
-        ePanel.appendChild(eAutoSizePanel.getGui());
+        cMenuList.addSeparator();
 
-        var eRowGroupPanel = this.createRowGroupPanel();
-        ePanel.appendChild(eRowGroupPanel.getGui());
+        cMenuList.addItem({
+            name: 'Pin',
+            checked: !this.column.isPinned(),
+            childMenu: this.createPinnedSubMenu()
+        });
 
-        var eRowMiscPanel = this.createMiscGroupPanel();
-        ePanel.appendChild(eRowMiscPanel.getGui());
+        cMenuList.addSeparator();
+
+        cMenuList.addItem({
+            name: 'Autosize This Column',
+            action: ()=> this.columnController.autoSizeColumn(this.column)
+        });
+        cMenuList.addItem({
+            name: 'Autosize All Columns',
+            action: ()=> this.columnController.autoSizeAllColumns()
+        });
+
+        cMenuList.addSeparator();
+
+        cMenuList.addItem({
+            name: 'Un-Group by ' + this.column.getColDef().headerName,
+            action: ()=> this.columnController.removeRowGroupColumn(this.column)
+        });
+        cMenuList.addItem({
+            name: 'Group by ' + this.column.getColDef().headerName,
+            action: ()=> this.columnController.addRowGroupColumn(this.column)
+        });
+
+        cMenuList.addSeparator();
+
+        cMenuList.addItem({
+            name: 'Reset Columns',
+                action: ()=> this.columnController.resetState()
+        });
+        cMenuList.addItem({
+            name: 'Sum',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
+                this.columnController.addValueColumn(this.column);
+            }
+        });
+        cMenuList.addItem({
+            name: 'Remove Sum',
+            action: ()=> this.columnController.removeValueColumn(this.column)
+        });
+        cMenuList.addItem({
+            name: 'Expand All',
+            action: ()=> this.gridApi.expandAll()
+        });
+        cMenuList.addItem({
+            name: 'Collapse All',
+            action: ()=> this.gridApi.collapseAll()
+        });
+
+        cMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         return {
             title: svgFactory.createMenuSvg(),
-            body: ePanel
+            body: cMenuList.getGui()
         };
     }
 
