@@ -38,6 +38,8 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     public static AGG_SUM = 'sum';
     public static AGG_MIN = 'min';
     public static AGG_MAX = 'max';
+    public static AGG_FIRST = 'first';
+    public static AGG_LAST = 'last';
 
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';

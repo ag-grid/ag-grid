@@ -63,6 +63,7 @@ export class EnterpriseMenu {
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
     private column: Column;
+    private mainMenuList: MenuList;
 
     private columnSelectPanel: ColumnSelectPanel;
 
@@ -86,6 +87,7 @@ export class EnterpriseMenu {
 
     public destroy(): void {
         this.columnSelectPanel.destroy();
+        this.mainMenuList.destroy();
     }
 
     private createPinnedSubMenu(): MenuList {
@@ -111,88 +113,134 @@ export class EnterpriseMenu {
         return cMenuList;
     }
 
-    private createGeneralPanel(): TabbedItem {
-
+    private createAggregationSubMenu(): MenuList {
         var cMenuList = new MenuList();
         this.context.wireBean(cMenuList);
 
-        cMenuList.addItem({
-            name: 'Pin Left',
-            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
-            checked: this.column.isPinnedLeft()
-        });
-        cMenuList.addItem({
-            name: 'Pin Right',
-            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
-            checked: this.column.isPinnedRight()
-        });
-        cMenuList.addItem({
-            name: 'No Pin',
-            action: ()=> this.columnController.setColumnPinned(this.column, null),
-            checked: !this.column.isPinned()
-        });
-
-        cMenuList.addSeparator();
+        var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
 
         cMenuList.addItem({
-            name: 'Pin',
-            checked: !this.column.isPinned(),
+            name: 'Sum',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
+                this.columnController.addValueColumn(this.column);
+            },
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_SUM
+        });
+        cMenuList.addItem({
+            name: 'Min',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_MIN);
+                this.columnController.addValueColumn(this.column);
+            },
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MIN
+        });
+        cMenuList.addItem({
+            name: 'Max',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_MAX);
+                this.columnController.addValueColumn(this.column);
+            },
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MAX
+        });
+        cMenuList.addItem({
+            name: 'First',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_FIRST);
+                this.columnController.addValueColumn(this.column);
+            },
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_FIRST
+        });
+        cMenuList.addItem({
+            name: 'Last',
+            action: ()=> {
+                this.columnController.setColumnAggFunction(this.column, Column.AGG_LAST);
+                this.columnController.addValueColumn(this.column);
+            },
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_LAST
+        });
+        cMenuList.addItem({
+            name: 'None',
+            action: ()=> {
+                this.column.setAggFunc(null);
+                this.columnController.removeValueColumn(this.column);
+            },
+            checked: !columnIsAlreadyAggValue
+        });
+
+        return cMenuList;
+    }
+
+    private createGeneralPanel(): TabbedItem {
+
+        this.mainMenuList = new MenuList();
+        this.context.wireBean(this.mainMenuList);
+
+        this.mainMenuList.addSeparator();
+
+        this.mainMenuList.addItem({
+            name: 'Pin Column',
             childMenu: this.createPinnedSubMenu()
         });
 
-        cMenuList.addSeparator();
+        this.mainMenuList.addItem({
+            name: 'Value Aggregation',
+            childMenu: this.createAggregationSubMenu()
+        });
 
-        cMenuList.addItem({
+        this.mainMenuList.addSeparator();
+
+        this.mainMenuList.addItem({
             name: 'Autosize This Column',
             action: ()=> this.columnController.autoSizeColumn(this.column)
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Autosize All Columns',
             action: ()=> this.columnController.autoSizeAllColumns()
         });
 
-        cMenuList.addSeparator();
+        this.mainMenuList.addSeparator();
 
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Un-Group by ' + this.column.getColDef().headerName,
             action: ()=> this.columnController.removeRowGroupColumn(this.column)
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Group by ' + this.column.getColDef().headerName,
             action: ()=> this.columnController.addRowGroupColumn(this.column)
         });
 
-        cMenuList.addSeparator();
+        this.mainMenuList.addSeparator();
 
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Reset Columns',
                 action: ()=> this.columnController.resetState()
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Sum',
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
                 this.columnController.addValueColumn(this.column);
             }
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Remove Sum',
             action: ()=> this.columnController.removeValueColumn(this.column)
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Expand All',
             action: ()=> this.gridApi.expandAll()
         });
-        cMenuList.addItem({
+        this.mainMenuList.addItem({
             name: 'Collapse All',
             action: ()=> this.gridApi.collapseAll()
         });
 
-        cMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         return {
             title: svgFactory.createMenuSvg(),
-            body: cMenuList.getGui()
+            body: this.mainMenuList.getGui()
         };
     }
 

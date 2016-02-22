@@ -50,6 +50,11 @@ export class Component {
         this.destroyFunctions.forEach( func => func() );
     }
 
+    public addGuiEventListener(event: string, listener: ()=>void): void {
+        this.getGui().addEventListener(event, listener);
+        this.destroyFunctions.push( ()=> this.getGui().removeEventListener(event, listener));
+    }
+
     public addDestroyableEventListener(eElement: HTMLElement|EventService, event: string, listener: ()=>void): void {
         if (eElement instanceof EventService) {
             (<EventService>eElement).addEventListener(event, listener);

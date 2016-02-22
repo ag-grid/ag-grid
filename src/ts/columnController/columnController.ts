@@ -607,7 +607,7 @@ export class ColumnController {
                     oldColumn.setActualWidth(stateItem.width);
                 }
                 // accept agg func only if valid
-                var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM].indexOf(stateItem.aggFunc) >= 0;
+                var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM, Column.AGG_FIRST, Column.AGG_LAST].indexOf(stateItem.aggFunc) >= 0;
                 if (aggFuncValid) {
                     oldColumn.setAggFunc(stateItem.aggFunc);
                     this.valueColumns.push(oldColumn);

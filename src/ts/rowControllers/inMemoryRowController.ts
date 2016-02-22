@@ -249,6 +249,9 @@ export default class InMemoryRowController implements IRowModel {
                 // only include if the value is a number
                 if (typeof thisColumnValue === 'number') {
 
+                    var firstRow = i === 0;
+                    var lastRow = i===(rowNodes.length-1);
+
                     switch (aggFunc) {
                         case Column.AGG_SUM :
                             resultForColumn += thisColumnValue;
@@ -264,6 +267,16 @@ export default class InMemoryRowController implements IRowModel {
                             if (resultForColumn === null) {
                                 resultForColumn = thisColumnValue;
                             } else if (resultForColumn < thisColumnValue) {
+                                resultForColumn = thisColumnValue;
+                            }
+                            break;
+                        case Column.AGG_FIRST :
+                            if (firstRow) {
+                                resultForColumn = thisColumnValue;
+                            }
+                            break;
+                        case Column.AGG_LAST :
+                            if (lastRow) {
                                 resultForColumn = thisColumnValue;
                             }
                             break;
@@ -308,7 +321,7 @@ export default class InMemoryRowController implements IRowModel {
 
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
             if (!rowNodes) { return; }
-            rowNodes.forEach( rowNode => {
+            rowNodes.forEach( (rowNode: RowNode) => {
                 if (rowNode.group) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.children);

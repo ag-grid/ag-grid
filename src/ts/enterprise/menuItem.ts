@@ -4,6 +4,9 @@ import {MenuList} from "./menuList";
 import {Autowired} from "../context/context";
 import PopupService from "../widgets/agPopupService";
 import _ from '../utils';
+import SvgFactory from "../svgFactory";
+
+var svgFactory = SvgFactory.getInstance();
 
 export class MenuItem extends Component {
 
@@ -12,7 +15,9 @@ export class MenuItem extends Component {
     private static TEMPLATE =
         '<div class="ag-menu-option">' +
         '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
+        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
         '  <span id="eName" class="ag-menu-option-text"></span>' +
+        '  <span style="clear: both;"></span>' +
         '</div>';
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';
@@ -26,29 +31,27 @@ export class MenuItem extends Component {
 
         if (params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
+        } else {
+            // if i didn't put space here, the alignment was messed up, probably
+            // fixable with CSS but i was spending to much time trying to figure
+            // it out.
+            this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
+        }
+        if (params.childMenu) {
+            this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+        } else {
+            this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';
         }
         this.queryForHtmlElement('#eName').innerHTML = params.name;
-        this.getGui().addEventListener('click', this.onOptionSelected.bind(this));
+
+        this.addGuiEventListener('click', this.onOptionSelected.bind(this));
     }
 
     private onOptionSelected(): void {
-        if (this.params.childMenu) {
-            var ePopup = _.loadTemplate('<div class="ag-menu"></div>');
-            ePopup.appendChild(this.params.childMenu.getGui());
-
-            var hidePopup = this.popupService.addAsModalPopup(
-                ePopup,
-                true,
-                null // closedCallback ()=> menu.destroy()
-            );
-            this.popupService.positionPopupForMenu({
-                eventSource: this.getGui(),
-                ePopup: ePopup
-            });
-        } else {
-            this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, this.params);
+        if (this.params.action) {
             this.params.action();
         }
+        this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, this.params);
     }
 }
 

@@ -132,7 +132,9 @@ export default class PopupService {
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);
             eChild.removeEventListener('click', consumeClick);
-            closedCallback();
+            if (closedCallback) {
+                closedCallback();
+            }
         }
 
         function consumeClick(event: any) {
