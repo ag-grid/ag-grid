@@ -144,22 +144,6 @@ export default class GridPanel {
         this.findElements();
     }
 
-    public agPostWire(): void {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
-        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
-    }
-
     private onRowDataChanged(): void {
         if (this.rowModel.isEmpty()) {
             this.showNoRowsOverlay();
@@ -174,6 +158,20 @@ export default class GridPanel {
 
     @PostConstruct
     private init() {
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
 
         this.layout = new BorderLayout({
             overlays: {
@@ -196,6 +194,10 @@ export default class GridPanel {
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
         }
+
+        this.setWidthsOfContainers();
+        this.showPinnedColContainersIfNeeded();
+        this.sizeHeaderAndBody();
     }
 
     public getPinnedLeftFloatingTop(): HTMLElement {
@@ -605,6 +607,7 @@ export default class GridPanel {
     }
 
     private setWidthsOfContainers(): void {
+        this.logger.log('setWidthsOfContainers()');
         this.showPinnedColContainersIfNeeded();
 
         var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';

@@ -688,8 +688,6 @@ export class ColumnController {
             return columnMatches || colDefMatches || idMatches;
         }
 
-        console.log('could not find column for key ' + key);
-
         return null;
     }
 

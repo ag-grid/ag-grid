@@ -32,15 +32,27 @@ var rowData = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    getNodeChildDetails: getNodeChildDetails
+    debug: true,
+    getNodeChildDetails: getNodeChildDetails,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function getNodeChildDetails(rowItem) {
     if (rowItem.group) {
         return {
             group: true,
+            // open C be default
+            expanded: rowItem.group === 'Group C',
+            // provide ag-Grid with the children of this group
             children: rowItem.participants,
-            field: 'Group',
+            // this is not used, however it is available to the cellRenderers,
+            // if you provide a custom cellRenderer, you might use it. it's more
+            // relavent if you are doing multi levels of groupings, not just one
+            // as in this example.
+            field: 'group',
+            // the key is used by the default group cellRenderer
             key: rowItem.group
         };
     } else {
