@@ -528,8 +528,17 @@ export default class GridPanel {
             return;
         }
 
-        var newTopPosition = this.eBodyViewport.scrollTop + delta;
-        targetPanel.scrollTop = newTopPosition;
+        // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
+        // horizontal scroll
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+            var newLeftPosition = this.eBodyViewport.scrollLeft + event.deltaX;
+            this.eBodyViewport.scrollLeft = newLeftPosition;
+        }
+        // vertical scroll
+        else {
+            var newTopPosition = this.eBodyViewport.scrollTop + delta;
+            targetPanel.scrollTop = newTopPosition;
+        }
 
         // if we don't prevent default, then the whole browser will scroll also as well as the grid
         event.preventDefault();
