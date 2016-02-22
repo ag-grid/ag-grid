@@ -31,6 +31,33 @@ export class TabbedLayout {
         }
     }
 
+    public getMinWidth(): number {
+        var eDummyContainer = document.createElement('span');
+        // position fixed, so it isn't restricted to the boundaries of the parent
+        eDummyContainer.style.position = 'fixed';
+
+        // we put the dummy into the body container, so it will inherit all the
+        // css styles that the real cells are inheriting
+        this.eGui.appendChild(eDummyContainer);
+
+        var minWidth = 0;
+
+        this.items.forEach( (itemWrapper: TabbedItemWrapper) => {
+            _.removeAllChildren(eDummyContainer);
+
+            var eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.body.cloneNode(true);
+            eDummyContainer.appendChild(eClone);
+
+            if (minWidth<eDummyContainer.offsetWidth) {
+                minWidth = eDummyContainer.offsetWidth;
+            }
+        });
+
+        this.eGui.removeChild(eDummyContainer);
+
+        return minWidth;
+    }
+
     public showFirstItem(): void {
         if (this.items.length>0) {
             this.showItem(this.items[0]);

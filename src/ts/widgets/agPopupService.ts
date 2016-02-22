@@ -23,22 +23,22 @@ export default class PopupService {
         var x = sourceRect.right - parentRect.left - 2;
         var y = sourceRect.top - parentRect.top;
 
-        // if popup is overflowing to the right, move it left
-        //var minWidth: number;
-        //if (params.ePopup.clientWidth>0) {
-        //    minWidth = params.ePopup.clientWidth;
-        //} else {
-        //    minWidth = 200;
-        //}
+        var minWidth:number;
+        if (params.ePopup.clientWidth > 0) {
+            minWidth = params.ePopup.clientWidth;
+        } else {
+            minWidth = 200;
+        }
 
-        //var widthOfParent = parentRect.right - parentRect.left;
-        //var maxX = widthOfParent - minWidth;
-        //if (x > maxX) { // move position left, back into view
-        //    x = maxX;
-        //}
-        //if (x < 0) { // in case the popup has a negative value
-        //    x = 0;
-        //}
+        var widthOfParent = parentRect.right - parentRect.left;
+        var maxX = widthOfParent - minWidth;
+        if (x > maxX) {
+            // try putting menu to the left
+            x = sourceRect.left - minWidth;
+        }
+        if (x < 0) { // in case the popup has a negative value
+            x = 0;
+        }
 
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
@@ -46,6 +46,7 @@ export default class PopupService {
 
     public positionPopup(params: {eventSource: any,
                             ePopup: HTMLElement,
+                            minWidth?: number,
                             nudgeX?: number,
                             nudgeY?: number,
                             keepWithinBounds?: boolean}) {
@@ -66,7 +67,9 @@ export default class PopupService {
         // if popup is overflowing to the right, move it left
         if (params.keepWithinBounds) {
             var minWidth: number;
-            if (params.ePopup.clientWidth>0) {
+            if (params.minWidth > 0) {
+                minWidth = params.minWidth;
+            } else if (params.ePopup.clientWidth>0) {
                 minWidth = params.ePopup.clientWidth;
             } else {
                 minWidth = 200;

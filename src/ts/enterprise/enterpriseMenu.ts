@@ -15,6 +15,7 @@ import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
 import {GridApi} from "../gridApi";
 import {MenuList} from "./menuList";
 import {MenuItem} from "./menuItem";
+import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -42,6 +43,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             ePopup: eMenuGui,
             nudgeX: -9,
             nudgeY: -26,
+            minWidth: menu.getMinWidth(),
             keepWithinBounds: true
         });
 
@@ -71,7 +73,12 @@ export class EnterpriseMenu {
         this.column = column;
     }
 
-    public agPostWire(): void {
+    public getMinWidth(): number {
+        return this.tabbedLayout.getMinWidth();
+    }
+
+    @PostConstruct
+    public init(): void {
         var tabItems: TabbedItem[] = [
             this.createGeneralPanel(),
             this.createFilterPanel(),

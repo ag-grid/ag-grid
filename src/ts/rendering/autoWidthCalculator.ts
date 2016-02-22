@@ -19,7 +19,6 @@ export default class AutoWidthCalculator {
         var eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
-        eDummyContainer.style.backgroundColor = 'red';
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
