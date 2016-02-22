@@ -244,8 +244,8 @@ include '../documentation_header.php';
     </p>
 
     <ul>
-        <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
-        <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
+        <li><b>columnApi.getState()</b>: Returns the state of all columns.</li>
+        <li><b>columnApi.setState(state)</b>: To set the state of all columns.</li>
     </ul>
 
     <p>
