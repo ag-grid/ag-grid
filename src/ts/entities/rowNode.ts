@@ -70,6 +70,10 @@ export class RowNode {
         this.selectionController = selectionController ;
     }
 
+    public resetQuickFilterAggregateText(): void {
+        this.quickFilterAggregateText = null;
+    }
+
     public isSelected(): boolean {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {

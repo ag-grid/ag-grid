@@ -136,13 +136,17 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getModel()</th>
-            <td>Returns the row model inside the table. From here you can see the original rows, rows after filter has
-            been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows.</td>
+            <td>
+                Returns the row model inside the table. From here you can see the original rows, rows after filter has
+                been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows.
+            </td>
         </tr>
         <tr>
             <th>onGroupExpandedOrCollapsed()</th>
-            <td>If after getting the model, you expand or collapse a group, call this method to inform the grid. It will
-            work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).</td>
+            <td>
+                If after getting the model, you expand or collapse a group, call this method to inform the grid. It will
+                work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).
+            </td>
         </tr>
         <tr>
             <th>expandAll()</th>

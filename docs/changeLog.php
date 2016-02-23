@@ -9,6 +9,14 @@ include 'documentation_header.php';
 <div style="padding: 20px;">
 
     <h3>Version 3.4.0</h3>
+
+    <li>rowNode is now a class object with methods (previously it only have properties, a simple data object).
+        Methods now include: setSelected(), isSelected(), addEventListener(), removeEventListener(),
+        resetQuickFilterAggregateText(), deptFirstSearch(callback).
+<!--        See <a href="./angular-grid-model/index.php">Row
+            Model</a> page for details.
+-->    </li>
+
     <li>Event rowDeselected gone, now event rowSelected gets fired for both selected and deselected. Check node state
         to see if row is selected or not.</li>
 

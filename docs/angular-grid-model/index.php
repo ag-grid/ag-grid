@@ -210,9 +210,16 @@ include '../documentation_header.php';
         <li><b>setSelected(newValue: boolean, clearSelection: boolean):</b> Select (or deselect) the node. newValue=true for selection,
             newValue=false for deselection. If selecting, then passing true for clearSelection will select the
             node exclusively (ie NOT do multi select). If doing deselection, clearSelection has no impact.</li>
+        <li><b>isSelected():</b> Returns true if node is selected, otherwise false.</li>
         <li><b>addEventListener(eventType: string, listener: Function):</b> Add an event listener. Currently only
             rowSelected event supported.</li>
         <li><b>removeEventListener(eventType: string, listener: Function)</b> Remove event listener.</li>
+        <li><b>resetQuickFilterAggregateText()</b>: First time quickFilter runs, the grid creates a one off
+            string representation of the row. This one string is then used for the quick filter instead of
+            hitting each column separately. When you edit, using grid editing, this string gets cleared down.
+            However if you edit without using grid editing, you will need to clear this string down for the
+            row to be updated with the new values. Otherwise new values will not work with the quickFilter.</li>
+        <li><b>deptFirstSearch(callback):</b> Do a tree search dept first search of this node and it's children.</li>
     </ul>
 
     <p>

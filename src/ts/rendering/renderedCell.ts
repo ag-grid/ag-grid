@@ -330,6 +330,8 @@ export default class RenderedCell {
             } else {
                 this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
             }
+            // reset quick filter on this row
+            this.node.resetQuickFilterAggregateText();
 
             // at this point, the value has been updated
             this.value = this.getValue();
