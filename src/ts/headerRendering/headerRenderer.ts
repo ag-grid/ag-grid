@@ -10,7 +10,7 @@ import ColumnGroup from "../entities/columnGroup";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import Column from "../entities/column";
 import RenderedHeaderCell from "./renderedHeaderCell";
-import {DragService} from "./dragService";
+import {HorizontalDragService} from "./horizontalDragService";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
@@ -34,7 +34,7 @@ export default class HeaderRenderer {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('$compile') private $compile: any;
-    @Autowired('dragService') private dragService: DragService;
+    @Autowired('dragService') private dragService: HorizontalDragService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('popupService') private popupService: PopupService;

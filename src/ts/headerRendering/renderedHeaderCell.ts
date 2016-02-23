@@ -6,7 +6,7 @@ import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
 import HeaderTemplateLoader from "./headerTemplateLoader";
 import GridOptionsWrapper from "../gridOptionsWrapper";
-import {DragService} from "./dragService";
+import {HorizontalDragService} from "./horizontalDragService";
 import HeaderRenderer from "./headerRenderer";
 import GridPanel from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
@@ -31,7 +31,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('$compile') private $compile: any;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
-    @Autowired('dragService') private dragService: DragService;
+    @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;

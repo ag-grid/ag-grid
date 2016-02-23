@@ -7,7 +7,7 @@ import FilterManager from "../filter/filterManager";
 import {Grid} from "../grid";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import Column from "../entities/column";
-import {DragService} from "./dragService";
+import {HorizontalDragService} from "./horizontalDragService";
 import {Autowired} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
@@ -20,7 +20,7 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('$compile') private $compile: any;
-    @Autowired('dragService') private dragService: DragService;
+    @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private eHeaderGroupCell: HTMLElement;

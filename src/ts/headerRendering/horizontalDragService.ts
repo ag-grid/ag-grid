@@ -3,6 +3,8 @@ import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 
+/** need to get this class to use the dragService, so no duplication */
+
 export interface DragServiceParams {
     eDraggableElement: Element,
     eBody: HTMLElement,
@@ -12,8 +14,8 @@ export interface DragServiceParams {
     onDragging: (delta: number, finished: boolean)=>void
 }
 
-@Bean('dragService')
-export class DragService {
+@Bean('horizontalDragService')
+export class HorizontalDragService {
 
     public addDragHandling(params: DragServiceParams): void {
         params.eDraggableElement.addEventListener('mousedown', (startEvent: MouseEvent) => {

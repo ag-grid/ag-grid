@@ -7,8 +7,8 @@ import HeaderTemplateLoader from "../headerRendering/headerTemplateLoader";
 import _ from '../utils';
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
-import GridPanel from "../gridPanel/gridPanel";
 import SvgFactory from "../svgFactory";
+import {DragService} from "./dragService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -41,7 +41,7 @@ export interface DraggingEvent {
 export class DragAndDropService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('dragService') private dragService: DragService;
 
     public static DIRECTION_LEFT = 'left';
     public static DIRECTION_RIGHT = 'right';
@@ -55,15 +55,10 @@ export class DragAndDropService {
 
     private logger: Logger;
 
-    private dragging = false;
     private dragItem: Column;
-    private dragStartEvent: MouseEvent;
     private eventLastTime: MouseEvent;
-
     private dragSource: DragSource;
-
-    private onMouseUpListener = this.onMouseUp.bind(this);
-    private onMouseMoveListener = this.onMouseMove.bind(this);
+    private dragging: boolean;
 
     private eGhost: HTMLElement;
     private eGhostIcon: HTMLElement;
@@ -92,22 +87,101 @@ export class DragAndDropService {
     // when the element is disposed, the drag source is also disposed, even though this service
     // remains. this is a bit different to normal 'addListener' methods
     public addDragSource(params: DragSource): void {
-        params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
+        this.dragService.addDragSource({
+            eElement: params.eElement,
+            onDragStart: this.onDragStart.bind(this, params),
+            onDragStop: this.onDragStop.bind(this),
+            onDragging: this.onDragging.bind(this)
+        });
+        //params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
     }
 
     public nudge(): void {
         if (this.dragging) {
-            this.onMouseMove(this.eventLastTime);
+            this.onDragging(this.eventLastTime);
         }
     }
 
-    public onMouseDown(dragSource: DragSource, mouseEvent: MouseEvent): void {
+    private onDragStart(dragSource: DragSource, mouseEvent: MouseEvent): void {
+        this.logger.log('startDrag');
+        this.dragging = true;
         this.dragSource = dragSource;
-        this.dragging = false;
         this.eventLastTime = mouseEvent;
-        this.dragStartEvent = mouseEvent;
-        document.addEventListener('mousemove', this.onMouseMoveListener);
-        document.addEventListener('mouseup', this.onMouseUpListener);
+        this.dragSource.dragItem.setMoving(true);
+        this.dragItem = this.dragSource.dragItem;
+        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
+        this.createGhost();
+    }
+
+    private onDragStop(mouseEvent: MouseEvent): void {
+        this.logger.log('onDragStop');
+
+        this.eventLastTime = null;
+
+        this.dragging = false;
+
+        this.dragItem.setMoving(false);
+        if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
+            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
+            this.lastDropTarget.onDragStop(draggingEvent);
+        }
+        this.lastDropTarget = null;
+        this.dragItem = null;
+        this.removeGhost();
+    }
+
+    private onDragging(mouseEvent: MouseEvent): void {
+
+        var direction = this.workOutDirection(mouseEvent);
+        this.eventLastTime = mouseEvent;
+
+        this.positionGhost(mouseEvent);
+
+        // check if mouseEvent intersects with any of the drop targets
+        var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
+            var targetsToCheck = [dropTarget.eContainer];
+            if (dropTarget.eSecondaryContainers) {
+                targetsToCheck = targetsToCheck.concat(dropTarget.eSecondaryContainers);
+            }
+            var gotMatch: boolean = false;
+            targetsToCheck.forEach( (eContainer: HTMLElement) => {
+                if (!eContainer) { return; } // secondary can be missing
+                var rect = eContainer.getBoundingClientRect();
+
+                // if element is not visible, then width and height are zero
+                if (rect.width===0 || rect.height===0) {
+                    return;
+                }
+                var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
+                var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+
+                //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
+
+                if (horizontalFit && verticalFit) {
+                    gotMatch = true;
+                }
+            });
+            return gotMatch;
+        });
+
+        if (dropTarget!==this.lastDropTarget) {
+            if (this.lastDropTarget) {
+                this.logger.log('onDragLeave');
+                var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction);
+                this.lastDropTarget.onDragLeave(dragLeaveEvent);
+                this.setGhostIcon(null);
+            }
+            if (dropTarget) {
+                this.logger.log('onDragEnter');
+                var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
+                dropTarget.onDragEnter(dragEnterEvent);
+                this.setGhostIcon(dropTarget.iconName);
+            }
+            this.lastDropTarget = dropTarget;
+        } else if (dropTarget) {
+            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
+            dropTarget.onDragging(draggingEvent);
+        }
     }
 
     public addDropTarget(dropTarget: DropTarget) {
@@ -146,84 +220,10 @@ export class DragAndDropService {
         return dropTargetEvent;
     }
 
-    public startDrag(): void {
-
-        this.logger.log('startDrag');
-        this.dragSource.dragItem.setMoving(true);
-        this.dragging = true;
-        this.dragItem = this.dragSource.dragItem;
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
-
-        this.createGhost();
-    }
-
     private getDistanceBetweenEvents(event1: MouseEvent, event2: MouseEvent): number {
         var diffX = Math.abs(event1.clientX - event2.clientX);
         var diffY = Math.abs(event1.clientY - event2.clientY);
         return Math.max(diffX, diffY);
-    }
-
-    private onMouseMove(event: MouseEvent): void {
-
-        if (!this.dragging) {
-            // we want to have moved at least 4px before the drag starts
-            if (this.getDistanceBetweenEvents(event, this.dragStartEvent) < 4) {
-                return;
-            }
-            this.startDrag();
-        }
-
-        var direction = this.workOutDirection(event);
-        this.eventLastTime = event;
-
-        this.positionGhost(event);
-
-        // check if mouseEvent intersects with any of the drop targets
-        var dropTarget = _.find(this.dropTargets, (dropTarget: DropTarget)=> {
-            var targetsToCheck = [dropTarget.eContainer];
-            if (dropTarget.eSecondaryContainers) {
-                targetsToCheck = targetsToCheck.concat(dropTarget.eSecondaryContainers);
-            }
-            var gotMatch: boolean = false;
-            targetsToCheck.forEach( (eContainer: HTMLElement) => {
-                if (!eContainer) { return; } // secondary can be missing
-                var rect = eContainer.getBoundingClientRect();
-
-                // if element is not visible, then width and height are zero
-                if (rect.width===0 || rect.height===0) {
-                    return;
-                }
-                var horizontalFit = event.clientX >= rect.left && event.clientX <= rect.right;
-                var verticalFit = event.clientY >= rect.top && event.clientY <= rect.bottom;
-
-                //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
-
-                if (horizontalFit && verticalFit) {
-                    gotMatch = true;
-                }
-            });
-            return gotMatch;
-        });
-
-        if (dropTarget!==this.lastDropTarget) {
-            if (this.lastDropTarget) {
-                this.logger.log('onDragLeave');
-                var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, event, direction);
-                this.lastDropTarget.onDragLeave(dragLeaveEvent);
-                this.setGhostIcon(null);
-            }
-            if (dropTarget) {
-                this.logger.log('onDragEnter');
-                var dragEnterEvent = this.createDropTargetEvent(dropTarget, event, direction);
-                dropTarget.onDragEnter(dragEnterEvent);
-                this.setGhostIcon(dropTarget.iconName);
-            }
-            this.lastDropTarget = dropTarget;
-        } else if (dropTarget) {
-            var draggingEvent = this.createDropTargetEvent(dropTarget, event, direction);
-            dropTarget.onDragging(draggingEvent);
-        }
-
     }
 
     private positionGhost(event: MouseEvent): void {
@@ -305,29 +305,6 @@ export class DragAndDropService {
         }
         this.eGhostIcon.appendChild(eIcon);
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
-    }
-
-    public onMouseUp(mouseEvent: MouseEvent): void {
-        this.logger.log('onMouseUp');
-
-        document.removeEventListener('mouseup', this.onMouseUpListener);
-        document.removeEventListener('mousemove', this.onMouseMoveListener);
-
-        this.dragStartEvent = null;
-        this.eventLastTime = null;
-
-        if (this.dragging) {
-            this.dragItem.setMoving(false);
-            this.dragging = false;
-            if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-                var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
-                this.lastDropTarget.onDragStop(draggingEvent);
-            }
-            this.lastDropTarget = null;
-            this.dragItem = null;
-            this.removeGhost();
-        }
-
     }
 
 }

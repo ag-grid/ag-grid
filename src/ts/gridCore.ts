@@ -33,7 +33,6 @@ import ColumnChangeEvent from "./columnChangeEvent";
 import Column from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
-import {DragService} from "./headerRendering/dragService";
 import {Context} from './context/context';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";

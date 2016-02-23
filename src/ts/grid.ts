@@ -36,17 +36,19 @@ import ColumnChangeEvent from "./columnChangeEvent";
 import Column from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
-import {DragService} from "./headerRendering/dragService";
+import {HorizontalDragService} from "./headerRendering/horizontalDragService";
 import {Context} from './context/context';
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
+import {DragService} from "./dragAndDrop/dragService";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
 import {ColumnApi} from "./columnController/columnController";
+import {RangeSelectorListener} from "./enterprise/rangeSelectorListener";
 
 export class Grid {
 
@@ -66,7 +68,7 @@ export class Grid {
 
         this.context = new Context({
             //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel],
+            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeSelectorListener],
             seed: {
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
@@ -75,7 +77,7 @@ export class Grid {
                 quickFilterOnScope: quickFilterOnScope,
                 globalEventListener: globalEventListener
             },
-            beans: [rowModelClass, DragService, HeaderTemplateLoader, FloatingRowModel,
+            beans: [rowModelClass, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,

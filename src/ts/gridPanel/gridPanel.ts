@@ -440,6 +440,22 @@ export default class GridPanel {
         return this.ePinnedLeftColsContainer;
     }
 
+    public getPinnedLeftColsViewport(): HTMLElement {
+        return this.ePinnedLeftColsViewport;
+    }
+
+    public getPinnedRightColsViewport(): HTMLElement {
+        return this.ePinnedRightColsViewport;
+    }
+
+    public getCenterColsViewport(): HTMLElement {
+        if (this.forPrint) {
+            return this.eBodyContainer;
+        } else {
+            return this.eBodyViewport;
+        }
+    }
+
     public getDropTargetLeftContainers(): HTMLElement[] {
         if (this.forPrint) {
             return [];
