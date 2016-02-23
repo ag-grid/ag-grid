@@ -498,7 +498,7 @@ export default class Utils {
      *         Firefox v4/Win7  |     undefined    |       3
      *
      */
-    static normalizeWheel(event) {
+    static normalizeWheel(event:any) {
         var PIXEL_STEP  = 10;
         var LINE_HEIGHT = 40;
         var PAGE_HEIGHT = 800;
