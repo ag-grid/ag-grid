@@ -17,6 +17,13 @@ export class MenuList extends Component {
     private static TEMPLATE =
         '<div class="ag-menu-list"></div>';
 
+    private static SEPARATOR_TEMPLATE =
+        '<div class="ag-menu-separator">' +
+        '  <span class="ag-menu-option-text"></span>' +
+        '  <span class="ag-menu-option-text"></span>' +
+        '  <span class="ag-menu-option-text"></span>' +
+        '</div>';
+
     private activeMenuItemParams: MenuItemParams;
     private activeMenuItem: MenuItem;
     private timerCount = 0;
@@ -108,7 +115,7 @@ export class MenuList extends Component {
     }
 
     public addSeparator(): void {
-        this.getGui().appendChild(_.loadTemplate('<div class="ag-menu-separator"></div>'))
+        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     }
 
     private removeOldChildPopup(): void {

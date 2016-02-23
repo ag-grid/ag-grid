@@ -305,19 +305,25 @@ ag-grid-ng2
     width: 200px;
     height: 300px;
 
+.ag-menu-list
+    display: table;
+
+.ag-menu-option
+    display: table-row;
+
 .ag-menu-option-text
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    display: block;
+    display: table-cell;
 
 .ag-menu-option-icon
-    float: left;
+    display: table-cell;
 
 .ag-menu-option-popup-pointer
-    float: right;
+    display: table-cell;
 
-.ag-filter
+.ag-menu-separator
+    display: table-row;
+
+.ag-filter {}
     //z-index: 100
 
 .ag-filter-list-viewport

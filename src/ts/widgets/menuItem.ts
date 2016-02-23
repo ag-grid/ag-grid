@@ -15,9 +15,8 @@ export class MenuItem extends Component {
     private static TEMPLATE =
         '<div class="ag-menu-option">' +
         '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
-        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
         '  <span id="eName" class="ag-menu-option-text"></span>' +
-        '  <span style="clear: both;"></span>' +
+        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
         '</div>';
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';
