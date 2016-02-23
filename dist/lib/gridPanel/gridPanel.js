@@ -396,25 +396,17 @@ var GridPanel = (function () {
         return this.generalMouseWheelListener(event, targetPanel);
     };
     GridPanel.prototype.generalMouseWheelListener = function (event, targetPanel) {
-        var delta;
-        if (event.deltaY && event.deltaX != 0) {
-            // tested on chrome
-            delta = event.deltaY;
-        }
-        else if (event.wheelDelta && event.wheelDelta != 0) {
-            // tested on IE
-            delta = -event.wheelDelta;
-        }
-        else if (event.detail && event.detail != 0) {
-            // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
-            delta = event.detail * 20;
+        var wheelEvent = utils_1.default.normalizeWheel(event);
+        // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
+        // horizontal scroll
+        if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
+            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            this.eBodyViewport.scrollLeft = newLeftPosition;
         }
         else {
-            // couldn't find delta
-            return;
+            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
+            targetPanel.scrollTop = newTopPosition;
         }
-        var newTopPosition = this.eBodyViewport.scrollTop + delta;
-        targetPanel.scrollTop = newTopPosition;
         // if we don't prevent default, then the whole browser will scroll also as well as the grid
         event.preventDefault();
         return false;
