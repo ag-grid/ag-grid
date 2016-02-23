@@ -16,9 +16,9 @@ import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
-import {DropTarget} from "../dragAndDrop/dragAndDropService2";
-import {DragSource} from "../dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {DropTarget} from "../dragAndDrop/dragAndDropService";
+import {DragSource} from "../dragAndDrop/dragAndDropService";
 import EventService from "../eventService";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
@@ -34,7 +34,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('dragService') private dragService: DragService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('sortController') private sortController: SortController;
 
     private eHeaderCell: HTMLElement;
@@ -246,7 +246,7 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
                 dragItem: this.column,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
-            this.dragAndDropService2.addDragSource(dragSource);
+            this.dragAndDropService.addDragSource(dragSource);
         }
     }
 

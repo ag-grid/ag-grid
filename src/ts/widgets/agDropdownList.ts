@@ -1,7 +1,7 @@
 import _ from '../utils';
 import SvgFactory from "../svgFactory";
 import PopupService from "./agPopupService";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
+import OldToolPanelDragAndDropService from "../dragAndDrop/oldToolPanelDragAndDropService";
 import AgList from "./agList";
 
 var svgFactory = SvgFactory.getInstance();
@@ -17,7 +17,7 @@ export default class AgDropdownList {
     private cellRenderer: any;
     private popupService: PopupService;
 
-    constructor(popupService: PopupService, dragAndDropService: DragAndDropService) {
+    constructor(popupService: PopupService, dragAndDropService: OldToolPanelDragAndDropService) {
         this.popupService = popupService;
         this.setupComponents(dragAndDropService);
         this.itemSelectedListeners = [];
@@ -38,7 +38,7 @@ export default class AgDropdownList {
         }
     }
 
-    setupComponents(dragAndDropService: DragAndDropService) {
+    setupComponents(dragAndDropService: OldToolPanelDragAndDropService) {
         this.eGui = document.createElement('span');
         this.eValue = document.createElement('span');
         this.eGui.appendChild(this.eValue);

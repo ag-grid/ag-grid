@@ -13,7 +13,7 @@ import FilterManager from "./filter/filterManager";
 import ValueService from "./valueService";
 import MasterSlaveService from "./masterSlaveService";
 import EventService from "./eventService";
-import DragAndDropService from "./dragAndDrop/dragAndDropService";
+import OldToolPanelDragAndDropService from "./dragAndDrop/oldToolPanelDragAndDropService";
 import GridPanel from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
@@ -42,7 +42,7 @@ import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
-import {DragAndDropService2} from "./dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
@@ -80,9 +80,9 @@ export class Grid {
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
-                LoggerFactory, DragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
+                LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService2, SortController, ColumnApi],
+                DragAndDropService, SortController, ColumnApi],
             debug: !!gridOptions.debug
         });
     }

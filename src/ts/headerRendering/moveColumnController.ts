@@ -5,8 +5,8 @@ import {Logger} from "../logger";
 import {ColumnController} from "../columnController/columnController";
 import Column from "../entities/column";
 import _ from '../utils';
-import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
-import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
 import GridPanel from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 
@@ -15,7 +15,7 @@ export class MoveColumnController {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -67,7 +67,7 @@ export class MoveColumnController {
     }
 
     private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
-        if (draggingEvent.direction === DragAndDropService2.DIRECTION_LEFT) {
+        if (draggingEvent.direction === DragAndDropService.DIRECTION_LEFT) {
             return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
         } else {
             return this.getNewIndexForColMovingRight(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
@@ -213,9 +213,9 @@ export class MoveColumnController {
             this.failedMoveAttempts = 0;
             this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
             if (this.needToMoveLeft) {
-                this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_LEFT, true);
+                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
             } else {
-                this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_RIGHT, true);
+                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_RIGHT, true);
             }
         }
     }
@@ -224,7 +224,7 @@ export class MoveColumnController {
         if (this.moveInterval) {
             clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
-            this.dragAndDropService2.setGhostIcon(DragAndDropService2.ICON_MOVE);
+            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
         }
     }
 
@@ -254,7 +254,7 @@ export class MoveColumnController {
                 } else {
                     this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_RIGHT);
                 }
-                this.dragAndDropService2.nudge();
+                this.dragAndDropService.nudge();
             }
         }
     }

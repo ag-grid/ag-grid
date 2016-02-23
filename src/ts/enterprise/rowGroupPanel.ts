@@ -6,12 +6,12 @@ import _ from '../utils';
 import Column from "../entities/column";
 import {Context} from "../context/context";
 import {Bean} from "../context/context";
-import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
-import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
-import {DragSource} from "../dragAndDrop/dragAndDropService2";
-import {DropTarget} from "../dragAndDrop/dragAndDropService2";
+import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
+import {DragSource} from "../dragAndDrop/dragAndDropService";
+import {DropTarget} from "../dragAndDrop/dragAndDropService";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import SvgFactory from "../svgFactory";
 import GridPanel from "../gridPanel/gridPanel";
@@ -26,7 +26,7 @@ export class RowGroupPanel {
     @Autowired('eventService') eventService: EventService;
     @Autowired('context') context: Context;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
-    @Autowired('dragAndDropService2') dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') gridPanel: GridPanel;
 
@@ -50,13 +50,13 @@ export class RowGroupPanel {
     private setupDropTarget(): void {
         this.dropTarget = {
             eContainer: this.eGui,
-            iconName: DragAndDropService2.ICON_GROUP,
+            iconName: DragAndDropService.ICON_GROUP,
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
             onDragStop: this.onDragStop.bind(this)
         };
-        this.dragAndDropService2.addDropTarget(this.dropTarget);
+        this.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
     private onDragging(): void {
@@ -186,7 +186,7 @@ class RenderedGroupedColumnCell {
             '<span id="btRemove" class="ag-row-group-cell-button">&#10006;</span>' +
         '</span>';
 
-    @Autowired('dragAndDropService2') dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('gridPanel') gridPanel: GridPanel;
 
@@ -215,7 +215,7 @@ class RenderedGroupedColumnCell {
             dragItem: this.column,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
-        this.dragAndDropService2.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource);
     }
 
     private setupComponents(): void {

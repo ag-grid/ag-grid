@@ -1,9 +1,9 @@
 import {Autowired} from "../../context/context";
 import {ColumnController} from "../../columnController/columnController";
-import {DragAndDropService2} from "../../dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "../../dragAndDrop/dragAndDropService";
 import Column from "../../entities/column";
 import _ from '../../utils';
-import {DragSource} from "../../dragAndDrop/dragAndDropService2";
+import {DragSource} from "../../dragAndDrop/dragAndDropService";
 import {RenderedItem} from "./renderedItem";
 import SvgFactory from "../../svgFactory";
 import GridPanel from "../../gridPanel/gridPanel";
@@ -24,7 +24,7 @@ export class RenderedColumn extends RenderedItem {
         '</div>';
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private column: Column;
@@ -79,7 +79,7 @@ export class RenderedColumn extends RenderedItem {
             eElement: this.getGui(),
             dragItem: this.column
         };
-        this.dragAndDropService2.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource);
     }
 
     private onColumnStateChangedListener(): void {

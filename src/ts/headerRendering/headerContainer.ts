@@ -8,10 +8,10 @@ import Column from "../entities/column";
 import {Context} from "../context/context";
 import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
 import RenderedHeaderCell from "./renderedHeaderCell";
-import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {MoveColumnController} from "./moveColumnController";
 import {ColumnController} from "../columnController/columnController";
-import {DropTarget} from "../dragAndDrop/dragAndDropService2";
+import {DropTarget} from "../dragAndDrop/dragAndDropService";
 import GridPanel from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 
@@ -20,7 +20,7 @@ export class HeaderContainer {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
     @Autowired('$scope') private $scope: any;
-    @Autowired('dragAndDropService2') private dragAndDropService2: DragAndDropService2;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
@@ -53,7 +53,7 @@ export class HeaderContainer {
             default: secondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
         }
 
-        var icon = this.pinned ? DragAndDropService2.ICON_PINNED : DragAndDropService2.ICON_MOVE;
+        var icon = this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
 
         this.dropTarget = {
             eContainer: this.eViewport ? this.eViewport : this.eContainer,
@@ -64,7 +64,7 @@ export class HeaderContainer {
             onDragLeave: moveColumnController.onDragLeave.bind(moveColumnController),
             onDragStop: moveColumnController.onDragStop.bind(moveColumnController)
         };
-        this.dragAndDropService2.addDropTarget(this.dropTarget);
+        this.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
     public removeAllChildren(): void {

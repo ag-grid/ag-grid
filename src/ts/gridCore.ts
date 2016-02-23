@@ -5,15 +5,12 @@ import InMemoryRowController from "./rowControllers/inMemoryRowController";
 import PaginationController from "./rowControllers/paginationController";
 import VirtualPageRowController from "./rowControllers/virtualPageRowController";
 import FloatingRowModel from "./rowControllers/floatingRowModel";
-import SelectionController from "./selectionController";
 import {ColumnController} from "./columnController/columnController";
 import RowRenderer from "./rendering/rowRenderer";
-import HeaderRenderer from "./headerRendering/headerRenderer";
 import FilterManager from "./filter/filterManager";
 import ValueService from "./valueService";
 import MasterSlaveService from "./masterSlaveService";
 import EventService from "./eventService";
-import DragAndDropService from "./dragAndDrop/dragAndDropService";
 import GridPanel from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
@@ -53,13 +50,11 @@ export class GridCore {
     @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('toolPanel') private toolPanel: any;
+    @Autowired('toolPanel') private toolPanel: ToolPanel;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;

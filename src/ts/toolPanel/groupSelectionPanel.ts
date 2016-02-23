@@ -1,7 +1,7 @@
 import _ from '../utils';
 import SvgFactory from "../svgFactory";
 import {ColumnController} from "../columnController/columnController";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
+import OldToolPanelDragAndDropService from "../dragAndDrop/oldToolPanelDragAndDropService";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import EventService from "../eventService";
 import {Events} from "../events";
@@ -17,12 +17,12 @@ export default class GroupSelectionPanel {
     private inMemoryRowController: any;
     private cColumnList: any;
     public layout: any; // need to change this to private
-    private dragAndDropService: DragAndDropService;
+    private oldToolPanelDragAndDropService: OldToolPanelDragAndDropService;
 
     constructor(columnController: ColumnController, inMemoryRowController: any,
                 gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
-                dragAndDropService: DragAndDropService) {
-        this.dragAndDropService = dragAndDropService;
+                dragAndDropService: OldToolPanelDragAndDropService) {
+        this.oldToolPanelDragAndDropService = dragAndDropService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.setupComponents();
         this.columnController = columnController;
@@ -68,7 +68,7 @@ export default class GroupSelectionPanel {
         var columnsLocalText = localeTextFunc('rowGroupColumns', 'Row Groupings');
         var rowGroupColumnsEmptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag columns from above to group rows');
 
-        this.cColumnList = new AgList(this.dragAndDropService);
+        this.cColumnList = new AgList(this.oldToolPanelDragAndDropService);
         this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
         this.cColumnList.addBeforeDropListener(this.onBeforeDrop.bind(this));
         this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));
