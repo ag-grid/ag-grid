@@ -13,8 +13,8 @@ import {Context} from "../context/context";
 import PopupService from "../widgets/agPopupService";
 import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
 import {GridApi} from "../gridApi";
-import {MenuList} from "./menuList";
-import {MenuItem} from "./menuItem";
+import {MenuList} from "./../widgets/menuList";
+import {MenuItem} from "./../widgets/menuItem";
 import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();

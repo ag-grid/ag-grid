@@ -9,6 +9,7 @@ import {Events} from "./events";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./rowControllers/iRowModel";
 import GridOptionsWrapper from "./gridOptionsWrapper";
+import {PostConstruct} from "./context/context";
 
 @Bean('selectionController')
 export default class SelectionController {
@@ -32,7 +33,8 @@ export default class SelectionController {
 
     }
 
-    public agPostWire() {
+    @PostConstruct
+    public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 

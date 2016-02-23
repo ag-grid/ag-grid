@@ -26,6 +26,7 @@ import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {IRowModel} from "../rowControllers/iRowModel";
+import {PostConstruct} from "../context/context";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -81,7 +82,8 @@ export default class RowRenderer {
 
     private logger: Logger;
 
-    private agPostWire() {
+    @PostConstruct
+    public init(): void {
         this.logger = this.loggerFactory.create('RowRenderer');
 
         this.cellRendererMap = {

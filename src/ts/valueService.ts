@@ -5,6 +5,7 @@ import {ColDef} from "./entities/colDef";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
+import {PostConstruct} from "./context/context";
 
 @Bean('valueService')
 export default class ValueService {
@@ -15,7 +16,8 @@ export default class ValueService {
 
     private suppressDotNotation: boolean;
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
     }
 

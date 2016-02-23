@@ -13,6 +13,7 @@ import {MoveColumnController} from "./moveColumnController";
 import {ColumnController} from "../columnController/columnController";
 import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import GridPanel from "../gridPanel/gridPanel";
+import {PostConstruct} from "../context/context";
 
 export class HeaderContainer {
 
@@ -40,7 +41,8 @@ export class HeaderContainer {
         this.eViewport = eViewport;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         var moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
 

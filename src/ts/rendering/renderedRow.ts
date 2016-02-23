@@ -17,6 +17,7 @@ import {Qualifier} from "../context/context";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import ColumnChangeEvent from "../columnChangeEvent";
+import {PostConstruct} from "../context/context";
 
 export default class RenderedRow {
 
@@ -73,7 +74,8 @@ export default class RenderedRow {
         this.rowNode = node;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.pinningLeft = this.columnController.isPinningLeft();
         this.pinningRight = this.columnController.isPinningRight();
 

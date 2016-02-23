@@ -9,6 +9,7 @@ import SvgFactory from "../../svgFactory";
 import GridOptionsWrapper from "../../gridOptionsWrapper";
 import {RenderedItem} from "./renderedItem";
 import GridPanel from "../../gridPanel/gridPanel";
+import {PostConstruct} from "../../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -50,7 +51,8 @@ export class RenderedGroup extends RenderedItem {
         this.expandedCallback = expandedCallback;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         var eText = this.queryForHtmlElement('#eText');
 
         var headerName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;

@@ -15,6 +15,7 @@ import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import SvgFactory from "../svgFactory";
 import GridPanel from "../gridPanel/gridPanel";
+import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -38,7 +39,8 @@ export class RowGroupPanel {
         this.setupComponents();
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.logger = this.loggerFactory.create('RowGroupPanel');
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
@@ -199,7 +201,8 @@ class RenderedGroupedColumnCell {
         this.ghost = ghost;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.setupComponents();
         if (!this.ghost) {
             this.addDragSource();

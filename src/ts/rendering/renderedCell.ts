@@ -16,6 +16,7 @@ import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
+import {PostConstruct} from "../context/context";
 
 export default class RenderedCell {
 
@@ -109,7 +110,8 @@ export default class RenderedCell {
         this.eParentRow = eParentRow;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.data = this.getDataForRow();
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();

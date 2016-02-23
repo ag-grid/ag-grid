@@ -21,6 +21,7 @@ import {DropTarget} from "../dragAndDrop/dragAndDropService2";
 import {DragSource} from "../dragAndDrop/dragAndDropService2";
 import EventService from "../eventService";
 import {SortController} from "../sortController";
+import {PostConstruct} from "../context/context";
 
 export default class RenderedHeaderCell implements IRenderedHeaderElement {
 
@@ -58,7 +59,8 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 

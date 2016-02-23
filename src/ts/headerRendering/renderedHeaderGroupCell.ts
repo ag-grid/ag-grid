@@ -11,6 +11,7 @@ import {DragService} from "./dragService";
 import {Autowired} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -55,7 +56,8 @@ export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         }
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
 
         this.eHeaderGroupCell = document.createElement('div');
         var classNames = ['ag-header-group-cell'];

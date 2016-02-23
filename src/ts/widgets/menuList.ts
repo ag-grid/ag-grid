@@ -1,5 +1,5 @@
 
-import {Component} from "../widgets/component";
+import {Component} from "./component";
 import {PostConstruct} from "../context/context";
 import {MenuItem} from "./menuItem";
 import {MenuItemParams} from "./menuItem";
@@ -7,7 +7,7 @@ import _ from '../utils';
 import EventService from "../eventService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
-import PopupService from "../widgets/agPopupService";
+import PopupService from "./agPopupService";
 
 export class MenuList extends Component {
 

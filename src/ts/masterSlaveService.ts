@@ -12,6 +12,7 @@ import ColumnGroup from "./entities/columnGroup";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
+import {PostConstruct} from "./context/context";
 
 @Bean('masterSlaveService')
 export default class MasterSlaveService {
@@ -32,7 +33,8 @@ export default class MasterSlaveService {
         this.logger = loggerFactory.create('MasterSlaveService');
     }
 
-    public agPostWire() {
+    @PostConstruct
+    public init(): void {
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));

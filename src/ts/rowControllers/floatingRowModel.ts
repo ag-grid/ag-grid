@@ -6,6 +6,7 @@ import {Qualifier} from "../context/context";
 import EventService from "../eventService";
 import {Autowired} from "../context/context";
 import {Events} from "../events";
+import {PostConstruct} from "../context/context";
 
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
@@ -16,7 +17,8 @@ export default class FloatingRowModel {
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
 
-    public agPostWire() {
+    @PostConstruct
+    public init(): void {
         this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
         this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
     }

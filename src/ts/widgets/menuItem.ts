@@ -1,8 +1,8 @@
 
-import {Component} from "../widgets/component";
+import {Component} from "./component";
 import {MenuList} from "./menuList";
 import {Autowired} from "../context/context";
-import PopupService from "../widgets/agPopupService";
+import PopupService from "./agPopupService";
 import _ from '../utils';
 import SvgFactory from "../svgFactory";
 

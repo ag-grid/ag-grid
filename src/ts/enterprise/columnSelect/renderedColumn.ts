@@ -7,6 +7,7 @@ import {DragSource} from "../../dragAndDrop/dragAndDropService2";
 import {RenderedItem} from "./renderedItem";
 import SvgFactory from "../../svgFactory";
 import GridPanel from "../../gridPanel/gridPanel";
+import {PostConstruct} from "../../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -40,7 +41,8 @@ export class RenderedColumn extends RenderedItem {
         this.allowDragging = allowDragging;
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         var eText = <HTMLElement> this.queryForHtmlElement('#eText');
         eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
         eText.addEventListener('dblclick', this.onColumnVisibilityChanged.bind(this));

@@ -8,6 +8,7 @@ import _ from '../utils';
 import {DragAndDropService2} from "../dragAndDrop/dragAndDropService2";
 import {DraggingEvent} from "../dragAndDrop/dragAndDropService2";
 import GridPanel from "../gridPanel/gridPanel";
+import {PostConstruct} from "../context/context";
 
 export class MoveColumnController {
 
@@ -36,7 +37,8 @@ export class MoveColumnController {
         this.centerContainer = !_.exists(pinned);
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.logger = this.loggerFactory.create('MoveColumnController');
     }
 

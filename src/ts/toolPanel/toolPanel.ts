@@ -4,6 +4,7 @@ import {ColumnSelectPanel} from "../enterprise/columnSelect/columnSelectPanel";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import _ from '../utils';
+import {PostConstruct} from "../context/context";
 
 @Bean('toolPanel')
 export default class ToolPanel {
@@ -20,7 +21,8 @@ export default class ToolPanel {
         this.eGui = _.loadTemplate(ToolPanel.TEMPLATE);
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
         this.context.wireBean(this.columnSelectPanel);
         this.eGui.appendChild(this.columnSelectPanel.getGui());
     }

@@ -43,6 +43,7 @@ import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {IRowModel} from "./rowControllers/iRowModel";
+import {PostConstruct} from "./context/context";
 
 @Bean('gridCore')
 export class GridCore {
@@ -80,7 +81,8 @@ export class GridCore {
         this.logger = loggerFactory.create('GridCore');
     }
 
-    public agPostWire(): void {
+    @PostConstruct
+    public init(): void {
 
         // and the last bean, done in it's own section, as it's optional
         var paginationGui: any;

@@ -188,10 +188,6 @@ export class Context {
 
     private postWire(beans: any): void {
         beans.forEach( (bean: any) => {
-            if (bean.agPostWire) {
-                bean.agPostWire();
-            }
-
             // try calling init methods
             if (bean.__agBeanMetaData && bean.__agBeanMetaData.postConstructMethods) {
                 bean.__agBeanMetaData.postConstructMethods.forEach( (methodName: string) => bean[methodName]() );
