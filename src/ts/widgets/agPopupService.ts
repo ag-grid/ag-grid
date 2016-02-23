@@ -115,7 +115,9 @@ export default class PopupService {
                 eBody.addEventListener('keydown', hidePopupOnEsc);
             }
             eBody.addEventListener('click', hidePopup);
+            //eBody.addEventListener('mousedown', hidePopup);
             eChild.addEventListener('click', consumeClick);
+            //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
 
         var eventFromChild: any = null;
@@ -133,8 +135,10 @@ export default class PopupService {
             }
             that.ePopupParent.removeChild(eChild);
             eBody.removeEventListener('keydown', hidePopupOnEsc);
+            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);
             eChild.removeEventListener('click', consumeClick);
+            //eChild.removeEventListener('mousedown', consumeClick);
             if (closedCallback) {
                 closedCallback();
             }

@@ -187,11 +187,13 @@ export class EnterpriseMenu {
 
         this.mainMenuList.addItem({
             name: 'Pin Column',
+            icon: svgFactory.createPinIcon(),
             childMenu: this.createPinnedSubMenu()
         });
 
         this.mainMenuList.addItem({
             name: 'Value Aggregation',
+            icon: svgFactory.createAggregationIcon(),
             childMenu: this.createAggregationSubMenu()
         });
 
@@ -208,14 +210,20 @@ export class EnterpriseMenu {
 
         this.mainMenuList.addSeparator();
 
-        this.mainMenuList.addItem({
-            name: 'Un-Group by ' + this.column.getColDef().headerName,
-            action: ()=> this.columnController.removeRowGroupColumn(this.column)
-        });
-        this.mainMenuList.addItem({
-            name: 'Group by ' + this.column.getColDef().headerName,
-            action: ()=> this.columnController.addRowGroupColumn(this.column)
-        });
+        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        if (groupedByThisColumn) {
+            this.mainMenuList.addItem({
+                name: 'Un-Group by ' + this.column.getColDef().headerName,
+                action: ()=> this.columnController.removeRowGroupColumn(this.column),
+                icon: svgFactory.createGroupIcon12()
+            });
+        } else {
+            this.mainMenuList.addItem({
+                name: 'Group by ' + this.column.getColDef().headerName,
+                action: ()=> this.columnController.addRowGroupColumn(this.column),
+                icon: svgFactory.createGroupIcon12()
+            });
+        }
 
         this.mainMenuList.addSeparator();
 
@@ -223,25 +231,18 @@ export class EnterpriseMenu {
             name: 'Reset Columns',
                 action: ()=> this.columnController.resetState()
         });
-        this.mainMenuList.addItem({
-            name: 'Sum',
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
-                this.columnController.addValueColumn(this.column);
-            }
-        });
-        this.mainMenuList.addItem({
-            name: 'Remove Sum',
-            action: ()=> this.columnController.removeValueColumn(this.column)
-        });
-        this.mainMenuList.addItem({
-            name: 'Expand All',
-            action: ()=> this.gridApi.expandAll()
-        });
-        this.mainMenuList.addItem({
-            name: 'Collapse All',
-            action: ()=> this.gridApi.collapseAll()
-        });
+
+        // only add grouping expand/collapse if grouping
+        if (this.columnController.getRowGroupColumns().length>0) {
+            this.mainMenuList.addItem({
+                name: 'Expand All',
+                action: ()=> this.gridApi.expandAll()
+            });
+            this.mainMenuList.addItem({
+                name: 'Collapse All',
+                action: ()=> this.gridApi.collapseAll()
+            });
+        }
 
         this.mainMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 

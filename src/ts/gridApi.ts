@@ -370,4 +370,9 @@ export class GridApi {
     public destroy(): void {
         this.context.destroy();
     }
+
+    public resetQuickFilter(): void {
+        this.rowModel.forEachNode( node => node.quickFilterAggregateText = null);
+    }
+
 }

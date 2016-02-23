@@ -31,6 +31,8 @@ export class MenuItem extends Component {
 
         if (params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
+        } else if (params.icon) {
+            this.queryForHtmlElement('#eIcon').appendChild(params.icon);
         } else {
             // if i didn't put space here, the alignment was messed up, probably
             // fixable with CSS but i was spending to much time trying to figure
@@ -59,5 +61,6 @@ export interface MenuItemParams {
     name: string,
     action?: ()=>void,
     checked?: boolean,
+    icon?: HTMLElement,
     childMenu?: MenuList
 }
