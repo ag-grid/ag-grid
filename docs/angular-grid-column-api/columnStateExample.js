@@ -31,22 +31,22 @@ var gridOptions = {
 var savedState;
 
 function printState() {
-    var state = gridOptions.columnApi.getState();
+    var state = gridOptions.columnApi.getColumnState();
     console.log(state);
 }
 
 function saveState() {
-    savedState = gridOptions.columnApi.getState();
+    savedState = gridOptions.columnApi.getColumnState();
     console.log('column state saved');
 }
 
 function restoreState() {
-    gridOptions.columnApi.setState(savedState);
+    gridOptions.columnApi.setColumnState(savedState);
     console.log('column state restored');
 }
 
 function resetState() {
-    gridOptions.columnApi.resetState();
+    gridOptions.columnApi.resetColumnState();
 }
 
 function showAthlete(show) {

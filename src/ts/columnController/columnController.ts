@@ -40,9 +40,9 @@ export class ColumnApi {
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
     public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
     public getColumn(key: any): Column { return this._columnController.getColumn(key); }
-    public setState(columnState: any): void { return this._columnController.setState(columnState); }
-    public getState(): [any] { return this._columnController.getState(); }
-    public resetState(): void { this._columnController.resetState(); }
+    public setColumnState(columnState: any): void { return this._columnController.setColumnState(columnState); }
+    public getColumnState(): [any] { return this._columnController.getColumnState(); }
+    public resetColumnState(): void { this._columnController.resetColumnState(); }
     public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this._columnController.isPinningLeft(); }
     public isPinningRight(): boolean { return this._columnController.isPinningRight(); }
@@ -87,6 +87,20 @@ export class ColumnApi {
         console.error('ag-Grid: hideColumn is deprecated, use setColumnVisible');
         this._columnController.setColumnVisible(colId, !hide);
     }
+
+    public setState(columnState: any): void {
+        console.error('ag-Grid: setState is deprecated, use setColumnState');
+        return this.setColumnState(columnState);
+    }
+    public getState(): [any] {
+        console.error('ag-Grid: hideColumn is getState, use getColumnState');
+        return this.getColumnState();
+    }
+    public resetState(): void {
+        console.error('ag-Grid: hideColumn is resetState, use resetColumnState');
+        this.resetColumnState();
+    }
+
 }
 
 @Bean('columnController')
@@ -544,7 +558,7 @@ export class ColumnController {
         return result;
     }
 
-    public getState(): [any] {
+    public getColumnState(): [any] {
         if (!this.allColumns || this.allColumns.length < 0) {
             return <any>[];
         }
@@ -565,7 +579,7 @@ export class ColumnController {
         return result;
     }
 
-    public resetState(): void {
+    public resetColumnState(): void {
         // we can't use 'allColumns' as the order might of messed up, so get the original ordered list
         var originalColumns = this.allColumns = this.getColumnsFromTree(this.originalBalancedTree);
         var state: any[] = [];
@@ -582,10 +596,10 @@ export class ColumnController {
                 });
             });
         }
-        this.setState(state);
+        this.setColumnState(state);
     }
 
-    public setState(columnState: any[]): void {
+    public setColumnState(columnState: any[]): void {
         var oldColumnList = this.allColumns;
         this.allColumns = [];
         this.rowGroupColumns = [];

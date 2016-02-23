@@ -117,15 +117,15 @@ include '../documentation_header.php';
             or the colDef (an object).</td>
         </tr>
         <tr>
-            <th>setState(columnState)</th>
+            <th>setColumnState(columnState)</th>
             <td>Sets the state of the columns. See example below.</td>
         </tr>
         <tr>
-            <th>resetState()</th>
+            <th>resetColumnState()</th>
             <td>Sets the state back to match the originally provided column definitions.</td>
         </tr>
         <tr>
-            <th>getState()</th>
+            <th>getColumnState()</th>
             <td>Gets the state of the columns. See example below.</td>
         </tr>
         <tr>
