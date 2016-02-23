@@ -229,7 +229,7 @@ export class EnterpriseMenu {
 
         this.mainMenuList.addItem({
             name: 'Reset Columns',
-                action: ()=> this.columnController.resetState()
+                action: ()=> this.columnController.resetColumnState()
         });
 
         // only add grouping expand/collapse if grouping

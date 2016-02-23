@@ -360,7 +360,7 @@ export default class RowRenderer {
 
     public workOutFirstAndLastRowsToRender(): void {
 
-        if (this.rowModel.isEmpty()) {
+        if (!this.rowModel.isRowsToRender()) {
             this.firstVirtualRenderedRow = 0;
             this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
             return;

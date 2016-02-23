@@ -88,6 +88,10 @@ export default class VirtualPageRowController implements IRowModel {
         return !this.datasource;
     }
 
+    public isRowsToRender(): boolean {
+        return !this.datasource;
+    }
+
     private reset() {
         this.selectionController.reset();
 

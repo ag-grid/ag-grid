@@ -52,6 +52,8 @@ include 'documentation_header.php';
 
     <li>Toolpanel gone. Replaced with enterprise features.</li>
 
+    <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

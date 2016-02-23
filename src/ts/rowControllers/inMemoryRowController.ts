@@ -94,6 +94,10 @@ export default class InMemoryRowController implements IRowModel {
         return this.allRows === null || this.allRows.length === 0 || !this.columnController.isReady();
     }
 
+    public isRowsToRender(): boolean {
+        return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
+    }
+
     public setDatasource(datasource: any): void {
         console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
     }
