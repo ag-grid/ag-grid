@@ -14,11 +14,11 @@ import EventService from "../eventService";
 import {Events} from "../events";
 import {MoveColumnController} from "../headerRendering/moveColumnController";
 import ColumnChangeEvent from "../columnChangeEvent";
-import {IRowModel} from "../rowControllers/iRowModel";
+import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
-import {RangeController} from "../enterprise/rangeController";
 import {DragService} from "../dragAndDrop/dragService";
 import Column from "../entities/column";
+import {IRangeController} from "../interfaces/iRangeController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -97,7 +97,7 @@ export default class GridPanel {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rangeController') private rangeSelectorController: RangeController;
+    @Autowired('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
 
     private layout: BorderLayout;
@@ -219,19 +219,21 @@ export default class GridPanel {
     }
 
     private addDragListeners(): void {
-        if (this.forPrint) {
+        if (this.forPrint // no range select when doing 'for print'
+            || !this.gridOptionsWrapper.isEnableRangeSelection() // no range selection if no property
+            || _.missing(this.rangeController)) { // no range selection if not enterprise version
             return;
         }
-        // right now, pinned is not needed here
-        var items = [this.ePinnedLeftColsViewport, this.ePinnedRightColsViewport, this.eBodyContainer];
 
-        items.forEach( item => {
+        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer];
+
+        containers.forEach(container => {
             this.dragService.addDragSource({
                 dragStartPixels: 0,
-                eElement: item,
-                onDragStart: this.rangeSelectorController.onDragStart.bind(this.rangeSelectorController),
-                onDragStop: this.rangeSelectorController.onDragStop.bind(this.rangeSelectorController),
-                onDragging: this.rangeSelectorController.onDragging.bind(this.rangeSelectorController)
+                eElement: container,
+                onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
+                onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
+                onDragging: this.rangeController.onDragging.bind(this.rangeController)
             });
         });
     }
@@ -873,11 +875,11 @@ export default class GridPanel {
         return this.ePinnedRightColsViewport.getBoundingClientRect();
     }
 
-    public addVerticalScrollListener(listener: ()=>void): void {
+    public addScrollEventListener(listener: ()=>void): void {
         this.eBodyViewport.addEventListener('scroll', listener);
     }
 
-    public removeVerticalScrollListener(listener: ()=>void): void {
+    public removeScrollEventListener(listener: ()=>void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }

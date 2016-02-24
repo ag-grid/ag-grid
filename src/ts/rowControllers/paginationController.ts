@@ -7,7 +7,7 @@ import {GridCore} from "../gridCore";
 import GridPanel from "../gridPanel/gridPanel";
 import SelectionController from "../selectionController";
 import {Autowired} from "../context/context";
-import {IRowModel} from "./iRowModel";
+import {IRowModel} from "./../interfaces/iRowModel";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
 import EventService from "../eventService";

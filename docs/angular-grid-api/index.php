@@ -291,9 +291,10 @@ include '../documentation_header.php';
                 for the next 500ms refresh.</td>
         </tr>
         <tr>
-            <th>getValue(colDef, data, node)</th>
-            <td>Gets the value for a cell. This is what gets passed to the cellRenderer for rendering.
-                This is useful if you want the raw value eg for csv export.</td>
+            <th>getValue(colKey, node)</th>
+            <td>Gets the value for a column for a particular rowNode (row).
+                This is useful if you want the raw value of a cell eg implementing your own csv export.
+            </td>
         </tr>
         <tr>
             <th>setHeaderHeight(value)</th>
@@ -360,6 +361,26 @@ include '../documentation_header.php';
         </tr>
     </table>
 
+    <h2>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        API Functions
+    </h2>
+
+    <p>
+        These functions are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Function</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>getRangeSelections()</th>
+            <td>Returns the list of selected ranges.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

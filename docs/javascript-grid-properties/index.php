@@ -281,6 +281,25 @@ include '../documentation_header.php';
 
     </table>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The properties below are available in the Enterprise version of ag-Grid.
+    </p>
+
+
+    <table class="table">
+        <tr>
+            <th>Property</th>
+            <th>Description</th>
+        </tr>
+
+        <tr>
+            <th>enableRangeSelection</th>
+            <td>Set to true to enable range selection.</td>
+        </tr>
+    </table>
+
 </div>
 
 <?php include '../documentation_footer.php';?>

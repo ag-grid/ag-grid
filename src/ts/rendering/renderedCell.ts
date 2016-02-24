@@ -163,7 +163,7 @@ export default class RenderedCell {
     }
 
     private getValue(): any {
-        return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
+        return this.valueService.getValueUsingSpecificData(this.column, this.data, this.node);
     }
 
     public getGui(): HTMLElement {

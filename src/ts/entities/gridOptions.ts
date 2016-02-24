@@ -45,6 +45,7 @@ export interface GridOptions {
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
     rowModelType?: string;
+    enableRangeSelection?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

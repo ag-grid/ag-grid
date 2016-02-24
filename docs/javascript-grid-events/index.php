@@ -59,7 +59,7 @@ include '../documentation_header.php';
         DOM elements work.
     </p>
 
-    <h2>Core Grid Events</h2>
+    <h2>ag-Grid Events</h2>
 
     <table class="table">
         <tr>
@@ -142,20 +142,6 @@ include '../documentation_header.php';
             <th>rowGroupOpened</th>
             <td>A row group was opened or closed.</td>
         </tr>
-    </table>
-
-    <h2>Column Changed Events</h2>
-
-    <p>
-        A column change event gets fired whenever something changes with one of the columns.
-        You add a column change event as follows:
-    </p>
-
-    <table class="table">
-        <tr>
-            <th>Event</th>
-            <th>Description</th>
-        </tr>
         <tr>
             <th>columnEverythingChanged</th>
             <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so everything has changed.</td>
@@ -190,6 +176,22 @@ include '../documentation_header.php';
         </tr>
     </table>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The below events are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Event</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>rangeSelectionChanged</th>
+            <td>A change to range selection has occurred.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

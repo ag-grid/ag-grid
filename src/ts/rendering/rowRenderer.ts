@@ -25,7 +25,7 @@ import {Autowired} from "../context/context";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 import ColumnChangeEvent from "../columnChangeEvent";
-import {IRowModel} from "../rowControllers/iRowModel";
+import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 

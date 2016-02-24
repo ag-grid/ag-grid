@@ -42,14 +42,13 @@ export default class GroupCreator {
 
         for (i = 0; i < rowNodes.length; i++) {
             node = rowNodes[i];
-            data = node.data;
 
             // all leaf nodes have the same level in this grouping, which is one level after the last group
             node.level = levelToInsertChild + 1;
 
             for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
                 var groupColumn = groupedCols[currentLevel];
-                groupKey = this.valueService.getValue(groupColumn.getColDef(), data, node);
+                groupKey = this.valueService.getValue(groupColumn, node);
 
                 if (currentLevel === 0) {
                     currentGroup = topMostGroup;

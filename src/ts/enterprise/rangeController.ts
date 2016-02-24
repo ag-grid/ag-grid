@@ -4,7 +4,7 @@ import {LoggerFactory} from "../logger";
 import {PostConstruct} from "../context/context";
 import {Logger} from "../logger";
 import GridPanel from "../gridPanel/gridPanel";
-import {IRowModel} from "../rowControllers/iRowModel";
+import {IRowModel} from "../interfaces/iRowModel";
 import EventService from "../eventService";
 import {Events} from "../events";
 import Column from "../entities/column";
@@ -12,17 +12,11 @@ import {ColumnController} from "../columnController/columnController";
 import _ from '../utils';
 import RowRenderer from "../rendering/rowRenderer";
 import {FocusedCellController} from "../focusedCellController";
-
-export interface CellRange {
-    rowStart: number,
-    rowEnd: number,
-    columnStart: Column,
-    columnEnd: Column,
-    columns: Column[]
-}
+import {IRangeController} from "../interfaces/iRangeController";
+import {RangeSelection} from "../interfaces/iRangeController";
 
 @Bean('rangeController')
-export class RangeController {
+export class RangeController implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -34,10 +28,8 @@ export class RangeController {
 
     private logger: Logger;
 
-    private cellRanges: CellRange[];
-
-    private activeRange: CellRange;
-
+    private cellRanges: RangeSelection[];
+    private activeRange: RangeSelection;
     private lastMouseEvent: MouseEvent;
 
     private bodyScrollListener = this.onBodyScroll.bind(this);
@@ -56,9 +48,14 @@ export class RangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
     }
 
+    public getCellRanges(): RangeSelection[] {
+        return this.cellRanges;
+    }
+
     public clearSelection(): void {
         this.activeRange = null;
-        this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED);
+        this.cellRanges = null;
+        this.dispatchChangedChangedEvent(true, false);
     }
 
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
@@ -76,7 +73,7 @@ export class RangeController {
 
         var matchingCount = 0;
 
-        this.cellRanges.forEach( (cellRange: CellRange) => {
+        this.cellRanges.forEach( (cellRange: RangeSelection) => {
             var columnInRange = cellRange.columns.indexOf(column) >= 0;
 
             var rowInRange: boolean;
@@ -104,12 +101,12 @@ export class RangeController {
 
         this.createNewActiveRange(mouseEvent);
 
-        this.gridPanel.addVerticalScrollListener(this.bodyScrollListener);
+        this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
 
         this.lastMouseEvent = mouseEvent;
 
-        this.selectionChanged();
+        this.selectionChanged(false, true);
     }
 
     private createNewActiveRange(mouseEvent: MouseEvent): void {
@@ -127,16 +124,20 @@ export class RangeController {
         this.cellRanges.push(this.activeRange);
     }
 
-    private selectionChanged(): void {
-        //this.focusedCellController.setFocusedCell(this.dragEndRowIndex, this.dragEndColumn, true);
+    private selectionChanged(finished: boolean, started: boolean): void {
         this.updateSelectedColumns();
-        this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED);
+        this.dispatchChangedChangedEvent(finished, started);
     }
 
-    public onDragStop(mouseEvent: MouseEvent): void {
-        this.gridPanel.removeVerticalScrollListener(this.bodyScrollListener);
+    private dispatchChangedChangedEvent(finished: boolean, started: boolean): void {
+        this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED, {finished: finished, started: started});
+    }
+
+    public onDragStop(): void {
+        this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
+        this.dispatchChangedChangedEvent(true, false);
     }
 
     public onDragging(mouseEvent: MouseEvent): void {
@@ -157,7 +158,7 @@ export class RangeController {
         }
 
         if (columnChanged || rowChanged) {
-            this.selectionChanged();
+            this.selectionChanged(false, false);
         }
     }
 
@@ -225,8 +226,6 @@ export class RangeController {
         if (!hoveringColumn) {
             hoveringColumn = columns[columns.length - 1];
         }
-
-        console.log(`=> ${container} -> ${hoveringColumn ? hoveringColumn.getId() : null}`);
 
         return hoveringColumn;
     }

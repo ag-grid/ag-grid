@@ -71,6 +71,7 @@ export class Grid {
             //overrideBeans: null,
             overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController],
             seed: {
+                enterprise: true,
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
                 $scope: $scope,

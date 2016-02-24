@@ -16,7 +16,7 @@ import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import SelectionController from "../selectionController";
 import {Autowired} from "../context/context";
-import {IRowModel} from "./iRowModel";
+import {IRowModel} from "./../interfaces/iRowModel";
 import Constants from "../constants";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
@@ -230,7 +230,7 @@ export default class InMemoryRowController implements IRowModel {
                         'the result will not be stored in a value getter.');
                 }
                 // at this point, if no values were numbers, the result is null (not zero)
-                result[colKey] = aggregateColumn(rows, valueColumn.getAggFunc(), colKey, valueColumn.getColDef());
+                result[colKey] = aggregateColumn(rows, valueColumn.getAggFunc(), colKey, valueColumn);
             }
 
             return result;
@@ -238,17 +238,17 @@ export default class InMemoryRowController implements IRowModel {
 
         // if colDef is passed in, we are working off a column value, if it is not passed in, we are
         // working off colKeys passed in to the gridOptions
-        function aggregateColumn(rowNodes: RowNode[], aggFunc: string, colKey: string, colDef: ColDef) {
+        function aggregateColumn(rowNodes: RowNode[], aggFunc: string, colKey: string, column: Column) {
             var resultForColumn: any = null;
             for (var i = 0; i < rowNodes.length; i++) {
                 var rowNode = rowNodes[i];
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
                 var thisColumnValue: any;
-                if (colDef && !rowNode.group) {
-                    thisColumnValue = _valueService.getValue(colDef, rowNode.data, rowNode);
-                } else {
+                if (rowNode.group) {
                     thisColumnValue = rowNode.data[colKey];
+                } else {
+                    thisColumnValue = _valueService.getValue(column, rowNode);
                 }
                 // only include if the value is a number
                 if (typeof thisColumnValue === 'number') {
@@ -421,8 +421,8 @@ export default class InMemoryRowController implements IRowModel {
         var that = this;
 
         function compare(nodeA: RowNode, nodeB: RowNode, column:Column, isInverted: boolean) {
-            var valueA = that.valueService.getValue(column.getColDef(), nodeA.data, nodeA);
-            var valueB = that.valueService.getValue(column.getColDef(), nodeB.data, nodeB);
+            var valueA = that.valueService.getValue(column, nodeA);
+            var valueB = that.valueService.getValue(column, nodeB);
             if (column.getColDef().comparator) {
                 //if comparator provided, use it
                 return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);

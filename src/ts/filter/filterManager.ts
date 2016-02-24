@@ -13,7 +13,7 @@ import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {Autowired} from "../context/context";
-import {IRowModel} from "../rowControllers/iRowModel";
+import {IRowModel} from "../interfaces/iRowModel";
 import EventService from "../eventService";
 import {Events} from "../events";
 import {PostConstruct} from "../context/context";
@@ -248,8 +248,7 @@ export default class FilterManager {
         var aggregatedText = '';
         var that = this;
         this.columnController.getAllColumns().forEach(function (column: Column) {
-            var data = node.data;
-            var value = that.valueService.getValue(column.getColDef(), data, node);
+            var value = that.valueService.getValue(column, node);
             if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
             }
@@ -270,7 +269,7 @@ export default class FilterManager {
     private createValueGetter(column: Column) {
         var that = this;
         return function valueGetter(node: any) {
-            return that.valueService.getValue(column.getColDef(), node.data, node);
+            return that.valueService.getValue(column, node);
         };
     }
 

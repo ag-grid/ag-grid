@@ -28,6 +28,7 @@ export default class GridOptionsWrapper {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('enterprise') private enterprise: boolean;
 
     private headerHeight: number;
 
@@ -110,6 +111,7 @@ export default class GridOptionsWrapper {
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
+    public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
     public getIcons() { return this.gridOptions.icons; }
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }

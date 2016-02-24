@@ -7,7 +7,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Autowired} from "./context/context";
-import {IRowModel} from "./rowControllers/iRowModel";
+import {IRowModel} from "./interfaces/iRowModel";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 var LINE_SEPARATOR = '\r\n';
 
@@ -110,7 +110,7 @@ export class CsvCreator {
                 if (node.group && index === 0) {
                     valueForCell =  this.createValueForGroupNode(node);
                 } else {
-                    valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
+                    valueForCell =  this.valueService.getValue(column, node);
                 }
                 if (valueForCell === null || valueForCell === undefined) {
                     valueForCell = '';

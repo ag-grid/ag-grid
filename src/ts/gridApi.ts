@@ -22,10 +22,12 @@ import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
 import {Autowired} from "./context/context";
-import {IRowModel} from "./rowControllers/iRowModel";
+import {IRowModel} from "./interfaces/iRowModel";
 import {SortController} from "./sortController";
 import PaginationController from "./rowControllers/paginationController";
 import {FocusedCellController} from "./focusedCellController";
+import {IRangeController} from "./interfaces/iRangeController";
+import {RangeSelection} from "./interfaces/iRangeController";
 
 @Bean('gridApi')
 export class GridApi {
@@ -48,6 +50,7 @@ export class GridApi {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('rangeController') private rangeController: IRangeController;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -137,7 +140,7 @@ export class GridApi {
         return this.filterManager.isQuickFilterPresent();
     }
 
-    public getModel() {
+    public getModel(): IRowModel {
         return this.rowModel;
     }
 
@@ -345,8 +348,9 @@ export class GridApi {
         this.gridCore.doLayout();
     }
 
-    public getValue(colDef: ColDef, data: any, node: any): any {
-        return this.valueService.getValue(colDef, data, node);
+    public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
+        var column = this.columnController.getColumn(colKey);
+        return this.valueService.getValue(column, rowNode);
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -377,4 +381,12 @@ export class GridApi {
         this.rowModel.forEachNode( node => node.quickFilterAggregateText = null);
     }
 
+    public getRangeSelections(): RangeSelection[] {
+        if (this.rangeController) {
+            return this.rangeController.getCellRanges();
+        } else {
+            console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
+            return null;
+        }
+    }
 }

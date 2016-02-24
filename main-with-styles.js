@@ -23,6 +23,10 @@ exports.RowNode = require('./dist/lib/entities/rowNode').RowNode;
 exports.SetFilterParameters = require('./dist/lib/filter/setFilterParameters').SetFilterParameters;
 exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumberFilterParameters').TextAndNumberFilterParameters;
 
+exports.IRowModel = require('./dist/lib/interfaces/iRowModel').IRowModel;
+exports.IRangeController = require('./dist/lib/interfaces/iRangeController').IRangeController;
+exports.RangeSelection = require('./dist/lib/interfaces/iRangeController').RangeSelection;
+
 require('./dist/styles/ag-grid.css');
 require('./dist/styles/theme-blue.css');
 require('./dist/styles/theme-dark.css');

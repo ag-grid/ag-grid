@@ -123,6 +123,7 @@ var gridOptions = {
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
+    enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     groupSelectsChildren: true, // one of [true, false]
@@ -207,6 +208,9 @@ var gridOptions = {
     },
     onRowGroupOpened: function(event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+    },
+    onRangeSelectionChanged: function(event) {
+        //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     }
 };
 
@@ -243,7 +247,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: countryCellRenderer, filter: 'set',
-                pinned: 'left',
+                //pinned: 'left',
                 floatCell: true,
                 filterParams: {
                     cellRenderer: countryCellRenderer,
@@ -257,7 +261,7 @@ var defaultCols = [
             },
             {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
-                pinned: 'left',
+                //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
                 icons: {
@@ -273,14 +277,14 @@ var defaultCols = [
         children: [
             {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
                 cellClass: function() { return 'alphabet'; },
-                pinned: 'right',
+                //pinned: 'right',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
             {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
-                pinned: 'right',
+                //pinned: 'right',
                 cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}

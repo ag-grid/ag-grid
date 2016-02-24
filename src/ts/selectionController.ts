@@ -7,7 +7,7 @@ import {LoggerFactory} from "./logger";
 import EventService from "./eventService";
 import {Events} from "./events";
 import {Autowired} from "./context/context";
-import {IRowModel} from "./rowControllers/iRowModel";
+import {IRowModel} from "./interfaces/iRowModel";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 

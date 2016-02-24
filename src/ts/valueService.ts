@@ -6,6 +6,8 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
+import {RowNode} from "./entities/rowNode";
+import Column from "./entities/column";
 
 @Bean('valueService')
 export default class ValueService {
@@ -21,16 +23,21 @@ export default class ValueService {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
     }
 
-    public getValue(colDef: ColDef, data: any, node: any):any {
+    public getValue(column: Column, node: RowNode): any {
+        return this.getValueUsingSpecificData(column, node.data, node);
+    }
+
+    public getValueUsingSpecificData(column: Column, data: any, node: any): any {
 
         var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        var colDef = column.getColDef();
         var field = colDef.field;
 
         var result: any;
 
         // if there is a value getter, this gets precedence over a field
         if (colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, colDef, node);
+            result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
             result = this.getValueUsingField(data, field);
         } else {
@@ -40,7 +47,7 @@ export default class ValueService {
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             var cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, colDef, node);
+            result = this.executeValueGetter(cellValueGetter, data, column, node);
         }
 
         return result;
@@ -89,7 +96,7 @@ export default class ValueService {
         }
     }
 
-    private executeValueGetter(valueGetter: any, data: any, colDef: any, node: any): any {
+    private executeValueGetter(valueGetter: any, data: any, column: Column, node: RowNode): any {
 
         var context = this.gridOptionsWrapper.getContext();
         var api = this.gridOptionsWrapper.getApi();
@@ -97,7 +104,7 @@ export default class ValueService {
         var params = {
             data: data,
             node: node,
-            colDef: colDef,
+            colDef: column.getColDef(),
             api: api,
             context: context,
             getValue: this.getValueCallback.bind(this, data, node)
@@ -112,10 +119,10 @@ export default class ValueService {
         }
     }
 
-    private getValueCallback(data: any, node: any, field: string): any {
+    private getValueCallback(data: any, node: RowNode, field: string): any {
         var otherColumn = this.columnController.getColumn(field);
         if (otherColumn) {
-            return this.getValue(otherColumn.getColDef(), data, node);
+            return this.getValueUsingSpecificData(otherColumn, data, node);
         } else {
             return null;
         }

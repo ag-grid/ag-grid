@@ -38,7 +38,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
-import {IRowModel} from "./rowControllers/iRowModel";
+import {IRowModel} from "./interfaces/iRowModel";
 import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
 
