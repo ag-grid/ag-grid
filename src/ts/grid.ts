@@ -48,7 +48,7 @@ import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
 import {ColumnApi} from "./columnController/columnController";
-import {RangeSelectorController} from "./enterprise/rangeSelectorController";
+import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
 
 export class Grid {
@@ -69,7 +69,7 @@ export class Grid {
 
         this.context = new Context({
             //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeSelectorController],
+            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController],
             seed: {
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,

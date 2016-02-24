@@ -18,7 +18,7 @@ import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
-import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 
 export default class RenderedRow {

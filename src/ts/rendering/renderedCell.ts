@@ -17,7 +17,7 @@ import {Autowired} from "../context/context";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {PostConstruct} from "../context/context";
-import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 
 export default class RenderedCell {
@@ -33,7 +33,7 @@ export default class RenderedCell {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rangeSelectorController') private rangeSelectorController: RangeSelectorController;
+    @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private eGridCell: HTMLElement; // the outer cell
@@ -208,14 +208,16 @@ export default class RenderedCell {
     }
 
     private addRangeSelectedListener(): void {
-        var inRangeLastTime = false;
+        var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
-            var rowInRange = this.rangeSelectorController.isRowInRange(this.rowIndex);
-            var columnInRange = this.rangeSelectorController.isColumnInRange(this.column);
-            var inRange = rowInRange && columnInRange;
-            if (inRangeLastTime !== inRange) {
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', inRange);
-                inRangeLastTime = inRange;
+            var rangeCount = this.rangeController.getCellRangeCount(this.rowIndex, this.column);
+            if (rangeCountLastTime !== rangeCount) {
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-2', rangeCount===2);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-3', rangeCount===3);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-4', rangeCount>=4);
+                rangeCountLastTime = rangeCount;
             }
         };
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);

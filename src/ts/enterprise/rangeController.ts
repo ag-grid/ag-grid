@@ -13,8 +13,16 @@ import _ from '../utils';
 import RowRenderer from "../rendering/rowRenderer";
 import {FocusedCellController} from "../focusedCellController";
 
-@Bean('rangeSelectorController')
-export class RangeSelectorController {
+export interface CellRange {
+    rowStart: number,
+    rowEnd: number,
+    columnStart: Column,
+    columnEnd: Column,
+    columns: Column[]
+}
+
+@Bean('rangeController')
+export class RangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -26,13 +34,9 @@ export class RangeSelectorController {
 
     private logger: Logger;
 
-    private dragStartRowIndex: number;
-    private dragEndRowIndex: number;
+    private cellRanges: CellRange[];
 
-    private dragStartColumn: Column;
-    private dragEndColumn: Column;
-
-    private selectedColumns: Column[];
+    private activeRange: CellRange;
 
     private lastMouseEvent: MouseEvent;
 
@@ -42,7 +46,7 @@ export class RangeSelectorController {
 
     @PostConstruct
     private init(): void {
-        this.logger = this.loggerFactory.create('RangeSelectorController');
+        this.logger = this.loggerFactory.create('RangeController');
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
@@ -52,13 +56,9 @@ export class RangeSelectorController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
     }
 
-    private clearSelection(): void {
-        this.dragStartRowIndex = null;
-        this.dragEndRowIndex = null;
-        this.dragStartColumn = null;
-        this.dragEndColumn = null;
-        this.selectedColumns = null;
-        this.selectionChanged();
+    public clearSelection(): void {
+        this.activeRange = null;
+        this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED);
     }
 
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
@@ -68,26 +68,41 @@ export class RangeSelectorController {
         this.onDragging(this.lastMouseEvent);
     }
 
-    public isColumnInRange(column: Column): boolean {
-        return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
-    }
-
-    public isRowInRange(rowIndex: number): boolean {
-        if (this.dragStartRowIndex < this.dragEndRowIndex) {
-            return rowIndex >= this.dragStartRowIndex && rowIndex <= this.dragEndRowIndex;
-        } else {
-            return rowIndex >= this.dragEndRowIndex && rowIndex <= this.dragStartRowIndex;
+    // returns the number of ranges this cell is in
+    public getCellRangeCount(rowIndex: number, column: Column): number {
+        if (_.missingOrEmpty(this.cellRanges)) {
+            return 0;
         }
+
+        var matchingCount = 0;
+
+        this.cellRanges.forEach( (cellRange: CellRange) => {
+            var columnInRange = cellRange.columns.indexOf(column) >= 0;
+
+            var rowInRange: boolean;
+            if (cellRange.rowStart < cellRange.rowEnd) {
+                rowInRange = rowIndex >= cellRange.rowStart && rowIndex <= cellRange.rowEnd;
+            } else {
+                rowInRange = rowIndex >= cellRange.rowEnd && rowIndex <= cellRange.rowStart;
+            }
+
+            if (columnInRange && rowInRange) {
+                matchingCount++;
+            }
+        });
+
+        return matchingCount;
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        var rowIndex = this.getRowIndex(mouseEvent);
-        this.dragStartRowIndex = rowIndex;
-        this.dragEndRowIndex = rowIndex;
 
-        var column = this.getColumn(mouseEvent);
-        this.dragStartColumn = column;
-        this.dragEndColumn = column;
+        // ctrlKey for windows, metaKey for Apple
+        var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        if (!multiSelectKeyPressed) {
+            this.cellRanges = [];
+        }
+
+        this.createNewActiveRange(mouseEvent);
 
         this.gridPanel.addVerticalScrollListener(this.bodyScrollListener);
         this.dragging = true;
@@ -95,6 +110,21 @@ export class RangeSelectorController {
         this.lastMouseEvent = mouseEvent;
 
         this.selectionChanged();
+    }
+
+    private createNewActiveRange(mouseEvent: MouseEvent): void {
+        var rowIndex = this.getRowIndex(mouseEvent);
+        var column = this.getColumn(mouseEvent);
+
+        this.activeRange = {
+            rowEnd: rowIndex,
+            rowStart: rowIndex,
+            columnEnd: column,
+            columnStart: column,
+            columns: [column]
+        };
+
+        this.cellRanges.push(this.activeRange);
     }
 
     private selectionChanged(): void {
@@ -114,15 +144,15 @@ export class RangeSelectorController {
 
         var columnChanged = false;
         var column = this.getColumn(mouseEvent);
-        if (column !== this.dragEndColumn) {
-            this.dragEndColumn = column;
+        if (column !== this.activeRange.columnEnd) {
+            this.activeRange.columnEnd = column;
             columnChanged = true;
         }
 
         var rowChanged = false;
         var rowIndex = this.getRowIndex(mouseEvent);
-        if (rowIndex!==this.dragEndRowIndex) {
-            this.dragEndRowIndex = rowIndex;
+        if (rowIndex!==this.activeRange.rowEnd) {
+            this.activeRange.rowEnd = rowIndex;
             rowChanged = true;
         }
 
@@ -202,12 +232,10 @@ export class RangeSelectorController {
     }
 
     private updateSelectedColumns(): void {
-        this.selectedColumns = [];
-
         var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
-        var firstIndex = allDisplayedColumns.indexOf(this.dragStartColumn);
-        var lastIndex = allDisplayedColumns.indexOf(this.dragEndColumn);
+        var firstIndex = allDisplayedColumns.indexOf(this.activeRange.columnStart);
+        var lastIndex = allDisplayedColumns.indexOf(this.activeRange.columnEnd);
 
         if (firstIndex > lastIndex) {
             var copy = firstIndex;
@@ -215,9 +243,12 @@ export class RangeSelectorController {
             lastIndex = copy;
         }
 
+        var columns: Column[] = [];
         for (var i = firstIndex; i<=lastIndex; i++) {
-            this.selectedColumns.push(allDisplayedColumns[i]);
+            columns.push(allDisplayedColumns[i]);
         }
+
+        this.activeRange.columns = columns;
     }
 
     private getRowIndex(mouseEvent: MouseEvent): number {

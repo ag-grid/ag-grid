@@ -16,7 +16,7 @@ import {MoveColumnController} from "../headerRendering/moveColumnController";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {IRowModel} from "../rowControllers/iRowModel";
 import {PostConstruct} from "../context/context";
-import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {RangeController} from "../enterprise/rangeController";
 import {DragService} from "../dragAndDrop/dragService";
 import Column from "../entities/column";
 
@@ -97,7 +97,7 @@ export default class GridPanel {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rangeSelectorController') private rangeSelectorController: RangeSelectorController;
+    @Autowired('rangeController') private rangeSelectorController: RangeController;
     @Autowired('dragService') private dragService: DragService;
 
     private layout: BorderLayout;
