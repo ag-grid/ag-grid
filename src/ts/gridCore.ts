@@ -40,6 +40,7 @@ import {Autowired} from "./context/context";
 import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {IRowModel} from "./rowControllers/iRowModel";
 import {PostConstruct} from "./context/context";
+import {FocusedCellController} from "./focusedCellController";
 
 @Bean('gridCore')
 export class GridCore {
@@ -61,6 +62,7 @@ export class GridCore {
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('rowGroupPanel') private rowGroupPanel: RowGroupPanel;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -261,34 +263,7 @@ export class GridCore {
     public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
         this.gridPanel.ensureIndexVisible(rowIndex);
         this.gridPanel.ensureColumnVisible(colKey);
-        var that = this;
-        setTimeout(function () {
-            that.rowRenderer.setFocusedCell(rowIndex, colKey);
-        }, 10);
-    }
-
-    public onSortingChanged() {
-        //this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
-        //this.headerRenderer.updateSortIcons();
-        //if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-        //    // if doing server side sorting, changing the sort has the impact
-        //    // of resetting the datasource
-        //    this.setDatasource();
-        //} else {
-        //    // if doing in memory sorting, we just update the in memory data
-        //    this.updateModelAndRefresh(Constants.STEP_SORT);
-        //}
-        //this.eventService.dispatchEvent(Events.EVENT_AFTER_SORT_CHANGED);
-    }
-
-    public setColumnDefs(colDefs?: ColDef[]) {
-        //if (colDefs) {
-        //    this.gridOptions.columnDefs = colDefs;
-        //}
-        //this.setupColumns();
-        //this.updateModelAndRefresh(Constants.STEP_EVERYTHING);
-        //// found that adding pinned column can upset the layout
-        //this.doLayout();
+        setTimeout( () => this.focusedCellController.setFocusedCell(rowIndex, colKey), 10);
     }
 
     public doLayout() {

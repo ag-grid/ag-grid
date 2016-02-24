@@ -16,6 +16,9 @@ import {MoveColumnController} from "../headerRendering/moveColumnController";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {IRowModel} from "../rowControllers/iRowModel";
 import {PostConstruct} from "../context/context";
+import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {DragService} from "../dragAndDrop/dragService";
+import Column from "../entities/column";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -94,6 +97,8 @@ export default class GridPanel {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rangeSelectorController') private rangeSelectorController: RangeSelectorController;
+    @Autowired('dragService') private dragService: DragService;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -159,19 +164,8 @@ export default class GridPanel {
     @PostConstruct
     private init() {
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
-        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.addEventListeners();
+        this.addDragListeners();
 
         this.layout = new BorderLayout({
             overlays: {
@@ -198,6 +192,52 @@ export default class GridPanel {
         this.setWidthsOfContainers();
         this.showPinnedColContainersIfNeeded();
         this.sizeHeaderAndBody();
+        this.disableBrowserDragging();
+    }
+
+    private disableBrowserDragging(): void {
+        this.eRoot.addEventListener('dragstart', (event: MouseEvent)=> {
+            event.preventDefault();
+            return false;
+        });
+    }
+
+    private addEventListeners(): void {
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+    }
+
+    private addDragListeners(): void {
+        if (this.forPrint) {
+            return;
+        }
+        // right now, pinned is not needed here
+        var items = [
+            {container: this.ePinnedLeftColsViewport, pinned: Column.PINNED_LEFT},
+            {container: this.ePinnedRightColsViewport, pinned: Column.PINNED_RIGHT},
+            {container: this.eBodyViewport, pinned: null}
+        ];
+
+        items.forEach( item => {
+            this.dragService.addDragSource({
+                dragStartPixels: 0,
+                eElement: item.container,
+                onDragStart: this.rangeSelectorController.onDragStart.bind(this.rangeSelectorController),
+                onDragStop: this.rangeSelectorController.onDragStop.bind(this.rangeSelectorController),
+                onDragging: this.rangeSelectorController.onDragging.bind(this.rangeSelectorController)
+            });
+        });
     }
 
     public getPinnedLeftFloatingTop(): HTMLElement {
@@ -440,21 +480,6 @@ export default class GridPanel {
         return this.ePinnedLeftColsContainer;
     }
 
-    public getPinnedLeftColsViewport(): HTMLElement {
-        return this.ePinnedLeftColsViewport;
-    }
-
-    public getPinnedRightColsViewport(): HTMLElement {
-        return this.ePinnedRightColsViewport;
-    }
-
-    public getCenterColsViewport(): HTMLElement {
-        if (this.forPrint) {
-            return this.eBodyContainer;
-        } else {
-            return this.eBodyViewport;
-        }
-    }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
         if (this.forPrint) {
@@ -822,17 +847,33 @@ export default class GridPanel {
         }
     }
 
-    private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any) {
+    private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any): void {
         this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
     }
 
-    private verticallyScrollLeftPinned(bodyTopPosition: any) {
+    private verticallyScrollLeftPinned(bodyTopPosition: any): void {
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
     }
 
-    private verticallyScrollBody(position: any) {
+    private verticallyScrollBody(position: any): void {
         this.eBodyViewport.scrollTop = position;
+    }
+
+    public getVerticalScrollPosition(): number {
+        return this.eBodyViewport.scrollTop;
+    }
+
+    public getBodyViewportBoundingClientRect(): ClientRect {
+        return this.eBodyViewport.getBoundingClientRect();
+    }
+
+    public addVerticalScrollListener(listener: ()=>void): void {
+        this.eBodyViewport.addEventListener('scroll', listener);
+    }
+
+    public removeVerticalScrollListener(listener: ()=>void): void {
+        this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }

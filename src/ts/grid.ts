@@ -48,7 +48,8 @@ import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
 import {ColumnApi} from "./columnController/columnController";
-import {RangeSelectorListener} from "./enterprise/rangeSelectorListener";
+import {RangeSelectorController} from "./enterprise/rangeSelectorController";
+import {FocusedCellController} from "./focusedCellController";
 
 export class Grid {
 
@@ -68,7 +69,7 @@ export class Grid {
 
         this.context = new Context({
             //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeSelectorListener],
+            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeSelectorController],
             seed: {
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
@@ -84,7 +85,7 @@ export class Grid {
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService, SortController, ColumnApi],
+                DragAndDropService, SortController, ColumnApi, FocusedCellController],
             debug: !!gridOptions.debug
         });
     }

@@ -12,6 +12,13 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="./style.css">
 
+        <style>
+            label { font-weight: normal !important; }
+            .blue { background-color: darkblue; color: lightblue; }
+            .good-score { background-color: lightgreen; }
+            .bad-score { background-color: lightcoral; }
+        </style>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
@@ -23,27 +30,6 @@
 
         <script src="example.js"></script>
 
-        <style>
-            label {
-                font-weight: normal !important;
-            }
-
-            .blue {
-                background-color: darkblue;
-                color: lightblue;
-            }
-
-            .good-score {
-                background-color: lightgreen;
-                /*color: lightblue;*/
-            }
-
-            .bad-score {
-                background-color: lightcoral;
-                /*color: lightblue;*/
-            }
-
-        </style>
     </head>
 
     <body style="height: 100%; margin: 0px; padding: 0px;">

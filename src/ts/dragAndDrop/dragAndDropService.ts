@@ -220,12 +220,6 @@ export class DragAndDropService {
         return dropTargetEvent;
     }
 
-    private getDistanceBetweenEvents(event1: MouseEvent, event2: MouseEvent): number {
-        var diffX = Math.abs(event1.clientX - event2.clientX);
-        var diffY = Math.abs(event1.clientY - event2.clientY);
-        return Math.max(diffX, diffY);
-    }
-
     private positionGhost(event: MouseEvent): void {
         var ghostRect = this.eGhost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;

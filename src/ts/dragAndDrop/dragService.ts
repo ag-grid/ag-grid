@@ -3,6 +3,7 @@ import {Autowired} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
 import {PostConstruct} from "../context/context";
+import _ from '../utils';
 
 @Bean('dragService')
 export class DragService {
@@ -37,12 +38,22 @@ export class DragService {
 
         document.addEventListener('mousemove', this.onMouseMoveListener);
         document.addEventListener('mouseup', this.onMouseUpListener);
+
+        // see if we want to start dragging straight away
+        if (params.dragStartPixels===0) {
+            this.onMouseMove(mouseEvent);
+        }
     }
 
     private isEventNearStartEvent(event: MouseEvent): boolean {
+        // by default, we wait 4 pixels before starting the drag
+        var requiredPixelDiff = _.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
+        if (requiredPixelDiff===0) {
+            return false;
+        }
         var diffX = Math.abs(event.clientX - this.dragStartEvent.clientX);
         var diffY = Math.abs(event.clientY - this.dragStartEvent.clientY);
-        return Math.max(diffX, diffY) <= 4;
+        return Math.max(diffX, diffY) <= requiredPixelDiff;
     }
 
     private onMouseMove(mouseEvent: MouseEvent): void {
@@ -77,6 +88,7 @@ export class DragService {
 }
 
 export interface DragListenerParams {
+    dragStartPixels?: number,
     eElement: HTMLElement,
     onDragStart: (mouseEvent: MouseEvent)=>void,
     onDragStop: (mouseEvent: MouseEvent)=>void,

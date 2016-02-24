@@ -25,6 +25,7 @@ import {Autowired} from "./context/context";
 import {IRowModel} from "./rowControllers/iRowModel";
 import {SortController} from "./sortController";
 import PaginationController from "./rowControllers/paginationController";
+import {FocusedCellController} from "./focusedCellController";
 
 @Bean('gridApi')
 export class GridApi {
@@ -46,6 +47,7 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationController') private paginationController: PaginationController;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -324,7 +326,7 @@ export class GridApi {
     }
 
     public setFocusedCell(rowIndex:any, colId:any) {
-        this.gridCore.setFocusedCell(rowIndex, colId);
+        this.focusedCellController.setFocusedCell(rowIndex, colId);
     }
 
     public setHeaderHeight(headerHeight: number) {

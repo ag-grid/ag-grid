@@ -42,7 +42,7 @@ export class ComponentUtil {
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
-        'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
+        'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES

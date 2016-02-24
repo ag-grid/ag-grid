@@ -153,6 +153,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         return this.left;
     }
 
+    public getRight(): number {
+        return this.left + this.actualWidth;
+    }
+
     public setLeft(left: number) {
         if (this.left !== left) {
             this.left = left;

@@ -19,9 +19,9 @@ export class MenuList extends Component {
 
     private static SEPARATOR_TEMPLATE =
         '<div class="ag-menu-separator">' +
-        '  <span class="ag-menu-option-text"></span>' +
-        '  <span class="ag-menu-option-text"></span>' +
-        '  <span class="ag-menu-option-text"></span>' +
+        '  <span class="ag-menu-separator-cell"></span>' +
+        '  <span class="ag-menu-separator-cell"></span>' +
+        '  <span class="ag-menu-separator-cell"></span>' +
         '</div>';
 
     private activeMenuItemParams: MenuItemParams;

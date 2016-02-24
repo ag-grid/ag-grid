@@ -27,6 +27,7 @@ import {LoggerFactory} from "../logger";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {IRowModel} from "../rowControllers/iRowModel";
 import {PostConstruct} from "../context/context";
+import {FocusedCellController} from "../focusedCellController";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -46,6 +47,7 @@ export default class RowRenderer {
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private cellRendererMap: {[key: string]: any};
     private firstVirtualRenderedRow: number;
@@ -461,36 +463,6 @@ export default class RowRenderer {
         this.renderedRows[rowIndex] = renderedRow;
     }
 
-    // Separating out the rendering into frames was experimental, but it looked crap.
-    //private rowRenderIntervalId: number;
-    //
-    //private renderRows(): void {
-    //    var frameStartMillis = new Date().getTime();
-    //    var keys = Object.keys(this.renderedRows);
-    //    keys.sort( (a, b) => Number(a) - Number(b) );
-    //    var atLeastOne = false;
-    //    var count = 0;
-    //    for (var i = 0; i<keys.length; i++) {
-    //        var renderedRow = this.renderedRows[keys[i]];
-    //        if (!renderedRow.isRendered()) {
-    //            renderedRow.render();
-    //            atLeastOne = true;
-    //            var nowMillis = new Date().getTime();
-    //            var frameDuration = nowMillis - frameStartMillis;
-    //            count++;
-    //            // 16ms is 60 FPS, so if going slower than 60 FPS, we finish this frame
-    //            if (frameDuration>100) {
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    if (!atLeastOne) {
-    //        clearInterval(this.rowRenderIntervalId);
-    //        this.rowRenderIntervalId = null;
-    //    }
-    //    //console.log('count = ' + count);
-    //}
-
     public getRenderedNodes() {
         var renderedRows = this.renderedRows;
         return Object.keys(renderedRows).map(key => {
@@ -534,7 +506,7 @@ export default class RowRenderer {
         this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
 
         // this changes the css on the cell
-        this.focusCell(eCell, cellToFocus.rowIndex, cellToFocus.column.getColId(), cellToFocus.column.getColDef(), true);
+        this.focusedCellController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, true);
     }
 
     private getNextCellToFocus(key: any, lastCellToFocus: any) {
@@ -586,47 +558,9 @@ export default class RowRenderer {
         };
     }
 
-    // called by the renderedRow
-    public focusCell(eCell: any, rowIndex: number, colId: string, colDef: ColDef, forceBrowserFocus: any) {
-        // do nothing if cell selection is off
-        if (this.gridOptionsWrapper.isSuppressCellSelection()) {
-            return;
-        }
-
-        this.eParentsOfRows.forEach( function(rowContainer: HTMLElement) {
-            // remove any previous focus
-            _.querySelectorAll_replaceCssClass(rowContainer, '.ag-cell-focus', 'ag-cell-focus', 'ag-cell-no-focus');
-            _.querySelectorAll_replaceCssClass(rowContainer, '.ag-row-focus', 'ag-row-focus', 'ag-row-no-focus');
-
-            var selectorForCell = '[row="' + rowIndex + '"] [colId="' + colId + '"]';
-            _.querySelectorAll_replaceCssClass(rowContainer, selectorForCell, 'ag-cell-no-focus', 'ag-cell-focus');
-            var selectorForRow = '[row="' + rowIndex + '"]';
-            _.querySelectorAll_replaceCssClass(rowContainer, selectorForRow, 'ag-row-no-focus', 'ag-row-focus');
-        });
-
-        this.focusedCell = {rowIndex: rowIndex, colId: colId, node: this.rowModel.getRow(rowIndex), colDef: colDef};
-
-        // this puts the browser focus on the cell (so it gets key presses)
-        if (forceBrowserFocus) {
-            eCell.focus();
-        }
-
-        this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, this.focusedCell);
-    }
-
     // for API
     public getFocusedCell() {
         return this.focusedCell;
-    }
-
-    // called via API
-    public setFocusedCell(rowIndex: any, colIndex: any) {
-        var renderedRow = this.renderedRows[rowIndex];
-        var column = this.columnController.getAllDisplayedColumns()[colIndex];
-        if (renderedRow && column) {
-            var eCell = renderedRow.getCellForCol(column);
-            this.focusCell(eCell, rowIndex, colIndex, column.getColDef(), true);
-        }
     }
 
     // called by the cell, when tab is pressed while editing

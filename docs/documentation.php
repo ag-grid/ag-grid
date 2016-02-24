@@ -42,15 +42,11 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 40px;">
-        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
-            <img src="images/lab.png"/>
-        </a>
+        <img src="images/lab.png"/>
     </div>
     <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
-                What's cooking in the next version....
-            </a>
+        <div style="font-size: 20px; float: left;">
+            What's cooking in the next version....
         </div>
     </div>
 

@@ -17,6 +17,8 @@ import {Autowired} from "../context/context";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {PostConstruct} from "../context/context";
+import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {FocusedCellController} from "../focusedCellController";
 
 export default class RenderedCell {
 
@@ -31,6 +33,8 @@ export default class RenderedCell {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rangeSelectorController') private rangeSelectorController: RangeSelectorController;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -203,6 +207,45 @@ export default class RenderedCell {
         leftChangedListener();
     }
 
+    private addRangeSelectedListener(): void {
+        var inRangeLastTime = false;
+        var rangeSelectedListener = () => {
+            var rowInRange = this.rangeSelectorController.isRowInRange(this.rowIndex);
+            var columnInRange = this.rangeSelectorController.isColumnInRange(this.column);
+            var inRange = rowInRange && columnInRange;
+            if (inRangeLastTime !== inRange) {
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', inRange);
+                inRangeLastTime = inRange;
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        });
+        rangeSelectedListener();
+    }
+
+    private addCellFocusedListener(): void {
+        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+        var cellFocusedLastTime: boolean = null;
+        var cellFocusedListener = (event?: any) => {
+            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column);
+            if (cellFocused !== cellFocusedLastTime) {
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+                cellFocusedLastTime = cellFocused;
+            }
+            if (cellFocused && event && event.forceBrowserFocus) {
+                this.eGridCell.focus();
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        });
+        cellFocusedListener();
+    }
+
     private setWidthOnCell(): void {
         var widthChangedListener = () => {
             this.eGridCell.style.width = this.column.getActualWidth() + "px";
@@ -222,6 +265,8 @@ export default class RenderedCell {
         this.setLeftOnCell();
         this.setWidthOnCell();
         this.setPinnedClasses();
+        this.addRangeSelectedListener();
+        this.addCellFocusedListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
@@ -232,6 +277,7 @@ export default class RenderedCell {
         this.addClasses();
 
         this.addCellClickedHandler();
+        this.addMouseDownHandler();
         this.addCellDoubleClickedHandler();
         this.addCellContextMenuHandler();
 
@@ -303,7 +349,7 @@ export default class RenderedCell {
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
-        this.rowRenderer.focusCell(this.eGridCell, this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, forceBrowserFocus);
     }
 
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
@@ -432,27 +478,31 @@ export default class RenderedCell {
         return false;
     }
 
-    private addCellClickedHandler() {
-        var colDef = this.column.getColDef();
-        var that = this;
-        this.eGridCell.addEventListener("click", function (event: any) {
+    private addMouseDownHandler() {
+        this.eGridCell.addEventListener('mousedown', (event: any) => {
             // we pass false to focusCell, as we don't want the cell to focus
             // also get the browser focus. if we did, then the cellRenderer could
             // have a text field in it, for example, and as the user clicks on the
             // text field, the text field, the focus doesn't get to the text
             // field, instead to goes to the div behind, making it impossible to
             // select the text field.
-            if (!that.node.floating) {
-                that.focusCell(false);
+            if (!this.node.floating) {
+                this.focusCell(false);
             }
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
+        });
+    }
+
+    private addCellClickedHandler() {
+        var colDef = this.column.getColDef();
+        this.eGridCell.addEventListener("click", (event: any) => {
+            var agEvent = this.createEvent(event, this);
+            this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
             if (colDef.onCellClicked) {
                 colDef.onCellClicked(agEvent);
             }
 
-            if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
+            if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+                this.startEditing();
             }
         });
     }
@@ -719,7 +769,6 @@ export default class RenderedCell {
 
     private addClasses() {
         _.addCssClass(this.eGridCell, 'ag-cell');
-        _.addCssClass(this.eGridCell, 'ag-cell-no-focus');
         this.eGridCell.setAttribute("colId", this.column.getColId());
 
         if (this.node.group && this.node.footer) {

@@ -18,6 +18,8 @@ import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import ColumnChangeEvent from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
+import {RangeSelectorController} from "../enterprise/rangeSelectorController";
+import {FocusedCellController} from "../focusedCellController";
 
 export default class RenderedRow {
 
@@ -28,11 +30,12 @@ export default class RenderedRow {
     @Autowired('$compile') private $compile: any;
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     public ePinnedLeftRow: HTMLElement;
     public ePinnedRightRow: HTMLElement;
     public eBodyRow: HTMLElement;
-    private allRows: HTMLElement[];
+    private eLeftCenterAndRightRows: HTMLElement[];
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
@@ -99,10 +102,11 @@ export default class RenderedRow {
         this.setTopAndHeightCss();
 
         if (this.scope) {
-            this.allRows.forEach( row => this.$compile(row)(this.scope));
+            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
         }
 
         this.addRowSelectedListener();
+        this.addCellFocusedListener();
 
         this.addColumnListener();
     }
@@ -207,18 +211,38 @@ export default class RenderedRow {
     }
 
     private addRowSelectedListener(): void {
-        var rowSelectedListener = this.onRowSelected.bind(this);
+        var rowSelectedListener = () => {
+            var selected = this.rowNode.isSelected();
+            this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+        };
         this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         this.destroyFunctions.push(()=> {
             this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         });
     }
 
+    private addCellFocusedListener(): void {
+        var rowFocusedLastTime: boolean = null;
+        var rowFocusedListener = () => {
+            var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex);
+            if (rowFocused !== rowFocusedLastTime) {
+                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
+                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+                rowFocusedLastTime = rowFocused;
+            }
+        };
+        this.mainEventService.addEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
+        this.destroyFunctions.push(()=> {
+            this.mainEventService.removeEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
+        });
+        rowFocusedListener();
+    }
+
     private createContainers(): void {
         this.eBodyRow = this.createRowContainer();
         this.ePinnedLeftRow = this.createRowContainer();
         this.ePinnedRightRow = this.createRowContainer();
-        this.allRows = [this.eBodyRow, this.ePinnedLeftRow, this.ePinnedRightRow];
+        this.eLeftCenterAndRightRows = [this.eBodyRow, this.ePinnedLeftRow, this.ePinnedRightRow];
 
         this.eBodyContainer.appendChild(this.eBodyRow);
         this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
@@ -229,10 +253,10 @@ export default class RenderedRow {
         // if showing scrolls, position on the container
         if (!this.gridOptionsWrapper.isForPrint()) {
             var topPx = this.rowNode.rowTop + "px";
-            this.allRows.forEach( row => row.style.top = topPx);
+            this.eLeftCenterAndRightRows.forEach( row => row.style.top = topPx);
         }
         var heightPx = this.rowNode.rowHeight + 'px';
-        this.allRows.forEach( row => row.style.height = heightPx);
+        this.eLeftCenterAndRightRows.forEach( row => row.style.height = heightPx);
     }
 
     // adds in row and row-id attributes to the row
@@ -243,12 +267,12 @@ export default class RenderedRow {
         } else if (this.rowNode.floatingTop) {
             rowStr = 'ft-' + rowStr;
         }
-        this.allRows.forEach( row => row.setAttribute('row', rowStr) );
+        this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row', rowStr) );
 
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
             var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
-                this.allRows.forEach( row => row.setAttribute('row-id', businessKey) );
+                this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row-id', businessKey) );
             }
         }
     }
@@ -260,11 +284,6 @@ export default class RenderedRow {
 
     public removeEventListener(eventType: string, listener: Function): void {
         this.renderedRowEventService.removeEventListener(eventType, listener);
-    }
-
-    public onRowSelected(): void {
-        var selected = this.rowNode.isSelected();
-        this.allRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
     public softRefresh(): void {
@@ -414,7 +433,7 @@ export default class RenderedRow {
             if (typeof rowStyle === 'function') {
                 console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             } else {
-                this.allRows.forEach( row => _.addStylesToElement(row, rowStyle));
+                this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, rowStyle));
             }
         }
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
@@ -427,7 +446,7 @@ export default class RenderedRow {
                 $scope: this.scope
             };
             var cssToUseFromFunc = rowStyleFunc(params);
-            this.allRows.forEach( row => _.addStylesToElement(row, cssToUseFromFunc));
+            this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, cssToUseFromFunc));
         }
     }
 
@@ -602,7 +621,7 @@ export default class RenderedRow {
         }
 
         classes.forEach( (classStr: string) => {
-            this.allRows.forEach( row => _.addCssClass(row, classStr));
+            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
         });
     }
 }

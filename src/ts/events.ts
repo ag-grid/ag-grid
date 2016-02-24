@@ -1,6 +1,5 @@
 export class Events {
 
-
     /** A new set of columns has been entered, everything has potentially changed. */
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
     public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
@@ -32,6 +31,8 @@ export class Events {
     public static EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
 
     public static EVENT_FLOATING_ROW_DATA_CHANGED = 'floatingRowDataChanged';
+
+    public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
 
     public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
