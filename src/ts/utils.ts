@@ -173,6 +173,10 @@ export default class Utils {
         return !this.exists(value);
     }
 
+    static missingOrEmpty(value: any[]): boolean {
+        return this.missing(value) || value.length === 0;
+    }
+
     static exists(value: any): boolean {
         if (value===null || value===undefined || value==='') {
             return false;

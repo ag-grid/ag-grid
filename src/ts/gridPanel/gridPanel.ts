@@ -223,16 +223,12 @@ export default class GridPanel {
             return;
         }
         // right now, pinned is not needed here
-        var items = [
-            {container: this.ePinnedLeftColsViewport, pinned: Column.PINNED_LEFT},
-            {container: this.ePinnedRightColsViewport, pinned: Column.PINNED_RIGHT},
-            {container: this.eBodyViewport, pinned: null}
-        ];
+        var items = [this.ePinnedLeftColsViewport, this.ePinnedRightColsViewport, this.eBodyContainer];
 
         items.forEach( item => {
             this.dragService.addDragSource({
                 dragStartPixels: 0,
-                eElement: item.container,
+                eElement: item,
                 onDragStart: this.rangeSelectorController.onDragStart.bind(this.rangeSelectorController),
                 onDragStop: this.rangeSelectorController.onDragStop.bind(this.rangeSelectorController),
                 onDragging: this.rangeSelectorController.onDragging.bind(this.rangeSelectorController)
@@ -865,8 +861,16 @@ export default class GridPanel {
         return this.eBodyViewport.scrollTop;
     }
 
-    public getBodyViewportBoundingClientRect(): ClientRect {
+    public getBodyViewportClientRect(): ClientRect {
         return this.eBodyViewport.getBoundingClientRect();
+    }
+
+    public getPinnedLeftColsViewportClientRect(): ClientRect {
+        return this.ePinnedLeftColsViewport.getBoundingClientRect();
+    }
+
+    public getPinnedRightColsViewportClientRect(): ClientRect {
+        return this.ePinnedRightColsViewport.getBoundingClientRect();
     }
 
     public addVerticalScrollListener(listener: ()=>void): void {

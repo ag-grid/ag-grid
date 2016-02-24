@@ -54,6 +54,10 @@ include 'documentation_header.php';
 
     <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
 
+    <li>Bug fix: Text filter 'ends with' was not working correctly if search string appeared twice in the text.</li>
+
+    <li>Buf fix: forPrint was occasionally given 'Uncaught TypeError: Cannot read property 'appendChild' of undefined'. now fixed. </li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

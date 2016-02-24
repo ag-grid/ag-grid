@@ -61,6 +61,9 @@ export class RangeSelectorController {
         this.selectionChanged();
     }
 
+    // as the user is dragging outside of the panel, the div starts to scroll, which in turn
+    // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
+    // the selection my mimicking a new mouse event
     private onBodyScroll(event: Event): void {
         this.onDragging(this.lastMouseEvent);
     }
@@ -128,33 +131,72 @@ export class RangeSelectorController {
         }
     }
 
+    private getContainer(mouseEvent: MouseEvent): string {
+        var centerRect = this.gridPanel.getBodyViewportClientRect();
+
+        var mouseX = mouseEvent.clientX;
+        if (mouseX < centerRect.left && this.columnController.isPinningLeft()) {
+            return Column.PINNED_LEFT;
+        } else if (mouseX > centerRect.right && this.columnController.isPinningRight()) {
+            return Column.PINNED_RIGHT;
+        } else {
+            return null;
+        }
+    }
+
+    private getColumnsForContainer(container: string): Column[] {
+        switch (container) {
+            case Column.PINNED_LEFT: return this.columnController.getDisplayedLeftColumns();
+            case Column.PINNED_RIGHT: return this.columnController.getDisplayedRightColumns();
+            default: return this.columnController.getDisplayedCenterColumns();
+        }
+    }
+
+    private getXForContainer(container: string, mouseEvent: MouseEvent): number {
+        var containerX: number;
+        switch (container) {
+            case Column.PINNED_LEFT:
+                containerX = this.gridPanel.getPinnedLeftColsViewportClientRect().left;
+                break;
+            case Column.PINNED_RIGHT:
+                containerX = this.gridPanel.getPinnedRightColsViewportClientRect().left;
+                break;
+            default:
+                var centerRect = this.gridPanel.getBodyViewportClientRect();
+                var centerScroll = this.gridPanel.getHorizontalScrollPosition();
+                containerX = centerRect.left - centerScroll;
+        }
+        var result = mouseEvent.clientX - containerX;
+        return result;
+    }
+
     private getColumn(mouseEvent: MouseEvent): Column {
-        var allColumns = this.columnController.getDisplayedCenterColumns();
-        if (allColumns.length===0) {
+        if (this.columnController.isEmpty()) {
             return null;
         }
 
-        var clientRect = this.gridPanel.getBodyViewportBoundingClientRect();
-        var scrollX = this.gridPanel.getHorizontalScrollPosition();
-
-        var bodyX = mouseEvent.clientX - clientRect.left + scrollX;
+        var container = this.getContainer(mouseEvent);
+        var columns = this.getColumnsForContainer(container);
+        var containerX = this.getXForContainer(container, mouseEvent);
 
         var hoveringColumn: Column;
-        if (bodyX < 0) {
-            hoveringColumn = allColumns[0];
+        if (containerX < 0) {
+            hoveringColumn = columns[0];
         }
 
-        allColumns.forEach( column => {
-            var afterLeft = bodyX >= column.getLeft();
-            var beforeRight = bodyX <= column.getRight();
+        columns.forEach( column => {
+            var afterLeft = containerX >= column.getLeft();
+            var beforeRight = containerX <= column.getRight();
             if (afterLeft && beforeRight) {
                 hoveringColumn = column;
             }
         });
 
         if (!hoveringColumn) {
-            hoveringColumn = allColumns[allColumns.length - 1];
+            hoveringColumn = columns[columns.length - 1];
         }
+
+        console.log(`=> ${container} -> ${hoveringColumn ? hoveringColumn.getId() : null}`);
 
         return hoveringColumn;
     }
@@ -162,7 +204,7 @@ export class RangeSelectorController {
     private updateSelectedColumns(): void {
         this.selectedColumns = [];
 
-        var allDisplayedColumns = this.columnController.getAllColumns();
+        var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
         var firstIndex = allDisplayedColumns.indexOf(this.dragStartColumn);
         var lastIndex = allDisplayedColumns.indexOf(this.dragEndColumn);
@@ -179,7 +221,7 @@ export class RangeSelectorController {
     }
 
     private getRowIndex(mouseEvent: MouseEvent): number {
-        var clientRect = this.gridPanel.getBodyViewportBoundingClientRect();
+        var clientRect = this.gridPanel.getBodyViewportClientRect();
         var scrollY = this.gridPanel.getVerticalScrollPosition();
 
         var bodyY = mouseEvent.clientY - clientRect.top + scrollY;

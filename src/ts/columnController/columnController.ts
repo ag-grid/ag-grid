@@ -456,6 +456,10 @@ export class ColumnController {
         return this.allColumns;
     }
 
+    public isEmpty(): boolean {
+        return _.missingOrEmpty(this.allColumns);
+    }
+
     public setColumnVisible(key: Column|ColDef|String, visible: boolean): void {
         this.setColumnsVisible([key], visible);
     }
