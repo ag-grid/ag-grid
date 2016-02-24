@@ -83,7 +83,7 @@ export default class TextFilter implements Filter {
             case STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
             case ENDS_WITH:
-                var index = valueLowerCase.indexOf(this.filterText);
+                var index = valueLowerCase.lastIndexOf(this.filterText);
                 return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
             default:
                 // should never happen
