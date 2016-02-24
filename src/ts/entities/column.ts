@@ -7,6 +7,10 @@ import EventService from "../eventService";
 import ColumnGroup from "./columnGroup";
 import {ColumnController} from "../columnController/columnController";
 import _ from '../utils';
+import {Autowired} from "../context/context";
+import GridOptionsWrapper from "../gridOptionsWrapper";
+import {PostConstruct} from "../context/context";
+import ColumnUtils from "../columnController/columnUtils";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -44,6 +48,9 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
+
     private colDef: ColDef;
     private colId: any;
 
@@ -67,30 +74,35 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     private eventService: EventService = new EventService();
 
-    constructor(colDef: ColDef, actualWidth: any, colId: String, globalMinWidth: number, globalMaxWidth: number) {
+    constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
-        this.actualWidth = actualWidth;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
-        if (colDef.pinned === true || colDef.pinned === 'left') {
-            this.pinned = 'left';
-        } else if (colDef.pinned === 'right') {
-            this.pinned = 'right';
-        }
+    }
+
+    // this is done after constructor as it uses gridOptionsWrapper
+    @PostConstruct
+    public initialise(): void {
+        this.setPinned(this.colDef.pinned);
+
+        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
         if (this.colDef.minWidth) {
             this.minWidth = this.colDef.minWidth;
         } else {
-            this.minWidth = globalMinWidth;
+            this.minWidth = minColWidth;
         }
 
         if (this.colDef.maxWidth) {
             this.maxWidth = this.colDef.maxWidth;
         } else {
-            this.maxWidth = globalMaxWidth;
+            this.maxWidth = maxColWidth;
         }
+
+        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -176,6 +188,11 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setPinned(pinned: string|boolean): void {
+        // pinning is not allowed when doing 'forPrint'
+        if (this.gridOptionsWrapper.isForPrint()) {
+            return;
+        }
+
         if (pinned===true || pinned===Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
         } else if (pinned===Column.PINNED_RIGHT) {

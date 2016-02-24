@@ -240,13 +240,19 @@ export default class RenderedRow {
 
     private createContainers(): void {
         this.eBodyRow = this.createRowContainer();
-        this.ePinnedLeftRow = this.createRowContainer();
-        this.ePinnedRightRow = this.createRowContainer();
-        this.eLeftCenterAndRightRows = [this.eBodyRow, this.ePinnedLeftRow, this.ePinnedRightRow];
-
+        this.eLeftCenterAndRightRows = [this.eBodyRow];
         this.eBodyContainer.appendChild(this.eBodyRow);
-        this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
-        this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
+
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.ePinnedLeftRow = this.createRowContainer();
+            this.ePinnedRightRow = this.createRowContainer();
+
+            this.eLeftCenterAndRightRows.push(this.ePinnedLeftRow);
+            this.eLeftCenterAndRightRows.push(this.ePinnedRightRow);
+
+            this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
+            this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
+        }
     }
 
     private setTopAndHeightCss(): void {

@@ -29,6 +29,7 @@ import {Autowired} from "../context/context";
 import GridPanel from "../gridPanel/gridPanel";
 import {AbstractColDef} from "../entities/colDef";
 import {PostConstruct} from "../context/context";
+import {Context} from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -116,6 +117,7 @@ export class ColumnController {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('context') private context: Context;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -1052,10 +1054,10 @@ export class ColumnController {
 
         if (needAGroupColumn) {
             // if one provided by user, use it, otherwise create one
-            var groupColDef = this.gridOptionsWrapper.getGroupColumnDef();
-            if (!groupColDef) {
+            var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
+            if (!autoColDef) {
                 var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                groupColDef = {
+                autoColDef = {
                     headerName: localeTextFunc('group', 'Group'),
                     comparator: defaultGroupComparator,
                     cellRenderer: {
@@ -1064,13 +1066,11 @@ export class ColumnController {
                 };
             }
             // we never allow moving the group column
-            groupColDef.suppressMovable = true;
+            autoColDef.suppressMovable = true;
 
-            var groupColumnWidth = this.columnUtils.calculateColInitialWidth(groupColDef);
             var colId = 'ag-Grid-AutoColumn';
-            var minColWidth = this.gridOptionsWrapper.getMinColWidth();
-            var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
-            this.groupAutoColumn = new Column(groupColDef, groupColumnWidth, colId, minColWidth, maxColWidth);
+            this.groupAutoColumn = new Column(autoColDef, colId);
+            this.context.wireBean(this.groupAutoColumn);
         } else {
             this.groupAutoColumn = null;
         }

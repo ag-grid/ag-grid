@@ -11,6 +11,7 @@ import Column from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
+import {Context} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('balancedColumnTreeBuilder')
@@ -18,6 +19,7 @@ export default class BalancedColumnTreeBuilder {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('context') private context: Context;
 
     private logger: Logger;
 
@@ -102,9 +104,6 @@ export default class BalancedColumnTreeBuilder {
             return result;
         }
 
-        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
-
         abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
             this.checkForDeprecatedItems(abstractColDef);
             if (this.isColumnGroup(abstractColDef)) {
@@ -116,9 +115,9 @@ export default class BalancedColumnTreeBuilder {
                 result.push(originalGroup);
             } else {
                 var colDef = <ColDef> abstractColDef;
-                var width = this.columnUtils.calculateColInitialWidth(colDef);
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new Column(colDef, width, colId, minColWidth, maxColWidth);
+                var column = new Column(colDef, colId);
+                this.context.wireBean(column);
                 result.push(column);
             }
         });
