@@ -16,7 +16,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableFilter: true,
     enableSorting: true,
-    showToolPanel: true
+    showToolPanel: true,
+    rowSelection: 'multiple'
 };
 
 function getBooleanValue(cssSelector) {
@@ -29,6 +30,7 @@ function onBtExport() {
         skipFooters: getBooleanValue('#skipFooters'),
         skipGroups: getBooleanValue('#skipGroups'),
         allColumns: getBooleanValue('#allColumns'),
+        onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value,
         columnSeparator: document.querySelector('#columnSeparator').value
     };

@@ -519,9 +519,13 @@ export default class RenderedRow {
         }
 
         if (this.rowNode.isSelected()) {
-            var deselectAllowed = multiSelectKeyPressed && gridOptionsWrapper.isRowDeselection();
-            if (deselectAllowed) {
-                this.rowNode.setSelected(false);
+            if (multiSelectKeyPressed) {
+                if (gridOptionsWrapper.isRowDeselection()) {
+                    this.rowNode.setSelected(false);
+                }
+            } else {
+                // selected with no multi key, must make sure anything else is unselected
+                this.rowNode.setSelected(true, true);
             }
         } else {
             this.rowNode.setSelected(true, !multiSelectKeyPressed);

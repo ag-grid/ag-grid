@@ -38,8 +38,8 @@ include '../documentation_header.php';
         <li><b>customFooter</b>: Same as customHeader, but for the end of the file.</li>
         <li><b>allColumns</b>: If true, all columns will be exported in the order they appear in columnDefs.
             Otherwise only the columns currently showing the in grid, and in that order, are exported.</li>
+        <li><b>onlySelected</b>: Only export selected rows.</li>
         <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
-
     </ul>
 
     <p>

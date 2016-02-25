@@ -9,6 +9,11 @@ import GridOptionsWrapper from "./gridOptionsWrapper";
 import {ColDef} from "./entities/colDef";
 import {ColumnController} from "./columnController/columnController";
 
+export interface FocusedCell {
+    rowIndex: number,
+    column: Column
+}
+
 @Bean('focusedCellController')
 export class FocusedCellController {
 
@@ -27,12 +32,21 @@ export class FocusedCellController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
+
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
     }
 
     public clearFocusedCell(): void {
         this.focusedRowIndex = null;
         this.focusedColumn = null;
         this.onCellFocused(false);
+    }
+
+    public getFocusedCell(): FocusedCell {
+        return {
+            column: this.focusedColumn,
+            rowIndex: this.focusedRowIndex
+        }
     }
 
     public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, forceBrowserFocus = false): void {

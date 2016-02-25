@@ -7,6 +7,7 @@ export * from './dist/lib/columnController/columnController';
 export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
 export * from './dist/lib/functions';
+export * from './dist/lib/focusedCellController';
 
 export * from './dist/lib/entities/gridOptions';
 export * from './dist/lib/entities/colDef';

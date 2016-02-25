@@ -268,7 +268,7 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getFocusedCell()</th>
-            <td>Returns the focused cell as an object containing the rowIndex, colIndex and cell node.</td>
+            <td>Returns the focused cell as an object containing the rowIndex and column.</td>
         </tr>
         <tr>
             <th>setFocusedCell(rowIndex, colIndex)</th>

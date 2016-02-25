@@ -52,7 +52,30 @@ export class RangeController implements IRangeController {
         return this.cellRanges;
     }
 
+    public isEmpty(): boolean {
+        return _.missingOrEmpty(this.cellRanges);
+    }
+
+    public isMoreThanOneCell(): boolean {
+        if (_.missingOrEmpty(this.cellRanges)) {
+            return false;
+        } else {
+            if (this.cellRanges.length>1) {
+                return true;
+            } else {
+                var onlyRange = this.cellRanges[0];
+                var onlyOneCellInRange =
+                    onlyRange.columnStart === onlyRange.columnEnd &&
+                    onlyRange.rowStart === onlyRange.rowEnd;
+                return !onlyOneCellInRange;
+            }
+        }
+    }
+
     public clearSelection(): void {
+        if (_.missing(this.cellRanges)) {
+            return;
+        }
         this.activeRange = null;
         this.cellRanges = null;
         this.dispatchChangedChangedEvent(true, false);

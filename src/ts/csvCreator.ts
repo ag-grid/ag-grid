@@ -9,6 +9,7 @@ import {GridCore} from "./gridCore";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import GridOptionsWrapper from "./gridOptionsWrapper";
+
 var LINE_SEPARATOR = '\r\n';
 
 export interface CsvExportParams {
@@ -20,6 +21,7 @@ export interface CsvExportParams {
     customFooter?: string;
     allColumns?: boolean;
     columnSeparator?: string;
+    onlySelected?: boolean;
 }
 
 @Bean('csvCreator')
@@ -68,6 +70,7 @@ export class CsvCreator {
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
+        var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
 
         var columnsToExport: Column[];
@@ -105,6 +108,8 @@ export class CsvCreator {
 
             if (skipFooters && node.footer) { return; }
 
+            if (onlySelected && !node.isSelected()) { return; }
+
             columnsToExport.forEach( (column: Column, index: number)=> {
                 var valueForCell: any;
                 if (node.group && index === 0) {
@@ -141,7 +146,7 @@ export class CsvCreator {
     }
 
     // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-    private escape(value: any): string {
+    public escape(value: any): string {
         if (value === null || value === undefined) {
             return '';
         }

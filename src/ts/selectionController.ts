@@ -151,6 +151,16 @@ export default class SelectionController {
         this.rowModel = rowModel;
     }
 
+    public isEmpty(): boolean {
+        var count = 0;
+        _.iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
+            if (rowNode) {
+                count++;
+            }
+        });
+        return count === 0;
+    }
+
     public deselectAllRowNodes() {
         _.iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
             if (rowNode) {

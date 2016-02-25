@@ -50,6 +50,7 @@ import {SortController} from "./sortController";
 import {ColumnApi} from "./columnController/columnController";
 import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
+import {ClipboardService} from "./enterprise/clipboardService";
 
 export class Grid {
 
@@ -69,7 +70,7 @@ export class Grid {
 
         this.context = new Context({
             //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController],
+            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService],
             seed: {
                 enterprise: true,
                 gridOptions: gridOptions,

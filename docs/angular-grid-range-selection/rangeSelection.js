@@ -37,7 +37,7 @@ function onRangeSelectionChanged(event) {
     // set range count to the number of ranges selected
     lbRangeCount.innerHTML = rangeSelections.length;
 
-    // consider the frist range only. if doing multi select, disregard the others
+    // consider the first range only. if doing multi select, disregard the others
     var firstRange = rangeSelections[0];
 
     var sum = 0;

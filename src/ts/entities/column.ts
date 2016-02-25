@@ -11,6 +11,7 @@ import {Autowired} from "../context/context";
 import GridOptionsWrapper from "../gridOptionsWrapper";
 import {PostConstruct} from "../context/context";
 import ColumnUtils from "../columnController/columnUtils";
+import {RowNode} from "./rowNode";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -111,6 +112,29 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public removeEventListener(eventType: string, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
+    }
+
+    public isCellEditable(rowNode: RowNode): boolean {
+        // if boolean set, then just use it
+        if (typeof this.colDef.editable === 'boolean') {
+            return <boolean> this.colDef.editable;
+        }
+
+        // if function, then call the function to find out
+        if (typeof this.colDef.editable === 'function') {
+            var params = {
+                node: rowNode,
+                column: this,
+                colDef: this.colDef,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            var editableFunc = <Function>this.colDef.editable;
+            return editableFunc(params);
+        }
+
+        return false;
     }
 
     public setMoving(moving: boolean) {

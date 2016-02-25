@@ -173,7 +173,7 @@ export default class Utils {
         return !this.exists(value);
     }
 
-    static missingOrEmpty(value: any[]): boolean {
+    static missingOrEmpty(value: any[]|string): boolean {
         return this.missing(value) || value.length === 0;
     }
 
@@ -486,6 +486,10 @@ export default class Utils {
             // are a mix of selected and unselected
             eCheckbox.indeterminate = true;
         }
+    }
+
+    static eventCtrlAnd(event: KeyboardEvent, character: number): boolean {
+        return event.which == character && (event.ctrlKey || event.metaKey)
     }
 }
 

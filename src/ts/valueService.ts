@@ -8,6 +8,9 @@ import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
 import Column from "./entities/column";
+import _ from './utils';
+import {Events} from "./events";
+import EventService from "./eventService";
 
 @Bean('valueService')
 export default class ValueService {
@@ -15,6 +18,7 @@ export default class ValueService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
 
     private suppressDotNotation: boolean;
 
@@ -74,10 +78,53 @@ export default class ValueService {
         }
     }
 
-    public setValueUsingField(data: any, field: string, newValue: any): void {
-        if (!field || !data) {
+    public setValue(rowNode: RowNode, column: Column, newValue: any): void {
+        if (!rowNode || !column) {
             return;
         }
+        // this will only happen if user is trying to paste into a group row, which doesn't make sense
+        // the user should not be trying to paste into group rows
+        var data = rowNode.data;
+        if (_.missing(data)) {
+            return;
+        }
+
+        var field = column.getColDef().field;
+        var newValueHandler = column.getColDef().newValueHandler;
+
+        // need either a field or a newValueHandler for this to work
+        if (_.missing(field) && _.missing(newValueHandler)) {
+            return;
+        }
+
+        var paramsForCallbacks = {
+            node: rowNode,
+            data: rowNode.data,
+            oldValue: this.getValue(column, rowNode),
+            newValue: newValue,
+            colDef: column.getColDef(),
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (newValueHandler) {
+            newValueHandler(paramsForCallbacks);
+        } else {
+            this.setValueUsingField(data, field, newValue);
+        }
+
+        // reset quick filter on this row
+        rowNode.resetQuickFilterAggregateText();
+
+        paramsForCallbacks.newValue = this.getValue(column, rowNode);
+
+        if (typeof column.getColDef().onCellValueChanged === 'function') {
+            column.getColDef().onCellValueChanged(paramsForCallbacks);
+        }
+        this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+    }
+
+    private setValueUsingField(data: any, field: string, newValue: any): void {
         // if no '.', then it's not a deep value
         if (this.suppressDotNotation || field.indexOf('.')<0) {
             data[field] = newValue;

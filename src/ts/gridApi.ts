@@ -28,6 +28,7 @@ import PaginationController from "./rowControllers/paginationController";
 import {FocusedCellController} from "./focusedCellController";
 import {IRangeController} from "./interfaces/iRangeController";
 import {RangeSelection} from "./interfaces/iRangeController";
+import {FocusedCell} from "./focusedCellController";
 
 @Bean('gridApi')
 export class GridApi {
@@ -324,8 +325,8 @@ export class GridApi {
         return this.filterManager.getFilterModel();
     }
 
-    public getFocusedCell() {
-        return this.rowRenderer.getFocusedCell();
+    public getFocusedCell(): FocusedCell {
+        return this.focusedCellController.getFocusedCell();
     }
 
     public setFocusedCell(rowIndex:any, colId:any) {

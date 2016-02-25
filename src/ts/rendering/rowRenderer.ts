@@ -53,13 +53,6 @@ export default class RowRenderer {
     private firstVirtualRenderedRow: number;
     private lastVirtualRenderedRow: number;
 
-    private focusedCell: {
-        rowIndex: number,
-        colId: string,
-        node: RowNode,
-        colDef: ColDef
-    };
-
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
     private renderedRows: {[key: string]: RenderedRow} = {};
@@ -226,6 +219,7 @@ export default class RowRenderer {
 
     public refreshView(refreshFromIndex?: any) {
         this.logger.log('refreshView');
+
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
             this.eBodyContainer.style.height = containerHeight + "px";
@@ -338,11 +332,6 @@ export default class RowRenderer {
         rowsToRemove.forEach(function (indexToRemove: any) {
             if (indexToRemove >= realFromIndex) {
                 that.unbindVirtualRow(indexToRemove);
-
-                // if the row was last to have focus, we remove the fact that it has focus
-                if (that.focusedCell && that.focusedCell.rowIndex == indexToRemove) {
-                    that.focusedCell = null;
-                }
             }
         });
     }
@@ -556,11 +545,6 @@ export default class RowRenderer {
             rowIndex: nextRowToFocus,
             column: nextColumnToFocus
         };
-    }
-
-    // for API
-    public getFocusedCell() {
-        return this.focusedCell;
     }
 
     // called by the cell, when tab is pressed while editing

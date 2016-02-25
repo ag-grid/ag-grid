@@ -357,40 +357,14 @@ export default class RenderedCell {
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
         this.editingCell = false;
         var newValue = eInput.value;
-        var colDef = this.column.getColDef();
 
         //If we don't remove the blur listener first, we get:
         //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
         eInput.removeEventListener('blur', blurListener);
 
         if (!reset) {
-            var paramsForCallbacks = {
-                node: this.node,
-                data: this.node.data,
-                oldValue: this.node.data[colDef.field],
-                newValue: newValue,
-                rowIndex: this.rowIndex,
-                colDef: colDef,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-
-            if (colDef.newValueHandler) {
-                colDef.newValueHandler(paramsForCallbacks);
-            } else {
-                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
-            }
-            // reset quick filter on this row
-            this.node.resetQuickFilterAggregateText();
-
-            // at this point, the value has been updated
+            this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
-
-            paramsForCallbacks.newValue = this.value;
-            if (typeof colDef.onCellValueChanged === 'function') {
-                colDef.onCellValueChanged(paramsForCallbacks);
-            }
-            this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
         }
 
         _.removeAllChildren(this.eGridCell);
@@ -464,20 +438,7 @@ export default class RenderedCell {
             return false;
         }
 
-        // if boolean set, then just use it
-        var colDef = this.column.getColDef();
-        if (typeof colDef.editable === 'boolean') {
-            return colDef.editable;
-        }
-
-        // if function, then call the function to find out
-        if (typeof colDef.editable === 'function') {
-            var params = this.createParams();
-            var editableFunc = <Function>colDef.editable;
-            return editableFunc(params);
-        }
-
-        return false;
+        return this.column.isCellEditable(this.node);
     }
 
     private addMouseDownHandler() {

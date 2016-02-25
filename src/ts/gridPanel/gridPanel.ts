@@ -19,6 +19,10 @@ import {PostConstruct} from "../context/context";
 import {DragService} from "../dragAndDrop/dragService";
 import Column from "../entities/column";
 import {IRangeController} from "../interfaces/iRangeController";
+import Constants from "../constants";
+import SelectionController from "../selectionController";
+import {ClipboardService} from "../enterprise/clipboardService";
+import {CsvCreator} from "../csvCreator";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -99,6 +103,9 @@ export default class GridPanel {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('clipboardService') private clipboardService: ClipboardService;
+    @Autowired('csvCreator') private csvCreator: CsvCreator;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -193,8 +200,11 @@ export default class GridPanel {
         this.showPinnedColContainersIfNeeded();
         this.sizeHeaderAndBody();
         this.disableBrowserDragging();
+        this.addShortcutKeyListeners();
     }
 
+    // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
+    // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
         this.eRoot.addEventListener('dragstart', (event: MouseEvent)=> {
             event.preventDefault();
@@ -236,6 +246,43 @@ export default class GridPanel {
                 onDragging: this.rangeController.onDragging.bind(this.rangeController)
             });
         });
+    }
+
+    private addShortcutKeyListeners(): void {
+        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer];
+        containers.forEach( (container)=> {
+            container.addEventListener('keydown', (event)=> {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (event.which) {
+                        case Constants.KEY_A: return this.onCtrlAndA(event);
+                        case Constants.KEY_C: return this.onCtrlAndC(event);
+                        case Constants.KEY_V: return this.onCtrlAndV(event);
+                    }
+                }
+            });
+        })
+    }
+
+    private onCtrlAndA(event: KeyboardEvent): boolean {
+        if (this.gridOptionsWrapper.isRowSelectionMulti()) {
+            this.selectionController.selectAllRowNodes();
+        }
+        event.preventDefault();
+        return false;
+    }
+
+    private onCtrlAndC(event: KeyboardEvent): boolean {
+        if (!this.clipboardService) { return; }
+        this.clipboardService.copyToClipboard();
+        event.preventDefault();
+        return false;
+    }
+
+    private onCtrlAndV(event: KeyboardEvent): boolean {
+        if (!this.clipboardService) { return; }
+        this.clipboardService.pasteFromClipboard();
+        //event.preventDefault();
+        return false;
     }
 
     public getPinnedLeftFloatingTop(): HTMLElement {

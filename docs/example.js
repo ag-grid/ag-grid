@@ -132,7 +132,7 @@ var gridOptions = {
     groupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
-    //showToolPanel: true,
+    showToolPanel: true,
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
     //groupSuppressAutoColumn: true,
@@ -199,9 +199,9 @@ var gridOptions = {
     },
     onGridReady: function(event) {
         console.log('Callback onGridReady: api = ' + event.api);
-        //event.api.addGlobalListener(function(type, event) {
-        //    console.log('event ' + type);
-        //});
+        event.api.addGlobalListener(function(type, event) {
+            console.log('event ' + type);
+        });
     },
     onGridSizeChanged: function(event) {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
@@ -211,6 +211,47 @@ var gridOptions = {
     },
     onRangeSelectionChanged: function(event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
+
+/*        var rangeSelections = gridOptions.api.getRangeSelections();
+
+        // if no selection, clear all the reuslts and do nothing more
+        if (!rangeSelections || rangeSelections.length===0) {
+            return;
+        }
+
+        // consider the first range only. if doing multi select, disregard the others
+        var firstRange = rangeSelections[0];
+
+        // get starting and ending row, remember rowEnd could be before rowStart
+        var startRow = Math.min(firstRange.rowStart, firstRange.rowEnd);
+        var endRow = Math.max(firstRange.rowStart, firstRange.rowEnd);
+
+        var result = '';
+        for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
+            firstRange.columns.forEach( function(column, index) {
+                var rowModel = gridOptions.api.getModel();
+                var rowNode = rowModel.getRow(rowIndex);
+                var value = gridOptions.api.getValue(column, rowNode);
+                if (index!==0) {
+                    result += '\t';
+                }
+                result += '"'+value+'"';
+            });
+            result += '\r\n';
+        }
+
+        //var eInput = document.createElement('input');
+        var eInput = document.querySelector('#myText');
+        eInput.value = result;
+        eInput.select();
+
+        try {
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
+        } catch (err) {
+            console.log('Oops, unable to copy');
+        }*/
     }
 };
 
@@ -529,7 +570,13 @@ var COUNTRY_CODES = {
 };
 
 function numberNewValueHandler(params) {
-    var valueAsNumber = parseFloat(params.newValue);
+    var newValue = params.newValue;
+    var valueAsNumber;
+    if (newValue===null || newValue===undefined || newValue==='') {
+        valueAsNumber = null;
+    } else {
+        valueAsNumber = parseFloat(params.newValue);
+    }
     var field = params.colDef.field;
     var data = params.data;
     data[field] = valueAsNumber;
