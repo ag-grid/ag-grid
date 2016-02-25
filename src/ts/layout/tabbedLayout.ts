@@ -60,7 +60,7 @@ export class TabbedLayout {
 
     public showFirstItem(): void {
         if (this.items.length>0) {
-            this.showItem(this.items[0]);
+            this.showItemWrapper(this.items[0]);
         }
     }
 
@@ -77,10 +77,22 @@ export class TabbedLayout {
         };
         this.items.push(wrapper);
 
-        eHeaderButton.addEventListener('click', this.showItem.bind(this, wrapper));
+        eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     }
 
-    private showItem(wrapper: TabbedItemWrapper): void {
+    public showItem(tabbedItem: TabbedItem): void {
+        var itemWrapper = _.find(this.items, (itemWrapper)=> {
+            return itemWrapper.tabbedItem === tabbedItem;
+        });
+        if (itemWrapper) {
+            this.showItemWrapper(itemWrapper);
+        }
+    }
+
+    private showItemWrapper(wrapper: TabbedItemWrapper): void {
+        if (this.params.onItemClicked) {
+            this.params.onItemClicked({item: wrapper.tabbedItem});
+        }
         if (this.activeItem === wrapper) {
             _.callIfPresent(this.params.onActiveItemClicked);
             return;
@@ -109,6 +121,7 @@ export class TabbedLayout {
 export interface TabbedLayoutParams {
     items: TabbedItem[],
     cssClass?: string,
+    onItemClicked?: Function
     onActiveItemClicked?: Function
 }
 

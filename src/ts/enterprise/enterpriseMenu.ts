@@ -16,6 +16,7 @@ import {GridApi} from "../gridApi";
 import {MenuList} from "./../widgets/menuList";
 import {MenuItem} from "./../widgets/menuItem";
 import {PostConstruct} from "../context/context";
+import EventService from "../eventService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -25,9 +26,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
 
+    private lastSelectedTab: string;
+
     public showMenu(column: Column, eventSource: HTMLElement): void {
 
-        var menu = new EnterpriseMenu(column);
+        var menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
 
         var eMenuGui =  menu.getGui();
@@ -51,11 +54,22 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             hidePopup: hidePopup,
             eventSource: eventSource
         });
+
+        menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
+            console.log('saved ' + event.key);
+            this.lastSelectedTab = event.key
+        } );
     }
 
 }
 
 export class EnterpriseMenu {
+
+    public static EVENT_TAB_SELECTED = 'tabSelected';
+
+    public static TAB_FILTER = 'filter';
+    public static TAB_GENERAL = 'general';
+    public static TAB_COLUMNS = 'columns';
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -68,9 +82,21 @@ export class EnterpriseMenu {
     private mainMenuList: MenuList;
 
     private columnSelectPanel: ColumnSelectPanel;
+    private eventService = new EventService();
 
-    constructor(column: Column) {
+    private tabItemFilter: TabbedItem;
+    private tabItemGeneral: TabbedItem;
+    private tabItemColumns: TabbedItem;
+
+    private initialSelection: string;
+
+    constructor(column: Column, initialSelection: string) {
         this.column = column;
+        this.initialSelection = initialSelection;
+    }
+
+    public addEventListener(event: string, listener: Function): void {
+        this.eventService.addEventListener(event, listener);
     }
 
     public getMinWidth(): number {
@@ -79,17 +105,55 @@ export class EnterpriseMenu {
 
     @PostConstruct
     public init(): void {
+
+        this.createGeneralPanel();
+        this.createFilterPanel();
+        this.createColumnsPanel();
+
         var tabItems: TabbedItem[] = [
-            this.createGeneralPanel(),
-            this.createFilterPanel(),
-            this.createColumnsPanel()
+            this.tabItemGeneral,
+            this.tabItemFilter,
+            this.tabItemColumns
         ];
 
         this.tabbedLayout = new TabbedLayout({
             items: tabItems,
             cssClass: 'ag-menu',
-            onActiveItemClicked: this.onHidePopup.bind(this)
+            onActiveItemClicked: this.onHidePopup.bind(this),
+            onItemClicked: this.onTabItemClicked.bind(this)
         });
+    }
+
+    private showTabBasedOnPreviousSelection(): void {
+        // show the tab the user was on last time they had a menu open
+        if (this.tabItemColumns && this.initialSelection===EnterpriseMenu.TAB_COLUMNS) {
+            console.log('showing columns');
+            this.tabbedLayout.showItem(this.tabItemColumns);
+        }
+        else if (this.tabItemFilter&& this.initialSelection===EnterpriseMenu.TAB_FILTER) {
+            console.log('showing filter');
+            this.tabbedLayout.showItem(this.tabItemFilter);
+        }
+        else if (this.tabItemGeneral && this.initialSelection===EnterpriseMenu.TAB_GENERAL) {
+            console.log('showing general');
+            this.tabbedLayout.showItem(this.tabItemGeneral);
+        }
+        else {
+            console.log('showing first');
+            this.tabbedLayout.showFirstItem();
+        }
+    }
+
+    private onTabItemClicked(event: any): void {
+        var key: string;
+        switch (event.item) {
+            case this.tabItemColumns: key = EnterpriseMenu.TAB_COLUMNS; break;
+            case this.tabItemFilter: key = EnterpriseMenu.TAB_FILTER; break;
+            case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
+        }
+        if (key) {
+            this.eventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, {key: key});
+        }
     }
 
     public destroy(): void {
@@ -178,7 +242,7 @@ export class EnterpriseMenu {
         return cMenuList;
     }
 
-    private createGeneralPanel(): TabbedItem {
+    private createGeneralPanel(): void {
 
         this.mainMenuList = new MenuList();
         this.context.wireBean(this.mainMenuList);
@@ -246,7 +310,7 @@ export class EnterpriseMenu {
 
         this.mainMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
-        return {
+        this.tabItemGeneral = {
             title: svgFactory.createMenuSvg(),
             body: this.mainMenuList.getGui()
         };
@@ -256,7 +320,7 @@ export class EnterpriseMenu {
         this.hidePopupFunc();
     }
 
-    private createFilterPanel(): TabbedItem {
+    private createFilterPanel(): void {
 
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
@@ -265,14 +329,14 @@ export class EnterpriseMenu {
             afterFilterAttachedCallback = filterWrapper.filter.afterGuiAttached.bind(filterWrapper.filter);
         }
 
-        return {
+        this.tabItemFilter = {
             title: svgFactory.createFilterSvg(),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback
         };
     }
 
-    private createColumnsPanel(): TabbedItem {
+    private createColumnsPanel(): void {
 
         var eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
@@ -282,14 +346,14 @@ export class EnterpriseMenu {
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
-        return {
+        this.tabItemColumns = {
             title: svgFactory.createColumnsIcon(),
             body: eWrapperDiv
         };
     }
 
     public afterGuiAttached(params: any): void {
-        this.tabbedLayout.showFirstItem();
+        this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
     }
 
