@@ -24,4 +24,8 @@ export default class Constants {
 
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
+
+    static ALWAYS = 'always';
+    static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
+
 }

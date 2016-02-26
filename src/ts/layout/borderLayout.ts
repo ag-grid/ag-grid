@@ -252,6 +252,13 @@ export default class BorderLayout {
         this.doLayout();
     }
 
+    public setNorthVisible(visible: any) {
+        if (this.eNorthWrapper) {
+            this.eNorthWrapper.style.display = visible ? '' : 'none';
+        }
+        this.doLayout();
+    }
+
     private setupOverlays(): void {
         // if no overlays, just remove the panel
         if (!this.overlays) {

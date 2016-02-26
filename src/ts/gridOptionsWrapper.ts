@@ -98,6 +98,7 @@ export default class GridOptionsWrapper {
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
+    public getRowGroupPanelShow() { return this.gridOptions.rowGroupPanelShow; }
     public isAngularCompileRows() { return isTrue(this.gridOptions.angularCompileRows); }
     public isAngularCompileFilters() { return isTrue(this.gridOptions.angularCompileFilters); }
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }

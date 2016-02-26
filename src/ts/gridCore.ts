@@ -68,7 +68,7 @@ export class GridCore {
     private finished: boolean;
     private doingVirtualPaging: boolean;
 
-    private eRootPanel: any;
+    private eRootPanel: BorderLayout;
     private toolPanelShowing: boolean;
 
     private windowResizeListener: EventListener;
@@ -131,7 +131,27 @@ export class GridCore {
 
         this.popupService.setPopupParent(this.eRootPanel.getGui());
 
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+
+        this.onRowGroupChanged();
+
         this.logger.log('ready');
+    }
+
+    private onRowGroupChanged(): void {
+        if (!this.rowGroupPanel) { return; }
+
+        var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
+
+        if (rowGroupPanelShow===Constants.ALWAYS) {
+            this.eRootPanel.setNorthVisible(true);
+        } else if (rowGroupPanelShow===Constants.ONLY_WHEN_GROUPING) {
+            var grouping = !this.columnController.isRowGroupEmpty();
+            this.eRootPanel.setNorthVisible(grouping);
+        } else {
+            this.eRootPanel.setNorthVisible(false);
+        }
     }
 
     public agApplicationBoot(): void {

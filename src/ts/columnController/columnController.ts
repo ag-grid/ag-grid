@@ -460,6 +460,10 @@ export class ColumnController {
         return _.missingOrEmpty(this.allColumns);
     }
 
+    public isRowGroupEmpty(): boolean {
+        return _.missingOrEmpty(this.rowGroupColumns);
+    }
+
     public setColumnVisible(key: Column|ColDef|String, visible: boolean): void {
         this.setColumnsVisible([key], visible);
     }

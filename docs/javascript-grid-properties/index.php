@@ -299,9 +299,14 @@ include '../documentation_header.php';
             <td>Set to true to enable range selection.</td>
         </tr>
         <tr>
+            <th>rowGroupPanelShow</th>
+            <td>When to show the 'row group panel' (where you drag rows to group). Default
+                is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
+        </tr>
+        <tr>
             <th>suppressEnterprise</th>
             <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
-            here in case someone is looking at the code and wondering.</td>
+                here in case someone is looking at the code and wondering.</td>
         </tr>
 
     </table>
