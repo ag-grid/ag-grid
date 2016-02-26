@@ -68,9 +68,12 @@ export class Grid {
         var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
         var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
 
+        var overrideBeans = gridOptions.suppressEnterprise ?
+            null :
+            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService];
+
         this.context = new Context({
-            //overrideBeans: null,
-            overrideBeans: [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService],
+            overrideBeans: overrideBeans,
             seed: {
                 enterprise: true,
                 gridOptions: gridOptions,

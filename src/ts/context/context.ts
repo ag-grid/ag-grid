@@ -129,9 +129,9 @@ export class Context {
 
         var beanName = this.getBeanName(bean);
 
-        _.iterateObject(attributes, (attribute: string, otherBeanName: string) => {
-            var otherBean = this.lookupBeanInstance(beanName, otherBeanName);
-            bean[attribute] = otherBean;
+        _.iterateObject(attributes, (attributeName: string, attribute: any) => {
+            var otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+            bean[attributeName] = otherBean;
         });
     }
 
@@ -171,18 +171,20 @@ export class Context {
         return beansList;
     }
 
-    private lookupBeanInstance(wiringBean: string, beanName: string): any {
+    private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
         if (beanName === 'context') {
             return this;
         } else if (this.contextParams.seed && this.contextParams.seed.hasOwnProperty(beanName)) {
             return this.contextParams.seed[beanName];
         } else {
             var beanEntry = this.beans[beanName];
-            if (!beanEntry) {
-                console.error('ag-Grid: unable to find bean reference ' + beanName + ' while initialising ' + wiringBean);
-                return null;
+            if (beanEntry) {
+                return beanEntry.beanInstance;
             }
-            return beanEntry.beanInstance;
+            if (!optional) {
+                console.error('ag-Grid: unable to find bean reference ' + beanName + ' while initialising ' + wiringBean);
+            }
+            return null;
         }
     }
 
@@ -249,21 +251,32 @@ export function Bean(beanName: string): Function {
 }
 
 export function Autowired(name?: string): Function {
-    return (classPrototype: any, methodOrAttributeName: string, index: number) => {
+    return autowiredFunc.bind(this, name, false);
+}
 
-        if (name===null) {
-            console.error('ag-Grid: Autowired name should not be null');
-            return;
-        }
-        if (typeof index !== 'number') {
-            // it's an attribute on the class
-            var props = getOrCreateProps(classPrototype);
-            if (!props.agClassAttributes) {
-                props.agClassAttributes = {};
-            }
-            props.agClassAttributes[methodOrAttributeName] = name;
-        }
+export function Optional(name?: string): Function {
+    return autowiredFunc.bind(this, name, true);
+}
 
+function autowiredFunc(name: string, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number) {
+
+    if (name===null) {
+        console.error('ag-Grid: Autowired name should not be null');
+        return;
+    }
+    if (typeof index === 'number') {
+        console.error('ag-Grid: Autowired should be on an attribute');
+        return;
+    }
+
+    // it's an attribute on the class
+    var props = getOrCreateProps(classPrototype);
+    if (!props.agClassAttributes) {
+        props.agClassAttributes = {};
+    }
+    props.agClassAttributes[methodOrAttributeName] = {
+        beanName: name,
+        optional: optional
     };
 }
 

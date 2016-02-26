@@ -29,6 +29,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {IRangeController} from "./interfaces/iRangeController";
 import {RangeSelection} from "./interfaces/iRangeController";
 import {FocusedCell} from "./focusedCellController";
+import {Optional} from "./context/context";
 
 @Bean('gridApi')
 export class GridApi {
@@ -51,7 +52,7 @@ export class GridApi {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('rangeController') private rangeController: IRangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {

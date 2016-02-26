@@ -29,6 +29,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
+import {Optional} from "../context/context";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -49,7 +50,7 @@ export default class RowRenderer {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('rangeController') private rangeController: IRangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private cellRendererMap: {[key: string]: any};
     private firstVirtualRenderedRow: number;

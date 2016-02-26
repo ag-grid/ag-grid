@@ -298,6 +298,12 @@ include '../documentation_header.php';
             <th>enableRangeSelection</th>
             <td>Set to true to enable range selection.</td>
         </tr>
+        <tr>
+            <th>suppressEnterprise</th>
+            <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
+            here in case someone is looking at the code and wondering.</td>
+        </tr>
+
     </table>
 
 </div>

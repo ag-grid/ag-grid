@@ -19,6 +19,7 @@ import {GridApi} from "../gridApi";
 import {PostConstruct} from "../context/context";
 import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
+import {Optional} from "../context/context";
 
 export default class RenderedCell {
 
@@ -33,7 +34,7 @@ export default class RenderedCell {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rangeController') private rangeController: RangeController;
+    @Optional('rangeController') private rangeController: RangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private eGridCell: HTMLElement; // the outer cell
@@ -206,6 +207,9 @@ export default class RenderedCell {
     }
 
     private addRangeSelectedListener(): void {
+        if (!this.rangeController) {
+            return;
+        }
         var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
             var rangeCount = this.rangeController.getCellRangeCount(this.rowIndex, this.column);

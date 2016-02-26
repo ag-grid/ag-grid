@@ -41,6 +41,7 @@ import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {IRowModel} from "./interfaces/iRowModel";
 import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
+import {Optional} from "./context/context";
 
 @Bean('gridCore')
 export class GridCore {
@@ -61,7 +62,7 @@ export class GridCore {
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('rowGroupPanel') private rowGroupPanel: RowGroupPanel;
+    @Optional('rowGroupPanel') private rowGroupPanel: RowGroupPanel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private finished: boolean;

@@ -46,6 +46,9 @@ export interface GridOptions {
     suppressFieldDotNotation?: boolean;
     rowModelType?: string;
     enableRangeSelection?: boolean;
+    suppressEnterprise?: boolean;
+    // enterprise only
+    rowGroupPanelShow?: string;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

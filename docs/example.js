@@ -95,7 +95,8 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    debug: true,
+    //debug: true,
+    suppressEnterprise: true,
     //minColWidth: 50,
     //maxColWidth: 300,
     //rowsBuffer: 1,
@@ -199,9 +200,9 @@ var gridOptions = {
     },
     onGridReady: function(event) {
         console.log('Callback onGridReady: api = ' + event.api);
-        event.api.addGlobalListener(function(type, event) {
-            console.log('event ' + type);
-        });
+        //event.api.addGlobalListener(function(type, event) {
+        //    console.log('event ' + type);
+        //});
     },
     onGridSizeChanged: function(event) {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
