@@ -51,6 +51,7 @@ import {ColumnApi} from "./columnController/columnController";
 import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
 import {ClipboardService} from "./enterprise/clipboardService";
+import {ContextMenuFactory} from "./enterprise/contextMenu";
 
 export class Grid {
 
@@ -70,7 +71,7 @@ export class Grid {
 
         var overrideBeans = gridOptions.suppressEnterprise ?
             null :
-            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService];
+            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService, ContextMenuFactory];
 
         this.context = new Context({
             overrideBeans: overrideBeans,

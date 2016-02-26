@@ -44,7 +44,22 @@ export default class PopupService {
         params.ePopup.style.top = y + "px";
     }
 
-    public positionPopup(params: {eventSource: any,
+    public positionPopupUnderMouseEvent(params: {
+                            mouseEvent: MouseEvent,
+                            ePopup: HTMLElement}): void {
+
+        var parentRect = this.ePopupParent.getBoundingClientRect();
+
+        this.positionPopup({
+            ePopup: params.ePopup,
+            x: params.mouseEvent.clientX - parentRect.left,
+            y: params.mouseEvent.clientY - parentRect.top,
+            keepWithinBounds: true
+        });
+    }
+
+    public positionPopupUnderComponent(params: {
+                            eventSource: HTMLElement,
                             ePopup: HTMLElement,
                             minWidth?: number,
                             nudgeX?: number,
@@ -54,8 +69,30 @@ export default class PopupService {
         var sourceRect = params.eventSource.getBoundingClientRect();
         var parentRect = this.ePopupParent.getBoundingClientRect();
 
-        var x = sourceRect.left - parentRect.left;
-        var y = sourceRect.top - parentRect.top + sourceRect.height;
+        this.positionPopup({
+            ePopup: params.ePopup,
+            minWidth: params.minWidth,
+            nudgeX: params.nudgeX,
+            nudgeY: params.nudgeY,
+            x: sourceRect.left - parentRect.left,
+            y: sourceRect.top - parentRect.top + sourceRect.height,
+            keepWithinBounds: params.keepWithinBounds
+        });
+    }
+
+    private positionPopup(params: {
+                        ePopup: HTMLElement,
+                        minWidth?: number,
+                        nudgeX?: number,
+                        nudgeY?: number,
+                        x: number,
+                        y: number,
+                        keepWithinBounds?: boolean}): void {
+
+        var parentRect = this.ePopupParent.getBoundingClientRect();
+
+        var x = params.x;
+        var y = params.y;
 
         if (params.nudgeX) {
             x += params.nudgeX;
@@ -115,6 +152,7 @@ export default class PopupService {
                 eBody.addEventListener('keydown', hidePopupOnEsc);
             }
             eBody.addEventListener('click', hidePopup);
+            eBody.addEventListener('contextmenu', hidePopup);
             //eBody.addEventListener('mousedown', hidePopup);
             eChild.addEventListener('click', consumeClick);
             //eChild.addEventListener('mousedown', consumeClick);
@@ -137,6 +175,7 @@ export default class PopupService {
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             //eBody.removeEventListener('mousedown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);
+            eBody.removeEventListener('contextmenu', hidePopup);
             eChild.removeEventListener('click', consumeClick);
             //eChild.removeEventListener('mousedown', consumeClick);
             if (closedCallback) {

@@ -74,7 +74,7 @@ export default class AgDropdownList {
 
     onClick() {
         var agListGui = this.agList.getGui();
-        this.popupService.positionPopup({eventSource: this.eGui, ePopup: agListGui});
+        this.popupService.positionPopupUnderComponent({eventSource: this.eGui, ePopup: agListGui});
         this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
     }
 

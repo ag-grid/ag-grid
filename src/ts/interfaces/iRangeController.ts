@@ -4,11 +4,13 @@ import {ColDef} from "../entities/colDef";
 export interface IRangeController {
     clearSelection(): void;
     getCellRangeCount(rowIndex: number, column: Column): number;
+    isCellInRange(rowIndex: number, column: Column): boolean;
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): RangeSelection[];
     setRangeToCell(rowIndex: number, column: Column): void;
+    setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
 }
 

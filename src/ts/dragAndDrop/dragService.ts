@@ -30,6 +30,9 @@ export class DragService {
     }
 
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
+        // only interested in left button clicks
+        if (mouseEvent.button!==0) { return; }
+
         this.currentDragParams = params;
         this.dragging = false;
 

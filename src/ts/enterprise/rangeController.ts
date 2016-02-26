@@ -66,6 +66,11 @@ export class RangeController implements IRangeController {
         this.dispatchChangedEvent(true, false);
     }
 
+    public setRange(rangeSelection: AddRangeSelectionParams): void {
+        this.cellRanges = [];
+        this.addRange(rangeSelection);
+    }
+
     public addRange(rangeSelection: AddRangeSelectionParams): void {
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
         var columnEnd = this.columnController.getColumn(rangeSelection.columnEnd);
@@ -81,7 +86,9 @@ export class RangeController implements IRangeController {
             columnEnd: rangeSelection.columnEnd,
             columns: columns
         };
-        this.cellRanges = [];
+        if (!this.cellRanges) {
+            this.cellRanges = [];
+        }
         this.cellRanges.push(newRange);
         this.dispatchChangedEvent(true, false);
     }
@@ -124,6 +131,10 @@ export class RangeController implements IRangeController {
     // the selection my mimicking a new mouse event
     private onBodyScroll(event: Event): void {
         this.onDragging(this.lastMouseEvent);
+    }
+
+    public isCellInRange(rowIndex: number, column: Column): boolean {
+        return this.getCellRangeCount(rowIndex, column) > 0;
     }
 
     // returns the number of ranges this cell is in

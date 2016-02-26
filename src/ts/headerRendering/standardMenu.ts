@@ -25,7 +25,7 @@ export class StandardMenuFactory implements IMenuFactory {
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenu, true);
-        this.popupService.positionPopup({eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
+        this.popupService.positionPopupUnderComponent({eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
 
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {

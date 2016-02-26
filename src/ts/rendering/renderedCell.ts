@@ -20,6 +20,7 @@ import {PostConstruct} from "../context/context";
 import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 import {Optional} from "../context/context";
+import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 
 export default class RenderedCell {
 
@@ -36,6 +37,7 @@ export default class RenderedCell {
     @Autowired('columnController') private columnController: ColumnController;
     @Optional('rangeController') private rangeController: RangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -420,13 +422,22 @@ export default class RenderedCell {
     private addCellContextMenuHandler() {
         var that = this;
         var colDef = this.column.getColDef();
-        this.eGridCell.addEventListener('contextmenu', function (event: any) {
-            var agEvent: any = that.createEvent(event, this);
+        this.eGridCell.addEventListener('contextmenu', function (mouseEvent: MouseEvent) {
+            var agEvent: any = that.createEvent(mouseEvent, this);
             that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
 
             if (colDef.onCellContextMenu) {
                 colDef.onCellContextMenu(agEvent);
             }
+
+            if (that.contextMenuFactory && !that.gridOptionsWrapper.isSuppressContextMenu()) {
+                that.contextMenuFactory.showMenu(that.rowIndex, that.column, mouseEvent);
+                event.preventDefault();
+                return false;
+            } else {
+                return true;
+            }
+
         });
     }
 
@@ -453,6 +464,14 @@ export default class RenderedCell {
             // select the text field.
             if (!this.node.floating) {
                 this.focusCell(false);
+            }
+            // if it's a right click, then if the cell is already in range,
+            // don't change the range, however if the cell is not in a range,
+            // we set a new range
+            if (this.rangeController) {
+                if (!this.rangeController.isCellInRange(this.rowIndex, this.column)) {
+                    this.rangeController.clearSelection();
+                }
             }
         });
     }

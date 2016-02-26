@@ -304,6 +304,10 @@ include '../documentation_header.php';
                 is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
         </tr>
         <tr>
+            <th>suppressContextMenu</th>
+            <td>Set to true to not show context menu. Use if you don't want to use the default 'right click' context menu.</td>
+        </tr>
+        <tr>
             <th>suppressEnterprise</th>
             <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
                 here in case someone is looking at the code and wondering.</td>

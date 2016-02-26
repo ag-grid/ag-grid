@@ -42,7 +42,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             true,
             ()=> menu.destroy()
         );
-        this.popupService.positionPopup({eventSource: eventSource,
+        this.popupService.positionPopupUnderComponent({eventSource: eventSource,
             ePopup: eMenuGui,
             nudgeX: -9,
             nudgeY: -26,

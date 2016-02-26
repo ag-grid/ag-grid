@@ -265,8 +265,16 @@ export default class GridPanel {
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
-        if (this.gridOptionsWrapper.isRowSelectionMulti()) {
-            this.selectionController.selectAllRowNodes();
+        if (this.rangeController && this.rowModel.isRowsToRender()) {
+            var rowEnd = this.rowModel.getRowCount() - 1;
+            var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+            if (_.missingOrEmpty(allDisplayedColumns)) { return; }
+            this.rangeController.setRange({
+                rowStart: 0,
+                rowEnd: rowEnd,
+                columnStart: allDisplayedColumns[0],
+                columnEnd: allDisplayedColumns[allDisplayedColumns.length-1]
+            });
         }
         event.preventDefault();
         return false;

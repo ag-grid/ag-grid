@@ -97,7 +97,7 @@ function suppressColumnMoveAnimation() {
 var gridOptions = {
     //debug: true,
     //suppressEnterprise: true,
-    //rowGroupPanelShow: 'onlyWhenGrouping', // on of ['always','onlyWhenGrouping']
+    rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     //minColWidth: 50,
     //maxColWidth: 300,
     //rowsBuffer: 1,
