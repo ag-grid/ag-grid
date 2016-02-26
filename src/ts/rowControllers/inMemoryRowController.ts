@@ -549,11 +549,28 @@ export default class InMemoryRowController {
             // place each row into a wrapper
             var nodes: RowNode[] = [];
             if (rows) {
-                for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
-                    var node = <RowNode>{};
-                    node.data = rows[i];
-                    nodes.push(node);
+                // Downstream code expects an array.
+                // If we are given something that looks like an
+                // Immutable.js iterable, then we havea  different method of
+                // extracting rows.
+                //
+                // (under es5.1+ the first branch will run even on arrays, but
+                // this isn't a problem)
+                if ((<any>rows).forEach) {
+                  rows.forEach(function (row) {
+                      var node = <RowNode>{};
+                      node.data = row;
+                      nodes.push(node);
+                  })
                 }
+                else {
+                  // <= es5 will do this on real arrays
+                  for (var i = 0; i < rows.length; i++) { // could be lots of rows, don't use functional programming
+                      var node = <RowNode>{};
+                      node.data = rows[i];
+                      nodes.push(node);
+                  }
+              }
             }
         }
 
