@@ -48,7 +48,6 @@ export default class RenderedCell {
     private data: any;
     private node: RowNode;
     private rowIndex: number;
-    private colIndex: number;
     private editingCell: boolean;
 
     private scope: any;
@@ -67,7 +66,7 @@ export default class RenderedCell {
 
     constructor(column: any,
                 cellRendererMap: {[key: string]: any},
-                node: any, rowIndex: number, colIndex: number, scope: any,
+                node: any, rowIndex: number, scope: any,
                 renderedRow: RenderedRow) {
 
         this.column = column;
@@ -75,7 +74,6 @@ export default class RenderedCell {
 
         this.node = node;
         this.rowIndex = rowIndex;
-        this.colIndex = colIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
     }

@@ -147,8 +147,8 @@ export default class RenderedRow {
 
         var renderedCellKeys = Object.keys(this.renderedCells);
 
-        columns.forEach( (column: Column, colIndex: number) => {
-            var renderedCell = this.getOrCreateCell(column, colIndex);
+        columns.forEach( (column: Column) => {
+            var renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
             renderedCell.checkPinnedClasses();
             _.removeFromArray(renderedCellKeys, column.getColId());
@@ -195,7 +195,7 @@ export default class RenderedRow {
         }
     }
 
-    private getOrCreateCell(column: Column, colIndex: number): RenderedCell {
+    private getOrCreateCell(column: Column): RenderedCell {
 
         var colId = column.getColId();
         if (this.renderedCells[colId]) {
@@ -203,7 +203,7 @@ export default class RenderedRow {
         } else {
             var renderedCell = new RenderedCell(column,
                 this.cellRendererMap, this.rowNode,
-                this.rowIndex, colIndex, this.scope, this);
+                this.rowIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             return renderedCell;

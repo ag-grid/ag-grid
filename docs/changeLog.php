@@ -62,6 +62,10 @@ include 'documentation_header.php';
 
     <li>api.getFocusedCell() -> now returns rowIndex and Column (used to return colDef and rowNode, colDef not needed as you can get from Column, rowNode not needed as you can lookup using rowIndex)</li>
 
+    <li>New features: Range Selection</li>
+    <li>New feature: Enterprise column menu</li>
+    <li>New feature: Clipboard interaction</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 
