@@ -28,6 +28,7 @@ import ColumnChangeEvent from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
+import {IRangeController} from "../interfaces/iRangeController";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -48,6 +49,7 @@ export default class RowRenderer {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('rangeController') private rangeController: IRangeController;
 
     private cellRendererMap: {[key: string]: any};
     private firstVirtualRenderedRow: number;
@@ -492,10 +494,13 @@ export default class RowRenderer {
         }
 
         // this scrolls the row into view
-        this.gridPanel.ensureIndexVisible(renderedRow.getRowIndex());
+        this.gridPanel.ensureIndexVisible(cellToFocus.rowIndex);
+        this.gridPanel.ensureColumnVisible(cellToFocus.column);
 
-        // this changes the css on the cell
         this.focusedCellController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, true);
+        if (this.rangeController) {
+            this.rangeController.setRangeToCell(cellToFocus.rowIndex, cellToFocus.column);
+        }
     }
 
     private getNextCellToFocus(key: any, lastCellToFocus: any) {

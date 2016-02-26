@@ -390,4 +390,15 @@ export class GridApi {
             return null;
         }
     }
+
+    public addRangeSelection(rangeSelection: RangeSelection): void {
+        if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
+        this.rangeController.addRange(rangeSelection);
+    }
+
+    public clearRangeSelection(): void {
+        if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
+        this.rangeController.clearSelection();
+    }
+
 }

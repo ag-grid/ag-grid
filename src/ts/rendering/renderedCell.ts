@@ -573,15 +573,14 @@ export default class RenderedCell {
 
     // rename this to 'add key event listener
     private addCellNavigationHandler() {
-        var that = this;
-        this.eGridCell.addEventListener('keydown', function (event: any) {
-            if (that.editingCell) {
+        this.eGridCell.addEventListener('keydown', (event: any) => {
+            if (this.editingCell) {
                 return;
             }
             // only interested on key presses that are directly on this element, not any children elements. this
             // stops navigation if the user is in, for example, a text field inside the cell, and user hits
             // on of the keys we are looking for.
-            if (event.target !== that.eGridCell) {
+            if (event.target !== this.eGridCell) {
                 return;
             }
 
@@ -591,13 +590,13 @@ export default class RenderedCell {
                 || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
             if (startNavigation) {
                 event.preventDefault();
-                that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column);
                 return;
             }
 
-            var startEdit = that.isKeycodeForStartEditing(key);
-            if (startEdit && that.isCellEditable()) {
-                that.startEditing(key);
+            var startEdit = this.isKeycodeForStartEditing(key);
+            if (startEdit && this.isCellEditable()) {
+                this.startEditing(key);
                 // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
                 // press, and stops editing immediately, hence giving he user experience that nothing happened
                 event.preventDefault();
@@ -605,12 +604,12 @@ export default class RenderedCell {
             }
 
             var selectRow = key === Constants.KEY_SPACE;
-            if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
-                var selected = that.node.isSelected();
+            if (selectRow && this.gridOptionsWrapper.isRowSelection()) {
+                var selected = this.node.isSelected();
                 if (selected) {
-                    that.node.setSelected(false);
+                    this.node.setSelected(false);
                 } else {
-                    that.node.setSelected(true);
+                    this.node.setSelected(true);
                 }
                 event.preventDefault();
                 return;

@@ -552,9 +552,6 @@ export default class InMemoryRowController implements IRowModel {
         // place each row into a wrapper
         this.allRows = this.createRowNodesFromData(rowData, firstId);
 
-        // if firstId provided, use it, otherwise start at 0
-        //this.recursivelyAddIdToNodes(this.allRows, firstIdToUse);
-
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {

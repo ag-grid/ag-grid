@@ -30,5 +30,6 @@ exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumber
 exports.IRowModel = require('./dist/lib/interfaces/iRowModel').IRowModel;
 exports.IRangeController = require('./dist/lib/interfaces/iRangeController').IRangeController;
 exports.RangeSelection = require('./dist/lib/interfaces/iRangeController').RangeSelection;
+exports.AddRangeSelectionParams = require('./dist/lib/interfaces/iRangeController').AddRangeSelectionParams;
 
 //exports. = require('./dist/lib/entities/gridOptions').;

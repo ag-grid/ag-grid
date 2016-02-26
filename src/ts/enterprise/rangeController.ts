@@ -14,6 +14,7 @@ import RowRenderer from "../rendering/rowRenderer";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {RangeSelection} from "../interfaces/iRangeController";
+import {AddRangeSelectionParams} from "../interfaces/iRangeController";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
@@ -48,6 +49,43 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
     }
 
+    public setRangeToCell(rowIndex: number, column: Column): void {
+        var columns = this.updateSelectedColumns(column, column);
+        if (!columns) { return; }
+
+        var newRange = {
+            rowStart: rowIndex,
+            rowEnd: rowIndex,
+            columnStart: column,
+            columnEnd: column,
+            columns: columns
+        };
+        this.cellRanges = [];
+        this.cellRanges.push(newRange);
+        this.activeRange = null;
+        this.dispatchChangedEvent(true, false);
+    }
+
+    public addRange(rangeSelection: AddRangeSelectionParams): void {
+        var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
+        var columnEnd = this.columnController.getColumn(rangeSelection.columnEnd);
+        if (!columnStart || !columnEnd) { return; }
+
+        var columns = this.updateSelectedColumns(columnStart, columnEnd);
+        if (!columns) { return; }
+
+        var newRange = <RangeSelection> {
+            rowStart: rangeSelection.rowStart,
+            rowEnd: rangeSelection.rowEnd,
+            columnStart: rangeSelection.columnStart,
+            columnEnd: rangeSelection.columnEnd,
+            columns: columns
+        };
+        this.cellRanges = [];
+        this.cellRanges.push(newRange);
+        this.dispatchChangedEvent(true, false);
+    }
+
     public getCellRanges(): RangeSelection[] {
         return this.cellRanges;
     }
@@ -78,7 +116,7 @@ export class RangeController implements IRangeController {
         }
         this.activeRange = null;
         this.cellRanges = null;
-        this.dispatchChangedChangedEvent(true, false);
+        this.dispatchChangedEvent(true, false);
     }
 
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
@@ -118,7 +156,7 @@ export class RangeController implements IRangeController {
 
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        if (!multiSelectKeyPressed) {
+        if (_.missing(this.cellRanges) || !multiSelectKeyPressed) {
             this.cellRanges = [];
         }
 
@@ -148,11 +186,11 @@ export class RangeController implements IRangeController {
     }
 
     private selectionChanged(finished: boolean, started: boolean): void {
-        this.updateSelectedColumns();
-        this.dispatchChangedChangedEvent(finished, started);
+        this.activeRange.columns = this.updateSelectedColumns(this.activeRange.columnStart, this.activeRange.columnEnd);
+        this.dispatchChangedEvent(finished, started);
     }
 
-    private dispatchChangedChangedEvent(finished: boolean, started: boolean): void {
+    private dispatchChangedEvent(finished: boolean, started: boolean): void {
         this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED, {finished: finished, started: started});
     }
 
@@ -160,7 +198,7 @@ export class RangeController implements IRangeController {
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
-        this.dispatchChangedChangedEvent(true, false);
+        this.dispatchChangedEvent(true, false);
     }
 
     public onDragging(mouseEvent: MouseEvent): void {
@@ -253,24 +291,30 @@ export class RangeController implements IRangeController {
         return hoveringColumn;
     }
 
-    private updateSelectedColumns(): void {
+    private updateSelectedColumns(columnFrom: Column, columnTo: Column): Column[] {
         var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
-        var firstIndex = allDisplayedColumns.indexOf(this.activeRange.columnStart);
-        var lastIndex = allDisplayedColumns.indexOf(this.activeRange.columnEnd);
+        var fromIndex = allDisplayedColumns.indexOf(columnFrom);
+        var toIndex = allDisplayedColumns.indexOf(columnTo);
 
-        if (firstIndex > lastIndex) {
-            var copy = firstIndex;
-            firstIndex = lastIndex;
-            lastIndex = copy;
+        if (fromIndex < 0) {
+            console.log('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
+            return null;
         }
+        if (toIndex < 0) {
+            console.log('ag-Grid: column ' + columnTo.getId() + ' is not visible');
+            return null;
+        }
+
+        var firstIndex = Math.min(fromIndex, toIndex);
+        var lastIndex = Math.max(fromIndex, toIndex);
 
         var columns: Column[] = [];
         for (var i = firstIndex; i<=lastIndex; i++) {
             columns.push(allDisplayedColumns[i]);
         }
 
-        this.activeRange.columns = columns;
+        return columns;
     }
 
     private getRowIndex(mouseEvent: MouseEvent): number {

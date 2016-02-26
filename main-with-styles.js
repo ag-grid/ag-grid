@@ -28,6 +28,7 @@ exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumber
 exports.IRowModel = require('./dist/lib/interfaces/iRowModel').IRowModel;
 exports.IRangeController = require('./dist/lib/interfaces/iRangeController').IRangeController;
 exports.RangeSelection = require('./dist/lib/interfaces/iRangeController').RangeSelection;
+exports.AddRangeSelectionParams = require('./dist/lib/interfaces/iRangeController').AddRangeSelectionParams;
 
 require('./dist/styles/ag-grid.css');
 require('./dist/styles/theme-blue.css');

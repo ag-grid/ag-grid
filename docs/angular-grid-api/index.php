@@ -380,6 +380,14 @@ include '../documentation_header.php';
             <th>getRangeSelections()</th>
             <td>Returns the list of selected ranges.</td>
         </tr>
+        <tr>
+            <th>addRangeSelection(rangeSelection)</th>
+            <td>Adds to the selected range.</td>
+        </tr>
+        <tr>
+            <th>clearRangeSelection()</th>
+            <td>Clears the selected range.</td>
+        </tr>
     </table>
 </div>
 

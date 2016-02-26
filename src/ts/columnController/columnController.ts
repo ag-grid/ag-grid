@@ -686,6 +686,14 @@ export class ColumnController {
         return foundColumns;
     }
 
+    public getColumnWithValidation(key: string|ColDef|Column): Column {
+        var column = this.getColumn(key);
+        if (!column) {
+            console.warn('ag-Grid: could not find column ' + column);
+        }
+        return column;
+    }
+
     public getColumn(key: string|ColDef|Column): Column {
         if (!key) {return null;}
 

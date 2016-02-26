@@ -55,7 +55,9 @@ include '../documentation_header.php';
     console.log('has changed, finished = ' + event.finished);
 });</pre>
 
-    <h3>Getting Selected Range</h3>
+    <h3>Range Selection API</h3>
+
+    <p><b>api.getRangeSelections()</b></p>
 
     <p>
         Get the selected ranges using <i>api.getRangeSelections()</i>. This will return back
@@ -82,6 +84,21 @@ include '../documentation_header.php';
         reorder), or columns may be not visible, or column groups may be closed. To avoid all
         ambiguity, the exact columns in the range are presented individually in the <i>columns</i>
         list and will be in the order they appear in the grid.
+    </p>
+
+    <p><b>api.addRangeSelection(rangeSelection)</b></p>
+
+    <p>
+        Adds a range to the selection. The rangeSelection passed is same structure as with getRangeSelection,
+        however the 'columns' is ignored, the grid works this out itself based on columnStart and columnEnd.
+        Be careful that the columns are visible in the grid, if not visible (column group closed or just simply
+        not visible) then this call will have no effect.
+    </p>
+
+    <p><b>api.clearRangeSelection()</b></p>
+
+    <p>
+        Clears the range selection.
     </p>
 
     <h3>Range Selection Example</h3>

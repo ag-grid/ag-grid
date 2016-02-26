@@ -1,4 +1,5 @@
 import Column from "../entities/column";
+import {ColDef} from "../entities/colDef";
 
 export interface IRangeController {
     clearSelection(): void;
@@ -7,6 +8,8 @@ export interface IRangeController {
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): RangeSelection[];
+    setRangeToCell(rowIndex: number, column: Column): void;
+    addRange(rangeSelection: AddRangeSelectionParams): void;
 }
 
 export interface RangeSelection {
@@ -15,4 +18,11 @@ export interface RangeSelection {
     columnStart: Column,
     columnEnd: Column,
     columns: Column[]
+}
+
+export interface AddRangeSelectionParams {
+    rowStart: number,
+    rowEnd: number,
+    columnStart: Column|ColDef|string,
+    columnEnd: Column|ColDef|string
 }

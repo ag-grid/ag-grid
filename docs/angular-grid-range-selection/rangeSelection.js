@@ -18,6 +18,19 @@ var gridOptions = {
     onRangeSelectionChanged: onRangeSelectionChanged
 };
 
+function onAddRange() {
+    gridOptions.api.addRangeSelection({
+        rowStart: 4,
+        rowEnd: 8,
+        columnStart: 'age',
+        columnEnd: 'date'
+    });
+}
+
+function onClearRange() {
+    gridOptions.api.clearRangeSelection();
+}
+
 function onRangeSelectionChanged(event) {
 
     var lbRangeCount = document.querySelector('#lbRangeCount');
