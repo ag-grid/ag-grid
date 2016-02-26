@@ -334,6 +334,10 @@ export default class Utils {
         } else if (this.isNodeOrElement(resultFromRenderer)) {
             //a dom node or element was returned, so add child
             eParent.appendChild(<Node>resultFromRenderer);
+        } else {
+            if (this.exists(resultFromRenderer)) {
+                console.warn('ag-Grid: result from render should be either a string or a DOM object, got ' + typeof resultFromRenderer);
+            }
         }
     }
 

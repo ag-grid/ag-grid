@@ -798,7 +798,7 @@ function languageCellRenderer(params) {
     if (params.$scope) {
         return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
             "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
-    } else if (params.value) {
+    } else if (params.value!==null && params.value!==undefined) {
         return params.value;
     } else {
         return null;

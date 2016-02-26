@@ -716,7 +716,9 @@ export default class RenderedCell {
         } else {
             throw 'Cell Renderer must be String or Function';
         }
+
         var resultFromRenderer = actualCellRenderer(rendererParams);
+
         // end duplicated code
         if (resultFromRenderer===null || resultFromRenderer==='') {
             return;
