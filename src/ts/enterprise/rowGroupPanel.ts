@@ -119,7 +119,8 @@ export class RowGroupPanel {
             // if no groupings, need to remove the empty message
             _.removeAllChildren(this.eGui);
             var eGroupIcon = svgFactory.createGroupIcon();
-            _.addCssClass(eGroupIcon, 'ag-faded ag-row-group-icon');
+            _.addCssClass(eGroupIcon, 'ag-faded');
+            _.addCssClass(eGroupIcon, 'ag-row-group-icon');
             this.ePotentialDropGui.appendChild(eGroupIcon);
         } else {
             // otherwise we need to add an arrow

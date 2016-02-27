@@ -217,28 +217,6 @@ export default class Utils {
         return <HTMLElement> tempDiv.firstChild;
     }
 
-    static querySelectorAll_addCssClass(eParent: any, selector: string, cssClass: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.addCssClass(eRows[k], cssClass);
-        }
-    }
-
-    static querySelectorAll_removeCssClass(eParent: any, selector: string, cssClass: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClass);
-        }
-    }
-
-    static querySelectorAll_replaceCssClass(eParent: any, selector: string, cssClassToRemove: string, cssClassToAdd: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClassToRemove);
-            this.addCssClass(eRows[k], cssClassToAdd);
-        }
-    }
-
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
         if (addOrRemove) {
             this.addCssClass(element, className);
@@ -254,14 +232,23 @@ export default class Utils {
     }
 
     static addCssClass(element: HTMLElement, className: string) {
-        if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            if (cssClasses.indexOf(className) < 0) {
-                cssClasses.push(className);
-                element.className = cssClasses.join(' ');
-            }
+        if (!className || className.length===0) { return; }
+        if (className.indexOf(' ') >= 0) {
+            className.split(' ').forEach( value => this.addCssClass(element, value));
+            return;
+        }
+        if (element.classList) {
+            element.classList.add(className);
         } else {
-            element.className = className;
+            if (element.className && element.className.length > 0) {
+                var cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) < 0) {
+                    cssClasses.push(className);
+                    element.className = cssClasses.join(' ');
+                }
+            } else {
+                element.className = className;
+            }
         }
     }
 

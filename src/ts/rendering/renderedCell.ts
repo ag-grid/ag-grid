@@ -705,6 +705,7 @@ export default class RenderedCell {
     }
 
     private useCellRenderer(cellRenderer: Function | {}) {
+
         var colDef = this.column.getColDef();
 
         var rendererParams = {

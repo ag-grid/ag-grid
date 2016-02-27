@@ -586,10 +586,14 @@ export default class GridPanel {
     private findElements() {
         if (this.forPrint) {
             this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-no-scrolls');
+            _.addCssClass(this.eRoot, 'ag-root');
+            _.addCssClass(this.eRoot, 'ag-font-style');
+            _.addCssClass(this.eRoot, 'ag-no-scrolls');
         } else {
             this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
-            _.addCssClass(this.eRoot, 'ag-root ag-font-style ag-scrolls');
+            _.addCssClass(this.eRoot, 'ag-root');
+            _.addCssClass(this.eRoot, 'ag-font-style');
+            _.addCssClass(this.eRoot, 'ag-scrolls');
         }
 
         if (this.forPrint) {

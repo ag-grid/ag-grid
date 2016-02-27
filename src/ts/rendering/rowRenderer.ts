@@ -404,7 +404,7 @@ export default class RowRenderer {
 
     private ensureRowsRendered() {
 
-        //var start = new Date().getTime();
+        var start = new Date().getTime();
 
         var mainRowWidth = this.columnController.getBodyContainerWidth();
 
@@ -434,8 +434,8 @@ export default class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        //var end = new Date().getTime();
-        //console.log(end-start);
+        var end = new Date().getTime();
+        console.log(end-start);
     }
 
     private insertRow(node: any, rowIndex: any, mainRowWidth: any) {

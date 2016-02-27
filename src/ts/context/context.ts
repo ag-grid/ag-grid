@@ -126,12 +126,15 @@ export class Context {
             return;
         }
         var attributes = bean.__agBeanMetaData.agClassAttributes;
+        if (!attributes) {
+            return;
+        }
 
         var beanName = this.getBeanName(bean);
 
-        _.iterateObject(attributes, (attributeName: string, attribute: any) => {
+        attributes.forEach( (attribute: any)=> {
             var otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-            bean[attributeName] = otherBean;
+            bean[attribute.attributeName] = otherBean;
         });
     }
 
@@ -272,12 +275,13 @@ function autowiredFunc(name: string, optional: boolean, classPrototype: any, met
     // it's an attribute on the class
     var props = getOrCreateProps(classPrototype);
     if (!props.agClassAttributes) {
-        props.agClassAttributes = {};
+        props.agClassAttributes = [];
     }
-    props.agClassAttributes[methodOrAttributeName] = {
+    props.agClassAttributes.push({
+        attributeName: methodOrAttributeName,
         beanName: name,
         optional: optional
-    };
+    });
 }
 
 export function Qualifier(name: string): Function {
