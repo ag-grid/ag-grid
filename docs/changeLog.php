@@ -62,6 +62,12 @@ include 'documentation_header.php';
 
     <li>api.getFocusedCell() -> now returns rowIndex and Column (used to return colDef and rowNode, colDef not needed as you can get from Column, rowNode not needed as you can lookup using rowIndex)</li>
 
+    <li>rowNode attributes floatingTop and floatingBottom removed, now floating is no longer a boolean, it's a string that can be 'top' or 'bottom' if floating.</li>
+
+    <li>setFocusedCell(rowIndex, colId) is now setFocusedCell(rowIndex, colKey, floating).</li>
+
+    <li>Floating rows can now be selected and navigated.</li>
+
     <li>New features: Range Selection</li>
     <li>New feature: Enterprise column menu</li>
     <li>New feature: Clipboard interaction</li>

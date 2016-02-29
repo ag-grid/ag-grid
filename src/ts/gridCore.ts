@@ -281,11 +281,11 @@ export class GridCore {
         }
     }
 
-    public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
+/*    public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
         this.gridPanel.ensureIndexVisible(rowIndex);
         this.gridPanel.ensureColumnVisible(colKey);
         setTimeout( () => this.focusedCellController.setFocusedCell(rowIndex, colKey), 10);
-    }
+    }*/
 
     public doLayout() {
         // need to do layout first, as drawVirtualRows and setPinnedColHeight

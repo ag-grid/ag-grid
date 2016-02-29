@@ -144,6 +144,7 @@ export class ColumnController {
     private headerRowCount = 0;
     private rowGroupColumns: Column[];
     private groupAutoColumn: Column;
+    private groupAutoColumnActive: boolean;
     private valueService: ValueService;
 
     private ready = false;
@@ -562,7 +563,7 @@ export class ColumnController {
 
     public getAllColumnsIncludingAuto(): Column[] {
         var result = this.allColumns.slice(0);
-        if (this.groupAutoColumn) {
+        if (this.groupAutoColumnActive) {
             result.push(this.groupAutoColumn);
         }
         return result;
@@ -707,7 +708,7 @@ export class ColumnController {
             }
         }
 
-        if (this.groupAutoColumn && colMatches(this.groupAutoColumn)) {
+        if (this.groupAutoColumnActive && colMatches(this.groupAutoColumn)) {
             return this.groupAutoColumn;
         }
 
@@ -1068,7 +1069,10 @@ export class ColumnController {
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();
 
-        if (needAGroupColumn) {
+        this.groupAutoColumnActive = needAGroupColumn;
+
+        // lazy create group auto-column
+        if (needAGroupColumn && !this.groupAutoColumn) {
             // if one provided by user, use it, otherwise create one
             var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
             if (!autoColDef) {
@@ -1087,15 +1091,13 @@ export class ColumnController {
             var colId = 'ag-Grid-AutoColumn';
             this.groupAutoColumn = new Column(autoColDef, colId);
             this.context.wireBean(this.groupAutoColumn);
-        } else {
-            this.groupAutoColumn = null;
         }
     }
 
     private updateVisibleColumns(): Column[] {
         var visibleColumns = _.filter(this.allColumns, column => column.isVisible() );
 
-        if (this.groupAutoColumn) {
+        if (this.groupAutoColumnActive) {
             visibleColumns.unshift(this.groupAutoColumn);
         }
 

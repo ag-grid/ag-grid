@@ -23,12 +23,8 @@ export class RowNode {
     public lastChild: boolean;
     /** The index of this node in the group */
     public childIndex: number;
-    /** True if this row is a floating row */
-    public floating: boolean;
-    /** True if this row is a floating top row */
-    public floatingTop: boolean;
-    /** True if this row is a floating bottom row */
-    public floatingBottom: boolean;
+    /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
+    public floating: string;
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */

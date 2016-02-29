@@ -10,7 +10,7 @@ exports.initialiseAgGridWithAngular1 = require('./dist/lib/components/agGridNg1'
 exports.initialiseAgGridWithWebComponents = require('./dist/lib/components/agGridWebComponent').initialiseAgGridWithWebComponents;
 exports.defaultGroupComparator = require('./dist/lib/functions').defaultGroupComparator;
 exports.FocusedCellController = require('./dist/lib/focusedCellController').FocusedCellController;
-exports.FocusedCell = require('./dist/lib/focusedCellController').FocusedCell;
+exports.GridCell = require('./dist/lib/gridPanel/mouseEventService').GridCell;
 
 exports.GridOptions = require('./dist/lib/entities/gridOptions').GridOptions;
 exports.NodeChildDetails = require('./dist/lib/entities/gridOptions').NodeChildDetails;

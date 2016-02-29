@@ -192,7 +192,7 @@ export default function groupCellRendererFactory(gridOptionsWrapper: GridOptions
 
     // creates cell with '{{key}} ({{childCount}})' for a group
     function createLeafCell(eParent: any, params: any) {
-        if (params.value) {
+        if (_.exists(params.value)) {
             var eText = document.createTextNode(' ' + params.value);
             eParent.appendChild(eText);
         }

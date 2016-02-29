@@ -185,6 +185,10 @@ export default class Utils {
         }
     }
 
+    static existsAndNotEmpty(value: any[]): boolean {
+        return this.exists(value) && value.length > 0;
+    }
+
     static removeAllChildren(node: HTMLElement) {
         if (node) {
             while (node.hasChildNodes()) {

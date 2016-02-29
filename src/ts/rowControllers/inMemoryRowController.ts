@@ -119,6 +119,10 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     public getRowAtPixel(pixelToMatch: number): number {
+        if (this.isEmpty()) {
+            return -1;
+        }
+
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         var bottomPointer = 0;

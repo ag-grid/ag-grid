@@ -180,9 +180,7 @@ include '../documentation_header.php';
             <li><b>firstChild:</b> True if this is the first child in this group</li>
             <li><b>lastChild:</b> True if this is the last child in this group</li>
             <li><b>childIndex:</b> The index of this node in the group.</li>
-            <li><b>floating:</b> True if this row is a floating row.</li>
-            <li><b>floatingTop:</b> True if this row is a floating top row.</li>
-            <li><b>floatingBottom:</b> True if this row is a floating bottom row.</li>
+            <li><b>floating:</b> 'top' or 'bottom' if floating row, otherwise null or undefined.</li>
             <li><b>quickFilterAggregateText:</b> If using quick filter, stores a string representation of the row for searching against.</li>
         </ul>
     </p>

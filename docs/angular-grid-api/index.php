@@ -268,11 +268,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getFocusedCell()</th>
-            <td>Returns the focused cell as an object containing the rowIndex and column.</td>
+            <td>Returns the focused cell as an object containing the rowIndex, column and floating (top, bottom or null).</td>
         </tr>
         <tr>
-            <th>setFocusedCell(rowIndex, colIndex)</th>
-            <td>Scrolls the grid to ensure the cell is visible and then puts focus on the cell.</td>
+            <th>setFocusedCell(rowIndex, colKey, floating)</th>
+            <td>Sets the focus to the specified cell. Set floating to null, 'top', or 'bottom'.</td>
         </tr>
         <tr>
             <th>showToolPanel(show)</th>

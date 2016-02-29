@@ -30,6 +30,8 @@ import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Optional} from "../context/context";
+import {GridCell} from "../gridPanel/mouseEventService";
+import {CellNavigationService} from "../cellNavigationService";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -51,6 +53,7 @@ export default class RowRenderer {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
     private cellRendererMap: {[key: string]: any};
     private firstVirtualRenderedRow: number;
@@ -404,9 +407,7 @@ export default class RowRenderer {
 
     private ensureRowsRendered() {
 
-        var start = new Date().getTime();
-
-        var mainRowWidth = this.columnController.getBodyContainerWidth();
+        //var start = new Date().getTime();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -421,7 +422,7 @@ export default class RowRenderer {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getRow(rowIndex);
             if (node) {
-                this.insertRow(node, rowIndex, mainRowWidth);
+                this.insertRow(node, rowIndex);
             }
         }
 
@@ -434,11 +435,29 @@ export default class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        var end = new Date().getTime();
-        console.log(end-start);
+        //var end = new Date().getTime();
+        //console.log(end-start);
     }
 
-    private insertRow(node: any, rowIndex: any, mainRowWidth: any) {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
+        var renderedRow: RenderedRow;
+        switch (cell.floating) {
+            case Constants.FLOATING_TOP:
+                renderedRow = this.renderedTopFloatingRows[cell.rowIndex];
+                break;
+            case Constants.FLOATING_BOTTOM:
+                renderedRow = this.renderedBottomFloatingRows[cell.rowIndex];
+                break;
+            default:
+                renderedRow = this.renderedRows[cell.rowIndex];
+                break;
+        }
+        if (renderedRow) {
+            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
+        }
+    }
+
+    private insertRow(node: any, rowIndex: any) {
         var columns = this.columnController.getAllDisplayedColumns();
         // if no cols, don't draw row
         if (!columns || columns.length == 0) {
@@ -462,146 +481,101 @@ export default class RowRenderer {
         });
     }
 
-    public getIndexOfRenderedNode(node: any): number {
-        var renderedRows = this.renderedRows;
-        var keys: string[] = Object.keys(renderedRows);
-        for (var i = 0; i < keys.length; i++) {
-            var key: string = keys[i];
-            if (renderedRows[key].getRowNode() === node) {
-                return renderedRows[key].getRowIndex();
-            }
-        }
-        return -1;
-    }
-
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(key: any, rowIndex: number, column: Column) {
+    public navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string) {
 
-        var cellToFocus = {rowIndex: rowIndex, column: column};
-        var renderedRow: RenderedRow;
-        var eCell: any;
+        var nextCell: GridCell = {rowIndex: rowIndex, column: column, floating: floating};
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
-        while (!eCell) {
-            cellToFocus = this.getNextCellToFocus(key, cellToFocus);
-            // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
-            if (!cellToFocus) {
-                return;
+        while (true) {
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
+
+            if (_.missing(nextCell)) {
+                break;
             }
-            // see if the next cell is selectable, if yes, use it, if not, skip it
-            renderedRow = this.renderedRows[cellToFocus.rowIndex];
-            eCell = renderedRow.getCellForCol(cellToFocus.column);
+
+            var skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
+            if (skipGroupRows) {
+                var rowNode = this.rowModel.getRow(nextCell.rowIndex);
+                if (!rowNode.group) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
+        if (!nextCell) {
+            return;
         }
 
         // this scrolls the row into view
-        this.gridPanel.ensureIndexVisible(cellToFocus.rowIndex);
-        this.gridPanel.ensureColumnVisible(cellToFocus.column);
+        if (_.missing(nextCell.floating)) {
+            this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+        }
 
-        this.focusedCellController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, true);
+        this.gridPanel.ensureColumnVisible(nextCell.column);
+        // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+        // floating cell, the scrolls get out of sync
+        this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+
+        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
-            this.rangeController.setRangeToCell(cellToFocus.rowIndex, cellToFocus.column);
+            this.rangeController.setRangeToCell(nextCell.rowIndex, nextCell.column, nextCell.floating);
         }
-    }
-
-    private getNextCellToFocus(key: any, lastCellToFocus: any) {
-        var lastRowIndex = lastCellToFocus.rowIndex;
-        var lastColumn = lastCellToFocus.column;
-
-        var nextRowToFocus: any;
-        var nextColumnToFocus: any;
-        switch (key) {
-            case Constants.KEY_UP :
-                // if already on top row, do nothing
-                if (lastRowIndex === this.firstVirtualRenderedRow) {
-                    return null;
-                }
-                nextRowToFocus = lastRowIndex - 1;
-                nextColumnToFocus = lastColumn;
-                break;
-            case Constants.KEY_DOWN :
-                // if already on bottom, do nothing
-                if (lastRowIndex === this.lastVirtualRenderedRow) {
-                    return null;
-                }
-                nextRowToFocus = lastRowIndex + 1;
-                nextColumnToFocus = lastColumn;
-                break;
-            case Constants.KEY_RIGHT :
-                var colToRight = this.columnController.getDisplayedColAfter(lastColumn);
-                // if already on right, do nothing
-                if (!colToRight) {
-                    return null;
-                }
-                nextRowToFocus = lastRowIndex;
-                nextColumnToFocus = colToRight;
-                break;
-            case Constants.KEY_LEFT :
-                var colToLeft = this.columnController.getDisplayedColBefore(lastColumn);
-                // if already on left, do nothing
-                if (!colToLeft) {
-                    return null;
-                }
-                nextRowToFocus = lastRowIndex;
-                nextColumnToFocus = colToLeft;
-                break;
-        }
-
-        return {
-            rowIndex: nextRowToFocus,
-            column: nextColumnToFocus
-        };
     }
 
     // called by the cell, when tab is pressed while editing
-    public startEditingNextCell(rowIndex: any, column: any, shiftKey: any) {
+    public startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any) {
 
-        var firstRowToCheck = this.firstVirtualRenderedRow;
-        var lastRowToCheck = this.lastVirtualRenderedRow;
-        var currentRowIndex = rowIndex;
-
-        var visibleColumns = this.columnController.getAllDisplayedColumns();
-        var currentCol = column;
+        var nextCell = {rowIndex: rowIndex, column: column, floating: floating};
 
         while (true) {
 
-            var indexOfCurrentCol = visibleColumns.indexOf(currentCol);
-
-            // move backward
             if (shiftKey) {
-                // move along to the previous cell
-                currentCol = visibleColumns[indexOfCurrentCol - 1];
-                // check if end of the row, and if so, go back a row
-                if (!currentCol) {
-                    currentCol = visibleColumns[visibleColumns.length - 1];
-                    currentRowIndex--;
-                }
-
-                // if got to end of rendered rows, then quit looking
-                if (currentRowIndex < firstRowToCheck) {
-                    return;
-                }
-                // move forward
+                nextCell = this.cellNavigationService.getNextTabbedCellBackwards(nextCell);
             } else {
-                // move along to the next cell
-                currentCol = visibleColumns[indexOfCurrentCol + 1];
-                // check if end of the row, and if so, go forward a row
-                if (!currentCol) {
-                    currentCol = visibleColumns[0];
-                    currentRowIndex++;
-                }
-
-                // if got to end of rendered rows, then quit looking
-                if (currentRowIndex > lastRowToCheck) {
-                    return;
-                }
+                nextCell = this.cellNavigationService.getNextTabbedCellForwards(nextCell);
             }
 
-            var nextRenderedRow: RenderedRow = this.renderedRows[currentRowIndex];
-            var nextRenderedCell: RenderedCell = nextRenderedRow.getRenderedCellForColumn(currentCol);
+            var nextRenderedRow: RenderedRow;
+            switch (nextCell.floating) {
+                case Constants.FLOATING_TOP:
+                    nextRenderedRow = this.renderedTopFloatingRows[nextCell.rowIndex];
+                    break;
+                case Constants.FLOATING_BOTTOM:
+                    nextRenderedRow = this.renderedBottomFloatingRows[nextCell.rowIndex];
+                    break;
+                default:
+                    nextRenderedRow = this.renderedRows[nextCell.rowIndex];
+                    break;
+            }
+            if (!nextRenderedRow) {
+                // this happens if we are on floating row and try to jump to body
+                return;
+            }
+
+            var nextRenderedCell: RenderedCell = nextRenderedRow.getRenderedCellForColumn(nextCell.column);
+
             if (nextRenderedCell.isCellEditable()) {
+
+                // this scrolls the row into view
+                if (_.missing(nextCell.floating)) {
+                    this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+                }
+
+                this.gridPanel.ensureColumnVisible(nextCell.column);
+                // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+                // floating cell, the scrolls get out of sync
+                this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+
                 nextRenderedCell.startEditing();
                 nextRenderedCell.focusCell(false);
+                if (this.rangeController) {
+                    this.rangeController.setRangeToCell(nextCell.rowIndex, nextCell.column, nextCell.floating);
+                }
                 return;
             }
         }

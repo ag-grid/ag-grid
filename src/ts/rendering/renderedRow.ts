@@ -20,6 +20,8 @@ import ColumnChangeEvent from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
 import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
+import {GridCell} from "../gridPanel/mouseEventService";
+import Constants from "../constants";
 
 export default class RenderedRow {
 
@@ -224,7 +226,7 @@ export default class RenderedRow {
     private addCellFocusedListener(): void {
         var rowFocusedLastTime: boolean = null;
         var rowFocusedListener = () => {
-            var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex);
+            var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex, this.rowNode.floating);
             if (rowFocused !== rowFocusedLastTime) {
                 this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
                 this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
@@ -255,6 +257,13 @@ export default class RenderedRow {
         }
     }
 
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
+        var renderedCell = this.renderedCells[cell.column.getId()];
+        if (renderedCell) {
+            renderedCell.onMouseEvent(eventName, mouseEvent);
+        }
+    }
+
     private setTopAndHeightCss(): void {
         // if showing scrolls, position on the container
         if (!this.gridOptionsWrapper.isForPrint()) {
@@ -268,9 +277,9 @@ export default class RenderedRow {
     // adds in row and row-id attributes to the row
     private addRowIds(): void {
         var rowStr = this.rowIndex.toString();
-        if (this.rowNode.floatingBottom) {
+        if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
             rowStr = 'fb-' + rowStr;
-        } else if (this.rowNode.floatingTop) {
+        } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
             rowStr = 'ft-' + rowStr;
         }
         this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row', rowStr) );

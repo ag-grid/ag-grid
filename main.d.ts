@@ -20,6 +20,7 @@ export * from './dist/lib/entities/rowNode';
 
 export * from './dist/lib/filter/setFilterParameters';
 export * from './dist/lib/filter/textAndNumberFilterParameters';
+export * from './dist/lib/gridPanel/mouseEventService';
 
 export * from './dist/lib/interfaces/iRowModel';
 export * from './dist/lib/interfaces/iRangeController';

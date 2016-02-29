@@ -214,7 +214,8 @@ export default class RenderedCell {
         }
         var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
-            var rangeCount = this.rangeController.getCellRangeCount(this.rowIndex, this.column);
+
+            var rangeCount = this.rangeController.getCellRangeCount(this.rowIndex, this.column, this.node.floating);
             if (rangeCountLastTime !== rangeCount) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
@@ -235,7 +236,7 @@ export default class RenderedCell {
         // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
         var cellFocusedLastTime: boolean = null;
         var cellFocusedListener = (event?: any) => {
-            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column);
+            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column, this.node.floating);
             if (cellFocused !== cellFocusedLastTime) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
@@ -275,24 +276,15 @@ export default class RenderedCell {
         this.addCellFocusedListener();
 
         // only set tab index if cell selection is enabled
-        if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
+        if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
         }
 
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
 
-        this.addCellClickedHandler();
-        this.addMouseDownHandler();
-        this.addCellDoubleClickedHandler();
-        this.addCellContextMenuHandler();
-
-        if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
-            this.addCellNavigationHandler();
-        }
-
+        this.addCellNavigationHandler();
         this.createParentOfValue();
-
         this.populateCell();
     }
 
@@ -346,7 +338,7 @@ export default class RenderedCell {
             var key = event.which || event.keyCode;
             if (key == Constants.KEY_TAB) {
                 that.stopEditing(eInput, blurListener);
-                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, event.shiftKey);
+                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, that.node.floating, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -355,7 +347,7 @@ export default class RenderedCell {
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
-        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
@@ -393,52 +385,11 @@ export default class RenderedCell {
         return params;
     }
 
-    private createEvent(event: any, eventSource: any): any {
+    private createEvent(event: any, eventSource?: any): any {
         var agEvent = this.createParams();
         agEvent.event = event;
-        agEvent.eventSource = eventSource;
+        //agEvent.eventSource = eventSource;
         return agEvent;
-    }
-
-    private addCellDoubleClickedHandler() {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.eGridCell.addEventListener('dblclick', function (event: any) {
-            // always dispatch event to eventService
-            var agEvent: any = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
-
-            // check if colDef also wants to handle event
-            if (typeof colDef.onCellDoubleClicked === 'function') {
-                colDef.onCellDoubleClicked(agEvent);
-            }
-
-            if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
-            }
-        });
-    }
-
-    private addCellContextMenuHandler() {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.eGridCell.addEventListener('contextmenu', function (mouseEvent: MouseEvent) {
-            var agEvent: any = that.createEvent(mouseEvent, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
-
-            if (colDef.onCellContextMenu) {
-                colDef.onCellContextMenu(agEvent);
-            }
-
-            if (that.contextMenuFactory && !that.gridOptionsWrapper.isSuppressContextMenu()) {
-                that.contextMenuFactory.showMenu(that.rowIndex, that.column, mouseEvent);
-                event.preventDefault();
-                return false;
-            } else {
-                return true;
-            }
-
-        });
     }
 
     public isCellEditable() {
@@ -454,41 +405,82 @@ export default class RenderedCell {
         return this.column.isCellEditable(this.node);
     }
 
-    private addMouseDownHandler() {
-        this.eGridCell.addEventListener('mousedown', (event: any) => {
-            // we pass false to focusCell, as we don't want the cell to focus
-            // also get the browser focus. if we did, then the cellRenderer could
-            // have a text field in it, for example, and as the user clicks on the
-            // text field, the text field, the focus doesn't get to the text
-            // field, instead to goes to the div behind, making it impossible to
-            // select the text field.
-            if (!this.node.floating) {
-                this.focusCell(false);
-            }
-            // if it's a right click, then if the cell is already in range,
-            // don't change the range, however if the cell is not in a range,
-            // we set a new range
-            if (this.rangeController) {
-                if (!this.rangeController.isCellInRange(this.rowIndex, this.column)) {
-                    this.rangeController.clearSelection();
-                }
-            }
-        });
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        switch (eventName) {
+            case 'click': this.onCellClicked(mouseEvent); break;
+            case 'mousedown': this.onMouseDown(); break;
+            case 'dblclick': this.onCellDoubleClicked(); break;
+            case 'contextmenu': this.onContextMenu(mouseEvent); break;
+        }
     }
 
-    private addCellClickedHandler() {
-        var colDef = this.column.getColDef();
-        this.eGridCell.addEventListener("click", (event: any) => {
-            var agEvent = this.createEvent(event, this);
-            this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
-            if (colDef.onCellClicked) {
-                colDef.onCellClicked(agEvent);
-            }
+    private onContextMenu(mouseEvent: MouseEvent): any {
 
-            if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
-                this.startEditing();
+        var colDef = this.column.getColDef();
+        var agEvent: any = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
+
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(agEvent);
+        }
+
+        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.contextMenuFactory.showMenu(this.rowIndex, this.column, mouseEvent);
+            event.preventDefault();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private onCellDoubleClicked() {
+        var colDef = this.column.getColDef();
+        // always dispatch event to eventService
+        var agEvent: any = this.createEvent(event, this);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+
+        // check if colDef also wants to handle event
+        if (typeof colDef.onCellDoubleClicked === 'function') {
+            colDef.onCellDoubleClicked(agEvent);
+        }
+
+        if (!this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
+    }
+
+    private onMouseDown(): void {
+        // we pass false to focusCell, as we don't want the cell to focus
+        // also get the browser focus. if we did, then the cellRenderer could
+        // have a text field in it, for example, and as the user clicks on the
+        // text field, the text field, the focus doesn't get to the text
+        // field, instead to goes to the div behind, making it impossible to
+        // select the text field.
+        this.focusCell(false);
+
+        // if it's a right click, then if the cell is already in range,
+        // don't change the range, however if the cell is not in a range,
+        // we set a new range
+        if (this.rangeController) {
+            if (!this.rangeController.isCellInRange(this.rowIndex, this.column, this.node.floating)) {
+                this.rangeController.clearSelection();
             }
-        });
+        }
+    }
+
+    private onCellClicked(mouseEvent: MouseEvent): void {
+        var agEvent = this.createEvent(mouseEvent, this);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
+
+        var colDef = this.column.getColDef();
+
+        if (colDef.onCellClicked) {
+            colDef.onCellClicked(agEvent);
+        }
+
+        if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
     }
 
     private populateCell() {
@@ -611,7 +603,7 @@ export default class RenderedCell {
                 || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
             if (startNavigation) {
                 event.preventDefault();
-                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column);
+                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
                 return;
             }
 

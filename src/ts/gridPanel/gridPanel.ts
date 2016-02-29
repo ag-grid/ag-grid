@@ -24,6 +24,7 @@ import SelectionController from "../selectionController";
 import {ClipboardService} from "../enterprise/clipboardService";
 import {CsvCreator} from "../csvCreator";
 import {Optional} from "../context/context";
+import {MouseEventService} from "./mouseEventService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -107,6 +108,7 @@ export default class GridPanel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('clipboardService') private clipboardService: ClipboardService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -202,6 +204,7 @@ export default class GridPanel {
         this.sizeHeaderAndBody();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
+        this.addCellListeners();
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
@@ -236,7 +239,8 @@ export default class GridPanel {
             return;
         }
 
-        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer];
+        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+            this.eFloatingTop, this.eFloatingBottom];
 
         containers.forEach(container => {
             this.dragService.addDragSource({
@@ -247,6 +251,25 @@ export default class GridPanel {
                 onDragging: this.rangeController.onDragging.bind(this.rangeController)
             });
         });
+    }
+
+    private addCellListeners(): void {
+        var eventNames = ['click','mousedown','dblclick','contextmenu'];
+        eventNames.forEach( eventName => {
+            this.ePinnedLeftColsContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
+            this.ePinnedRightColsContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
+            this.eBodyContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
+            this.eFloatingTop.addEventListener(eventName, this.processMouseEvent.bind(this, Constants.FLOATING_TOP, eventName));
+            this.eFloatingBottom.addEventListener(eventName, this.processMouseEvent.bind(this, Constants.FLOATING_BOTTOM, eventName));
+        });
+    }
+
+    private processMouseEvent(floating: string, eventName: string, mouseEvent: MouseEvent): void {
+        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        if (_.exists(cell)) {
+            //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+        }
     }
 
     private addShortcutKeyListeners(): void {
@@ -266,12 +289,31 @@ export default class GridPanel {
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
         if (this.rangeController && this.rowModel.isRowsToRender()) {
-            var rowEnd = this.rowModel.getRowCount() - 1;
+            var rowEnd: number;
+            var floatingStart: string;
+            var floatingEnd: string;
+
+            if (this.floatingRowModel.isEmpty(Constants.FLOATING_TOP)) {
+                floatingStart = null;
+            } else {
+                floatingStart = Constants.FLOATING_TOP;
+            }
+
+            if (this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM)) {
+                floatingEnd = null;
+                rowEnd = this.rowModel.getRowCount() - 1;
+            } else {
+                floatingEnd = Constants.FLOATING_BOTTOM;
+                rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
+            }
+
             var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (_.missingOrEmpty(allDisplayedColumns)) { return; }
             this.rangeController.setRange({
                 rowStart: 0,
+                floatingStart: floatingStart,
                 rowEnd: rowEnd,
+                floatingEnd: floatingEnd,
                 columnStart: allDisplayedColumns[0],
                 columnEnd: allDisplayedColumns[allDisplayedColumns.length-1]
             });
@@ -841,7 +883,7 @@ export default class GridPanel {
             var newLeftPosition = this.eBodyViewport.scrollLeft;
             if (newLeftPosition !== this.lastLeftPosition) {
                 this.lastLeftPosition = newLeftPosition;
-                this.horizontallyScrollHeaderCenterAndFloatingCenter(newLeftPosition);
+                this.horizontallyScrollHeaderCenterAndFloatingCenter();
                 this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             }
 
@@ -905,7 +947,8 @@ export default class GridPanel {
         }
     }
 
-    private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition: any): void {
+    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
+        var bodyLeftPosition = this.eBodyViewport.scrollLeft;
         this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
@@ -925,6 +968,14 @@ export default class GridPanel {
 
     public getBodyViewportClientRect(): ClientRect {
         return this.eBodyViewport.getBoundingClientRect();
+    }
+
+    public getFloatingTopClientRect(): ClientRect {
+        return this.eFloatingTop.getBoundingClientRect();
+    }
+
+    public getFloatingBottomClientRect(): ClientRect {
+        return this.eFloatingBottom.getBoundingClientRect();
     }
 
     public getPinnedLeftColsViewportClientRect(): ClientRect {

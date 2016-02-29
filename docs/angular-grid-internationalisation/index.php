@@ -57,7 +57,9 @@ include '../documentation_header.php';
             groupColumns: 'laGroup Cols',
             groupColumnsEmptyMessage: 'la please drag cols to here',
             valueColumns: 'laValue Cols',
-            valueColumnsEmptyMessage: 'la please drag cols to here'
+            valueColumnsEmptyMessage: 'la please drag cols to here',
+            // other
+            noRowsToShow: 'la no rows'
         }
     };</pre>
 

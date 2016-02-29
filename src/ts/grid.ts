@@ -52,6 +52,8 @@ import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
 import {ClipboardService} from "./enterprise/clipboardService";
 import {ContextMenuFactory} from "./enterprise/contextMenu";
+import {MouseEventService} from "./gridPanel/mouseEventService";
+import {CellNavigationService} from "./cellNavigationService";
 
 export class Grid {
 
@@ -91,7 +93,8 @@ export class Grid {
                 TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
-                DragAndDropService, SortController, ColumnApi, FocusedCellController],
+                DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
+                CellNavigationService],
             debug: !!gridOptions.debug
         });
     }

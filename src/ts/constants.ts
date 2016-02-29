@@ -28,4 +28,6 @@ export default class Constants {
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
 
+    static FLOATING_TOP = 'top';
+    static FLOATING_BOTTOM = 'bottom';
 }

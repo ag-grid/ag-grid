@@ -28,8 +28,8 @@ import PaginationController from "./rowControllers/paginationController";
 import {FocusedCellController} from "./focusedCellController";
 import {IRangeController} from "./interfaces/iRangeController";
 import {RangeSelection} from "./interfaces/iRangeController";
-import {FocusedCell} from "./focusedCellController";
 import {Optional} from "./context/context";
+import {GridCell} from "./gridPanel/mouseEventService";
 
 @Bean('gridApi')
 export class GridApi {
@@ -326,12 +326,12 @@ export class GridApi {
         return this.filterManager.getFilterModel();
     }
 
-    public getFocusedCell(): FocusedCell {
+    public getFocusedCell(): GridCell {
         return this.focusedCellController.getFocusedCell();
     }
 
-    public setFocusedCell(rowIndex:any, colId:any) {
-        this.focusedCellController.setFocusedCell(rowIndex, colId);
+    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating?: string) {
+        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating);
     }
 
     public setHeaderHeight(headerHeight: number) {

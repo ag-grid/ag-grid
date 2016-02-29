@@ -7,6 +7,8 @@ import EventService from "../eventService";
 import {Autowired} from "../context/context";
 import {Events} from "../events";
 import {PostConstruct} from "../context/context";
+import Constants from "../constants";
+import _ from '../utils';
 
 @Bean('floatingRowModel')
 export default class FloatingRowModel {
@@ -23,8 +25,34 @@ export default class FloatingRowModel {
         this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
     }
 
+    public isEmpty(floating: string): boolean {
+        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        return _.missingOrEmpty(rows);
+    }
+
+    public isRowsToRender(floating: string): boolean {
+        return !this.isEmpty(floating);
+    }
+
+    public getRowAtPixel(pixel: number, floating: string): number {
+        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        if (_.missingOrEmpty(rows)) {
+            return 0; // this should never happen, just in case, 0 is graceful failure
+        }
+        for (var i = 0; i<rows.length; i++) {
+            var rowNode = rows[i];
+            var rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
+            // only need to range check against the top pixel, as we are going through the list
+            // in order, first row to hit the pixel wins
+            if (rowTopPixel >= pixel) {
+                return i;
+            }
+        }
+        return rows.length - 1;
+    }
+
     public setFloatingTopRowData(rowData: any[]): void {
-        this.floatingTopRows = this.createNodesFromData(rowData, false);
+        this.floatingTopRows = this.createNodesFromData(rowData, true);
         this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
     }
 
@@ -40,9 +68,7 @@ export default class FloatingRowModel {
             allData.forEach( (dataItem) => {
                 var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null);
                 rowNode.data = dataItem;
-                rowNode.floating = true;
-                rowNode.floatingTop = isTop;
-                rowNode.floatingBottom = !isTop;
+                rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
                 rowNode.rowTop = nextRowTop;
                 rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
 

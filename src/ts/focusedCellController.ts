@@ -8,11 +8,8 @@ import {Events} from "./events";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 import {ColDef} from "./entities/colDef";
 import {ColumnController} from "./columnController/columnController";
-
-export interface FocusedCell {
-    rowIndex: number,
-    column: Column
-}
+import {GridCell} from "./gridPanel/mouseEventService";
+import _ from './utils';
 
 @Bean('focusedCellController')
 export class FocusedCellController {
@@ -21,8 +18,7 @@ export class FocusedCellController {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private focusedRowIndex: number;
-    private focusedColumn: Column;
+    private focusedCell: GridCell;
 
     @PostConstruct
     private init(): void {
@@ -37,48 +33,53 @@ export class FocusedCellController {
     }
 
     public clearFocusedCell(): void {
-        this.focusedRowIndex = null;
-        this.focusedColumn = null;
+        this.focusedCell = null;
         this.onCellFocused(false);
     }
 
-    public getFocusedCell(): FocusedCell {
-        return {
-            column: this.focusedColumn,
-            rowIndex: this.focusedRowIndex
-        }
+    public getFocusedCell(): GridCell {
+        return this.focusedCell;
     }
 
-    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating: string, forceBrowserFocus = false): void {
         if (this.gridOptionsWrapper.isSuppressCellSelection()) {
             return;
         }
 
-        this.focusedRowIndex = rowIndex;
-
-        if (colKey) {
-            this.focusedColumn = this.columnController.getColumn(colKey);
-        } else {
-            this.focusedColumn = null;
-        }
+        this.focusedCell = {
+            rowIndex: rowIndex,
+            floating: _.makeNull(floating),
+            column: _.makeNull(this.columnController.getColumn(colKey))
+        };
 
         this.onCellFocused(forceBrowserFocus);
     }
 
-    public isCellFocused(rowIndex: number, column: Column): boolean {
-        return this.focusedRowIndex === rowIndex && this.focusedColumn === column;
+    public isCellFocused(rowIndex: number, column: Column, floating: string): boolean {
+        if (_.missing(this.focusedCell)) { return false; }
+        return this.focusedCell.column === column && this.isRowFocused(rowIndex, floating);
     }
 
-    public isRowFocused(rowIndex: number): boolean {
-        return this.focusedRowIndex === rowIndex;
+    public isRowFocused(rowIndex: number, floating: string): boolean {
+        if (_.missing(this.focusedCell)) { return false; }
+        var floatingOrNull = _.makeNull(floating);
+        return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {
         var event = {
-            rowIndex: this.focusedRowIndex,
-            column: this.focusedColumn,
+            rowIndex: <number> null,
+            column: <Column> null,
+            floating: <string> null,
             forceBrowserFocus: forceBrowserFocus
         };
+        if (this.focusedCell) {
+            event.rowIndex = this.focusedCell.rowIndex;
+            event.column = this.focusedCell.column;
+            event.floating = this.focusedCell.floating;
+        }
+
+        console.log(`cellFocused = ${event.rowIndex} ${event.column} ${event.floating}`);
         this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, event);
     }
 }

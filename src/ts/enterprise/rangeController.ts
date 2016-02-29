@@ -15,6 +15,9 @@ import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {RangeSelection} from "../interfaces/iRangeController";
 import {AddRangeSelectionParams} from "../interfaces/iRangeController";
+import {MouseEventService} from "../gridPanel/mouseEventService";
+import Constants from "../constants";
+import {GridCell} from "../gridPanel/mouseEventService";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
@@ -26,6 +29,7 @@ export class RangeController implements IRangeController {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private logger: Logger;
 
@@ -47,15 +51,18 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     }
 
-    public setRangeToCell(rowIndex: number, column: Column): void {
+    public setRangeToCell(rowIndex: number, column: Column, floating: string): void {
         var columns = this.updateSelectedColumns(column, column);
         if (!columns) { return; }
 
         var newRange = {
             rowStart: rowIndex,
+            floatingStart: _.makeNull(floating),
             rowEnd: rowIndex,
+            floatingEnd: _.makeNull(floating),
             columnStart: column,
             columnEnd: column,
             columns: columns
@@ -81,7 +88,9 @@ export class RangeController implements IRangeController {
 
         var newRange = <RangeSelection> {
             rowStart: rangeSelection.rowStart,
+            floatingStart: _.makeNull(rangeSelection.floatingStart),
             rowEnd: rangeSelection.rowEnd,
+            floatingEnd: _.makeNull(rangeSelection.floatingEnd),
             columnStart: rangeSelection.columnStart,
             columnEnd: rangeSelection.columnEnd,
             columns: columns
@@ -133,12 +142,12 @@ export class RangeController implements IRangeController {
         this.onDragging(this.lastMouseEvent);
     }
 
-    public isCellInRange(rowIndex: number, column: Column): boolean {
-        return this.getCellRangeCount(rowIndex, column) > 0;
+    public isCellInRange(rowIndex: number, column: Column, floating: string): boolean {
+        return this.getCellRangeCount(rowIndex, column, floating) > 0;
     }
 
     // returns the number of ranges this cell is in
-    public getCellRangeCount(rowIndex: number, column: Column): number {
+    public getCellRangeCount(rowIndex: number, column: Column, floating: string): number {
         if (_.missingOrEmpty(this.cellRanges)) {
             return 0;
         }
@@ -147,20 +156,33 @@ export class RangeController implements IRangeController {
 
         this.cellRanges.forEach( (cellRange: RangeSelection) => {
             var columnInRange = cellRange.columns.indexOf(column) >= 0;
-
-            var rowInRange: boolean;
-            if (cellRange.rowStart < cellRange.rowEnd) {
-                rowInRange = rowIndex >= cellRange.rowStart && rowIndex <= cellRange.rowEnd;
-            } else {
-                rowInRange = rowIndex >= cellRange.rowEnd && rowIndex <= cellRange.rowStart;
-            }
-
+            var rowInRange = this.isRowInRange(rowIndex, floating, cellRange);
             if (columnInRange && rowInRange) {
                 matchingCount++;
             }
         });
 
         return matchingCount;
+    }
+
+    private isRowInRange(rowIndex: number, floating: string, cellRange: RangeSelection): boolean {
+
+        var row1 = new RowSelection(cellRange.rowStart, cellRange.floatingStart);
+        var row2 = new RowSelection(cellRange.rowEnd, cellRange.floatingEnd);
+
+        var firstRow = row1.before(row2) ? row1 : row2;
+        var lastRow = row1.before(row2) ? row2 : row1;
+
+        var thisRow = new RowSelection(rowIndex, floating);
+
+        if (thisRow.equals(firstRow) || thisRow.equals(lastRow)) {
+            return true;
+        } else {
+            var afterFirstRow = !thisRow.before(firstRow);
+            var beforeLastRow = thisRow.before(lastRow);
+            return afterFirstRow && beforeLastRow;
+        }
+
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
@@ -171,7 +193,14 @@ export class RangeController implements IRangeController {
             this.cellRanges = [];
         }
 
-        this.createNewActiveRange(mouseEvent);
+        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        if (_.missing(cell)) {
+            // if drag wasn't on cell, then do nothing, including do not set dragging=true,
+            // (which them means onDragging and onDragStop do nothing)
+            return;
+        }
+
+        this.createNewActiveRange(cell);
 
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
@@ -181,16 +210,16 @@ export class RangeController implements IRangeController {
         this.selectionChanged(false, true);
     }
 
-    private createNewActiveRange(mouseEvent: MouseEvent): void {
-        var rowIndex = this.getRowIndex(mouseEvent);
-        var column = this.getColumn(mouseEvent);
+    private createNewActiveRange(cell: GridCell): void {
 
         this.activeRange = {
-            rowEnd: rowIndex,
-            rowStart: rowIndex,
-            columnEnd: column,
-            columnStart: column,
-            columns: [column]
+            rowEnd: cell.rowIndex,
+            floatingEnd: _.makeNull(cell.floating),
+            rowStart: cell.rowIndex,
+            floatingStart: _.makeNull(cell.floating),
+            columnEnd: cell.column,
+            columnStart: cell.column,
+            columns: [cell.column]
         };
 
         this.cellRanges.push(this.activeRange);
@@ -206,6 +235,10 @@ export class RangeController implements IRangeController {
     }
 
     public onDragStop(): void {
+        if (!this.dragging) {
+            return;
+        }
+
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
@@ -213,93 +246,33 @@ export class RangeController implements IRangeController {
     }
 
     public onDragging(mouseEvent: MouseEvent): void {
+        if (!this.dragging) {
+            return;
+        }
+
         this.lastMouseEvent = mouseEvent;
 
+        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        if (_.missing(cell)) {
+            return;
+        }
+
         var columnChanged = false;
-        var column = this.getColumn(mouseEvent);
-        if (column !== this.activeRange.columnEnd) {
-            this.activeRange.columnEnd = column;
+        if (cell.column !== this.activeRange.columnEnd) {
+            this.activeRange.columnEnd = cell.column;
             columnChanged = true;
         }
 
         var rowChanged = false;
-        var rowIndex = this.getRowIndex(mouseEvent);
-        if (rowIndex!==this.activeRange.rowEnd) {
-            this.activeRange.rowEnd = rowIndex;
+        if (cell.rowIndex!==this.activeRange.rowEnd || cell.floating!==this.activeRange.floatingEnd) {
+            this.activeRange.rowEnd = cell.rowIndex;
+            this.activeRange.floatingEnd = cell.floating;
             rowChanged = true;
         }
 
         if (columnChanged || rowChanged) {
             this.selectionChanged(false, false);
         }
-    }
-
-    private getContainer(mouseEvent: MouseEvent): string {
-        var centerRect = this.gridPanel.getBodyViewportClientRect();
-
-        var mouseX = mouseEvent.clientX;
-        if (mouseX < centerRect.left && this.columnController.isPinningLeft()) {
-            return Column.PINNED_LEFT;
-        } else if (mouseX > centerRect.right && this.columnController.isPinningRight()) {
-            return Column.PINNED_RIGHT;
-        } else {
-            return null;
-        }
-    }
-
-    private getColumnsForContainer(container: string): Column[] {
-        switch (container) {
-            case Column.PINNED_LEFT: return this.columnController.getDisplayedLeftColumns();
-            case Column.PINNED_RIGHT: return this.columnController.getDisplayedRightColumns();
-            default: return this.columnController.getDisplayedCenterColumns();
-        }
-    }
-
-    private getXForContainer(container: string, mouseEvent: MouseEvent): number {
-        var containerX: number;
-        switch (container) {
-            case Column.PINNED_LEFT:
-                containerX = this.gridPanel.getPinnedLeftColsViewportClientRect().left;
-                break;
-            case Column.PINNED_RIGHT:
-                containerX = this.gridPanel.getPinnedRightColsViewportClientRect().left;
-                break;
-            default:
-                var centerRect = this.gridPanel.getBodyViewportClientRect();
-                var centerScroll = this.gridPanel.getHorizontalScrollPosition();
-                containerX = centerRect.left - centerScroll;
-        }
-        var result = mouseEvent.clientX - containerX;
-        return result;
-    }
-
-    private getColumn(mouseEvent: MouseEvent): Column {
-        if (this.columnController.isEmpty()) {
-            return null;
-        }
-
-        var container = this.getContainer(mouseEvent);
-        var columns = this.getColumnsForContainer(container);
-        var containerX = this.getXForContainer(container, mouseEvent);
-
-        var hoveringColumn: Column;
-        if (containerX < 0) {
-            hoveringColumn = columns[0];
-        }
-
-        columns.forEach( column => {
-            var afterLeft = containerX >= column.getLeft();
-            var beforeRight = containerX <= column.getRight();
-            if (afterLeft && beforeRight) {
-                hoveringColumn = column;
-            }
-        });
-
-        if (!hoveringColumn) {
-            hoveringColumn = columns[columns.length - 1];
-        }
-
-        return hoveringColumn;
     }
 
     private updateSelectedColumns(columnFrom: Column, columnTo: Column): Column[] {
@@ -327,15 +300,49 @@ export class RangeController implements IRangeController {
 
         return columns;
     }
+}
 
-    private getRowIndex(mouseEvent: MouseEvent): number {
-        var clientRect = this.gridPanel.getBodyViewportClientRect();
-        var scrollY = this.gridPanel.getVerticalScrollPosition();
+class RowSelection {
 
-        var bodyY = mouseEvent.clientY - clientRect.top + scrollY;
-        var rowIndex = this.rowModel.getRowAtPixel(bodyY);
+    index: number;
+    floating: string;
 
-        return rowIndex;
+    constructor(index: number, floating: string) {
+        this.index = index;
+        // turn undefined into null, so
+        this.floating = _.makeNull(floating);
     }
 
+    equals(otherSelection: RowSelection): boolean {
+        return this.index === otherSelection.index
+                && this.floating === otherSelection.floating;
+    }
+
+    // tests if this row selection is before the other row selection
+    before(otherSelection: RowSelection): boolean {
+        var otherFloating = otherSelection.floating;
+        switch (this.floating) {
+            case Constants.FLOATING_TOP:
+                // we we are floating top, and other isn't, then we are always before
+                if (otherFloating!==Constants.FLOATING_TOP) { return true; }
+                break;
+            case Constants.FLOATING_BOTTOM:
+                // if we are floating bottom, and the other isn't, then we are never before
+                if (otherFloating!==Constants.FLOATING_BOTTOM) { return false; }
+                break;
+            default:
+                // if we are not floating, but the other one is floating...
+                if (_.exists(otherFloating)) {
+                    if (otherFloating===Constants.FLOATING_TOP) {
+                        // we are not floating, other is floating top, we are first
+                        return false;
+                    } else {
+                        // we are not floating, other is floating bottom, we are always first
+                        return true;
+                    }
+                }
+                break;
+        }
+        return this.index <= otherSelection.index;
+    }
 }
