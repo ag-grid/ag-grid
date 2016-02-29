@@ -9,6 +9,8 @@ import {MenuList} from "../widgets/menuList";
 import {Context} from "../context/context";
 import SvgFactory from "../svgFactory";
 import PopupService from "../widgets/agPopupService";
+import {ClipboardService} from "./clipboardService";
+import {MenuItem} from "../widgets/menuItem";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -31,7 +33,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        this.popupService.addAsModalPopup(
+        var hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
             ()=> menu.destroy()
@@ -41,6 +43,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
             mouseEvent: mouseEvent,
             ePopup: eMenuGui
         });
+
+        menu.afterGuiAttached(hidePopup);
     }
 
 }
@@ -48,8 +52,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
 class ContextMenu extends Component {
 
     @Autowired('context') private context: Context;
+    @Autowired('clipboardService') private clipboardService: ClipboardService;
 
     private menuList: MenuList;
+    private hidePopupFunc: Function;
 
     constructor() {
         super('<div class="ag-menu"></div>');
@@ -62,23 +68,30 @@ class ContextMenu extends Component {
         this.context.wireBean(this.menuList);
 
         this.menuList.addItem({
-            name: 'Cut',
-            icon: svgFactory.createCutIcon(),
-            action: ()=> console.log('the action')
-        });
-        this.menuList.addItem({
             name: 'Copy',
+            shortcut: 'Ctrl+C',
             icon: svgFactory.createCopyIcon(),
-            action: ()=> console.log('the action')
+            action: ()=> this.clipboardService.copyToClipboard()
         });
         this.menuList.addItem({
             name: 'Paste',
+            shortcut: 'Ctrl+V',
+            disabled: true,
             icon: svgFactory.createPasteIcon(),
-            action: ()=> console.log('the action')
+            action: ()=> this.clipboardService.pasteFromClipboard()
         });
 
         this.getGui().appendChild(this.menuList.getGui());
+
+        this.menuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+
     }
 
+    private onHidePopup(): void {
+        this.hidePopupFunc();
+    }
 
+    public afterGuiAttached(hidePopup: Function): void {
+        this.hidePopupFunc = hidePopup;
+    }
 }

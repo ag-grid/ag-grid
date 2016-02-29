@@ -16,6 +16,7 @@ export class MenuItem extends Component {
         '<div class="ag-menu-option">' +
         '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
         '  <span id="eName" class="ag-menu-option-text"></span>' +
+        '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
         '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
         '</div>';
 
@@ -38,6 +39,9 @@ export class MenuItem extends Component {
             // it out.
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
+        if (params.shortcut) {
+            this.queryForHtmlElement('#eShortcut').innerHTML = params.shortcut;
+        }
         if (params.childMenu) {
             this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
         } else {
@@ -45,19 +49,25 @@ export class MenuItem extends Component {
         }
         this.queryForHtmlElement('#eName').innerHTML = params.name;
 
+        if (params.disabled) {
+            _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+        }
+
         this.addGuiEventListener('click', this.onOptionSelected.bind(this));
     }
 
     private onOptionSelected(): void {
+        this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, this.params);
         if (this.params.action) {
             this.params.action();
         }
-        this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, this.params);
     }
 }
 
 export interface MenuItemParams {
     name: string,
+    disabled?: boolean,
+    shortcut?: string,
     action?: ()=>void,
     checked?: boolean,
     icon?: HTMLElement,

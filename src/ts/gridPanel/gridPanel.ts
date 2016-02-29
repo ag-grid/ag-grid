@@ -255,16 +255,16 @@ export default class GridPanel {
 
     private addCellListeners(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
+        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+            this.eFloatingTop, this.eFloatingBottom];
         eventNames.forEach( eventName => {
-            this.ePinnedLeftColsContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
-            this.ePinnedRightColsContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
-            this.eBodyContainer.addEventListener(eventName, this.processMouseEvent.bind(this, null, eventName));
-            this.eFloatingTop.addEventListener(eventName, this.processMouseEvent.bind(this, Constants.FLOATING_TOP, eventName));
-            this.eFloatingBottom.addEventListener(eventName, this.processMouseEvent.bind(this, Constants.FLOATING_BOTTOM, eventName));
+            containers.forEach( container =>
+                container.addEventListener(eventName, this.processMouseEvent.bind(this, eventName))
+            )
         });
     }
 
-    private processMouseEvent(floating: string, eventName: string, mouseEvent: MouseEvent): void {
+    private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);

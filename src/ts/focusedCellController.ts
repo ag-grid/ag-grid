@@ -76,7 +76,6 @@ export class FocusedCellController {
             event.floating = this.focusedCell.floating;
         }
 
-        console.log(`cellFocused = ${event.rowIndex} ${event.column} ${event.floating}`);
         this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, event);
     }
 }

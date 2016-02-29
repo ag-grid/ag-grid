@@ -22,6 +22,7 @@ export class MenuList extends Component {
         '  <span class="ag-menu-separator-cell"></span>' +
         '  <span class="ag-menu-separator-cell"></span>' +
         '  <span class="ag-menu-separator-cell"></span>' +
+        '  <span class="ag-menu-separator-cell"></span>' +
         '</div>';
 
     private activeMenuItemParams: MenuItemParams;
@@ -62,6 +63,10 @@ export class MenuList extends Component {
     }
 
     private mouseEnterItem(menuItemParams: MenuItemParams, menuItem: MenuItem): void {
+        if (menuItemParams.disabled) {
+            return;
+        }
+
         if (this.activeMenuItemParams!==menuItemParams) {
             this.removeOldChildPopup();
         }

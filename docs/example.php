@@ -103,6 +103,7 @@
 
             </div>
         </div>
+
         <!-- The table div -->
         <div style="padding: 100px 20px 20px 20px; height: 100%; box-sizing: border-box;">
             <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>

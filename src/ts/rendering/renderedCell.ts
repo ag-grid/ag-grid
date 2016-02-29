@@ -416,6 +416,12 @@ export default class RenderedCell {
 
     private onContextMenu(mouseEvent: MouseEvent): any {
 
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
+        // thus the normal menu is displayed
+        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            return;
+        }
+
         var colDef = this.column.getColDef();
         var agEvent: any = this.createEvent(mouseEvent);
         this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);

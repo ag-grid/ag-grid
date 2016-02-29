@@ -483,8 +483,5 @@ export default class Utils {
         }
     }
 
-    static eventCtrlAnd(event: KeyboardEvent, character: number): boolean {
-        return event.which == character && (event.ctrlKey || event.metaKey)
-    }
 }
 
