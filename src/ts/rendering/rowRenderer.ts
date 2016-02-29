@@ -30,8 +30,8 @@ import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Optional} from "../context/context";
-import {GridCell} from "../gridPanel/mouseEventService";
 import {CellNavigationService} from "../cellNavigationService";
+import {GridCell} from "../entities/gridCell";
 
 @Bean('rowRenderer')
 export default class RowRenderer {
@@ -468,7 +468,6 @@ export default class RowRenderer {
             this.cellRendererMap,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex);
-        //renderedRow.setMainRowWidth(mainRowWidth);
         this.context.wireBean(renderedRow);
 
         this.renderedRows[rowIndex] = renderedRow;
@@ -485,7 +484,7 @@ export default class RowRenderer {
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     public navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string) {
 
-        var nextCell: GridCell = {rowIndex: rowIndex, column: column, floating: floating};
+        var nextCell = new GridCell(rowIndex, floating, column);
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
@@ -530,7 +529,7 @@ export default class RowRenderer {
     // called by the cell, when tab is pressed while editing
     public startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any) {
 
-        var nextCell = {rowIndex: rowIndex, column: column, floating: floating};
+        var nextCell = new GridCell(rowIndex, floating, column);
 
         while (true) {
 

@@ -9,7 +9,6 @@ exports.initialiseAgGridWithAngular1 = require('./dist/lib/components/agGridNg1'
 exports.initialiseAgGridWithWebComponents = require('./dist/lib/components/agGridWebComponent').initialiseAgGridWithWebComponents;
 exports.defaultGroupComparator = require('./dist/lib/functions').defaultGroupComparator;
 exports.FocusedCellController = require('./dist/lib/focusedCellController').FocusedCellController;
-exports.GridCell = require('./dist/lib/gridPanel/mouseEventService').GridCell;
 
 exports.GridOptions = require('./dist/lib/entities/gridOptions').GridOptions;
 exports.AbstractColDef = require('./dist/lib/entities/colDef').AbstractColDef;
@@ -21,6 +20,8 @@ exports.ColumnGroupChild = require('./dist/lib/entities/columnGroupChild').Colum
 exports.OriginalColumnGroup = require('./dist/lib/entities/originalColumnGroup').OriginalColumnGroup;
 exports.OriginalColumnGroupChild = require('./dist/lib/entities/originalColumnGroupChild').OriginalColumnGroupChild;
 exports.RowNode = require('./dist/lib/entities/rowNode').RowNode;
+exports.GridCell = require('./dist/lib/entities/gridCell').GridCell;
+exports.GridRow = require('./dist/lib/entities/gridCell').GridRow;
 
 exports.SetFilterParameters = require('./dist/lib/filter/setFilterParameters').SetFilterParameters;
 exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumberFilterParameters').TextAndNumberFilterParameters;

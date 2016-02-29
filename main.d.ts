@@ -17,6 +17,7 @@ export * from './dist/lib/entities/columnGroupChild';
 export * from './dist/lib/entities/originalColumnGroup';
 export * from './dist/lib/entities/originalColumnGroupChild';
 export * from './dist/lib/entities/rowNode';
+export * from './dist/lib/entities/gridCell';
 
 export * from './dist/lib/filter/setFilterParameters';
 export * from './dist/lib/filter/textAndNumberFilterParameters';

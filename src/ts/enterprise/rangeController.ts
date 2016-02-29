@@ -17,7 +17,7 @@ import {RangeSelection} from "../interfaces/iRangeController";
 import {AddRangeSelectionParams} from "../interfaces/iRangeController";
 import {MouseEventService} from "../gridPanel/mouseEventService";
 import Constants from "../constants";
-import {GridCell} from "../gridPanel/mouseEventService";
+import {GridCell} from "../entities/gridCell";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {

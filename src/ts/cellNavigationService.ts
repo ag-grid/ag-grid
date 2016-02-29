@@ -1,13 +1,13 @@
 import {Bean} from "./context/context";
-import {GridCell} from "./gridPanel/mouseEventService";
 import Constants from "./constants";
 import {Autowired} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
 import Column from "./entities/column";
 import FloatingRowModel from "./rowControllers/floatingRowModel";
-import {GridRow} from "./gridPanel/mouseEventService";
 import _ from './utils';
+import {GridRow} from "./entities/gridCell";
+import {GridCell} from "./entities/gridCell";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {
@@ -31,7 +31,7 @@ export class CellNavigationService {
         if (!colToLeft) {
             return null;
         } else {
-            return this.createGridCell(lastCell.rowIndex, colToLeft, lastCell.floating);
+            return new GridCell(lastCell.rowIndex, lastCell.floating, colToLeft);
         }
     }
 
@@ -41,7 +41,7 @@ export class CellNavigationService {
         if (!colToRight) {
             return null;
         } else {
-            return this.createGridCell(lastCell.rowIndex, colToRight, lastCell.floating);
+            return new GridCell(lastCell.rowIndex, lastCell.floating, colToRight);
         }
     }
 
@@ -56,29 +56,29 @@ export class CellNavigationService {
                 return null;
             } else if (lastCellNotFloating) {
                 if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_BOTTOM)) {
-                    return {rowIndex: 0, floating: Constants.FLOATING_BOTTOM};
+                    return new GridRow(0, Constants.FLOATING_BOTTOM);
                 } else {
                     return null;
                 }
             } else {
                 if (this.rowModel.isRowsToRender()) {
-                    return {rowIndex: 0, floating: null};
+                    return new GridRow(0, null);
                 } else if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_BOTTOM)) {
-                    return {rowIndex: 0, floating: Constants.FLOATING_BOTTOM};
+                    return new GridRow(0, Constants.FLOATING_BOTTOM);
                 } else {
                     return null;
                 }
             }
 
         } else {
-            return {rowIndex: lastRow.rowIndex + 1, floating: lastRow.floating};
+            return new GridRow(lastRow.rowIndex + 1, lastRow.floating);
         }
 
     }
 
     private getCellBelow(lastCell: GridCell): GridCell {
-        var rowBelow = this.getRowBelow({rowIndex: lastCell.rowIndex, floating: lastCell.floating});
-        return {rowIndex: rowBelow.rowIndex, column: lastCell.column, floating: rowBelow.floating};
+        var rowBelow = this.getRowBelow(lastCell.getGridRow());
+        return new GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
     }
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
@@ -128,8 +128,8 @@ export class CellNavigationService {
     }
 
     private getCellAbove(lastCell: GridCell): GridCell {
-        var rowAbove = this.getRowAbove({rowIndex: lastCell.rowIndex, floating: lastCell.floating});
-        return {rowIndex: rowAbove.rowIndex, column: lastCell.column, floating: rowAbove.floating}
+        var rowAbove = this.getRowAbove(lastCell.getGridRow());
+        return new GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
     }
 
     private getLastBodyCell(): GridRow {
@@ -140,14 +140,6 @@ export class CellNavigationService {
     private getLastFloatingTopRow(): GridRow {
         var lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
         return {rowIndex: lastFloatingRow, floating: Constants.FLOATING_TOP};
-    }
-
-    private createGridCell(rowIndex: number, column: Column, floating: string): GridCell {
-        return {
-            rowIndex: rowIndex,
-            floating: floating,
-            column: column
-        };
     }
 
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
@@ -172,11 +164,7 @@ export class CellNavigationService {
             newFloating = rowBelow.floating;
         }
 
-        return {
-            rowIndex: newRowIndex,
-            floating: newFloating,
-            column: newColumn
-        }
+        return new GridCell(newRowIndex, newFloating, newColumn);
     }
 
     public getNextTabbedCellBackwards(gridCell: GridCell): GridCell {
@@ -201,11 +189,7 @@ export class CellNavigationService {
             newFloating = rowAbove.floating;
         }
 
-        return {
-            rowIndex: newRowIndex,
-            floating: newFloating,
-            column: newColumn
-        }
+        return new GridCell(newRowIndex, newFloating, newColumn);
     }
 
 }

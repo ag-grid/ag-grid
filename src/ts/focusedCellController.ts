@@ -8,8 +8,8 @@ import {Events} from "./events";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 import {ColDef} from "./entities/colDef";
 import {ColumnController} from "./columnController/columnController";
-import {GridCell} from "./gridPanel/mouseEventService";
 import _ from './utils';
+import {GridCell} from "./entities/gridCell";
 
 @Bean('focusedCellController')
 export class FocusedCellController {
@@ -46,11 +46,8 @@ export class FocusedCellController {
             return;
         }
 
-        this.focusedCell = {
-            rowIndex: rowIndex,
-            floating: _.makeNull(floating),
-            column: _.makeNull(this.columnController.getColumn(colKey))
-        };
+        var column = _.makeNull(this.columnController.getColumn(colKey));
+        this.focusedCell = new GridCell(rowIndex, _.makeNull(floating), column);
 
         this.onCellFocused(forceBrowserFocus);
     }

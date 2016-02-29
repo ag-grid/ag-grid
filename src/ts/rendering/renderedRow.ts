@@ -20,8 +20,8 @@ import ColumnChangeEvent from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
 import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
-import {GridCell} from "../gridPanel/mouseEventService";
 import Constants from "../constants";
+import {GridCell} from "../entities/gridCell";
 
 export default class RenderedRow {
 

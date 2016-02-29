@@ -29,7 +29,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {IRangeController} from "./interfaces/iRangeController";
 import {RangeSelection} from "./interfaces/iRangeController";
 import {Optional} from "./context/context";
-import {GridCell} from "./gridPanel/mouseEventService";
+import {GridCell} from "./entities/gridCell";
 
 @Bean('gridApi')
 export class GridApi {

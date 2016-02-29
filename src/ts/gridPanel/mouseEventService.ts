@@ -7,17 +7,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import Constants from "../constants";
 import FloatingRowModel from "../rowControllers/floatingRowModel";
 import _ from '../utils';
-
-export interface GridCell {
-    floating: string,
-    rowIndex: number,
-    column: Column
-}
-
-export interface GridRow {
-    floating: string,
-    rowIndex: number
-}
+import {GridCell} from "../entities/gridCell";
 
 @Bean('mouseEventService')
 export class MouseEventService {
@@ -34,11 +24,7 @@ export class MouseEventService {
         var column = this.getColumn(mouseEvent);
 
         if (rowIndex>=0 && _.exists(column)) {
-            return {
-                floating: floating,
-                rowIndex: rowIndex,
-                column: column
-            }
+            return new GridCell(rowIndex, floating, column);
         } else {
             return null;
         }
