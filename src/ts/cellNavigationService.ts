@@ -48,13 +48,10 @@ export class CellNavigationService {
     private getRowBelow(lastRow: GridRow): GridRow {
         // if already on top row, do nothing
         if (this.isLastRowInContainer(lastRow)) {
-            var lastCellFloatingTop = lastRow.floating===Constants.FLOATING_TOP;
-            var lastCellFloatingBottom = lastRow.floating===Constants.FLOATING_BOTTOM;
-            var lastCellNotFloating = !(lastCellFloatingTop || lastCellFloatingBottom);
 
-            if (lastCellFloatingBottom) {
+            if (lastRow.isFloatingBottom()) {
                 return null;
-            } else if (lastCellNotFloating) {
+            } else if (lastRow.isNotFloating()) {
                 if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_BOTTOM)) {
                     return new GridRow(0, Constants.FLOATING_BOTTOM);
                 } else {
@@ -82,29 +79,24 @@ export class CellNavigationService {
     }
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
-        switch (gridRow.floating) {
-            case Constants.FLOATING_TOP:
-                var lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
-                return lastTopIndex === gridRow.rowIndex;
-            case Constants.FLOATING_BOTTOM:
-                var lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
-                return lastBottomIndex === gridRow.rowIndex;
-            default:
-                var lastBodyIndex = this.rowModel.getRowCount() - 1;
-                return lastBodyIndex === gridRow.rowIndex;
+        if (gridRow.isFloatingTop()) {
+            var lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
+            return lastTopIndex === gridRow.rowIndex;
+        } else if (gridRow.isFloatingBottom()) {
+            var lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
+            return lastBottomIndex === gridRow.rowIndex;
+        } else {
+            var lastBodyIndex = this.rowModel.getRowCount() - 1;
+            return lastBodyIndex === gridRow.rowIndex;
         }
     }
 
     private getRowAbove(lastRow: GridRow): GridRow {
         // if already on top row, do nothing
         if (lastRow.rowIndex === 0) {
-            var lastCellFloatingTop = lastRow.floating===Constants.FLOATING_TOP;
-            var lastCellFloatingBottom = lastRow.floating===Constants.FLOATING_BOTTOM;
-            var lastCellNotFloating = !(lastCellFloatingTop || lastCellFloatingBottom);
-
-            if (lastCellFloatingTop) {
+            if (lastRow.isFloatingTop()) {
                 return null;
-            } else if (lastCellNotFloating) {
+            } else if (lastRow.isNotFloating()) {
                 if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_TOP)) {
                     return this.getLastFloatingTopRow();
                 } else {
@@ -122,7 +114,7 @@ export class CellNavigationService {
             }
 
         } else {
-            return {rowIndex: lastRow.rowIndex - 1, floating: lastRow.floating};
+            return new GridRow(lastRow.rowIndex - 1, lastRow.floating);
         }
 
     }
@@ -134,12 +126,12 @@ export class CellNavigationService {
 
     private getLastBodyCell(): GridRow {
         var lastBodyRow = this.rowModel.getRowCount() - 1;
-        return {rowIndex: lastBodyRow, floating: null};
+        return new GridRow(lastBodyRow, null);
     }
 
     private getLastFloatingTopRow(): GridRow {
         var lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
-        return {rowIndex: lastFloatingRow, floating: Constants.FLOATING_TOP};
+        return new GridRow(lastFloatingRow, Constants.FLOATING_TOP);
     }
 
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
@@ -156,7 +148,7 @@ export class CellNavigationService {
         if (!newColumn) {
             newColumn = displayedColumns[0];
 
-            var rowBelow = this.getRowBelow({rowIndex: gridCell.rowIndex, floating: gridCell.floating});
+            var rowBelow = this.getRowBelow(gridCell.getGridRow());
             if (_.missing(rowBelow)) {
                 return;
             }
@@ -181,7 +173,7 @@ export class CellNavigationService {
         if (!newColumn) {
             newColumn = displayedColumns[displayedColumns.length - 1];
 
-            var rowAbove = this.getRowAbove({rowIndex: gridCell.rowIndex, floating: gridCell.floating});
+            var rowAbove = this.getRowAbove(gridCell.getGridRow());
             if (_.missing(rowAbove)) {
                 return;
             }

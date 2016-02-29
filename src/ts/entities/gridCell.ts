@@ -1,4 +1,5 @@
 import Column from "./column";
+import Constants from "../constants";
 
 export class GridCell {
 
@@ -25,5 +26,17 @@ export class GridRow {
     constructor(rowIndex: number, floating: string) {
         this.rowIndex = rowIndex;
         this.floating = floating;
+    }
+
+    isFloatingTop(): boolean {
+        return this.floating === Constants.FLOATING_TOP;
+    }
+
+    isFloatingBottom(): boolean {
+        return this.floating === Constants.FLOATING_BOTTOM;
+    }
+
+    isNotFloating(): boolean {
+        return !this.isFloatingBottom() && !this.isFloatingTop();
     }
 }
