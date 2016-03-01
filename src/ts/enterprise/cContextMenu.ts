@@ -112,20 +112,7 @@ class CContextMenu extends Component {
         this.menuList = new MenuList();
         this.context.wireBean(this.menuList);
 
-        this.menuItems.forEach( (listItem: MenuItem|string)=> {
-            if (listItem === 'separator') {
-                this.menuList.addSeparator();
-            } else {
-                var menuItem: MenuItem;
-                if (typeof listItem === 'string') {
-                    menuItem = this.defaultMenuItems[<string>listItem];
-                } else {
-                    menuItem = <MenuItem> listItem;
-                }
-                this.menuList.addItem(menuItem);
-            }
-        });
-
+        this.menuList.addMenuItems(this.menuItems, this.defaultMenuItems);
         this.getGui().appendChild(this.menuList.getGui());
 
         this.menuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));

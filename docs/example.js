@@ -227,7 +227,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Make Coffee',
-            icon: '<img src="../images/lab.png"/>',
+            icon: '<img src="../images/lab.png" style="width: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {window.alert('Make your own dam coffee!!!'); }
         }

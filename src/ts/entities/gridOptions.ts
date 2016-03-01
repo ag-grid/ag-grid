@@ -130,6 +130,7 @@ export interface GridOptions {
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
     getContextMenuItems?: GetContextMenuItems,
+    getMainMenuItems?: GetMainMenuItems,
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -184,4 +185,16 @@ export interface GetContextMenuItemsParams {
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): [string|MenuItem]
+}
+
+export interface GetMainMenuItemsParams {
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any,
+    defaultItems: string[]
+}
+
+export interface GetMainMenuItems {
+    (params: GetMainMenuItemsParams): [string|MenuItem]
 }

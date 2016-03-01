@@ -18,6 +18,7 @@ import {PostConstruct} from "../context/context";
 import EventService from "../eventService";
 import {CMenuItem} from "../widgets/cMenuItem";
 import GridOptionsWrapper from "../gridOptionsWrapper";
+import {MenuItem} from "../widgets/cMenuItem";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -118,7 +119,7 @@ export class EnterpriseMenu {
 
         var tabItems: TabbedItem[] = [];
         if (!this.gridOptionsWrapper.isSuppressMenuMainPanel()) {
-            this.createGeneralPanel();
+            this.createMainPanel();
             tabItems.push(this.tabItemGeneral);
         }
         if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel()) {
@@ -252,71 +253,102 @@ export class EnterpriseMenu {
         return cMenuList;
     }
 
-    private createGeneralPanel(): void {
+    private createBuiltInMenuOptions(): {[key: string]: MenuItem} {
+
+        var builtInMenuOptions: any = {
+            pinSubMenu: {
+                name: 'Pin Column',
+                icon: svgFactory.createPinIcon(),
+                childMenu: this.createPinnedSubMenu()
+            },
+            valueAggSubMenu: {
+                name: 'Value Aggregation',
+                icon: svgFactory.createAggregationIcon(),
+                childMenu: this.createAggregationSubMenu()
+            },
+            autoSizeThis: {
+                name: 'Autosize This Column',
+                action: ()=> this.columnController.autoSizeColumn(this.column)
+            },
+            autoSizeAll: {
+                name: 'Autosize All Columns',
+                action: ()=> this.columnController.autoSizeAllColumns()
+            },
+            rowGroup: {
+                name: 'Group by ' + this.column.getColDef().headerName,
+                action: ()=> this.columnController.addRowGroupColumn(this.column),
+                icon: svgFactory.createGroupIcon12()
+            },
+            rowUnGroup: {
+                name: 'Un-Group by ' + this.column.getColDef().headerName,
+                action: ()=> this.columnController.removeRowGroupColumn(this.column),
+                icon: svgFactory.createGroupIcon12()
+            },
+            resetColumns: {
+                name: 'Reset Columns',
+                action: ()=> this.columnController.resetColumnState()
+            },
+            expandAll: {
+                name: 'Expand All',
+                action: ()=> this.gridApi.expandAll()
+            },
+            contractAll: {
+                name: 'Collapse All',
+                action: ()=> this.gridApi.collapseAll()
+            }
+        };
+
+        return builtInMenuOptions;
+    }
+
+    private getMenuItems(): [string|MenuItem] {
+        var defaultMenuOptions: [string] = <[string]>[];
+
+        defaultMenuOptions.push('separator');
+        defaultMenuOptions.push('pinSubMenu');
+        defaultMenuOptions.push('valueAggSubMenu');
+        defaultMenuOptions.push('separator');
+        defaultMenuOptions.push('autoSizeThis');
+        defaultMenuOptions.push('autoSizeAll');
+        defaultMenuOptions.push('separator');
+
+        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        if (groupedByThisColumn) {
+            defaultMenuOptions.push('rowUnGroup');
+        } else {
+            defaultMenuOptions.push('rowGroup');
+        }
+        defaultMenuOptions.push('separator');
+        defaultMenuOptions.push('resetColumns');
+
+        // only add grouping expand/collapse if grouping
+        if (this.columnController.getRowGroupColumns().length>0) {
+            defaultMenuOptions.push('expandAll');
+            defaultMenuOptions.push('contractAll');
+        }
+        var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+        if (userFunc) {
+            var userOptions = userFunc({
+                column: this.column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                defaultItems: defaultMenuOptions
+            });
+            return userOptions;
+        } else {
+            return defaultMenuOptions;
+        }
+    }
+
+    private createMainPanel(): void {
 
         this.mainMenuList = new MenuList();
         this.context.wireBean(this.mainMenuList);
 
-        this.mainMenuList.addSeparator();
-
-        this.mainMenuList.addItem({
-            name: 'Pin Column',
-            icon: svgFactory.createPinIcon(),
-            childMenu: this.createPinnedSubMenu()
-        });
-
-        this.mainMenuList.addItem({
-            name: 'Value Aggregation',
-            icon: svgFactory.createAggregationIcon(),
-            childMenu: this.createAggregationSubMenu()
-        });
-
-        this.mainMenuList.addSeparator();
-
-        this.mainMenuList.addItem({
-            name: 'Autosize This Column',
-            action: ()=> this.columnController.autoSizeColumn(this.column)
-        });
-        this.mainMenuList.addItem({
-            name: 'Autosize All Columns',
-            action: ()=> this.columnController.autoSizeAllColumns()
-        });
-
-        this.mainMenuList.addSeparator();
-
-        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        if (groupedByThisColumn) {
-            this.mainMenuList.addItem({
-                name: 'Un-Group by ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.removeRowGroupColumn(this.column),
-                icon: svgFactory.createGroupIcon12()
-            });
-        } else {
-            this.mainMenuList.addItem({
-                name: 'Group by ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.addRowGroupColumn(this.column),
-                icon: svgFactory.createGroupIcon12()
-            });
-        }
-
-        this.mainMenuList.addSeparator();
-
-        this.mainMenuList.addItem({
-            name: 'Reset Columns',
-                action: ()=> this.columnController.resetColumnState()
-        });
-
-        // only add grouping expand/collapse if grouping
-        if (this.columnController.getRowGroupColumns().length>0) {
-            this.mainMenuList.addItem({
-                name: 'Expand All',
-                action: ()=> this.gridApi.expandAll()
-            });
-            this.mainMenuList.addItem({
-                name: 'Collapse All',
-                action: ()=> this.gridApi.collapseAll()
-            });
-        }
+        var menuItems = this.getMenuItems();
+        var builtInOptions = this.createBuiltInMenuOptions();
+        this.mainMenuList.addMenuItems(menuItems, builtInOptions);
 
         this.mainMenuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 

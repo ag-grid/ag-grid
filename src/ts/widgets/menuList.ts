@@ -41,6 +41,23 @@ export class MenuList extends Component {
         this.removeOldChildPopup();
     }
 
+    public addMenuItems(menuItems: [string|MenuItem], defaultMenuItems: {[key: string]: MenuItem}): void {
+        if (_.missing(menuItems)) { return; }
+        menuItems.forEach( (listItem: MenuItem|string)=> {
+            if (listItem === 'separator') {
+                this.addSeparator();
+            } else {
+                var menuItem: MenuItem;
+                if (typeof listItem === 'string') {
+                    menuItem = defaultMenuItems[<string>listItem];
+                } else {
+                    menuItem = <MenuItem> listItem;
+                }
+                this.addItem(menuItem);
+            }
+        });
+    }
+
     public addItem(params: MenuItem): void {
         var cMenuItem = new CMenuItem(params);
         this.context.wireBean(cMenuItem);

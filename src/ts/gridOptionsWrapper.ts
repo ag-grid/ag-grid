@@ -14,6 +14,7 @@ import {NodeChildDetails} from "./entities/gridOptions";
 import {ColumnApi} from "./columnController/columnController";
 import {PostConstruct} from "./context/context";
 import {GetContextMenuItems} from "./entities/gridOptions";
+import {GetMainMenuItems} from "./entities/gridOptions";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -132,6 +133,8 @@ export default class GridOptionsWrapper {
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
+    public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
+
 
     // properties
     public getHeaderHeight(): number {
