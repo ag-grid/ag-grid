@@ -54,6 +54,7 @@ import {ClipboardService} from "./enterprise/clipboardService";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {ContextMenuFactory} from "./enterprise/cContextMenu";
+import _ from './utils';
 
 export class Grid {
 
@@ -75,10 +76,12 @@ export class Grid {
             null :
             [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService, ContextMenuFactory];
 
+        var enterprise = _.exists(overrideBeans);
+
         this.context = new Context({
             overrideBeans: overrideBeans,
             seed: {
-                enterprise: true,
+                enterprise: enterprise,
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
                 $scope: $scope,

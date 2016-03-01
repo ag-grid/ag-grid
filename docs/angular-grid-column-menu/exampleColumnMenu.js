@@ -12,46 +12,8 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    columnDefs: columnDefs,
-    enableRangeSelection: true,
-    getContextMenuItems: getContextMenuItems
+    columnDefs: columnDefs
 };
-
-function getContextMenuItems(params) {
-    var result = [
-        { // custom item
-            name: 'Alert ' + params.value,
-            action: function () {window.alert('Alerting about ' + params.value); }
-        },
-        { // custom item
-            name: 'Always Disabled',
-            disabled: true
-        }, // built in separator
-        'separator',
-        { // custom item
-            name: 'Windows',
-            shortcut: 'Alt + W',
-            action: function() { console.log('Windows Item Selected'); },
-            icon: '<img src="../images/skills/windows.png"/>'
-        },
-        { // custom item
-            name: 'Mac',
-            shortcut: 'Alt + M',
-            action: function() { console.log('Mac Item Selected'); },
-            icon: '<img src="../images/skills/mac.png"/>'
-        }, // built in separator
-        'separator',
-        { // custom item
-            name: 'Checked',
-            checked: true,
-            action: function() { console.log('Checked Selected'); },
-            icon: '<img src="../images/skills/mac.png"/>'
-        }, // built in copy item
-        'copy'
-    ];
-
-    return result;
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

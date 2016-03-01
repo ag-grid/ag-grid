@@ -147,6 +147,9 @@ var gridOptions = {
         var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
         return params.colIndex === 0 && !isGrouping;
     },
+    //suppressMenuFilterPanel: true,
+    //suppressMenuMainPanel: true,
+    //suppressMenuColumnPanel: true,
     //forPrint: true,
     //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
     //headerCellRenderer: headerCellRenderer_text,
@@ -214,8 +217,24 @@ var gridOptions = {
     },
     onRangeSelectionChanged: function(event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
-    }
+    },
+    getContextMenuItems: getContextMenuItems
 };
+
+function getContextMenuItems(params) {
+    var result = ['copy','paste','separator'];
+
+    result.push(
+        {
+            name: 'Make Coffee',
+            icon: '<img src="../images/lab.png"/>',
+            //shortcut: 'Alt + M',
+            action: function () {window.alert('Make your own dam coffee!!!'); }
+        }
+    );
+
+    return result;
+}
 
 var firstColumn = {
     headerName: "Name",

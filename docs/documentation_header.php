@@ -317,6 +317,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-master-slave/index.php">Master / Slave</a>
                 <?php } ?>
 
+                <?php if ($key == "Column Menu") { ?>
+                    <span class="sidebarLinkSelected">Column Menu</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-column-menu/index.php">Column Menu</a>
+                <?php } ?>
+
                 <?php if ($key == "Context Menu") { ?>
                     <span class="sidebarLinkSelected">Context Menu</span>
                 <?php } else { ?>

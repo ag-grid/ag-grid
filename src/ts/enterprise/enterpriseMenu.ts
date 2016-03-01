@@ -17,6 +17,7 @@ import {MenuList} from "./../widgets/menuList";
 import {PostConstruct} from "../context/context";
 import EventService from "../eventService";
 import {CMenuItem} from "../widgets/cMenuItem";
+import GridOptionsWrapper from "../gridOptionsWrapper";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -25,6 +26,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private lastSelectedTab: string;
 
@@ -60,6 +62,14 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         } );
     }
 
+    public isMenuEnabled(column: Column): boolean {
+
+        var showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
+        var showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
+        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel();
+
+        return showColumnPanel || showMainPanel || showFilterPanel;
+    }
 }
 
 export class EnterpriseMenu {
@@ -74,6 +84,7 @@ export class EnterpriseMenu {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -105,15 +116,19 @@ export class EnterpriseMenu {
     @PostConstruct
     public init(): void {
 
-        this.createGeneralPanel();
-        this.createFilterPanel();
-        this.createColumnsPanel();
-
-        var tabItems: TabbedItem[] = [
-            this.tabItemGeneral,
-            this.tabItemFilter,
-            this.tabItemColumns
-        ];
+        var tabItems: TabbedItem[] = [];
+        if (!this.gridOptionsWrapper.isSuppressMenuMainPanel()) {
+            this.createGeneralPanel();
+            tabItems.push(this.tabItemGeneral);
+        }
+        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel()) {
+            this.createFilterPanel();
+            tabItems.push(this.tabItemFilter);
+        }
+        if (!this.gridOptionsWrapper.isSuppressMenuColumnPanel()) {
+            this.createColumnsPanel();
+            tabItems.push(this.tabItemColumns);
+        }
 
         this.tabbedLayout = new TabbedLayout({
             items: tabItems,
@@ -325,7 +340,7 @@ export class EnterpriseMenu {
         }
 
         this.tabItemFilter = {
-            title: svgFactory.createFilterSvg(),
+            title: svgFactory.createFilterSvg12(),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback
         };
@@ -342,7 +357,7 @@ export class EnterpriseMenu {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: svgFactory.createColumnsIcon(),
+            title: svgFactory.createColumnsSvg12(),//createColumnsIcon(),
             body: eWrapperDiv
         };
     }

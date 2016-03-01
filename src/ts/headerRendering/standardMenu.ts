@@ -8,12 +8,14 @@ import _ from '../utils';
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
 import PopupService from "../widgets/agPopupService";
+import GridOptionsWrapper from "../gridOptionsWrapper";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public showMenu(column: Column, eventSource: HTMLElement): void {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
@@ -34,6 +36,11 @@ export class StandardMenuFactory implements IMenuFactory {
             };
             filterWrapper.filter.afterGuiAttached(params);
         }
+    }
+
+    public isMenuEnabled(column: Column): boolean {
+        // for standard, we show menu if filter is enabled, and he menu is not suppressed
+        return this.gridOptionsWrapper.isEnableFilter();
     }
 
 }

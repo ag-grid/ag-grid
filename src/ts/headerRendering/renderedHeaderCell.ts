@@ -183,7 +183,8 @@ export default class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
-        var weWantMenu = this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressMenu;
+        var weWantMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
+
         if (!weWantMenu) {
             _.removeFromParent(eMenu);
             return;

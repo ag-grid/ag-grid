@@ -54,8 +54,8 @@ include '../documentation_header.php';
 
     <p>
         The result of <i>getContextMenuItems()</i> should be a list with each item either a) a string
-        or b) a MenuItem description. Use 'string' to pick from built in menu items (currently 'copy' and 'paste'
-        are provided) and use MenuItem descriptions for your own menu items.
+        or b) a MenuItem description. Use 'string' to pick from built in menu items (currently 'copy', 'paste'
+        or 'separator') and use MenuItem descriptions for your own menu items.
     </p>
 
     <p>
@@ -82,7 +82,9 @@ include '../documentation_header.php';
     <h3>Context Menu Example</h3>
 
     <p>
-        Below shows a configured context menu in action. The
+        Below shows a configured context menu in action demonstrating a customised menu with a mix
+        of custom items, built in items and the separator. Notice that the first item displays the contents
+        of the cell that was clicked on.
     </p>
 
     <show-example example="exampleContextMenu" example-height="450px"></show-example>

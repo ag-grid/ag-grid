@@ -14,7 +14,6 @@ import {HorizontalDragService} from "./horizontalDragService";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
 import PopupService from "../widgets/agPopupService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";

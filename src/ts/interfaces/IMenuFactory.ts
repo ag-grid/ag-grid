@@ -6,4 +6,5 @@ export interface IMenuFactory {
 
     showMenu(column: Column, eventSource: HTMLElement): void;
 
+    isMenuEnabled(column: Column): boolean;
 }

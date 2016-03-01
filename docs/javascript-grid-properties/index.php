@@ -312,7 +312,11 @@ include '../documentation_header.php';
             <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
                 here in case someone is looking at the code and wondering.</td>
         </tr>
-
+        <tr>
+            <th>suppressMenuColumnPanel<br/>suppressMenuFilterPanel<br/>suppressMenuMainPanel</th>
+            <td>By default the enterprise menu has three panels. Set these properties to true
+            to suppress one or more of these panels.</td>
+        </tr>
     </table>
 
 </div>

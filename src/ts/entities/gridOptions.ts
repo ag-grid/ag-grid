@@ -52,6 +52,9 @@ export interface GridOptions {
     // enterprise only
     rowGroupPanelShow?: string;
     suppressContextMenu?: boolean;
+    suppressMenuFilterPanel?: boolean;
+    suppressMenuMainPanel?: boolean;
+    suppressMenuColumnPanel?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
