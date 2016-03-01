@@ -28,16 +28,9 @@ import {PostConstruct} from "../context/context";
 @Bean('headerRenderer')
 export default class HeaderRenderer {
 
-    @Autowired('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('$scope') private $scope: any;
-    @Autowired('$compile') private $compile: any;
-    @Autowired('dragService') private dragService: HorizontalDragService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Autowired('popupService') private popupService: PopupService;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
 

@@ -128,7 +128,6 @@ export default class GridPanel {
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
     private eHeader: HTMLElement;
-    private eParentsOfRows: HTMLElement[];
     private eBodyViewportWrapper: HTMLElement;
     private ePinnedLeftColsViewport: HTMLElement;
     private ePinnedRightColsViewport: HTMLElement;
@@ -145,6 +144,8 @@ export default class GridPanel {
     private ePinnedRightFloatingBottom: HTMLElement;
     private eFloatingBottomContainer: HTMLElement;
     private eFloatingBottomViewport: HTMLElement;
+
+    private eAllCellContainers: HTMLElement[];
 
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
@@ -255,10 +256,8 @@ export default class GridPanel {
 
     private addCellListeners(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
-        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
-            this.eFloatingTop, this.eFloatingBottom];
         eventNames.forEach( eventName => {
-            containers.forEach( container =>
+            this.eAllCellContainers.forEach( container =>
                 container.addEventListener(eventName, this.processMouseEvent.bind(this, eventName))
             )
         });
@@ -273,8 +272,7 @@ export default class GridPanel {
     }
 
     private addShortcutKeyListeners(): void {
-        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer];
-        containers.forEach( (container)=> {
+        this.eAllCellContainers.forEach( (container)=> {
             container.addEventListener('keydown', (event)=> {
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
@@ -617,10 +615,6 @@ export default class GridPanel {
         return this.ePinnedRightHeader;
     }
 
-    public getRowsParent(): HTMLElement[] {
-        return this.eParentsOfRows;
-    }
-
     private queryHtmlElement(selector: string): HTMLElement {
         return <HTMLElement> this.eRoot.querySelector(selector);
     }
@@ -644,7 +638,7 @@ export default class GridPanel {
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 
-            this.eParentsOfRows = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
+            this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
         } else {
             this.eBody = this.queryHtmlElement('.ag-body');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -673,8 +667,8 @@ export default class GridPanel {
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
             this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
 
-            // for scrolls, all rows live in eBody (containing pinned and normal body)
-            this.eParentsOfRows = [this.eBody, this.eFloatingTop, this.eFloatingBottom];
+            this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+                this.eFloatingTop, this.eFloatingBottom];
 
             // IE9, Chrome, Safari, Opera
             this.ePinnedLeftColsViewport.addEventListener('mousewheel', this.pinnedLeftMouseWheelListener.bind(this));

@@ -21,6 +21,8 @@ import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 import {Optional} from "../context/context";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
+import {RangeSelection} from "../interfaces/iRangeController";
+import {GridCell} from "../entities/gridCell";
 
 export default class RenderedCell {
 
@@ -215,7 +217,7 @@ export default class RenderedCell {
         var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
 
-            var rangeCount = this.rangeController.getCellRangeCount(this.rowIndex, this.column, this.node.floating);
+            var rangeCount = this.rangeController.getCellRangeCount(new GridCell(this.rowIndex, this.node.floating, this.column));
             if (rangeCountLastTime !== rangeCount) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
@@ -230,6 +232,45 @@ export default class RenderedCell {
             this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
         });
         rangeSelectedListener();
+    }
+
+    private addHighlightListener(): void {
+        if (!this.rangeController) {
+            return;
+        }
+
+        var clipboardListener = (event: any) => {
+            _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
+            _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+            var cellId = new GridCell(this.rowIndex, this.node.floating, this.column).createId();
+            var shouldFlash = event.cells[cellId];
+            if (shouldFlash) {
+                this.flashCellForClipboardInteraction();
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+        });
+    }
+
+    private flashCellForClipboardInteraction(): void {
+        // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
+        // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
+        // CSS is cleared, that's the css removal in addClipboardListener() method
+        setTimeout( ()=> {
+            // once css is cleared, we want to highlight the cells, without any animation
+            _.addCssClass(this.eGridCell, 'ag-cell-highlight');
+            setTimeout( ()=> {
+                // then once that is applied, we remove the highlight with animation
+                _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
+                _.addCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+                setTimeout( ()=> {
+                    // and then to leave things as we got them, we remove the animation
+                    _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+                }, 1000);
+            }, 500);
+        }, 0);
     }
 
     private addCellFocusedListener(): void {
@@ -273,6 +314,7 @@ export default class RenderedCell {
         this.setWidthOnCell();
         this.setPinnedClasses();
         this.addRangeSelectedListener();
+        this.addHighlightListener();
         this.addCellFocusedListener();
 
         // only set tab index if cell selection is enabled
@@ -468,8 +510,10 @@ export default class RenderedCell {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         if (this.rangeController) {
-            if (!this.rangeController.isCellInRange(this.rowIndex, this.column, this.node.floating)) {
-                this.rangeController.clearSelection();
+            var thisCell = new GridCell(this.rowIndex, this.node.floating, this.column);
+            var cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
+            if (!cellAlreadyInRange) {
+                this.rangeController.setRangeToCell(thisCell);
             }
         }
     }

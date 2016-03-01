@@ -79,7 +79,6 @@ export default class RowRenderer {
     private eFloatingBottomContainer: HTMLElement;
     private eFloatingBottomPinnedLeftContainer: HTMLElement;
     private eFloatingBottomPinnedRightContainer: HTMLElement;
-    private eParentsOfRows: HTMLElement[];
 
     private logger: Logger;
 
@@ -132,7 +131,6 @@ export default class RowRenderer {
         this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
 
         this.eBodyViewport = this.gridPanel.getBodyViewport();
-        this.eParentsOfRows = this.gridPanel.getRowsParent();
 
         this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
             this.eFloatingTopContainer];
@@ -522,7 +520,7 @@ export default class RowRenderer {
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
-            this.rangeController.setRangeToCell(nextCell.rowIndex, nextCell.column, nextCell.floating);
+            this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
         }
     }
 
@@ -573,7 +571,7 @@ export default class RowRenderer {
                 nextRenderedCell.startEditing();
                 nextRenderedCell.focusCell(false);
                 if (this.rangeController) {
-                    this.rangeController.setRangeToCell(nextCell.rowIndex, nextCell.column, nextCell.floating);
+                    this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
                 }
                 return;
             }

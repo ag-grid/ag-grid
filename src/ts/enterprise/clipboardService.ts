@@ -13,6 +13,15 @@ import _ from '../utils';
 import {FocusedCellController} from "../focusedCellController";
 import RowRenderer from "../rendering/rowRenderer";
 import {ColumnController} from "../columnController/columnController";
+import EventService from "../eventService";
+import {Events} from "../events";
+import {CellNavigationService} from "../cellNavigationService";
+import Constants from "../constants";
+import FloatingRowModel from "../rowControllers/floatingRowModel";
+import {RowNode} from "../entities/rowNode";
+import {GridRow} from "../entities/gridCell";
+import {GridCell} from "../entities/gridCell";
+import {Grid} from "../grid";
 
 @Bean('clipboardService')
 export class ClipboardService {
@@ -22,10 +31,13 @@ export class ClipboardService {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
     private logger: Logger;
 
@@ -64,22 +76,30 @@ export class ClipboardService {
             _.removeFromArray(parsedData, lastLine);
         }
 
-        var startIndex = focusedCell.rowIndex;
-        var endIndex = Math.min(this.rowModel.getRowCount() - 1, startIndex + parsedData.length - 1);
+        var currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
+        var cellsToFlash = <any>{};
 
-        for (var index = startIndex; index <= endIndex; index++) {
-            var rowNode = this.rowModel.getRow(index);
+        parsedData.forEach( (values: string[]) => {
+            // if we have come to end of rows in grid, then skip
+            if (!currentRow) { return; }
+
+            var rowNode = this.getRowNode(currentRow);
             var column = focusedCell.column;
-            var values = parsedData[index - startIndex];
             values.forEach( (value: any)=> {
                 if (_.missing(column)) { return; }
                 if (!column.isCellEditable(rowNode)) { return; }
                 this.valueService.setValue(rowNode, column, value);
+                var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                cellsToFlash[cellId] = true;
                 column = this.columnController.getDisplayedColAfter(column);
             });
-        }
+            // move to next row down for next set of values
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        });
 
+        // this is very heavy!!
         this.rowRenderer.refreshView();
+        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
     public copyToClipboard(): void {
@@ -99,26 +119,55 @@ export class ClipboardService {
         if (this.rangeController.isEmpty()) { return; }
 
         var rangeSelections = this.rangeController.getCellRanges();
-        var firstRange = rangeSelections[0];
+        // if more than one range selected, we take the first one only, we ignore the others,
+        // in Excel, it doesn't allow multiple blocks to be copied to clipboard at same time
+        var range = rangeSelections[0];
 
         // get starting and ending row, remember rowEnd could be before rowStart
-        var startRow = Math.min(firstRange.rowStart, firstRange.rowEnd);
-        var endRow = Math.max(firstRange.rowStart, firstRange.rowEnd);
+        var startRow = range.start.getGridRow();
+        var endRow = range.end.getGridRow();
+
+        var startRowIsFirst = startRow.before(endRow);
+
+        var currentRow = startRowIsFirst ? startRow : endRow;
+        var lastRow = startRowIsFirst ? endRow : startRow;
+
+        var cellsToFlash = <any>{};
 
         var data = '';
-        for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
-            firstRange.columns.forEach( (column, index) => {
-                var rowNode = this.rowModel.getRow(rowIndex);
+        while (true) {
+            range.columns.forEach( (column, index) => {
+                var rowNode = this.getRowNode(currentRow);
                 var value = this.valueService.getValue(column, rowNode);
                 if (index != 0) {
                     data += '\t';
                 }
                 data += '"' + this.csvCreator.escape(value) + '"';
+                var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                cellsToFlash[cellId] = true;
             });
             data += '\r\n';
+
+            if (currentRow.equals(lastRow)) {
+                break;
+            }
+
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
         }
 
         this.copyDataToClipboard(data);
+        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+    }
+
+    private getRowNode(gridRow: GridRow): RowNode {
+        switch (gridRow.floating) {
+            case Constants.FLOATING_TOP:
+                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
+            case Constants.FLOATING_BOTTOM:
+                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            default:
+                return this.rowModel.getRow(gridRow.rowIndex);
+        }
     }
 
     public copySelectedRowsToClipboard(): void {

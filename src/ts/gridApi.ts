@@ -30,6 +30,7 @@ import {IRangeController} from "./interfaces/iRangeController";
 import {RangeSelection} from "./interfaces/iRangeController";
 import {Optional} from "./context/context";
 import {GridCell} from "./entities/gridCell";
+import {AddRangeSelectionParams} from "./interfaces/iRangeController";
 
 @Bean('gridApi')
 export class GridApi {
@@ -392,7 +393,7 @@ export class GridApi {
         }
     }
 
-    public addRangeSelection(rangeSelection: RangeSelection): void {
+    public addRangeSelection(rangeSelection: AddRangeSelectionParams): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.addRange(rangeSelection);
     }

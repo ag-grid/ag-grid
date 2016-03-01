@@ -56,7 +56,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         });
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
-            console.log('saved ' + event.key);
             this.lastSelectedTab = event.key
         } );
     }
@@ -127,19 +126,15 @@ export class EnterpriseMenu {
     private showTabBasedOnPreviousSelection(): void {
         // show the tab the user was on last time they had a menu open
         if (this.tabItemColumns && this.initialSelection===EnterpriseMenu.TAB_COLUMNS) {
-            console.log('showing columns');
             this.tabbedLayout.showItem(this.tabItemColumns);
         }
         else if (this.tabItemFilter&& this.initialSelection===EnterpriseMenu.TAB_FILTER) {
-            console.log('showing filter');
             this.tabbedLayout.showItem(this.tabItemFilter);
         }
         else if (this.tabItemGeneral && this.initialSelection===EnterpriseMenu.TAB_GENERAL) {
-            console.log('showing general');
             this.tabbedLayout.showItem(this.tabItemGeneral);
         }
         else {
-            console.log('showing first');
             this.tabbedLayout.showFirstItem();
         }
     }

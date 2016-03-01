@@ -45,7 +45,7 @@ export class CellNavigationService {
         }
     }
 
-    private getRowBelow(lastRow: GridRow): GridRow {
+    public getRowBelow(lastRow: GridRow): GridRow {
         // if already on top row, do nothing
         if (this.isLastRowInContainer(lastRow)) {
 

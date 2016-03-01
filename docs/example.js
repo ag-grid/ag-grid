@@ -213,47 +213,6 @@ var gridOptions = {
     },
     onRangeSelectionChanged: function(event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
-
-/*        var rangeSelections = gridOptions.api.getRangeSelections();
-
-        // if no selection, clear all the reuslts and do nothing more
-        if (!rangeSelections || rangeSelections.length===0) {
-            return;
-        }
-
-        // consider the first range only. if doing multi select, disregard the others
-        var firstRange = rangeSelections[0];
-
-        // get starting and ending row, remember rowEnd could be before rowStart
-        var startRow = Math.min(firstRange.rowStart, firstRange.rowEnd);
-        var endRow = Math.max(firstRange.rowStart, firstRange.rowEnd);
-
-        var result = '';
-        for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
-            firstRange.columns.forEach( function(column, index) {
-                var rowModel = gridOptions.api.getModel();
-                var rowNode = rowModel.getRow(rowIndex);
-                var value = gridOptions.api.getValue(column, rowNode);
-                if (index!==0) {
-                    result += '\t';
-                }
-                result += '"'+value+'"';
-            });
-            result += '\r\n';
-        }
-
-        //var eInput = document.createElement('input');
-        var eInput = document.querySelector('#myText');
-        eInput.value = result;
-        eInput.select();
-
-        try {
-            var successful = document.execCommand('copy');
-            var msg = successful ? 'successful' : 'unsuccessful';
-            console.log('Copying text command was ' + msg);
-        } catch (err) {
-            console.log('Oops, unable to copy');
-        }*/
     }
 };
 

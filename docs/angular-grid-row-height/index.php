@@ -11,8 +11,14 @@ include '../documentation_header.php';
     <h2>Row Height</h2>
 
     <p>
-        By default, the grid will display rows at 25px.
+        By default, the grid will display rows at 25px. You can change this for each row individually to give
+        each row a different height.
     </p>
+
+    <note>
+        You cannot use variable row height when doing <a href="../angular-grid-virtual-paging/">virtual paging</a>.
+        This is because virtual paging algorithm needs to work out the position of rows that are not loaded.
+    </note>
 
     <h3>rowHeight Property</h3>
 

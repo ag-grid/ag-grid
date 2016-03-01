@@ -56,8 +56,8 @@ function onRangeSelectionChanged(event) {
     var sum = 0;
 
     // get starting and ending row, remember rowEnd could be before rowStart
-    var startRow = Math.min(firstRange.rowStart, firstRange.rowEnd);
-    var endRow = Math.max(firstRange.rowStart, firstRange.rowEnd);
+    var startRow = Math.min(firstRange.start.rowIndex, firstRange.end.rowIndex);
+    var endRow = Math.max(firstRange.start.rowIndex, firstRange.end.rowIndex);
 
     for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
         firstRange.columns.forEach( function(column) {

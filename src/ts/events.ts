@@ -34,6 +34,7 @@ export class Events {
 
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
 
+    public static EVENT_FLASH_CELLS = 'clipboardPaste';
     public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
     public static EVENT_CELL_CLICKED = 'cellClicked';

@@ -18,6 +18,7 @@ import {AddRangeSelectionParams} from "../interfaces/iRangeController";
 import {MouseEventService} from "../gridPanel/mouseEventService";
 import Constants from "../constants";
 import {GridCell} from "../entities/gridCell";
+import {GridRow} from "../entities/gridCell";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
@@ -54,17 +55,13 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     }
 
-    public setRangeToCell(rowIndex: number, column: Column, floating: string): void {
-        var columns = this.updateSelectedColumns(column, column);
+    public setRangeToCell(cell: GridCell): void {
+        var columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
 
         var newRange = {
-            rowStart: rowIndex,
-            floatingStart: _.makeNull(floating),
-            rowEnd: rowIndex,
-            floatingEnd: _.makeNull(floating),
-            columnStart: column,
-            columnEnd: column,
+            start: new GridCell(cell.rowIndex, cell.floating, cell.column),
+            end: new GridCell(cell.rowIndex, cell.floating, cell.column),
             columns: columns
         };
         this.cellRanges = [];
@@ -87,12 +84,8 @@ export class RangeController implements IRangeController {
         if (!columns) { return; }
 
         var newRange = <RangeSelection> {
-            rowStart: rangeSelection.rowStart,
-            floatingStart: _.makeNull(rangeSelection.floatingStart),
-            rowEnd: rangeSelection.rowEnd,
-            floatingEnd: _.makeNull(rangeSelection.floatingEnd),
-            columnStart: rangeSelection.columnStart,
-            columnEnd: rangeSelection.columnEnd,
+            start: new GridCell(rangeSelection.rowStart, rangeSelection.floatingStart, columnStart),
+            end: new GridCell(rangeSelection.rowEnd, rangeSelection.floatingEnd, columnEnd),
             columns: columns
         };
         if (!this.cellRanges) {
@@ -119,8 +112,8 @@ export class RangeController implements IRangeController {
             } else {
                 var onlyRange = this.cellRanges[0];
                 var onlyOneCellInRange =
-                    onlyRange.columnStart === onlyRange.columnEnd &&
-                    onlyRange.rowStart === onlyRange.rowEnd;
+                    onlyRange.start.column === onlyRange.end.column &&
+                    onlyRange.start.rowIndex === onlyRange.end.rowIndex;
                 return !onlyOneCellInRange;
             }
         }
@@ -138,16 +131,22 @@ export class RangeController implements IRangeController {
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
     // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
     // the selection my mimicking a new mouse event
-    private onBodyScroll(event: Event): void {
+    private onBodyScroll(): void {
         this.onDragging(this.lastMouseEvent);
     }
 
-    public isCellInRange(rowIndex: number, column: Column, floating: string): boolean {
-        return this.getCellRangeCount(rowIndex, column, floating) > 0;
+    public isCellInAnyRange(cell: GridCell): boolean {
+        return this.getCellRangeCount(cell) > 0;
+    }
+
+    private isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean {
+        var columnInRange = range.columns.indexOf(cell.column) >= 0;
+        var rowInRange = this.isRowInRange(cell.rowIndex, cell.floating, range);
+        return columnInRange && rowInRange;
     }
 
     // returns the number of ranges this cell is in
-    public getCellRangeCount(rowIndex: number, column: Column, floating: string): number {
+    public getCellRangeCount(cell: GridCell): number {
         if (_.missingOrEmpty(this.cellRanges)) {
             return 0;
         }
@@ -155,9 +154,7 @@ export class RangeController implements IRangeController {
         var matchingCount = 0;
 
         this.cellRanges.forEach( (cellRange: RangeSelection) => {
-            var columnInRange = cellRange.columns.indexOf(column) >= 0;
-            var rowInRange = this.isRowInRange(rowIndex, floating, cellRange);
-            if (columnInRange && rowInRange) {
+            if (this.isCellInSpecificRange(cell, cellRange)) {
                 matchingCount++;
             }
         });
@@ -167,13 +164,13 @@ export class RangeController implements IRangeController {
 
     private isRowInRange(rowIndex: number, floating: string, cellRange: RangeSelection): boolean {
 
-        var row1 = new RowSelection(cellRange.rowStart, cellRange.floatingStart);
-        var row2 = new RowSelection(cellRange.rowEnd, cellRange.floatingEnd);
+        var row1 = new GridRow(cellRange.start.rowIndex, cellRange.start.floating);
+        var row2 = new GridRow(cellRange.end.rowIndex, cellRange.end.floating);
 
         var firstRow = row1.before(row2) ? row1 : row2;
         var lastRow = row1.before(row2) ? row2 : row1;
 
-        var thisRow = new RowSelection(rowIndex, floating);
+        var thisRow = new GridRow(rowIndex, floating);
 
         if (thisRow.equals(firstRow) || thisRow.equals(lastRow)) {
             return true;
@@ -213,12 +210,8 @@ export class RangeController implements IRangeController {
     private createNewActiveRange(cell: GridCell): void {
 
         this.activeRange = {
-            rowEnd: cell.rowIndex,
-            floatingEnd: _.makeNull(cell.floating),
-            rowStart: cell.rowIndex,
-            floatingStart: _.makeNull(cell.floating),
-            columnEnd: cell.column,
-            columnStart: cell.column,
+            start: new GridCell(cell.rowIndex, cell.floating, cell.column),
+            end: new GridCell(cell.rowIndex, cell.floating, cell.column),
             columns: [cell.column]
         };
 
@@ -226,7 +219,7 @@ export class RangeController implements IRangeController {
     }
 
     private selectionChanged(finished: boolean, started: boolean): void {
-        this.activeRange.columns = this.updateSelectedColumns(this.activeRange.columnStart, this.activeRange.columnEnd);
+        this.activeRange.columns = this.updateSelectedColumns(this.activeRange.start.column, this.activeRange.end.column);
         this.dispatchChangedEvent(finished, started);
     }
 
@@ -258,15 +251,15 @@ export class RangeController implements IRangeController {
         }
 
         var columnChanged = false;
-        if (cell.column !== this.activeRange.columnEnd) {
-            this.activeRange.columnEnd = cell.column;
+        if (cell.column !== this.activeRange.end.column) {
+            this.activeRange.end.column = cell.column;
             columnChanged = true;
         }
 
         var rowChanged = false;
-        if (cell.rowIndex!==this.activeRange.rowEnd || cell.floating!==this.activeRange.floatingEnd) {
-            this.activeRange.rowEnd = cell.rowIndex;
-            this.activeRange.floatingEnd = cell.floating;
+        if (cell.rowIndex!==this.activeRange.end.rowIndex || cell.floating!==this.activeRange.end.floating) {
+            this.activeRange.end.rowIndex = cell.rowIndex;
+            this.activeRange.end.floating = cell.floating;
             rowChanged = true;
         }
 
@@ -299,50 +292,5 @@ export class RangeController implements IRangeController {
         }
 
         return columns;
-    }
-}
-
-class RowSelection {
-
-    index: number;
-    floating: string;
-
-    constructor(index: number, floating: string) {
-        this.index = index;
-        // turn undefined into null, so
-        this.floating = _.makeNull(floating);
-    }
-
-    equals(otherSelection: RowSelection): boolean {
-        return this.index === otherSelection.index
-                && this.floating === otherSelection.floating;
-    }
-
-    // tests if this row selection is before the other row selection
-    before(otherSelection: RowSelection): boolean {
-        var otherFloating = otherSelection.floating;
-        switch (this.floating) {
-            case Constants.FLOATING_TOP:
-                // we we are floating top, and other isn't, then we are always before
-                if (otherFloating!==Constants.FLOATING_TOP) { return true; }
-                break;
-            case Constants.FLOATING_BOTTOM:
-                // if we are floating bottom, and the other isn't, then we are never before
-                if (otherFloating!==Constants.FLOATING_BOTTOM) { return false; }
-                break;
-            default:
-                // if we are not floating, but the other one is floating...
-                if (_.exists(otherFloating)) {
-                    if (otherFloating===Constants.FLOATING_TOP) {
-                        // we are not floating, other is floating top, we are first
-                        return false;
-                    } else {
-                        // we are not floating, other is floating bottom, we are always first
-                        return true;
-                    }
-                }
-                break;
-        }
-        return this.index <= otherSelection.index;
     }
 }
