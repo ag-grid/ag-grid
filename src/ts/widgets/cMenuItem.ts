@@ -8,7 +8,7 @@ import SvgFactory from "../svgFactory";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class MenuItem extends Component {
+export class CMenuItem extends Component {
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -22,17 +22,23 @@ export class MenuItem extends Component {
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';
 
-    private params: MenuItemParams;
+    private params: MenuItem;
 
-    constructor(params: MenuItemParams) {
-        super(MenuItem.TEMPLATE);
+    constructor(params: MenuItem) {
+        super(CMenuItem.TEMPLATE);
 
         this.params = params;
 
         if (params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
         } else if (params.icon) {
-            this.queryForHtmlElement('#eIcon').appendChild(params.icon);
+            if (_.isNodeOrElement(params.icon)) {
+                this.queryForHtmlElement('#eIcon').appendChild(<HTMLElement> params.icon);
+            } else if (typeof params.icon === 'string') {
+                this.queryForHtmlElement('#eIcon').innerHTML = <string> params.icon;
+            } else {
+                console.log('ag-Grid: menu item icon must be DOM node or string');
+            }
         } else {
             // if i didn't put space here, the alignment was messed up, probably
             // fixable with CSS but i was spending to much time trying to figure
@@ -57,19 +63,19 @@ export class MenuItem extends Component {
     }
 
     private onOptionSelected(): void {
-        this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, this.params);
+        this.dispatchEvent(CMenuItem.EVENT_ITEM_SELECTED, this.params);
         if (this.params.action) {
             this.params.action();
         }
     }
 }
 
-export interface MenuItemParams {
+export interface MenuItem {
     name: string,
     disabled?: boolean,
     shortcut?: string,
     action?: ()=>void,
     checked?: boolean,
-    icon?: HTMLElement,
+    icon?: HTMLElement|string,
     childMenu?: MenuList
 }

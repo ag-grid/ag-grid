@@ -1,13 +1,13 @@
 
 import {Component} from "./component";
 import {PostConstruct} from "../context/context";
-import {MenuItem} from "./menuItem";
-import {MenuItemParams} from "./menuItem";
 import _ from '../utils';
 import EventService from "../eventService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import PopupService from "./agPopupService";
+import {MenuItem} from "./cMenuItem";
+import {CMenuItem} from "./cMenuItem";
 
 export class MenuList extends Component {
 
@@ -25,8 +25,8 @@ export class MenuList extends Component {
         '  <span class="ag-menu-separator-cell"></span>' +
         '</div>';
 
-    private activeMenuItemParams: MenuItemParams;
-    private activeMenuItem: MenuItem;
+    private activeMenuItemParams: MenuItem;
+    private activeMenuItem: CMenuItem;
     private timerCount = 0;
 
     private showingChildMenu: MenuList;
@@ -41,16 +41,16 @@ export class MenuList extends Component {
         this.removeOldChildPopup();
     }
 
-    public addItem(params: MenuItemParams): void {
-        var cMenuItem = new MenuItem(params);
+    public addItem(params: MenuItem): void {
+        var cMenuItem = new CMenuItem(params);
         this.context.wireBean(cMenuItem);
         this.getGui().appendChild(cMenuItem.getGui());
 
-        cMenuItem.addEventListener(MenuItem.EVENT_ITEM_SELECTED, (event: any) => {
+        cMenuItem.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, (event: any) => {
             if (params.childMenu) {
                 this.showChildMenu(params, cMenuItem);
             } else {
-                this.dispatchEvent(MenuItem.EVENT_ITEM_SELECTED, event)
+                this.dispatchEvent(CMenuItem.EVENT_ITEM_SELECTED, event)
             }
         });
 
@@ -62,7 +62,7 @@ export class MenuList extends Component {
         }
     }
 
-    private mouseEnterItem(menuItemParams: MenuItemParams, menuItem: MenuItem): void {
+    private mouseEnterItem(menuItemParams: MenuItem, menuItem: CMenuItem): void {
         if (menuItemParams.disabled) {
             return;
         }
@@ -90,7 +90,7 @@ export class MenuList extends Component {
         }
     }
 
-    private addHoverForChildPopup(menuItemParams: MenuItemParams, menuItem: MenuItem): void {
+    private addHoverForChildPopup(menuItemParams: MenuItem, menuItem: CMenuItem): void {
         var timerCountCopy = this.timerCount;
         setTimeout( ()=> {
             var shouldShow = timerCountCopy===this.timerCount;
@@ -101,7 +101,7 @@ export class MenuList extends Component {
         }, 500);
     }
 
-    private showChildMenu(menuItemParams: MenuItemParams, menuItem: MenuItem): void {
+    private showChildMenu(menuItemParams: MenuItem, menuItem: CMenuItem): void {
         this.removeOldChildPopup();
 
         var ePopup = _.loadTemplate('<div class="ag-menu"></div>');

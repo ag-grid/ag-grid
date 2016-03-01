@@ -10,7 +10,12 @@ import {Context} from "../context/context";
 import SvgFactory from "../svgFactory";
 import PopupService from "../widgets/agPopupService";
 import {ClipboardService} from "./clipboardService";
-import {MenuItem} from "../widgets/menuItem";
+import GridOptionsWrapper from "../gridOptionsWrapper";
+import _ from '../utils';
+import {CMenuItem} from "../widgets/cMenuItem";
+import {MenuItem} from "../widgets/cMenuItem";
+import {RowNode} from "../entities/rowNode";
+import {GetContextMenuItemsParams} from "../entities/gridOptions";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -19,14 +24,35 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @PostConstruct
     private init(): void {
     }
 
-    public showMenu(rowIndex: number, column: Column, mouseEvent: MouseEvent): void {
+    private getMenuItems(node: RowNode, column: Column, value: any): [MenuItem|string] {
+        if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
+            var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            var params = {
+                node: node,
+                column: column,
+                value: value,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            var menuItemsFromUser = userFunc(params);
+            return menuItemsFromUser;
+        } else {
+            return ['copy','paste'];
+        }
+    }
 
-        var menu = new ContextMenu();
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent): void {
+
+        var menuItems = this.getMenuItems(node, column, value);
+
+        var menu = new CContextMenu(menuItems);
         this.context.wireBean(menu);
 
         var eMenuGui =  menu.getGui();
@@ -49,7 +75,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 }
 
-class ContextMenu extends Component {
+class CContextMenu extends Component {
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
@@ -57,8 +83,27 @@ class ContextMenu extends Component {
     private menuList: MenuList;
     private hidePopupFunc: Function;
 
-    constructor() {
+    private menuItems: [MenuItem|string];
+
+    private defaultMenuItems: {[key: string]: MenuItem} = {
+        copy: {
+            name: 'Copy',
+            shortcut: 'Ctrl+C',
+            icon: svgFactory.createCopyIcon(),
+            action: ()=> this.clipboardService.copyToClipboard()
+        },
+        paste: {
+            name: 'Paste',
+            shortcut: 'Ctrl+V',
+            disabled: true,
+            icon: svgFactory.createPasteIcon(),
+            action: ()=> this.clipboardService.pasteFromClipboard()
+        }
+    };
+
+    constructor(menuItems: [MenuItem|string]) {
         super('<div class="ag-menu"></div>');
+        this.menuItems = menuItems;
     }
 
     @PostConstruct
@@ -67,24 +112,19 @@ class ContextMenu extends Component {
         this.menuList = new MenuList();
         this.context.wireBean(this.menuList);
 
-        this.menuList.addItem({
-            name: 'Copy',
-            shortcut: 'Ctrl+C',
-            icon: svgFactory.createCopyIcon(),
-            action: ()=> this.clipboardService.copyToClipboard()
-        });
-        this.menuList.addItem({
-            name: 'Paste',
-            shortcut: 'Ctrl+V',
-            disabled: true,
-            icon: svgFactory.createPasteIcon(),
-            action: ()=> this.clipboardService.pasteFromClipboard()
+        this.menuItems.forEach( (listItem: MenuItem|string)=> {
+            var menuItem: MenuItem;
+            if (typeof listItem === 'string') {
+                menuItem = this.defaultMenuItems[<string>listItem];
+            } else {
+                menuItem = <MenuItem> listItem;
+            }
+            this.menuList.addItem(menuItem);
         });
 
         this.getGui().appendChild(this.menuList.getGui());
 
-        this.menuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
-
+        this.menuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
     }
 
     private onHidePopup(): void {

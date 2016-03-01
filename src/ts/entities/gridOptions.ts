@@ -1,6 +1,8 @@
 import {RowNode} from './rowNode';
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
+import Column from "./column";
+import {MenuItem} from "../widgets/cMenuItem";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -124,6 +126,7 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
+    getContextMenuItems?: GetContextMenuItems,
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -165,4 +168,17 @@ export interface NodeChildDetails {
     expanded?: boolean;
     field?: string;
     key?: any;
+}
+
+export interface GetContextMenuItemsParams {
+    column: Column,
+    node: RowNode,
+    value: any,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
+}
+
+export interface GetContextMenuItems {
+    (params: GetContextMenuItemsParams): [string|MenuItem]
 }

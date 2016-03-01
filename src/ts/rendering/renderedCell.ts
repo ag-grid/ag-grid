@@ -473,7 +473,7 @@ export default class RenderedCell {
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(this.rowIndex, this.column, mouseEvent);
+            this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
             event.preventDefault();
             return false;
         } else {

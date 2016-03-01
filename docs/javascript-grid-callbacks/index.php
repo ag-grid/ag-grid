@@ -115,6 +115,23 @@ include '../documentation_header.php';
 
     </table>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The callbacks below are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+        </tr>
+
+        <tr>
+            <th>getContextMenuItems(params)</th>
+            <td>For customising the context menu.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

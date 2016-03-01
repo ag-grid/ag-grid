@@ -68,6 +68,8 @@ include 'documentation_header.php';
 
     <li>Floating rows can now be selected and navigated.</li>
 
+    <li>Next feature: Context Menu</li>
+
     <li>New features: Range Selection</li>
     <li>New feature: Enterprise column menu</li>
     <li>New feature: Clipboard interaction</li>

@@ -51,9 +51,9 @@ import {ColumnApi} from "./columnController/columnController";
 import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
 import {ClipboardService} from "./enterprise/clipboardService";
-import {ContextMenuFactory} from "./enterprise/contextMenu";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
+import {ContextMenuFactory} from "./enterprise/cContextMenu";
 
 export class Grid {
 

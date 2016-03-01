@@ -14,9 +14,9 @@ import PopupService from "../widgets/agPopupService";
 import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
 import {GridApi} from "../gridApi";
 import {MenuList} from "./../widgets/menuList";
-import {MenuItem} from "./../widgets/menuItem";
 import {PostConstruct} from "../context/context";
 import EventService from "../eventService";
+import {CMenuItem} from "../widgets/cMenuItem";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -303,7 +303,7 @@ export class EnterpriseMenu {
             });
         }
 
-        this.mainMenuList.addEventListener(MenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: svgFactory.createMenuSvg(),
