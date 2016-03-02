@@ -1,7 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import GridOptionsWrapper from "./gridOptionsWrapper";
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
+import InMemoryRowController from "./rowControllers/inMemory/inMemoryRowController";
 import PaginationController from "./rowControllers/paginationController";
 import VirtualPageRowController from "./rowControllers/virtualPageRowController";
 import FloatingRowModel from "./rowControllers/floatingRowModel";
@@ -22,7 +22,6 @@ import SelectionRendererFactory from "./selectionRendererFactory";
 import ExpressionService from "./expressionService";
 import TemplateService from "./templateService";
 import PopupService from "./widgets/agPopupService";
-import GroupCreator from "./groupCreator";
 import {LoggerFactory} from "./logger";
 import ColumnUtils from "./columnController/columnUtils";
 import AutoWidthCalculator from "./rendering/autoWidthCalculator";

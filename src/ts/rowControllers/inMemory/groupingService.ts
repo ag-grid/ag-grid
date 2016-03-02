@@ -1,22 +1,24 @@
-import ValueService from "./valueService";
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import {RowNode} from "./entities/rowNode";
-import Column from "./entities/column";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import EventService from "./eventService";
-import SelectionController from "./selectionController";
-import {Autowired} from "./context/context";
+import {Bean} from "../../context/context";
+import {Autowired} from "../../context/context";
+import SelectionController from "../../selectionController";
+import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {ColumnController} from "../../columnController/columnController";
+import _ from '../../utils';
+import {RowNode} from "../../entities/rowNode";
+import ValueService from "../../valueService";
+import EventService from "../../eventService";
+import Column from "../../entities/column";
 
-@Bean('groupCreator')
-export default class GroupCreator {
+@Bean('groupingService')
+export class GroupingService {
 
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
 
-    public group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
+    private group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 
         var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
         topMostGroup.level = -1;
@@ -30,7 +32,6 @@ export default class GroupCreator {
         var i: number;
         var currentLevel: number;
         var node: RowNode;
-        var data: any;
         var currentGroup: any;
         var groupKey: string;
         var nextGroup: RowNode;
@@ -101,7 +102,7 @@ export default class GroupCreator {
         return topMostGroup.children;
     }
 
-    isExpanded(expandByDefault: any, level: any) {
+    private isExpanded(expandByDefault: any, level: any) {
         if (typeof expandByDefault === 'number') {
             if (expandByDefault===-1) {
                 return true;
@@ -112,4 +113,25 @@ export default class GroupCreator {
             return false;
         }
     }
+
+    public doRowGrouping(rowsToGroup: RowNode[]): RowNode[] {
+        var result: RowNode[];
+
+        var groupedCols = this.columnController.getRowGroupColumns();
+
+        if (groupedCols.length > 0) {
+            var expandByDefault: number;
+            if (this.gridOptionsWrapper.isGroupSuppressRow()) {
+                expandByDefault = -1;
+            } else {
+                expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+            }
+            result = this.group(rowsToGroup, groupedCols, expandByDefault);
+        } else {
+            result = rowsToGroup;
+        }
+
+        return result;
+    }
+
 }

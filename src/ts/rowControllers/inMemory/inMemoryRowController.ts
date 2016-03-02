@@ -1,26 +1,27 @@
-import _ from '../utils';
-import constants from '../constants';
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
-import {Grid} from "../grid";
-import FilterManager from "../filter/filterManager";
-import {RowNode} from "../entities/rowNode";
-import ValueService from "../valueService";
-import GroupCreator from "../groupCreator";
-import EventService from "../eventService";
-import {Events} from "../events";
-import Column from "../entities/column";
-import {ColDef} from "../entities/colDef";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import SelectionController from "../selectionController";
-import {Autowired} from "../context/context";
-import {IRowModel} from "./../interfaces/iRowModel";
-import Constants from "../constants";
-import {SortController} from "../sortController";
-import {PostConstruct} from "../context/context";
-import {NodeChildDetails} from "../entities/gridOptions";
+import _ from '../../utils';
+import constants from '../../constants';
+import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {ColumnController} from "../../columnController/columnController";
+import {Grid} from "../../grid";
+import FilterManager from "../../filter/filterManager";
+import {RowNode} from "../../entities/rowNode";
+import ValueService from "../../valueService";
+import EventService from "../../eventService";
+import {Events} from "../../events";
+import Column from "../../entities/column";
+import {ColDef} from "../../entities/colDef";
+import {Bean} from "../../context/context";
+import {Qualifier} from "../../context/context";
+import {GridCore} from "../../gridCore";
+import SelectionController from "../../selectionController";
+import {Autowired} from "../../context/context";
+import {IRowModel} from "./../../interfaces/iRowModel";
+import Constants from "../../constants";
+import {SortController} from "../../sortController";
+import {PostConstruct} from "../../context/context";
+import {NodeChildDetails} from "../../entities/gridOptions";
+import {GroupingService} from "./groupingService";
+import {FilterService} from "./filterService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -34,9 +35,11 @@ export default class InMemoryRowController implements IRowModel {
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
 
-    @Autowired('groupCreator') private groupCreator: GroupCreator;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
+
+    @Autowired('groupingService') private groupingService: GroupingService;
+    @Autowired('filterService') private filterService: FilterService;
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
@@ -169,11 +172,6 @@ export default class InMemoryRowController implements IRowModel {
         } else {
             return 0;
         }
-    }
-
-    public forEachInMemory(callback: Function) {
-        console.warn('ag-Grid: please use forEachNode instead of forEachInMemory, method is same, just renamed, forEachInMemory is deprecated');
-        this.forEachNode(callback);
     }
 
     public forEachNode(callback: Function) {
@@ -462,91 +460,27 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doRowGrouping() {
-        var rowsAfterGroup: any;
-        var groupedCols = this.columnController.getRowGroupColumns();
+        // grouping is enterprise only, so if service missing, skip the step
         var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
 
-        var doingGrouping = !rowsAlreadyGrouped && groupedCols.length > 0;
+        if (this.groupingService && !rowsAlreadyGrouped) {
 
-        // remove old groups from the selection model, as we are about to replace them
-        // with new groups
-        this.selectionController.removeGroupsFromSelection();
+            // remove old groups from the selection model, as we are about to replace them
+            // with new groups
+            this.selectionController.removeGroupsFromSelection();
 
-        if (doingGrouping) {
-            var expandByDefault: number;
-            if (this.gridOptionsWrapper.isGroupSuppressRow()) {
-                // 99999 means 'expand everything'
-                expandByDefault = -1;
-            } else {
-                expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+            this.rowsAfterGroup = this.groupingService.doRowGrouping(this.allRows);
+
+            if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
+                this.selectionController.updateGroupsFromChildrenSelections();
             }
-            rowsAfterGroup = this.groupCreator.group(this.allRows, groupedCols, expandByDefault);
         } else {
-            rowsAfterGroup = this.allRows;
-        }
-        this.rowsAfterGroup = rowsAfterGroup;
-
-        if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-            this.selectionController.updateGroupsFromChildrenSelections();
+            this.rowsAfterGroup = this.allRows;
         }
     }
 
     private doFilter() {
-        var doingFilter: boolean;
-
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            doingFilter = false;
-        } else {
-            doingFilter = this.filterManager.isAnyFilterPresent();
-        }
-
-        var rowsAfterFilter: RowNode[];
-        if (doingFilter) {
-            rowsAfterFilter = this.filterItems(this.rowsAfterGroup);
-        } else {
-            // do it here
-            rowsAfterFilter = this.rowsAfterGroup;
-            this.recursivelyResetFilter(this.rowsAfterGroup);
-        }
-
-        this.rowsAfterFilter = rowsAfterFilter;
-    }
-
-    private filterItems(rowNodes: RowNode[]) {
-        var result: RowNode[] = [];
-
-        for (var i = 0, l = rowNodes.length; i < l; i++) {
-            var node = rowNodes[i];
-
-            if (node.group) {
-                // deal with group
-                node.childrenAfterFilter = this.filterItems(node.children);
-                if (node.childrenAfterFilter.length > 0) {
-                    node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
-                    result.push(node);
-                }
-            } else {
-                if (this.filterManager.doesRowPassFilter(node)) {
-                    result.push(node);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private recursivelyResetFilter(nodes: RowNode[]) {
-        if (!nodes) {
-            return;
-        }
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group && node.children) {
-                node.childrenAfterFilter = node.children;
-                this.recursivelyResetFilter(node.children);
-                node.allChildrenCount = this.getTotalChildCount(node.childrenAfterFilter);
-            }
-        }
+        this.rowsAfterFilter = this.filterService.doFilter(this.rowsAfterGroup);
     }
 
     // rows: the rows to put into the model
@@ -606,19 +540,6 @@ export default class InMemoryRowController implements IRowModel {
             return rowNodes;
         }
 
-    }
-
-    private getTotalChildCount(rowNodes: any) {
-        var count = 0;
-        for (var i = 0, l = rowNodes.length; i < l; i++) {
-            var item = rowNodes[i];
-            if (item.group) {
-                count += item.allChildrenCount;
-            } else {
-                count++;
-            }
-        }
-        return count;
     }
 
     private doRowsToDisplay() {

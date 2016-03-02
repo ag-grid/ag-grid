@@ -4,7 +4,7 @@ import RowRenderer from "./rendering/rowRenderer";
 import HeaderRenderer from "./headerRendering/headerRenderer";
 import FilterManager from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
+import InMemoryRowController from "./rowControllers/inMemory/inMemoryRowController";
 import SelectionController from "./selectionController";
 import GridOptionsWrapper from "./gridOptionsWrapper";
 import GridPanel from "./gridPanel/gridPanel";

@@ -273,7 +273,7 @@ export default class GridPanel {
 
     private addShortcutKeyListeners(): void {
         this.eAllCellContainers.forEach( (container)=> {
-            container.addEventListener('keydown', (event)=> {
+            container.addEventListener('keydown', (event: any)=> {
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
                         case Constants.KEY_A: return this.onCtrlAndA(event);

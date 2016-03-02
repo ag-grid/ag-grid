@@ -1,7 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import GridOptionsWrapper from "./gridOptionsWrapper";
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
+import InMemoryRowController from "./rowControllers/inMemory/inMemoryRowController";
 import PaginationController from "./rowControllers/paginationController";
 import VirtualPageRowController from "./rowControllers/virtualPageRowController";
 import FloatingRowModel from "./rowControllers/floatingRowModel";
@@ -25,7 +25,6 @@ import SelectionRendererFactory from "./selectionRendererFactory";
 import ExpressionService from "./expressionService";
 import TemplateService from "./templateService";
 import PopupService from "./widgets/agPopupService";
-import GroupCreator from "./groupCreator";
 import {LoggerFactory} from "./logger";
 import ColumnUtils from "./columnController/columnUtils";
 import AutoWidthCalculator from "./rendering/autoWidthCalculator";
@@ -55,6 +54,8 @@ import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {ContextMenuFactory} from "./enterprise/cContextMenu";
 import _ from './utils';
+import {GroupingService} from "./rowControllers/inMemory/groupingService";
+import {FilterService} from "./rowControllers/inMemory/filterService";
 
 export class Grid {
 
@@ -74,7 +75,8 @@ export class Grid {
 
         var overrideBeans = gridOptions.suppressEnterprise ?
             null :
-            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService, ContextMenuFactory];
+            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
+                ContextMenuFactory, GroupingService];
 
         var enterprise = _.exists(overrideBeans);
 
@@ -93,11 +95,11 @@ export class Grid {
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
-                TemplateService, GridPanel, PopupService, ValueService, GroupCreator, MasterSlaveService,
+                TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService],
+                CellNavigationService, FilterService],
             debug: !!gridOptions.debug
         });
     }
