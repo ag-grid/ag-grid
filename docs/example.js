@@ -268,7 +268,7 @@ var defaultCols = [
         children: [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: countryCellRenderer, filter: 'set',
+                cellRenderer: countryCellRenderer,
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {

@@ -8,7 +8,7 @@ import {RowNode} from "../entities/rowNode";
 import Column from "../entities/column";
 import TextFilter from "./textFilter";
 import NumberFilter from "./numberFilter";
-import SetFilter from "./setFilter";
+import SetFilter from "./../enterprise/setFilter/setFilter";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
@@ -30,6 +30,7 @@ export default class FilterManager {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('enterprise') private enterprise: boolean;
 
     private allFilters: any = {};
     private quickFilter: string = null;
@@ -37,10 +38,19 @@ export default class FilterManager {
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
 
+    private availableFilters: {[key: string]: any} = {
+        'text': TextFilter,
+        'number': NumberFilter
+    };
+
     @PostConstruct
     public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+    }
+
+    public registerFilter(key: string, Filter: any): void {
+        this.availableFilters[key] = Filter;
     }
 
     public setFilterModel(model: any) {
@@ -312,12 +322,11 @@ export default class FilterManager {
             // now create filter (had to cast to any to get 'new' working)
             this.assertMethodHasNoParameters(colDef.filter);
             filterWrapper.filter = new (<any>colDef.filter)();
-        } else if (colDef.filter === 'text') {
-            filterWrapper.filter = new TextFilter();
-        } else if (colDef.filter === 'number') {
-            filterWrapper.filter = new NumberFilter();
+        } else if (_.missing(colDef.filter) || typeof colDef.filter === 'string') {
+            var Filter = this.getFilterFromCache(<string>colDef.filter);
+            filterWrapper.filter = new Filter();
         } else {
-            filterWrapper.filter = new SetFilter();
+            console.error('ag-Grid: colDef.filter should be function or a string');
         }
 
         var filterChangedCallback = this.onFilterChanged.bind(this);
@@ -366,6 +375,27 @@ export default class FilterManager {
         }
 
         return filterWrapper;
+    }
+
+    private getFilterFromCache(filterType: string): any {
+        var defaultFilterType = this.enterprise ? 'set' : 'text';
+        var defaultFilter = this.availableFilters[defaultFilterType];
+
+        if (_.missing(filterType)) {
+            return defaultFilter;
+        }
+
+        if (!this.enterprise && filterType==='set') {
+            console.warn('ag-Grid: Set filter is only available in Enterprise ag-Grid');
+            filterType = 'text';
+        }
+
+        if (this.availableFilters[filterType]) {
+            return this.availableFilters[filterType];
+        } else {
+            console.error('ag-Grid: Could not find filter type ' + filterType);
+            return this.availableFilters[defaultFilter];
+        }
     }
 
     private onNewColumnsLoaded(): void {

@@ -59,6 +59,7 @@ import {AggregationStage} from "./enterprise/rowStages/aggregationStage";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
+import {EnterpriseBoot} from "./enterprise/enterpriseBoot";
 
 export class Grid {
 
@@ -79,7 +80,7 @@ export class Grid {
         var overrideBeans = gridOptions.suppressEnterprise ?
             null :
             [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
-                ContextMenuFactory, GroupStage, AggregationStage];
+                ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot];
 
         var enterprise = _.exists(overrideBeans);
 

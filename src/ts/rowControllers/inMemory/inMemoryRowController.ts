@@ -338,6 +338,6 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterGroup);
+        this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
     }
 }

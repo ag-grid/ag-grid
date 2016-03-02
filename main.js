@@ -25,7 +25,7 @@ exports.RowNode = require('./dist/lib/entities/rowNode').RowNode;
 exports.GridCell = require('./dist/lib/entities/gridCell').GridCell;
 exports.GridRow = require('./dist/lib/entities/gridCell').GridRow;
 
-exports.SetFilterParameters = require('./dist/lib/filter/setFilterParameters').SetFilterParameters;
+exports.SetFilterParameters = require('./dist/lib/enterprise/setFilter/setFilterParameters').SetFilterParameters;
 exports.TextAndNumberFilterParameters = require('./dist/lib/filter/textAndNumberFilterParameters').TextAndNumberFilterParameters;
 
 exports.IRowModel = require('./dist/lib/interfaces/iRowModel').IRowModel;

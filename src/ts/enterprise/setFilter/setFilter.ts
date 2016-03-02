@@ -1,5 +1,5 @@
-import _ from '../utils';
-import {Filter} from "./filter";
+import _ from '../../utils';
+import {Filter} from "./../../filter/filter";
 import SetFilterModel from "./setFilterModel";
 
 var template =

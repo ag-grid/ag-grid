@@ -1,5 +1,5 @@
-import _ from '../utils';
-import {ColDef} from "../entities/colDef";
+import _ from '../../utils';
+import {ColDef} from "../../entities/colDef";
 import {SetFilterParameters} from "./setFilterParameters";
 
 export default class SetFilterModel {

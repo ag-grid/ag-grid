@@ -19,7 +19,7 @@ export * from './dist/lib/entities/originalColumnGroupChild';
 export * from './dist/lib/entities/rowNode';
 export * from './dist/lib/entities/gridCell';
 
-export * from './dist/lib/filter/setFilterParameters';
+export * from './dist/lib/enterprise/setFilter/setFilterParameters';
 export * from './dist/lib/filter/textAndNumberFilterParameters';
 export * from './dist/lib/gridPanel/mouseEventService';
 
