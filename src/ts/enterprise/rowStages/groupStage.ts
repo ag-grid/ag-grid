@@ -8,15 +8,36 @@ import {RowNode} from "../../entities/rowNode";
 import ValueService from "../../valueService";
 import EventService from "../../eventService";
 import Column from "../../entities/column";
+import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
-@Bean('groupingService')
-export class GroupingService {
+@Bean('groupStage')
+export class GroupStage implements IRowNodeStage {
 
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
+
+    public execute(rowsToGroup: RowNode[]): RowNode[] {
+        var result: RowNode[];
+
+        var groupedCols = this.columnController.getRowGroupColumns();
+
+        if (groupedCols.length > 0) {
+            var expandByDefault: number;
+            if (this.gridOptionsWrapper.isGroupSuppressRow()) {
+                expandByDefault = -1;
+            } else {
+                expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+            }
+            result = this.group(rowsToGroup, groupedCols, expandByDefault);
+        } else {
+            result = rowsToGroup;
+        }
+
+        return result;
+    }
 
     private group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 
@@ -112,26 +133,6 @@ export class GroupingService {
         } else {
             return false;
         }
-    }
-
-    public doRowGrouping(rowsToGroup: RowNode[]): RowNode[] {
-        var result: RowNode[];
-
-        var groupedCols = this.columnController.getRowGroupColumns();
-
-        if (groupedCols.length > 0) {
-            var expandByDefault: number;
-            if (this.gridOptionsWrapper.isGroupSuppressRow()) {
-                expandByDefault = -1;
-            } else {
-                expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-            }
-            result = this.group(rowsToGroup, groupedCols, expandByDefault);
-        } else {
-            result = rowsToGroup;
-        }
-
-        return result;
     }
 
 }

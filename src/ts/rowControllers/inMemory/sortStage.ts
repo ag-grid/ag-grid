@@ -7,14 +7,14 @@ import Column from "../../entities/column";
 import ValueService from "../../valueService";
 import _ from '../../utils';
 
-@Bean('sortingService')
-export class SortingService {
+@Bean('sortStage')
+export class SortStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('valueService') private valueService: ValueService;
 
-    public doSort(rowsToSort: RowNode[]) {
+    public execute(rowsToSort: RowNode[]): RowNode[] {
         var sorting: any;
 
         // if the sorting is already done by the server, then we should not do it here

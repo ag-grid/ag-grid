@@ -20,11 +20,8 @@ import Constants from "../../constants";
 import {SortController} from "../../sortController";
 import {PostConstruct} from "../../context/context";
 import {NodeChildDetails} from "../../entities/gridOptions";
-import {GroupingService} from "./groupingService";
-import {FilterService} from "./filterService";
-import {AggregateService} from "./aggregateService";
-import {SortingService} from "./sortingService";
-import {FlattenService} from "./flattenService";
+import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
+import {Optional} from "../../context/context";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -38,11 +35,14 @@ export default class InMemoryRowController implements IRowModel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
 
-    @Autowired('groupingService') private groupingService: GroupingService;
-    @Autowired('filterService') private filterService: FilterService;
-    @Autowired('aggregateService') private aggregateService: AggregateService;
-    @Autowired('sortingService') private sortingService: SortingService;
-    @Autowired('flattenService') private flattenService: FlattenService;
+    // standard stages
+    @Autowired('filterStage') private filterStage: IRowNodeStage;
+    @Autowired('sortStage') private sortStage: IRowNodeStage;
+    @Autowired('flattenStage') private flattenStage: IRowNodeStage;
+
+    // enterprise stages
+    @Optional('groupStage') private groupStage: IRowNodeStage;
+    @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
@@ -69,6 +69,12 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     public refreshModel(step: number): void {
+
+        // this goes through the pipeline of stages. what's in my head is similar
+        // to the diagram on this page:
+        // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
+        // however we want to keep the results of each stage, hence we manually call
+        // each step rather than have them chain each other.
 
         // fallthrough in below switch is on purpose,
         // eg if STEP_FILTER, then all steps below this
@@ -220,8 +226,8 @@ export default class InMemoryRowController implements IRowModel {
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public doAggregate() {
-        if (this.aggregateService) {
-            this.aggregateService.doAggregate(this.rowsAfterFilter);
+        if (this.aggregationStage) {
+            this.aggregationStage.execute(this.rowsAfterFilter);
         }
     }
 
@@ -245,20 +251,20 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doSort() {
-        this.rowsAfterSort = this.sortingService.doSort(this.rowsAfterFilter);
+        this.rowsAfterSort = this.sortStage.execute(this.rowsAfterFilter);
     }
 
     private doRowGrouping() {
         // grouping is enterprise only, so if service missing, skip the step
         var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
 
-        if (this.groupingService && !rowsAlreadyGrouped) {
+        if (this.groupStage && !rowsAlreadyGrouped) {
 
             // remove old groups from the selection model, as we are about to replace them
             // with new groups
             this.selectionController.removeGroupsFromSelection();
 
-            this.rowsAfterGroup = this.groupingService.doRowGrouping(this.allRows);
+            this.rowsAfterGroup = this.groupStage.execute(this.allRows);
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
                 this.selectionController.updateGroupsFromChildrenSelections();
@@ -269,7 +275,7 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doFilter() {
-        this.rowsAfterFilter = this.filterService.doFilter(this.rowsAfterGroup);
+        this.rowsAfterFilter = this.filterStage.execute(this.rowsAfterGroup);
     }
 
     // rows: the rows to put into the model
@@ -332,6 +338,6 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenService.doFlatten(this.rowsAfterGroup);
+        this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterGroup);
     }
 }

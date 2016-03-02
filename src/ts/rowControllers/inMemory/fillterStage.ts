@@ -3,14 +3,15 @@ import {Autowired} from "../../context/context";
 import GridOptionsWrapper from "../../gridOptionsWrapper";
 import FilterManager from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
+import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
-@Bean('filterService')
-export class FilterService {
+@Bean('filterStage')
+export class FilterStage implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    public doFilter(rowsToFilter: RowNode[]) {
+    public execute(rowsToFilter: RowNode[]): RowNode[] {
 
         var filterActive: boolean;
 

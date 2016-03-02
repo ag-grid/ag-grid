@@ -54,11 +54,11 @@ import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {ContextMenuFactory} from "./enterprise/cContextMenu";
 import _ from './utils';
-import {GroupingService} from "./rowControllers/inMemory/groupingService";
-import {FilterService} from "./rowControllers/inMemory/filterService";
-import {AggregateService} from "./rowControllers/inMemory/aggregateService";
-import {SortingService} from "./rowControllers/inMemory/sortingService";
-import {FlattenService} from "./rowControllers/inMemory/flattenService";
+import {GroupStage} from "./enterprise/rowStages/groupStage";
+import {AggregationStage} from "./enterprise/rowStages/aggregationStage";
+import {FilterStage} from "./rowControllers/inMemory/fillterStage";
+import {SortStage} from "./rowControllers/inMemory/sortStage";
+import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 
 export class Grid {
 
@@ -79,7 +79,7 @@ export class Grid {
         var overrideBeans = gridOptions.suppressEnterprise ?
             null :
             [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
-                ContextMenuFactory, GroupingService, AggregateService];
+                ContextMenuFactory, GroupStage, AggregationStage];
 
         var enterprise = _.exists(overrideBeans);
 
@@ -102,7 +102,7 @@ export class Grid {
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterService, SortingService, FlattenService],
+                CellNavigationService, FilterStage, SortStage, FlattenStage],
             debug: !!gridOptions.debug
         });
     }

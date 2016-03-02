@@ -6,9 +6,10 @@ import Column from "../../entities/column";
 import {RowNode} from "../../entities/rowNode";
 import ValueService from "../../valueService";
 import _ from '../../utils';
+import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
-@Bean('aggregateService')
-export class AggregateService {
+@Bean('aggregationStage')
+export class AggregationStage implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -16,7 +17,7 @@ export class AggregateService {
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public doAggregate(rowsToAgg: RowNode[]) {
+    public execute(rowsToAgg: RowNode[]): RowNode[] {
 
         var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
         if (typeof groupAggFunction === 'function') {
@@ -37,9 +38,11 @@ export class AggregateService {
                 this.recursivelyClearAggData(rowsToAgg);
             }
         }
+
+        return rowsToAgg;
     }
 
-    private recursivelyClearAggData(nodes: RowNode[]) {
+    private recursivelyClearAggData(nodes: RowNode[]): void {
         for (var i = 0, l = nodes.length; i < l; i++) {
             var node = nodes[i];
             if (node.group) {
