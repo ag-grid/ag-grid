@@ -56,6 +56,9 @@ import {ContextMenuFactory} from "./enterprise/cContextMenu";
 import _ from './utils';
 import {GroupingService} from "./rowControllers/inMemory/groupingService";
 import {FilterService} from "./rowControllers/inMemory/filterService";
+import {AggregateService} from "./rowControllers/inMemory/aggregateService";
+import {SortingService} from "./rowControllers/inMemory/sortingService";
+import {FlattenService} from "./rowControllers/inMemory/flattenService";
 
 export class Grid {
 
@@ -76,7 +79,7 @@ export class Grid {
         var overrideBeans = gridOptions.suppressEnterprise ?
             null :
             [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
-                ContextMenuFactory, GroupingService];
+                ContextMenuFactory, GroupingService, AggregateService];
 
         var enterprise = _.exists(overrideBeans);
 
@@ -99,7 +102,7 @@ export class Grid {
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterService],
+                CellNavigationService, FilterService, SortingService, FlattenService],
             debug: !!gridOptions.debug
         });
     }

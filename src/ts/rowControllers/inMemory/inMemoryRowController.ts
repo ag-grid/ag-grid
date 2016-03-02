@@ -22,6 +22,9 @@ import {PostConstruct} from "../../context/context";
 import {NodeChildDetails} from "../../entities/gridOptions";
 import {GroupingService} from "./groupingService";
 import {FilterService} from "./filterService";
+import {AggregateService} from "./aggregateService";
+import {SortingService} from "./sortingService";
+import {FlattenService} from "./flattenService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -30,16 +33,16 @@ export default class InMemoryRowController implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
-
-    @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
 
     @Autowired('groupingService') private groupingService: GroupingService;
     @Autowired('filterService') private filterService: FilterService;
+    @Autowired('aggregateService') private aggregateService: AggregateService;
+    @Autowired('sortingService') private sortingService: SortingService;
+    @Autowired('flattenService') private flattenService: FlattenService;
 
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
@@ -48,7 +51,6 @@ export default class InMemoryRowController implements IRowModel {
     private rowsAfterFilter: RowNode[]; // after filtering
     private rowsAfterSort: RowNode[]; // after sorting
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
-    private nextRowTop: number;
 
     @PostConstruct
     public init(): void {
@@ -214,108 +216,12 @@ export default class InMemoryRowController implements IRowModel {
         return index;
     }
 
-    private defaultGroupAggFunctionFactory(valueColumns: Column[]) {
-
-        // make closure of variable, so is available for methods below
-        var _valueService = this.valueService;
-
-        return function groupAggFunction(rows: any) {
-
-            var result = <any>{};
-
-            for (var j = 0; j < valueColumns.length; j++) {
-                var valueColumn = valueColumns[j];
-                var colKey = valueColumn.getColDef().field;
-                if (!colKey) {
-                    console.log('ag-Grid: you need to provide a field for all value columns so that ' +
-                        'the grid knows what field to store the result in. so even if using a valueGetter, ' +
-                        'the result will not be stored in a value getter.');
-                }
-                // at this point, if no values were numbers, the result is null (not zero)
-                result[colKey] = aggregateColumn(rows, valueColumn.getAggFunc(), colKey, valueColumn);
-            }
-
-            return result;
-        };
-
-        // if colDef is passed in, we are working off a column value, if it is not passed in, we are
-        // working off colKeys passed in to the gridOptions
-        function aggregateColumn(rowNodes: RowNode[], aggFunc: string, colKey: string, column: Column) {
-            var resultForColumn: any = null;
-            for (var i = 0; i < rowNodes.length; i++) {
-                var rowNode = rowNodes[i];
-                // if the row is a group, then it will only have an agg result value,
-                // which means valueGetter is never used.
-                var thisColumnValue: any;
-                if (rowNode.group) {
-                    thisColumnValue = rowNode.data[colKey];
-                } else {
-                    thisColumnValue = _valueService.getValue(column, rowNode);
-                }
-                // only include if the value is a number
-                if (typeof thisColumnValue === 'number') {
-
-                    var firstRow = i === 0;
-                    var lastRow = i===(rowNodes.length-1);
-
-                    switch (aggFunc) {
-                        case Column.AGG_SUM :
-                            resultForColumn += thisColumnValue;
-                            break;
-                        case Column.AGG_MIN :
-                            if (resultForColumn === null) {
-                                resultForColumn = thisColumnValue;
-                            } else if (resultForColumn > thisColumnValue) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                        case Column.AGG_MAX :
-                            if (resultForColumn === null) {
-                                resultForColumn = thisColumnValue;
-                            } else if (resultForColumn < thisColumnValue) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                        case Column.AGG_FIRST :
-                            if (firstRow) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                        case Column.AGG_LAST :
-                            if (lastRow) {
-                                resultForColumn = thisColumnValue;
-                            }
-                            break;
-                    }
-
-                }
-            }
-            return resultForColumn;
-        }
-    }
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public doAggregate() {
-
-        var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
-        if (typeof groupAggFunction === 'function') {
-            this.recursivelyCreateAggData(this.rowsAfterFilter, groupAggFunction, 0);
-            return;
-        }
-
-        var valueColumns = this.columnController.getValueColumns();
-        if (valueColumns && valueColumns.length > 0) {
-            var defaultAggFunction = this.defaultGroupAggFunctionFactory(valueColumns);
-            this.recursivelyCreateAggData(this.rowsAfterFilter, defaultAggFunction, 0);
-        } else {
-            // if no agg data, need to clear out any previous items, when can be left behind
-            // if use is creating / removing columns using the tool panel.
-            // one exception - don't do this if already grouped, as this breaks the File Explorer example!!
-            // to fix another day - how to we reset when the user provided the data??
-            if (_.missing(this.gridOptionsWrapper.getNodeChildDetailsFunc())) {
-                this.recursivelyClearAggData(this.rowsAfterFilter);
-            }
+        if (this.aggregateService) {
+            this.aggregateService.doAggregate(this.rowsAfterFilter);
         }
     }
 
@@ -338,125 +244,8 @@ export default class InMemoryRowController implements IRowModel {
         this.refreshModel(Constants.STEP_MAP);
     }
 
-    private recursivelyClearAggData(nodes: RowNode[]) {
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group) {
-                // agg function needs to start at the bottom, so traverse first
-                this.recursivelyClearAggData(node.childrenAfterFilter);
-                node.data = null;
-            }
-        }
-    }
-
-    private recursivelyCreateAggData(nodes: RowNode[], groupAggFunction: any, level: number) {
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group) {
-                // agg function needs to start at the bottom, so traverse first
-                this.recursivelyCreateAggData(node.childrenAfterFilter, groupAggFunction, level++);
-                // after traversal, we can now do the agg at this level
-                var data = groupAggFunction(node.childrenAfterFilter, level);
-                node.data = data;
-                // if we are grouping, then it's possible there is a sibling footer
-                // to the group, so update the data here also if there is one
-                if (node.sibling) {
-                    node.sibling.data = data;
-                }
-            }
-        }
-    }
-
     private doSort() {
-        var sorting: any;
-
-        // if the sorting is already done by the server, then we should not do it here
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sorting = false;
-        } else {
-            //see if there is a col we are sorting by
-            var sortingOptions = this.sortController.getSortForRowController();
-            sorting = sortingOptions.length > 0;
-        }
-
-        var rowNodesReadyForSorting = this.rowsAfterFilter ? this.rowsAfterFilter.slice(0) : null;
-
-        if (sorting) {
-            this.sortList(rowNodesReadyForSorting, sortingOptions);
-        } else {
-            // if no sorting, set all group children after sort to the original list.
-            // note: it is important to do this, even if doing server side sorting,
-            // to allow the rows to pass to the next stage (ie set the node value
-            // childrenAfterSort)
-            this.recursivelyResetSort(rowNodesReadyForSorting);
-        }
-
-        this.rowsAfterSort = rowNodesReadyForSorting;
-    }
-
-    private recursivelyResetSort(rowNodes: RowNode[]) {
-        if (!rowNodes) {
-            return;
-        }
-        for (var i = 0, l = rowNodes.length; i < l; i++) {
-            var item = rowNodes[i];
-            if (item.group && item.children) {
-                item.childrenAfterSort = item.childrenAfterFilter;
-                this.recursivelyResetSort(item.children);
-            }
-        }
-
-        this.updateChildIndexes(rowNodes);
-    }
-
-    private sortList(nodes: RowNode[], sortOptions: any) {
-
-        // sort any groups recursively
-        for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
-            var node = nodes[i];
-            if (node.group && node.children) {
-                node.childrenAfterSort = node.childrenAfterFilter.slice(0);
-                this.sortList(node.childrenAfterSort, sortOptions);
-            }
-        }
-
-        var that = this;
-
-        function compare(nodeA: RowNode, nodeB: RowNode, column:Column, isInverted: boolean) {
-            var valueA = that.valueService.getValue(column, nodeA);
-            var valueB = that.valueService.getValue(column, nodeB);
-            if (column.getColDef().comparator) {
-                //if comparator provided, use it
-                return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
-            } else {
-                //otherwise do our own comparison
-                return _.defaultComparator(valueA, valueB);
-            }
-        }
-
-        nodes.sort(function (nodeA: RowNode, nodeB: RowNode) {
-            // Iterate columns, return the first that doesn't match
-            for (var i = 0, len = sortOptions.length; i < len; i++) {
-                var sortOption = sortOptions[i];
-                var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-                if (compared !== 0) {
-                    return compared * sortOption.inverter;
-                }
-            }
-            // All matched, these are identical as far as the sort is concerned:
-            return 0;
-        });
-
-        this.updateChildIndexes(nodes);
-    }
-
-    private updateChildIndexes(nodes: RowNode[]) {
-        for (var j = 0; j<nodes.length; j++) {
-            var node = nodes[j];
-            node.firstChild = j === 0;
-            node.lastChild = j === nodes.length - 1;
-            node.childIndex = j;
-        }
+        this.rowsAfterSort = this.sortingService.doSort(this.rowsAfterFilter);
     }
 
     private doRowGrouping() {
@@ -543,56 +332,6 @@ export default class InMemoryRowController implements IRowModel {
     }
 
     private doRowsToDisplay() {
-        // even if not doing grouping, we do the mapping, as the client might
-        // of passed in data that already has a grouping in it somewhere
-        this.rowsToDisplay = [];
-        this.nextRowTop = 0;
-        this.recursivelyAddToRowsToDisplay(this.rowsAfterSort);
+        this.rowsToDisplay = this.flattenService.doFlatten(this.rowsAfterGroup);
     }
-
-    private recursivelyAddToRowsToDisplay(rowNodes: RowNode[]) {
-        if (!rowNodes) {
-            return;
-        }
-        var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
-        for (var i = 0; i < rowNodes.length; i++) {
-            var rowNode = rowNodes[i];
-            var skipGroupNode = groupSuppressRow && rowNode.group;
-            if (!skipGroupNode) {
-                this.addRowNodeToRowsToDisplay(rowNode);
-            }
-            if (rowNode.group && rowNode.expanded) {
-                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort);
-
-                // put a footer in if user is looking for it
-                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                    var footerNode = this.createFooterNode(rowNode);
-                    this.addRowNodeToRowsToDisplay(footerNode);
-                }
-            }
-        }
-    }
-
-    // duplicated method, it's also in floatingRowModel
-    private addRowNodeToRowsToDisplay(rowNode: RowNode): void {
-        this.rowsToDisplay.push(rowNode);
-        rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-        rowNode.rowTop = this.nextRowTop;
-        this.nextRowTop += rowNode.rowHeight;
-    }
-
-    private createFooterNode(groupNode: RowNode): RowNode {
-        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
-        Object.keys(groupNode).forEach(function (key) {
-            (<any>footerNode)[key] = (<any>groupNode)[key];
-        });
-        footerNode.footer = true;
-        // get both header and footer to reference each other as siblings. this is never undone,
-        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-        // sibling - but that's fine, as we can ignore this if the header is contracted.
-        footerNode.sibling = groupNode;
-        groupNode.sibling = footerNode;
-        return footerNode;
-    }
-
 }
