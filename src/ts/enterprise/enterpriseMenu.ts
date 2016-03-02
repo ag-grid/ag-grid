@@ -175,19 +175,20 @@ export class EnterpriseMenu {
     private createPinnedSubMenu(): MenuList {
         var cMenuList = new MenuList();
         this.context.wireBean(cMenuList);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         cMenuList.addItem({
-            name: 'Pin Left',
+            name: localeTextFunc('pinLeft', 'Pin Left'),
             action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
             checked: this.column.isPinnedLeft()
         });
         cMenuList.addItem({
-            name: 'Pin Right',
+            name: localeTextFunc('pinRight', 'Pin Right'),
             action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
             checked: this.column.isPinnedRight()
         });
         cMenuList.addItem({
-            name: 'No Pin',
+            name: localeTextFunc('noPin', 'No Pin'),
             action: ()=> this.columnController.setColumnPinned(this.column, null),
             checked: !this.column.isPinned()
         });
@@ -198,11 +199,12 @@ export class EnterpriseMenu {
     private createAggregationSubMenu(): MenuList {
         var cMenuList = new MenuList();
         this.context.wireBean(cMenuList);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
 
         cMenuList.addItem({
-            name: 'Sum',
+            name: localeTextFunc('sum', 'Sum'),
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
                 this.columnController.addValueColumn(this.column);
@@ -210,7 +212,7 @@ export class EnterpriseMenu {
             checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_SUM
         });
         cMenuList.addItem({
-            name: 'Min',
+            name: localeTextFunc('min', 'Min'),
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_MIN);
                 this.columnController.addValueColumn(this.column);
@@ -218,7 +220,7 @@ export class EnterpriseMenu {
             checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MIN
         });
         cMenuList.addItem({
-            name: 'Max',
+            name: localeTextFunc('max', 'Max'),
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_MAX);
                 this.columnController.addValueColumn(this.column);
@@ -226,7 +228,7 @@ export class EnterpriseMenu {
             checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MAX
         });
         cMenuList.addItem({
-            name: 'First',
+            name: localeTextFunc('first', 'First'),
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_FIRST);
                 this.columnController.addValueColumn(this.column);
@@ -234,7 +236,7 @@ export class EnterpriseMenu {
             checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_FIRST
         });
         cMenuList.addItem({
-            name: 'Last',
+            name: localeTextFunc('last', 'Last'),
             action: ()=> {
                 this.columnController.setColumnAggFunction(this.column, Column.AGG_LAST);
                 this.columnController.addValueColumn(this.column);
@@ -242,7 +244,7 @@ export class EnterpriseMenu {
             checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_LAST
         });
         cMenuList.addItem({
-            name: 'None',
+            name: localeTextFunc('none', 'None'),
             action: ()=> {
                 this.column.setAggFunc(null);
                 this.columnController.removeValueColumn(this.column);
@@ -255,45 +257,47 @@ export class EnterpriseMenu {
 
     private createBuiltInMenuOptions(): {[key: string]: MenuItem} {
 
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
         var builtInMenuOptions: any = {
             pinSubMenu: {
-                name: 'Pin Column',
+                name: localeTextFunc('pinColumn', 'Pin Column'),
                 icon: svgFactory.createPinIcon(),
                 childMenu: this.createPinnedSubMenu()
             },
             valueAggSubMenu: {
-                name: 'Value Aggregation',
+                name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                 icon: svgFactory.createAggregationIcon(),
                 childMenu: this.createAggregationSubMenu()
             },
             autoSizeThis: {
-                name: 'Autosize This Column',
+                name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
                 action: ()=> this.columnController.autoSizeColumn(this.column)
             },
             autoSizeAll: {
-                name: 'Autosize All Columns',
+                name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
                 action: ()=> this.columnController.autoSizeAllColumns()
             },
             rowGroup: {
-                name: 'Group by ' + this.column.getColDef().headerName,
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.column.getColDef().headerName,
                 action: ()=> this.columnController.addRowGroupColumn(this.column),
                 icon: svgFactory.createGroupIcon12()
             },
             rowUnGroup: {
-                name: 'Un-Group by ' + this.column.getColDef().headerName,
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.column.getColDef().headerName,
                 action: ()=> this.columnController.removeRowGroupColumn(this.column),
                 icon: svgFactory.createGroupIcon12()
             },
             resetColumns: {
-                name: 'Reset Columns',
+                name: localeTextFunc('resetColumns', 'Reset Columns'),
                 action: ()=> this.columnController.resetColumnState()
             },
             expandAll: {
-                name: 'Expand All',
+                name: localeTextFunc('expandAll', 'Expand All'),
                 action: ()=> this.gridApi.expandAll()
             },
             contractAll: {
-                name: 'Collapse All',
+                name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: ()=> this.gridApi.collapseAll()
             }
         };
@@ -302,30 +306,8 @@ export class EnterpriseMenu {
     }
 
     private getMenuItems(): [string|MenuItem] {
-        var defaultMenuOptions: [string] = <[string]>[];
+        var defaultMenuOptions = this.getDefaultMenuOptions();
 
-        defaultMenuOptions.push('separator');
-        defaultMenuOptions.push('pinSubMenu');
-        defaultMenuOptions.push('valueAggSubMenu');
-        defaultMenuOptions.push('separator');
-        defaultMenuOptions.push('autoSizeThis');
-        defaultMenuOptions.push('autoSizeAll');
-        defaultMenuOptions.push('separator');
-
-        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        if (groupedByThisColumn) {
-            defaultMenuOptions.push('rowUnGroup');
-        } else {
-            defaultMenuOptions.push('rowGroup');
-        }
-        defaultMenuOptions.push('separator');
-        defaultMenuOptions.push('resetColumns');
-
-        // only add grouping expand/collapse if grouping
-        if (this.columnController.getRowGroupColumns().length>0) {
-            defaultMenuOptions.push('expandAll');
-            defaultMenuOptions.push('contractAll');
-        }
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
             var userOptions = userFunc({
@@ -339,6 +321,39 @@ export class EnterpriseMenu {
         } else {
             return defaultMenuOptions;
         }
+    }
+
+    private getDefaultMenuOptions(): [string] {
+        var result: [string] = <[string]>[];
+
+        var doingGrouping = this.columnController.getRowGroupColumns().length>0;
+        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+
+        result.push('separator');
+        result.push('pinSubMenu');
+        if (doingGrouping) {
+            result.push('valueAggSubMenu');
+        }
+        result.push('separator');
+        result.push('autoSizeThis');
+        result.push('autoSizeAll');
+        result.push('separator');
+
+        if (groupedByThisColumn) {
+            result.push('rowUnGroup');
+        } else {
+            result.push('rowGroup');
+        }
+        result.push('separator');
+        result.push('resetColumns');
+
+        // only add grouping expand/collapse if grouping
+        if (doingGrouping) {
+            result.push('expandAll');
+            result.push('contractAll');
+        }
+
+        return result;
     }
 
     private createMainPanel(): void {

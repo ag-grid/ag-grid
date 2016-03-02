@@ -408,7 +408,7 @@ export default class VirtualPageRowController implements IRowModel {
     }
 
     public getRowHeightAsNumber(): number {
-        var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagiation();
+        var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagination();
         if (typeof rowHeight === 'number') {
             return <number>rowHeight;
         } else {

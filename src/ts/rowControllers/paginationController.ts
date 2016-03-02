@@ -15,7 +15,7 @@ import {Events} from "../events";
 import FilterManager from "../filter/filterManager";
 
 var template =
-        '<div class="ag-paging-panel">'+
+        '<div class="ag-paging-panel ag-font-style">'+
             '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">'+
                 '<span id="firstRowOnPage"></span>'+
                 ' [TO] '+

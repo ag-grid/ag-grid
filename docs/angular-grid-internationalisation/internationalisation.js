@@ -22,6 +22,8 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     showToolPanel: true,
+    rowModelType: 'pagination',
+    rowGroupPanelShow: 'always',
     localeText: {
         // for filter panel
         page: 'daPage',
@@ -37,7 +39,7 @@ var gridOptions = {
         selectAll: 'daSelect Allen',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
-        // for number filter and string filter
+        // for number filter and text filter
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
         // for number filter
@@ -48,14 +50,40 @@ var gridOptions = {
         contains: 'daContains',
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
+        // the header of the default group column
+        group: 'laGroup',
         // tool panel
         columns: 'laColumns',
         rowGroupColumns: 'laPivot Cols',
         rowGroupColumnsEmptyMessage: 'la please drag cols to here',
         valueColumns: 'laValue Cols',
-        valueColumnsEmptyMessage: 'la please drag cols to here'
+        valueColumnsEmptyMessage: 'la please drag cols to here',
+        // other
+        noRowsToShow: 'la no rows',
+        // enterprise menu
+        pinColumn: 'laPin Column',
+        valueAggregation: 'laValue Agg',
+        autosizeThiscolumn: 'laAutosize Diz',
+        autosizeAllColumns: 'laAutsoie em All',
+        groupBy: 'laGroup by',
+        ungroupBy: 'laUnGroup by',
+        resetColumns: 'laReset Those Cols',
+        expandAll: 'laOpen-em-up',
+        collapseAll: 'laClose-em-up',
+        // enterprise menu pinning
+        pinLeft: 'laPin <<',
+        pinRight: 'laPin >>',
+        noPin: 'laDontPin <>',
+        // enterprise menu aggregation
+        sum: 'laSum',
+        min: 'laMin',
+        max: 'laMax',
+        first: 'laFirst',
+        last: 'laLast',
+        none: 'laNone'
     }
 };
+
 
 function setDataSource(allOfTheData) {
     var dataSource = {
