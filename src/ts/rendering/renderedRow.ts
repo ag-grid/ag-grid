@@ -105,6 +105,7 @@ export default class RenderedRow {
         }
 
         this.addDynamicStyles();
+        this.addDynamicAttributes();
         this.addDynamicClasses();
 
         var rowStr = this.rowIndex.toString();
@@ -168,6 +169,8 @@ export default class RenderedRow {
             this.bindVirtualElement(this.vPinnedRightRow);
         }
 
+        this.eBodyContainer.appendChild(this.vBodyRow.getElement());
+
         if (this.scope) {
             this.$compile(this.vBodyRow.getElement())(this.scope);
             if (this.pinningLeft) {
@@ -178,7 +181,6 @@ export default class RenderedRow {
             }
         }
 
-        this.eBodyContainer.appendChild(this.vBodyRow.getElement());
         if (this.pinningLeft) {
             this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
         }
@@ -402,6 +404,44 @@ export default class RenderedRow {
             }
             if (this.pinningRight) {
                 this.vPinnedRightRow.addStyles(cssToUseFromFunc);
+            }
+        }
+    }
+
+    private addDynamicAttributes() {
+        var rowAttribute = this.gridOptionsWrapper.getRowAttribute();
+        if (rowAttribute) {
+            if (typeof rowAttribute === 'function') {
+                console.log('ag-Grid: rowAttribute should not be a function, use getRowAttribute() instead');
+            } else if (typeof rowAttribute !== 'object') {
+                console.log('ag-Grid: rowAttribute should be an object of key / value pairs eg {foo: "bar"} results in foo="bar"');
+            } else {
+                _.iterateObject(rowAttribute, (key: string, value: string)=> {
+                    this.vBodyRow.setAttribute(key, value);
+                    if (this.pinningLeft) {
+                        this.vPinnedLeftRow.setAttribute(key, value);
+                    }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.setAttribute(key, value);
+                    }
+                });
+            }
+        }
+        var rowAttributeFunc = this.gridOptionsWrapper.getRowAttributeFunc();
+        if (rowAttributeFunc) {
+            var attributesToUseFromFunc = rowAttributeFunc(this.createParams());
+            if (typeof attributesToUseFromFunc !== 'object') {
+                console.log('ag-Grid: getRowAttribute should return an object of key / value pairs eg {foo: "bar"} results in foo="bar"');
+            } else {
+                _.iterateObject(attributesToUseFromFunc, (key: string, value: string)=> {
+                    this.vBodyRow.setAttribute(key, value);
+                    if (this.pinningLeft) {
+                        this.vPinnedLeftRow.setAttribute(key, value);
+                    }
+                    if (this.pinningRight) {
+                        this.vPinnedRightRow.setAttribute(key, value);
+                    }
+                });
             }
         }
     }

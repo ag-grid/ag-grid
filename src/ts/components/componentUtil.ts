@@ -16,7 +16,7 @@ export class ComponentUtil {
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText'];
 
     public static OBJECT_PROPERTIES = [
-        'rowStyle','context','groupColumnDef','localeText','icons','datasource'
+        'rowStyle','rowAttribute','context','groupColumnDef','localeText','icons','datasource'
     ];
 
     public static ARRAY_PROPERTIES = [
@@ -42,7 +42,7 @@ export class ComponentUtil {
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
-        'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate'];
+        'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getRowAttributes', 'getHeaderCellTemplate'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)

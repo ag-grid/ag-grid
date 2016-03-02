@@ -57,8 +57,10 @@ export default class GridOptionsWrapper {
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
     public getRowStyle() { return this.gridOptions.rowStyle; }
+    public getRowAttribute() { return this.gridOptions.rowAttribute; }
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
+    public getRowAttributeFunc() { return this.gridOptions.getRowAttribute; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
     public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }

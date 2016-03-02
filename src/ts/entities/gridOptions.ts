@@ -64,6 +64,7 @@ export interface GridOptions {
     // changeable, but no immediate impact
     context?: any;
     rowStyle?: any;
+    rowAttribute?: any;
     rowClass?: any;
     groupDefaultExpanded?: number;
     slaveGrids?: GridOptions[];
@@ -92,6 +93,7 @@ export interface GridOptions {
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
+    getRowAttribute?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
     headerCellRenderer?: any;

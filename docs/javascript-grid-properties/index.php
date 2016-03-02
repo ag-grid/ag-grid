@@ -180,7 +180,12 @@ include '../documentation_header.php';
         <tr>
             <th>rowStyle</th>
             <td>The style for a particular row. Provide an array of CSS key / value pairs eg {color: 'red'}.
-            If you a different style per row, then use the callback getRowStyle(params) instead.</td>
+            If you want a different style per row, then use the callback getRowStyle(params) instead.</td>
+        </tr>
+        <tr>
+            <th>rowAttribute</th>
+            <td>The Attributes for a particular row. Provide a Object with key / value pairs, eg {foo: 'bar'} results in foo="bar".
+                If you want a different attribute(s) per row, then use the callback getRowAttribute(params) instead.</td>
         </tr>
         <tr>
             <th>rowsAlreadyGrouped</th>
