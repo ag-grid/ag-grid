@@ -161,7 +161,7 @@ export default class GridPanel {
     }
 
     private onRowDataChanged(): void {
-        if (this.rowModel.isEmpty()) {
+        if (this.rowModel.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
             this.showNoRowsOverlay();
         } else {
             this.hideOverlay();
