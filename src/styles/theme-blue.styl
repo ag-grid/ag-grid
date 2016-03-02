@@ -1,9 +1,55 @@
 @import 'nib'
 
 .ag-blue
+  // copying bootstrap with line-height, sorts out alignment problems with images beside text
+  line-height: 1.4;
+
+  // changing the image is same as what bootstrap does, without the images didn't align right
+  img
+    vertical-align: middle;
+    border: 0px;
+
   .ag-root
     border: 1px solid #9bc2e6;
     font: 10pt Calibri, "Segoe UI", Thonburi, Arial, Verdana, sans-serif;
+
+  .ag-row-group-cell
+    background: #5b9bd5;
+    border: 1px solid #808080;
+    padding: 2px;
+
+  .ag-row-group-cell-ghost
+    opacity: 0.5;
+
+  .ag-row-group-cell-text
+    padding-left: 2px;
+    padding-right: 2px;
+
+  .ag-row-group-cell-button
+    border 1px solid transparent;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 3px;
+
+  .ag-row-group-cell-button:hover
+    border: 1px solid black;
+
+  .ag-row-group-empty-message
+    padding-left: 2px;
+    padding-right: 2px;
+    border: 1px solid transparent;
+    color: grey;
+
+  .ag-row-group-icon
+    padding-right: 4px;
+
+  .ag-row-group-panel
+    border-top: 1px solid #9bc2e6;
+    border-left: 1px solid #9bc2e6;
+    border-right: 1px solid #9bc2e6;
+    padding: 4px;
+    background-color #ddebf7;
+    color: #fff;
 
   .ag-cell
     top: -1px;
@@ -12,6 +58,19 @@
     overflow: hidden;
     white-space: nowrap;
     letter-spacing: -0.02em;
+
+  // we do not want to color the range color when the cell is also focused
+  .ag-cell-range-selected-1:not(.ag-cell-focus)
+    background-color: rgba(120,120,120,0.4);
+
+  .ag-cell-range-selected-2:not(.ag-cell-focus)
+    background-color: rgba(80,80,80,0.4);
+
+  .ag-cell-range-selected-3:not(.ag-cell-focus)
+    background-color: rgba(40,40,40,0.4);
+
+  .ag-cell-range-selected-4:not(.ag-cell-focus)
+    background-color: rgba(0,0,0,0.4);
 
   .ag-column-moving .ag-cell
     transition: left 0.2s;
@@ -27,7 +86,17 @@
     border-bottom: 1px solid #9bc2e6;
 
   .ag-cell-first-right-pinned
-    border-left: 1px dotted #9bc2e6;
+    border-left: 1px solid #9bc2e6;
+
+  .ag-cell-last-left-pinned
+    border-right: 1px solid #9bc2e6;
+
+  // this needs to be after the other cell items, so the boarder gets preference
+  .ag-cell-highlight
+    border: 1px solid darkgreen;
+
+  .ag-cell-highlight-animation
+    transition: border 1s;
 
   .ag-header
     background-color: #5B9BD5;
@@ -144,9 +213,62 @@
     font-style: italic;
 
   .ag-menu
-    background-color: #fff;
-    border: 1px solid #c6c6c6;
-    font: 9pt Calibri, "Segoe UI", Thonburi, Arial, Verdana, sans-serif;
+    border: 1px solid #7070A0;
+    background-color: #f0f0f0;
+    cursor: default;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+
+    .ag-tab-header
+      background-color: #5b9bd5;
+
+    .ag-tab
+      padding: 6px 8px 6px 8px;
+      margin: 2px 2px 0px 2px;
+      display: inline-block;
+      border-right: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-top: 1px solid transparent;
+      border-top-right-radius: 2px;
+      border-top-left-radius: 2px;
+
+    .ag-tab-selected
+      background-color: #9bc2e6;
+      border-right: 1px solid #7070A0;
+      border-left: 1px solid #7070A0;
+      border-top: 1px solid #7070A0;
+
+  .ag-menu-panel-title {}
+
+  .ag-menu-separator
+    border-top 1px solid #d3d3d3;
+
+  .ag-menu-option {}
+
+  .ag-menu-option-active
+    background-color: #BDE2E5;
+
+  .ag-menu-option-icon
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-text
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-shortcut
+    padding: 2px 2px 2px 20px;
+    vertical-align: middle;
+
+  .ag-menu-option-popup-pointer
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-disabled
+    opacity: 0.5;
+
+  .ag-menu-column-select-wrapper
+    margin: 2px;
 
   .ag-filter-checkbox
     position: relative;
@@ -188,45 +310,3 @@
   .ag-paging-row-summary-panel
     display: inline-block;
     width: 300px;
-
-  .ag-column-not-visible
-    opacity: 0.75;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
-    filter: "alpha(opacity=75)";
-
-  .ag-not-dragging
-    border: 1px solid transparent;
-
-  .ag-drop-target-above
-    border-top: 5px solid #a9a9a9;
-
-  .ag-drop-target-below
-    border-bottom: 5px solid #a9a9a9;
-
-  .ag-dragging
-    border: 1px dotted #a9a9a9;
-
-  .ag-list-item-selected
-    color: #f0f0f0;
-
-  .ag-list-item-not-selected
-    font-style: italic;
-    color: #a0a0a0;
-
-  .ag-tool-panel-container
-    background-color: #eee;
-    box-sizing: border-box;
-    border: 1px solid #a9a9a9;
-    padding: 4px;
-
-  .ag-list-selection
-    background-color: #fff;
-    border: 1px solid #a9a9a9;
-    box-sizing: border-box;
-
-  .ag-popup-list .ag-list-item:hover
-    background-color: #add8e6;
-
-  .ag-visible-icons
-    padding-left: 2px
-    padding-right: 2px

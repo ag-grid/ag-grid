@@ -320,6 +320,7 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer},
+                aggFunc: 'sum',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                     sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -339,6 +340,7 @@ var defaultCols = [
     },
     {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
+        aggFunc: 'sum',
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -356,6 +358,7 @@ months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
+        aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',
