@@ -1,17 +1,17 @@
-import _ from '../utils';
-import Column from "../entities/column";
+import {Utils as _} from '../utils';
+import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import ExpressionService from "../expressionService";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import RowRenderer from "./rowRenderer";
-import TemplateService from "../templateService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ExpressionService} from "../expressionService";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {RowRenderer} from "./rowRenderer";
+import {TemplateService} from "../templateService";
 import {ColumnController} from "../columnController/columnController";
-import ValueService from "../valueService";
-import EventService from "../eventService";
-import Constants from "../constants";
+import {ValueService} from "../valueService";
+import {EventService} from "../eventService";
+import {Constants} from "../constants";
 import {Events} from "../events";
-import RenderedRow from "./renderedRow";
+import {RenderedRow} from "./renderedRow";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
 import {ColumnApi} from "../columnController/columnController";
@@ -24,7 +24,7 @@ import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {RangeSelection} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 
-export default class RenderedCell {
+export class RenderedCell {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;

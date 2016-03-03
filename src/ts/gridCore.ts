@@ -1,35 +1,34 @@
 
 import {GridOptions} from "./entities/gridOptions";
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import InMemoryRowController from "./rowControllers/inMemory/inMemoryRowController";
-import PaginationController from "./rowControllers/paginationController";
-import VirtualPageRowController from "./rowControllers/virtualPageRowController";
-import FloatingRowModel from "./rowControllers/floatingRowModel";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
+import {PaginationController} from "./rowControllers/paginationController";
+import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
+import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {ColumnController} from "./columnController/columnController";
-import RowRenderer from "./rendering/rowRenderer";
-import FilterManager from "./filter/filterManager";
-import ValueService from "./valueService";
-import MasterSlaveService from "./masterSlaveService";
-import EventService from "./eventService";
-import GridPanel from "./gridPanel/gridPanel";
+import {RowRenderer} from "./rendering/rowRenderer";
+import {FilterManager} from "./filter/filterManager";
+import {ValueService} from "./valueService";
+import {MasterSlaveService} from "./masterSlaveService";
+import {EventService} from "./eventService";
+import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
-import Constants from "./constants";
-import HeaderTemplateLoader from "./headerRendering/headerTemplateLoader";
-import BalancedColumnTreeBuilder from "./columnController/balancedColumnTreeBuilder";
-import DisplayedGroupCreator from "./columnController/displayedGroupCreator";
-import SelectionRendererFactory from "./selectionRendererFactory";
-import ExpressionService from "./expressionService";
-import TemplateService from "./templateService";
-import PopupService from "./widgets/agPopupService";
+import {Constants} from "./constants";
+import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
+import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
+import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
+import {SelectionRendererFactory} from "./selectionRendererFactory";
+import {ExpressionService} from "./expressionService";
+import {TemplateService} from "./templateService";
+import {PopupService} from "./widgets/agPopupService";
 import {LoggerFactory} from "./logger";
-import ColumnUtils from "./columnController/columnUtils";
-import AutoWidthCalculator from "./rendering/autoWidthCalculator";
+import {ColumnUtils} from "./columnController/columnUtils";
+import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {Events} from "./events";
-import ToolPanel from "./toolPanel/toolPanel";
-import BorderLayout from "./layout/borderLayout";
-import ColumnChangeEvent from "./columnChangeEvent";
-import Column from "./entities/column";
+import {BorderLayout} from "./layout/borderLayout";
+import {ColumnChangeEvent} from "./columnChangeEvent";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
 import {Context} from './context/context';
@@ -41,6 +40,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
 import {Optional} from "./context/context";
+import {Component} from "./widgets/component";
 
 @Bean('gridCore')
 export class GridCore {
@@ -54,7 +54,7 @@ export class GridCore {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('toolPanel') private toolPanel: ToolPanel;
+    @Autowired('toolPanel') private toolPanel: Component;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
@@ -85,6 +85,9 @@ export class GridCore {
         var toolPanelGui: HTMLElement;
         if (!this.gridOptionsWrapper.isForPrint()) {
             paginationGui = this.paginationController.getGui();
+        }
+
+        if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             toolPanelGui = this.toolPanel.getGui();
         }
 
@@ -116,11 +119,6 @@ export class GridCore {
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addWindowResizeListener();
-        }
-
-        // if datasource provided, use it
-        if (this.gridOptionsWrapper.getDatasource()) {
-            this.setDatasource();
         }
 
         this.doLayout();
@@ -186,6 +184,7 @@ export class GridCore {
 
     public showToolPanel(show: any) {
         if (!this.toolPanel) {
+            console.log('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             this.toolPanelShowing = false;
             return;
         }
@@ -196,48 +195,6 @@ export class GridCore {
 
     public isToolPanelShowing() {
         return this.toolPanelShowing;
-    }
-
-    public setDatasource(datasource?: any) {
-        /*
-        // if datasource provided, then set it
-        if (datasource) {
-            this.gridOptions.datasource = datasource;
-        }
-        // get the set datasource (if null was passed to this method,
-        // then need to get the actual datasource from options
-        var datasourceToUse = this.gridOptionsWrapper.getDatasource();
-        this.doingVirtualPaging = this.gridOptionsWrapper.isVirtualPaging() && datasourceToUse;
-        this.doingPagination = datasourceToUse && !this.doingVirtualPaging;
-        var showPagingPanel: any;
-
-        if (this.doingVirtualPaging) {
-            this.paginationController.setDatasource(null);
-            this.virtualPageRowController.setDatasource(datasourceToUse);
-            this.setRowModel(this.virtualPageRowController.getModel());
-            this.usingInMemoryModel = false;
-            showPagingPanel = false;
-        } else if (this.doingPagination) {
-            this.paginationController.setDatasource(datasourceToUse);
-            this.virtualPageRowController.setDatasource(null);
-            this.setRowModel(this.inMemoryRowController.getModel());
-            this.usingInMemoryModel = true;
-            showPagingPanel = true;
-        } else {
-            this.paginationController.setDatasource(null);
-            this.virtualPageRowController.setDatasource(null);
-            this.setRowModel(this.inMemoryRowController.getModel());
-            this.usingInMemoryModel = true;
-            showPagingPanel = false;
-        }
-
-        this.eRootPanel.setSouthVisible(showPagingPanel);
-
-        // because we just set the rowModel, need to update the gui
-        this.rowRenderer.refreshView();
-
-        this.doLayout();
-        */
     }
 
     public agDestroy() {
@@ -279,12 +236,6 @@ export class GridCore {
             this.gridPanel.ensureIndexVisible(indexToSelect);
         }
     }
-
-/*    public setFocusedCell(rowIndex: number, colKey: string|ColDef|Column) {
-        this.gridPanel.ensureIndexVisible(rowIndex);
-        this.gridPanel.ensureColumnVisible(colKey);
-        setTimeout( () => this.focusedCellController.setFocusedCell(rowIndex, colKey), 10);
-    }*/
 
     public doLayout() {
         // need to do layout first, as drawVirtualRows and setPinnedColHeight

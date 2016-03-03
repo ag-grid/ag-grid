@@ -1,6 +1,6 @@
 import {AbstractColDef} from "../entities/colDef";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import _ from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
 
 export class CssClassApplier {
 

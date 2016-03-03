@@ -1,17 +1,17 @@
 
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
 import {Events} from "../events";
 import {PostConstruct} from "../context/context";
-import Constants from "../constants";
-import _ from '../utils';
+import {Constants} from "../constants";
+import {Utils as _} from '../utils';
 
 @Bean('floatingRowModel')
-export default class FloatingRowModel {
+export class FloatingRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;

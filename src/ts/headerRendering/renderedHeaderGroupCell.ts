@@ -1,12 +1,12 @@
-import _ from '../utils';
-import constants from "../constants";
-import SvgFactory from "../svgFactory";
-import ColumnGroup from "../entities/columnGroup";
+import {Utils as _} from '../utils';
+import {Constants as constants} from "../constants";
+import {SvgFactory} from "../svgFactory";
+import {ColumnGroup} from "../entities/columnGroup";
 import {ColumnController} from "../columnController/columnController";
-import FilterManager from "../filter/filterManager";
+import {FilterManager} from "../filter/filterManager";
 import {Grid} from "../grid";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import Column from "../entities/column";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Column} from "../entities/column";
 import {HorizontalDragService} from "./horizontalDragService";
 import {Autowired} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
@@ -15,7 +15,7 @@ import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
-export default class RenderedHeaderGroupCell implements IRenderedHeaderElement {
+export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

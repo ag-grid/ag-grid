@@ -1,7 +1,7 @@
 import {Bean} from "../../context/context";
 import {Autowired} from "../../context/context";
-import GridOptionsWrapper from "../../gridOptionsWrapper";
-import FilterManager from "../../filter/filterManager";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 

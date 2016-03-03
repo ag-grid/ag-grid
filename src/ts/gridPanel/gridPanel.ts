@@ -1,26 +1,26 @@
-import _ from '../utils';
-import MasterSlaveService from "../masterSlaveService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {MasterSlaveService} from "../masterSlaveService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import RowRenderer from "../rendering/rowRenderer";
-import FloatingRowModel from "../rowControllers/floatingRowModel";
-import BorderLayout from "../layout/borderLayout";
+import {RowRenderer} from "../rendering/rowRenderer";
+import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {BorderLayout} from "../layout/borderLayout";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
 import {MoveColumnController} from "../headerRendering/moveColumnController";
-import ColumnChangeEvent from "../columnChangeEvent";
+import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {DragService} from "../dragAndDrop/dragService";
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {IRangeController} from "../interfaces/iRangeController";
-import Constants from "../constants";
-import SelectionController from "../selectionController";
+import {Constants} from "../constants";
+import {SelectionController} from "../selectionController";
 import {ClipboardService} from "../enterprise/clipboardService";
 import {CsvCreator} from "../csvCreator";
 import {Optional} from "../context/context";
@@ -94,7 +94,7 @@ var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LO
 var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
 @Bean('gridPanel')
-export default class GridPanel {
+export class GridPanel {
 
     @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

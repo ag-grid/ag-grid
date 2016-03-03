@@ -2,12 +2,12 @@ import {Logger} from "../logger";
 import {Qualifier} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
-import Column from "../entities/column";
-import HeaderTemplateLoader from "../headerRendering/headerTemplateLoader";
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Column} from "../entities/column";
+import {HeaderTemplateLoader} from "../headerRendering/headerTemplateLoader";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
-import SvgFactory from "../svgFactory";
+import {SvgFactory} from "../svgFactory";
 import {DragService} from "./dragService";
 
 var svgFactory = SvgFactory.getInstance();

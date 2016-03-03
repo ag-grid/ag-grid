@@ -2,13 +2,13 @@ import {Bean} from "../context/context";
 import {IMenu} from "../interfaces/iMenu";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {Qualifier} from "../context/context";
-import FilterManager from "../filter/filterManager";
-import Column from "../entities/column";
-import _ from '../utils';
+import {FilterManager} from "../filter/filterManager";
+import {Column} from "../entities/column";
+import {Utils as _} from '../utils';
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
-import PopupService from "../widgets/agPopupService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {PopupService} from "../widgets/agPopupService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {

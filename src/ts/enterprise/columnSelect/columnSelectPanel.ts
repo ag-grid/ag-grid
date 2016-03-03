@@ -1,10 +1,10 @@
 import {Bean} from "../../context/context";
 import {Autowired} from "../../context/context";
 import {ColumnController} from "../../columnController/columnController";
-import _ from '../../utils';
-import EventService from "../../eventService";
+import {Utils as _} from '../../utils';
+import {EventService} from "../../eventService";
 import {Events} from "../../events";
-import Column from "../../entities/column";
+import {Column} from "../../entities/column";
 import {Context} from "../../context/context";
 import {DragAndDropService} from "../../dragAndDrop/dragAndDropService";
 import {DragSource} from "../../dragAndDrop/dragAndDropService";

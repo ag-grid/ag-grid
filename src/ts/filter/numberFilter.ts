@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Filter} from "./filter";
 
 var template =
@@ -22,7 +22,7 @@ var EQUALS = 1;
 var LESS_THAN = 2;
 var GREATER_THAN = 3;
 
-export default class NumberFilter implements Filter {
+export class NumberFilter implements Filter {
 
     private filterParams: any;
     private filterChangedCallback: any;

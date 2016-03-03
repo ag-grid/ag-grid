@@ -1,25 +1,25 @@
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import PopupService from "../widgets/agPopupService";
-import ValueService from "../valueService";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {PopupService} from "../widgets/agPopupService";
+import {ValueService} from "../valueService";
 import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
 import {RowNode} from "../entities/rowNode";
-import Column from "../entities/column";
-import TextFilter from "./textFilter";
-import NumberFilter from "./numberFilter";
-import SetFilter from "./../enterprise/setFilter/setFilter";
+import {Column} from "../entities/column";
+import {TextFilter} from "./textFilter";
+import {NumberFilter} from "./numberFilter";
+import {SetFilter} from "./../enterprise/setFilter/setFilter";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {Autowired} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
 import {PostConstruct} from "../context/context";
 
 @Bean('filterManager')
-export default class FilterManager {
+export class FilterManager {
 
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;

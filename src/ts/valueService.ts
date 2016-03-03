@@ -1,5 +1,5 @@
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import ExpressionService from "./expressionService";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ExpressionService} from "./expressionService";
 import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
 import {Bean} from "./context/context";
@@ -7,13 +7,13 @@ import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
-import Column from "./entities/column";
-import _ from './utils';
+import {Column} from "./entities/column";
+import {Utils as _} from './utils';
 import {Events} from "./events";
-import EventService from "./eventService";
+import {EventService} from "./eventService";
 
 @Bean('valueService')
-export default class ValueService {
+export class ValueService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;

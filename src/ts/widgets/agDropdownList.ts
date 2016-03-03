@@ -1,12 +1,12 @@
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
-import PopupService from "./agPopupService";
-import OldToolPanelDragAndDropService from "../dragAndDrop/oldToolPanelDragAndDropService";
-import AgList from "./agList";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
+import {PopupService} from "./agPopupService";
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {AgList} from "./agList";
 
 var svgFactory = SvgFactory.getInstance();
 
-export default class AgDropdownList {
+export class AgDropdownList {
 
     private itemSelectedListeners: any;
     private eValue: any;

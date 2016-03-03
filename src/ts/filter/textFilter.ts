@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Filter} from "./filter";
 
 var template =
@@ -24,7 +24,7 @@ var EQUALS = 2;
 var STARTS_WITH = 3;
 var ENDS_WITH = 4;
 
-export default class TextFilter implements Filter {
+export class TextFilter implements Filter {
 
     private filterParams: any;
     private filterChangedCallback: any;

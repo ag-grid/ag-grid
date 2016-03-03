@@ -1,4 +1,4 @@
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {ColDef} from "../entities/colDef";
 import {GridCell} from "../entities/gridCell";
 

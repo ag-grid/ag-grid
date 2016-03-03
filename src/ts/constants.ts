@@ -1,4 +1,4 @@
-export default class Constants {
+export class Constants {
 
     static STEP_EVERYTHING = 0;
     static STEP_FILTER = 1;

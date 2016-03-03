@@ -2,9 +2,9 @@
 import {Component} from "./component";
 import {MenuList} from "./menuList";
 import {Autowired} from "../context/context";
-import PopupService from "./agPopupService";
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
+import {PopupService} from "./agPopupService";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
 
 var svgFactory = SvgFactory.getInstance();
 

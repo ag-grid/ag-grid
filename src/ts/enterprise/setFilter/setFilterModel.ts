@@ -1,8 +1,8 @@
-import _ from '../../utils';
+import {Utils as _} from '../../utils';
 import {ColDef} from "../../entities/colDef";
 import {SetFilterParameters} from "./setFilterParameters";
 
-export default class SetFilterModel {
+export class SetFilterModel {
 
     private colDef: ColDef;
     private filterParams: SetFilterParameters;

@@ -1,10 +1,10 @@
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import Column from "./entities/column";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
-export default class Utils {
+export class Utils {
 
     // taken from:
     // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser

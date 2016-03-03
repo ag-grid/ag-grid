@@ -1,38 +1,38 @@
 
 import {GridOptions} from "./entities/gridOptions";
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import InMemoryRowController from "./rowControllers/inMemory/inMemoryRowController";
-import PaginationController from "./rowControllers/paginationController";
-import VirtualPageRowController from "./rowControllers/virtualPageRowController";
-import FloatingRowModel from "./rowControllers/floatingRowModel";
-import SelectionController from "./selectionController";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
+import {PaginationController} from "./rowControllers/paginationController";
+import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
+import {FloatingRowModel} from "./rowControllers/floatingRowModel";
+import {SelectionController} from "./selectionController";
 import {ColumnController} from "./columnController/columnController";
-import RowRenderer from "./rendering/rowRenderer";
-import HeaderRenderer from "./headerRendering/headerRenderer";
-import FilterManager from "./filter/filterManager";
-import ValueService from "./valueService";
-import MasterSlaveService from "./masterSlaveService";
-import EventService from "./eventService";
-import OldToolPanelDragAndDropService from "./dragAndDrop/oldToolPanelDragAndDropService";
-import GridPanel from "./gridPanel/gridPanel";
+import {RowRenderer} from "./rendering/rowRenderer";
+import {HeaderRenderer} from "./headerRendering/headerRenderer";
+import {FilterManager} from "./filter/filterManager";
+import {ValueService} from "./valueService";
+import {MasterSlaveService} from "./masterSlaveService";
+import {EventService} from "./eventService";
+import {OldToolPanelDragAndDropService} from "./dragAndDrop/oldToolPanelDragAndDropService";
+import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
-import Constants from "./constants";
-import HeaderTemplateLoader from "./headerRendering/headerTemplateLoader";
-import BalancedColumnTreeBuilder from "./columnController/balancedColumnTreeBuilder";
-import DisplayedGroupCreator from "./columnController/displayedGroupCreator";
-import SelectionRendererFactory from "./selectionRendererFactory";
-import ExpressionService from "./expressionService";
-import TemplateService from "./templateService";
-import PopupService from "./widgets/agPopupService";
+import {Constants} from "./constants";
+import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
+import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
+import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
+import {SelectionRendererFactory} from "./selectionRendererFactory";
+import {ExpressionService} from "./expressionService";
+import {TemplateService} from "./templateService";
+import {PopupService} from "./widgets/agPopupService";
 import {LoggerFactory} from "./logger";
-import ColumnUtils from "./columnController/columnUtils";
-import AutoWidthCalculator from "./rendering/autoWidthCalculator";
+import {ColumnUtils} from "./columnController/columnUtils";
+import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {Events} from "./events";
-import ToolPanel from "./toolPanel/toolPanel";
-import BorderLayout from "./layout/borderLayout";
-import ColumnChangeEvent from "./columnChangeEvent";
-import Column from "./entities/column";
+import {ToolPanel} from "./toolPanel/toolPanel";
+import {BorderLayout} from "./layout/borderLayout";
+import {ColumnChangeEvent} from "./columnChangeEvent";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColDef} from "./entities/colDef";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
@@ -53,7 +53,7 @@ import {ClipboardService} from "./enterprise/clipboardService";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {ContextMenuFactory} from "./enterprise/cContextMenu";
-import _ from './utils';
+import {Utils as _} from './utils';
 import {GroupStage} from "./enterprise/rowStages/groupStage";
 import {AggregationStage} from "./enterprise/rowStages/aggregationStage";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
@@ -64,6 +64,12 @@ import {EnterpriseBoot} from "./enterprise/enterpriseBoot";
 export class Grid {
 
     private context: Context;
+
+    private static enterpriseBeans: any[];
+
+    public static setEnterpriseBeans(enterpriseBeans: any[]): void {
+        this.enterpriseBeans = enterpriseBeans;
+    }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
@@ -77,15 +83,15 @@ export class Grid {
         var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
         var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
 
-        var overrideBeans = gridOptions.suppressEnterprise ?
-            null :
-            [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
-                ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot];
+        //var overrideBeans = gridOptions.suppressEnterprise ?
+        //    null :
+        //    [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
+        //        ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot];
 
-        var enterprise = _.exists(overrideBeans);
+        var enterprise = _.exists(Grid.enterpriseBeans);
 
         this.context = new Context({
-            overrideBeans: overrideBeans,
+            overrideBeans: Grid.enterpriseBeans,
             seed: {
                 enterprise: enterprise,
                 gridOptions: gridOptions,

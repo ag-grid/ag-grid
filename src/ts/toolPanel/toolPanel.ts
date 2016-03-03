@@ -3,31 +3,31 @@ import {Qualifier} from "../context/context";
 import {ColumnSelectPanel} from "../enterprise/columnSelect/columnSelectPanel";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {PostConstruct} from "../context/context";
+import {Component} from "../widgets/component";
 
 @Bean('toolPanel')
-export default class ToolPanel {
+export class ToolPanel extends Component {
 
     private static TEMPLATE = '<div class="ag-tool-panel"></div>';
 
     @Autowired('context') private context: Context;
 
-    private eGui: HTMLElement;
     private columnSelectPanel: ColumnSelectPanel;
+
+    constructor() {
+        super(ToolPanel.TEMPLATE);
+    }
 
     public agWire(): void {
         this.columnSelectPanel = new ColumnSelectPanel(true);
-        this.eGui = _.loadTemplate(ToolPanel.TEMPLATE);
     }
 
     @PostConstruct
     public init(): void {
         this.context.wireBean(this.columnSelectPanel);
-        this.eGui.appendChild(this.columnSelectPanel.getGui());
+        this.getGui().appendChild(this.columnSelectPanel.getGui());
     }
 
-    public getGui(): HTMLElement {
-        return this.eGui;
-    }
 }

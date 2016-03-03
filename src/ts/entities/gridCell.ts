@@ -1,6 +1,6 @@
-import Column from "./column";
-import Constants from "../constants";
-import _ from '../utils';
+import {Column} from "./column";
+import {Constants} from "../constants";
+import {Utils as _} from '../utils';
 
 export class GridCell {
 

@@ -1,13 +1,13 @@
 import {Bean} from "../../context/context";
 import {Autowired} from "../../context/context";
-import SelectionController from "../../selectionController";
-import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {SelectionController} from "../../selectionController";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ColumnController} from "../../columnController/columnController";
-import _ from '../../utils';
+import {Utils as _} from '../../utils';
 import {RowNode} from "../../entities/rowNode";
-import ValueService from "../../valueService";
-import EventService from "../../eventService";
-import Column from "../../entities/column";
+import {ValueService} from "../../valueService";
+import {EventService} from "../../eventService";
+import {Column} from "../../entities/column";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
 @Bean('groupStage')

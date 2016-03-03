@@ -1,11 +1,11 @@
 import {Bean} from "../../context/context";
-import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Autowired} from "../../context/context";
 import {ColumnController} from "../../columnController/columnController";
-import Column from "../../entities/column";
+import {Column} from "../../entities/column";
 import {RowNode} from "../../entities/rowNode";
-import ValueService from "../../valueService";
-import _ from '../../utils';
+import {ValueService} from "../../valueService";
+import {Utils as _} from '../../utils';
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
 @Bean('aggregationStage')

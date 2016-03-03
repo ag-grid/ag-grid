@@ -1,7 +1,7 @@
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import SelectionController from "../selectionController";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {SelectionController} from "../selectionController";
 
 export class RowNode {
 

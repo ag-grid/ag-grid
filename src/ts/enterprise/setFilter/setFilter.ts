@@ -1,6 +1,6 @@
-import _ from '../../utils';
+import {Utils as _} from '../../utils';
 import {Filter} from "./../../filter/filter";
-import SetFilterModel from "./setFilterModel";
+import {SetFilterModel} from "./setFilterModel";
 
 var template =
     '<div>'+
@@ -30,7 +30,7 @@ var template =
 
 var DEFAULT_ROW_HEIGHT = 20;
 
-export default class SetFilter implements Filter {
+export class SetFilter implements Filter {
 
     private eGui: any;
     private filterParams: any;

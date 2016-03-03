@@ -1,9 +1,9 @@
 
-import Column from "./entities/column";
-import ColumnGroup from "./entities/columnGroup";
+import {Column} from "./entities/column";
+import {ColumnGroup} from "./entities/columnGroup";
 import {Events} from "./events";
 
-export default class ColumnChangeEvent {
+export class ColumnChangeEvent {
 
     private type: string;
     // set if event impacts one column

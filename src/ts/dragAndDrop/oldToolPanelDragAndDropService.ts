@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Logger, LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
@@ -7,7 +7,7 @@ import {Qualifier} from "../context/context";
  * from the 'available columns' list and putting them into the 'grouped columns' in the tool panel.
  * This service is NOT used by the column headers for resizing and moving, that is a different use case. */
 @Bean('oldToolPanelDragAndDropService')
-export default class OldToolPanelDragAndDropService {
+export class OldToolPanelDragAndDropService {
 
     private dragItem: any;
     private mouseUpEventListener: EventListener;

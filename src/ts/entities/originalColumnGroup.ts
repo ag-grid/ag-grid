@@ -1,7 +1,7 @@
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColGroupDef} from "./colDef";
-import ColumnGroup from "./columnGroup";
-import Column from "./column";
+import {ColumnGroup} from "./columnGroup";
+import {Column} from "./column";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild {
 

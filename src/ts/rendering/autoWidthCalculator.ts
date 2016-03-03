@@ -1,12 +1,12 @@
-import RowRenderer from "./rowRenderer";
-import GridPanel from "../gridPanel/gridPanel";
-import Column from "../entities/column";
+import {RowRenderer} from "./rowRenderer";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {Column} from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
 
 @Bean('autoWidthCalculator')
-export default class AutoWidthCalculator {
+export class AutoWidthCalculator {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridPanel') private gridPanel: GridPanel;

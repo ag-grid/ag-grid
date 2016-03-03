@@ -1,14 +1,14 @@
 import {Bean} from "./context/context";
 import {Autowired} from "./context/context";
-import EventService from "./eventService";
-import Column from "./entities/column";
+import {EventService} from "./eventService";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {PostConstruct} from "./context/context";
 import {Events} from "./events";
-import GridOptionsWrapper from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColDef} from "./entities/colDef";
 import {ColumnController} from "./columnController/columnController";
-import _ from './utils';
+import {Utils as _} from './utils';
 import {GridCell} from "./entities/gridCell";
 
 @Bean('focusedCellController')

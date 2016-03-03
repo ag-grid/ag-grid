@@ -1,11 +1,11 @@
 import {Bean} from "../../context/context";
 import {Autowired} from "../../context/context";
-import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
 import {RowNode} from "../../entities/rowNode";
-import Column from "../../entities/column";
-import ValueService from "../../valueService";
-import _ from '../../utils';
+import {Column} from "../../entities/column";
+import {ValueService} from "../../valueService";
+import {Utils as _} from '../../utils';
 
 @Bean('sortStage')
 export class SortStage {

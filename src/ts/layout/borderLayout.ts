@@ -1,6 +1,6 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 
-export default class BorderLayout {
+export class BorderLayout {
 
     private eNorthWrapper: any;
     private eSouthWrapper: any;

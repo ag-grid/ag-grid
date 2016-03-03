@@ -1,15 +1,15 @@
-import SvgFactory from '../svgFactory';
-import _ from '../utils';
-import constants from '../constants';
-import GridOptionsWrapper from '../gridOptionsWrapper';
-import SelectionRendererFactory from '../selectionRendererFactory';
-import ExpressionService from '../expressionService';
-import EventService from '../eventService';
+import {SvgFactory} from '../svgFactory';
+import {Utils as _} from '../utils';
+import {Constants as constants} from '../constants';
+import {GridOptionsWrapper} from '../gridOptionsWrapper';
+import {SelectionRendererFactory} from '../selectionRendererFactory';
+import {ExpressionService} from '../expressionService';
+import {EventService} from '../eventService';
 import {Events} from '../events';
 
 var svgFactory = SvgFactory.getInstance();
 
-export default function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
+export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
                                 selectionRendererFactory: SelectionRendererFactory,
                                 expressionService: ExpressionService,
                                 eventService: EventService) {

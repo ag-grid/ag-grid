@@ -3,11 +3,11 @@ import {Autowired} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
 import {ColumnController} from "../columnController/columnController";
-import Column from "../entities/column";
-import _ from '../utils';
+import {Column} from "../entities/column";
+import {Utils as _} from '../utils';
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
-import GridPanel from "../gridPanel/gridPanel";
+import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 
 export class MoveColumnController {

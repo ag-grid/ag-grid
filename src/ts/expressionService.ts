@@ -3,7 +3,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 
 @Bean('expressionService')
-export default class ExpressionService {
+export class ExpressionService {
 
     private expressionToFunctionCache = <any>{};
     private logger: Logger;

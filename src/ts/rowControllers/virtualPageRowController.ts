@@ -1,17 +1,17 @@
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import EventService from "../eventService";
-import SelectionController from "../selectionController";
+import {EventService} from "../eventService";
+import {SelectionController} from "../selectionController";
 import {Autowired} from "../context/context";
 import {IRowModel} from "./../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {Events} from "../events";
 import {SortController} from "../sortController";
-import FilterManager from "../filter/filterManager";
+import {FilterManager} from "../filter/filterManager";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -21,7 +21,7 @@ import FilterManager from "../filter/filterManager";
 var logging = false;
 
 @Bean('rowModel')
-export default class VirtualPageRowController implements IRowModel {
+export class VirtualPageRowController implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: any;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

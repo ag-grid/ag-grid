@@ -1,12 +1,12 @@
 import {Bean} from "../context/context";
 import {Autowired} from "../context/context";
-import GridPanel from "./gridPanel";
+import {GridPanel} from "./gridPanel";
 import {ColumnController} from "../columnController/columnController";
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {IRowModel} from "../interfaces/iRowModel";
-import Constants from "../constants";
-import FloatingRowModel from "../rowControllers/floatingRowModel";
-import _ from '../utils';
+import {Constants} from "../constants";
+import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {Utils as _} from '../utils';
 import {GridCell} from "../entities/gridCell";
 
 @Bean('mouseEventService')

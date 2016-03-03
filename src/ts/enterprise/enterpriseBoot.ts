@@ -1,8 +1,8 @@
 import {Bean} from "../context/context";
 import {Autowired} from "../context/context";
-import FilterManager from "../filter/filterManager";
+import {FilterManager} from "../filter/filterManager";
 import {PostConstruct} from "../context/context";
-import SetFilter from "./setFilter/setFilter";
+import {SetFilter} from "./setFilter/setFilter";
 
 @Bean('enterpriseBoot')
 export class EnterpriseBoot {

@@ -1,4 +1,4 @@
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 
 export interface IContextMenuFactory {

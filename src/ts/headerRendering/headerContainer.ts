@@ -1,18 +1,18 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {ColumnGroupChild} from "../entities/columnGroupChild";
-import ColumnGroup from "../entities/columnGroup";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {ColumnGroup} from "../entities/columnGroup";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {Context} from "../context/context";
-import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
-import RenderedHeaderCell from "./renderedHeaderCell";
+import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
+import {RenderedHeaderCell} from "./renderedHeaderCell";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {MoveColumnController} from "./moveColumnController";
 import {ColumnController} from "../columnController/columnController";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import GridPanel from "../gridPanel/gridPanel";
+import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 
 export class HeaderContainer {

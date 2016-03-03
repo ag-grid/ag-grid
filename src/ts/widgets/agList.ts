@@ -1,5 +1,5 @@
-import _ from '../utils';
-import OldToolPanelDragAndDropService from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {Utils as _} from '../utils';
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
 
 var template =
     '<div class="ag-list-selection">'+
@@ -11,7 +11,7 @@ var template =
 
 enum DropTargetLocation {NOT_DROP_TARGET, DROP_TARGET_ABOVE, DROP_TARGET_BELOW};
 
-export default class AgList {
+export class AgList {
 
     private eGui: any;
     private uniqueId: any;

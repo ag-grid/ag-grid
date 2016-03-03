@@ -1,12 +1,12 @@
 import {Autowired} from "../../context/context";
 import {ColumnController} from "../../columnController/columnController";
 import {DragAndDropService} from "../../dragAndDrop/dragAndDropService";
-import Column from "../../entities/column";
-import _ from '../../utils';
+import {Column} from "../../entities/column";
+import {Utils as _} from '../../utils';
 import {DragSource} from "../../dragAndDrop/dragAndDropService";
 import {RenderedItem} from "./renderedItem";
-import SvgFactory from "../../svgFactory";
-import GridPanel from "../../gridPanel/gridPanel";
+import {SvgFactory} from "../../svgFactory";
+import {GridPanel} from "../../gridPanel/gridPanel";
 import {PostConstruct} from "../../context/context";
 
 var svgFactory = SvgFactory.getInstance();

@@ -1,17 +1,17 @@
-import _ from '../utils';
-import Column from "../entities/column";
-import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
-import FilterManager from "../filter/filterManager";
+import {Utils as _} from '../utils';
+import {Column} from "../entities/column";
+import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
+import {FilterManager} from "../filter/filterManager";
 import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
-import HeaderTemplateLoader from "./headerTemplateLoader";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {HeaderTemplateLoader} from "./headerTemplateLoader";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {HorizontalDragService} from "./horizontalDragService";
-import HeaderRenderer from "./headerRenderer";
-import GridPanel from "../gridPanel/gridPanel";
+import {HeaderRenderer} from "./headerRenderer";
+import {GridPanel} from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
-import PopupService from "../widgets/agPopupService";
+import {PopupService} from "../widgets/agPopupService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
@@ -19,11 +19,11 @@ import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
 import {DragSource} from "../dragAndDrop/dragAndDropService";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
 
-export default class RenderedHeaderCell implements IRenderedHeaderElement {
+export class RenderedHeaderCell implements IRenderedHeaderElement {
 
     @Autowired('context') private context: Context;
     @Autowired('filterManager') private filterManager: FilterManager;

@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
 

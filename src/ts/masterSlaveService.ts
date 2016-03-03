@@ -1,21 +1,21 @@
-import GridOptionsWrapper from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnController} from "./columnController/columnController";
-import GridPanel from "./gridPanel/gridPanel";
+import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
-import EventService from "./eventService";
+import {EventService} from "./eventService";
 import {LoggerFactory} from "./logger";
 import {Events} from "./events";
 import {GridOptions} from "./entities/gridOptions";
-import ColumnChangeEvent from "./columnChangeEvent";
-import Column from "./entities/column";
-import ColumnGroup from "./entities/columnGroup";
+import {ColumnChangeEvent} from "./columnChangeEvent";
+import {Column} from "./entities/column";
+import {ColumnGroup} from "./entities/columnGroup";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 
 @Bean('masterSlaveService')
-export default class MasterSlaveService {
+export class MasterSlaveService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;

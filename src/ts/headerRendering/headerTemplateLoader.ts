@@ -1,7 +1,7 @@
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import Column from "../entities/column";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Column} from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
@@ -9,7 +9,7 @@ import {Autowired} from "../context/context";
 var svgFactory = SvgFactory.getInstance();
 
 @Bean('headerTemplateLoader')
-export default class HeaderTemplateLoader {
+export class HeaderTemplateLoader {
 
     // used when cell is dragged
     public static HEADER_CELL_DND_TEMPLATE =

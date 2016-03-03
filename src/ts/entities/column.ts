@@ -1,16 +1,16 @@
-import constants from '../constants';
+import {Constants as constants} from '../constants';
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColDef} from "./colDef";
 import {AbstractColDef} from "./colDef";
-import EventService from "../eventService";
-import ColumnGroup from "./columnGroup";
+import {EventService} from "../eventService";
+import {ColumnGroup} from "./columnGroup";
 import {ColumnController} from "../columnController/columnController";
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Autowired} from "../context/context";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PostConstruct} from "../context/context";
-import ColumnUtils from "../columnController/columnUtils";
+import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -19,7 +19,7 @@ import {RowNode} from "./rowNode";
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export default class Column implements ColumnGroupChild, OriginalColumnGroupChild {
+export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED = 'movingChanged';

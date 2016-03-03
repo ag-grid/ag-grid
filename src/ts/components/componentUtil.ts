@@ -1,7 +1,7 @@
 import {GridOptions} from "../entities/gridOptions";
 import {GridApi} from "../gridApi";
 import {Events} from "../events";
-import _ from "../utils";
+import {Utils as _} from "../utils";
 
 export class ComponentUtil {
 

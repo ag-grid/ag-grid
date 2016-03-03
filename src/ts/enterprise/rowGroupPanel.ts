@@ -1,9 +1,9 @@
 import {Autowired} from "../context/context";
 import {ColumnController} from "../columnController/columnController";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import _ from '../utils';
-import Column from "../entities/column";
+import {Utils as _} from '../utils';
+import {Column} from "../entities/column";
 import {Context} from "../context/context";
 import {Bean} from "../context/context";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
@@ -12,9 +12,9 @@ import {Logger} from "../logger";
 import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
 import {DragSource} from "../dragAndDrop/dragAndDropService";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import SvgFactory from "../svgFactory";
-import GridPanel from "../gridPanel/gridPanel";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {SvgFactory} from "../svgFactory";
+import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();

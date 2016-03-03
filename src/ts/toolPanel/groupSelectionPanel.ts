@@ -1,12 +1,12 @@
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
 import {ColumnController} from "../columnController/columnController";
-import OldToolPanelDragAndDropService from "../dragAndDrop/oldToolPanelDragAndDropService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import EventService from "../eventService";
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import AgList from "../widgets/agList";
-import BorderLayout from "../layout/borderLayout";
+import {AgList} from "../widgets/agList";
+import {BorderLayout} from "../layout/borderLayout";
 
 var svgFactory = SvgFactory.getInstance();
 

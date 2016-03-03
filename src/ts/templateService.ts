@@ -3,7 +3,7 @@ import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 
 @Bean('templateService')
-export default class TemplateService {
+export class TemplateService {
 
     @Autowired('$scope') private $scope: any;
 

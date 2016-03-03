@@ -1,7 +1,7 @@
 import {RowNode} from './entities/rowNode';
 import {GridOptions} from './entities/gridOptions';
-import EventService from "./eventService";
-import Constants from "./constants";
+import {EventService} from "./eventService";
+import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef} from "./entities/colDef";
@@ -17,7 +17,7 @@ import {GetContextMenuItems} from "./entities/gridOptions";
 import {GetMainMenuItems} from "./entities/gridOptions";
 import {ProcessRowParams} from "./entities/gridOptions";
 import {ProcessCellForExportParams} from "./entities/gridOptions";
-import Column from "./entities/column";
+import {Column} from "./entities/column";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -26,7 +26,7 @@ function isTrue(value: any) {
 }
 
 @Bean('gridOptionsWrapper')
-export default class GridOptionsWrapper {
+export class GridOptionsWrapper {
 
     private static MIN_COL_WIDTH = 10;
 

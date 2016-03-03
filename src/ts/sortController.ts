@@ -1,11 +1,11 @@
-import Column from "./entities/column";
+import {Column} from "./entities/column";
 import {Autowired} from "./context/context";
-import GridOptionsWrapper from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnController} from "./columnController/columnController";
-import EventService from "./eventService";
+import {EventService} from "./eventService";
 import {Events} from "./events";
 import {Bean} from "./context/context";
-import _ from './utils';
+import {Utils as _} from './utils';
 
 @Bean('sortController')
 export class SortController {

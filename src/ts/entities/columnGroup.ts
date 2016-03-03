@@ -1,10 +1,10 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {ColGroupDef} from "./colDef";
-import Column from "./column";
+import {Column} from "./column";
 import {AbstractColDef} from "./colDef";
 import {OriginalColumnGroup} from "./originalColumnGroup";
 
-export default class ColumnGroup implements ColumnGroupChild {
+export class ColumnGroup implements ColumnGroupChild {
 
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';

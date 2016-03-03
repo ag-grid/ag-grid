@@ -1,5 +1,5 @@
 import {RowNode} from "./entities/rowNode";
-import _ from './utils';
+import {Utils as _} from './utils';
 
 export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode): number {
     var bothAreGroups = nodeA.group && nodeB.group;

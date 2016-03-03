@@ -1,22 +1,22 @@
-import _ from '../../utils';
-import constants from '../../constants';
-import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {Utils as _} from '../../utils';
+import {Constants as constants} from '../../constants';
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ColumnController} from "../../columnController/columnController";
 import {Grid} from "../../grid";
-import FilterManager from "../../filter/filterManager";
+import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
-import ValueService from "../../valueService";
-import EventService from "../../eventService";
+import {ValueService} from "../../valueService";
+import {EventService} from "../../eventService";
 import {Events} from "../../events";
-import Column from "../../entities/column";
+import {Column} from "../../entities/column";
 import {ColDef} from "../../entities/colDef";
 import {Bean} from "../../context/context";
 import {Qualifier} from "../../context/context";
 import {GridCore} from "../../gridCore";
-import SelectionController from "../../selectionController";
+import {SelectionController} from "../../selectionController";
 import {Autowired} from "../../context/context";
 import {IRowModel} from "./../../interfaces/iRowModel";
-import Constants from "../../constants";
+import {Constants} from "../../constants";
 import {SortController} from "../../sortController";
 import {PostConstruct} from "../../context/context";
 import {NodeChildDetails} from "../../entities/gridOptions";
@@ -26,7 +26,7 @@ import {Optional} from "../../context/context";
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
 @Bean('rowModel')
-export default class InMemoryRowController implements IRowModel {
+export class InMemoryRowController implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;

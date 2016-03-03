@@ -1,29 +1,29 @@
-import _ from '../utils';
-import RenderedCell from "./renderedCell";
+import {Utils as _} from '../utils';
+import {RenderedCell} from "./renderedCell";
 import {RowNode} from "../entities/rowNode";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Grid} from "../grid";
 import {ColumnController} from "../columnController/columnController";
-import ExpressionService from "../expressionService";
-import RowRenderer from "./rowRenderer";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import TemplateService from "../templateService";
-import ValueService from "../valueService";
-import Column from "../entities/column";
+import {ExpressionService} from "../expressionService";
+import {RowRenderer} from "./rowRenderer";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {TemplateService} from "../templateService";
+import {ValueService} from "../valueService";
+import {Column} from "../entities/column";
 import {Events} from "../events";
 import {GridCore} from "../gridCore";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Qualifier} from "../context/context";
 import {Context} from "../context/context";
 import {Autowired} from "../context/context";
-import ColumnChangeEvent from "../columnChangeEvent";
+import {ColumnChangeEvent} from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
 import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
-import Constants from "../constants";
+import {Constants} from "../constants";
 import {GridCell} from "../entities/gridCell";
 
-export default class RenderedRow {
+export class RenderedRow {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 

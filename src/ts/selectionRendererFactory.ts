@@ -2,13 +2,13 @@ import {Grid} from "./grid";
 import {Bean} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Qualifier} from "./context/context";
-import SelectionController from "./selectionController";
+import {SelectionController} from "./selectionController";
 import {RowNode} from "./entities/rowNode";
-import RenderedRow from "./rendering/renderedRow";
-import _ from './utils';
+import {RenderedRow} from "./rendering/renderedRow";
+import {Utils as _} from './utils';
 
 @Bean('selectionRendererFactory')
-export default class SelectionRendererFactory {
+export class SelectionRendererFactory {
 
     public createSelectionCheckbox(rowNode: RowNode, rowIndex: any, addRenderedRowEventListener: Function) {
 

@@ -1,18 +1,18 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Grid} from "../grid";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import GridPanel from "../gridPanel/gridPanel";
-import SelectionController from "../selectionController";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {SelectionController} from "../selectionController";
 import {Autowired} from "../context/context";
 import {IRowModel} from "./../interfaces/iRowModel";
 import {SortController} from "../sortController";
 import {PostConstruct} from "../context/context";
-import EventService from "../eventService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import FilterManager from "../filter/filterManager";
+import {FilterManager} from "../filter/filterManager";
 
 var template =
         '<div class="ag-paging-panel ag-font-style">'+
@@ -36,7 +36,7 @@ var template =
         '</div>';
 
 @Bean('paginationController')
-export default class PaginationController {
+export class PaginationController {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridPanel') private gridPanel: GridPanel;

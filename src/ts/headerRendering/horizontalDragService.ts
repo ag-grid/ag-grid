@@ -1,5 +1,5 @@
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 

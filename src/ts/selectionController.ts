@@ -1,18 +1,18 @@
-import _ from './utils';
+import {Utils as _} from './utils';
 import {RowNode} from "./entities/rowNode";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
-import EventService from "./eventService";
+import {EventService} from "./eventService";
 import {Events} from "./events";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
-import GridOptionsWrapper from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 
 @Bean('selectionController')
-export default class SelectionController {
+export class SelectionController {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;

@@ -1,5 +1,5 @@
-import _ from '../utils';
-import EventService from "../eventService";
+import {Utils as _} from '../utils';
+import {EventService} from "../eventService";
 
 export class Component {
 

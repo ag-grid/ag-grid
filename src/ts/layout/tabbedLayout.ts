@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 
 export class TabbedLayout {
 

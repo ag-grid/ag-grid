@@ -1,12 +1,12 @@
 
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
-import _ from './utils';
+import {Utils as _} from './utils';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 
 @Bean('eventService')
-export default class EventService {
+export class EventService {
 
     private allListeners: {[key: string]: Function[]} = {};
 

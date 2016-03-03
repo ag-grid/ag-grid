@@ -1,8 +1,8 @@
-import _ from './utils';
+import {Utils as _} from './utils';
 
 var SVG_NS = "http://www.w3.org/2000/svg";
 
-export default class SvgFactory {
+export class SvgFactory {
 
     static theInstance: SvgFactory;
 

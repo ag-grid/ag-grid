@@ -1,21 +1,21 @@
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Grid} from "../grid";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import GridPanel from "../gridPanel/gridPanel";
-import ExpressionService from "../expressionService";
-import TemplateService from "../templateService";
-import ValueService from "../valueService";
-import EventService from "../eventService";
-import FloatingRowModel from "../rowControllers/floatingRowModel";
-import RenderedRow from "./renderedRow";
-import groupCellRendererFactory from "../cellRenderers/groupCellRendererFactory";
-import Column from "../entities/column";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {ExpressionService} from "../expressionService";
+import {TemplateService} from "../templateService";
+import {ValueService} from "../valueService";
+import {EventService} from "../eventService";
+import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {RenderedRow} from "./renderedRow";
+import {groupCellRendererFactory} from "../cellRenderers/groupCellRendererFactory";
+import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events} from "../events";
-import Constants from "../constants";
+import {Constants} from "../constants";
 import {ColDef} from "../entities/colDef";
-import RenderedCell from "./renderedCell";
+import {RenderedCell} from "./renderedCell";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
@@ -24,7 +24,7 @@ import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import {Logger} from "../logger";
 import {LoggerFactory} from "../logger";
-import ColumnChangeEvent from "../columnChangeEvent";
+import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
 import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
@@ -34,7 +34,7 @@ import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
 
 @Bean('rowRenderer')
-export default class RowRenderer {
+export class RowRenderer {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

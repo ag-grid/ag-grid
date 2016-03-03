@@ -3,7 +3,7 @@ import {Autowired} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
 import {PostConstruct} from "../context/context";
-import _ from '../utils';
+import {Utils as _} from '../utils';
 
 @Bean('dragService')
 export class DragService {

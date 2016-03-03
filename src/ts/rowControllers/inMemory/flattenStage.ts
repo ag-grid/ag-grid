@@ -1,10 +1,10 @@
 import {Bean} from "../../context/context";
 import {RowNode} from "../../entities/rowNode";
-import _ from '../../utils';
-import GridOptionsWrapper from "../../gridOptionsWrapper";
+import {Utils as _} from '../../utils';
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Autowired} from "../../context/context";
-import SelectionController from "../../selectionController";
-import EventService from "../../eventService";
+import {SelectionController} from "../../selectionController";
+import {EventService} from "../../eventService";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 
 @Bean('flattenStage')

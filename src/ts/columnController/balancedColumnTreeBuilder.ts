@@ -1,13 +1,13 @@
-import GridOptionsWrapper from '../gridOptionsWrapper';
+import {GridOptionsWrapper} from '../gridOptionsWrapper';
 import {Logger, LoggerFactory} from '../logger';
-import ColumnUtils from '../columnController/columnUtils';
+import {ColumnUtils} from '../columnController/columnUtils';
 import {AbstractColDef} from "../entities/colDef";
-import ColumnKeyCreator from "./columnKeyCreator";
+import {ColumnKeyCreator} from "./columnKeyCreator";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {ColGroupDef} from "../entities/colDef";
 import {ColDef} from "../entities/colDef";
-import Column from "../entities/column";
+import {Column} from "../entities/column";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
@@ -15,7 +15,7 @@ import {Context} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('balancedColumnTreeBuilder')
-export default class BalancedColumnTreeBuilder {
+export class BalancedColumnTreeBuilder {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
