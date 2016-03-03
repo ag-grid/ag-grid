@@ -142,7 +142,9 @@ export class ClipboardService {
                 if (index != 0) {
                     data += '\t';
                 }
-                data += '"' + this.csvCreator.escape(value) + '"';
+                if (_.exists(value)) {
+                    data += value;
+                }
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
             });

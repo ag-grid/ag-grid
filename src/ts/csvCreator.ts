@@ -146,7 +146,7 @@ export class CsvCreator {
     }
 
     // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-    public escape(value: any): string {
+    private escape(value: any): string {
         if (value === null || value === undefined) {
             return '';
         }
@@ -157,7 +157,7 @@ export class CsvCreator {
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('known value type during csv conversio');
+            console.warn('known value type during csv conversion');
             stringValue = '';
         }
 

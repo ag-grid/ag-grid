@@ -329,6 +329,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-context-menu/index.php">Context Menu</a>
                 <?php } ?>
 
+                <?php if ($key == "Clipboard") { ?>
+                    <span class="sidebarLinkSelected">Clipboard</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-clipboard/index.php">Clipboard</a>
+                <?php } ?>
+
                 <h4>
                     Working with Data
                 </h4>

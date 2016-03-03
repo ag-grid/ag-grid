@@ -1080,6 +1080,15 @@ export class ColumnController {
                 autoColDef = {
                     headerName: localeTextFunc('group', 'Group'),
                     comparator: defaultGroupComparator,
+                    valueGetter: (params: any) => {
+                        if (params.node.group) {
+                            return params.node.key;
+                        } else if (params.data && params.colDef.field) {
+                            return params.data[params.colDef.field];
+                        } else {
+                            return null;
+                        }
+                    },
                     cellRenderer: {
                         renderer: 'group'
                     }

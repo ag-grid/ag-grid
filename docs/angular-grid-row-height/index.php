@@ -41,18 +41,6 @@ include '../documentation_header.php';
         to 50px for all non-floating rows and 25px for floating rows, do the following:
     </p>
 
-    <p>
-        The params object passed to the callback has the following values:
-        <ul>
-        <li><b>node:</b> The <a href="/angular-grid-model/index.php#rowNode">rowNode</a> in question.</li>
-        <li><b>data:</b> The data for the row provided by you.</li>
-        <li><b>api:</b> The <a href="/angular-grid-api/index.php">grid api</a>.</li>
-        <li><b>context:</b> The <a href="/angular-grid-context/index.php">grid context</a>.</li>
-    </ul>
-    </p>
-
-    <h3></h3>
-
     <pre><code></code>gridOptions.getRowHeight = function(params) {
     if (params.node.floating) {
         return 25;
@@ -60,6 +48,16 @@ include '../documentation_header.php';
         return 50;
     }
 }</code></pre>
+
+    <p>
+        The params object passed to the callback has the following values:
+    <ul>
+        <li><b>node:</b> The <a href="/angular-grid-model/index.php#rowNode">rowNode</a> in question.</li>
+        <li><b>data:</b> The data for the row.</li>
+        <li><b>api:</b> The <a href="/angular-grid-api/index.php">grid api</a>.</li>
+        <li><b>context:</b> The <a href="/angular-grid-context/index.php">grid context</a>.</li>
+    </ul>
+    </p>
 
     <h3>Row Height Simple Example</h3>
 
@@ -83,7 +81,7 @@ include '../documentation_header.php';
     <show-example example="exampleRowHeightComplex"></show-example>
 
     <note>
-        You cannot change the rowHeight of a cell. Once it is set, it cannot be undone.
+        You cannot change the rowHeight of a row. Once it is set, it cannot be undone.
         If you must change the row height, then pass the data into the grid again to
         get the grid to reset the heights, eg <i>api.setRowData(sameData)</i>.
     </note>

@@ -63,6 +63,13 @@ var groupColumn = {
     headerName: "Group",
     width: 200,
     field: 'name',
+    valueGetter: function(params) {
+        if (params.node.group) {
+            return params.node.key;
+        } else {
+            return params.data[params.colDef.field];
+        }
+    },
     comparator: agGrid.defaultGroupComparator,
     cellRenderer: {
         renderer: "group",
