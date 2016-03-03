@@ -35,6 +35,16 @@ function onBtExport() {
         columnSeparator: document.querySelector('#columnSeparator').value
     };
 
+    if (getBooleanValue('#useCellCallback')) {
+        params.processCellCallback = function(params) {
+            if (params.value && params.value.toUpperCase) {
+                return params.value.toUpperCase();
+            } else {
+                return params.value;
+            }
+        };
+    }
+
     if (getBooleanValue('#customHeader')) {
         params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
     }

@@ -15,7 +15,14 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     rowData: null,
-    onRangeSelectionChanged: onRangeSelectionChanged
+    onRangeSelectionChanged: onRangeSelectionChanged,
+    processCellForClipboard: function(params) {
+        if (params.column.getColId()==='athlete' && params.value && params.value.toUpperCase) {
+            return params.value.toUpperCase();
+        } else {
+            return params.value;
+        }
+    }
 };
 
 function onAddRange() {

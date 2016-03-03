@@ -129,6 +129,18 @@ GridCell {
 }</pre>
     </p>
 
+    <h3>Callback processCellForClipboard()</h3>
+
+    <p>
+        There is a grid callback <i>processCellForClipboard()</i> that allows you to format cells before
+        going to the clipboard. This can be useful if, for example, you are pasting to Excel and you need to
+        format dates so that Excel can understand them.
+    </p>
+
+    <p>
+        The callback params has the following attributes: value, node, column, api, columnApi, context.
+    </p>
+
     <h3>Range Selection Example</h3>
 
     <p>
@@ -138,6 +150,9 @@ GridCell {
         that are in the range (it ignores all non-number values). The <i>finished</i> flag
         is used to update the eager and lazy figures separately.
     </p>
+
+    <p>The example also shows use of <i>processCellForClipboard()</i> by making all the athlete
+    names upper case when copying into the clipboard.</p>
 
     <show-example example="rangeSelection"></show-example>
 

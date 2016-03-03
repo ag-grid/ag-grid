@@ -16,6 +16,8 @@ import {PostConstruct} from "./context/context";
 import {GetContextMenuItems} from "./entities/gridOptions";
 import {GetMainMenuItems} from "./entities/gridOptions";
 import {ProcessRowParams} from "./entities/gridOptions";
+import {ProcessCellForExportParams} from "./entities/gridOptions";
+import Column from "./entities/column";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -135,6 +137,7 @@ export default class GridOptionsWrapper {
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
+    public getProcessCellForClipboardFunc() { return this.gridOptions.processCellForClipboard; }
 
     public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
         if (this.gridOptions.processRowPostCreate) {

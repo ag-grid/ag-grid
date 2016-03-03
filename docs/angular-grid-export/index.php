@@ -40,8 +40,22 @@ include '../documentation_header.php';
             Otherwise only the columns currently showing the in grid, and in that order, are exported.</li>
         <li><b>onlySelected</b>: Only export selected rows.</li>
         <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
+        <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
     </ul>
 
+    <h3>processCellCallback()</h3>
+
+    <p>This callback allows you to format the cells for the export. The example below has an option 'Use Cell Callback'
+    which puts all the items into upper case. This can be useful if, for example, you need to format date cells
+    to be read by Excel.</p>
+
+    <p>
+        The callback params has the following attributes: value, node, column, api, columnApi, context.
+    </p>
+
+    <h3>
+        Example
+    </h3>
     <p>
         The example below shows the export in action. Notice the following:
     </p>

@@ -22,6 +22,9 @@ import {RowNode} from "../entities/rowNode";
 import {GridRow} from "../entities/gridCell";
 import {GridCell} from "../entities/gridCell";
 import {Grid} from "../grid";
+import GridOptionsWrapper from "../gridOptionsWrapper";
+import Column from "../entities/column";
+import {ProcessCellForExportParams} from "../entities/gridOptions";
 
 @Bean('clipboardService')
 export class ClipboardService {
@@ -38,6 +41,7 @@ export class ClipboardService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private logger: Logger;
 
@@ -139,6 +143,9 @@ export class ClipboardService {
             range.columns.forEach( (column, index) => {
                 var rowNode = this.getRowNode(currentRow);
                 var value = this.valueService.getValue(column, rowNode);
+
+                value = this.processRangeCell(rowNode, column, value);
+
                 if (index != 0) {
                     data += '\t';
                 }
@@ -161,6 +168,22 @@ export class ClipboardService {
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
+    private processRangeCell(rowNode: RowNode, column: Column, value: any): void {
+        var func = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
+        if (func) {
+            return func({
+                column: column,
+                node: rowNode,
+                value: value,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        } else {
+            return value;
+        }
+    }
+
     private getRowNode(gridRow: GridRow): RowNode {
         switch (gridRow.floating) {
             case Constants.FLOATING_TOP:
@@ -178,7 +201,8 @@ export class ClipboardService {
             skipHeader: true,
             skipFooters: true,
             columnSeparator: '\t',
-            onlySelected: true
+            onlySelected: true,
+            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
         });
 
         this.copyDataToClipboard(data);

@@ -132,6 +132,7 @@ export interface GridOptions {
     getContextMenuItems?: GetContextMenuItems,
     getMainMenuItems?: GetMainMenuItems,
     processRowPostCreate?(params: ProcessRowParams): void;
+    processCellForClipboard?(params: ProcessCellForExportParams): any;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -206,6 +207,16 @@ export interface ProcessRowParams {
     ePinnedRightRow: HTMLElement;
     rowIndex: number,
     node: RowNode,
+    api: GridApi,
+    columnApi: ColumnApi,
+    addRenderedRowListener: (eventType: string, listener: Function)=>void,
+    context: any
+}
+
+export interface ProcessCellForExportParams {
+    value: any,
+    node: RowNode,
+    column: Column,
     api: GridApi,
     columnApi: ColumnApi,
     context: any

@@ -9,6 +9,7 @@ import {GridCore} from "./gridCore";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import GridOptionsWrapper from "./gridOptionsWrapper";
+import {ProcessCellForExportParams} from "./entities/gridOptions";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -22,6 +23,7 @@ export interface CsvExportParams {
     allColumns?: boolean;
     columnSeparator?: string;
     onlySelected?: boolean;
+    processCellCallback?(params: ProcessCellForExportParams): void;
 }
 
 @Bean('csvCreator')
@@ -72,6 +74,7 @@ export class CsvCreator {
         var allColumns = params && params.allColumns;
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
+        var processCellCallback = params.processCellCallback;
 
         var columnsToExport: Column[];
         if (allColumns) {
@@ -117,6 +120,7 @@ export class CsvCreator {
                 } else {
                     valueForCell =  this.valueService.getValue(column, node);
                 }
+                valueForCell = this.processCell(node, column, valueForCell, processCellCallback);
                 if (valueForCell === null || valueForCell === undefined) {
                     valueForCell = '';
                 }
@@ -134,6 +138,21 @@ export class CsvCreator {
         }
 
         return result;
+    }
+
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>void): any {
+        if (processCellCallback) {
+            return processCellCallback({
+                column: column,
+                node: rowNode,
+                value: value,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        } else {
+            return value;
+        }
     }
 
     private createValueForGroupNode(node: RowNode): string {
