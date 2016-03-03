@@ -109,8 +109,19 @@ export default class RenderedRow {
 
         this.addRowSelectedListener();
         this.addCellFocusedListener();
-
         this.addColumnListener();
+
+        this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
+            eRow: this.eBodyRow,
+            ePinnedLeftRow: this.ePinnedLeftRow,
+            ePinnedRightRow: this.ePinnedRightRow,
+            node: this.rowNode,
+            api: this.gridOptionsWrapper.getApi(),
+            rowIndex: this.rowIndex,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
+        });
     }
 
     private addColumnListener(): void {

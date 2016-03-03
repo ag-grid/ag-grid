@@ -131,6 +131,7 @@ export interface GridOptions {
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
     getContextMenuItems?: GetContextMenuItems,
     getMainMenuItems?: GetMainMenuItems,
+    processRowPostCreate?(params: ProcessRowParams): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -197,4 +198,15 @@ export interface GetMainMenuItemsParams {
 
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): [string|MenuItem]
+}
+
+export interface ProcessRowParams {
+    eRow: HTMLElement;
+    ePinnedLeftRow: HTMLElement;
+    ePinnedRightRow: HTMLElement;
+    rowIndex: number,
+    node: RowNode,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
 }

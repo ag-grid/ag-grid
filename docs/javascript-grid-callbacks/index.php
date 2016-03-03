@@ -112,7 +112,10 @@ include '../documentation_header.php';
             <th>getNodeChildDetails(callback)</th>
             <td>Allows you to pass tree structure data to the grid, or row data that is already grouped.</td>
         </tr>
-
+        <tr>
+            <th>processRowPostCreate(params)</th>
+            <td>Allows you to process rows after they are created. So do final adding of custom attributes etc.</td>
+        </tr>
     </table>
 
     <p>

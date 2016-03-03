@@ -225,7 +225,10 @@ var gridOptions = {
     onRangeSelectionChanged: function(event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    getContextMenuItems: getContextMenuItems
+    getContextMenuItems: getContextMenuItems,
+    processRowPostCreate: function(params) {
+        params.eRow.setAttribute('bonkers', 'saussage');
+    },
 };
 
 function getContextMenuItems(params) {

@@ -74,6 +74,8 @@ include 'documentation_header.php';
     <li>New feature: Enterprise column menu</li>
     <li>New feature: Clipboard interaction</li>
 
+    <li>New feature: processRowPostCreate callback, so you can process the grid row after it is created. Handy for adding attributes or other stuff to the row after create.</li>
+
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
 

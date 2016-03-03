@@ -15,6 +15,7 @@ import {ColumnApi} from "./columnController/columnController";
 import {PostConstruct} from "./context/context";
 import {GetContextMenuItems} from "./entities/gridOptions";
 import {GetMainMenuItems} from "./entities/gridOptions";
+import {ProcessRowParams} from "./entities/gridOptions";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -135,6 +136,11 @@ export default class GridOptionsWrapper {
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
 
+    public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
+        if (this.gridOptions.processRowPostCreate) {
+            this.gridOptions.processRowPostCreate(params);
+        }
+    }
 
     // properties
     public getHeaderHeight(): number {
