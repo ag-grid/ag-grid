@@ -68,7 +68,7 @@ export class InMemoryRowController implements IRowModel {
 
     }
 
-    public refreshModel(step: number): void {
+    public refreshModel(step: number, fromIndex?: any): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -92,7 +92,7 @@ export class InMemoryRowController implements IRowModel {
                 this.doRowsToDisplay();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, {fromIndex: fromIndex});
 
         if (this.$scope) {
             setTimeout( () => {

@@ -24,6 +24,7 @@ export * from './dist/lib/entities/columnGroup';
 export * from './dist/lib/entities/columnGroupChild';
 export * from './dist/lib/entities/gridCell';
 export * from './dist/lib/entities/gridOptions';
+export * from './dist/lib/entities/gridRow';
 export * from './dist/lib/entities/originalColumnGroup';
 export * from './dist/lib/entities/originalColumnGroupChild';
 export * from './dist/lib/entities/rowNode';

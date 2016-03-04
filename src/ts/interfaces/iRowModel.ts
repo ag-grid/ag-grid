@@ -11,7 +11,7 @@ export interface IRowModel {
     isEmpty(): boolean;
     // does this model have rows to render, so if filtering removed all rows, returns false
     isRowsToRender(): boolean;
-    refreshModel(step: number): void;
+    refreshModel(step: number, fromIndex?: number): void;
 
     forEachNode(callback: (rowNode: RowNode)=>void): void;
     forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void): void;

@@ -148,7 +148,7 @@ export class GridApi {
     }
 
     public onGroupExpandedOrCollapsed(refreshFromIndex: any) {
-        this.rowModel.refreshModel(Constants.STEP_MAP);
+        this.rowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
     }
 
     public expandAll() {
