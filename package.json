@@ -17,7 +17,7 @@
     "enterprise"
   ],
   "author": "Niall Crosby <niall.crosby@gmail.com>",
-  "license": "MIT",
+  "license": "Commercial",
   "bugs": {
     "url": "https://github.com/ceolter/ag-grid-enterprise/issues"
   },
@@ -32,8 +32,7 @@
     "webpack-stream": "3.1.0",
     "webpack": "1.12.12",
     "style-loader": "0.13.0",
-    "css-loader": "0.23.1",
-    "ag-grid": "file:../ag-grid"
+    "css-loader": "0.23.1"
   },
   "peerDependencies": {
     "ag-grid": "3.3.x"
