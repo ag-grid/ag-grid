@@ -70,7 +70,7 @@ FUNCTION FOR A LIMITED PERIOD OF TIME, OR LIMIT THE FUNCTIONALITY OR TIME OF FUN
 AND/OR USE OF ANY FILES OR OUTPUT CREATED WITH SUCH SOFTWARE IS ENTIRELY AT YOUR OWN RISK. WE ARE LICENSING THE 
 SOFTWARE ON AN “AS IS” BASIS AT YOUR OWN RISK AND WE DISCLAIM ANY WARRANTY OR LIABILITY TO YOU OF ANY KIND.
 
-3. OWNERSHIP
+3.OWNERSHIP
 
 This is a license agreement and not an agreement for sale. We reserve ownership of all intellectual property rights 
 inherent in or relating to the Software, which include, but are not limited to, all copyright, patent rights, all 
@@ -84,7 +84,7 @@ copyright and other intellectual property rights in the ag-Grid-Enterprise sourc
 You must not remove, obscure or interfere with any copyright, acknowledgment, attribution, trademark, warning or 
 disclaimer statement affixed to, incorporated in or otherwise applied in connection with the Software.
 
-4. PROHIBITED USES (ag-Grid-Enterprise)
+4.PROHIBITED USES (ag-Grid-Enterprise)
 
 You may not redistribute the ag-Grid-Enterprise code or Modifications other than by including the ag-Grid-Enterprise 
 or a portion thereof within Your Application. You may not redistribute the ag-Grid-Enterprise code or Modifications 
@@ -106,14 +106,14 @@ Public License versions 3.0 (“GPL”). If You, or another third party, has, at
 of the Application(s) using a GPL Version, You may not combine such work with the Sencha SDKs licensed hereunder, 
 and You must license such application(s) under the terms of the GNU General Public License version 3.
 
-5. TERMINATION
+5.TERMINATION
 
 This Agreement and Your right to use the Software and Modifications will terminate immediately if You fail to comply 
 with any of the terms and conditions of this Agreement. Upon termination, You agree to immediately cease using and 
 destroy the Software or Modifications, including all accompanying documents. The provisions of sections 3, 4, 5, 6, 
 7, 8, 10, and 11 will survive any termination of this Agreement.
 
-6. DISCLAIMER OF WARRANTIES
+6.DISCLAIMER OF WARRANTIES
 
 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, WE AND OUR RESELLERS DISCLAIM ALL WARRANTIES AND CONDITIONS, 
 EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
@@ -121,7 +121,7 @@ PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, WITH REGARD TO THE SOFTWARE. WE
 OF THE SOFTWARE OR THE CODE IT PRODUCES WILL BE UNINTERRUPTED OR ERROR-FREE, AND YOU ACKNOWLEDGE THAT IT IS NOT 
 TECHNICALLY PRACTICABLE FOR US TO DO SO.
 
-7. LIMITATION OF LIABILITIES
+7.LIMITATION OF LIABILITIES
 
 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL WE OR OUR RESELLERS BE LIABLE UNDER ANY LEGAL 
 OR EQUITABLE THEORY FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
@@ -131,7 +131,7 @@ MATTER RELATING TO THIS AGREEMENT, EVEN IF WE OR OUR RESELLERS HAVE BEEN ADVISED
 IN ANY CASE, OUR ENTIRE LIABILITY WITH RESPECT TO ANY SUBJECT MATER RELATING TO THIS AGREEMENT SHALL BE LIMITED TO 
 THE GREATER OF (I) THE AMOUNT ACTUALLY PAID BY YOU FOR THE SOFTWARE OR (II) FIVE HUNDRED BRITISH POUNDS (£500).
 
-8. VERIFICATION
+8.VERIFICATION
 
 We or a certified auditor acting on Our behalf, may, upon Our reasonable request and at Our expense, audit You with 
 respect to the use of the Software. Such audit may be conducted by mail, electronic means or through an in-person 
@@ -144,7 +144,7 @@ attributable to the unauthorized use. In the alternative, We reserve the right, 
 licenses for the Software, in addition to any other remedies available under law. This Section shall survive expiration 
 or termination of this Agreement for a period of two (2) years.
 
-9. PAYMENT AND TAXES
+9.PAYMENT AND TAXES
 
 If credit has been extended to You by Us, all payments under this Agreement are due within thirty (30) days of the date 
 We mail an invoice to You. If We have not extended credit to You, You shall be required to make payment concurrent with 
@@ -157,7 +157,7 @@ furnish evidence of such paid taxes as is sufficient to enable the other party t
 including original withholding tax certificates. Notwithstanding the foregoing, Software ordered through Our resellers 
 is subject to the fees and payment terms set forth on the applicable reseller invoice.
 
-10. MISCELLANEOUS
+10.MISCELLANEOUS
 
 The license granted herein applies only to the version of the Software available when purchased in connection with 
 the terms of this Agreement, and to any updates and/or upgrades to which You may be entitled. Any previous or subsequent 
