@@ -21,10 +21,10 @@ import {Column} from "../entities/column";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {SelectionController} from "../selectionController";
-import {ClipboardService} from "../enterprise/clipboardService";
 import {CsvCreator} from "../csvCreator";
 import {Optional} from "../context/context";
 import {MouseEventService} from "./mouseEventService";
+import {IClipboardService} from "../interfaces/iClipboardService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -106,7 +106,7 @@ export class GridPanel {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Optional('clipboardService') private clipboardService: ClipboardService;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 

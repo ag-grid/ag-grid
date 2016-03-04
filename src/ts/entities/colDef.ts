@@ -1,5 +1,5 @@
 import {RowNode} from "./rowNode";
-import {SetFilterParameters} from "../enterprise/setFilter/setFilterParameters";
+import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
 
 /** AbstractColDef can be a group or a column definition */

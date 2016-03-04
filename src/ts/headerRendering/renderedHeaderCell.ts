@@ -11,7 +11,7 @@ import {HeaderRenderer} from "./headerRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {PopupService} from "../widgets/agPopupService";
+import {PopupService} from "../widgets/popupService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";

@@ -17,12 +17,12 @@ import {Autowired} from "../context/context";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {PostConstruct} from "../context/context";
-import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 import {Optional} from "../context/context";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {RangeSelection} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
+import {IRangeController} from "../interfaces/iRangeController";
 
 export class RenderedCell {
 
@@ -37,7 +37,7 @@ export class RenderedCell {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Optional('rangeController') private rangeController: RangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 

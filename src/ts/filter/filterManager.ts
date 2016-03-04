@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {PopupService} from "../widgets/agPopupService";
+import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService";
 import {ColumnController} from "../columnController/columnController";
 import {Grid} from "../grid";
@@ -8,7 +8,6 @@ import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {TextFilter} from "./textFilter";
 import {NumberFilter} from "./numberFilter";
-import {SetFilter} from "./../enterprise/setFilter/setFilter";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";

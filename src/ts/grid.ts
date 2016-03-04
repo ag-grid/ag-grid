@@ -24,12 +24,11 @@ import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {SelectionRendererFactory} from "./selectionRendererFactory";
 import {ExpressionService} from "./expressionService";
 import {TemplateService} from "./templateService";
-import {PopupService} from "./widgets/agPopupService";
+import {PopupService} from "./widgets/popupService";
 import {LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {Events} from "./events";
-import {ToolPanel} from "./toolPanel/toolPanel";
 import {BorderLayout} from "./layout/borderLayout";
 import {ColumnChangeEvent} from "./columnChangeEvent";
 import {Column} from "./entities/column";
@@ -40,26 +39,17 @@ import {Context} from './context/context';
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
-import {EnterpriseMenuFactory} from "./enterprise/enterpriseMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
-import {RowGroupPanel} from "./enterprise/rowGroupPanel";
-import {ColumnSelectPanel} from "./enterprise/columnSelect/columnSelectPanel";
 import {SortController} from "./sortController";
 import {ColumnApi} from "./columnController/columnController";
-import {RangeController} from "./enterprise/rangeController";
 import {FocusedCellController} from "./focusedCellController";
-import {ClipboardService} from "./enterprise/clipboardService";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {ContextMenuFactory} from "./enterprise/cContextMenu";
 import {Utils as _} from './utils';
-import {GroupStage} from "./enterprise/rowStages/groupStage";
-import {AggregationStage} from "./enterprise/rowStages/aggregationStage";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
-import {EnterpriseBoot} from "./enterprise/enterpriseBoot";
 
 export class Grid {
 
@@ -83,11 +73,6 @@ export class Grid {
         var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
         var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
 
-        //var overrideBeans = gridOptions.suppressEnterprise ?
-        //    null :
-        //    [EnterpriseMenuFactory, RowGroupPanel, ColumnSelectPanel, RangeController, ClipboardService,
-        //        ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot];
-
         var enterprise = _.exists(Grid.enterpriseBeans);
 
         this.context = new Context({
@@ -107,7 +92,7 @@ export class Grid {
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
-                PaginationController, PopupService, GridCore, ToolPanel, StandardMenuFactory,
+                PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage],
             debug: !!gridOptions.debug

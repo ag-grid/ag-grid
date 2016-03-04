@@ -18,7 +18,6 @@ import {Context} from "../context/context";
 import {Autowired} from "../context/context";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {PostConstruct} from "../context/context";
-import {RangeController} from "../enterprise/rangeController";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {GridCell} from "../entities/gridCell";

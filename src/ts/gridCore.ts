@@ -21,7 +21,7 @@ import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {SelectionRendererFactory} from "./selectionRendererFactory";
 import {ExpressionService} from "./expressionService";
 import {TemplateService} from "./templateService";
-import {PopupService} from "./widgets/agPopupService";
+import {PopupService} from "./widgets/popupService";
 import {LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
@@ -35,7 +35,6 @@ import {Context} from './context/context';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
-import {RowGroupPanel} from "./enterprise/rowGroupPanel";
 import {IRowModel} from "./interfaces/iRowModel";
 import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
@@ -54,15 +53,16 @@ export class GridCore {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('toolPanel') private toolPanel: Component;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Optional('rowGroupPanel') private rowGroupPanel: RowGroupPanel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+
+    @Optional('rowGroupPanel') private rowGroupPanel: Component;
+    @Optional('toolPanel') private toolPanel: Component;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;

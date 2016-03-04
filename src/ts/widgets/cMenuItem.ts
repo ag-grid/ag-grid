@@ -2,7 +2,7 @@
 import {Component} from "./component";
 import {MenuList} from "./menuList";
 import {Autowired} from "../context/context";
-import {PopupService} from "./agPopupService";
+import {PopupService} from "./popupService";
 import {Utils as _} from '../utils';
 import {SvgFactory} from "../svgFactory";
 

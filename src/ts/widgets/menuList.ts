@@ -5,7 +5,7 @@ import {Utils as _} from '../utils';
 import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
-import {PopupService} from "./agPopupService";
+import {PopupService} from "./popupService";
 import {MenuItem} from "./cMenuItem";
 import {CMenuItem} from "./cMenuItem";
 

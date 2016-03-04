@@ -14,7 +14,7 @@ import {HorizontalDragService} from "./horizontalDragService";
 import {Bean} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {PopupService} from "../widgets/agPopupService";
+import {PopupService} from "../widgets/popupService";
 import {Autowired} from "../context/context";
 import {Context} from "../context/context";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";

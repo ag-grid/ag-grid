@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
 import {SvgFactory} from "../svgFactory";
-import {PopupService} from "./agPopupService";
+import {PopupService} from "./popupService";
 import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
 import {AgList} from "./agList";
 

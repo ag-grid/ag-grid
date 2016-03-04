@@ -3,7 +3,7 @@ import {Constants} from "../constants";
 import {Utils as _} from '../utils';
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import {PopupService} from "../widgets/agPopupService";
+import {PopupService} from "../widgets/popupService";
 import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
 import {EventService} from "../eventService";
 import {Events} from "../events";

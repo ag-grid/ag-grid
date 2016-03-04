@@ -7,7 +7,7 @@ import {Column} from "../entities/column";
 import {Utils as _} from '../utils';
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
-import {PopupService} from "../widgets/agPopupService";
+import {PopupService} from "../widgets/popupService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('menuFactory')
