@@ -1,7 +1,15 @@
 import {ComponentUtil} from "./componentUtil";
 import {Grid} from "../grid";
 
+var registered = false;
+
 export function initialiseAgGridWithWebComponents() {
+
+    // only register to WebComponents once
+    if (registered) {
+        return;
+    }
+    registered = true;
 
     if (typeof document==='undefined' || !(<any>document).registerElement) {
         console.error('ag-Grid: unable to find document.registerElement() function, unable to initialise ag-Grid as a Web Component');
@@ -91,7 +99,7 @@ export function initialiseAgGridWithWebComponents() {
         var browserEventNoType = <any> browserEvent;
         browserEventNoType.agGridDetails = event;
 
-        this.dispatchEvent(browserEvent);
+        this.dispatchChangedEvent(browserEvent);
 
         var callbackMethod = 'on' + eventLowerCase;
         if (typeof this[callbackMethod] === 'function') {

@@ -1,7 +1,7 @@
 import {GridOptions} from "../entities/gridOptions";
 import {GridApi} from "../gridApi";
 import {Events} from "../events";
-import _ from "../utils";
+import {Utils as _} from "../utils";
 
 export class ComponentUtil {
 
@@ -13,7 +13,7 @@ export class ComponentUtil {
 
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText'];
+        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource'
@@ -29,7 +29,7 @@ export class ComponentUtil {
     ];
 
     public static BOOLEAN_PROPERTIES = [
-        'virtualPaging','toolPanelSuppressGroups','toolPanelSuppressValues','rowsAlreadyGrouped',
+        'toolPanelSuppressGroups','toolPanelSuppressValues',
         'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
         'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
         'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
@@ -37,12 +37,15 @@ export class ComponentUtil {
         'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
         'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
         'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
-        'suppressParentsInRowNodes','showToolPanel','suppressMovingCss','suppressMovableColumns'
+        'suppressParentsInRowNodes','showToolPanel','suppressColumnMoveAnimation','suppressMovableColumns',
+        'suppressFieldDotNotation','enableRangeSelection','suppressEnterprise','rowGroupPanelShow',
+        'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
-        'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent',
-        'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate'];
+        'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
+        'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
+        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
@@ -206,5 +209,8 @@ _.iterateObject(Events, function(key, value) {
 function checkForDeprecated(changes: any): void {
     if (changes.ready || changes.onReady) {
         console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
+    }
+    if (changes.rowDeselected || changes.onRowDeselected) {
+        console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
     }
 }

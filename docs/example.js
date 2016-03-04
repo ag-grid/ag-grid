@@ -30,7 +30,7 @@ var countries = [
     {country: "Uruguay", continent: "South America", language: "Spanish"}
 ];
 
-var games = ["Chess","Cross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle gameCross and Circle game","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
+var games = ["Chess","Cross and Circle","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
     "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
     "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
     "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
@@ -63,6 +63,13 @@ var groupColumn = {
     headerName: "Group",
     width: 200,
     field: 'name',
+    valueGetter: function(params) {
+        if (params.node.group) {
+            return params.node.key;
+        } else {
+            return params.data[params.colDef.field];
+        }
+    },
     comparator: agGrid.defaultGroupComparator,
     cellRenderer: {
         renderer: "group",
@@ -70,15 +77,45 @@ var groupColumn = {
     }
 };
 
+//var aVisible = true;
+//setTimeout( function() {
+//    var start = new Date().getTime();
+//    console.log('start');
+//    aVisible = !aVisible;
+//    gridOptions.columnApi.setColumnsVisible(gridOptions.columnApi.getAllColumns(), aVisible);
+//    //gridOptions.columnApi.getAllColumns().forEach( function(column) {
+//    //    gridOptions.columnApi.setColumnVisible(column, aVisible);
+//    //});
+//    var end = new Date().getTime();
+//    console.log('end ' + (end - start));
+//}, 5000);
+
+// the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
+function suppressColumnMoveAnimation() {
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+    return isFirefox || isSafari || isIE;
+}
+
 var gridOptions = {
-    debug: true,
+    //debug: true,
+    //suppressEnterprise: true,
+    rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     //minColWidth: 50,
     //maxColWidth: 300,
     //rowsBuffer: 1,
-    columnDefs: [],
+    //columnDefs: [],
     //singleClickEdit: true,
-    rowData: null,
-    rowsAlreadyGrouped: false, // set this to true, if you are passing in data alrady in nodes and groups
+    //rowData: [
+    //    {name: 'Niall'},
+    //    {name: 'Eamon'},
+    //    {name: 'Kevin'},
+    //    {name: 'Brian'}
+    //],
     groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
@@ -87,21 +124,25 @@ var gridOptions = {
     //groupSuppressBlankHeader: true,
     //suppressMovingCss: true,
     //suppressMovableColumns: true,
-    groupIncludeFooter: false,
+    //groupIncludeFooter: true,
     groupHideGroupColumns: true,
+    suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
+    enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+    //suppressContextMenu: true,
+    //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
-    showToolPanel: false,
+    //showToolPanel: true,
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
     //groupSuppressAutoColumn: true,
@@ -113,12 +154,14 @@ var gridOptions = {
         var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
         return params.colIndex === 0 && !isGrouping;
     },
+    //suppressMenuFilterPanel: true,
+    //suppressMenuMainPanel: true,
+    //suppressMenuColumnPanel: true,
     //forPrint: true,
     //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
     //headerCellRenderer: headerCellRenderer_text,
     //headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
-    onRowDeselected: rowDeselected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     icons: {
         //menu: '<i class="fa fa-bars"/>',
@@ -143,7 +186,8 @@ var gridOptions = {
     },
     // isScrollLag: function() { return false; },
     //suppressScrollLag: true,
-
+    //floatingTopRowData: [{},{},{}],
+    //floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
         console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
@@ -177,8 +221,30 @@ var gridOptions = {
     },
     onRowGroupOpened: function(event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
-    }
+    },
+    onRangeSelectionChanged: function(event) {
+        //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
+    },
+    getContextMenuItems: getContextMenuItems,
+    processRowPostCreate: function(params) {
+        params.eRow.setAttribute('bonkers', 'saussage');
+    },
 };
+
+function getContextMenuItems(params) {
+    var result = ['copy','paste','separator'];
+
+    result.push(
+        {
+            name: 'Make Coffee',
+            icon: '<img src="../images/lab.png" style="width: 14px;"/>',
+            //shortcut: 'Alt + M',
+            action: function () {window.alert('Make your own dam coffee!!!'); }
+        }
+    );
+
+    return result;
+}
 
 var firstColumn = {
     headerName: "Name",
@@ -186,6 +252,10 @@ var firstColumn = {
     width: 200,
     editable: true,
     filter: PersonFilter,
+    checkboxSelection: function(params) {
+        // we put checkbox on the name if we are not doing no grouping
+        return params.columnApi.getRowGroupColumns().length === 0;
+    },
     icons: {
         sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
         sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -208,7 +278,7 @@ var defaultCols = [
         children: [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: countryCellRenderer, filter: 'set',
+                cellRenderer: countryCellRenderer,
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {
@@ -260,6 +330,7 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer},
+                aggFunc: 'sum',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                     sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -279,6 +350,7 @@ var defaultCols = [
     },
     {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
+        aggFunc: 'sum',
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -296,6 +368,8 @@ months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
+        aggFunc: 'sum',
+        //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',
             'bad-score': 'x < 10000'
@@ -305,7 +379,7 @@ months.forEach(function(month) {
         cellStyle: {"text-align": "right"}})
 });
 
-gridOptions.columnDefs = createCols();
+//gridOptions.columnDefs = createCols();
 
 function filterDoubleClicked(event) {
     setInterval(function() {
@@ -440,24 +514,16 @@ function createRowItem(row, colCount) {
 }
 
 function selectionChanged(event) {
-    console.log('Callback selectionChanged: selection count = ' + event.selectedRows.length);
+    console.log('Callback selectionChanged: selection count = ' + gridOptions.api.getSelectedNodes().length);
 }
 
 function rowSelected(event) {
-    // this clogs the console, when to many rows displayed, and use selected 'select all'.
-    // so check 'not to many rows'
-    if (gridOptions.rowData.length <= 100) {
+    // the number of rows selected could be huge, if the user is grouping and selects a group, so
+    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
+    // the node id's are assigned from 0 upwards)
+    if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint);
-    }
-}
-
-function rowDeselected(event) {
-    // this clogs the console, when to many rows displayed, and use selected 'select all'.
-    // so check 'not to many rows'
-    if (gridOptions.rowData.length <= 100) {
-        var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
-        console.log("Callback rowDeselected: " + valueToPrint);
     }
 }
 
@@ -465,8 +531,15 @@ function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
 }
 
+var filterCount = 0;
 function onFilterChanged(newFilter) {
-    gridOptions.api.setQuickFilter(newFilter);
+    filterCount++;
+    var filterCountCopy = filterCount;
+    setTimeout( function() {
+        if (filterCount === filterCountCopy) {
+            gridOptions.api.setQuickFilter(newFilter);
+        }
+    }, 300);
 }
 
 var COUNTRY_CODES = {
@@ -491,7 +564,13 @@ var COUNTRY_CODES = {
 };
 
 function numberNewValueHandler(params) {
-    var valueAsNumber = parseFloat(params.newValue);
+    var newValue = params.newValue;
+    var valueAsNumber;
+    if (newValue===null || newValue===undefined || newValue==='') {
+        valueAsNumber = null;
+    } else {
+        valueAsNumber = parseFloat(params.newValue);
+    }
     var field = params.colDef.field;
     var data = params.data;
     data[field] = valueAsNumber;
@@ -554,7 +633,6 @@ PersonFilter.prototype.doesFilterPass = function (params) {
 
 PersonFilter.prototype.isFilterActive = function () {
     var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
-    console.log('person filter active = ' + isActive);
     return isActive;
 };
 
@@ -714,7 +792,7 @@ function languageCellRenderer(params) {
     if (params.$scope) {
         return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
             "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
-    } else if (params.value) {
+    } else if (params.value!==null && params.value!==undefined) {
         return params.value;
     } else {
         return null;

@@ -1,15 +1,15 @@
-import RowRenderer from "./rowRenderer";
-import GridPanel from "../gridPanel/gridPanel";
-import Column from "../entities/column";
-export default class AutoWidthCalculator {
+import {RowRenderer} from "./rowRenderer";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {Column} from "../entities/column";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
 
-    private rowRenderer: RowRenderer;
-    private gridPanel: GridPanel;
+@Bean('autoWidthCalculator')
+export class AutoWidthCalculator {
 
-    public init(rowRenderer: RowRenderer, gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-        this.rowRenderer = rowRenderer;
-    }
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
@@ -19,7 +19,6 @@ export default class AutoWidthCalculator {
         var eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
-        eDummyContainer.style.backgroundColor = 'red';
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting

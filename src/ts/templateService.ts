@@ -1,12 +1,14 @@
-export default class TemplateService {
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
 
-    templateCache:any = {};
-    waitingCallbacks:any = {};
-    $scope: any;
+@Bean('templateService')
+export class TemplateService {
 
-    init($scope: any) {
-        this.$scope = $scope;
-    }
+    @Autowired('$scope') private $scope: any;
+
+    private templateCache:any = {};
+    private waitingCallbacks:any = {};
 
     // returns the template if it is loaded, or null if it is not loaded
     // but will call the callback when it is loaded

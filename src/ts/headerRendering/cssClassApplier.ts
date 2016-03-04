@@ -1,28 +1,10 @@
-import _ from '../utils';
-import Column from "../entities/column";
-import GridOptionsWrapper from "../gridOptionsWrapper";
 import {AbstractColDef} from "../entities/colDef";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
 
-export default class RenderedHeaderElement {
+export class CssClassApplier {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    constructor(gridOptionsWrapper: GridOptionsWrapper) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
-
-    // methods implemented by the base classes
-    public destroy(): void {}
-    public refreshFilterIcon(): void {}
-    public refreshSortIcon(): void {}
-    public onIndividualColumnResized(column: Column): void {}
-    public getGui(): HTMLElement { return null; }
-
-    protected getGridOptionsWrapper(): GridOptionsWrapper {
-        return this.gridOptionsWrapper;
-    }
-
-    protected addHeaderClassesFromCollDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement) {
+    public static addHeaderClassesFromCollDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper) {
         if (abstractColDef && abstractColDef.headerClass) {
             var classToUse: string | string[];
             if (typeof abstractColDef.headerClass === 'function') {
@@ -31,8 +13,8 @@ export default class RenderedHeaderElement {
                     // however most people won't appreciate the difference,
                     // so keeping it as colDef to avoid confusion.
                     colDef: abstractColDef,
-                    context: this.gridOptionsWrapper.getContext(),
-                    api: this.gridOptionsWrapper.getApi()
+                    context: gridOptionsWrapper.getContext(),
+                    api: gridOptionsWrapper.getApi()
                 };
                 var headerClassFunc = <(params: any) => string | string[]> abstractColDef.headerClass;
                 classToUse = headerClassFunc(params);
@@ -49,5 +31,4 @@ export default class RenderedHeaderElement {
             }
         }
     }
-
 }

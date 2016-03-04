@@ -3,4 +3,5 @@
 // See the note at the top of Column class.
 export interface OriginalColumnGroupChild {
     getColumnGroupShow(): string;
+    getId(): string;
 }

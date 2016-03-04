@@ -1,12 +1,12 @@
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-import EventService from "../eventService";
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import AgList from "../widgets/agList";
-import BorderLayout from "../layout/borderLayout";
+import {AgList} from "../widgets/agList";
+import {BorderLayout} from "../layout/borderLayout";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -17,10 +17,10 @@ export default class ColumnSelectionPanel {
     private cColumnList: any;
     layout: any;
     private eRootPanel: any;
-    private dragAndDropService: DragAndDropService;
+    private oldToolPanelDragAndDropService: OldToolPanelDragAndDropService;
 
-    constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService, dragAndDropService: DragAndDropService) {
-        this.dragAndDropService = dragAndDropService;
+    constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService, oldToolPanelDragAndDropService: OldToolPanelDragAndDropService) {
+        this.oldToolPanelDragAndDropService = oldToolPanelDragAndDropService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.columnController = columnController;
 
@@ -47,8 +47,8 @@ export default class ColumnSelectionPanel {
 
         var eVisibleIcons = document.createElement('span');
         _.addCssClass(eVisibleIcons, 'ag-visible-icons');
-        var eShowing = _.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnShowingSvg);
-        var eHidden = _.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenSvg);
+        var eShowing = _.createIcon('columnVisible', this.gridOptionsWrapper, column, svgFactory.createColumnVisibleIcon);
+        var eHidden = _.createIcon('columnHidden', this.gridOptionsWrapper, column, svgFactory.createColumnHiddenIcon);
         eVisibleIcons.appendChild(eShowing);
         eVisibleIcons.appendChild(eHidden);
         eShowing.style.display = column.visible ? '' : 'none';
@@ -77,7 +77,7 @@ export default class ColumnSelectionPanel {
 
     private setupComponents() {
 
-        this.cColumnList = new AgList(this.dragAndDropService);
+        this.cColumnList = new AgList(this.oldToolPanelDragAndDropService);
         this.cColumnList.setCellRenderer(this.columnCellRenderer.bind(this));
         this.cColumnList.addStyles({height: '100%', overflow: 'auto'});
         this.cColumnList.addItemMovedListener(this.onItemMoved.bind(this));

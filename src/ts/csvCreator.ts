@@ -1,9 +1,16 @@
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
 import {ColumnController} from "./columnController/columnController";
 import {Grid} from "./grid";
-import ValueService from "./valueService";
-import Column from "./entities/column";
+import {ValueService} from "./valueService";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {GridCore} from "./gridCore";
+import {Autowired} from "./context/context";
+import {IRowModel} from "./interfaces/iRowModel";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ProcessCellForExportParams} from "./entities/gridOptions";
+
 var LINE_SEPARATOR = '\r\n';
 
 export interface CsvExportParams {
@@ -15,16 +22,17 @@ export interface CsvExportParams {
     customFooter?: string;
     allColumns?: boolean;
     columnSeparator?: string;
+    onlySelected?: boolean;
+    processCellCallback?(params: ProcessCellForExportParams): void;
 }
 
-export default class CsvCreator {
+@Bean('csvCreator')
+export class CsvCreator {
 
-    constructor(
-        private rowController: InMemoryRowController,
-        private columnController: ColumnController,
-        private grid: Grid,
-        private valueService: ValueService) {
-    }
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         var csvString = this.getDataAsCsv(params);
@@ -51,7 +59,7 @@ export default class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (!this.grid.isUsingInMemoryModel()) {
+        if (this.gridOptionsWrapper.isRowModelVirtual()) {
             console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
             return '';
         }
@@ -64,7 +72,9 @@ export default class CsvCreator {
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
+        var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
+        var processCellCallback = params.processCellCallback;
 
         var columnsToExport: Column[];
         if (allColumns) {
@@ -96,18 +106,21 @@ export default class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
-        this.rowController.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        this.rowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }
+
+            if (onlySelected && !node.isSelected()) { return; }
 
             columnsToExport.forEach( (column: Column, index: number)=> {
                 var valueForCell: any;
                 if (node.group && index === 0) {
                     valueForCell =  this.createValueForGroupNode(node);
                 } else {
-                    valueForCell =  this.valueService.getValue(column.getColDef(), node.data, node);
+                    valueForCell =  this.valueService.getValue(column, node);
                 }
+                valueForCell = this.processCell(node, column, valueForCell, processCellCallback);
                 if (valueForCell === null || valueForCell === undefined) {
                     valueForCell = '';
                 }
@@ -125,6 +138,21 @@ export default class CsvCreator {
         }
 
         return result;
+    }
+
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>void): any {
+        if (processCellCallback) {
+            return processCellCallback({
+                column: column,
+                node: rowNode,
+                value: value,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        } else {
+            return value;
+        }
     }
 
     private createValueForGroupNode(node: RowNode): string {
@@ -148,7 +176,7 @@ export default class CsvCreator {
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('known value type during csv conversio');
+            console.warn('known value type during csv conversion');
             stringValue = '';
         }
 

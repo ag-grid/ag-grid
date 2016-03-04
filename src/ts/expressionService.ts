@@ -1,11 +1,14 @@
 import {Logger, LoggerFactory} from "./logger";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
 
-export default class ExpressionService {
+@Bean('expressionService')
+export class ExpressionService {
 
     private expressionToFunctionCache = <any>{};
     private logger: Logger;
 
-    public init(loggerFactory: LoggerFactory) {
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     }
 

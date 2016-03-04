@@ -1,53 +1,44 @@
 import {Grid} from "./grid";
+import {Bean} from "./context/context";
+import {GridCore} from "./gridCore";
+import {Qualifier} from "./context/context";
+import {SelectionController} from "./selectionController";
+import {RowNode} from "./entities/rowNode";
+import {RenderedRow} from "./rendering/renderedRow";
+import {Utils as _} from './utils';
 
-export default class SelectionRendererFactory {
+@Bean('selectionRendererFactory')
+export class SelectionRendererFactory {
 
-    private grid: Grid;
-    private selectionController: any;
-
-    public init(grid: Grid, selectionController: any) {
-        this.grid = grid;
-        this.selectionController = selectionController;
-    }
-
-    public createSelectionCheckbox(node: any, rowIndex: any) {
+    public createSelectionCheckbox(rowNode: RowNode, rowIndex: any, addRenderedRowEventListener: Function) {
 
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";
         eCheckbox.name = "name";
         eCheckbox.className = 'ag-selection-checkbox';
-        this.setCheckboxState(eCheckbox, this.selectionController.isNodeSelected(node));
+        _.setCheckboxState(eCheckbox, rowNode.isSelected());
 
-        var that = this;
-        eCheckbox.onclick = function (event) {
-            event.stopPropagation();
-        };
+        eCheckbox.addEventListener('click', event => event.stopPropagation() );
 
-        eCheckbox.onchange = function () {
+        eCheckbox.addEventListener('change', () => {
             var newValue = eCheckbox.checked;
             if (newValue) {
-                that.selectionController.selectIndex(rowIndex, true);
+                rowNode.setSelected(newValue);
             } else {
-                that.selectionController.deselectIndex(rowIndex);
+                rowNode.setSelected(newValue);
             }
-        };
+        });
 
-        this.grid.addVirtualRowListener(Grid.VIRTUAL_ROW_SELECTED, rowIndex, (selected: boolean) => {
-            this.setCheckboxState(eCheckbox, selected);
+        var selectionChangedCallback = ()=> _.setCheckboxState(eCheckbox, rowNode.isSelected());
+        rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
+
+        addRenderedRowEventListener(RenderedRow.EVENT_RENDERED_ROW_REMOVED, () => {
+            rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
         });
 
         return eCheckbox;
     }
 
-    private setCheckboxState(eCheckbox: any, state: any) {
-        if (typeof state === 'boolean') {
-            eCheckbox.checked = state;
-            eCheckbox.indeterminate = false;
-        } else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            eCheckbox.indeterminate = true;
-        }
-    }
+
 
 }

@@ -1,201 +1,319 @@
-import _ from '../utils';
-import RenderedCell from "./renderedCell";
+import {Utils as _} from '../utils';
+import {RenderedCell} from "./renderedCell";
 import {RowNode} from "../entities/rowNode";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Grid} from "../grid";
 import {ColumnController} from "../columnController/columnController";
-import ExpressionService from "../expressionService";
-import RowRenderer from "./rowRenderer";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import TemplateService from "../templateService";
-import SelectionController from "../selectionController";
-import ValueService from "../valueService";
-import EventService from "../eventService";
-import Column from "../entities/column";
-import VHtmlElement from "../virtualDom/vHtmlElement";
+import {ExpressionService} from "../expressionService";
+import {RowRenderer} from "./rowRenderer";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {TemplateService} from "../templateService";
+import {ValueService} from "../valueService";
+import {Column} from "../entities/column";
 import {Events} from "../events";
+import {GridCore} from "../gridCore";
+import {EventService} from "../eventService";
+import {Qualifier} from "../context/context";
+import {Context} from "../context/context";
+import {Autowired} from "../context/context";
+import {ColumnChangeEvent} from "../columnChangeEvent";
+import {PostConstruct} from "../context/context";
+import {FocusedCellController} from "../focusedCellController";
+import {Constants} from "../constants";
+import {GridCell} from "../entities/gridCell";
 
-export default class RenderedRow {
+export class RenderedRow {
 
-    public vPinnedLeftRow: any;
-    public vPinnedRightRow: any;
-    public vBodyRow: any;
+    public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('eventService') private mainEventService: EventService;
+    @Autowired('context') private context: Context;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+
+    public ePinnedLeftRow: HTMLElement;
+    public ePinnedRightRow: HTMLElement;
+    public eBodyRow: HTMLElement;
+    private eLeftCenterAndRightRows: HTMLElement[];
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
-    private node: RowNode;
+    private rowNode: RowNode;
     private rowIndex: number;
+
+    private rowIsHeaderThatSpans: boolean;
 
     private cellRendererMap: {[key: string]: any};
 
-    private gridOptionsWrapper: GridOptionsWrapper;
     private parentScope: any;
-    private angularGrid: Grid;
-    private columnController: ColumnController;
-    private expressionService: ExpressionService;
     private rowRenderer: RowRenderer;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private $compile: any;
-    private templateService: TemplateService;
-    private selectionController: SelectionController;
     private pinningLeft: boolean;
     private pinningRight: boolean;
     private eBodyContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
-    private valueService: ValueService;
-    private eventService: EventService;
 
-    constructor(gridOptionsWrapper: GridOptionsWrapper,
-                valueService: ValueService,
-                parentScope: any,
-                angularGrid: Grid,
-                columnController: ColumnController,
-                expressionService: ExpressionService,
+    private destroyFunctions: Function[] = [];
+
+    private renderedRowEventService: EventService;
+
+    constructor(parentScope: any,
                 cellRendererMap: {[key: string]: any},
-                selectionRendererFactory: SelectionRendererFactory,
-                $compile: any,
-                templateService: TemplateService,
-                selectionController: SelectionController,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
                 ePinnedRightContainer: HTMLElement,
                 node: RowNode,
-                rowIndex: number,
-                eventService: EventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.valueService = valueService;
+                rowIndex: number) {
         this.parentScope = parentScope;
-        this.angularGrid = angularGrid;
-        this.expressionService = expressionService;
-        this.columnController = columnController;
         this.cellRendererMap = cellRendererMap;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.$compile = $compile;
-        this.templateService = templateService;
-        this.selectionController = selectionController;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
         this.ePinnedRightContainer = ePinnedRightContainer;
 
-        this.pinningLeft = columnController.isPinningLeft();
-        this.pinningRight = columnController.isPinningRight();
+        this.rowIndex = rowIndex;
+        this.rowNode = node;
+    }
 
-        this.eventService = eventService;
+    @PostConstruct
+    public init(): void {
+        this.pinningLeft = this.columnController.isPinningLeft();
+        this.pinningRight = this.columnController.isPinningRight();
+
+        this.createContainers();
 
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
-        var rowIsHeaderThatSpans = node.group && groupHeaderTakesEntireRow;
+        this.rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
 
-        this.vBodyRow = this.createRowContainer();
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow = this.createRowContainer();
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow = this.createRowContainer();
-        }
+        this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
-        this.rowIndex = rowIndex;
-        this.node = node;
-        this.scope = this.createChildScopeOrNull(node.data);
-
-        if (!rowIsHeaderThatSpans) {
-            this.drawNormalRow();
+        if (this.rowIsHeaderThatSpans) {
+            this.createGroupRow();
+        } else {
+            this.refreshCellsIntoRow();
         }
 
         this.addDynamicStyles();
         this.addDynamicClasses();
 
-        var rowStr = this.rowIndex.toString();
-        if (this.node.floatingBottom) {
-            rowStr = 'fb-' + rowStr;
-        } else if (this.node.floatingTop) {
-            rowStr = 'ft-' + rowStr;
-        }
-
-        this.vBodyRow.setAttribute('row', rowStr);
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.setAttribute('row', rowStr);
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.setAttribute('row', rowStr);
-        }
-
-        if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
-            var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.node);
-            if (typeof businessKey === 'string' || typeof businessKey === 'number') {
-                this.vBodyRow.setAttribute('row-id', businessKey);
-                if (this.pinningLeft) {
-                    this.vPinnedLeftRow.setAttribute('row-id', businessKey);
-                }
-                if (this.pinningRight) {
-                    this.vPinnedRightRow.setAttribute('row-id', businessKey);
-                }
-            }
-        }
-
-        // if showing scrolls, position on the container
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            var topPx = this.node.rowTop + "px";
-            this.vBodyRow.style.top = topPx;
-            if (this.pinningLeft) {
-                this.vPinnedLeftRow.style.top = topPx;
-            }
-            if (this.pinningRight) {
-                this.vPinnedRightRow.style.top = topPx;
-            }
-        }
-        var heightPx = this.node.rowHeight + 'px';
-        this.vBodyRow.style.height = heightPx;
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.style.height = heightPx;
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.style.height = heightPx;
-        }
-
-        // if group item, insert the first row
-        if (rowIsHeaderThatSpans) {
-            this.createGroupRow();
-        }
-
-        this.bindVirtualElement(this.vBodyRow);
-        if (this.pinningLeft) {
-            this.bindVirtualElement(this.vPinnedLeftRow);
-        }
-        if (this.pinningRight) {
-            this.bindVirtualElement(this.vPinnedRightRow);
-        }
+        this.addRowIds();
+        this.setTopAndHeightCss();
 
         if (this.scope) {
-            this.$compile(this.vBodyRow.getElement())(this.scope);
-            if (this.pinningLeft) {
-                this.$compile(this.vPinnedLeftRow.getElement())(this.scope);
-            }
-            if (this.pinningRight) {
-                this.$compile(this.vPinnedRightRow.getElement())(this.scope);
-            }
+            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
         }
 
-        this.eBodyContainer.appendChild(this.vBodyRow.getElement());
-        if (this.pinningLeft) {
-            this.ePinnedLeftContainer.appendChild(this.vPinnedLeftRow.getElement());
+        this.addRowSelectedListener();
+        this.addCellFocusedListener();
+        this.addColumnListener();
+
+        this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
+            eRow: this.eBodyRow,
+            ePinnedLeftRow: this.ePinnedLeftRow,
+            ePinnedRightRow: this.ePinnedRightRow,
+            node: this.rowNode,
+            api: this.gridOptionsWrapper.getApi(),
+            rowIndex: this.rowIndex,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
+        });
+    }
+
+    private addColumnListener(): void {
+        var columnListener = this.onColumnChanged.bind(this);
+
+        this.mainEventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
+        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
+        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
+        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
+        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_COLUMN_PINNED, columnListener);
+
+        this.destroyFunctions.push( () => {
+            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
+            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
+            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
+            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
+            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_PINNED, columnListener);
+        });
+    }
+
+    private onColumnChanged(event: ColumnChangeEvent): void {
+        // if row is a group row that spans, then it's not impacted by column changes
+        if (this.rowIsHeaderThatSpans) {
+            return;
         }
-        if (this.pinningRight) {
-            this.ePinnedRightContainer.appendChild(this.vPinnedRightRow.getElement());
+        this.refreshCellsIntoRow();
+    }
+
+    private refreshCellsIntoRow() {
+
+        var columns = this.columnController.getAllDisplayedColumns();
+
+        var renderedCellKeys = Object.keys(this.renderedCells);
+
+        columns.forEach( (column: Column) => {
+            var renderedCell = this.getOrCreateCell(column);
+            this.ensureCellInCorrectRow(renderedCell);
+            renderedCell.checkPinnedClasses();
+            _.removeFromArray(renderedCellKeys, column.getColId());
+        });
+
+        // remove old cells from gui, but we don't destroy them, we might use them again
+        renderedCellKeys.forEach( (key: string)=> {
+            var renderedCell = this.renderedCells[key];
+            // could be old reference, ie removed cell
+            if (!renderedCell) {
+                return;
+            }
+            if (renderedCell.getParentRow()) {
+                renderedCell.getParentRow().removeChild(renderedCell.getGui());
+                renderedCell.setParentRow(null);
+            }
+            renderedCell.destroy();
+            this.renderedCells[key] = null;
+        });
+    }
+
+    private ensureCellInCorrectRow(renderedCell: RenderedCell): void {
+        var eRowGui = renderedCell.getGui();
+        var column = renderedCell.getColumn();
+
+        var rowWeWant: HTMLElement;
+        switch (column.getPinned()) {
+            case Column.PINNED_LEFT: rowWeWant = this.ePinnedLeftRow; break;
+            case Column.PINNED_RIGHT: rowWeWant = this.ePinnedRightRow; break;
+            default: rowWeWant = this.eBodyRow; break;
+        }
+
+        // if in wrong container, remove it
+        var oldRow = renderedCell.getParentRow();
+        var inWrongRow = oldRow !== rowWeWant;
+        if (inWrongRow) {
+            // take out from old row
+            if (oldRow) {
+                oldRow.removeChild(eRowGui);
+            }
+
+            rowWeWant.appendChild(eRowGui);
+            renderedCell.setParentRow(rowWeWant);
         }
     }
 
-    public onRowSelected(selected: boolean): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            renderedCell.setSelected(selected);
+    private getOrCreateCell(column: Column): RenderedCell {
+
+        var colId = column.getColId();
+        if (this.renderedCells[colId]) {
+            return this.renderedCells[colId];
+        } else {
+            var renderedCell = new RenderedCell(column,
+                this.cellRendererMap, this.rowNode,
+                this.rowIndex, this.scope, this);
+            this.context.wireBean(renderedCell);
+            this.renderedCells[colId] = renderedCell;
+            return renderedCell;
+        }
+    }
+
+    private addRowSelectedListener(): void {
+        var rowSelectedListener = () => {
+            var selected = this.rowNode.isSelected();
+            this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+        };
+        this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
+        this.destroyFunctions.push(()=> {
+            this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         });
+    }
+
+    private addCellFocusedListener(): void {
+        var rowFocusedLastTime: boolean = null;
+        var rowFocusedListener = () => {
+            var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex, this.rowNode.floating);
+            if (rowFocused !== rowFocusedLastTime) {
+                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
+                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+                rowFocusedLastTime = rowFocused;
+            }
+        };
+        this.mainEventService.addEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
+        this.destroyFunctions.push(()=> {
+            this.mainEventService.removeEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
+        });
+        rowFocusedListener();
+    }
+
+    private createContainers(): void {
+        this.eBodyRow = this.createRowContainer();
+        this.eLeftCenterAndRightRows = [this.eBodyRow];
+        this.eBodyContainer.appendChild(this.eBodyRow);
+
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.ePinnedLeftRow = this.createRowContainer();
+            this.ePinnedRightRow = this.createRowContainer();
+
+            this.eLeftCenterAndRightRows.push(this.ePinnedLeftRow);
+            this.eLeftCenterAndRightRows.push(this.ePinnedRightRow);
+
+            this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
+            this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
+        }
+    }
+
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
+        var renderedCell = this.renderedCells[cell.column.getId()];
+        if (renderedCell) {
+            renderedCell.onMouseEvent(eventName, mouseEvent);
+        }
+    }
+
+    private setTopAndHeightCss(): void {
+        // if showing scrolls, position on the container
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            var topPx = this.rowNode.rowTop + "px";
+            this.eLeftCenterAndRightRows.forEach( row => row.style.top = topPx);
+        }
+        var heightPx = this.rowNode.rowHeight + 'px';
+        this.eLeftCenterAndRightRows.forEach( row => row.style.height = heightPx);
+    }
+
+    // adds in row and row-id attributes to the row
+    private addRowIds(): void {
+        var rowStr = this.rowIndex.toString();
+        if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
+            rowStr = 'fb-' + rowStr;
+        } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
+            rowStr = 'ft-' + rowStr;
+        }
+        this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row', rowStr) );
+
+        if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
+            var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
+            if (typeof businessKey === 'string' || typeof businessKey === 'number') {
+                this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row-id', businessKey) );
+            }
+        }
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
+        if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
+        this.renderedRowEventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
     public softRefresh(): void {
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (renderedCell.isVolatile()) {
+            if (renderedCell && renderedCell.isVolatile()) {
                 renderedCell.refreshCell();
             }
         });
@@ -208,27 +326,31 @@ export default class RenderedRow {
     public getCellForCol(column: Column): HTMLElement {
         var renderedCell = this.renderedCells[column.getColId()];
         if (renderedCell) {
-            return renderedCell.getVGridCell().getElement();
+            return renderedCell.getGui();
         } else {
             return null;
         }
     }
 
     public destroy(): void {
+
+        this.destroyFunctions.forEach( func => func() );
+
         this.destroyScope();
 
-        if (this.pinningLeft) {
-            this.ePinnedLeftContainer.removeChild(this.vPinnedLeftRow.getElement());
-        }
-        if (this.pinningRight) {
-            this.ePinnedRightContainer.removeChild(this.vPinnedRightRow.getElement());
-        }
-        this.eBodyContainer.removeChild(this.vBodyRow.getElement());
+        this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
+        this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
+        this.eBodyContainer.removeChild(this.eBodyRow);
 
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            renderedCell.destroy();
+            if (renderedCell) {
+                renderedCell.destroy();
+            }
         });
 
+        if (this.renderedRowEventService) {
+            this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
+        }
     }
 
     private destroyScope(): void {
@@ -239,64 +361,27 @@ export default class RenderedRow {
     }
 
     public isDataInList(rows: any[]): boolean {
-        return rows.indexOf(this.node.data) >= 0;
-    }
-
-    public isNodeInList(nodes: RowNode[]): boolean {
-        return nodes.indexOf(this.node) >= 0;
+        return rows.indexOf(this.rowNode.data) >= 0;
     }
 
     public isGroup(): boolean {
-        return this.node.group === true;
-    }
-
-    private drawNormalRow() {
-        var columns = this.columnController.getAllDisplayedColumns();
-        var firstRightPinnedColIndex = this.columnController.getFirstRightPinnedColIndex();
-        for (var colIndex = 0; colIndex<columns.length; colIndex++) {
-            var column = columns[colIndex];
-            var firstRightPinnedCol = colIndex === firstRightPinnedColIndex;
-
-            var renderedCell = new RenderedCell(firstRightPinnedCol, column,
-                this.$compile, this.rowRenderer, this.gridOptionsWrapper, this.expressionService,
-                this.selectionRendererFactory, this.selectionController, this.templateService,
-                this.cellRendererMap, this.node, this.rowIndex, colIndex, this.scope, this.columnController,
-                this.valueService, this.eventService);
-
-            var vGridCell = renderedCell.getVGridCell();
-
-            if (column.getPinned() === Column.PINNED_LEFT) {
-                this.vPinnedLeftRow.appendChild(vGridCell);
-            } else if (column.getPinned()=== Column.PINNED_RIGHT) {
-                this.vPinnedRightRow.appendChild(vGridCell);
-            } else {
-                this.vBodyRow.appendChild(vGridCell);
-            }
-
-            this.renderedCells[column.getColId()] = renderedCell;
-        }
-    }
-
-    private bindVirtualElement(vElement: VHtmlElement): void {
-        var html = vElement.toHtmlString();
-        var element: Element = <Element> _.loadTemplate(html);
-        vElement.elementAttached(element);
+        return this.rowNode.group === true;
     }
 
     private createGroupRow() {
         var eGroupRow = this.createGroupSpanningEntireRowCell(false);
 
         if (this.pinningLeft) {
-            this.vPinnedLeftRow.appendChild(eGroupRow);
+            this.ePinnedLeftRow.appendChild(eGroupRow);
             var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-            this.vBodyRow.appendChild(eGroupRowPadding);
+            this.eBodyRow.appendChild(eGroupRowPadding);
         } else {
-            this.vBodyRow.appendChild(eGroupRow);
+            this.eBodyRow.appendChild(eGroupRow);
         }
 
         if (this.pinningRight) {
             var ePinnedRightPadding = this.createGroupSpanningEntireRowCell(true);
-            this.vPinnedRightRow.appendChild(ePinnedRightPadding);
+            this.ePinnedRightRow.appendChild(ePinnedRightPadding);
         }
     }
 
@@ -315,8 +400,8 @@ export default class RenderedRow {
                 };
             }
             var params = {
-                node: this.node,
-                data: this.node.data,
+                node: this.rowNode,
+                data: this.rowNode.data,
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 colDef: {
@@ -348,7 +433,7 @@ export default class RenderedRow {
                 eRow = _.loadTemplate(resultFromRenderer);
             }
         }
-        if (this.node.footer) {
+        if (this.rowNode.footer) {
             _.addCssClass(eRow, 'ag-footer-cell-entire-row');
         } else {
             _.addCssClass(eRow, 'ag-group-cell-entire-row');
@@ -356,10 +441,6 @@ export default class RenderedRow {
 
         return eRow;
     }
-
-    //public setMainRowWidth(width: number) {
-    //    this.vBodyRow.addStyles({width: width + "px"});
-    //}
 
     private createChildScopeOrNull(data: any) {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -375,41 +456,29 @@ export default class RenderedRow {
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (rowStyle) {
             if (typeof rowStyle === 'function') {
-                console.log('ag-Grid: rowStyle should be a string or an array, not be a function, use getRowStyle() instead');
+                console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             } else {
-                this.vBodyRow.addStyles(rowStyle);
-                if (this.pinningLeft) {
-                    this.vPinnedLeftRow.addStyles(rowStyle);
-                }
-                if (this.pinningRight) {
-                    this.vPinnedRightRow.addStyles(rowStyle);
-                }
+                this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, rowStyle));
             }
         }
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
         if (rowStyleFunc) {
             var params = {
-                data: this.node.data,
-                node: this.node,
+                data: this.rowNode.data,
+                node: this.rowNode,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 $scope: this.scope
             };
             var cssToUseFromFunc = rowStyleFunc(params);
-            this.vBodyRow.addStyles(cssToUseFromFunc);
-            if (this.pinningLeft) {
-                this.vPinnedLeftRow.addStyles(cssToUseFromFunc);
-            }
-            if (this.pinningRight) {
-                this.vPinnedRightRow.addStyles(cssToUseFromFunc);
-            }
+            this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, cssToUseFromFunc));
         }
     }
 
     private createParams(): any {
         var params = {
-            node: this.node,
-            data: this.node.data,
+            node: this.rowNode,
+            data: this.rowNode.data,
             rowIndex: this.rowIndex,
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
@@ -425,27 +494,65 @@ export default class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer() {
-        var vRow = new VHtmlElement('div');
-        var that = this;
-        vRow.addEventListener("click", function (event: any) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
-
-            // ctrlKey for windows, metaKey for Apple
-            var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
-            that.angularGrid.onRowClicked(multiSelectKeyPressed, that.rowIndex, that.node);
-        });
-        vRow.addEventListener("dblclick", function (event: any) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+    private createRowContainer(): HTMLElement {
+        var vRow = document.createElement('div');
+        vRow.addEventListener("click", this.onRowClicked.bind(this));
+        vRow.addEventListener("dblclick", (event: any) => {
+            var agEvent = this.createEvent(event, this);
+            this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
         });
 
         return vRow;
     }
 
+    public onRowClicked(event: MouseEvent) {
+
+        var agEvent = this.createEvent(event, this);
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
+
+        // ctrlKey for windows, metaKey for Apple
+        var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
+
+        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // so return if it's a group row
+        if (this.rowNode.group) {
+            return;
+        }
+
+        // we also don't allow selection of floating rows
+        if (this.rowNode.floating) {
+            return;
+        }
+
+        // making local variables to make the below more readable
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+
+        // if no selection method enabled, do nothing
+        if (!gridOptionsWrapper.isRowSelection()) {
+            return;
+        }
+
+        // if click selection suppressed, do nothing
+        if (gridOptionsWrapper.isSuppressRowClickSelection()) {
+            return;
+        }
+
+        if (this.rowNode.isSelected()) {
+            if (multiSelectKeyPressed) {
+                if (gridOptionsWrapper.isRowDeselection()) {
+                    this.rowNode.setSelected(false);
+                }
+            } else {
+                // selected with no multi key, must make sure anything else is unselected
+                this.rowNode.setSelected(true, true);
+            }
+        } else {
+            this.rowNode.setSelected(true, !multiSelectKeyPressed);
+        }
+    }
+
     public getRowNode(): any {
-        return this.node;
+        return this.rowNode;
     }
 
     public getRowIndex(): any {
@@ -459,6 +566,9 @@ export default class RenderedRow {
         var columnsToRefresh = this.columnController.getColumns(colIds);
 
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+            if (!renderedCell) {
+                return;
+            }
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
                 renderedCell.refreshCell();
@@ -474,29 +584,29 @@ export default class RenderedRow {
 
         classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
 
-        if (this.selectionController.isNodeSelected(this.node)) {
+        if (this.rowNode.isSelected()) {
             classes.push("ag-row-selected");
         }
 
-        if (this.node.group) {
+        if (this.rowNode.group) {
             classes.push("ag-row-group");
             // if a group, put the level of the group in
-            classes.push("ag-row-level-" + this.node.level);
+            classes.push("ag-row-level-" + this.rowNode.level);
 
-            if (!this.node.footer && this.node.expanded) {
+            if (!this.rowNode.footer && this.rowNode.expanded) {
                 classes.push("ag-row-group-expanded");
             }
-            if (!this.node.footer && !this.node.expanded) {
+            if (!this.rowNode.footer && !this.rowNode.expanded) {
                 // opposite of expanded is contracted according to the internet.
                 classes.push("ag-row-group-contracted");
             }
-            if (this.node.footer) {
+            if (this.rowNode.footer) {
                 classes.push("ag-row-footer");
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            if (this.node.parent) {
-                classes.push("ag-row-level-" + (this.node.parent.level + 1));
+            if (this.rowNode.parent) {
+                classes.push("ag-row-level-" + (this.rowNode.parent.level + 1));
             } else {
                 classes.push("ag-row-level-0");
             }
@@ -521,8 +631,8 @@ export default class RenderedRow {
         var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
         if (gridOptionsRowClassFunc) {
             var params = {
-                node: this.node,
-                data: this.node.data,
+                node: this.rowNode,
+                data: this.rowNode.data,
                 rowIndex: this.rowIndex,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()
@@ -539,12 +649,8 @@ export default class RenderedRow {
             }
         }
 
-        this.vBodyRow.addClasses(classes);
-        if (this.pinningLeft) {
-            this.vPinnedLeftRow.addClasses(classes);
-        }
-        if (this.pinningRight) {
-            this.vPinnedRightRow.addClasses(classes);
-        }
+        classes.forEach( (classStr: string) => {
+            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+        });
     }
 }

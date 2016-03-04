@@ -1,6 +1,7 @@
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColGroupDef} from "./colDef";
-import ColumnGroup from "./columnGroup";
+import {ColumnGroup} from "./columnGroup";
+import {Column} from "./column";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild {
 
@@ -32,6 +33,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
         return this.groupId;
     }
 
+    public getId(): string {
+        return this.getGroupId();
+    }
+
     public setChildren(children: OriginalColumnGroupChild[]): void {
         this.children = children;
     }
@@ -42,6 +47,22 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
 
     public getColGroupDef(): ColGroupDef {
         return this.colGroupDef;
+    }
+
+    public getLeafColumns(): Column[] {
+        var result: Column[] = [];
+        this.addLeafColumns(result);
+        return result;
+    }
+
+    private addLeafColumns(leafColumns: Column[]): void {
+        this.children.forEach( (child: OriginalColumnGroupChild) => {
+            if (child instanceof Column) {
+                leafColumns.push(<Column>child);
+            } else if (child instanceof OriginalColumnGroup) {
+                (<OriginalColumnGroup>child).addLeafColumns(leafColumns);
+            }
+        });
     }
 
     public getColumnGroupShow(): string {

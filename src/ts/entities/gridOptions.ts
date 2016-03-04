@@ -1,21 +1,21 @@
 import {RowNode} from './rowNode';
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
+import {Column} from "./column";
+import {MenuItem} from "../widgets/cMenuItem";
 
 /****************************************************************
- ****************************************************************
- *                                                              *
  * Don't forget to update ComponentUtil if changing this class. *
- *                                                              *
- ****************************************************************
  ****************************************************************/
 export interface GridOptions {
 
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
+
     // set once in init, can never change
-    virtualPaging?: boolean;
     toolPanelSuppressGroups?: boolean;
     toolPanelSuppressValues?: boolean;
-    rowsAlreadyGrouped?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
@@ -42,14 +42,32 @@ export interface GridOptions {
     suppressLoadingOverlay?: boolean;
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
-    suppressMovingCss?: boolean;
+    suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
+    suppressFieldDotNotation?: boolean;
+    rowModelType?: string;
+    enableRangeSelection?: boolean;
+    suppressEnterprise?: boolean;
+    // enterprise only
+    rowGroupPanelShow?: string;
+    suppressContextMenu?: boolean;
+    suppressMenuFilterPanel?: boolean;
+    suppressMenuMainPanel?: boolean;
+    suppressMenuColumnPanel?: boolean;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // just set once
     localeText?: any;
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
@@ -60,6 +78,10 @@ export interface GridOptions {
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: any; // change to typed
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // changeable, but no immediate impact
     context?: any;
@@ -75,6 +97,10 @@ export interface GridOptions {
     rowHeight?: number;
     headerCellTemplate?: string;
 
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
+
     // changeable with impact
     rowData?: any[]; // should this be immutable for ag2?
     floatingTopRowData?: any[]; // should this be immutable ag2?
@@ -84,6 +110,10 @@ export interface GridOptions {
     datasource?: any; // should be typed
     // in properties
     headerHeight?: number;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // callbacks
     groupRowInnerRenderer?(params: any): void;
@@ -98,6 +128,15 @@ export interface GridOptions {
     groupAggFunction?(nodes: any[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
+    getNodeChildDetails?(dataItem: any): NodeChildDetails;
+    getContextMenuItems?: GetContextMenuItems,
+    getMainMenuItems?: GetMainMenuItems,
+    processRowPostCreate?(params: ProcessRowParams): void;
+    processCellForClipboard?(params: ProcessCellForExportParams): any;
+
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
 
     // events
     onGridReady?(params: any): void;
@@ -120,7 +159,65 @@ export interface GridOptions {
     onRowDoubleClicked?(params: any): void;
     onGridSizeChanged?(params: any): void;
 
+    /****************************************************************
+     * Don't forget to update ComponentUtil if changing this class. *
+     ****************************************************************/
+
     // apis, set by the grid on init
     api?: GridApi; // change to typed
     columnApi?: ColumnApi; // change to typed
+}
+
+export interface NodeChildDetails {
+    group: boolean;
+    children?: any[];
+    expanded?: boolean;
+    field?: string;
+    key?: any;
+}
+
+export interface GetContextMenuItemsParams {
+    column: Column,
+    node: RowNode,
+    value: any,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
+}
+
+export interface GetContextMenuItems {
+    (params: GetContextMenuItemsParams): [string|MenuItem]
+}
+
+export interface GetMainMenuItemsParams {
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any,
+    defaultItems: string[]
+}
+
+export interface GetMainMenuItems {
+    (params: GetMainMenuItemsParams): [string|MenuItem]
+}
+
+export interface ProcessRowParams {
+    eRow: HTMLElement;
+    ePinnedLeftRow: HTMLElement;
+    ePinnedRightRow: HTMLElement;
+    rowIndex: number,
+    node: RowNode,
+    api: GridApi,
+    columnApi: ColumnApi,
+    addRenderedRowListener: (eventType: string, listener: Function)=>void,
+    context: any
+}
+
+export interface ProcessCellForExportParams {
+    value: any,
+    node: RowNode,
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
 }

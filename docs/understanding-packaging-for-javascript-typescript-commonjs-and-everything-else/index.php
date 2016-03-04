@@ -49,7 +49,7 @@ include('../mediaHeader.php');
         You can learn from them and benefit from what they bring to the community even if your a Babel and React guy.
         <ul>
             <li><b>Typescript</b> is written by Microsoft, a proper company with experience writing proper compilers
-            including C# and C++. This means I respect more their 'design on things' that I would open source
+            including C# and C++. This means I respect more their 'design on things' than I would open source
             community driven projects. Personally I learnt a lot by observing the different options of the Typescript
             compiler and how they changed the resultant JavaScript code.</li>
             <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be it's achilles heel,
@@ -105,7 +105,7 @@ module ag.grid {
         <p>
             External modules in TypeScript are what you see in ag-Grid and Angular 2 code and this is what
             works best with CommonJS as it gets compiled down to CommonJS 'require' functions which is what
-            most of the rest of the work is using, incluing the React community.
+            most of the rest of the world is using, incluing the React community.
         </p>
 
         <pre>
@@ -321,7 +321,7 @@ import {Grid} from 'ag-grid/main';</pre>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 
-        <p>As for the Self Contained JavaScritp Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
+        <p>As for the Self Contained JavaScript Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
             the JavaScript code or not, so ag-Grid provides four bundled versions:
             <ul>
             <li>Normal no CSS</li>
@@ -345,29 +345,34 @@ import {Grid} from 'ag-grid/main';</pre>
             <li>The dependent projects cannot be part of the Self Contained JavaScript Bundles described above
                 that you can build with WebPack for direct HTML inclusion. This is because the parts need
                 the said libraries at compile time (not run-time like for example Angular 1)
-                because your component classes extend (as in 'object oriented class' extend) classes from these libraries.
-                This means if you included these dependencies in your project, they would end up in your bundled files,
-                which would be bad.</li>
+                because your component classes have compile time linked dependencies on the frameworks
+                (React components 'object oriented class' extend React classes, and Angular 2 components
+                use ECMA 6 decorators) from these libraries.
+                This means if you included these dependencies in your project they would
+                be dragged into your bundled files. This would be bad, as the client will need
+                to be providing the framework.</li>
         </ul></p>
 
         <p>
             One thing to note about the second point and Angular 2 - it says you cannot Webpack UMD bundle Angular 2
             components, so how then can we write components that work with Angular 2's UMD distribution? The answer is
             that you will also need to provide your component as compatible with Angular 2's UMD interface, ie you
-            will need to reference Angular 2 on the global scope and then use ECMA 5 JavaScript techniques instead of
-            ECMA 6 object oriented extends and decorators. This means you would have to either NOT use ECMA 6 at all
+            will need to reference Angular 2 on the global scope (or have the client give you a reference to the library
+            somehow) and then use ECMA 5 JavaScript techniques instead of
+            ECMA 6 decorators. This means you would have to either NOT use ECMA 6 at all
             in your component's Angular 2 references,
-            or have two version of your library. Personally I don't see this catching on. I do not believe that the
-            majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspecting of some
+            or have two versions of your library, one using ECMA 5 and one using ECMA 6.
+            Personally I don't see this catching on. I do not believe that the
+            majority of libraries are going to support the Angular 2 UMD model. Right now, a quick inspection of some
             popular Angular 2 components shows they are not supporting UMD.
         </p>
 
         <h3>Summing Up</h3>
 
         <p>
-            And that's it. The world of packaging is changing, so I don't know how long the above will be relevant for.
+            And that's it. The world of packaging is changing, so I don't know for how long the above will be relevant.
             However you can take it from me, ag-Grid is used by thousands of people, the above system is tried and
-            tested and is working for me.
+            tested and does work.
         </p>
 
         <div style="margin-top: 20px;">

@@ -1,26 +1,29 @@
-import GridOptionsWrapper from '../gridOptionsWrapper';
+import {GridOptionsWrapper} from '../gridOptionsWrapper';
 import {Logger, LoggerFactory} from '../logger';
-import ColumnUtils from '../columnController/columnUtils';
+import {ColumnUtils} from '../columnController/columnUtils';
 import {AbstractColDef} from "../entities/colDef";
-import ColumnKeyCreator from "./columnKeyCreator";
+import {ColumnKeyCreator} from "./columnKeyCreator";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {ColGroupDef} from "../entities/colDef";
 import {ColDef} from "../entities/colDef";
-import Column from "../entities/column";
+import {Column} from "../entities/column";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
+import {Context} from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-export default class BalancedColumnTreeBuilder {
+@Bean('balancedColumnTreeBuilder')
+export class BalancedColumnTreeBuilder {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('context') private context: Context;
+
     private logger: Logger;
-    private columnUtils: ColumnUtils;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper, loggerFactory: LoggerFactory,
-                columnUtils: ColumnUtils) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnUtils = columnUtils;
-
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
@@ -101,9 +104,6 @@ export default class BalancedColumnTreeBuilder {
             return result;
         }
 
-        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
-
         abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
             this.checkForDeprecatedItems(abstractColDef);
             if (this.isColumnGroup(abstractColDef)) {
@@ -115,9 +115,9 @@ export default class BalancedColumnTreeBuilder {
                 result.push(originalGroup);
             } else {
                 var colDef = <ColDef> abstractColDef;
-                var width = this.columnUtils.calculateColInitialWidth(colDef);
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new Column(colDef, width, colId, minColWidth, maxColWidth);
+                var column = new Column(colDef, colId);
+                this.context.wireBean(column);
                 result.push(column);
             }
         });
@@ -144,7 +144,5 @@ export default class BalancedColumnTreeBuilder {
     private isColumnGroup(abstractColDef: AbstractColDef): boolean {
         return (<ColGroupDef>abstractColDef).children !== undefined;
     }
-
-
 
 }

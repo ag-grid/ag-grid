@@ -8,42 +8,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Bootstrap -->
+<!--
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+-->
+        <link rel="stylesheet" href="./bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="./bootstrap/bootstrap-theme.min.css">
+
         <link rel="stylesheet" href="./style.css">
 
+        <style>
+            label { font-weight: normal !important; }
+            .blue { background-color: darkblue; color: lightblue; }
+            .good-score { background-color: lightgreen; }
+            .bad-score { background-color: lightcoral; }
+        </style>
+
+<!--
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+-->
+        <script src="./bootstrap/jquery.min.js"></script>
+        <script src="./bootstrap/bootstrap.min.js"></script>
 
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
-        <script src="./dist/ag-grid.js?ignore=notused18"></script>
+<!--        <script src="./dist/ag-grid.js?ignore=notused18"></script>-->
+        <script src="./dist/ag-grid-enterprise.js?ignore=notused18"></script>
 
         <script src="example.js"></script>
 
-        <style>
-            label {
-                font-weight: normal !important;
-            }
-
-            .blue {
-                background-color: darkblue;
-                color: lightblue;
-            }
-
-            .good-score {
-                background-color: lightgreen;
-                /*color: lightblue;*/
-            }
-
-            .bad-score {
-                background-color: lightcoral;
-                /*color: lightblue;*/
-            }
-
-        </style>
     </head>
 
     <body style="height: 100%; margin: 0px; padding: 0px;">
@@ -108,6 +104,7 @@
 
             </div>
         </div>
+
         <!-- The table div -->
         <div style="padding: 100px 20px 20px 20px; height: 100%; box-sizing: border-box;">
             <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>

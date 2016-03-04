@@ -108,9 +108,38 @@ include '../documentation_header.php';
             <th>getHeaderCellTemplate</th>
             <td>Function to use instead of headerCellTemplate, should return string or html DOM element.</td>
         </tr>
-
+        <tr>
+            <th>getNodeChildDetails(callback)</th>
+            <td>Allows you to pass tree structure data to the grid, or row data that is already grouped.</td>
+        </tr>
+        <tr>
+            <th>processRowPostCreate(params)</th>
+            <td>Allows you to process rows after they are created. So do final adding of custom attributes etc.</td>
+        </tr>
     </table>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The callbacks below are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+        </tr>
+
+        <tr>
+            <th>getContextMenuItems(params)</th>
+            <td>For customising the context menu.</td>
+        </tr>
+        <tr>
+            <th>processCellForClipboard(params)</th>
+            <td>Allows you to process cells for the clipboard. Handy if you have date objects that you need
+                to have a particular format if importing into Excel.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

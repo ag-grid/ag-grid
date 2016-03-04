@@ -1,4 +1,4 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Filter} from "./filter";
 
 var template =
@@ -24,7 +24,7 @@ var EQUALS = 2;
 var STARTS_WITH = 3;
 var ENDS_WITH = 4;
 
-export default class TextFilter implements Filter {
+export class TextFilter implements Filter {
 
     private filterParams: any;
     private filterChangedCallback: any;
@@ -83,7 +83,7 @@ export default class TextFilter implements Filter {
             case STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
             case ENDS_WITH:
-                var index = valueLowerCase.indexOf(this.filterText);
+                var index = valueLowerCase.lastIndexOf(this.filterText);
                 return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
             default:
                 // should never happen

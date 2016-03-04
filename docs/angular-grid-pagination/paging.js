@@ -21,14 +21,17 @@ var gridOptions = {
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     enableSorting: true,
     enableFilter: true,
+    debug: true,
+    rowSelection: 'multiple',
     enableColResize: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowModelType: 'pagination'
 };
 
-function onPageSizeChanged(pageSize) {
-    pageSize = new Number(pageSize);
+function onPageSizeChanged(newPageSize) {
+    pageSize = new Number(newPageSize);
     createNewDatasource();
-};
+}
 
 // when json gets loaded, it's put here, and  the datasource reads in from here.
 // in a real application, the page will be got from the server.

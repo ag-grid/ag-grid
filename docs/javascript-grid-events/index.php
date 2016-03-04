@@ -59,7 +59,7 @@ include '../documentation_header.php';
         DOM elements work.
     </p>
 
-    <h2>Core Grid Events</h2>
+    <h2>ag-Grid Events</h2>
 
     <table class="table">
         <tr>
@@ -103,17 +103,25 @@ include '../documentation_header.php';
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
-            <th>beforeSortChanged<br/>afterSortChanged</th>
-            <td>Sorting changed. 'before' dispatches before the grid executes the sort. 'after'
-                dispatches after the grid executes the sort.</td>
+            <th>sortChanged<br/>beforeSortChanged<br/>afterSortChanged</th>
+            <td>
+                sortChanged -> Sort has changed, grid also listens for this and updates the model.<br/>
+                beforeSortChanged -> Sort has changed, grid has not updated.<br/>
+                afterSortChanged -> Sort has changed, grid has updated.<br/>
+            </td>
         </tr>
         <tr>
-            <th>filterModified<br/>beforeFilterChanged<br/>afterFilterChanged</th>
-            <td>Filtering changed. 'before' dispatches before the grid executes the filter. 'after'
-                dispatches after the grid executes the filter. filterModified is useful when using the Apply button.</td>
+            <th>filterChanged</br>beforeFilterChanged<br/>afterFilterChanged<br/>filterModified</th>
+            <td>
+                filterChanged -> Filter has changed, grid also listens for this and updates the model.<br/>
+                beforeFilterChanged -> Filter has changed, grid has not updated.<br/>
+                afterFilterChanged -> Filter has changed, grid has updated.<br/>
+                filterModified -> Gets called when filter has been modified, but grid not informed. Useful when
+                using an apply button inside the filter.<br/>
+            </td>
         </tr>
         <tr>
-            <th>ready</th>
+            <th>gridReady</th>
             <td>ag-Grid has initialised. The name 'ready'
                 was influenced by the authors time programming the Commodore 64. Use this event if,
                 for example, you need to use the grid's API to fix the columns to size.</td>
@@ -133,20 +141,6 @@ include '../documentation_header.php';
         <tr>
             <th>rowGroupOpened</th>
             <td>A row group was opened or closed.</td>
-        </tr>
-    </table>
-
-    <h2>Column Changed Events</h2>
-
-    <p>
-        A column change event gets fired whenever something changes with one of the columns.
-        You add a column change event as follows:
-    </p>
-
-    <table class="table">
-        <tr>
-            <th>Event</th>
-            <th>Description</th>
         </tr>
         <tr>
             <th>columnEverythingChanged</th>
@@ -182,6 +176,22 @@ include '../documentation_header.php';
         </tr>
     </table>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The below events are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Event</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>rangeSelectionChanged</th>
+            <td>A change to range selection has occurred.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

@@ -1,10 +1,17 @@
-import constants from '../constants';
+import {Constants as constants} from '../constants';
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColDef} from "./colDef";
 import {AbstractColDef} from "./colDef";
-import EventService from "../eventService";
-import ColumnGroup from "./columnGroup";
+import {EventService} from "../eventService";
+import {ColumnGroup} from "./columnGroup";
+import {ColumnController} from "../columnController/columnController";
+import {Utils as _} from '../utils';
+import {Autowired} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {PostConstruct} from "../context/context";
+import {ColumnUtils} from "../columnController/columnUtils";
+import {RowNode} from "./rowNode";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -12,7 +19,23 @@ import ColumnGroup from "./columnGroup";
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export default class Column implements ColumnGroupChild, OriginalColumnGroupChild {
+export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
+
+    // + renderedHeaderCell - for making header cell transparent when moving
+    public static EVENT_MOVING_CHANGED = 'movingChanged';
+    // + renderedCell - changing left position
+    public static EVENT_LEFT_CHANGED = 'leftChanged';
+    // + renderedCell - changing width
+    public static EVENT_WIDTH_CHANGED = 'widthChanged';
+    // + renderedCell - for changing pinned classes
+    public static EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
+    public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    // + renderedColumn - for changing visibility icon
+    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    // + renderedHeaderCell - marks the header with filter icon
+    public static EVENT_FILTER_ACTIVE_CHANGED = 'filterChanged';
+    // + renderedHeaderCell - marks the header with sort icon
+    public static EVENT_SORT_CHANGED = 'filterChanged';
 
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
@@ -20,9 +43,14 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     public static AGG_SUM = 'sum';
     public static AGG_MIN = 'min';
     public static AGG_MAX = 'max';
+    public static AGG_FIRST = 'first';
+    public static AGG_LAST = 'last';
 
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private colDef: ColDef;
     private colId: any;
@@ -37,39 +65,45 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt: number;
     private moving = false;
 
+    private lastLeftPinned: boolean;
+    private firstRightPinned: boolean;
+
     private minWidth: number;
     private maxWidth: number;
 
-    public static EVENT_MOVING_CHANGED = 'movingChanged';
-    public static EVENT_LEFT_CHANGED = 'leftChanged';
-    public static EVENT_WIDTH_CHANGED = 'widthChanged';
+    private filterActive = false;
 
     private eventService: EventService = new EventService();
 
-    constructor(colDef: ColDef, actualWidth: any, colId: String, globalMinWidth: number, globalMaxWidth: number) {
+    constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
-        this.actualWidth = actualWidth;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
-        if (colDef.pinned === true || colDef.pinned === 'left') {
-            this.pinned = 'left';
-        } else if (colDef.pinned === 'right') {
-            this.pinned = 'right';
-        }
+    }
+
+    // this is done after constructor as it uses gridOptionsWrapper
+    @PostConstruct
+    public initialise(): void {
+        this.setPinned(this.colDef.pinned);
+
+        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
         if (this.colDef.minWidth) {
             this.minWidth = this.colDef.minWidth;
         } else {
-            this.minWidth = globalMinWidth;
+            this.minWidth = minColWidth;
         }
 
         if (this.colDef.maxWidth) {
             this.maxWidth = this.colDef.maxWidth;
         } else {
-            this.maxWidth = globalMaxWidth;
+            this.maxWidth = maxColWidth;
         }
+
+        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -78,6 +112,29 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public removeEventListener(eventType: string, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
+    }
+
+    public isCellEditable(rowNode: RowNode): boolean {
+        // if boolean set, then just use it
+        if (typeof this.colDef.editable === 'boolean') {
+            return <boolean> this.colDef.editable;
+        }
+
+        // if function, then call the function to find out
+        if (typeof this.colDef.editable === 'function') {
+            var params = {
+                node: rowNode,
+                column: this,
+                colDef: this.colDef,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            var editableFunc = <Function>this.colDef.editable;
+            return editableFunc(params);
+        }
+
+        return false;
     }
 
     public setMoving(moving: boolean) {
@@ -94,7 +151,22 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setSort(sort: string): void {
-        this.sort = sort;
+        if (this.sort !== sort) {
+            this.sort = sort;
+            this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
+        }
+    }
+
+    public isSortAscending(): boolean {
+        return this.sort === Column.SORT_ASC;
+    }
+
+    public isSortDescending(): boolean {
+        return this.sort === Column.SORT_DESC;
+    }
+
+    public isSortNone(): boolean {
+        return _.missing(this.sort);
     }
 
     public getSortedAt(): number {
@@ -117,6 +189,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         return this.left;
     }
 
+    public getRight(): number {
+        return this.left + this.actualWidth;
+    }
+
     public setLeft(left: number) {
         if (this.left !== left) {
             this.left = left;
@@ -124,7 +200,23 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         }
     }
 
+    public isFilterActive(): boolean {
+        return this.filterActive;
+    }
+
+    public setFilterActive(active: boolean): void {
+        if (this.filterActive !== active) {
+            this.filterActive = active;
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
+        }
+    }
+
     public setPinned(pinned: string|boolean): void {
+        // pinning is not allowed when doing 'forPrint'
+        if (this.gridOptionsWrapper.isForPrint()) {
+            return;
+        }
+
         if (pinned===true || pinned===Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
         } else if (pinned===Column.PINNED_RIGHT) {
@@ -134,8 +226,38 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
         }
     }
 
+    public setFirstRightPinned(firstRightPinned: boolean): void {
+        if (this.firstRightPinned !== firstRightPinned) {
+            this.firstRightPinned = firstRightPinned;
+            this.eventService.dispatchEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED);
+        }
+    }
+
+    public setLastLeftPinned(lastLeftPinned: boolean): void {
+        if (this.lastLeftPinned !== lastLeftPinned) {
+            this.lastLeftPinned = lastLeftPinned;
+            this.eventService.dispatchEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED);
+        }
+    }
+
+    public isFirstRightPinned(): boolean {
+        return this.firstRightPinned;
+    }
+
+    public isLastLeftPinned(): boolean {
+        return this.lastLeftPinned;
+    }
+
     public isPinned(): boolean {
         return this.pinned === Column.PINNED_LEFT || this.pinned === Column.PINNED_RIGHT;
+    }
+
+    public isPinnedLeft(): boolean {
+        return this.pinned === Column.PINNED_LEFT;
+    }
+
+    public isPinnedRight(): boolean {
+        return this.pinned === Column.PINNED_RIGHT;
     }
 
     public getPinned(): string {
@@ -143,7 +265,11 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
     }
 
     public setVisible(visible: boolean): void {
-        this.visible = visible===true;
+        var newValue = visible===true;
+        if (this.visible !== newValue) {
+            this.visible = newValue;
+            this.eventService.dispatchEvent(Column.EVENT_VISIBLE_CHANGED);
+        }
     }
 
     public isVisible(): boolean {
@@ -160,6 +286,10 @@ export default class Column implements ColumnGroupChild, OriginalColumnGroupChil
 
     public getColId(): string {
         return this.colId;
+    }
+
+    public getId(): string {
+        return this.getColId();
     }
 
     public getDefinition(): AbstractColDef {

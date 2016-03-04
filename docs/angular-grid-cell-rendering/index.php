@@ -130,7 +130,7 @@ var colDef = {
         <tr>
             <th>valueGetter</th>
             <td>A function, that when called, gives you the value, calling the relevant valueGetter / expression
-            if neccessary. This can be called at any time after rendering, so you could implement some kind of
+            if necessary. This can be called at any time after rendering, so you could implement some kind of
             refresh and get the latest value this way when the 'value' param would be stale.</td>
         </tr>
         <tr>
@@ -139,7 +139,16 @@ var colDef = {
         </tr>
         <tr>
             <th>node</th>
-            <td>The RowNode of the row beeing renderered.</td>
+            <td>The RowNode of the row being rendered.</td>
+        </tr>
+        <tr>
+            <th>addRenderedRowListener(eventName, callback)</th>
+            <td>Registers a callback to the rendered row.
+                Unlike normal events, you do not need to unregister rendered row listeners.
+                When the rendered row is removed from the grid, all associated rendered row listeners will
+                also be removed. Currently only one event: 'renderedRowRemoved' - listen
+                for this event if your cellRenderer needs to do clean down after the
+                row no longer exists.</td>
         </tr>
     </table>
 

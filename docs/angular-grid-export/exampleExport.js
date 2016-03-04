@@ -16,7 +16,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableFilter: true,
     enableSorting: true,
-    showToolPanel: true
+    showToolPanel: true,
+    rowSelection: 'multiple'
 };
 
 function getBooleanValue(cssSelector) {
@@ -29,9 +30,20 @@ function onBtExport() {
         skipFooters: getBooleanValue('#skipFooters'),
         skipGroups: getBooleanValue('#skipGroups'),
         allColumns: getBooleanValue('#allColumns'),
+        onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value,
         columnSeparator: document.querySelector('#columnSeparator').value
     };
+
+    if (getBooleanValue('#useCellCallback')) {
+        params.processCellCallback = function(params) {
+            if (params.value && params.value.toUpperCase) {
+                return params.value.toUpperCase();
+            } else {
+                return params.value;
+            }
+        };
+    }
 
     if (getBooleanValue('#customHeader')) {
         params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';

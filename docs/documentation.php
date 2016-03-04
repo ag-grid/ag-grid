@@ -41,6 +41,92 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
+    <div style="float: left; width: 40px;">
+        <img src="images/npm.png" style="width: 30px;"/>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; float: left;">
+            NPM Downloads Last Month (source www.npmjs.com)
+        </div>
+    </div>
+
+    <style>
+        .chart-bar {
+            width: 100px;
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+    </style>
+    <div>
+        <table style="margin-top: 40px;">
+            <tr>
+                <td colspan="3" align="center">
+                    <b></b>
+                </td>
+            </tr>
+            <tr style="border-bottom: 1px solid black; border-left: 1px solid black;">
+                <td valign="bottom" align="center">
+                    9,977<br/>
+                    <div class="chart-bar" style="height: 99px; background-color: darkgreen;"/>
+                </td>
+                <td valign="bottom" align="center">
+                    5,556<br/>
+                    <div class="chart-bar" style="height: 55px; background-color: brown;"/>
+                </td>
+                <td valign="bottom" align="center">
+                    1,274<br/>
+                    <div class="chart-bar" style="height: 12px; background-color: #3c3c3c;"/>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    ag-Grid
+                </td>
+                <td align="center">
+                    ui-grid
+                </td>
+                <td align="center">
+                    Slickgrid
+                </td>
+            </tr>
+        </table>
+        <div style=""></div>
+    </div>
+
+    <div style="color: #767676; padding-top: 20px; padding-bottom: 20px;">
+        And the good news is, ag-Grid is growing. We are just getting started people :) ..... last
+        week I've been working hard on cell selection and clipboard copy/paste interaction.
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 40px;">
+        <img src="images/lab.png"/>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; float: left;">
+            What's cooking in the next version....
+        </div>
+    </div>
+
+    <div style="color: #767676; padding-top: 20px; padding-bottom: 20px;">
+        It's going to be a week or two before the next version is ready as I am making some large
+        changes. I've reworked all the column management to include proper drag and drop of columns
+        (so you can drag columns from the sidebar into the grid, drag columns into the 'group' bar
+        at the top, drag columns to the edge to make them pinned etc). It's working very well, but
+        not ready for general consumption yet! Oh, and also a cool menu.
+    </div>
+
+    <div>
+        <img src="images/nextVersion.png"/>
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
     <div style="float: left; width: 240px;">
         <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
             <img src="images/agGridDaily.png"/>

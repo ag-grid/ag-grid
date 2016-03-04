@@ -6,13 +6,16 @@ var columnDefs = [
             eCell.innerHTML =
                 '<div style="text-align: left;">' +
                 '  <div id="agResizeBar" style="width: 4px; height: 100%; float: right; cursor: col-resize;"></div>' +
-                '  <div id="agHeaderCellLabel" style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
+                '  <div style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
                 '    <span id="agMenu"><i class="fa fa-bars"></i></span>' +
-                '    <span id="agText"></span>' +
-                '    <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +
-                '    <span id="agSortDesc"><i class="fa fa-long-arrow-up"></i></span>' +
-                '    <span id="agNoSort"></span>' +
-                '    <span id="agFilter"><i class="fa fa-filter"></i></span>' +
+                    // everything inside agHeaderCellLabel gets actioned when the user clicks
+                '    <span id="agHeaderCellLabel">' +
+                '      <span id="agText"></span>' +
+                '      <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +
+                '      <span id="agSortDesc"><i class="fa fa-long-arrow-up"></i></span>' +
+                '      <span id="agNoSort"></span>' +
+                '      <span id="agFilter"><i class="fa fa-filter"></i></span>' +
+                '    </span>' +
                 '    <span id="myCalendarIcon"><i class="fa fa-calendar"></i></span>' +
                 '  </div>' +
                 '</div>';

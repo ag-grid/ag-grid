@@ -98,10 +98,24 @@ include '../documentation_header.php';
                 bar in the header will not auto-size the column.</td>
         </tr>
         <tr>
+            <th>suppressColumnMoveAnimation</th>
+            <td>If true, the <i>ag-column-moving</i> class is not added to the grid while columns are moving.
+            In the default themes, this transpires to no animation for moving columns.</td>
+        </tr>
+        <tr>
+            <th>suppressMovableColumns</th>
+            <td>If true, you cannot drag the columns to move them.</td>
+        </tr>
+        <tr>
             <th>enableSorting, enableServerSideSorting</th>
             <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
                 sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks
                 and show sort icons, but the sorting will be deferred to your datasource.</td>
+        </tr>
+        <tr>
+            <td>suppressFieldDotNotation</td>
+            <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
+            Allows you to use dots in your field name if you prefer.</td>
         </tr>
         <tr>
             <th>enableCellExpressions</th>
@@ -165,11 +179,11 @@ include '../documentation_header.php';
             <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
         </tr>
         <tr>
-            <th>colMinWidth</th>
+            <th>minColWidth</th>
             <td>The default min width for each col. Min widths specified in column definitions get preference, otherwise 20px is the default.</td>
         </tr>
         <tr>
-            <th>colMaxWidth</th>
+            <th>maxColWidth</th>
             <td>The default max width for each col. Max widths specified in column definitions get preference, otherwise no max is set.</td>
         </tr>
         <tr>
@@ -181,11 +195,6 @@ include '../documentation_header.php';
             <th>rowStyle</th>
             <td>The style for a particular row. Provide an array of CSS key / value pairs eg {color: 'red'}.
             If you a different style per row, then use the callback getRowStyle(params) instead.</td>
-        </tr>
-        <tr>
-            <th>rowsAlreadyGrouped</th>
-            <td>Set to true if data provided to the grid is already in node structure (this is for passing
-                already aggregated data to the grid).</td>
         </tr>
         <tr>
             <th>rowBuffer</th>
@@ -270,6 +279,44 @@ include '../documentation_header.php';
             <td>String for HTML header template to use.</td>
         </tr>
 
+    </table>
+
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        The properties below are available in the Enterprise version of ag-Grid.
+    </p>
+
+
+    <table class="table">
+        <tr>
+            <th>Property</th>
+            <th>Description</th>
+        </tr>
+
+        <tr>
+            <th>enableRangeSelection</th>
+            <td>Set to true to enable range selection.</td>
+        </tr>
+        <tr>
+            <th>rowGroupPanelShow</th>
+            <td>When to show the 'row group panel' (where you drag rows to group). Default
+                is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
+        </tr>
+        <tr>
+            <th>suppressContextMenu</th>
+            <td>Set to true to not show context menu. Use if you don't want to use the default 'right click' context menu.</td>
+        </tr>
+        <tr>
+            <th>suppressEnterprise</th>
+            <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
+                here in case someone is looking at the code and wondering.</td>
+        </tr>
+        <tr>
+            <th>suppressMenuColumnPanel<br/>suppressMenuFilterPanel<br/>suppressMenuMainPanel</th>
+            <td>By default the enterprise menu has three panels. Set these properties to true
+            to suppress one or more of these panels.</td>
+        </tr>
     </table>
 
 </div>

@@ -6,15 +6,17 @@ ag-grid-ng2
     display: inline-block
 
 .ag-root
-    font-size: 14px
-    cursor: default
     /* set to relative, so absolute popups appear relative to this */
     position: relative
-    /* disable user mouse selection */
-    user-select: none
     box-sizing: border-box
     /* was getting some 'should be there' scrolls, this sorts it out */
     overflow: hidden
+
+.ag-font-style
+    cursor: default
+    font-size: 14px
+    /* disable user mouse selection */
+    user-select: none
 
 .ag-no-scrolls
     white-space: nowrap
@@ -81,6 +83,30 @@ ag-grid-ng2
     display: inline-block
     height: 100%
     //float: left // safari doesn't align if we don't float
+
+// the ghost header cell doesn't live inside the grid, it's parent is the body element,
+// so we cannot style using standard themes. hence we break the rules, and style it here
+.ag-header-cell-ghost
+    font-size: 14px
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    position: absolute
+    background: #e5e5e5
+    border: 1px solid black
+    cursor: move;
+    user-select: none;
+    box-sizing border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px;
+    line-height: 1.4;
+    img
+        vertical-align: middle;
+        border: 0px;
+
+.ag-header-cell-ghost-icon
+    float: left;
+    padding-left: 2px;
+    padding-right: 2px;
 
 .ag-header-group-cell
     height: 100%
@@ -237,6 +263,10 @@ ag-grid-ng2
 .agile-gird-row:hover
     background-color: aliceblue
 
+.ag-row-group-panel
+    width: 100%;
+    box-sizing: border-box;
+
 .ag-cell
     display: inline-block
     white-space: nowrap
@@ -271,9 +301,42 @@ ag-grid-ng2
 
 .ag-large .ag-root
     font-size: 20px
-.ag-filter
+
+.ag-menu
     position: absolute
-    z-index: 100
+    user-select: none;
+
+.ag-menu-column-select-wrapper
+    width: 200px;
+    height: 300px;
+
+.ag-menu-list
+    display: table;
+    border-collapse: collapse;
+
+.ag-menu-option
+    display: table-row;
+
+.ag-menu-option-text
+    display: table-cell;
+
+.ag-menu-option-shortcut
+    display: table-cell;
+
+.ag-menu-option-icon
+    display: table-cell;
+
+.ag-menu-option-popup-pointer
+    display: table-cell;
+
+.ag-menu-separator
+    display: table-row;
+
+.ag-menu-separator-cell
+    display: table-cell;
+
+.ag-filter {}
+    //z-index: 100
 
 .ag-filter-list-viewport
     overflow-x: auto
@@ -316,7 +379,50 @@ ag-grid-ng2
     user-select: none;
     cursor: default;
 
-.ag-tool-panel-container
+.ag-tool-panel
+    width: 200px;
     user-select: none;
     cursor: default;
-    width: 200px;
+    height: 100%;
+    box-sizing: border-box;
+
+.ag-column-select-indent
+    display: inline-block;
+
+.ag-column-select-column
+    margin-left: 14px;
+    white-space: nowrap;
+
+.ag-column-select-column-group
+    white-space: nowrap;
+
+.ag-column-select-panel
+    height: 100%;
+    overflow: auto;
+
+.ag-hidden
+    display: none;
+
+.ag-faded
+    opacity: 0.3;
+
+//.ag-tool-panel-container
+//    user-select: none;
+//    cursor: default;
+//    width: 200px;
+
+// setting shake class to an item will give it a left ot right animation
+// used for the 'left' and 'rigth' arrows when dragging columns and scrolling
+.ag-shake-left-to-right
+    animation-name: ag-shake-left-to-right;
+    animation-duration: 0.2s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+
+@keyframes ag-shake-left-to-right
+    from
+        padding-left: 6px;
+        padding-right: 2px;
+    to
+        padding-left: 2px;
+        padding-right: 6px;

@@ -1,85 +1,126 @@
-import _ from '../utils';
-import VHtmlElement from "../virtualDom/vHtmlElement";
-import Column from "../entities/column";
+import {Utils as _} from '../utils';
+import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import ExpressionService from "../expressionService";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import RowRenderer from "./rowRenderer";
-import SelectionController from "../selectionController";
-import TemplateService from "../templateService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ExpressionService} from "../expressionService";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {RowRenderer} from "./rowRenderer";
+import {TemplateService} from "../templateService";
 import {ColumnController} from "../columnController/columnController";
-import ValueService from "../valueService";
-import EventService from "../eventService";
-import Constants from "../constants";
+import {ValueService} from "../valueService";
+import {EventService} from "../eventService";
+import {Constants} from "../constants";
 import {Events} from "../events";
-import VWrapperElement from "../virtualDom/vWrapperElement";
+import {RenderedRow} from "./renderedRow";
+import {Qualifier} from "../context/context";
+import {Autowired} from "../context/context";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
+import {PostConstruct} from "../context/context";
+import {FocusedCellController} from "../focusedCellController";
+import {Optional} from "../context/context";
+import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
+import {RangeSelection} from "../interfaces/iRangeController";
+import {GridCell} from "../entities/gridCell";
+import {IRangeController} from "../interfaces/iRangeController";
 
-export default class RenderedCell {
+export class RenderedCell {
 
-    private vGridCell: VHtmlElement; // the outer cell
-    private vSpanWithValue: VHtmlElement; // inner cell
-    private vCellWrapper: VHtmlElement;
-    private vParentOfValue: VHtmlElement;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('templateService') private templateService: TemplateService;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 
-    private checkboxOnChangeListener: EventListener;
+    private eGridCell: HTMLElement; // the outer cell
+    private eSpanWithValue: HTMLElement; // inner cell
+    private eCellWrapper: HTMLElement;
+    private eParentOfValue: HTMLElement;
+
+    // we do not use this in this class, however the renderedRow wants to konw this
+    private eParentRow: HTMLElement;
 
     private column: Column;
     private data: any;
     private node: RowNode;
     private rowIndex: number;
-    private colIndex: number;
     private editingCell: boolean;
 
     private scope: any;
-    private firstRightPinnedColumn: boolean;
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private expressionService: ExpressionService;
-    private selectionRendererFactory: SelectionRendererFactory;
-    private rowRenderer: RowRenderer;
-    private selectionController: SelectionController;
-    private $compile: any;
-    private templateService: TemplateService;
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
-    private columnController: ColumnController;
-    private valueService: ValueService;
-    private eventService: EventService;
 
     private value: any;
     private checkboxSelection: boolean;
+    private renderedRow: RenderedRow;
 
     private destroyMethods: Function[] = [];
 
-    constructor(firstRightPinnedCol: boolean, column: any, $compile: any, rowRenderer: RowRenderer,
-                gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService,
-                selectionRendererFactory: SelectionRendererFactory, selectionController: SelectionController,
-                templateService: TemplateService, cellRendererMap: {[key: string]: any},
-                node: any, rowIndex: number, colIndex: number, scope: any, columnController: ColumnController,
-                valueService: ValueService, eventService: EventService) {
+    private firstRightPinned = false;
+    private lastLeftPinned = false;
 
-        this.firstRightPinnedColumn = firstRightPinnedCol;
+    constructor(column: any,
+                cellRendererMap: {[key: string]: any},
+                node: any, rowIndex: number, scope: any,
+                renderedRow: RenderedRow) {
+
         this.column = column;
-        this.rowRenderer = rowRenderer;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.expressionService = expressionService;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.selectionController = selectionController;
         this.cellRendererMap = cellRendererMap;
-        this.$compile = $compile;
-        this.templateService = templateService;
-        this.columnController = columnController;
-        this.valueService = valueService;
-        this.eventService = eventService;
 
         this.node = node;
         this.rowIndex = rowIndex;
-        this.colIndex = colIndex;
         this.scope = scope;
+        this.renderedRow = renderedRow;
+    }
+
+    public checkPinnedClasses(): void {
+    }
+
+    private setPinnedClasses(): void {
+        var firstPinnedChangedListener = () => {
+            if (this.firstRightPinned !== this.column.isFirstRightPinned()) {
+                this.firstRightPinned = this.column.isFirstRightPinned();
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-first-right-pinned', this.firstRightPinned);
+            }
+
+            if (this.lastLeftPinned !== this.column.isLastLeftPinned()) {
+                this.lastLeftPinned = this.column.isLastLeftPinned();
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-last-left-pinned', this.lastLeftPinned);
+            }
+        };
+
+        this.column.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.column.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.destroyMethods.push( () => {
+            this.column.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+            this.column.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        });
+
+        firstPinnedChangedListener();
+    }
+
+    public getParentRow(): HTMLElement {
+        return this.eParentRow;
+    }
+
+    public setParentRow(eParentRow: HTMLElement): void {
+        this.eParentRow = eParentRow;
+    }
+
+    @PostConstruct
+    public init(): void {
         this.data = this.getDataForRow();
         this.value = this.getValue();
-
         this.checkboxSelection = this.calculateCheckboxSelection();
 
         this.setupComponents();
@@ -125,11 +166,11 @@ export default class RenderedCell {
     }
 
     private getValue(): any {
-        return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
+        return this.valueService.getValueUsingSpecificData(this.column, this.data, this.node);
     }
 
-    public getVGridCell(): VHtmlElement {
-        return this.vGridCell;
+    public getGui(): HTMLElement {
+        return this.eGridCell;
     }
 
     private getDataForRow() {
@@ -153,10 +194,12 @@ export default class RenderedCell {
 
     private setLeftOnCell(): void {
         var leftChangedListener = () => {
-            //if (this.column.getColId()==='age') {
-            //    console.log('left changed: ' + this.column.getColId() + ' ' + this.column.getLeft());
-            //}
-            this.vGridCell.addStyles({left: this.column.getLeft() + 'px'});
+            var newLeft = this.column.getLeft();
+            if (_.exists(newLeft)) {
+                this.eGridCell.style.left = this.column.getLeft() + 'px';
+            } else {
+                this.eGridCell.style.left = '';
+            }
         };
 
         this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
@@ -167,9 +210,93 @@ export default class RenderedCell {
         leftChangedListener();
     }
 
+    private addRangeSelectedListener(): void {
+        if (!this.rangeController) {
+            return;
+        }
+        var rangeCountLastTime: number = 0;
+        var rangeSelectedListener = () => {
+
+            var rangeCount = this.rangeController.getCellRangeCount(new GridCell(this.rowIndex, this.node.floating, this.column));
+            if (rangeCountLastTime !== rangeCount) {
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-2', rangeCount===2);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-3', rangeCount===3);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-4', rangeCount>=4);
+                rangeCountLastTime = rangeCount;
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        });
+        rangeSelectedListener();
+    }
+
+    private addHighlightListener(): void {
+        if (!this.rangeController) {
+            return;
+        }
+
+        var clipboardListener = (event: any) => {
+            _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
+            _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+            var cellId = new GridCell(this.rowIndex, this.node.floating, this.column).createId();
+            var shouldFlash = event.cells[cellId];
+            if (shouldFlash) {
+                this.flashCellForClipboardInteraction();
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+        });
+    }
+
+    private flashCellForClipboardInteraction(): void {
+        // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
+        // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
+        // CSS is cleared, that's the css removal in addClipboardListener() method
+        setTimeout( ()=> {
+            // once css is cleared, we want to highlight the cells, without any animation
+            _.addCssClass(this.eGridCell, 'ag-cell-highlight');
+            setTimeout( ()=> {
+                // then once that is applied, we remove the highlight with animation
+                _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
+                _.addCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+                setTimeout( ()=> {
+                    // and then to leave things as we got them, we remove the animation
+                    _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
+                }, 1000);
+            }, 500);
+        }, 0);
+    }
+
+    private addCellFocusedListener(): void {
+        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+        var cellFocusedLastTime: boolean = null;
+        var cellFocusedListener = (event?: any) => {
+            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column, this.node.floating);
+            if (cellFocused !== cellFocusedLastTime) {
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
+                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+                cellFocusedLastTime = cellFocused;
+            }
+            if (cellFocused && event && event.forceBrowserFocus) {
+                this.eGridCell.focus();
+            }
+        };
+        this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        this.destroyMethods.push(()=> {
+            this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        });
+        cellFocusedListener();
+    }
+
     private setWidthOnCell(): void {
         var widthChangedListener = () => {
-            this.vGridCell.addStyles({width: this.column.getActualWidth() + "px"});
+            this.eGridCell.style.width = this.column.getActualWidth() + "px";
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
@@ -181,42 +308,33 @@ export default class RenderedCell {
     }
 
     private setupComponents() {
-        this.vGridCell = new VHtmlElement("div");
+        this.eGridCell = document.createElement('div');
 
         this.setLeftOnCell();
         this.setWidthOnCell();
+        this.setPinnedClasses();
+        this.addRangeSelectedListener();
+        this.addHighlightListener();
+        this.addCellFocusedListener();
 
         // only set tab index if cell selection is enabled
-        if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
-            this.vGridCell.setAttribute("tabindex", "-1");
+        if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
+            this.eGridCell.setAttribute("tabindex", "-1");
         }
 
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
 
-        this.addCellClickedHandler();
-        this.addCellDoubleClickedHandler();
-        this.addCellContextMenuHandler();
-
-        if (!this.node.floating) { // not allowing navigation on the floating until i have time to figure it out
-            this.addCellNavigationHandler();
-        }
-
+        this.addCellNavigationHandler();
         this.createParentOfValue();
-
         this.populateCell();
-
-        if (this.eCheckbox) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
-
     }
 
     // called by rowRenderer when user navigates via tab key
     public startEditing(key?: number) {
         var that = this;
         this.editingCell = true;
-        _.removeAllChildren(this.vGridCell.getElement());
+        _.removeAllChildren(this.eGridCell);
         var eInput = document.createElement('input');
         eInput.type = 'text';
         _.addCssClass(eInput, 'ag-cell-edit-input');
@@ -228,7 +346,7 @@ export default class RenderedCell {
         }
 
         eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-        this.vGridCell.appendChild(eInput);
+        this.eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();
 
@@ -262,7 +380,7 @@ export default class RenderedCell {
             var key = event.which || event.keyCode;
             if (key == Constants.KEY_TAB) {
                 that.stopEditing(eInput, blurListener);
-                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, event.shiftKey);
+                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, that.node.floating, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -271,49 +389,25 @@ export default class RenderedCell {
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
-        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
     private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
         this.editingCell = false;
         var newValue = eInput.value;
-        var colDef = this.column.getColDef();
 
         //If we don't remove the blur listener first, we get:
         //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
         eInput.removeEventListener('blur', blurListener);
 
         if (!reset) {
-            var paramsForCallbacks = {
-                node: this.node,
-                data: this.node.data,
-                oldValue: this.node.data[colDef.field],
-                newValue: newValue,
-                rowIndex: this.rowIndex,
-                colDef: colDef,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-
-            if (colDef.newValueHandler) {
-                colDef.newValueHandler(paramsForCallbacks);
-            } else {
-                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
-            }
-
-            // at this point, the value has been updated
+            this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
-
-            paramsForCallbacks.newValue = this.value;
-            if (typeof colDef.onCellValueChanged === 'function') {
-                colDef.onCellValueChanged(paramsForCallbacks);
-            }
-            this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
         }
 
-        _.removeAllChildren(this.vGridCell.getElement());
+        _.removeAllChildren(this.eGridCell);
         if (this.checkboxSelection) {
-            this.vGridCell.appendChild(this.vCellWrapper.getElement());
+            this.eGridCell.appendChild(this.eCellWrapper);
         }
         this.refreshCell();
     }
@@ -324,52 +418,20 @@ export default class RenderedCell {
             data: this.node.data,
             value: this.value,
             rowIndex: this.rowIndex,
-            colIndex: this.colIndex,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         return params;
     }
 
-    private createEvent(event: any, eventSource: any): any {
+    private createEvent(event: any, eventSource?: any): any {
         var agEvent = this.createParams();
         agEvent.event = event;
-        agEvent.eventSource = eventSource;
+        //agEvent.eventSource = eventSource;
         return agEvent;
-    }
-
-    private addCellDoubleClickedHandler() {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('dblclick', function (event: any) {
-            // always dispatch event to eventService
-            var agEvent: any = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
-
-            // check if colDef also wants to handle event
-            if (typeof colDef.onCellDoubleClicked === 'function') {
-                colDef.onCellDoubleClicked(agEvent);
-            }
-
-            if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
-            }
-        });
-    }
-
-    private addCellContextMenuHandler() {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('contextmenu', function (event: any) {
-            var agEvent: any = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
-
-            if (colDef.onCellContextMenu) {
-                colDef.onCellContextMenu(agEvent);
-            }
-        });
     }
 
     public isCellEditable() {
@@ -382,45 +444,93 @@ export default class RenderedCell {
             return false;
         }
 
-        // if boolean set, then just use it
-        var colDef = this.column.getColDef();
-        if (typeof colDef.editable === 'boolean') {
-            return colDef.editable;
-        }
-
-        // if function, then call the function to find out
-        if (typeof colDef.editable === 'function') {
-            var params = this.createParams();
-            var editableFunc = <Function>colDef.editable;
-            return editableFunc(params);
-        }
-
-        return false;
+        return this.column.isCellEditable(this.node);
     }
 
-    private addCellClickedHandler() {
-        var colDef = this.column.getColDef();
-        var that = this;
-        this.vGridCell.addEventListener("click", function (event: any) {
-            // we pass false to focusCell, as we don't want the cell to focus
-            // also get the browser focus. if we did, then the cellRenderer could
-            // have a text field in it, for example, and as the user clicks on the
-            // text field, the text field, the focus doesn't get to the text
-            // field, instead to goes to the div behind, making it impossible to
-            // select the text field.
-            if (!that.node.floating) {
-                that.focusCell(false);
-            }
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
-            if (colDef.onCellClicked) {
-                colDef.onCellClicked(agEvent);
-            }
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        switch (eventName) {
+            case 'click': this.onCellClicked(mouseEvent); break;
+            case 'mousedown': this.onMouseDown(); break;
+            case 'dblclick': this.onCellDoubleClicked(); break;
+            case 'contextmenu': this.onContextMenu(mouseEvent); break;
+        }
+    }
 
-            if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
+    private onContextMenu(mouseEvent: MouseEvent): any {
+
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
+        // thus the normal menu is displayed
+        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            return;
+        }
+
+        var colDef = this.column.getColDef();
+        var agEvent: any = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
+
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(agEvent);
+        }
+
+        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
+            event.preventDefault();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private onCellDoubleClicked() {
+        var colDef = this.column.getColDef();
+        // always dispatch event to eventService
+        var agEvent: any = this.createEvent(event, this);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+
+        // check if colDef also wants to handle event
+        if (typeof colDef.onCellDoubleClicked === 'function') {
+            colDef.onCellDoubleClicked(agEvent);
+        }
+
+        if (!this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
+    }
+
+    private onMouseDown(): void {
+        // we pass false to focusCell, as we don't want the cell to focus
+        // also get the browser focus. if we did, then the cellRenderer could
+        // have a text field in it, for example, and as the user clicks on the
+        // text field, the text field, the focus doesn't get to the text
+        // field, instead to goes to the div behind, making it impossible to
+        // select the text field.
+        this.focusCell(false);
+
+        // if it's a right click, then if the cell is already in range,
+        // don't change the range, however if the cell is not in a range,
+        // we set a new range
+        if (this.rangeController) {
+            var thisCell = new GridCell(this.rowIndex, this.node.floating, this.column);
+            var cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
+            if (!cellAlreadyInRange) {
+                this.rangeController.setRangeToCell(thisCell);
             }
-        });
+        }
+    }
+
+    private onCellClicked(mouseEvent: MouseEvent): void {
+        var agEvent = this.createEvent(mouseEvent, this);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
+
+        var colDef = this.column.getColDef();
+
+        if (colDef.onCellClicked) {
+            colDef.onCellClicked(agEvent);
+        }
+
+        if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
     }
 
     private populateCell() {
@@ -454,7 +564,7 @@ export default class RenderedCell {
             }
 
             if (cssToUse) {
-                this.vGridCell.addStyles(cssToUse);
+                _.addStylesToElement(this.eGridCell, cssToUse);
             }
         }
     }
@@ -481,10 +591,10 @@ export default class RenderedCell {
             }
 
             if (typeof classToUse === 'string') {
-                this.vGridCell.addClass(classToUse);
+                _.addCssClass(this.eGridCell, classToUse);
             } else if (Array.isArray(classToUse)) {
                 classToUse.forEach( (cssClassItem: string)=> {
-                    this.vGridCell.addClass(cssClassItem);
+                    _.addCssClass(this.eGridCell, cssClassItem);
                 });
             }
         }
@@ -516,9 +626,9 @@ export default class RenderedCell {
                     resultOfRule = rule(params);
                 }
                 if (resultOfRule) {
-                    this.vGridCell.addClass(className);
+                    _.addCssClass(this.eGridCell, className);
                 } else {
-                    this.vGridCell.removeClass(className);
+                    _.removeCssClass(this.eGridCell, className);
                 }
             }
         }
@@ -526,15 +636,14 @@ export default class RenderedCell {
 
     // rename this to 'add key event listener
     private addCellNavigationHandler() {
-        var that = this;
-        this.vGridCell.addEventListener('keydown', function (event: any) {
-            if (that.editingCell) {
+        this.eGridCell.addEventListener('keydown', (event: any) => {
+            if (this.editingCell) {
                 return;
             }
             // only interested on key presses that are directly on this element, not any children elements. this
             // stops navigation if the user is in, for example, a text field inside the cell, and user hits
             // on of the keys we are looking for.
-            if (event.target !== that.vGridCell.getElement()) {
+            if (event.target !== this.eGridCell) {
                 return;
             }
 
@@ -544,13 +653,13 @@ export default class RenderedCell {
                 || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
             if (startNavigation) {
                 event.preventDefault();
-                that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
                 return;
             }
 
-            var startEdit = that.isKeycodeForStartEditing(key);
-            if (startEdit && that.isCellEditable()) {
-                that.startEditing(key);
+            var startEdit = this.isKeycodeForStartEditing(key);
+            if (startEdit && this.isCellEditable()) {
+                this.startEditing(key);
                 // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
                 // press, and stops editing immediately, hence giving he user experience that nothing happened
                 event.preventDefault();
@@ -558,12 +667,12 @@ export default class RenderedCell {
             }
 
             var selectRow = key === Constants.KEY_SPACE;
-            if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
-                var selected = that.selectionController.isNodeSelected(that.node);
+            if (selectRow && this.gridOptionsWrapper.isRowSelection()) {
+                var selected = this.node.isSelected();
                 if (selected) {
-                    that.selectionController.deselectNode(that.node);
+                    this.node.setSelected(false);
                 } else {
-                    that.selectionController.selectNode(that.node, true);
+                    this.node.setSelected(true);
                 }
                 event.preventDefault();
                 return;
@@ -575,64 +684,26 @@ export default class RenderedCell {
         return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
     }
 
-    public createSelectionCheckbox() {
-
-        this.eCheckbox = document.createElement('input');
-        this.eCheckbox.type = "checkbox";
-        this.eCheckbox.name = "name";
-        this.eCheckbox.className = 'ag-selection-checkbox';
-
-        this.eCheckbox.addEventListener('click', function (event) {
-            event.stopPropagation();
-        });
-
-        var that = this;
-        this.checkboxOnChangeListener = function() {
-            var newValue = that.eCheckbox.checked;
-            if (newValue) {
-                that.selectionController.selectIndex(that.rowIndex, true);
-            } else {
-                that.selectionController.deselectIndex(that.rowIndex);
-            }
-        };
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
-    }
-
-    public setSelected(state: boolean) {
-        if (!this.eCheckbox) {
-            return;
-        }
-        this.eCheckbox.onchange = null;
-        if (typeof state === 'boolean') {
-            this.eCheckbox.checked = state;
-            this.eCheckbox.indeterminate = false;
-        } else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            this.eCheckbox.indeterminate = true;
-        }
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
-    }
-
     private createParentOfValue() {
         if (this.checkboxSelection) {
-            this.vCellWrapper = new VHtmlElement('span');
-            this.vCellWrapper.addClass('ag-cell-wrapper');
-            this.vGridCell.appendChild(this.vCellWrapper);
+            this.eCellWrapper = document.createElement('span');
+            _.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
+            this.eGridCell.appendChild(this.eCellWrapper);
 
-            this.createSelectionCheckbox();
-            this.vCellWrapper.appendChild(new VWrapperElement(this.eCheckbox));
+            //this.createSelectionCheckbox();
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
+            this.eCellWrapper.appendChild(this.eCheckbox);
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.vSpanWithValue = new VHtmlElement('span');
-            this.vSpanWithValue.addClass('ag-cell-value');
+            this.eSpanWithValue = document.createElement('span');
+            _.addCssClass(this.eSpanWithValue, 'ag-cell-value');
 
-            this.vCellWrapper.appendChild(this.vSpanWithValue);
+            this.eCellWrapper.appendChild(this.eSpanWithValue);
 
-            this.vParentOfValue = this.vSpanWithValue;
+            this.eParentOfValue = this.eSpanWithValue;
         } else {
-            this.vGridCell.addClass('ag-cell-value');
-            this.vParentOfValue = this.vGridCell;
+            _.addCssClass(this.eGridCell, 'ag-cell-value');
+            this.eParentOfValue = this.eGridCell;
         }
     }
 
@@ -642,18 +713,14 @@ export default class RenderedCell {
 
     public refreshCell() {
 
-        _.removeAllChildren(this.vParentOfValue.getElement());
+        _.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
 
         this.populateCell();
 
-        if (this.checkboxSelection) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
-
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.vGridCell.getElement())(this.scope);
+            this.$compile(this.eGridCell)(this.scope);
         }
     }
 
@@ -661,11 +728,11 @@ export default class RenderedCell {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
         if (colDef.template) {
-            this.vParentOfValue.setInnerHtml(colDef.template);
+            this.eParentOfValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
             var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
-                this.vParentOfValue.setInnerHtml(template);
+                this.eParentOfValue.innerHTML = template;
             }
         } else if (colDef.floatingCellRenderer && this.node.floating) {
             this.useCellRenderer(colDef.floatingCellRenderer);
@@ -674,12 +741,13 @@ export default class RenderedCell {
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (this.value !== undefined && this.value !== null && this.value !== '') {
-                this.vParentOfValue.setInnerHtml(this.value.toString());
+                this.eParentOfValue.innerHTML = this.value.toString();
             }
         }
     }
 
     private useCellRenderer(cellRenderer: Function | {}) {
+
         var colDef = this.column.getColDef();
 
         var rendererParams = {
@@ -694,8 +762,9 @@ export default class RenderedCell {
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
-            eGridCell: this.vGridCell,
-            eParentOfValue: this.vParentOfValue
+            eGridCell: this.eGridCell,
+            eParentOfValue: this.eParentOfValue,
+            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
         // start duplicated code
         var actualCellRenderer: Function;
@@ -710,31 +779,31 @@ export default class RenderedCell {
         } else {
             throw 'Cell Renderer must be String or Function';
         }
+
         var resultFromRenderer = actualCellRenderer(rendererParams);
+
         // end duplicated code
+        if (resultFromRenderer===null || resultFromRenderer==='') {
+            return;
+        }
         if (_.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
-            this.vParentOfValue.appendChild(resultFromRenderer);
+            this.eParentOfValue.appendChild(resultFromRenderer);
         } else {
             // otherwise assume it was html, so just insert
-            this.vParentOfValue.setInnerHtml(resultFromRenderer);
+            this.eParentOfValue.innerHTML = resultFromRenderer;
         }
     }
 
     private addClasses() {
-        this.vGridCell.addClass('ag-cell');
-        this.vGridCell.addClass('ag-cell-no-focus');
-        this.vGridCell.setAttribute("colId", this.column.getColId());
+        _.addCssClass(this.eGridCell, 'ag-cell');
+        this.eGridCell.setAttribute("colId", this.column.getColId());
 
         if (this.node.group && this.node.footer) {
-            this.vGridCell.addClass('ag-footer-cell');
+            _.addCssClass(this.eGridCell, 'ag-footer-cell');
         }
         if (this.node.group && !this.node.footer) {
-            this.vGridCell.addClass('ag-group-cell');
-        }
-
-        if (this.firstRightPinnedColumn) {
-            this.vGridCell.addClass('ag-cell-first-right-pinned');
+            _.addCssClass(this.eGridCell, 'ag-group-cell');
         }
     }
 

@@ -1,43 +1,45 @@
-import GridOptionsWrapper from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnController} from "./columnController/columnController";
-import GridPanel from "./gridPanel/gridPanel";
+import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger} from "./logger";
-import EventService from "./eventService";
+import {EventService} from "./eventService";
 import {LoggerFactory} from "./logger";
 import {Events} from "./events";
 import {GridOptions} from "./entities/gridOptions";
-import ColumnChangeEvent from "./columnChangeEvent";
-import Column from "./entities/column";
-import ColumnGroup from "./entities/columnGroup";
-export default class MasterSlaveService {
+import {ColumnChangeEvent} from "./columnChangeEvent";
+import {Column} from "./entities/column";
+import {ColumnGroup} from "./entities/columnGroup";
+import {Bean} from "./context/context";
+import {Qualifier} from "./context/context";
+import {Autowired} from "./context/context";
+import {PostConstruct} from "./context/context";
 
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private columnController: ColumnController;
-    private gridPanel: GridPanel;
+@Bean('masterSlaveService')
+export class MasterSlaveService {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('eventService') private eventService: EventService;
+
     private logger: Logger;
-    private eventService: EventService;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
     // we don't fire back any events.
     private consuming = false;
 
-    public init(gridOptionsWrapper: GridOptionsWrapper,
-                columnController: ColumnController,
-                gridPanel: GridPanel,
-                loggerFactory: LoggerFactory,
-                eventService: EventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.gridPanel = gridPanel;
-        this.eventService = eventService;
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
+    }
 
-        eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+    @PostConstruct
+    public init(): void {
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
     }
 
     // common logic across all the fire methods

@@ -1,9 +1,10 @@
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import Column from "./entities/column";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Column} from "./entities/column";
+import {RowNode} from "./entities/rowNode";
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
-export default class Utils {
+export class Utils {
 
     // taken from:
     // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
@@ -39,6 +40,14 @@ export default class Utils {
             var mappedItem = callback(item);
             result.push(mappedItem);
         }
+        return result;
+    }
+
+    static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
+        var result: TResult[] = [];
+        Utils.iterateObject(object, (key: string, value: any)=> {
+            result.push(callback(value));
+        });
         return result;
     }
 
@@ -79,16 +88,27 @@ export default class Utils {
         }
     }
 
-    static find(collection: any, predicate: any, value: any) {
+    static find<T>(collection: T[], predicate: string |((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
+        var firstMatchingItem: T;
         for (var i = 0; i < collection.length; i++) {
-            if (collection[i][predicate] === value) {
-                return collection[i];
+            var item: T = collection[i];
+            if (typeof predicate === 'string') {
+                if ((<any>item)[predicate] === value) {
+                    firstMatchingItem = item;
+                    break;
+                }
+            } else {
+                var callback = <(item: T) => void> predicate;
+                if (callback(item)) {
+                    firstMatchingItem = item;
+                    break;
+                }
             }
         }
-        return null;
+        return firstMatchingItem;
     }
 
     static toStrings<T>(array: T[]): string[] {
@@ -112,7 +132,7 @@ export default class Utils {
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     static isNode(o: any) {
         return (
-            typeof Node === "object" ? o instanceof Node :
+            typeof Node === "function" ? o instanceof Node :
             o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
@@ -121,7 +141,7 @@ export default class Utils {
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     static isElement(o: any) {
         return (
-            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+            typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
             o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
         );
     }
@@ -150,6 +170,26 @@ export default class Utils {
         }
     }
 
+    static missing(value: any): boolean {
+        return !this.exists(value);
+    }
+
+    static missingOrEmpty(value: any[]|string): boolean {
+        return this.missing(value) || value.length === 0;
+    }
+
+    static exists(value: any): boolean {
+        if (value===null || value===undefined || value==='') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    static existsAndNotEmpty(value: any[]): boolean {
+        return this.exists(value) && value.length > 0;
+    }
+
     static removeAllChildren(node: HTMLElement) {
         if (node) {
             while (node.hasChildNodes()) {
@@ -176,32 +216,10 @@ export default class Utils {
      * loads the template and returns it as an element. makes up for no simple way in
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
-    static loadTemplate(template: string) {
+    static loadTemplate(template: string): HTMLElement {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
-        return tempDiv.firstChild;
-    }
-
-    static querySelectorAll_addCssClass(eParent: any, selector: string, cssClass: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.addCssClass(eRows[k], cssClass);
-        }
-    }
-
-    static querySelectorAll_removeCssClass(eParent: any, selector: string, cssClass: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClass);
-        }
-    }
-
-    static querySelectorAll_replaceCssClass(eParent: any, selector: string, cssClassToRemove: string, cssClassToAdd: string) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClassToRemove);
-            this.addCssClass(eRows[k], cssClassToAdd);
-        }
+        return <HTMLElement> tempDiv.firstChild;
     }
 
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
@@ -212,15 +230,30 @@ export default class Utils {
         }
     }
 
+    static callIfPresent(func: Function): void {
+        if (func) {
+            func();
+        }
+    }
+
     static addCssClass(element: HTMLElement, className: string) {
-        if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            if (cssClasses.indexOf(className) < 0) {
-                cssClasses.push(className);
-                element.className = cssClasses.join(' ');
-            }
+        if (!className || className.length===0) { return; }
+        if (className.indexOf(' ') >= 0) {
+            className.split(' ').forEach( value => this.addCssClass(element, value));
+            return;
+        }
+        if (element.classList) {
+            element.classList.add(className);
         } else {
-            element.className = className;
+            if (element.className && element.className.length > 0) {
+                var cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) < 0) {
+                    cssClasses.push(className);
+                    element.className = cssClasses.join(' ');
+                }
+            } else {
+                element.className = className;
+            }
         }
     }
 
@@ -293,6 +326,10 @@ export default class Utils {
         } else if (this.isNodeOrElement(resultFromRenderer)) {
             //a dom node or element was returned, so add child
             eParent.appendChild(<Node>resultFromRenderer);
+        } else {
+            if (this.exists(resultFromRenderer)) {
+                console.warn('ag-Grid: result from render should be either a string or a DOM object, got ' + typeof resultFromRenderer);
+            }
         }
     }
 
@@ -340,6 +377,7 @@ export default class Utils {
     }
 
     static addStylesToElement(eElement: any, styles: any) {
+        if (!styles) { return; }
         Object.keys(styles).forEach(function (key) {
             eElement.style[key] = styles[key];
         });
@@ -375,9 +413,13 @@ export default class Utils {
         return pressedKey === keyToCheck;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean) {
+    static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string) {
         if (visible) {
-            element.style.display = 'inline';
+            if (this.exists(visibleStyle)) {
+                element.style.display = visibleStyle;
+            } else {
+                element.style.display = 'inline';
+            }
         } else {
             element.style.display = 'none';
         }
@@ -395,6 +437,51 @@ export default class Utils {
             this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
         }
         return this.isSafari;
+    }
+
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    static getBrowserWidth(): number {
+        if (window.innerHeight) {
+            return window.innerWidth;
+        }
+
+        if (document.documentElement && document.documentElement.clientWidth) {
+            return document.documentElement.clientWidth;
+        }
+
+        if (document.body) {
+            return document.body.clientWidth;
+        }
+
+        return -1;
+    }
+
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    static getBrowserHeight(): number {
+        if (window.innerHeight) {
+            return window.innerHeight;
+        }
+
+        if (document.documentElement && document.documentElement.clientHeight) {
+            return document.documentElement.clientHeight;
+        }
+
+        if (document.body) {
+            return document.body.clientHeight;
+        }
+
+        return -1;
+    }
+
+    static setCheckboxState(eCheckbox: any, state: any) {
+        if (typeof state === 'boolean') {
+            eCheckbox.checked = state;
+            eCheckbox.indeterminate = false;
+        } else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            eCheckbox.indeterminate = true;
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-export default class VerticalStack {
+export class VerticalStack {
 
     isLayoutPanel: any;
     childPanels: any;

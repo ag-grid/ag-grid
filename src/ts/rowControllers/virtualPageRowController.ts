@@ -1,6 +1,17 @@
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
+import {EventService} from "../eventService";
+import {SelectionController} from "../selectionController";
+import {Autowired} from "../context/context";
+import {IRowModel} from "./../interfaces/iRowModel";
+import {PostConstruct} from "../context/context";
+import {Events} from "../events";
+import {SortController} from "../sortController";
+import {FilterManager} from "../filter/filterManager";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -9,37 +20,60 @@ import {RowNode} from "../entities/rowNode";
 
 var logging = false;
 
-export default class VirtualPageRowController {
+@Bean('rowModel')
+export class VirtualPageRowController implements IRowModel {
 
-    rowRenderer: any;
-    datasourceVersion: any;
-    gridOptionsWrapper: GridOptionsWrapper;
-    angularGrid: any;
-    datasource: any;
-    virtualRowCount: any;
-    foundMaxRow: any;
+    @Autowired('rowRenderer') private rowRenderer: any;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('eventService') private eventService: EventService;
 
-    pageCache: {[key: string]: RowNode[]};
-    pageCacheSize: any;
+    private datasourceVersion = 0;
+    private datasource: any;
+    private virtualRowCount: number;
+    private foundMaxRow: boolean;
 
-    pageLoadsInProgress: any;
-    pageLoadsQueued: any;
-    pageAccessTimes: any;
-    accessTime: any;
+    private pageCache: {[key: string]: RowNode[]};
+    private pageCacheSize: number;
 
-    maxConcurrentDatasourceRequests: any;
-    maxPagesInCache: any;
-    pageSize: any;
-    overflowSize: any;
+    private pageLoadsInProgress: any[];
+    private pageLoadsQueued: any[];
+    private pageAccessTimes: any;
+    private accessTime: number;
 
-    init(rowRenderer: any, gridOptionsWrapper: any, angularGrid: any) {
-        this.rowRenderer = rowRenderer;
-        this.datasourceVersion = 0;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+    private maxConcurrentDatasourceRequests: number;
+    private maxPagesInCache: number;
+    private pageSize: number;
+    private overflowSize: number;
+
+    @PostConstruct
+    public init(): void {
+        var virtualEnabled = this.gridOptionsWrapper.isRowModelVirtual();
+
+        this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
+            if (virtualEnabled && this.gridOptionsWrapper.isEnableServerSideFilter()) {
+                this.reset();
+            }
+        });
+
+        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, ()=> {
+            if (virtualEnabled && this.gridOptionsWrapper.isEnableServerSideSorting()) {
+                this.reset();
+            }
+        });
+
+        if (virtualEnabled && this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        }
     }
 
-    setDatasource(datasource: any) {
+    public getTopLevelNodes(): RowNode[] {
+        return null;
+    }
+
+    public setDatasource(datasource: any): void {
         this.datasource = datasource;
 
         if (!datasource) {
@@ -50,7 +84,17 @@ export default class VirtualPageRowController {
         this.reset();
     }
 
-    reset() {
+    public isEmpty(): boolean {
+        return !this.datasource;
+    }
+
+    public isRowsToRender(): boolean {
+        return !this.datasource;
+    }
+
+    private reset() {
+        this.selectionController.reset();
+
         // see if datasource knows how many rows there are
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
@@ -92,50 +136,66 @@ export default class VirtualPageRowController {
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
 
         this.doLoadOrQueue(0);
+        this.rowRenderer.refreshView();
     }
 
-    createNodesFromRows(pageNumber: any, rows: any) {
+    private createNodesFromRows(pageNumber: any, rows: any) {
         var nodes: any = [];
         if (rows) {
             for (var i = 0, j = rows.length; i < j; i++) {
                 var virtualRowIndex = (pageNumber * this.pageSize) + i;
-                var node = this.createNode(rows[i], virtualRowIndex);
+                var node = this.createNode(rows[i], virtualRowIndex, true);
                 nodes.push(node);
             }
         }
         return nodes;
     }
 
-    private createNode(data: any, virtualRowIndex: number): RowNode {
+    private createNode(data: any, virtualRowIndex: number, realNode: boolean): RowNode {
         var rowHeight = this.getRowHeightAsNumber();
         var top = rowHeight * virtualRowIndex;
-        var rowNode = <RowNode> {
-            data: data,
-            id: virtualRowIndex,
-            rowTop: top,
-            rowHeight: rowHeight
-        };
+
+        var rowNode: RowNode;
+        if (realNode) {
+            // if a real node, then always create a new one
+            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+            rowNode.id = virtualRowIndex;
+            rowNode.data = data;
+            // and see if the previous one was selected, and if yes, swap it out
+            this.selectionController.syncInRowNode(rowNode);
+        } else {
+            // if creating a proxy node, see if there is a copy in selected memory that we can use
+            var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
+            if (!rowNode) {
+                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+                rowNode.id = virtualRowIndex;
+                rowNode.data = data;
+            }
+        }
+        rowNode.rowTop = top;
+        rowNode.rowHeight = rowHeight;
+
         return rowNode;
     }
 
-    removeFromLoading(pageNumber: any) {
+    private removeFromLoading(pageNumber: any) {
         var index = this.pageLoadsInProgress.indexOf(pageNumber);
         this.pageLoadsInProgress.splice(index, 1);
     }
 
-    pageLoadFailed(pageNumber: any) {
+    private pageLoadFailed(pageNumber: any) {
         this.removeFromLoading(pageNumber);
         this.checkQueueForNextLoad();
     }
 
-    pageLoaded(pageNumber: any, rows: any, lastRow: any) {
+    private pageLoaded(pageNumber: any, rows: any, lastRow: any) {
         this.putPageIntoCacheAndPurge(pageNumber, rows);
         this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
         this.removeFromLoading(pageNumber);
         this.checkQueueForNextLoad();
     }
 
-    putPageIntoCacheAndPurge(pageNumber: any, rows: any) {
+    private putPageIntoCacheAndPurge(pageNumber: any, rows: any) {
         this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
         this.pageCacheSize++;
         if (logging) {
@@ -156,7 +216,7 @@ export default class VirtualPageRowController {
 
     }
 
-    checkMaxRowAndInformRowRenderer(pageNumber: any, lastRow: any) {
+    private checkMaxRowAndInformRowRenderer(pageNumber: any, lastRow: any) {
         if (!this.foundMaxRow) {
             // if we know the last row, use if
             if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -176,12 +236,12 @@ export default class VirtualPageRowController {
         }
     }
 
-    isPageAlreadyLoading(pageNumber: any) {
+    private isPageAlreadyLoading(pageNumber: any) {
         var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0 || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
         return result;
     }
 
-    doLoadOrQueue(pageNumber: any) {
+    private doLoadOrQueue(pageNumber: any) {
         // if we already tried to load this page, then ignore the request,
         // otherwise server would be hit 50 times just to display one page, the
         // first row to find the page missing is enough.
@@ -199,7 +259,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    addToQueueAndPurgeQueue(pageNumber: any) {
+    private addToQueueAndPurgeQueue(pageNumber: any) {
         if (logging) {
             console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
         }
@@ -221,7 +281,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    findLeastRecentlyAccessedPage(pageIndexes: any) {
+    private findLeastRecentlyAccessedPage(pageIndexes: any) {
         var youngestPageIndex = -1;
         var youngestPageAccessTime = Number.MAX_VALUE;
         var that = this;
@@ -237,7 +297,7 @@ export default class VirtualPageRowController {
         return youngestPageIndex;
     }
 
-    checkQueueForNextLoad() {
+    private checkQueueForNextLoad() {
         if (this.pageLoadsQueued.length > 0) {
             // take from the front of the queue
             var pageToLoad = this.pageLoadsQueued[0];
@@ -251,7 +311,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    loadPage(pageNumber: any) {
+    private loadPage(pageNumber: any) {
 
         this.pageLoadsInProgress.push(pageNumber);
 
@@ -263,12 +323,12 @@ export default class VirtualPageRowController {
 
         var sortModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.sortController.getSortModel();
         }
 
         var filterModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.filterManager.getFilterModel();
         }
 
         var params = {
@@ -304,12 +364,16 @@ export default class VirtualPageRowController {
         }
     }
 
-// check that the datasource has not changed since the lats time we did a request
-    requestIsDaemon(datasourceVersionCopy: any) {
+    public expandOrCollapseAll(expand: boolean): void {
+        console.warn('ag-Grid: can not expand or collapse all when doing virtual pagination');
+    }
+
+    // check that the datasource has not changed since the lats time we did a request
+    private requestIsDaemon(datasourceVersionCopy: any) {
         return this.datasourceVersion !== datasourceVersionCopy;
     }
 
-    getVirtualRow(rowIndex: any) {
+    public getRow(rowIndex: number): RowNode {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
@@ -323,7 +387,7 @@ export default class VirtualPageRowController {
         if (!page) {
             this.doLoadOrQueue(pageNumber);
             // return back an empty row, so table can at least render empty cells
-            var dummyNode = this.createNode({}, rowIndex);
+            var dummyNode = this.createNode(null, rowIndex, false);
             return dummyNode;
         } else {
             var indexInThisPage = rowIndex % this.pageSize;
@@ -331,7 +395,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    forEachNode(callback: any) {
+    public forEachNode(callback: (rowNode: RowNode)=> void): void {
         var pageKeys = Object.keys(this.pageCache);
         for (var i = 0; i < pageKeys.length; i++) {
             var pageKey = pageKeys[i];
@@ -344,7 +408,7 @@ export default class VirtualPageRowController {
     }
 
     public getRowHeightAsNumber(): number {
-        var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagiation();
+        var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagination();
         if (typeof rowHeight === 'number') {
             return <number>rowHeight;
         } else {
@@ -353,7 +417,7 @@ export default class VirtualPageRowController {
         }
     }
 
-    public getVirtualRowCombinedHeight(): number {
+    public getRowCombinedHeight(): number {
         return this.virtualRowCount * this.getRowHeightAsNumber();
     }
 
@@ -366,33 +430,24 @@ export default class VirtualPageRowController {
         }
     }
 
-    getModel() {
-        var that = this;
-        return {
-            getRowAtPixel: function(pixel: number): number {
-                return that.getRowAtPixel(pixel);
-            },
-            getVirtualRowCombinedHeight: function(): number {
-                return that.getVirtualRowCombinedHeight();
-            },
-            getVirtualRow: function (index: any) {
-                return that.getVirtualRow(index);
-            },
-            getVirtualRowCount: function () {
-                return that.virtualRowCount;
-            },
-            forEachInMemory: function (callback: any) {
-                that.forEachNode(callback);
-            },
-            forEachNode: function (callback: any) {
-                that.forEachNode(callback);
-            },
-            forEachNodeAfterFilter: function (callback: any) {
-                console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
-            },
-            forEachNodeAfterFilterAndSort: function (callback: any) {
-                console.warn('forEachNodeAfterFilterAndSort - does not work with virtual pagination');
-            }
-        };
+    public getRowCount(): number {
+        return this.virtualRowCount;
     }
+
+    public setRowData(rows: any[], refresh: boolean, firstId?: number): void {
+        console.warn('setRowData - does not work with virtual pagination');
+    }
+
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode)=> void): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=> void): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public refreshModel(): void {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
 }

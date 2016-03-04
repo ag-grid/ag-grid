@@ -8,8 +8,78 @@ include 'documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 3.4.0</h3>
+
+    <li>rowNode is now a class object with methods (previously it only have properties, a simple data object).
+        Methods now include: setSelected(), isSelected(), addEventListener(), removeEventListener(),
+        resetQuickFilterAggregateText(), deptFirstSearch(callback).
+<!--        See <a href="./angular-grid-model/index.php">Row
+            Model</a> page for details.
+-->    </li>
+
+    <li>Event rowDeselected gone, now event rowSelected gets fired for both selected and deselected. Check node state
+        to see if row is selected or not.</li>
+
+    <li>Event selectionChanged no longer contains the selected rows or nodes. Use the API to look these up if needed.
+    Preparing these lists took CPU time, so it's best they are only prepared if needed.</li>
+
+    <li>Concept of 'suppressEvents' was dumped for row selection. No other event event typ had this feature, and it
+    was out of sync with out web components work in general. If you don't want to be notified of an event, then remove
+    your event listener.</li>
+
+    <li>RowNode now has method 'setSelected'. This should now be used for row selection over the gridApi.selectXXXX() methods.</li>
+
+    <li>api.getSelectedNodesById gone, use api.getSelectedNodes instead</li>
+
+    <li>api.addVirtualRowListener is gone. Instead for row selection/deselection listening, use node.addEventListener(),
+        and for virtual row removed, use api.addRenderedRowListener()</li>
+
+    <li>New API methods: getFirstRenderedRow() getFirstVirtualRenderedRow()</li>
+
+    <li>Took out virtual dom. It only made an improvement on IE, and now that we are using delayed scrolling, IE is working fast enough now.</li>
+
+    <li>Added new property: suppressFieldDotNotation</li>
+
+    <li>Took out property groupHideGroupColumns, if you don't want a column to be shown, just hide it. This feature was not necessary and caused complexity in the design.</li>
+
+    <li>Removed api.refreshRowGroup() -> it wasn't documented, and I can't remember why I put it in, refreshing the grid has the same effect.</li>
+
+    <li>Introduced property modelType, set to 'pagination' or 'virtual' for pagination and virtual pagination. This replaces virtualPaging, as virtual was a boolean when in fact we need to distinctly model three modes of operation: Normal, Pagination and Virtual Pagination.</li>
+
+    <li>rowsAlreadyGrouped replaced with getNodeChildDetails</li>
+
+    <li>New features: Enterprise menu, new column management via menu and sidebar.</li>
+
+    <li>Toolpanel gone. Replaced with enterprise features.</li>
+
+    <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
+
+    <li>Bug fix: Text filter 'ends with' was not working correctly if search string appeared twice in the text.</li>
+
+    <li>Buf fix: forPrint was occasionally given 'Uncaught TypeError: Cannot read property 'appendChild' of undefined'. now fixed. </li>
+
+    <li>api.getValue(colKey, node) replaces api.getValue(colDef, node, data), the colDef and data were 'old design', newer method works much better.</li>
+
+    <li>api.getFocusedCell() -> now returns rowIndex and Column (used to return colDef and rowNode, colDef not needed as you can get from Column, rowNode not needed as you can lookup using rowIndex)</li>
+
+    <li>rowNode attributes floatingTop and floatingBottom removed, now floating is no longer a boolean, it's a string that can be 'top' or 'bottom' if floating.</li>
+
+    <li>setFocusedCell(rowIndex, colId) is now setFocusedCell(rowIndex, colKey, floating).</li>
+
+    <li>Floating rows can now be selected and navigated.</li>
+
+    <li>Next feature: Context Menu</li>
+
+    <li>New features: Range Selection</li>
+    <li>New feature: Enterprise column menu</li>
+    <li>New feature: Clipboard interaction</li>
+
+    <li>New feature: processRowPostCreate callback, so you can process the grid row after it is created. Handy for adding attributes or other stuff to the row after create.</li>
+
+    <li>New feature: Now CSV export allows you to format cells on their way out. Handy if you want to import into Excel and need to make dates, for example, into Excel formatted dates.</li>
+
     <h3>Version 3.3.3</h3>
-    <li>Buf fix: Pinned rows were not colored correctly</li>
+    <li>Bug fix: Pinned rows were not colored correctly</li>
 
     <h3>Version 3.3.2</h3>
     <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with CommonJS</li>

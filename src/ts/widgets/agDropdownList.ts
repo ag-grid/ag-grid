@@ -1,12 +1,12 @@
-import _ from '../utils';
-import SvgFactory from "../svgFactory";
-import PopupService from "./agPopupService";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-import AgList from "./agList";
+import {Utils as _} from '../utils';
+import {SvgFactory} from "../svgFactory";
+import {PopupService} from "./popupService";
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {AgList} from "./agList";
 
 var svgFactory = SvgFactory.getInstance();
 
-export default class AgDropdownList {
+export class AgDropdownList {
 
     private itemSelectedListeners: any;
     private eValue: any;
@@ -17,7 +17,7 @@ export default class AgDropdownList {
     private cellRenderer: any;
     private popupService: PopupService;
 
-    constructor(popupService: PopupService, dragAndDropService: DragAndDropService) {
+    constructor(popupService: PopupService, dragAndDropService: OldToolPanelDragAndDropService) {
         this.popupService = popupService;
         this.setupComponents(dragAndDropService);
         this.itemSelectedListeners = [];
@@ -38,7 +38,7 @@ export default class AgDropdownList {
         }
     }
 
-    setupComponents(dragAndDropService: DragAndDropService) {
+    setupComponents(dragAndDropService: OldToolPanelDragAndDropService) {
         this.eGui = document.createElement('span');
         this.eValue = document.createElement('span');
         this.eGui.appendChild(this.eValue);
@@ -74,7 +74,7 @@ export default class AgDropdownList {
 
     onClick() {
         var agListGui = this.agList.getGui();
-        this.popupService.positionPopup(this.eGui, agListGui, false);
+        this.popupService.positionPopupUnderComponent({eventSource: this.eGui, ePopup: agListGui});
         this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
     }
 

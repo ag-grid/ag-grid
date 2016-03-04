@@ -88,36 +88,13 @@ include '../documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
-            <th>selectIndex(index, multi, suppressEvents)<br/>selectNode(node, multi, suppressEvents)</th>
-            <td>Select the row at the given index / node. If multi is true, then previous selections will be kept (ie allow
-                multi-select). If multi is false, any previously selected row will be unselected. If suppressEvents
-                is true, then <i>rowSelected</i> and <i>selectionChanged</i> will not be called during the selection.</td>
-        </tr>
-        <tr>
-            <th>deselectIndex(index, suppressEvents)<br/>deselectNode(node, suppressEvents)</th>
-            <td>Deselects the row node at the given index / node.</td>
-        </tr>
-        <tr>
             <th>getSelectedNodes()</th>
             <td>Returns a list of selected nodes. Getting the underlying node (rather than the data) is useful
                 when working with tree / aggregated data, as the node can be traversed.</td>
         </tr>
         <tr>
-            <th>getSelectedNodesById()</th>
-            <td>Returns a list of selected nodes by id. This is the internal representation for selection,
-                useful to lookup nodes by their unique id.</td>
-        </tr>
-        <tr>
             <th>getSelectedRows()</th>
             <td>Returns a list of selected rows (ie row data that you provided).</td>
-        </tr>
-        <tr>
-            <th>isNodeSelected(node)</th>
-            <td>Returns true if the node is selected, or false if it is not selected. If the node is a group node,
-                and the group selection is set to 'children', then this will return true if all child (and grand child)
-                nodes are selected, false if all unselected, of undefined if a mixture. This is particularly useful
-                for group selection 'children' as in this mode, the group nodes never appear in the selected rows (as
-                selecting a group implies selecting children).
         </tr>
         <tr>
             <th>getBestCostNodeSelection()</th>
@@ -159,13 +136,17 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getModel()</th>
-            <td>Returns the row model inside the table. From here you can see the original rows, rows after filter has
-            been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows.</td>
+            <td>
+                Returns the row model inside the table. From here you can see the original rows, rows after filter has
+                been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows.
+            </td>
         </tr>
         <tr>
             <th>onGroupExpandedOrCollapsed()</th>
-            <td>If after getting the model, you expand or collapse a group, call this method to inform the grid. It will
-            work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).</td>
+            <td>
+                If after getting the model, you expand or collapse a group, call this method to inform the grid. It will
+                work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).
+            </td>
         </tr>
         <tr>
             <th>expandAll()</th>
@@ -208,23 +189,22 @@ include '../documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>addVirtualRowListener(event, rowIndex, callback)</th>
-            <td>Register a callback for notifications about a particular virtualised row.
-                Unlike normal events, you do not need to unregister virtual row listeners.
-                When the row is removed from the grid, all associated row listeners will
-                also be removed. There are two events: 'virtualRowRemoved' - listen
+            <th>addRenderedRowListener(event, rowIndex, callback)</th>
+            <td>Registers a callback to a rendered row. A rendered row is a row that
+                is visually rendered on the screen (rows that are not visible because
+                of the scroll position are not rendered).
+                Unlike normal events, you do not need to unregister rendered row listeners.
+                When the rendered row is removed from the grid, all associated rendered row listeners will
+                also be removed. Currently only one event: 'renderedRowRemoved' - listen
                 for this event if your cellRenderer needs to do clean down after the
-                row no longer exists. 'virtualRowSelected' - listen for this event
-                if you want your cell listener to do something when the row is selected.
-                This callback is intended for cellRenderers that want to register for events
-                for the rendered row - thus if the row is no longer rendered on the screen, the
-                callbacks stop. If the row is redrawn, then the cell renderer must register
-                another callback.
+                row no longer exists.
             </td>
+
         </tr>
         <tr>
             <th>getRenderedNodes()</th>
-            <td>Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and the amount in the buffer.
+            <td>Retrieve rendered nodes. Due to virtualisation this will contain only the current
+                visible rows and the amount in the buffer.
             </td>
         </tr>
         <tr>
@@ -288,11 +268,11 @@ include '../documentation_header.php';
         </tr>
         <tr>
             <th>getFocusedCell()</th>
-            <td>Returns the focused cell as an object containing the rowIndex, colIndex and cell node.</td>
+            <td>Returns the focused cell as an object containing the rowIndex, column and floating (top, bottom or null).</td>
         </tr>
         <tr>
-            <th>setFocusedCell(rowIndex, colIndex)</th>
-            <td>Scrolls the grid to ensure the cell is visible and then puts focus on the cell.</td>
+            <th>setFocusedCell(rowIndex, colKey, floating)</th>
+            <td>Sets the focus to the specified cell. Set floating to null, 'top', or 'bottom'.</td>
         </tr>
         <tr>
             <th>showToolPanel(show)</th>
@@ -311,9 +291,10 @@ include '../documentation_header.php';
                 for the next 500ms refresh.</td>
         </tr>
         <tr>
-            <th>getValue(colDef, data, node)</th>
-            <td>Gets the value for a cell. This is what gets passed to the cellRenderer for rendering.
-                This is useful if you want the raw value eg for csv export.</td>
+            <th>getValue(colKey, node)</th>
+            <td>Gets the value for a column for a particular rowNode (row).
+                This is useful if you want the raw value of a cell eg implementing your own csv export.
+            </td>
         </tr>
         <tr>
             <th>setHeaderHeight(value)</th>
@@ -374,8 +355,40 @@ include '../documentation_header.php';
             are using Web Components or native Javascript, you do need to call this, to avoid a memory
             leak in your application.</td>
         </tr>
+        <tr>
+            <th>getFirstRenderedRow() getFirstVirtualRenderedRow()</th>
+            <td>Gets the index of the first and last rendered rows.</td>
+        </tr>
     </table>
 
+    <h2>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        API Functions
+    </h2>
+
+    <p>
+        These functions are available in the Enterprise version of ag-Grid.
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Function</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>getRangeSelections()</th>
+            <td>Returns the list of selected ranges.</td>
+        </tr>
+        <tr>
+            <th>addRangeSelection(rangeSelection)</th>
+            <td>Adds to the selected range.</td>
+        </tr>
+        <tr>
+            <th>clearRangeSelection()</th>
+            <td>Clears the selected range.</td>
+        </tr>
+    </table>
 </div>
 
 <?php include '../documentation_footer.php';?>

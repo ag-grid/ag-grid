@@ -18,11 +18,12 @@ var columnDefs = [
 var gridOptions = {
     enableColResize: true,
     virtualPaging: true, // this is important, if not set, normal paging will be done
-    rowSelection: 'single',
+    debug: true,
+    rowSelection: 'multiple',
     rowDeselection: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowModelType: 'virtual'
 };
-
 
 function setRowData(allOfTheData) {
     var dataSource = {

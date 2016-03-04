@@ -21,11 +21,19 @@ function onSelectionChanged() {
     var selectedRows = gridOptions.api.getSelectedRows();
     var selectedRowsString = '';
     selectedRows.forEach( function(selectedRow, index) {
+        if (index>5) {
+            return;
+        }
         if (index!=0) {
             selectedRowsString += ', ';
         }
         selectedRowsString += selectedRow.athlete;
     });
+
+    if (selectedRows.length>=5) {
+        selectedRowsString += (' - and ' + (selectedRows.length - 5) + ' others');
+    }
+
     document.querySelector('#selectedRows').innerHTML = selectedRowsString;
 }
 

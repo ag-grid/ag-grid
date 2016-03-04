@@ -1,27 +1,64 @@
 
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {EventService} from "../eventService";
+import {Autowired} from "../context/context";
+import {Events} from "../events";
+import {PostConstruct} from "../context/context";
+import {Constants} from "../constants";
+import {Utils as _} from '../utils';
 
-export default class FloatingRowModel {
+@Bean('floatingRowModel')
+export class FloatingRowModel {
 
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
 
-    public init(gridOptionsWrapper: GridOptionsWrapper): void {
-        this.gridOptionsWrapper = gridOptionsWrapper;
+    @PostConstruct
+    public init(): void {
+        this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
+        this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
+    }
 
-        this.setFloatingTopRowData(gridOptionsWrapper.getFloatingTopRowData());
-        this.setFloatingBottomRowData(gridOptionsWrapper.getFloatingBottomRowData());
+    public isEmpty(floating: string): boolean {
+        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        return _.missingOrEmpty(rows);
+    }
+
+    public isRowsToRender(floating: string): boolean {
+        return !this.isEmpty(floating);
+    }
+
+    public getRowAtPixel(pixel: number, floating: string): number {
+        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        if (_.missingOrEmpty(rows)) {
+            return 0; // this should never happen, just in case, 0 is graceful failure
+        }
+        for (var i = 0; i<rows.length; i++) {
+            var rowNode = rows[i];
+            var rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
+            // only need to range check against the top pixel, as we are going through the list
+            // in order, first row to hit the pixel wins
+            if (rowTopPixel >= pixel) {
+                return i;
+            }
+        }
+        return rows.length - 1;
     }
 
     public setFloatingTopRowData(rowData: any[]): void {
-        this.floatingTopRows = this.createNodesFromData(rowData, false);
+        this.floatingTopRows = this.createNodesFromData(rowData, true);
+        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
     }
 
     public setFloatingBottomRowData(rowData: any[]): void {
         this.floatingBottomRows = this.createNodesFromData(rowData, false);
+        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
@@ -29,15 +66,12 @@ export default class FloatingRowModel {
         if (allData) {
             var nextRowTop = 0;
             allData.forEach( (dataItem) => {
-                var rowNode: RowNode = {
-                    data: dataItem,
-                    floating: true,
-                    floatingTop: isTop,
-                    floatingBottom: !isTop,
-                    rowTop: nextRowTop,
-                    rowHeight: null
-                };
+                var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null);
+                rowNode.data = dataItem;
+                rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
+                rowNode.rowTop = nextRowTop;
                 rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);
             });

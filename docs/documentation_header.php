@@ -215,6 +215,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
                 <?php } ?>
 
+                <?php if ($key == "Tree Data") { ?>
+                    <span class="sidebarLinkSelected">Tree Data</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-tree/index.php">Tree Data</a>
+                <?php } ?>
+
                 <?php if ($key == "Row Height") { ?>
                     <span class="sidebarLinkSelected">Row Height</span>
                 <?php } else { ?>
@@ -231,6 +237,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-selection/index.php">Selection</a>
+                <?php } ?>
+
+                <?php if ($key == "Range Selection") { ?>
+                    <span class="sidebarLinkSelected">Range Selection</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-range-selection/index.php">Range Selection</a>
                 <?php } ?>
 
                 <?php if ($key == "Value Getters") { ?>
@@ -303,6 +315,24 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Master / Slave</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-master-slave/index.php">Master / Slave</a>
+                <?php } ?>
+
+                <?php if ($key == "Column Menu") { ?>
+                    <span class="sidebarLinkSelected">Column Menu</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-column-menu/index.php">Column Menu</a>
+                <?php } ?>
+
+                <?php if ($key == "Context Menu") { ?>
+                    <span class="sidebarLinkSelected">Context Menu</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-context-menu/index.php">Context Menu</a>
+                <?php } ?>
+
+                <?php if ($key == "Clipboard") { ?>
+                    <span class="sidebarLinkSelected">Clipboard</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-clipboard/index.php">Clipboard</a>
                 <?php } ?>
 
                 <h4>

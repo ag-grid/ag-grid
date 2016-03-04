@@ -1,42 +1,50 @@
-import _ from '../utils';
-import constants from "../constants";
-import SvgFactory from "../svgFactory";
-import RenderedHeaderElement from "./renderedHeaderElement";
-import ColumnGroup from "../entities/columnGroup";
+import {Utils as _} from '../utils';
+import {Constants as constants} from "../constants";
+import {SvgFactory} from "../svgFactory";
+import {ColumnGroup} from "../entities/columnGroup";
 import {ColumnController} from "../columnController/columnController";
-import FilterManager from "../filter/filterManager";
+import {FilterManager} from "../filter/filterManager";
 import {Grid} from "../grid";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import Column from "../entities/column";
-import {DragService} from "./dragService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Column} from "../entities/column";
+import {HorizontalDragService} from "./horizontalDragService";
+import {Autowired} from "../context/context";
+import {CssClassApplier} from "./cssClassApplier";
+import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {PostConstruct} from "../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 
-export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
+export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
+
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('$compile') private $compile: any;
+    @Autowired('horizontalDragService') private dragService: HorizontalDragService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private eHeaderGroupCell: HTMLElement;
     private eHeaderCellResize: HTMLElement;
     private columnGroup: ColumnGroup;
-    private columnController: ColumnController;
 
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
     private parentScope: any;
-    private filterManager: FilterManager;
-    private $compile: any;
+    private destroyFunctions: (()=>void)[] = [];
 
-    constructor(columnGroup:ColumnGroup, gridOptionsWrapper:GridOptionsWrapper,
-                columnController: ColumnController, eRoot: HTMLElement,
-                parentScope: any, filterManager: FilterManager, $compile: any,
-                dragService: DragService) {
-        super(gridOptionsWrapper);
-        this.columnController = columnController;
+    private eRoot: HTMLElement;
+
+    constructor(columnGroup:ColumnGroup, eRoot: HTMLElement, parentScope: any) {
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
-        this.filterManager = filterManager;
-        this.$compile = $compile;
-        this.setupComponents(eRoot, dragService);
+        this.eRoot = eRoot;
+        this.parentScope = parentScope;
     }
+
+    // required by interface, but we don't use
+    public refreshFilterIcon(): void {}
+    // required by interface, but we don't use
+    public refreshSortIcon(): void {}
 
     public getGui(): HTMLElement {
         return this.eHeaderGroupCell;
@@ -48,7 +56,8 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
         }
     }
 
-    private setupComponents(eRoot: HTMLElement, dragService: DragService) {
+    @PostConstruct
+    public init(): void {
 
         this.eHeaderGroupCell = document.createElement('div');
         var classNames = ['ag-header-group-cell'];
@@ -61,22 +70,22 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
         }
         this.eHeaderGroupCell.className = classNames.join(' ');
         //this.eHeaderGroupCell.style.height = this.getGridOptionsWrapper().getHeaderHeight() + 'px';
-        this.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell);
+        CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
 
-        if (this.getGridOptionsWrapper().isEnableColResize()) {
+        if (this.gridOptionsWrapper.isEnableColResize()) {
             this.eHeaderCellResize = document.createElement("div");
             this.eHeaderCellResize.className = "ag-header-cell-resize";
             this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
-            dragService.addDragHandling({
+            this.dragService.addDragHandling({
                 eDraggableElement: this.eHeaderCellResize,
-                eBody: eRoot,
+                eBody: this.eRoot,
                 cursor: 'col-resize',
                 startAfterPixels: 0,
                 onDragStart: this.onDragStart.bind(this),
                 onDragging: this.onDragging.bind(this)
             });
 
-            if (!this.getGridOptionsWrapper().isSuppressAutoSize()) {
+            if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
                 this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
                     // get list of all the column keys we are responsible for
                     var keys: string[] = [];
@@ -117,16 +126,33 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
         this.setWidthOfGroupHeaderCell();
     }
 
-    private setWidthOfGroupHeaderCell() {
-        this.eHeaderGroupCell.style.width = _.formatWidth(this.columnGroup.getActualWidth());
+    private setWidthOfGroupHeaderCell(): void {
+        var widthChangedListener = () => {
+            this.eHeaderGroupCell.style.width = this.columnGroup.getActualWidth() + 'px';
+        };
+
+        this.columnGroup.getLeafColumns().forEach( column => {
+            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            this.destroyFunctions.push( () => {
+                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            });
+        });
+
+        widthChangedListener();
+    }
+
+    public destroy(): void {
+        this.destroyFunctions.forEach( (func)=> {
+            func();
+        });
     }
 
     private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
         var eGroupIcon: any;
         if (this.columnGroup.isExpanded()) {
-            eGroupIcon = _.createIcon('columnGroupOpened', this.getGridOptionsWrapper(), null, svgFactory.createArrowLeftSvg);
+            eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
         } else {
-            eGroupIcon = _.createIcon('columnGroupClosed', this.getGridOptionsWrapper(), null, svgFactory.createArrowRightSvg);
+            eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);
@@ -153,11 +179,6 @@ export default class RenderedHeaderGroupCell extends RenderedHeaderElement {
         if (newWidth < minWidth) {
             newWidth = minWidth;
         }
-
-        // set the new width to the group header
-        //var newWidthPx = newWidth + "px";
-        //this.eHeaderGroupCell.style.width = newWidthPx;
-        //this.columnGroup.actualWidth = newWidth;
 
         // distribute the new width to the child headers
         var changeRatio = newWidth / this.groupWidthStart;

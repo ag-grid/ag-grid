@@ -1,5 +1,5 @@
-import _ from '../utils';
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
+import {Utils as _} from '../utils';
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
 
 var template =
     '<div class="ag-list-selection">'+
@@ -11,7 +11,7 @@ var template =
 
 enum DropTargetLocation {NOT_DROP_TARGET, DROP_TARGET_ABOVE, DROP_TARGET_BELOW};
 
-export default class AgList {
+export class AgList {
 
     private eGui: any;
     private uniqueId: any;
@@ -27,9 +27,9 @@ export default class AgList {
     private cellRenderer: any;
     private readOnly = false;
 
-    private dragAndDropService: DragAndDropService;
+    private dragAndDropService: OldToolPanelDragAndDropService;
 
-    constructor(dragAndDropService: DragAndDropService) {
+    constructor(dragAndDropService: OldToolPanelDragAndDropService) {
         this.dragAndDropService = dragAndDropService;
         this.setupComponents();
         this.uniqueId = 'CheckboxSelection-' + Math.random();

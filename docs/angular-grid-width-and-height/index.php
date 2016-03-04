@@ -12,7 +12,9 @@ include '../documentation_header.php';
 
     <h4>Fixed Width and Height</h4>
 
-    Set the width and height of the table by applying CSS to the containing div. Eg:
+    <p>
+        Set the width and height of the table by applying CSS to the containing div. Eg:
+    </p>
 
     <p/>
 
@@ -20,14 +22,28 @@ include '../documentation_header.php';
 
     <h4>Percent Width and Height</h4>
 
-    The width and / or height can also be set to a percentage. Eg:
+    <p>
+        The width and / or height can also be set to a percentage. Eg:
+    </p>
 
     <pre><code>style="width: 100%; height: 100%;"</code></pre>
 
+    <p>
+        If using % for your height, then make sure the container you are putting the grid into
+        also has height specified, as the browser will fit the div according to a percentage of
+        the parents height, and if the parent has no height, then this % will always be zero.
+        If your grid is not using all the space you think it should, then put a border on the grid's
+        div and see if that's the size you want (the grid will fill this div). If it is not the size
+        you want, then you have a CSS layout issue to solve outside of the grid.
+    </p>
+
     <h4>Changing Width and Height</h4>
 
-    If the width and / or height change after the grid is initialised, the grid will
-    automatically resize to fill the new area.
+    <p>
+        If the width and / or height change after the grid is initialised, the grid will
+        automatically resize to fill the new area.
+    </p>
+
 
     <show-example example="exampleWidthAndHeight"></show-example>
 

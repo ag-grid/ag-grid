@@ -16,6 +16,10 @@ include '../documentation_header.php';
     </p>
 
     <p>
+        To enable pagination, set the grid property <i>rowModelType='pagination'</i>.
+    </p>
+
+    <p>
         If the grid knows how many pages in total at the start, the total page and row count will appear in the pagination panel, and the user will
         be restricted to this range.
     </p>

@@ -1,16 +1,16 @@
-import SvgFactory from "../svgFactory";
-import Constants from "../constants";
-import _ from '../utils';
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {SvgFactory} from "../svgFactory";
+import {Constants} from "../constants";
+import {Utils as _} from '../utils';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import PopupService from "../widgets/agPopupService";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-import EventService from "../eventService";
+import {PopupService} from "../widgets/popupService";
+import {OldToolPanelDragAndDropService} from "../dragAndDrop/oldToolPanelDragAndDropService";
+import {EventService} from "../eventService";
 import {Events} from "../events";
-import AgDropdownList from "../widgets/agDropdownList";
-import Column from "../entities/column";
-import AgList from "../widgets/agList";
-import BorderLayout from "../layout/borderLayout";
+import {AgDropdownList} from "../widgets/agDropdownList";
+import {Column} from "../entities/column";
+import {AgList} from "../widgets/agList";
+import {BorderLayout} from "../layout/borderLayout";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -21,12 +21,12 @@ export default class ValuesSelectionPanel {
     private cColumnList: any;
     private layout: any;
     private popupService: PopupService;
-    private dragAndDropService: DragAndDropService;
+    private oldToolPanelDragAndDropService: OldToolPanelDragAndDropService;
 
     constructor(columnController: ColumnController, gridOptionsWrapper: GridOptionsWrapper,
                 popupService: PopupService, eventService: EventService,
-                dragAndDropService: DragAndDropService) {
-        this.dragAndDropService = dragAndDropService;
+                oldToolPanelDragAndDropService: OldToolPanelDragAndDropService) {
+        this.oldToolPanelDragAndDropService = oldToolPanelDragAndDropService;
         this.popupService = popupService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.setupComponents();
@@ -63,7 +63,7 @@ export default class ValuesSelectionPanel {
             that.columnController.removeValueColumn(column);
         });
 
-        var agValueType = new AgDropdownList(this.popupService, this.dragAndDropService);
+        var agValueType = new AgDropdownList(this.popupService, this.oldToolPanelDragAndDropService);
         agValueType.setModel([Column.AGG_SUM, Column.AGG_MIN, Column.AGG_MAX]);
         agValueType.setSelected(column.aggFunc);
         agValueType.setWidth(45);
@@ -87,7 +87,7 @@ export default class ValuesSelectionPanel {
         var columnsLocalText = localeTextFunc('valueColumns', 'Aggregations');
         var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to aggregate values');
 
-        this.cColumnList = new AgList(this.dragAndDropService);
+        this.cColumnList = new AgList(this.oldToolPanelDragAndDropService);
         this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));
         this.cColumnList.setEmptyMessage(emptyMessage);
         this.cColumnList.addStyles({height: '100%', overflow: 'auto'});

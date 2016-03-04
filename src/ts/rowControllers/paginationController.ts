@@ -1,9 +1,21 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 import {Grid} from "../grid";
-import GridOptionsWrapper from "../gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
+import {GridCore} from "../gridCore";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {SelectionController} from "../selectionController";
+import {Autowired} from "../context/context";
+import {IRowModel} from "./../interfaces/iRowModel";
+import {SortController} from "../sortController";
+import {PostConstruct} from "../context/context";
+import {EventService} from "../eventService";
+import {Events} from "../events";
+import {FilterManager} from "../filter/filterManager";
 
 var template =
-        '<div class="ag-paging-panel">'+
+        '<div class="ag-paging-panel ag-font-style">'+
             '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">'+
                 '<span id="firstRowOnPage"></span>'+
                 ' [TO] '+
@@ -23,7 +35,16 @@ var template =
             '</span>'+
         '</div>';
 
-export default class PaginationController {
+@Bean('paginationController')
+export class PaginationController {
+
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('eventService') private eventService: EventService;
 
     private eGui: any;
     private btNext: any;
@@ -38,9 +59,7 @@ export default class PaginationController {
     private lbLastRowOnPage: any;
     private ePageRowSummaryPanel: any;
 
-    private angularGrid: Grid;
     private callVersion: number;
-    private gridOptionsWrapper: GridOptionsWrapper;
     private datasource: any;
     private pageSize: number;
     private rowCount: number;
@@ -48,11 +67,27 @@ export default class PaginationController {
     private totalPages: number;
     private currentPage: number;
 
-    public init(angularGrid: any, gridOptionsWrapper: any) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+    @PostConstruct
+    public init() {
         this.setupComponents();
         this.callVersion = 0;
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
+
+        this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
+            if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideFilter()) {
+                this.reset();
+            }
+        });
+
+        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, ()=> {
+            if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideSorting()) {
+                this.reset();
+            }
+        });
+
+        if (paginationEnabled && this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        }
     }
 
     public setDatasource(datasource: any) {
@@ -66,7 +101,9 @@ export default class PaginationController {
         this.reset();
     }
 
-    public reset() {
+    private reset() {
+        this.selectionController.reset();
+
         // copy pageSize, to guard against it changing the the datasource between calls
         if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
             console.warn('datasource.pageSize should be a number');
@@ -119,7 +156,7 @@ export default class PaginationController {
 
     private pageLoaded(rows: any, lastRowIndex: any) {
         var firstId = this.currentPage * this.pageSize;
-        this.angularGrid.setRowData(rows, firstId);
+        this.rowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
         if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
             this.foundMaxRow = true;
@@ -167,16 +204,16 @@ export default class PaginationController {
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
-        this.angularGrid.showLoadingOverlay();
+        this.gridPanel.showLoadingOverlay();
 
         var sortModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.sortController.getSortModel();
         }
 
         var filterModel: any;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.filterManager.getFilterModel();
         }
 
         var params = {
@@ -211,7 +248,7 @@ export default class PaginationController {
             // set in an empty set of rows, this will at
             // least get rid of the loading panel, and
             // stop blocking things
-            that.angularGrid.setRowData([]);
+            that.rowModel.setRowData([], true);
         }
     }
 

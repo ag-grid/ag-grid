@@ -1,6 +1,6 @@
-import _ from '../utils';
+import {Utils as _} from '../utils';
 
-export default class BorderLayout {
+export class BorderLayout {
 
     private eNorthWrapper: any;
     private eSouthWrapper: any;
@@ -248,6 +248,13 @@ export default class BorderLayout {
     public setEastVisible(visible: any) {
         if (this.eEastWrapper) {
             this.eEastWrapper.style.display = visible ? '' : 'none';
+        }
+        this.doLayout();
+    }
+
+    public setNorthVisible(visible: any) {
+        if (this.eNorthWrapper) {
+            this.eNorthWrapper.style.display = visible ? '' : 'none';
         }
         this.doLayout();
     }

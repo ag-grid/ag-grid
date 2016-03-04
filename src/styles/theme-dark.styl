@@ -1,17 +1,98 @@
 @import 'nib'
 
 .ag-dark
+    // copying bootstrap with line-height, sorts out alignment problems with images beside text
+    line-height: 1.4;
+
+    // changing the image is same as what bootstrap does, without the images didn't align right
+    img
+        vertical-align: middle;
+        border: 0px;
+
     .ag-root
         border: 1px solid grey;
         color: #e0e0e0;
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 
+    .ag-row-group-cell
+        background: #430000;
+        border: 1px solid #808080;
+        padding: 2px;
+
+    .ag-row-group-cell-ghost
+        opacity: 0.3;
+
+    .ag-row-group-cell-text
+        padding-left: 2px;
+        padding-right: 2px;
+
+    .ag-row-group-cell-button
+        border 1px solid transparent;
+        padding-left: 2px;
+        padding-right: 2px;
+        border-radius: 3px;
+
+    .ag-row-group-cell-button:hover
+        border: 1px solid #808080;
+
+    .ag-row-group-empty-message
+        padding-left: 2px;
+        padding-right: 2px;
+        border: 1px solid transparent;
+        color: #909090;
+
+    .ag-row-group-icon
+        padding-right: 4px;
+
+    .ag-row-group-panel
+        border-top: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
+        padding: 4px;
+        background-color: #403e3e;
+        color: #e0e0e0;
+
     .ag-cell
         border-right: 1px solid grey;
-        padding: 4px;
+        padding: 2px;
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus)
+        background-color: rgba(100,160,160,0.4);
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus)
+        background-color: rgba(100,190,190,0.4);
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus)
+        background-color: rgba(100,220,220,0.4);
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus)
+        background-color: rgba(100,250,250,0.4);
 
     .ag-column-moving .ag-cell
         transition: left 0.2s;
+
+    .ag-cell-focus
+        border: 1px solid darkgrey;
+
+    .ag-cell-no-focus
+        border-right: 1px dotted grey;
+        border-top: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+
+    .ag-cell-first-right-pinned
+        border-left: 1px solid grey;
+
+    .ag-cell-last-left-pinned
+        border-right: 1px solid grey;
+
+    // this needs to be after the other cell items, so the boarder gets preference
+    .ag-cell-highlight
+        border: 1px solid lightgreen;
+
+    .ag-cell-highlight-animation
+        transition: border 1s;
 
     .ag-header
         background-color: #430000;
@@ -36,9 +117,6 @@
         background-color grey;
 
     .ag-pinned-right-header
-        border-left: 1px solid grey;
-
-    .ag-cell-first-right-pinned
         border-left: 1px solid grey;
 
     .ag-header-cell-label
@@ -73,8 +151,8 @@
         border: 1px solid #e0e0e0;
 
     .ag-header-icon
-        stroke: white;
-        fill: white;
+        stroke: #e0e0e0;
+        fill: #e0e0e0;
 
     .ag-header-expand-icon:hover
         cursor: pointer;
@@ -120,8 +198,63 @@
     .ag-footer-cell
         font-style: italic;
 
-    .ag-filter
-        color: black;
+    .ag-menu
+        border: 1px solid #555;
+        background-color: #f0f0f0;
+        cursor: default;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+
+        .ag-tab-header
+            background-color: #430000;
+
+        .ag-tab
+            padding: 6px 8px 6px 8px;
+            margin: 2px 2px 0px 2px;
+            display: inline-block;
+            border-right: 1px solid transparent;
+            border-left: 1px solid transparent;
+            border-top: 1px solid transparent;
+            border-top-right-radius: 2px;
+            border-top-left-radius: 2px;
+
+        .ag-tab-selected
+            background-color: #403e3e;
+            border-right: 1px solid #555;
+            border-left: 1px solid #555;
+            border-top: 1px solid #555;
+
+    .ag-menu-panel-title {}
+
+    .ag-menu-separator
+        border-top 1px solid #d3d3d3;
+
+    .ag-menu-option {}
+
+    .ag-menu-option-active
+        background-color: #BDE2E5;
+
+    .ag-menu-option-icon
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-text
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-shortcut
+        padding: 2px 2px 2px 20px;
+        vertical-align: middle;
+
+    .ag-menu-option-popup-pointer
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-disabled
+        opacity: 0.5;
+
+    .ag-menu-column-select-wrapper
+        margin: 2px;
 
     .ag-filter-checkbox
         position: relative;
@@ -138,10 +271,6 @@
         border-top: 1px solid lightgrey;
         padding: 2px;
 
-    .ag-filter
-        border: 1px solid black;
-        background-color: #f0f0f0;
-
     .ag-selection-checkbox
         margin-left: 4px;
 
@@ -156,43 +285,3 @@
     .ag-paging-row-summary-panel
         display: inline-block;
         width: 300px;
-
-    .ag-column-not-visible
-        opacity: 0.75;
-        font-style: italic;
-
-    .ag-not-dragging
-        border: 1px solid transparent;
-
-    .ag-drop-target-above
-        //border: 1px solid transparent;
-        border-top: 5px solid darkgrey;
-
-    .ag-drop-target-below
-        //border: 1px solid transparent;
-        border-bottom: 5px solid darkgrey;
-
-    .ag-dragging
-        border: 1px dotted darkgrey;
-
-    .ag-list-item-selected
-        color #f0f0f0;
-
-    .ag-list-item-not-selected
-        font-style italic;
-        color #a0a0a0;
-
-    .ag-tool-panel-container
-        background-color: #eee;
-        box-sizing: border-box;
-        border: 1px solid darkgrey;
-        padding: 4px;
-
-    .ag-list-selection
-        background-color: white;
-        border: 1px solid darkgrey;
-        box-sizing: border-box;
-
-    .ag-visible-icons
-        padding-left: 2px;
-        padding-right: 2px;

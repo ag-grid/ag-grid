@@ -37,7 +37,8 @@ var gridOptions = {
     enableServerSideSorting: true,
     enableServerSideFilter: true,
     enableColResize: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowModelType: 'pagination'
 };
 
 function onPageSizeChanged(pageSize) {

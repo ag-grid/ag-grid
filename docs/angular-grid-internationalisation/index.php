@@ -27,6 +27,7 @@ include '../documentation_header.php';
         enableColResize: true,
         columnDefs: columnDefs,
         localeText: {
+            // for filter panel
             page: 'daPage',
             more: 'daMore',
             to: 'daTo',
@@ -40,12 +41,13 @@ include '../documentation_header.php';
             selectAll: 'daSelect Allen',
             searchOoo: 'daSearch...',
             blanks: 'daBlanc',
+            // for number filter and text filter
+            filterOoo: 'daFilter...',
+            applyFilter: 'daApplyFilter...',
             // for number filter
             equals: 'daEquals',
             lessThan: 'daLessThan',
             greaterThan: 'daGreaterThan',
-            applyFilter: 'daApplyFilter',
-            filterOoo: 'daFilter...',
             // for text filter
             contains: 'daContains',
             startsWith: 'daStarts dawith',
@@ -54,10 +56,33 @@ include '../documentation_header.php';
             group: 'laGroup',
             // tool panel
             columns: 'laColumns',
-            groupColumns: 'laGroup Cols',
-            groupColumnsEmptyMessage: 'la please drag cols to here',
+            rowGroupColumns: 'laPivot Cols',
+            rowGroupColumnsEmptyMessage: 'la please drag cols to here',
             valueColumns: 'laValue Cols',
-            valueColumnsEmptyMessage: 'la please drag cols to here'
+            valueColumnsEmptyMessage: 'la please drag cols to here',
+            // other
+            noRowsToShow: 'la no rows',
+            // enterprise menu
+            pinColumn: 'laPin Column',
+            valueAggregation: 'laValue Agg',
+            autosizeThiscolumn: 'laAutosize Diz',
+            autosizeAllColumns: 'laAutsoie em All',
+            groupBy: 'laGroup by',
+            ungroupBy: 'laUnGroup by',
+            resetColumns: 'laReset Those Cols',
+            expandAll: 'laOpen-em-up',
+            collapseAll: 'laClose-em-up',
+            // enterprise menu pinning
+            pinLeft: 'laPin <<',
+            pinRight: 'laPin >>',
+            noPin: 'laDontPin <>',
+            // enterprise menu aggregation
+            sum: 'laSum',
+            min: 'laMin',
+            max: 'laMax',
+            first: 'laFirst',
+            last: 'laLast',
+            none: 'laNone'
         }
     };</pre>
 

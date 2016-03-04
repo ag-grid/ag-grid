@@ -78,6 +78,7 @@ include '../documentation_header.php';
         <li>agNoSort - Icon for 'no sort'.</li>
         <li>agFilter - Icon for filter.</li>
         <li>agText - Container to put header title.</li>
+        <li>agHeaderCellLabel - Container when clicked the column will sort. Usually contains text and icons.</li>
     </ul>
     The grid will then attach the relevant logic to each element. If you do NOT include any of
     the above, the grid will still work but just not display what's missing, eg if missing agFilter,
@@ -99,7 +100,7 @@ include '../documentation_header.php';
     <pre><code>&lt;div class="ag-header-cell">
     &lt;div id="agResizeBar" class="ag-header-cell-resize">&lt;/div>
     &lt;span id="agMenu" class="ag-header-icon ag-header-cell-menu-button">&lt;/span>
-    &lt;div class="ag-header-cell-label">
+    &lt;div id="agHeaderCellLabel" class="ag-header-cell-label">
         &lt;span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon">&lt;/span>
         &lt;span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon">&lt;/span>
         &lt;span id="agNoSort" class="ag-header-icon ag-sort-none-icon">&lt;/span>
