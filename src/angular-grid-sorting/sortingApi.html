@@ -1,0 +1,28 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="sortingApi.js"></script>
+</head>
+<body>
+
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button onclick="sortByAthleteAsc()">Athlete Ascending</button>
+            <button onclick="sortByAthleteDesc()">Athlete Descending</button>
+            <button onclick="sortByCountryThenSport()">Country, then Sport</button>
+            <button onclick="sortBySportThenCountry()">Sport, then Country</button>
+        </span>
+        <br/>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button onclick="clearSort()">Clear Sort</button>
+            <button onclick="printSortStateToConsole()">Print Sort State to Console</button>
+            <button onclick="saveSort()">Save Sort</button>
+            <button onclick="restoreFromSave()">Restore from Save</button>
+        </span>
+
+    </div>
+    <div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

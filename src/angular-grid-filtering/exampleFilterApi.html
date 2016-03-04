@@ -1,0 +1,28 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="exampleFilterApi.js"></script>
+</head>
+<body>
+
+<div>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="irelandAndUk()">Ireland & UK</button>
+        <button onclick="endingStan()">Countries Ending 'stan'</button>
+        <button onclick="setCountryModel()">Set Model ['Algeria','Argentina']</button>
+        <button onclick="printCountryModel()">Print Country Model</button>
+        <button onclick="clearCountryFilter()">Clear Country Filter</button>
+    </span>
+    <br/>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="ageBelow25()">Age Below 25</button>
+        <button onclick="ageAbove30()">Age Above 30</button>
+        <button onclick="clearAgeFilter()">Clear Age Filter</button>
+    </span>
+
+</div>
+<div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

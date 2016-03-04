@@ -1,0 +1,5 @@
+## EXPIRES CACHING ##
+<IfModule mod_expires.c>
+ExpiresActive Off
+</IfModule>
+## EXPIRES CACHING ##

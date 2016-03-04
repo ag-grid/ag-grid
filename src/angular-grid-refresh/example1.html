@@ -1,0 +1,21 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="example1.js"></script>
+</head>
+
+<style>
+    .bold-and-red {
+        color: darkred;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+    <div style="height: 6%;">
+        Click this button to refresh the Hard Summary >> <button onclick="onHardRefresh()">Hard Refresh</button>
+    </div>
+    <div style="height: 94%;" id="myGrid" class="ag-fresh"></div>
+</body>
+</html>

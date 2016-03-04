@@ -1,0 +1,35 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="columnStateExample.js"></script>
+</head>
+<body>
+
+<div>
+    <div style="padding-bottom: 4px;">
+        Column Visible:
+        <button onclick="showAthlete(true)">Show Athlete</button>
+        <button onclick="showAthlete(false)">Hide Athlete</button>
+        <button onclick="showMedals(true)">Show All Medals</button>
+        <button onclick="showMedals(false)">Hide All Medals</button>
+    </div>
+    <div style="padding-bottom: 4px;">
+        Column Pinned:
+        <button onclick="pinAthlete(true)">Pin Athlete</button>
+        <button onclick="pinAthlete(false)">Unpin Athlete</button>
+        <button onclick="pinAge(true)">Pin Age</button>
+        <button onclick="pinAge(false)">Unpin Age</button>
+    </div>
+    <div style="padding-bottom: 4px;">
+        Get / Set State:
+        <button onclick="printState()">Print Col State</button>
+        <button onclick="saveState()">Save Col State</button>
+        <button onclick="restoreState()">Restore Col State</button>
+        <button onclick="resetState()">Reset Col State</button>
+    </div>
+</div>
+
+<div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
+</body>
+</html>

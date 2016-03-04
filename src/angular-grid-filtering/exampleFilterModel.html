@@ -1,0 +1,30 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="exampleFilterModel.js"></script>
+</head>
+<body>
+
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            <button onclick="saveFilterModel()">Save Filter Model</button>
+            <button onclick="restoreFilterModel()">Restore from Save</button>
+            <button onclick="clearFilters()">Clear Filters</button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <button onclick="restoreFromHardCoded()">Name = 'Mich%', Country = ['Ireland', 'United States'], Age < 30</button>
+        </span>
+    </div>
+    <div>
+        <span style="padding-bottom: 4px; display: inline-block;">
+            Saved Filters: <span id="savedFilters">[]</span>
+        </span>
+    </div>
+
+    <div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>

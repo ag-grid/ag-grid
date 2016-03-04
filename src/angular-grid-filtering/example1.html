@@ -1,0 +1,22 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="example1.js"></script>
+</head>
+<style>
+    .ag-header-cell-filtered {
+        background-color: #e5e5e5;
+    }
+</style>
+<body>
+    <input placeholder="Filter..." type="text"
+           onpaste="onFilterChanged(this.value)"
+           oninput="onFilterChanged(this.value)"
+           onchange="onFilterChanged(this.value)"
+           onchange="onFilterChanged(this.value)"
+           onkeydown="onFilterChanged(this.value)"
+           onkeyup="onFilterChanged(this.value)"/>
+    <div id="myGrid" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>
+</body>
+</html>

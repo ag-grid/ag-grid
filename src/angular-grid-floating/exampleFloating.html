@@ -1,0 +1,30 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="exampleFloating.js"></script>
+</head>
+<body>
+
+    <div style="padding-bottom: 4px;">
+        Rows to Freeze on Top:
+        <select onchange="onFloatingTopCount(this.value)">
+            <option value="0">0</option>
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        Rows to Freeze on Bottom:
+        <select onchange="onFloatingBottomCount(this.value)">
+            <option value="0">0</option>
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+    </div>
+
+    <div id="myGrid" class="ag-blue" style="height: 400px;"></div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="monthlySales.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+
+    <script src="monthlySales.js"></script>
+
+    <style>
+        .ag-basic .ag-cell {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        label {
+            font-weight: normal !important;
+        }
+
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .cell-act {
+            background: rgba(255,0,0,0.1);
+        }
+
+        .cell-bud {
+            background: rgba(0,255,0,0.1);
+        }
+
+        .cell-negative {
+            color: darkred;
+        }
+
+        .cell-figure {
+            text-align: right;
+        }
+
+        .ag-row-group {
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body style="height: 100%">
+
+    <div style="width: 100%; height: 100%;">
+        <div style="height: 10%; padding: 10px;">
+
+            <input type="text" style="width: 100px;" oninput="onQuickFilterChanged(this.value)" placeholder="Filter..."/>
+
+            <span style="padding-left: 20px;">
+                <b>Rows (visible / total):</b> <span id="rowCount"></span>
+            </span>
+
+            <span style="padding-left: 20px;">
+                <b>Period:</b>
+                <button onclick="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
+                <button onclick="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>
+                <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
+            </span>
+
+            <span style="padding-left: 20px;">
+                <b>Legend:</b>
+                <span class="cell-bud" style="border: 1px solid black;">
+                    &nbsp;
+                    &nbsp;
+                </span>&nbsp; Actual
+                <span class="cell-act" style="border: 1px solid black;">
+                    &nbsp;
+                    &nbsp;
+                </span>&nbsp; Budget
+            </span>
+        </div>
+        <div style="width: 100%; height: 90%; padding: 10px;"
+             id="myGrid"
+             class="ag-fresh">
+        </div>
+    </div>
+
+</body>
+</html>

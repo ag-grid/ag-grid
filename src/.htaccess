@@ -1,0 +1,21 @@
+## EXPIRES CACHING ##
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpg "access 1 month"
+ExpiresByType image/jpeg "access 1 month"
+ExpiresByType image/gif "access 1 month"
+ExpiresByType image/png "access 1 month"
+ExpiresByType text/css "access 7 day"
+ExpiresByType text/html "access 1 hour"
+ExpiresByType application/pdf "access 1 hour"
+ExpiresByType application/javascript "access 7 day"
+ExpiresByType image/x-icon "access 1 hour"
+ExpiresDefault "access 1 hour"
+</IfModule>
+## EXPIRES CACHING ##
+
+# Always use https for secure connections
+# (as it appears on your SSL certificate)
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]

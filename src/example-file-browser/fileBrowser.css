@@ -1,0 +1,63 @@
+
+.ag-file-browser .ag-root {
+    border: 1px solid grey;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.ag-file-browser .ag-cell {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.ag-file-browser .ag-column-moving .ag-cell {
+    -webkit-transition: left 0.2s;
+    -moz-transition: left 0.2s;
+    -o-transition: left 0.2s;
+    -ms-transition: left 0.2s;
+    transition: left 0.2s;
+}
+
+.ag-file-browser .ag-header-cell-moving .ag-header-cell-label {
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+}
+
+.ag-file-browser .ag-header-cell-moving {
+    background-color: #bebebe;
+}
+
+.ag-file-browser .ag-header-cell-moving-clone {
+    border-right: 1px solid #808080;
+    border-left: 1px solid #808080;
+    background-color: rgba(220,220,220,0.8);
+}
+
+.ag-file-browser .ag-header {
+    background: -webkit-linear-gradient(white, lightgrey); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(white, lightgrey); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(white, lightgrey); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(white, lightgrey); /* Standard syntax */
+    border-bottom: 1px solid grey;
+}
+
+.ag-file-browser .ag-header-cell {
+    border-right: 1px solid grey;
+}
+
+.ag-file-browser .ag-header-cell-label {
+    padding: 4px;
+}
+
+.ag-file-browser .ag-row:hover {
+    background-color: aliceblue;
+}
+
+.ag-file-browser .ag-body {
+    background-color: #ffffff;
+}
+
+.ag-file-browser .ag-body-viewport {
+    background-color: #ffffff;
+}
+

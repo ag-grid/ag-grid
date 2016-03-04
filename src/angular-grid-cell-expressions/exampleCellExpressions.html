@@ -1,0 +1,24 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+    <script src="exampleCellExpressions.js"></script>
+</head>
+<body>
+
+<div style="float: left; width: 50%;">
+    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+        Enter a number to analyse:
+        <input type="text" oninput="onNewNumber(this.value)"/>
+    </div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" id="myGridLeft" class="ag-fresh"></div>
+</div>
+<div style="float: left; width: 50%;">
+    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+        Edit data on RHS, table updates on LHS
+    </div>
+    <div style="height: 90%; padding: 10px; box-sizing: border-box;" id="myGridRight" class="ag-fresh"></div>
+</div>
+
+</body>
+</html>

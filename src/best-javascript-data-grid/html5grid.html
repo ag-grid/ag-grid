@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid.js?ignore=notused18"></script>
+
+    <script src="/best-javascript-data-grid/html5grid.js"></script>
+    <link href="/best-javascript-data-grid/html5grid.css" rel="stylesheet">
+
+</head>
+
+<style>
+    button:disabled { color: #a0a0a0; }
+</style>
+
+<body>
+
+    <div style="width: 800px;">
+        <div style="padding: 4px">
+            <div style="float: right;">
+                <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+                <button type="checkbox" id="btDestroyGrid">Destroy Grid</button>
+                <button type="checkbox" id="btBringGridBack">Create Grid</button>
+            </div>
+            <div style="padding: 4px;">
+                <b>Employees Skills and Contact Details</b> <span id="rowCount"/>
+            </div>
+            <div style="clear: both;"/>
+        </div>
+        <div style="width: 100%; height: 400px;"
+             id="myGrid"
+             class="ag-fresh ag-basic">
+        </div>
+    </div>
+
+</body>
+</html>
