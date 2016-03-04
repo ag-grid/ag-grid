@@ -40,19 +40,21 @@ gulp.task('release', ['copyToDocs-release']);
 
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
 
-gulp.task('tsc', ['cleanDist','cleanDocs'], tscTask);
+gulp.task('tsc', ['cleanDist'], tscTask);
+gulp.task('tsc-dev', tscTask);
 
 gulp.task('webpack-minify-noStyle', ['tsc','stylus'], webpackTask.bind(null, true, false));
 gulp.task('webpack-noStyle', ['tsc','stylus'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
 
-gulp.task('copyToDocs-dev', ['webpack'], copyToDocsTask);
-gulp.task('copyToDocs-release', ['webpack-all'], copyToDocsTask);
+gulp.task('webpack-dev', ['tsc-dev','stylus-dev'], webpackTask.bind(null, false, true));
 
-gulp.task('watch', ['copyToDocs-dev'], watchTask);
-//gulp.task('tsd', tsdTask);
-gulp.task('stylus', ['cleanDist','cleanDocs'], stylusTask);
+gulp.task('watch', ['webpack-dev'], watchTask);
+
+gulp.task('stylus', ['cleanDist'], stylusTask);
+gulp.task('stylus-dev', stylusTask);
+
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanDocs', cleanDocs);
 
@@ -158,12 +160,7 @@ function stylusTask() {
 
 }
 
-function copyToDocsTask() {
-    gulp.src('./dist/*')
-        .pipe(gulp.dest('./docs/dist'));
-}
-
 function watchTask() {
-    gulp.watch('./src/ts/**/*', ['copyToDocs-dev']);
-    gulp.watch('./src/styles/**/*', ['copyToDocs-dev']);
+    gulp.watch('./src/ts/**/*', ['webpack-dev']);
+    gulp.watch('./src/styles/**/*', ['webpack-dev']);
 }

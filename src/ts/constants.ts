@@ -30,4 +30,5 @@ export class Constants {
 
     static FLOATING_TOP = 'top';
     static FLOATING_BOTTOM = 'bottom';
+
 }

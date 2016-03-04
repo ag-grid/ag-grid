@@ -6,7 +6,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {Column} from "./entities/column";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {Utils as _} from './utils';
-import {GridRow} from "./entities/gridCell";
+import {GridRow} from "./entities/gridRow";
 import {GridCell} from "./entities/gridCell";
 
 @Bean('cellNavigationService')

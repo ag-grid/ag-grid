@@ -7,7 +7,6 @@ import {initialiseAgGridWithAngular1} from "./components/agGridNg1";
 import {initialiseAgGridWithWebComponents} from "./components/agGridWebComponent";
 import {IRowModel} from "./interfaces/iRowModel";
 import {TextAndNumberFilterParameters} from "./filter/textAndNumberFilterParameters";
-import {GridRow} from "./entities/gridCell";
 import {GridCell} from "./entities/gridCell";
 import {RowNode} from "./entities/rowNode";
 import {OriginalColumnGroupChild} from "./entities/originalColumnGroupChild";
@@ -88,6 +87,7 @@ import {PostConstruct} from "./context/context";
 import {Optional} from "./context/context";
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {GridRow} from "./entities/gridRow";
 
 export function populateClientExports(exports: any): void {
 
@@ -121,9 +121,9 @@ export function populateClientExports(exports: any): void {
     exports.Column = Column;
     exports.ColumnGroup = ColumnGroup;
     exports.GridCell = GridCell;
+    exports.GridRow = GridRow;
     exports.OriginalColumnGroup = OriginalColumnGroup;
     exports.RowNode = RowNode;
-    //exports.ColumnGroupChild = ColumnGroupChild;
 
     // filter
     exports.FilterManager = FilterManager;
