@@ -16,7 +16,7 @@ INTELLECTUAL PROPERTY LAWS AND TREATIES. THE SOFTWARE IS LICENSED, NOT SOLD.
 
 THIS LICENSE AGREEMENT DESCRIBES YOUR RIGHTS AND RESTRICTIONS WITH RESPECT TO THE SOFTWARE AND ITS COMPONENTS.
 
-1. DEFINITIONS
+1.DEFINITIONS
 
 “Application” means any software, application, or elements that Your Designated Users develop using the Software or 
 Modifications in accordance with this Agreement; provided that any such Application (i) must have substantially 
@@ -35,7 +35,7 @@ not for distribution, resale, user interface design, or software development pur
 ag-Grid-Enterprise or previous Modifications created by You, and/or b) any new file that leverages any part of the original 
 ag-Grid-Enterprise or previous Modifications.
 
-2. LICENSE GRANT
+2.LICENSE GRANT
 
 Subject to the payment of the fee required, and subject to Your compliance with all of the terms and conditions of 
 this Agreement, We grant to You a revocable, non-exclusive, non-transferable and non-sublicensable license (i) for 
