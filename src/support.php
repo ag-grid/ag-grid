@@ -41,10 +41,10 @@
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/media.php"> <i class="fa fa-road"></i> Media</a>
+                            <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+                            <a class="top-button-selected" href="/support.php"> <i class="fa fa-users"></i> Support</a>
                         </span>
             </div>
         </div>
@@ -54,38 +54,152 @@
 
 <div class="container">
 
+    <div class="row">
 
-ag-Grid Support
-The free version of ag-Grid is given under MIT license and comes with no warranty or support. The following lists the recommended places for getting help.
+        <div class="col-md-12">
 
-How do I? -- Stack Overflow.
-I got this error, why? -- Stack Overflow.
-Please look at my code? -- Stack Overflow.
-I got this error and I'm sure it's a bug -- Github issue.
-I have an idea/request -- Github issue.
-Why do you? -- Not covered.
-When will you? -- Not covered.
-Feature requests and bugs raised from non-enterprise customers will be taken lightly.
 
-ag-Grid Enterprise Support
-As an ag-Grid Enterprise customer, you will have access to guaranteed support through the members only support forum.
+            <h2>ag-Grid (free) Support</h2>
 
-How do I? -- Stack Overflow or Members Forum.
-I got this error, why? -- Stack Overflow or Members Forum.
-I got this error and I'm sure it's a bug -- Github issue or Members Forum.
-I have an idea/request -- Github issue or Members Forum.
-Why do you? -- Members Forum
-When will you? -- Members Forum
-Billing issues -- email accounts@ag-grid.com
-The members forum is monitored by the ag-Grid team and you will get a response typically within one working day (or less if we are not busy). A time slot will be committed each day to making sure all items on the forum are being progressed.
+            <p>
+                The free version of ag-Grid is given under MIT license and comes with no warranty or support.
+                All feature request and bugs raised by the community will be taken as advice.
+            </p>
 
-Feature requests and bugs raised from enterprise customers will be taken seriously.
+            <p>
+                If you are only interested in the free version of ag-Grid but require support, you can
+                purchase an enterprise license to access support. If you don't require support, you can
+                'give back' to the ag-Grid project by purchasing a token license. The support will help ag-Grid
+                grow into the future.
+            </p>
 
-Github Issues Usage
-Github should not be used for requesting help. Issues in Github are for tracking bugs and potential features inside ag-Grid only.
+            <h2>ag-Grid-Enterprise Support</h2>
 
-Stack Overflow
-Stack Overflow is the chosen platform for unofficial 'free' ag-Grid support. The employees of ag-Grid will look at Stack Overflow issues tagged 'ag-grid' and will answer questions that are worthwhile or 'interesting to the community'. However the ag-Grid team is under no obligation to participate in Stack Overflow questions.
+            <p>
+                ag-Grid Enterprise users have access to guaranteed support through the members only forum.
+                The members forum is monitored by the ag-Grid team and the team will endeavour to progress all
+                threads within one working day. A time slot is committed each day to making sure all items
+                on the forum are progressing.
+            </p>
+
+            <p>
+                Feature requests and bugs raised by enterprise users will be given priority and serious
+                consideration.
+            </p>
+
+            <h2>Support Channels</h2>
+
+            <table class="table">
+                <tr>
+                    <th>
+                        Query
+                    </th>
+                    <th>
+                        ag-Grid (free)
+                    </th>
+                    <th>
+                        ag-Grid-Enterprise
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        I got this error, why?
+                    </td>
+                    <td>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
+                    </td>
+                    <td>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Please look at my code?
+                    </td>
+                    <td>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
+                    </td>
+                    <td>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        I got an error and 99% sure it's a bug
+                    </td>
+                    <td>
+                        Github issue
+                    </td>
+                    <td>
+                        Github issue or Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        I have an idea/request
+                    </td>
+                    <td>
+                        Github issue
+                    </td>
+                    <td>
+                        Github issue or Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Why do you?
+                    </td>
+                    <td>
+                        Not covered
+                    </td>
+                    <td>
+                        Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        When will you?
+                    </td>
+                    <td>
+                        Not covered
+                    </td>
+                    <td>
+                        Members Forum
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Billing issues
+                    </td>
+                    <td>
+                        Not covered
+                    </td>
+                    <td>
+                        Email
+                        <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
+                    </td>
+                </tr>
+            </table>
+
+            <h2>Github Issues</h2>
+
+            <p>
+                Github should not be used for requesting help. Issues in Github are for tracking bugs and potential
+                features inside ag-Grid only.
+            </p>
+
+            <h2>Stack Overflow</h2>
+
+            <p>
+                Stack Overflow is the chosen platform for unofficial 'free' ag-Grid support. The ag-Grid team will
+                look at Stack Overflow issues tagged 'ag-grid' and may answer questions that are worthwhile or
+                'interesting to the community'. However the ag-Grid team is not under obligation to participate
+                in Stack Overflow questions.
+            </p>
+
+        </div> <!-- end col -->
+
+    </div> <!-- end row -->
 
 
 </div>

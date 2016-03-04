@@ -56,7 +56,7 @@ if (strcmp($version , 'latest') == 0) {
                             <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button" href="/forum"> <i class="fa fa-users"></i> Forum</a>
+                            <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>
                         </span>
                     <?php } else { ?>
                         <span class="top-button-wrapper">

@@ -14,7 +14,7 @@ var columnDefs = [
             return {color: "red"};
         }
     }},
-    {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroupIndex: 0,
+    {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroupIndex: 1,
         cellStyle: function(params) {
         // color blue for the first in the current sub group
         if (params.node.firstChild) {
