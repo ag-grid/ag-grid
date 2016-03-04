@@ -17,12 +17,14 @@ function copyFromAgGrid() {
 
 function copyFromAgGridEnterprise() {
     return gulp.src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js'])
-        .pipe(gulp.dest('./dist/dist'));
+        .pipe(gulp.dest('./dist/dist'))
+        .pipe(liveReload());
 }
 
 function copyFromDocs() {
     return gulp.src(['./src/**/*'])
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./dist'))
+        .pipe(liveReload());
 }
 
 function watchTask() {
