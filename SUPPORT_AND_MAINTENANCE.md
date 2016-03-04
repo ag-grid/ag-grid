@@ -18,12 +18,9 @@ only for the Support Term (as hereinafter defined), and the Services will become
 termination of this Agreement. Software generally offered by ag-Grid Ltd in un-obfuscated source code format is 
 sometimes hereinafter referred to as Source Software.
 
-The Services include the following basic features:
-
-# Unlimited, 24×7 access to the community-driven ag-Grid public support forums.
-# Unlimited, 24×7 access to the member-only ag-Grid support forum that is monitored by the ag-Grid development and support teams. 
-
-ag-Grid will provide support in English.
+Support is provided though the member-only ag-Grid support forum that is monitored by 
+the ag-Grid development and support teams. ag-Grid support by ag-Grid Ltd will be provided 
+in English.
 
 Support will be provided for the current release of the software and previous releases up to 12 months of the release date.
 
