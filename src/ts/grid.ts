@@ -64,10 +64,10 @@ export class Grid {
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
 
         if (!eGridDiv) {
-            console.warn('ag-Grid: no div element provided to the grid');
+            console.error('ag-Grid: no div element provided to the grid');
         }
         if (!gridOptions) {
-            console.warn('ag-Grid: no gridOptions provided to the grid');
+            console.error('ag-Grid: no gridOptions provided to the grid');
         }
 
         var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;

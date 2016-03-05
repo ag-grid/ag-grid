@@ -8,6 +8,7 @@ import {Constants} from "../constants";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {Utils as _} from '../utils';
 import {GridCell} from "../entities/gridCell";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('mouseEventService')
 export class MouseEventService {
@@ -16,6 +17,7 @@ export class MouseEventService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public getCellForMouseEvent(mouseEvent: MouseEvent): GridCell {
 

@@ -104,6 +104,8 @@ export function populateClientExports(exports: any): void {
 
     // components
     exports.ComponentUtil = ComponentUtil;
+    exports.initialiseAgGridWithAngular1 = initialiseAgGridWithAngular1;
+    exports.initialiseAgGridWithWebComponents = initialiseAgGridWithWebComponents;
 
     // context
     exports.Context = Context;

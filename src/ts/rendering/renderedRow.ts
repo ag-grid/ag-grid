@@ -338,9 +338,11 @@ export class RenderedRow {
 
         this.destroyScope();
 
-        this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
-        this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
         this.eBodyContainer.removeChild(this.eBodyRow);
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
+            this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
+        }
 
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
             if (renderedCell) {

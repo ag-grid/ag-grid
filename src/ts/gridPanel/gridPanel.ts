@@ -848,7 +848,11 @@ export class GridPanel {
     }
 
     public getHorizontalScrollPosition(): number {
-        return this.eBodyViewport.scrollLeft;
+        if (this.forPrint) {
+            return 0;
+        } else {
+            return this.eBodyViewport.scrollLeft;
+        }
     }
 
     public turnOnAnimationForABit(): void {
@@ -957,19 +961,35 @@ export class GridPanel {
     }
 
     public getVerticalScrollPosition(): number {
-        return this.eBodyViewport.scrollTop;
+        if (this.forPrint) {
+            return 0;
+        } else {
+            return this.eBodyViewport.scrollTop;
+        }
     }
 
     public getBodyViewportClientRect(): ClientRect {
-        return this.eBodyViewport.getBoundingClientRect();
+        if (this.forPrint) {
+            return this.eBodyContainer.getBoundingClientRect();
+        } else {
+            return this.eBodyViewport.getBoundingClientRect();
+        }
     }
 
     public getFloatingTopClientRect(): ClientRect {
-        return this.eFloatingTop.getBoundingClientRect();
+        if (this.forPrint) {
+            return this.eFloatingTopContainer.getBoundingClientRect();
+        } else {
+            return this.eFloatingTop.getBoundingClientRect();
+        }
     }
 
     public getFloatingBottomClientRect(): ClientRect {
-        return this.eFloatingBottom.getBoundingClientRect();
+        if (this.forPrint) {
+            return this.eFloatingBottomContainer.getBoundingClientRect();
+        } else {
+            return this.eFloatingBottom.getBoundingClientRect();
+        }
     }
 
     public getPinnedLeftColsViewportClientRect(): ClientRect {

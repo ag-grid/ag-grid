@@ -121,6 +121,11 @@ export class InMemoryRowController implements IRowModel {
         return this.rowsToDisplay[index];
     }
 
+    public getVirtualRowCount(): number {
+        console.warn('ag-Grid: rowModel.getVirtualRowCount() is not longer a function, use rowModel.getRowCount() instead');
+        return this.getRowCount();
+    }
+
     public getRowCount(): number {
         if (this.rowsToDisplay) {
             return this.rowsToDisplay.length;
