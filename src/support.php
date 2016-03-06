@@ -25,25 +25,8 @@
 
 <?php $navKey = "support"; include 'navbar.php'; ?>
 
-<div class="header-row">
+<?php $headerTitle = "Support"; include 'headerRow.php'; ?>
 
-    <div class="container">
-
-        <div class="row">
-            <div class="col-md-12">
-                <h2 style="padding-left: 20px;">
-                    <span class='header-logo'>
-                        <span style="color: #600000; ">ag</span>
-                        <span style="color: #555">-Grid</span>
-                    </span>
-                    Support
-                </h2>
-            </div>
-        </div>
-
-    </div>
-
-</div>
 
 <div class="container">
 
@@ -60,9 +43,9 @@
             </p>
 
             <p>
-                If you are only interested in the free version of ag-Grid but require support, you can
+                If you are only interested in the free features of ag-Grid but require support, you can
                 purchase an enterprise license to access support. If you don't require support, you can
-                'give back' to the ag-Grid project by purchasing a token license. The support will help ag-Grid
+                'give back' to the ag-Grid project by purchasing a token license. The donation will help ag-Grid
                 grow into the future.
             </p>
 
@@ -77,7 +60,8 @@
 
             <p>
                 Feature requests and bugs raised by enterprise users will be given priority and serious
-                consideration.
+                consideration. Discussions had with enterprise users will also help dictate the ag-Grid
+                road-map.
             </p>
 
             <h2>Support Channels</h2>
@@ -192,7 +176,7 @@
             <h2>Raising Bugs</h2>
 
             <p>
-                Use GitHub Issues to report bugs. When reporting a bug please:
+                Use Github Issues to report bugs. When reporting a bug please:
                 <ul>
                 <li>Write steps to reproduce the error.</li>
                 <li>If the bug cannot be reproduced via one of the documentation examples, provide a JSFiddle (or use similar website)</li>

@@ -197,15 +197,6 @@ import {Grid} from 'ag-grid/main';
         details of how to use the grid.
     </p>
 
-    <h2>
-        The ag-Grid License
-    </h2>
-
-    <p class="license">
-        ag-Grid comes in two flavors. ag-Grid standard is released under MIT license. ag-Grid-Enterprise
-        is released under commercial license.
-    </p>
-
 </div>
 
 <?php include '../documentation_footer.php';?>

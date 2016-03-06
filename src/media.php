@@ -7,6 +7,17 @@ $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 include('mediaHeader.php');
 ?>
 
+<div class="row">
+
+    <div class="col-md-12" style="padding: 40px 40px 20px 40px;">
+        ag-Grid started as a side project, grew in adoption, and is today one of the most widely used grid
+        components. Below are press releases and other news related media released at different parts
+        of the journey. If you want to know where ag-Grid came from and where it is going, take a read
+        at the items below. They are listed latest first, so you might want to start at the bottom.
+    </div>
+
+</div>
+
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">

@@ -23,25 +23,7 @@
 
 <?php $navKey = "licenseAndPricing"; include 'navbar.php'; ?>
 
-<div class="header-row">
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-md-12">
-                <h2 style="padding-left: 20px;">
-                    <span class='header-logo'>
-                        <span style="color: #600000;">ag</span>
-                        <span style="color: #555">-Grid</span>
-                    </span>
-                    License and Pricing
-                </h2>
-            </div>
-        </div>
-
-    </div>
-
-</div>
+<?php $headerTitle = "License and Pricing"; include 'headerRow.php'; ?>
 
 <div class="container">
 
@@ -165,7 +147,7 @@
                         &diams;
 
                         <div class="gridFeature">
-                            Access to Support via Members Only Forum
+                            Access to Support via Members Forum
                         </div>
 
                         &diams;

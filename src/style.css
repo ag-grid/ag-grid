@@ -28,6 +28,24 @@
     margin: 5px;
 }
 
+.diamond-separated-list {
+    padding: 0;
+    text-align: center;
+}
+
+.diamond-separated-list li {
+    display: inline;
+    white-space: nowrap;
+}
+
+.diamond-separated-list li:after {
+    content: " ";
+    word-spacing: 2em;
+    background-repeat: no-repeat;
+    background-position: 50% 60%;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAJCAYAAAD+WDajAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTMyQjQ3NERFM0JEMTFFNTlFRUVBNUZCMUY2OEQ2RDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTMyQjQ3NEVFM0JEMTFFNTlFRUVBNUZCMUY2OEQ2RDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MzJCNDc0QkUzQkQxMUU1OUVFRUE1RkIxRjY4RDZEOCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MzJCNDc0Q0UzQkQxMUU1OUVFRUE1RkIxRjY4RDZEOCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PoXwiRgAAAC9SURBVHjaYvj//z8DGH/aH1RpGXRz/o3/QTAxiMT/p0GbciznGxsb/zcO6jl66QdEARMDA0PQs83tUo3HfyUwgMDD5VZVU84a/wSKM1cG8xqmFG6f85EBAb5c2WV7XdLzCLMN5+ecdQ//GjOggL8MTx4I/2Nyb5u5M1Ke4RiKHJvls/rJCfMhDrq/Jije2Pgz2EHGPv97zvyIQnLtf4anm3JyLIGSQT2X6n78h7gWLgn2Tv38+TBvgDBAgAEA2x1+8knvhFsAAAAASUVORK5CYII=);
+}
+
 .menu {
     display: none;
     color: white;
@@ -192,6 +210,20 @@ h4 {
 .header-logo {
     padding-right: 20px;
     font-family: Impact, Charcoal, sans-serif;
+    opacity: 0.5;
+}
+
+.header-logo:hover {
+    text-decoration: none;
+    opacity: 1;
+}
+
+.header-logo-ag {
+    color: #b00000;
+}
+
+.header-logo-grid {
+    color: #eee;
 }
 
 .header-icon {

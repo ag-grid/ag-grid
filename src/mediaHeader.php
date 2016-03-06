@@ -28,24 +28,6 @@
 
 <?php $navKey = "media"; include 'navbar.php'; ?>
 
-<div class="header-row">
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-md-12">
-                <h2 style="padding-left: 20px;">
-                    <span class='header-logo'>
-                        <span style="color: #600000; ">ag</span>
-                        <span style="color: #555">-Grid</span>
-                    </span>
-                    Media
-                </h2>
-            </div>
-        </div>
-
-    </div>
-
-</div>
+<?php $headerTitle = "Media"; include 'headerRow.php'; ?>
 
 <div class="container">
