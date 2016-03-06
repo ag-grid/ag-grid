@@ -12,7 +12,7 @@ include '../documentation_header.php';
 
     <p>
         Webpack and Babel are popular within the React community. The remainder of this page goes
-        through an example using Webpack and Babel. The full example is
+        through an example for React using Webpack and Babel. The full example is
         <a href="https://github.com/ceolter/ag-grid-react-example">
         available on Github</a>. It is assumed you are
         already familiar with Webpack, Babel and React.

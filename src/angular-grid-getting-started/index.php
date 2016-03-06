@@ -8,6 +8,10 @@ include '../documentation_header.php';
 
 <div>
 
+    <h2>Compatibility</h2>
+
+    <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
+
     <h2>Download & Install</h2>
 
     <table>
@@ -198,35 +202,8 @@ import {Grid} from 'ag-grid/main';
     </h2>
 
     <p class="license">
-        The MIT License (MIT)
-    </p>
-
-    <p class="license">
-        Copyright (c) 2015 Niall Crosby
-    </p>
-
-    <p class="license">
-        Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-        in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        copies of the Software, and to permit persons to whom the Software is
-        furnished to do so, subject to the following conditions:
-    </p>
-
-    <p class="license">
-        The above copyright notice and this permission notice shall be included in
-        all copies or substantial portions of the Software.
-    </p>
-
-    <p class="license">
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-        THE SOFTWARE.
+        ag-Grid comes in two flavors. ag-Grid standard is released under MIT license. ag-Grid-Enterprise
+        is released under commercial license.
     </p>
 
 </div>

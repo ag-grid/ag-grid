@@ -25,9 +25,9 @@
         </style>
 
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
+-->
 <!--        <script src="./bootstrap/jquery.min.js"></script>
         <script src="./bootstrap/bootstrap.min.js"></script>
 -->
@@ -42,73 +42,65 @@
 
     </head>
 
-    <body style="height: 100%; margin: 0px; padding: 0px;">
-
-        <div style="position: absolute; top: 55px; left: 0px; padding: 0px 20px 20px 20px;">
-
-            <nav class="navbar-inverse navbar-fixed-top">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12 top-header big-text">
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>
-                        </span>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- First row of header, has table options -->
-            <div style="padding: 4px;">
-                <input placeholder="Filter..." type="text"
-                       oninput="onFilterChanged(this.value)"
-                       ondblclick="filterDoubleClicked(event)"
-                />
-
-                <span style="padding-left: 20px;">Data Size:</span>
-                <select onchange="onDataSizeChanged(this.value)">
-                    <option value="1x22">1,000 Rows, 22 Cols</option>
-                    <option value="10x100">10,000 Rows, 100 Cols</option>
-                    <option value="100x22">100,000 Rows, 22 Cols</option>
-                </select>
-
-                <span style="padding-left: 20px;">Theme:</span>
-
-                <select onchange="onThemeChanged(this.value)" style="width: 90px;">
-                    <option value="">-none-</option>
-                    <option value="ag-fresh" selected>Fresh</option>
-                    <option value="ag-blue">Blue</option>
-                    <option value="ag-dark">Dark</option>
-                </select>
-
-                <span style="padding-left: 20px; display: inline-block;">
-                    <button onclick="toggleToolPanel()">Tool Panel</button>
-                </span>
-
-                <span id="message" style="margin-left: 10px;">
-                    <i class="fa fa-spinner fa-spin"></i>
-                    <span id="messageText"></span>
-                </span>
-
-            </div>
-        </div>
+    <body class="no-user-select" style="height: 100%; margin: 0px; padding: 0px;">
 
         <!-- The table div -->
-        <div style="padding: 100px 20px 20px 20px; height: 100%; box-sizing: border-box;">
+        <div style="padding: 5px; padding-top: 102px; height: 100%; width: 100%;">
             <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
         </div>
+
+        <div class="header-row" style="position: fixed; top: 0px; left: 0px; width: 100%; padding-bottom: 0px;">
+
+            <div class="container">
+
+                <?php $navKey = "demo"; include 'navbar.php'; ?>
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div style="padding: 10px;">
+
+                            <!-- First row of header, has table options -->
+                            <div style="padding: 4px;">
+                                <input placeholder="Filter..." type="text"
+                                       oninput="onFilterChanged(this.value)"
+                                       ondblclick="filterDoubleClicked(event)"
+                                       class="hide-when-small"
+                                       style="color: #333;"
+                                />
+
+                                <span style="padding-left: 20px;">Data Size:</span>
+                                <select onchange="onDataSizeChanged(this.value)"
+                                        style="color: #333;">
+                                    <option value="1x22">1,000 Rows, 22 Cols</option>
+                                    <option value="10x100">10,000 Rows, 100 Cols</option>
+                                    <option value="100x22">100,000 Rows, 22 Cols</option>
+                                </select>
+
+                                <span style="padding-left: 20px;" class="hide-when-small">Theme:</span>
+
+                                <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;" class="hide-when-small">
+                                    <option value="">-none-</option>
+                                    <option value="ag-fresh" selected>Fresh</option>
+                                    <option value="ag-blue">Blue</option>
+                                    <option value="ag-dark">Dark</option>
+                                </select>
+
+                                <span id="message" style="margin-left: 10px;">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    <span id="messageText"></span>
+                                </span>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
     </body>
 
     <?php include_once("analytics.php"); ?>

@@ -107,7 +107,7 @@
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true,
+        {headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
             suppressMenu: true, pinned: true},
         {
             headerName: 'Employee',
@@ -140,12 +140,13 @@
 
     var gridOptions = {
         columnDefs: columnDefs,
-        rowData: createRowData(),
         rowSelection: 'multiple',
         enableColResize: true,
         enableSorting: true,
         enableFilter: true,
         groupHeaders: true,
+        enableRangeSelection: true,
+        suppressRowClickSelection: true,
         rowHeight: 22,
         onModelUpdated: modelUpdated,
         debug: true
@@ -160,18 +161,26 @@
         btBringGridBack = document.querySelector('#btBringGridBack');
         btDestroyGrid = document.querySelector('#btDestroyGrid');
 
-        btBringGridBack.addEventListener('click', onBtBringGridBack);
-        btDestroyGrid.addEventListener('click', onBtDestroyGrid);
+        // this example is also used in the website landing page, where
+        // we don't display the buttons, so we check for the buttons existance
+        if (btBringGridBack) {
+            btBringGridBack.addEventListener('click', onBtBringGridBack);
+            btDestroyGrid.addEventListener('click', onBtDestroyGrid);
+        }
 
         addQuickFilterListener();
         onBtBringGridBack();
+
+        gridOptions.api.setRowData(createRowData());
     });
 
     function onBtBringGridBack() {
-        var eGridDiv = document.querySelector('#myGrid');
+        var eGridDiv = document.querySelector('#bestHtml5Grid');
         new agGrid.Grid(eGridDiv, gridOptions);
-        btBringGridBack.disabled = true;
-        btDestroyGrid.disabled = false;
+        if (btBringGridBack) {
+            btBringGridBack.disabled = true;
+            btDestroyGrid.disabled = false;
+        }
     }
 
     function onBtDestroyGrid() {
@@ -190,8 +199,8 @@
 
     function modelUpdated() {
         var model = gridOptions.api.getModel();
-        var totalRows = gridOptions.rowData.length;
-        var processedRows = model.getVirtualRowCount();
+        var totalRows = model.getTopLevelNodes().length;
+        var processedRows = model.getRowCount();
         var eSpan = document.querySelector('#rowCount');
         eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }

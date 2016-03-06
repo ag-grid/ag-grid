@@ -32,6 +32,11 @@
     font-weight: bold;
 }
 
+.ag-account .ag-row-group-cell-text {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
 .ag-account .ag-footer-cell {
     border-top: 1px solid grey;
     border-bottom: 4px double grey;

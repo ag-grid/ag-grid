@@ -70,6 +70,7 @@ var gridOptions = {
         resetColumns: 'laReset Those Cols',
         expandAll: 'laOpen-em-up',
         collapseAll: 'laClose-em-up',
+        toolPanel: 'laTool Panelo',
         // enterprise menu pinning
         pinLeft: 'laPin <<',
         pinRight: 'laPin >>',
@@ -80,10 +81,14 @@ var gridOptions = {
         max: 'laMax',
         first: 'laFirst',
         last: 'laLast',
-        none: 'laNone'
+        none: 'laNone',
+        // standard menu
+        copy: 'laCopy',
+        ctrlC: 'ctrl n C',
+        paste: 'laPaste',
+        ctrlV: 'ctrl n C'
     }
 };
-
 
 function setDataSource(allOfTheData) {
     var dataSource = {

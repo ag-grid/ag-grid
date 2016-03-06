@@ -142,7 +142,7 @@ var gridOptions = {
     groupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
-    //showToolPanel: true,
+    showToolPanel: window.innerWidth > 1000,
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
     //groupSuppressAutoColumn: true,
@@ -232,14 +232,16 @@ var gridOptions = {
 };
 
 function getContextMenuItems(params) {
-    var result = ['copy','paste','separator'];
-
+    var result = params.defaultItems.splice(0);
     result.push(
         {
-            name: 'Make Coffee',
+            name: 'Custom Menu Item',
             icon: '<img src="../images/lab.png" style="width: 14px;"/>',
             //shortcut: 'Alt + M',
-            action: function () {window.alert('Make your own dam coffee!!!'); }
+            action: function () {
+                var value = params.value ? params.value : '<empty>';
+                window.alert('You clicked a custom menu item on cell ' + value);
+            }
         }
     );
 
@@ -461,7 +463,7 @@ function createData() {
             row++;
         }
 
-        eMessageText.innerHTML = ' Loading rows ' + row;
+        eMessageText.innerHTML = ' Generating rows ' + row;
 
         if (row >= rowCount) {
             clearInterval(intervalId);

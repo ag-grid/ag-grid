@@ -6,39 +6,6 @@ $pageKeyboards = "ag-Grid AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 5px 5px 5px;">-->
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 2px; margin: 5px 5px 5px;">
-<!--    <div style="text-align: center; font-size: 40px; background-color: black;">
-        <span style="color: gainsboro">
-            Keep the stars coming!!
-        </span>
-        <img src="http://rs902.pbsrc.com/albums/ac225/Sharkmandude/fireworks3.gif~c200" style="width: 100px"/>
-    </div>-->
-    <div style="padding: 10px;">
-
-    <div style="float: left;">
-        <img src="images/star.png"/>
-    </div>
-    <div style="float: right;">
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
-                frameborder="0" scrolling="0" width="160px" height="30px">
-        </iframe>
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=watch&count=true&size=large&v=2"
-                frameborder="0" scrolling="0" width="160px" height="30px">
-        </iframe>
-    </div>
-    <div style="text-align: center; font-size: 22px;">
-        Keep the stars coming, star
-            <span style="font-family: Impact, Charcoal, sans-serif; padding-left: 6px; padding-right: 6px;">
-                <span style="color: darkred;">ag</span><span style="color: #404040;">-Grid</span>
-            </span>
-        on Github
-    </div>
-
-    </div>
-
-</div>
-
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 40px;">

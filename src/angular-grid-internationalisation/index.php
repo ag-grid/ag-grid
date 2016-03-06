@@ -63,6 +63,7 @@ include '../documentation_header.php';
             // other
             noRowsToShow: 'la no rows',
             // enterprise menu
+            toolPanel: 'laTool Panelo',
             pinColumn: 'laPin Column',
             valueAggregation: 'laValue Agg',
             autosizeThiscolumn: 'laAutosize Diz',
@@ -82,7 +83,12 @@ include '../documentation_header.php';
             max: 'laMax',
             first: 'laFirst',
             last: 'laLast',
-            none: 'laNone'
+            none: 'laNone',
+            // standard menu
+            copy: 'laCopy',
+            ctrlC: 'ctrl n C',
+            paste: 'laPaste',
+            ctrlV: 'ctrl n C'
         }
     };</pre>
 

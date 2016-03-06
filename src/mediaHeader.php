@@ -26,29 +26,26 @@
 
 <body ng-app="index" class="big-text">
 
-<nav class="navbar-inverse">
+<?php $navKey = "media"; include 'navbar.php'; ?>
+
+<div class="header-row">
+
     <div class="container">
+
         <div class="row">
-            <div class="col-md-12 top-header big-text">
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/media.php"> <i class="fa fa-road"></i> Media</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>
-                        </span>
+            <div class="col-md-12">
+                <h2 style="padding-left: 20px;">
+                    <span class='header-logo'>
+                        <span style="color: #600000; ">ag</span>
+                        <span style="color: #555">-Grid</span>
+                    </span>
+                    Media
+                </h2>
             </div>
         </div>
 
     </div>
-</nav>
+
+</div>
 
 <div class="container">

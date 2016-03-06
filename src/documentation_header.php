@@ -8,18 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link inline rel="stylesheet" href="../dist/bootstrap.css">
+    <link inline rel="stylesheet" href="../dist/bootstrap-theme.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
+<!--    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
     <script src="/documentation.js"></script>
 
-    <link rel="stylesheet" href="/documentation.css">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/documentation.css">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
@@ -38,36 +37,42 @@ if (strcmp($version , 'latest') == 0) {
 
 <body ng-app="documentation">
 
+<?php if ($version=='latest') {
+    $navKey = "documentation";
+    include 'navbar.php';
+} else { ?>
     <nav class="navbar-inverse">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 top-header big-text">
-                    <?php if ($version=='latest') { ?>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/media.php"> <i class="fa fa-road"></i> Media</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>
-                        </span>
-                    <?php } else { ?>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="<?php print($rootFolder) ?>"> <i class="fa fa-users"></i> ag-Grid Archive Documentation <?php print($version) ?></a>
                         </span>
-                    <?php } ?>
                 </div>
             </div>
 
         </div>
     </nav>
+<?php } ?>
+    <div class="header-row">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 style="padding-left: 20px;">
+                        <span class='header-logo'>
+                            <span style="color: #600000; ">ag</span>
+                            <span style="color: #555">-Grid</span>
+                        </span>
+                        Documentation
+                    </h2>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
     <div class="container" style="margin-top: 20px">
 

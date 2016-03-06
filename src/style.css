@@ -7,7 +7,7 @@
 }
 
 .big-text {
-    font-size: 150%;
+    font-size: 120%;
 }
 
 .dot {
@@ -28,6 +28,32 @@
     margin: 5px;
 }
 
+.menu {
+    display: none;
+    color: white;
+    background: #333;
+    color: white;
+    position: absolute;
+    z-index: 2;
+    border: 1px solid black;
+}
+
+.menuButton {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 2px;
+}
+
+.menuButton:hover {
+    border: 1px solid #777;
+}
+
+.menuButton-wrapper {
+    white-space: nowrap;
+    padding: 10px;
+    display: inline-block;
+}
+
 h3 {
 }
 
@@ -35,20 +61,37 @@ h4 {
 }
 
 .horizontal-rule {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 80px;
+    margin-bottom: 80px;
 }
 
 .top-header {
-    padding-top: 12px;
+    padding-top: 8px;
+    padding-bottom: 2px;
 }
 
 @media (min-width: 200px) and (max-width: 800px) {
     body {
         font-size: 20px !important;
     }
-    .ag-grid-example {
+    .hide-when-small {
         display: none;
+    }
+}
+
+@media (min-width: 1100px) {
+    .hide-when-medium {
+        display: none;
+    }
+}
+
+@media (max-width: 1100px) {
+    .show-when-medium {
+        display: none;
+    }
+    .share-link {
+        padding-left: 10px;
+        padding-right: 10px;
     }
 }
 
@@ -56,16 +99,19 @@ h4 {
     body {
         font-size: 16px !important;
     }
+    .hide-when-big {
+        display: none;
+    }
 }
 
 .my-navbar {
-    background-color: #3c3c3c;
+    background-color: #101010;
 }
 
 .top-button-wrapper {
     white-space: nowrap;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .top-button {
@@ -90,7 +136,6 @@ h4 {
 }
 
 .top-button-selected {
-    margin-right: 30px;
     color: #eeeeee;
 }
 
@@ -118,6 +163,35 @@ h4 {
 
 .share-link {
     text-decoration: none;
+}
+
+.no-user-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.header-row {
+    background: #101010;
+    background-image: url("images/background.jpg");
+    color: #eee;
+    /*padding-bottom: 20px;*/
+}
+
+.header-row h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.index-header-row {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+.header-logo {
+    padding-right: 20px;
+    font-family: Impact, Charcoal, sans-serif;
 }
 
 .header-icon {
