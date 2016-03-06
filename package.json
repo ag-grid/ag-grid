@@ -27,6 +27,7 @@
   "dependencies": {
   },
   "devDependencies": {
+    "font-awesome": "4.5.0",
     "bootstrap": "3.3.6",
     "gulp-inline-source": "2.1.0",
     "gulp-livereload": "3.8.1",

@@ -176,7 +176,7 @@
     <div class="row">
         <div class="col-md-12" style="text-align: center; padding: 40px;">
             Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
-            back will help ag-Grid healthy grow into the future.
+            back will help ag-Grid grow into the future.
         </div>
     </div>
 

@@ -12,6 +12,8 @@
 
         <link inline rel="stylesheet" href="dist/bootstrap.css">
         <link inline rel="stylesheet" href="dist/bootstrap-theme.css">
+        <link inline rel="stylesheet" href="dist/font-awesome/css/font-awesome.css">
+<!--        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">-->
         <link inline rel="stylesheet" type="text/css" href="style.css">
 
         <script inline src="dist/ag-grid-enterprise.js"></script>
@@ -251,12 +253,9 @@
             <div class="row hide-when-small" style="padding: 30px">
 
                 <div class="col-md-9">
-                    <div style="text-align: center; padding-bottom: 10px;">
-                        <img src="example.png" width="25px"/>
-                        <b>Example Style for Presentations</b>
-                    </div>
                     <div id="exampleAccountGrid" class="ag-account" style="display: inline-block; padding: 4px;">
                     </div>
+                    <span style="float: right; position: relative; top: 20px; left: -20px;"><a href="./example-account-report/">(view code)</a></span>
                 </div>
                 <div class="col-md-3">
                     <div style="margin-top: 50px; padding-left: 20px;">
@@ -264,10 +263,6 @@
                     </div>
                 </div>
 
-            </div>
-
-            <div class="horizontal-rule">
-                <hr/>
             </div>
 
             <div class="container">
@@ -281,12 +276,8 @@
                     </div>
 
                     <div class="col-md-9 hide-when-small">
-                        <div style="padding: 4px;">
-                            <img src="example.png" width="25px"/>
-                            <b>Example Customisation</b>
-                        </div>
                         <div style="border: 1px solid darkgrey;
-                                width: 600px;
+                                width: 800px;
                                 background-color: lightgrey;
                                 border-radius: 5px;
                                 padding: 3px;">
@@ -295,6 +286,7 @@
                                  id="exampleFileBrowser"
                                  class="ag-file-browser">
                             </div>
+                            <span style="float: right; position: relative; top: 10px;"><a href="./example-file-browser/">(view code)</a></span>
                         </div>
                     </div>
 

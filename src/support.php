@@ -28,7 +28,7 @@
 <?php $headerTitle = "Support"; include 'headerRow.php'; ?>
 
 
-<div class="container">
+<div class="container support-page">
 
     <div class="row">
 
