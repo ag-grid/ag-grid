@@ -110,6 +110,8 @@ export class RenderedRow {
         this.addCellFocusedListener();
         this.addColumnListener();
 
+        this.attachContainers();
+
         this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
             eRow: this.eBodyRow,
             ePinnedLeftRow: this.ePinnedLeftRow,
@@ -253,7 +255,6 @@ export class RenderedRow {
     private createContainers(): void {
         this.eBodyRow = this.createRowContainer();
         this.eLeftCenterAndRightRows = [this.eBodyRow];
-        this.eBodyContainer.appendChild(this.eBodyRow);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.ePinnedLeftRow = this.createRowContainer();
@@ -261,7 +262,13 @@ export class RenderedRow {
 
             this.eLeftCenterAndRightRows.push(this.ePinnedLeftRow);
             this.eLeftCenterAndRightRows.push(this.ePinnedRightRow);
+        }
+    }
 
+    private attachContainers(): void {
+        this.eBodyContainer.appendChild(this.eBodyRow);
+
+        if (!this.gridOptionsWrapper.isForPrint()) {
             this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
             this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
         }
