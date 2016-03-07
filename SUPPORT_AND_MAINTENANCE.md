@@ -24,12 +24,12 @@ in English.
 
 Support will be provided for the current release of the software and previous releases up to 12 months of the release date.
 
-3. Response Time
+2.Response Time
 
 Typical response time on member-only support will be within 24 hours on working days, 
 working days as defined by the United Kingdom calendar.
 
-4. Customer’s Responsibilities
+3.Customer’s Responsibilities
 
 It is the customers responsibility that raised support tickets are relevant to ag-Grid and not use the service
 to receive help on related but not ag-Grid matters. In other words, ag-Grid support should not be used for general
@@ -39,9 +39,9 @@ It is also assumed that the support tickets are raised by aptly trained individu
 issue is not due to inexperience of the raiser. In other words, the ticket should not be due to the core problem
 the raiser is not proficient enough in Javascript or other related technologies.
 
-7. Service Limitations; Limitation of Liability
+4.Service Limitations; Limitation of Liability
 
-ag-Grid Ltd shall be responsible for providing Services to the extent that the issue is caused by (a) Customer’s misuse, 
+ag-Grid Ltd shall not be responsible for providing Services to the extent that the issue is caused by (a) Customer’s misuse, 
 improper use, mis-configuration, alteration, or damage to the Software; (b) Customer’s use of the Software with any 
 hardware or software not supplied or supported by ag-Grid Ltd; (c) Customer’s failure to install an update to the 
 Software if such update would have resolved the issue; or (d) uses in a manner not in accordance with the Agreement. 
@@ -62,7 +62,7 @@ MATTER RELATING TO THIS AGREEMENT, EVEN IF AG GRID LTD HAS BEEN ADVISED OF THE P
 NY CASE, AG GRID LTD'S ENTIRE LIABILITY WITH RESPECT TO ANY SUBJECT MATER RELATING TO THIS AGREEMENT SHALL BE 
 LIMITED TO THE AMOUNT ACTUALLY PAID FOR THE SERVICES.
 
-8. Miscellaneous
+5.Miscellaneous
 
 Customer and ag-Grid Ltd are independent parties, and nothing in this Agreement shall be construed as making them 
 partners or as creating the relationships of employer and employee, master and servant, or principal and agent 
