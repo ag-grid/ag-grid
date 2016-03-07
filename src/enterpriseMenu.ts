@@ -335,7 +335,7 @@ export class EnterpriseMenu {
 
         result.push('separator');
         result.push('pinSubMenu');
-        if (doingGrouping) {
+        if (doingGrouping && !this.column.getColDef().suppressAggregation) {
             result.push('valueAggSubMenu');
         }
         result.push('separator');
@@ -343,10 +343,12 @@ export class EnterpriseMenu {
         result.push('autoSizeAll');
         result.push('separator');
 
-        if (groupedByThisColumn) {
-            result.push('rowUnGroup');
-        } else {
-            result.push('rowGroup');
+        if (!this.column.getColDef().suppressRowGroup) {
+            if (groupedByThisColumn) {
+                result.push('rowUnGroup');
+            } else {
+                result.push('rowGroup');
+            }
         }
         result.push('separator');
         result.push('resetColumns');

@@ -54,7 +54,6 @@ export class RowGroupPanel extends Component {
     private setupDropTarget(): void {
         this.dropTarget = {
             eContainer: this.getGui(),
-            iconName: DragAndDropService.ICON_GROUP,
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
@@ -67,10 +66,19 @@ export class RowGroupPanel extends Component {
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        // is if column is already grouped, if it is, ignore it
-        if (!this.columnController.isColumnRowGrouped(draggingEvent.dragItem)) {
+        // see if column is already grouped, if it is, ignore it
+        var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(draggingEvent.dragItem);
+        var columnNotGroupable = draggingEvent.dragItem.getColDef().suppressRowGroup;
+
+        if (columnAlreadyGrouped || columnNotGroupable) {
+            // do not allow group
+            this.dragAndDropService.setGhostIcon(null);
+        } else {
+            // allow group
             this.addPotentialDropToGui(draggingEvent.dragItem);
+            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_GROUP);
         }
+
     }
 
     private onDragLeave(draggingEvent: DraggingEvent): void {
