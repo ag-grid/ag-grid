@@ -226,13 +226,13 @@ export class DragAndDropService {
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
-        var browserWidth = _.getBrowserWidth() - 2;
-        var browserHeight = _.getBrowserHeight() - 2;
+        var browserWidth = _.getBodyWidth() - 2;
+        var browserHeight = _.getBodyHeight() - 2;
 
         // put ghost vertically in middle of cursor
-        var top = event.clientY - (ghostHeight / 2);
+        var top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
-        var left = event.clientX - 30;
+        var left = event.pageX - 30;
 
         // check ghost is not positioned outside of the browser
         if (browserWidth>0) {

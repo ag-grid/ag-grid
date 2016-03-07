@@ -440,7 +440,11 @@ export class Utils {
     }
 
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
-    static getBrowserWidth(): number {
+    static getBodyWidth(): number {
+        if (document.body) {
+            return document.body.clientWidth;
+        }
+
         if (window.innerHeight) {
             return window.innerWidth;
         }
@@ -449,25 +453,21 @@ export class Utils {
             return document.documentElement.clientWidth;
         }
 
-        if (document.body) {
-            return document.body.clientWidth;
-        }
-
         return -1;
     }
 
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
-    static getBrowserHeight(): number {
+    static getBodyHeight(): number {
+        if (document.body) {
+            return document.body.clientHeight;
+        }
+
         if (window.innerHeight) {
             return window.innerHeight;
         }
 
         if (document.documentElement && document.documentElement.clientHeight) {
             return document.documentElement.clientHeight;
-        }
-
-        if (document.body) {
-            return document.body.clientHeight;
         }
 
         return -1;
