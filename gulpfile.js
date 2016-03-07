@@ -70,8 +70,6 @@ function cleanDocs() {
         .pipe(clean());
 }
 
-// sample comment
-
 //function tsdTask(callback) {
 //    tsd({
 //        command: 'reinstall',
