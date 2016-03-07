@@ -15,9 +15,7 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
     box-shadow: material-elevation-1
     
     .ag-root
-        border: 1px solid #DFDFDF
         font-family: "Roboto"
-        
         
      .ag-header
         color: rgba(0, 0, 0, 0.54)
@@ -34,7 +32,10 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
             cursor: pointer
             font-weight: bold   
             text-align: left
-         
+            
+        .ag-header-cell:first-child
+            padding-right: 0px
+            
         .ag-sort-ascending-icon, .ag-sort-descending-icon
             display: none !important
             
@@ -44,7 +45,7 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
             background: url(arrow-up) no-repeat
             width: 15px;
             height: 15px;
-            margin: -2px 10px;
+            margin: 0px 10px;
             display: none
          
         .ag-header-cell-sorted-asc, .ag-header-cell-sorted-desc
@@ -81,7 +82,9 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
               
           .ag-cell
               outline: none
-              padding: 18px 24px
+              padding: 16px 24px 
+              
+      .ag-body, .ag-header
               
           .ag-selection-checkbox
               margin: -2px -6px
@@ -111,11 +114,8 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
               border-bottom-left-radius: 1px
               content: ''
               position: absolute
-              box-sizing: border-box   
+              box-sizing: border-box
               width: 13px
               height: 6px
               margin: 5px 4px
               transform: rotate(-45deg)
-              
-           .ag-scrolls
-              position: initial
