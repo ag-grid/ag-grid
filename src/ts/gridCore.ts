@@ -63,6 +63,7 @@ export class GridCore {
 
     @Optional('rowGroupPanel') private rowGroupPanel: Component;
     @Optional('toolPanel') private toolPanel: Component;
+    @Optional('statusBar') private statusBar: Component;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -81,11 +82,9 @@ export class GridCore {
     public init(): void {
 
         // and the last bean, done in it's own section, as it's optional
-        var paginationGui: any;
         var toolPanelGui: HTMLElement;
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            paginationGui = this.paginationController.getGui();
-        }
+
+        var eSouthPanel = this.createSouthPanel();
 
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             toolPanelGui = this.toolPanel.getGui();
@@ -100,12 +99,10 @@ export class GridCore {
             center: this.gridPanel.getLayout(),
             east: toolPanelGui,
             north: rowGroupGui,
-            south: paginationGui,
+            south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
             name: 'eRootPanel'
         });
-
-        this.eRootPanel.setSouthVisible(this.gridOptionsWrapper.isRowModelPagination());
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
@@ -134,6 +131,27 @@ export class GridCore {
         this.onRowGroupChanged();
 
         this.logger.log('ready');
+    }
+
+    private createSouthPanel(): HTMLElement {
+
+        var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
+        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination() && !this.gridOptionsWrapper.isForPrint();
+
+        if (!statusBarEnabled && !paginationPanelEnabled) {
+            return null;
+        }
+
+        var eSouthPanel = document.createElement('div');
+        if (statusBarEnabled) {
+            eSouthPanel.appendChild(this.statusBar.getGui());
+        }
+
+        if (paginationPanelEnabled) {
+            eSouthPanel.appendChild(this.paginationController.getGui());
+        }
+
+        return eSouthPanel;
     }
 
     private onRowGroupChanged(): void {

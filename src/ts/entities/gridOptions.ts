@@ -29,6 +29,7 @@ export interface GridOptions {
     enableServerSideSorting?: boolean;
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
+    enableStatusBar?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;

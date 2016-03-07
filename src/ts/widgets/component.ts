@@ -7,22 +7,22 @@ export class Component {
 
     private destroyFunctions: (()=>void)[] = [];
 
-    private eventService: EventService;
+    private localEventService: EventService;
 
     constructor(template: string) {
         this.eGui = _.loadTemplate(template);
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (!this.eventService) {
-            this.eventService = new EventService();
+        if (!this.localEventService) {
+            this.localEventService = new EventService();
         }
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public dispatchEvent(eventType: string, event?: any): void {
-        if (this.eventService) {
-            this.eventService.dispatchEvent(eventType, event);
+        if (this.localEventService) {
+            this.localEventService.dispatchEvent(eventType, event);
         }
     }
 
@@ -38,8 +38,12 @@ export class Component {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node): void {
-        this.eGui.appendChild(newChild);
+    public appendChild(newChild: Node|Component): void {
+        if (_.isNodeOrElement(newChild)) {
+            this.eGui.appendChild(<Node>newChild);
+        } else {
+            this.eGui.appendChild((<Component>newChild).getGui());
+        }
     }
 
     public setVisible(visible: boolean): void {
