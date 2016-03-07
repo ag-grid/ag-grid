@@ -14,6 +14,7 @@ import {GridOptionsWrapper} from "ag-grid/main";
 import {RowNode} from "ag-grid/main";
 import {Column} from "ag-grid/main";
 import {MenuItem} from "ag-grid/main";
+import {GridApi} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -29,12 +30,14 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): [MenuItem|string] {
+        var defaultMenuOptions: [string] = ['copy','paste','separator','toolPanel'];
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
             var params = {
                 node: node,
                 column: column,
                 value: value,
+                defaultItems: defaultMenuOptions,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
@@ -42,7 +45,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
             var menuItemsFromUser = userFunc(params);
             return menuItemsFromUser;
         } else {
-            return ['copy','paste'];
+            return defaultMenuOptions;
         }
     }
 
@@ -77,31 +80,45 @@ class CContextMenu extends Component {
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private menuList: MenuList;
     private hidePopupFunc: Function;
 
     private menuItems: [MenuItem|string];
 
-    private defaultMenuItems: {[key: string]: MenuItem} = {
-        copy: {
-            name: 'Copy',
-            shortcut: 'Ctrl+C',
-            icon: svgFactory.createCopyIcon(),
-            action: ()=> this.clipboardService.copyToClipboard()
-        },
-        paste: {
-            name: 'Paste',
-            shortcut: 'Ctrl+V',
-            disabled: true,
-            icon: svgFactory.createPasteIcon(),
-            action: ()=> this.clipboardService.pasteFromClipboard()
-        }
-    };
-
     constructor(menuItems: [MenuItem|string]) {
         super('<div class="ag-menu"></div>');
         this.menuItems = menuItems;
+    }
+
+    private createDefaultMenuItems(): {[key: string]: MenuItem} {
+
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        var result: {[key: string]: MenuItem} = {
+            copy: {
+                name: localeTextFunc('copy','Copy'),
+                shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                icon: svgFactory.createCopyIcon(),
+                action: ()=> this.clipboardService.copyToClipboard()
+            },
+            paste: {
+                name: localeTextFunc('paste','Paste'),
+                shortcut: localeTextFunc('ctrlV','Ctrl+V'),
+                disabled: true,
+                icon: svgFactory.createPasteIcon(),
+                action: ()=> this.clipboardService.pasteFromClipboard()
+            },
+            toolPanel: {
+                name: localeTextFunc('toolPanel', 'Tool Panel'),
+                checked: this.gridApi.isToolPanelShowing(),
+                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
+            }
+        };
+
+        return result;
     }
 
     @PostConstruct
@@ -110,7 +127,8 @@ class CContextMenu extends Component {
         this.menuList = new MenuList();
         this.context.wireBean(this.menuList);
 
-        this.menuList.addMenuItems(this.menuItems, this.defaultMenuItems);
+        var defaultMenuItems = this.createDefaultMenuItems();
+        this.menuList.addMenuItems(this.menuItems, defaultMenuItems);
         this.getGui().appendChild(this.menuList.getGui());
 
         this.menuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));

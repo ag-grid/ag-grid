@@ -100,37 +100,16 @@ function webpackTask(minify, styles) {
 }
 
 function copyFromAgGrid() {
-
     return gulp.src(['../ag-grid/*', '../ag-grid/dist/**/*'], {base: '../ag-grid'})
         .pipe(gulp.dest('./node_modules/ag-grid'));
-
-/*    return gulp.src([
-        '../ag-grid/!*',
-        '../ag-grid/dist/lib/!*',
-        '../ag-grid/dist/lib/cellRenderers/!*',
-        '../ag-grid/dist/lib/columnController/!*',
-        '../ag-grid/dist/lib/components/!*',
-        '../ag-grid/dist/lib/context/!*',
-        '../ag-grid/dist/lib/dragAndDrop/!*',
-        '../ag-grid/dist/lib/entities/!*',
-        '../ag-grid/dist/lib/filter/!*',
-        '../ag-grid/dist/lib/gridPanel/!*',
-        '../ag-grid/dist/lib/headerRendering/!*',
-        '../ag-grid/dist/lib/interfaces/!*',
-        '../ag-grid/dist/lib/layout/!*',
-        '../ag-grid/dist/lib/rendering/!*',
-        '../ag-grid/dist/lib/rowControllers/!*',
-        '../ag-grid/dist/lib/rowControllers/inMemory/!*',
-        '../ag-grid/dist/lib/toolPanel/!*',
-        '../ag-grid/dist/lib/widgets/!*'
-    ], {base: '../ag-grid'}).pipe(gulp.dest('./node_modules/ag-grid'));
-*/
-
 }
 
 // 1. copy files -> webpack
 // 2. webpack <- copy files
 
 function watchTask() {
-    gulp.watch('../ag-grid/dist/ag-grid.js', ['webpack-dev']);
+    gulp.watch([
+        '../ag-grid/dist/ag-grid.js',
+        './src/**/*'
+    ], ['webpack-dev']);
 }

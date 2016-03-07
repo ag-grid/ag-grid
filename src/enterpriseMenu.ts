@@ -298,6 +298,11 @@ export class EnterpriseMenu {
             contractAll: {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: ()=> this.gridApi.collapseAll()
+            },
+            toolPanel: {
+                name: localeTextFunc('toolPanel', 'Tool Panel'),
+                checked: this.gridApi.isToolPanelShowing(),
+                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
             }
         };
 
@@ -345,6 +350,7 @@ export class EnterpriseMenu {
         }
         result.push('separator');
         result.push('resetColumns');
+        result.push('toolPanel');
 
         // only add grouping expand/collapse if grouping
         if (doingGrouping) {

@@ -29,6 +29,7 @@ export class RowGroupPanel extends Component {
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') gridPanel: GridPanel;
+    @Autowired('eventService') globalEventService: EventService;
 
     private logger: Logger;
     private dropTarget: DropTarget;
@@ -45,8 +46,8 @@ export class RowGroupPanel extends Component {
     @PostConstruct
     public init(): void {
         this.logger = this.loggerFactory.create('RowGroupPanel');
-        this.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
-        this.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
+        this.globalEventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
+        this.globalEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
         this.setupDropTarget();
     }
 
