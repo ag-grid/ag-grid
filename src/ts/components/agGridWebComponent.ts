@@ -99,7 +99,7 @@ export function initialiseAgGridWithWebComponents() {
         var browserEventNoType = <any> browserEvent;
         browserEventNoType.agGridDetails = event;
 
-        this.dispatchChangedEvent(browserEvent);
+        this.dispatchEvent(browserEvent);
 
         var callbackMethod = 'on' + eventLowerCase;
         if (typeof this[callbackMethod] === 'function') {

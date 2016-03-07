@@ -89,7 +89,7 @@ export class VirtualPageRowController implements IRowModel {
     }
 
     public isRowsToRender(): boolean {
-        return !this.datasource;
+        return _.exists(this.datasource);
     }
 
     private reset() {

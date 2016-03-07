@@ -1089,6 +1089,8 @@ export class ColumnController {
                             return null;
                         }
                     },
+                    suppressAggregation: true,
+                    suppressRowGroup: true,
                     cellRenderer: {
                         renderer: 'group'
                     }

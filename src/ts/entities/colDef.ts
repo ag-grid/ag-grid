@@ -113,6 +113,12 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
+    /** Set to true if you don't want to be able to group by this column */
+    suppressRowGroup?: boolean;
+
+    /** Set to true if you don't want to be able to aggregate by this column */
+    suppressAggregation?: boolean;
+
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);
 
