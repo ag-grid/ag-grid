@@ -1,0 +1,145 @@
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  src: url("https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic,100,300");
+}
+.ag-material {
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+}
+.ag-material .ag-root {
+  border: 1px solid #dfdfdf;
+  font-family: "Roboto";
+}
+.ag-material .ag-header {
+  color: rgba(0,0,0,0.54);
+  font-size: 12px;
+  height: 56px !important;
+}
+.ag-material .ag-header .ag-header-row {
+  height: 100% !important;
+  border-bottom: 1px solid #ededed;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ag-material .ag-header .ag-header-cell {
+  padding: 20px 24px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+}
+.ag-material .ag-header .ag-sort-ascending-icon,
+.ag-material .ag-header .ag-sort-descending-icon {
+  display: none !important;
+}
+.ag-material .ag-header .ag-header-cell-text:after {
+  position: absolute;
+  content: '';
+  background: url("data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'><path d='M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z'></path></svg>") no-repeat;
+  width: 15px;
+  height: 15px;
+  margin: -2px 10px;
+  display: none;
+}
+.ag-material .ag-header .ag-header-cell-sorted-asc,
+.ag-material .ag-header .ag-header-cell-sorted-desc {
+  color: rgba(0,0,0,0.87);
+}
+.ag-material .ag-header .ag-header-cell-sorted-asc .ag-header-cell-text:after,
+.ag-material .ag-header .ag-header-cell-sorted-desc .ag-header-cell-text:after {
+  display: initial;
+}
+.ag-material .ag-header .ag-header-cell-sorted-desc .ag-header-cell-text:after {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+  -webkit-transition: 0.2s linear;
+  -moz-transition: 0.2s linear;
+  -o-transition: 0.2s linear;
+  -ms-transition: 0.2s linear;
+  transition: 0.2s linear;
+}
+.ag-material .ag-filter {
+  background: #fafafa;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+  margin-top: 24px;
+  padding: 6px;
+}
+.ag-material .ag-body {
+  color: rgba(0,0,0,0.87);
+  font-size: 13px;
+  padding-top: 56px !important;
+}
+.ag-material .ag-body .ag-row {
+  border-bottom: 1px solid #ededed;
+  height: 48px !important;
+  -webkit-transition: 0.2s background ease-in;
+  -moz-transition: 0.2s background ease-in;
+  -o-transition: 0.2s background ease-in;
+  -ms-transition: 0.2s background ease-in;
+  transition: 0.2s background ease-in;
+}
+.ag-material .ag-body .ag-row:hover {
+  background: #eee;
+}
+.ag-material .ag-body .ag-row.ag-row-selected {
+  background: #f5f5f5;
+}
+.ag-material .ag-body .ag-cell {
+  outline: none;
+  padding: 18px 24px;
+}
+.ag-material .ag-body .ag-selection-checkbox {
+  margin: -2px -6px;
+  cursor: pointer;
+}
+.ag-material .ag-body .ag-selection-checkbox:focus {
+  outline: none;
+}
+.ag-material .ag-body .ag-selection-checkbox:before {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #757575;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  content: '';
+  background: #fff;
+  position: absolute;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: 0.2s all ease-in;
+  -moz-transition: 0.2s all ease-in;
+  -o-transition: 0.2s all ease-in;
+  -ms-transition: 0.2s all ease-in;
+  transition: 0.2s all ease-in;
+}
+.ag-material .ag-body .ag-selection-checkbox:checked:before {
+  background: #ff4081;
+  border-color: #ff4081;
+}
+.ag-material .ag-body .ag-selection-checkbox:checked:after {
+  border-bottom: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom-left-radius: 1px;
+  content: '';
+  position: absolute;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 13px;
+  height: 6px;
+  margin: 5px 4px;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.ag-material .ag-body .ag-scrolls {
+  position: initial;
+}
