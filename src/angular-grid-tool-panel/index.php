@@ -11,6 +11,12 @@ include '../documentation_header.php';
     <h2>Tool Panel</h2>
 
     <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        Tool panel is available in ag-Grid Enterprise.
+    </p>
+
+    <p>
         The tool panel is where you can change the state of the columns. This includes show / hide, move and group.
     </p>
 
@@ -73,7 +79,10 @@ include '../documentation_header.php';
     <h3>Example</h3>
 
     <p>
-        The example below shows the tool panel in action.
+        The example below demonstrates the tool panel. It also shows usage of properties
+        <i>suppressRowGroup</i> and <i>suppressAggregation</i> so that the 'number of wins'
+        columns cannot be grouped and the other columns cannot be aggregated (as doing
+        either of these just wouldn't make sense).
     </p>
 
     <show-example example="toolPanelExample"></show-example>

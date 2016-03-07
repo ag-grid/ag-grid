@@ -196,6 +196,15 @@ include '../documentation_header.php';
             <td>Cell template (or specify URL to load template from) to use for cell.
                 Useful for AngularJS 1.x cells only.</td>
         </tr>
+        <tr>
+            <th>suppressRowGroup</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to row group by this column (via column menu or by dragging
+                to the group box).</td>
+        </tr>
+        <tr>
+            <th>suppressAggregation</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to aggregate by this column (via column menu).</td>
+        </tr>
     </table>
 
     <h2>Properties for Column Groups</h2>

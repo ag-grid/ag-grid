@@ -40,7 +40,7 @@ var columnDefs = [
         ]
     },
     {
-        field: 'country', rowGroupIndex: 0
+        field: 'country', rowGroupIndex: 0, hide: true
     }
 ];
 
@@ -61,7 +61,6 @@ var gridOptions = {
     rowHeight: 22,
     onModelUpdated: modelUpdated,
     groupSelectsChildren: true,
-    groupHideGroupColumns: true,
     context: {
         month: 0,
         months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
