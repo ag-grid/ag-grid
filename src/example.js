@@ -134,6 +134,7 @@ var gridOptions = {
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
+    enableStatusBar: true,
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,

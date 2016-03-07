@@ -75,13 +75,15 @@ var gridOptions = {
         pinLeft: 'laPin <<',
         pinRight: 'laPin >>',
         noPin: 'laDontPin <>',
-        // enterprise menu aggregation
+        // enterprise menu aggregation and status panel
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',
         first: 'laFirst',
         last: 'laLast',
         none: 'laNone',
+        count: 'laCount',
+        average: 'laAverage',
         // standard menu
         copy: 'laCopy',
         ctrlC: 'ctrl n C',
