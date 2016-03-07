@@ -3,7 +3,7 @@ $key = "Pinning";
 $pageTitle = "AngularJS Angular Grid Pinning";
 $pageDescription = "AngularJS Angular Grid Pinning";
 $pageKeyboards = "AngularJS Angular Grid Pinning";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -40,4 +40,4 @@ include '../documentation_header.php';
     <show-example example="examplePinned"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

@@ -3,7 +3,7 @@ $key = "Virtual Paging / Infinite Scrolling";
 $pageTitle = "Angular Grid Virtual Paging";
 $pageDescription = "Angular Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
 $pageKeyboards = "Angular Grid Virtual Paging";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -103,4 +103,4 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

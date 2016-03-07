@@ -3,7 +3,7 @@ $key = "Getting Started ng1";
 $pageTitle = "Best AngularJS Data Grid";
 $pageDescription = "Shows an example of the best Javascript Data Grid. Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
 $pageKeyboards = "Best AngularJS Grid Datagrid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -148,4 +148,4 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

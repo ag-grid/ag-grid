@@ -3,7 +3,7 @@ $key = "Grouping Columns";
 $pageTitle = "AngularJS Angular Grid Group Columns ag-Grid";
 $pageDescription = "AngularJS Angular Grid Group Columns ag-Grid";
 $pageKeyboards = "AngularJS Angular Grid Group Columns ag-Grid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -150,4 +150,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

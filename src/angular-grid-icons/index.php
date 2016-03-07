@@ -3,7 +3,7 @@ $key = "Icons";
 $pageTitle = "AngularJS Angular Grid Icons";
 $pageDescription = "Angular Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.";
 $pageKeyboards = "AngularJS Angular Grid Pinning";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -78,4 +78,4 @@ gridOptions.icons = {
     <show-example example="icons"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

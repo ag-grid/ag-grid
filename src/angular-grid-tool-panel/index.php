@@ -3,7 +3,7 @@ $key = "Tool Panel";
 $pageTitle = "AngularJS Angular Grid Tool Panel";
 $pageDescription = "The tool panel allows you to work with the columns at run time, but showing and hiding, and grouping.";
 $pageKeyboards = "AngularJS Angular Grid Show Hide Column Tool Panel";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -88,4 +88,4 @@ include '../documentation_header.php';
     <show-example example="toolPanelExample"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

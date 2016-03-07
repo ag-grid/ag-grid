@@ -3,7 +3,7 @@ $key = "Column API";
 $pageTitle = "AngularJS Angular Column API";
 $pageDescription = "Angular Grid allows you to save and restore the column state. This includes column widths, agg fields and visibility.";
 $pageKeyboards = "AngularJS Angular Column API";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -289,4 +289,4 @@ include '../documentation_header.php';
     <show-example example="columnStateExample"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

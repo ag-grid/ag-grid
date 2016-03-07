@@ -3,7 +3,7 @@ $key = "Grid API";
 $pageTitle = "Angular Compiling";
 $pageDescription = "Angular Grid API";
 $pageKeyboards = "Angular Grid API";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -391,4 +391,4 @@ include '../documentation_header.php';
     </table>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

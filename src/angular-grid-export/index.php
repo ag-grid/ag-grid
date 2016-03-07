@@ -3,7 +3,7 @@ $key = "Data Export";
 $pageTitle = "ag-Grid Data Export";
 $pageDescription = "Data in the grid can be exported to csv. This page explains how to do exports along with properties you can set to get the exports done.";
 $pageKeyboards = "ag-Grid Data Export Javascript CSV";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -73,4 +73,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

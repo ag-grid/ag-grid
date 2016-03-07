@@ -3,7 +3,7 @@ $key = "Getting Started ng2";
 $pageTitle = "Best Angular 2 Data Grid";
 $pageDescription = "Demonstrate the best Angular 2 data grid. Shows and example of a data grid for using with Angular 2.";
 $pageKeyboards = "Angular 2 Grid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -209,4 +209,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

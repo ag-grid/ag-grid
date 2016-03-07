@@ -4,7 +4,7 @@ $key = "Intermediate Tutorial";
 $pageTitle = "ag-Grid Intermediate Tutorials and Examples";
 $pageDescription = "This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are build.";
 $pageKeyboards = "ag-Grid tutorials";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -77,7 +77,7 @@ include '../documentation_header.php';
 <hr/>
 
 <footer class="license">
-    © Niall Crosby 2015
+    ï¿½ Niall Crosby 2015
 </footer>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

@@ -3,7 +3,7 @@ $key = "Cell Expressions";
 $pageTitle = "AngularJS Angular Grid Cell Expressions";
 $pageDescription = "Angular Grid provides the ability to have expressions as cell values, just like in Excel. This page describes how to do this.";
 $pageKeyboards = "AngularJS Angular Grid Cell Expressions";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -66,4 +66,4 @@ include '../documentation_header.php';
     <show-example example="exampleCellExpressions"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

@@ -3,7 +3,7 @@ $key = "Editing";
 $pageTitle = "AngularJS Angular Grid Editing";
 $pageDescription = "AngularJS Angular Grid Editing";
 $pageKeyboards = "AngularJS Angular Grid Editing";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -117,4 +117,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

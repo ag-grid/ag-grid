@@ -3,7 +3,7 @@ $key = "Styled Report";
 $pageTitle = "AngularJS as a Styled Report";
 $pageDescription = "How to make a Styled Report using Angular Grid. This page gives you an example you can follow.";
 $pageKeyboards = "AngularJS Angular Grid Styled Report";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -21,4 +21,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

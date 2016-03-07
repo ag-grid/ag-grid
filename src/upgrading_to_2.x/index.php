@@ -3,7 +3,7 @@ $key = "Upgrading to 2.0";
 $pageTitle = "Upgrading to ag-Grid 2.x";
 $pageDescription = "Shows steps in moving your project from ag-Grid 1.x to ag-Grid 2.0.";
 $pageKeyboards = "ag-Grid upgrading 1.x to 2.0";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -184,4 +184,4 @@ include '../documentation_header.php';
     </p>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

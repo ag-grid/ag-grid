@@ -3,7 +3,7 @@ $key = "Cell Templates";
 $pageTitle = "AngularJS Angular Grid Cell Templates";
 $pageDescription = "Angular Grid allows you to specify cell templates. Cell templates allow custom rendering of the cell given a provided template. This pages describes how to use them.";
 $pageKeyboards = "AngularJS Angular Grid Cell Templates";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -55,4 +55,4 @@ include '../documentation_header.php';
     <show-example example="example1"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

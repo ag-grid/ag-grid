@@ -8,17 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
-    <link inline rel="stylesheet" href="./dist/bootstrap.css">
-    <link inline rel="stylesheet" href="./dist/bootstrap-theme.css">
+    <link inline rel="stylesheet" href="../dist/bootstrap.css">
+    <link inline rel="stylesheet" href="../dist/bootstrap-theme.css">
 
 <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
 <!--    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 
-    <script src="/documentation.js"></script>
+    <script src="../documentation-main/documentation.js"></script>
 
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/documentation.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../documentation-main/documentation.css">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
@@ -39,7 +39,7 @@ if (strcmp($version , 'latest') == 0) {
 
 <?php if ($version=='latest') {
     $navKey = "documentation";
-    include 'navbar.php';
+    include '../navbar.php';
 } else { ?>
     <nav class="navbar-inverse">
         <div class="container">
@@ -55,7 +55,7 @@ if (strcmp($version , 'latest') == 0) {
     </nav>
 <?php } ?>
 
-<?php $headerTitle = "Documentation"; include 'headerRow.php'; ?>
+<?php $headerTitle = "Documentation"; include '../headerRow.php'; ?>
 
 
     <div class="container" style="margin-top: 20px">

@@ -3,7 +3,7 @@ $key = "Properties";
 $pageTitle = "ag-Grid Properties";
 $pageDescription = "Learn how each property impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -321,4 +321,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

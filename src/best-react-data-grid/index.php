@@ -3,7 +3,7 @@ $key = "Getting Started React";
 $pageTitle = "Best React Data Grid";
 $pageDescription = "Demonstrates teh best React Data Grid. Shows and example of a data grid for using with React.";
 $pageKeyboards = "React Grid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -231,4 +231,4 @@ somePointLater() {
 <!-- Example uses font awesome icons -->
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

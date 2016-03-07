@@ -28,7 +28,7 @@ include 'documentation_header.php';
 
 
     <div style="float: left; width: 40px;">
-        <img src="images/npm.png" style="width: 30px;"/>
+        <img src="../images/npm.png" style="width: 30px;"/>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
@@ -89,7 +89,7 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 40px;">
-        <img src="images/lab.png"/>
+        <img src="../images/lab.png"/>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
@@ -106,7 +106,7 @@ include 'documentation_header.php';
     </div>
 
     <div>
-        <img src="images/nextVersion.png"/>
+        <img src="../images/nextVersion.png"/>
     </div>
 
 </div>
@@ -114,13 +114,13 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
-            <img src="images/agGridDaily.png"/>
+        <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
+            <img src="../images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
                 Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
             </a>
         </div>
@@ -138,7 +138,7 @@ include 'documentation_header.php';
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
-            <img src="images/panda.png"/>
+            <img src="../images/panda.png"/>
         </div>
         <div style="font-size: 25px; float: left; padding-left: 10px">
             ag-Grid v3.3 Released
@@ -150,7 +150,7 @@ include 'documentation_header.php';
 
     <div style="padding-top: 20px;">
         <p>
-            The <a href="changeLog.php">change log</a> has a full set of changes. The
+            The <a href="../changeLog.php">change log</a> has a full set of changes. The
             highlights are as follows:
         </p>
         <p>
@@ -199,13 +199,13 @@ include 'documentation_header.php';
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="react-and-ag-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="../react-and-ag-grid">
+            <img src="../images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="react-and-ag-grid/">
+            <a href="../react-and-ag-grid">
                 React and ag-Grid - the Perfect Match
             </a>
         </div>
@@ -225,7 +225,7 @@ include 'documentation_header.php';
 
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-    <b>Version 3.2.0 released</b>. Minor changes, see the <a href="changeLog.php">change log</a>. This release
+    <b>Version 3.2.0 released</b>. Minor changes, see the <a href="../changeLog.php">change log</a>. This release
     was mostly to support the 'React Component' which I'm going to release as soon as I get the
     documentation updated.
 </div>
@@ -234,7 +234,7 @@ include 'documentation_header.php';
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
-            <img src="images/superDev.jpg"/>
+            <img src="../images/superDev.jpg"/>
         </div>
         <div style="font-size: 25px; float: left; padding: 20px;">
             ag-Grid v3.1.0 Released
@@ -246,18 +246,18 @@ include 'documentation_header.php';
 
     <div style="padding-top: 20px;">
         <p>
-            ag-Grid 3.1.0 is now released. The <a href="changeLog.php">change log</a> has a full set of changes. This
+            ag-Grid 3.1.0 is now released. The <a href="../changeLog.php">change log</a> has a full set of changes. This
             is a minor release and is fully compatible with the previous. Highlights of this release are:
         </p>
         <p>
         <ul>
             <li><b>Column Auto-width</b> to fit cell contents.
-                Documented <a href="./angular-grid-resizing/index.php">here</a>.
+                Documented <a href="../angular-grid-resizing/index.php">here</a>.
             </li>
             <li><b>Header Templates</b> to allow full customisation of headers.
-                Documented <a href="./angular-grid-header-rendering/index.php">here</a>. </li>
+                Documented <a href="../angular-grid-header-rendering/index.php">here</a>. </li>
             <li><b>Variable Row Height</b> so now your rows can have different heights.
-                Documented <a href="./angular-grid-row-height/index.php">here</a>. </li>
+                Documented <a href="../angular-grid-row-height/index.php">here</a>. </li>
         </ul>
         </p>
     </div>
@@ -269,7 +269,7 @@ include 'documentation_header.php';
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; float: left;">
-            <img src="images/newAndImproved.jpg"/>
+            <img src="../images/newAndImproved.jpg"/>
         </div>
         <div style="font-size: 25px; float: left; padding: 20px;">
             ag-Grid v3.0.0 Released
@@ -281,13 +281,13 @@ include 'documentation_header.php';
 
     <div style="padding-top: 20px;">
         <p>
-            ag-Grid 3.0.0 is now released. The <a href="changeLog.php">change log</a> has a full set of changes and what
+            ag-Grid 3.0.0 is now released. The <a href="../changeLog.php">change log</a> has a full set of changes and what
             you need to do to upgrade. The new big changes are as follows:
         </p>
         <p>
         <ul>
-            <li>Left and right column pinning with <a href="./angular-grid-pinning/index.php">updated documentation</a>. </li>
-            <li>Multiple levels of column grouping with <a href="./angular-grid-grouping-headers/index.php">updated documentation</a>. </li>
+            <li>Left and right column pinning with <a href="../angular-grid-pinning/index.php">updated documentation</a>. </li>
+            <li>Multiple levels of column grouping with <a href="../angular-grid-grouping-headers/index.php">updated documentation</a>. </li>
             <li>Pivoting is now called 'row grouping' (it wasn't really pivoting, I will be implementing proper pivoting in the future and needed to remove the confusion!!).</li>
         </ul>
         </p>

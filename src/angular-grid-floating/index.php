@@ -3,7 +3,7 @@ $key = "Floating";
 $pageTitle = "AngularJS Angular Grid Floating Header & Floating Footer";
 $pageDescription = "AngularJS Angular Grid Floating Header & Floating Footer";
 $pageKeyboards = "AngularJS Angular Grid Floating Header & Floating Footer";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -59,4 +59,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

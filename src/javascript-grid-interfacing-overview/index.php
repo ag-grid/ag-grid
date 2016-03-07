@@ -3,7 +3,7 @@ $key = "Interfacing Overview";
 $pageTitle = "Interfacing Overview";
 $pageDescription = "Learn how to interface with ag-Grid using events, functions and the API.";
 $pageKeyboards = "html5 data grid ag-Grid interfacing events functions api";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -331,4 +331,4 @@ myGrid.showToolPanel = true;
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

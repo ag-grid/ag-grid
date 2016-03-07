@@ -3,7 +3,7 @@ $key = "Keyboard Navigation";
 $pageTitle = "AngularJS Angular Grid Keyboard Navigation";
 $pageDescription = "AngularJS Angular Grid Keyboard Navigation";
 $pageKeyboards = "AngularJS Angular Grid Keyboard Navigation";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -74,4 +74,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

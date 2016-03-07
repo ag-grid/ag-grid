@@ -3,7 +3,7 @@ $key = "Header Rendering";
 $pageTitle = "AngularJS Angular Grid Header Rendering";
 $pageDescription = "AngularJS Angular Grid Header Rendering";
 $pageKeyboards = "AngularJS Angular Grid Header Rendering";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -178,4 +178,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

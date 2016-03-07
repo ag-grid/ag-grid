@@ -3,7 +3,7 @@ $key = "Cell Rendering";
 $pageTitle = "Angular Grid Cell Rendering";
 $pageDescription = "You can customise every cell in Angular Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
 $pageKeyboards = "Angular Grid Cell Renderers";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -169,4 +169,4 @@ var colDef = {
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

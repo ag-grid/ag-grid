@@ -3,7 +3,7 @@ $key = "Width & Height";
 $pageTitle = "Angular Grid Width and Height";
 $pageDescription = "Angular Grid Resizing";
 $pageKeyboards = "Angular Grid Resizing";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -49,4 +49,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

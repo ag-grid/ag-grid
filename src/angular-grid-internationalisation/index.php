@@ -3,7 +3,7 @@ $key = "Internationalisation";
 $pageTitle = "Angular Grid Internationalisation";
 $pageDescription = "You can change text used in different parts of the grid for Internationalisation. This page explains how to change languages via the grid options.";
 $pageKeyboards = "Angular Grid Internationalisation";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -128,4 +128,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

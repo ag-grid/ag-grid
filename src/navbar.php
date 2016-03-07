@@ -29,7 +29,7 @@
                     <br/>
                     <span class="menuButton-wrapper">
                         <a class="top-button"
-                           href="/documentation.php">Documentation</a>
+                           href="/documentation-main/documentation.php">Documentation</a>
                     </span>
                     <br/>
                     <span class="menuButton-wrapper">
@@ -71,7 +71,7 @@
                     </span>
                     <span class="top-button-wrapper">
                         <a class="top-button<?php if ($navKey == "documentation") { ?>-selected<?php }?>"
-                           href="/documentation.php">Documentation</a>
+                           href="/documentation-main/documentation.php">Documentation</a>
                     </span>
                     <span class="top-button-wrapper">
                         <a class="top-button<?php if ($navKey == "media") { ?>-selected<?php }?>"

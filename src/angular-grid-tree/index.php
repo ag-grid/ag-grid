@@ -3,7 +3,7 @@ $key = "Tree Data";
 $pageTitle = "ag-Grid Providing Tree Data";
 $pageDescription = "You can provide the data to your grid in a tree format. This page explains how to set this up.";
 $pageKeyboards = "ag-Grid Javascript Tree";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -48,4 +48,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

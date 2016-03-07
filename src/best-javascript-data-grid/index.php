@@ -3,7 +3,7 @@ $key = "Getting Started Javascript";
 $pageTitle = "Best Javascript Data Grid";
 $pageDescription = "How to set up the Best Javascript Data Grid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Data Grid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -65,4 +65,4 @@ new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
 </div>
 
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

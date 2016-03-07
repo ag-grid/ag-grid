@@ -3,7 +3,7 @@ $key = "Selection";
 $pageTitle = "AngularJS Angular Grid Selection";
 $pageDescription = "AngularJS Angular Grid Selection";
 $pageKeyboards = "AngularJS Angular Grid Selection";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -162,4 +162,4 @@ var selected = node.isSelected();</pre>
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

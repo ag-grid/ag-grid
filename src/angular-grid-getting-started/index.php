@@ -3,9 +3,9 @@ $key = "Getting Started";
 $pageTitle = "Getting Started";
 $pageDescription = "Getting Started Angular JS 1";
 $pageKeyboards = "Getting Started Angular JS 1";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
-
+<!--include '../documentation-main/documentation_header.php';-->
 <div>
 
     <h2>Compatibility</h2>
@@ -199,4 +199,4 @@ import {Grid} from 'ag-grid/main';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

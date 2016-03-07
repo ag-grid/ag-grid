@@ -3,7 +3,7 @@ $key = "Getting Started Web Components";
 $pageTitle = "Best Web Component Data Grid";
 $pageDescription = "Demonstrates the best Web Component Data Grid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
 $pageKeyboards = "Best Javascript Web Component Data Grid";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -131,4 +131,4 @@ myGrid.setGridOptions(gridOptions);</code></pre>
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

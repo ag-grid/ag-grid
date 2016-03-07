@@ -3,7 +3,7 @@ $key = "Resizing";
 $pageTitle = "AngularJS Angular Grid Resizing";
 $pageDescription = "AngularJS Angular Grid Resizing";
 $pageKeyboards = "AngularJS Angular Grid Resizing";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -83,4 +83,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

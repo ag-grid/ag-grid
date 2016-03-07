@@ -3,7 +3,7 @@ $key = "Getting Started Web Components";
 $pageTitle = "Getting Started Web Components";
 $pageDescription = "Getting Started Web Components";
 $pageKeyboards = "Getting Started Web Components";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -20,4 +20,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

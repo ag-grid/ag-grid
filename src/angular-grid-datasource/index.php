@@ -3,7 +3,7 @@ $key = "Datasource";
 $pageTitle = "Angular Grid Datasource";
 $pageDescription = "To do pagination or virtual paging, you need to set up a datasource. This page explains how to create an Angular Grid datasource.";
 $pageKeyboards = "Angular Grid Datasource";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -160,4 +160,4 @@ gridOptions.api.onNewDatasource();</pre>
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

@@ -3,7 +3,7 @@ $key = "Angular Compiling";
 $pageTitle = "AngularJS Data Grid - Angular Compiling";
 $pageDescription = "Documentation on how to Angular Compile for Angular AngularJS Data Grid";
 $pageKeyboards = "AngularJS Angular Data Grid Angular Compiling";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -14,4 +14,4 @@ include '../documentation_header.php';
     </p>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

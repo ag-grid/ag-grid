@@ -3,7 +3,7 @@ $key = "Grouping";
 $pageTitle = "AngularJS Angular Grid Grouping and Aggregation";
 $pageDescription = "AngularJS Angular Grid Grouping and Aggregation";
 $pageKeyboards = "AngularJS Angular Grid Grouping and Aggregation";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -419,6 +419,7 @@ gridOptions.groupRowRenderer: {
     row gets split into a separate component for the pinned sections. At the time of writing,
     there is no way around this problem.</note>
 
+
     <h3>Suppress Group Row</h3>
 
     <p>
@@ -437,4 +438,4 @@ gridOptions.groupRowRenderer: {
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

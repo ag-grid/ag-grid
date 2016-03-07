@@ -3,7 +3,7 @@ $key = "Context Menu";
 $pageTitle = "ag-Grid Javascript Grid Context Menu";
 $pageDescription = "Right clicking on a cell brings up the grid's context menu. You can use the default or configure your own details.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -91,4 +91,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

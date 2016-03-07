@@ -3,7 +3,7 @@ $key = "Pagination";
 $pageTitle = "Angular Grid Pagination";
 $pageDescription = "You can load data in pages from the server, delegating filtering and sorting to the server also. This page explains how to do this with Angular Grid.";
 $pageKeyboards = "Angular Grid Paging Pagination";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -90,4 +90,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

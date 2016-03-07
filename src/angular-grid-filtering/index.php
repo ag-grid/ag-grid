@@ -3,7 +3,7 @@ $key = "Filtering";
 $pageTitle = "AngularJS Angular Grid Filtering";
 $pageDescription = "AngularJS Angular Grid Filtering";
 $pageKeyboards = "AngularJS Angular Grid Filtering";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -467,4 +467,4 @@ columnDefinition = {
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

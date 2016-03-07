@@ -3,7 +3,7 @@ $key = "Cell Styling";
 $pageTitle = "Angular Grid Cell Styling";
 $pageDescription = "You can change the CSS style in Angular Grid. This is done by providing style and class callbacks in the column definition.";
 $pageKeyboards = "Angular Grid Cell Styling CSS";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -169,4 +169,4 @@ var colDef4 = {
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

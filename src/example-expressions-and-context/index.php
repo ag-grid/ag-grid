@@ -3,7 +3,7 @@ $key = "Expressions and Context";
 $pageTitle = "Grid Expressions and Context Example";
 $pageDescription = "Angular Grid Expressions and Context example. Learn how to build a grid using Expressions and Context from Angular Grid";
 $pageKeyboards = "AngularJS Angular Grid expressions Context";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -43,4 +43,4 @@ include '../documentation_header.php';
 
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

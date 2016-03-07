@@ -3,7 +3,7 @@ $key = "For Print";
 $pageTitle = "ag-Grid Printing";
 $pageDescription = "If you want to print your grid, then it should be rendered without scrolls. This page shows you how to do it.";
 $pageKeyboards = "ag-Grid Printing";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -47,4 +47,4 @@ include '../documentation_header.php';
     <show-example example="example1"></show-example>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

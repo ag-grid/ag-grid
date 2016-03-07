@@ -3,7 +3,7 @@ $key = "Events";
 $pageTitle = "ag-Grid Events";
 $pageDescription = "Learn how each events impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid events";
-include '../documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -194,4 +194,4 @@ include '../documentation_header.php';
     </table>
 </div>
 
-<?php include '../documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>
