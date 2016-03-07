@@ -71,28 +71,16 @@
         </div>
 
         <div class="container">
+
             <div class="row" style="text-align: center; padding-top: 80px;">
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
                     <div style="font-style: italic; margin-left: 20px; margin-right: 20px;">
-                        ag-Grid is a Javascript data grid for building professional
+                        ag-Grid is a JavaScript data grid for building professional web
                         applications.
                         Your user's experience depends on your choice of data grid.
                         Allow your users an enterprise experience, give them ag-Grid.
-<!--                        "ag-Grid is an Enterprise Grade Javascript Data Grid.
-                        The purpose of ag-Grid is to provide a data grid that enterprise
-                        software can use for building applications such as
-                        reporting and data analytics, business workflow and data entry.
-                        Having spent years building applications in C++, Java and Javascript
-                        I found the choice of grids in JavaScript lacking, especially in
-                        comparison to what I was used to in other languages. ag-Grid is
-                        the result of turning my frustration into answers,
-                        providing a grid worthy of enterprise development."
--->                    </div>
-<!--                    <div style="margin-top: 10px;">
-                        Niall Crosby, ag-Grid Creator
                     </div>
--->
                 </div>
                 <div class="col-md-2"></div>
             </div>

@@ -8,6 +8,25 @@ include 'documentation_header.php';
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
+
+    <!--
+                        <div>
+                            "ag-Grid is an Enterprise Grade Javascript Data Grid.
+                            The purpose of ag-Grid is to provide a data grid that enterprise
+                            software can use for building applications such as
+                            reporting and data analytics, business workflow and data entry.
+                            Having spent years building applications in C++, Java and Javascript
+                            I found the choice of grids in JavaScript lacking, especially in
+                            comparison to what I was used to in other languages. ag-Grid is
+                            the result of turning my frustration into answers,
+                            providing a grid worthy of enterprise development."
+                        </div>
+                        <div style="margin-top: 10px;">
+                            Niall Crosby, ag-Grid Creator
+                        </div>
+    -->
+
+
     <div style="float: left; width: 40px;">
         <img src="images/npm.png" style="width: 30px;"/>
     </div>

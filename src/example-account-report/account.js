@@ -67,6 +67,9 @@
         enableSorting: false,
         forPrint: true,
         groupColumnDef: groupColumn,
+        suppressMenuColumnPanel: true,
+        suppressMenuFilterPanel: true,
+        suppressMenuMainPanel: true,
         getRowHeight: function(params) {
             if (params.node.footer) {
                 return 40;

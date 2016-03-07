@@ -28,7 +28,7 @@
 <?php $headerTitle = "Support"; include 'headerRow.php'; ?>
 
 
-<div class="container support-page">
+<div class="container info-page">
 
     <div class="row">
 
@@ -179,7 +179,7 @@
                 Use Github Issues to report bugs. When reporting a bug please:
                 <ul>
                 <li>Write steps to reproduce the error.</li>
-                <li>If the bug cannot be reproduced via one of the documentation examples, provide a JSFiddle (or use similar website)</li>
+                <li>If the bug cannot be reproduced via one of the documentation examples, provide a Plunker (or use similar website)</li>
                 <ul>
             </p>
 

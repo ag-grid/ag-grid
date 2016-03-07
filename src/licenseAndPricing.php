@@ -25,22 +25,93 @@
 
 <?php $headerTitle = "License and Pricing"; include 'headerRow.php'; ?>
 
-<div class="container">
+<div class="container info-page">
 
     <div class="row">
-        <div class="col-md-12" style="text-align: center; padding: 40px; font-weight: bold;">
-            Choose the edition that's right for you
+        <div class="col-md-12">
+
+            <h2>
+                Choosing a License
+            </h2>
+
+            <p>
+                ag-Grid free edition comes with standard features is released under MIT. There is no warranty or support.
+                ag-Grid-Enterprise comes with a commercial license, extra enterprise features and support. If you want
+                to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Trial License
+            </h2>
+
+            <p>
+                A trial license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
+                All we ask in return is the following:
+            <ul>
+                <li>
+                    You agree to use the Trial License only for evaluation ag-Grid-Enterprise.
+                </li>
+                <li>
+                    You limit your trial to two months (after that, either delete or pay up!!)
+                </li>
+                <li>
+                    You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
+                    and inform us you are taking a trial.
+                </li>
+            </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Non-Commercial License
+            </h2>
+
+            <p>
+                If you wish to use ag-Grid-Enterprise for a non-profit project, then you can use ag-Grid-Enterprise
+                for free. All we ask in return is the following:
+                <ul>
+                    <li>
+                        If you are hosting ag-Grid-Enterprise on a website, you provide a link back to the ag-Grid website.
+                    </li>
+                    <li>
+                        You do not alter any of the copyright headers in the javascript files.
+                    </li>
+                    <li>
+                        Your users are aware that ag-Grid-Enterprise is not free for commercial use.
+                    </li>
+                    <li>
+                        You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
+                        and inform us you are using ag-Grid-Enterprise for non-commercial use.
+                    </li>
+                </ul>
+                The non-commercial license is for using ag-Grid-Enterprise only. It does not cover any warranty or support.
+            </p>
         </div>
     </div>
 
     <style>
         .theTable {
+            text-align: center;
         }
         .tableCell {
             width: 48%;
-            border-left: 1px solid #ddd;
-            border-right: 1px solid #ddd;
+            border-left: 1px solid #888;
+            border-right: 1px solid #888;
             padding: 10px;
+        }
+        .tableHighlightCell {
+            border-top: 1px solid #888;
+            border-bottom: 1px solid #888;
+            background-color: #eee;
         }
         .gapCol {
             width: 4%;
@@ -50,36 +121,39 @@
             font-family: Impact, Charcoal, sans-serif;
             font-size: 35px;
             background-color: #eee;
-        }
-        .licenseCell {
-            background-color: #eee;
+            border-top: 1px solid #888;
+            border-bottom: 1px solid #888;
         }
         .gridFeature {
             padding: 4px;
         }
         .benefitsCell {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #888;
         }
         .buyLink {
-            background-color: lightgreen;
-            padding: 4px;
+            background-color: #0b0;
+            padding: 8px;
             margin: 10px;
             display: inline-block;
             font-weight: bold;
-            border-radius: 2px;
+            border-radius: 10px;
         }
     </style>
 
     <div class="row">
-        <div class="col-md-12" style="text-align: center;">
+        <div class="col-md-12">
+
+            <h2>
+                License Comparison and Pricing
+            </h2>
 
             <table class="theTable" style="width: 100%;">
                 <tr>
-                    <td class="titleCell tableCell">
+                    <td class="titleCell tableHighlightCell tableCell">
                         <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid</span>
                     </td>
                     <td class="gapCol"/>
-                    <td class="titleCell tableCell">
+                    <td class="titleCell tableHighlightCell tableCell">
                         <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid-Enterprise</span>
                     </td>
                 </tr>
@@ -112,11 +186,11 @@
                 </tr>
 
                 <tr>
-                    <td class="licenseCell tableCell">
+                    <td class="tableHighlightCell tableCell">
                         Released under <a href="https://github.com/ceolter/ag-grid/blob/master/LICENSE.txt">MIT</a>
                     </td>
                     <td class="gapCol"/>
-                    <td class="licenseCell tableCell">
+                    <td class="tableHighlightCell tableCell">
                         Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a>
                     </td>
                 </tr>
@@ -162,9 +236,19 @@
                             Influence the Future Direction of ag-Grid
                         </div>
 
-                        <span class="buyLink">
-                            Email <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
-                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="tableHighlightCell tableCell">
+                        Download for Free
+                    </td>
+                    <td class="gapCol"/>
+                    <td class="tableHighlightCell tableCell">
+
+                        <a href="./order.php" class="buyLink">
+                            Continue to Ordering
+                        </a>
 
                     </td>
                 </tr>
@@ -177,6 +261,12 @@
         <div class="col-md-12" style="text-align: center; padding: 40px;">
             Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
             back will help ag-Grid grow into the future.
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12" style="text-align: center;">
+            Any questions on licensing or ordering? Email <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
         </div>
     </div>
 
