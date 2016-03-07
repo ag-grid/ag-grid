@@ -26,17 +26,17 @@ Support will be provided for the current release of the software and previous re
 
 2.Response Time
 
-Typical response time on member-only support will be within 24 hours on working days, 
+Response time on member-only support will be within 24 hours on working days, 
 working days as defined by the United Kingdom calendar.
 
 3.Customer’s Responsibilities
 
-It is the customers responsibility that raised support tickets are relevant to ag-Grid and not use the service
-to receive help on related but not ag-Grid matters. In other words, ag-Grid support should not be used for general
+It is the customers responsibility that raised support tickets regarding ag-Grid and not use the service
+to receive help on related matters. In other words, ag-Grid support should not be used for general
 Javascript help or help using other frameworks.
 
-It is also assumed that the support tickets are raised by aptly trained individuals, such that the cause of the
-issue is not due to inexperience of the raiser. In other words, the ticket should not be due to the core problem
+It is teh customers responsibility that the support tickets are raised by aptly trained individuals, such that the cause of the
+issue is not due to inexperience of the raiser. In other words, the ticket should not be due to the 
 the raiser is not proficient enough in Javascript or other related technologies.
 
 4.Service Limitations; Limitation of Liability
