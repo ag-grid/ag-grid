@@ -317,8 +317,12 @@ include '../documentation-main/documentation_header.php';
             <td>By default the enterprise menu has three panels. Set these properties to true
             to suppress one or more of these panels.</td>
         </tr>
+        <tr>
+            <th>rememberGroupStateWhenNewData</th>
+            <td>When true, if you set new data into the grid and have groups open, the grid will keep
+                groups open if they exist in the new dataset.</td>
+        </tr>
     </table>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -337,6 +337,19 @@ colDef.onCellValueChanged = function() {
 
     </p>
 
+    <h3>Keeping Group State</h3>
+
+    <p>
+        When you set new data into the group by default all the group open/closed states are reset.
+        If you want to keep the original state, then set the property <i>rememberGroupStateWhenNewData=true</i>.
+        The example below demonstrates this. Only have the data is shown in the grid at any given time,
+        either the odd rows or the even rows. Hitting the 'Refresh Data' will set the data to 'the other half'.
+        Note that not all groups are present in both sets (eg 'Afghanistan' is only present in one group) and
+        as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
+    </p>
+
+    <show-example example="exampleKeepingGroupState"></show-example>
+
     <h3>Group Row Rendering</h3>
 
     <p>
@@ -418,7 +431,6 @@ gridOptions.groupRowRenderer: {
     <note>Grouping using the whole row doesn't work very well with pinned columns, as the group
     row gets split into a separate component for the pinned sections. At the time of writing,
     there is no way around this problem.</note>
-
 
     <h3>Suppress Group Row</h3>
 

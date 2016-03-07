@@ -1,10 +1,10 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 0, hide: true},
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
     {headerName: "Bronze", field: "bronze", width: 100},
@@ -13,8 +13,38 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null
+    enableSorting: true,
+    rememberGroupStateWhenNewData: true,
+    rowData: null,
+    onGridReady: function(params) {
+        params.api.setSortModel([
+            {colId: 'ag-Grid-AutoColumn', sort: 'asc'}
+        ]);
+    }
 };
+
+var allRowData;
+var pickingEvenRows = false;
+
+function refreshData() {
+    // in case user hits the 'refresh groups' data before the data was loaded
+    if (!allRowData) {
+        return;
+    }
+
+    // pull out half the data, different half to the last time
+    var dataThisTime = [];
+    allRowData.forEach( function(item, index) {
+        var rowIsEven = index % 2 === 0;
+        if ( (pickingEvenRows && rowIsEven) || (!pickingEvenRows && !rowIsEven) ) {
+            dataThisTime.push(item);
+        }
+    });
+
+    gridOptions.api.setRowData(dataThisTime);
+
+    pickingEvenRows = !pickingEvenRows;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -29,7 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
+            allRowData = httpResult;
+            refreshData();
         }
     };
 });
