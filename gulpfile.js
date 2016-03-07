@@ -36,7 +36,7 @@ var dtsHeaderTemplate =
     '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
 
 gulp.task('default', ['watch']);
-gulp.task('release', ['copyToDocs-release']);
+gulp.task('release', ['webpack-all']);
 
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
 
