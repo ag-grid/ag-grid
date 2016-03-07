@@ -493,5 +493,22 @@ export class Utils {
         }
     }
 
+    static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string)=>void): void {
+        var keyParts: any[] = [];
+
+        recursiveSearchNodes(nodes);
+
+        function recursiveSearchNodes(nodes: RowNode[]): void {
+            nodes.forEach( (node: RowNode) => {
+                if (node.group) {
+                    keyParts.push(node.key);
+                    var key = keyParts.join('|');
+                    callback(node, key);
+                    recursiveSearchNodes(node.children);
+                    keyParts.pop();
+                }
+            });
+        }
+    }
 }
 

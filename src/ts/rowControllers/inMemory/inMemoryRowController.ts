@@ -68,7 +68,7 @@ export class InMemoryRowController implements IRowModel {
 
     }
 
-    public refreshModel(step: number, fromIndex?: any): void {
+    public refreshModel(step: number, fromIndex?: any, groupState?: any): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -81,7 +81,7 @@ export class InMemoryRowController implements IRowModel {
         // step get done
         switch (step) {
             case constants.STEP_EVERYTHING:
-                this.doRowGrouping();
+                this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
             case constants.STEP_AGGREGATE:
@@ -259,7 +259,7 @@ export class InMemoryRowController implements IRowModel {
         this.rowsAfterSort = this.sortStage.execute(this.rowsAfterFilter);
     }
 
-    private doRowGrouping() {
+    private doRowGrouping(groupState: any) {
         // grouping is enterprise only, so if service missing, skip the step
         var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
 
@@ -271,12 +271,22 @@ export class InMemoryRowController implements IRowModel {
 
             this.rowsAfterGroup = this.groupStage.execute(this.allRows);
 
+            this.restoreGroupState(groupState);
+
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
                 this.selectionController.updateGroupsFromChildrenSelections();
             }
         } else {
             this.rowsAfterGroup = this.allRows;
         }
+    }
+
+    private restoreGroupState(groupState: any): void {
+        if (!groupState) { return; }
+
+        _.traverseNodesWithKey(this.rowsAfterGroup, (node: RowNode, key: string)=> {
+            node.expanded = groupState[key] === true
+        });
     }
 
     private doFilter() {
@@ -287,14 +297,26 @@ export class InMemoryRowController implements IRowModel {
     // firstId: the first id to use, used for paging, where we are not on the first page
     public setRowData(rowData: any[], refresh: boolean, firstId?: number) {
 
+        // remember group state, so we can expand groups that should be expanded
+        var groupState = this.getGroupState();
+
         // place each row into a wrapper
         this.allRows = this.createRowNodesFromData(rowData, firstId);
 
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {
-            this.refreshModel(Constants.STEP_EVERYTHING);
+            this.refreshModel(Constants.STEP_EVERYTHING, null, groupState);
         }
+    }
+
+    private getGroupState(): any {
+        if (!this.rowsAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
+            return null;
+        }
+        var result: any = {};
+        _.traverseNodesWithKey(this.rowsAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
+        return result;
     }
 
     private createRowNodesFromData(rowData: any[], firstId?: number): RowNode[] {

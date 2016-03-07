@@ -56,6 +56,7 @@ export interface GridOptions {
     suppressMenuFilterPanel?: boolean;
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
+    rememberGroupStateWhenNewData?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
