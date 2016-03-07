@@ -11,7 +11,7 @@ label {
 .div-percent-bar {
     display: inline-block;
     height: 100%;
-    position: relative;
+    position: absolute;
 }
 
 .div-percent-value {

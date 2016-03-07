@@ -321,8 +321,8 @@ function percentCellRenderer(params) {
 
     var eOuterDiv = document.createElement('div');
     eOuterDiv.className = 'div-outer-div';
-    eOuterDiv.appendChild(eValue);
     eOuterDiv.appendChild(eDivPercentBar);
+    eOuterDiv.appendChild(eValue);
 
     return eOuterDiv;
 }

@@ -11,12 +11,11 @@ label {
 .div-percent-bar {
     display: inline-block;
     height: 100%;
-    position: relative;
+    position: absolute;
 }
 
 .div-percent-value {
     position: absolute;
-    z-index: 1;
     padding-left: 4px;
     font-weight: bold;
     font-size: 13px;

@@ -193,7 +193,7 @@
             var data = params.data;
             var skills = [];
             IT_SKILLS.forEach(function (skill) {
-                if (data.skills[skill]) {
+                if (data && data.skills[skill]) {
                     skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
                 }
             });
@@ -236,8 +236,8 @@
 
             var eOuterDiv = document.createElement('div');
             eOuterDiv.className = 'div-outer-div';
-            eOuterDiv.appendChild(eValue);
             eOuterDiv.appendChild(eDivPercentBar);
+            eOuterDiv.appendChild(eValue);
 
             return eOuterDiv;
         }

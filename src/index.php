@@ -28,13 +28,6 @@
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
-        <!-- For example datagrid, should reuse whats in the example -->
-        <style>
-            .div-percent-bar { display: inline-block;  height: 100%; position: relative; }
-            .div-percent-value { position: absolute; z-index: 1; padding-left: 4px; font-weight: bold; font-size: 13px; }
-            .div-outer-div { display: inline-block; height: 100%; width: 100%; }
-        </style>
-
     </head>
 
     <body class="big-text">
