@@ -2,7 +2,9 @@
 ag-Grid-Enterprise
 ==============
 
-This project contains ag-Grid-Enterprise features
+This project contains ag-Grid-Enterprise features.
+
+See www.ag-grid.com.
 
 This is not free software, this software is covered by copyright and to use you need a commercial license.
 
