@@ -54,10 +54,10 @@
                 All we ask in return is the following:
             <ul>
                 <li>
-                    You agree to use the Trial License only for evaluation ag-Grid-Enterprise.
+                    You agree to use the Trial License only for evaluation of ag-Grid-Enterprise.
                 </li>
                 <li>
-                    You limit your trial to two months (after that, either delete or pay up!!)
+                    You limit your trial to two months (after that, either uninstall or purchase).
                 </li>
                 <li>
                     You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
@@ -144,7 +144,7 @@
         <div class="col-md-12">
 
             <h2>
-                License Comparison and Pricing
+                Free vs Enterprise Comparison and Pricing
             </h2>
 
             <table class="theTable" style="width: 100%;">

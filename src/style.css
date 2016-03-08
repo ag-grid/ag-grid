@@ -122,6 +122,16 @@ h4 {
     }
 }
 
+.testimonial-quote {
+    font-style: italic;
+    text-align: center;
+}
+
+.testimonial-reference {
+    padding-top: 10px;
+    text-align: center;
+}
+
 .info-page h2 {
     margin-top: 50px;
 }

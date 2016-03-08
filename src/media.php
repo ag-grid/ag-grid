@@ -10,8 +10,9 @@ include('mediaHeader.php');
 <div class="row">
 
     <div class="col-md-12" style="padding: 40px 40px 20px 40px;">
-        ag-Grid started as a side project, grew in adoption, and is today one of the most widely used grid
-        components. Below are press releases and other news related media released at different parts
+        ag-Grid started as a side project, grew in adoption, then grew some more, news spread, and is today one of the most
+        widely used grid components in all life-bearing planets known to man. Below are press releases and other news
+        related media released at different parts
         of the journey. If you want to know where ag-Grid came from and where it is going, take a read
         at the items below. They are listed latest first, so you might want to start at the bottom.
     </div>

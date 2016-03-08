@@ -70,7 +70,7 @@ include 'documentation_header.php';
 
     <li>Next feature: Context Menu</li>
 
-    <li>New features: Range Selection</li>
+    <li>New feature: Range Selection</li>
     <li>New feature: Enterprise column menu</li>
     <li>New feature: Clipboard interaction</li>
 
@@ -79,6 +79,8 @@ include 'documentation_header.php';
     <li>New feature: Now CSV export allows you to format cells on their way out. Handy if you want to import into Excel and need to make dates, for example, into Excel formatted dates.</li>
 
     <li>New colDef properties suppressAggregation and suppressRowGroup for suppressing aggregation and row group for particular columns</li>
+
+    <li>New feature: Status Bar</li>
 
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>

@@ -137,6 +137,28 @@
             </div>
 
             <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <div class="testimonial-quote">
+                        "We’re using ag-Grid as a major component in our enterprise analytics and reporting product and it’s incredible.
+                        Prior to ag-Grid, we tried jqGrid, jqxGrid, DataTables, and SlickGrid, which all have their strong points, but
+                        we eventually ran into a wall with certain features.  ag-Grid’s grouping, aggregation, filtering, and all-around
+                        flexibility allowed us to quickly integrate it into our product.  And, the performance is truly awesome!"
+                    </div>
+                    <div class="testimonial-reference">
+                        Andrew Taft - Head of Product Development at Insight Technology Group
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+
+            <div class="horizontal-rule">
+                <hr/>
+            </div>
+
+            <div class="row">
                 <div class="col-md-12">
 
                     <h4 style="padding-bottom: 30px; text-align: center;">
@@ -184,6 +206,7 @@
                         <li>Master / Slave</li>
 
                         <li>Cell Range Selection</li>
+                        <li>Status Panel with Aggregation</li>
                         <li>Grouping and Aggregation of Data</li>
                         <li>Excel-like Filtering</li>
                         <li>Advanced Column Menu</li>
@@ -227,6 +250,25 @@
                 <hr/>
             </div>
 
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <div class="testimonial-quote">
+                        "We love Ag-grid for its simple integration, blazing-fast performance, and friendly community."
+                    </div>
+                    <div class="testimonial-reference">
+                        Lucas Vall - VP of Product Development at Hexonet Services Inc
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+
+            <div class="horizontal-rule">
+                <hr/>
+            </div>
+
             <h4 style="padding-bottom: 30px; text-align: center;">
                 Bake your own look and feel to get differently styled grids
             </h4>
@@ -240,7 +282,7 @@
                 </div>
                 <div class="col-md-3">
                     <div style="margin-top: 50px; padding-left: 20px;">
-                        Give a custom style for grids that will end up as presentations.
+<!--                        Give a custom style for grids that will end up as presentations.-->
                     </div>
                 </div>
 
@@ -252,7 +294,7 @@
 
                     <div class="col-md-3">
                         <div style="margin-top: 50px">
-                            Customise the look and feels and create complex widgets, beyond what's expected of HTML tables.
+<!--                            Customise the look and feels and create complex widgets, beyond what's expected of HTML tables.-->
                         </div>
                     </div>
 

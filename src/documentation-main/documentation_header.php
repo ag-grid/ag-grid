@@ -234,6 +234,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-range-selection/index.php">Range Selection</a>
                 <?php } ?>
 
+                <?php if ($key == "Status Bar") { ?>
+                    <span class="sidebarLinkSelected">Status Bar</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-status-bar/index.php">Status Bar</a>
+                <?php } ?>
+
                 <?php if ($key == "Value Getters") { ?>
                     <span class="sidebarLinkSelected">Value Getters</span>
                 <?php } else { ?>
