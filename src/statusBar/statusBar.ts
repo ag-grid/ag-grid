@@ -120,6 +120,7 @@ export class StatusBar extends Component {
                     }
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
+
                 }
 
             });
