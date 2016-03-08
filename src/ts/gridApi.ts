@@ -169,7 +169,8 @@ export class GridApi {
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (eventName==='virtualRowRemoved') {
             console.log('ag-Grid: event virtualRowRemoved is deprecated, now called renderedRowRemoved');
-            eventName = 'renderedRowRemoved';
+            eventName = '' +
+                '';
         }
         if (eventName==='virtualRowSelected') {
             console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +

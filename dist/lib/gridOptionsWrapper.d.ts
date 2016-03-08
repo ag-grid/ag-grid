@@ -1,26 +1,37 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from './entities/rowNode';
 import { GridOptions } from './entities/gridOptions';
-import EventService from "./eventService";
 import { GridApi } from "./gridApi";
 import { ColDef } from "./entities/colDef";
-export default class GridOptionsWrapper {
+import { NodeChildDetails } from "./entities/gridOptions";
+import { ColumnApi } from "./columnController/columnController";
+import { GetContextMenuItems } from "./entities/gridOptions";
+import { GetMainMenuItems } from "./entities/gridOptions";
+import { ProcessRowParams } from "./entities/gridOptions";
+import { ProcessCellForExportParams } from "./entities/gridOptions";
+export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     private gridOptions;
+    private columnController;
+    private eventService;
+    private enterprise;
     private headerHeight;
-    init(gridOptions: GridOptions, eventService: EventService): void;
+    agWire(gridApi: GridApi, columnApi: ColumnApi): void;
+    init(): void;
+    isEnterprise(): boolean;
     isRowSelection(): boolean;
     isRowDeselection(): boolean;
     isRowSelectionMulti(): boolean;
     getContext(): any;
-    isVirtualPaging(): boolean;
+    isRowModelPagination(): boolean;
+    isRowModelVirtual(): boolean;
+    isRowModelDefault(): boolean;
     isShowToolPanel(): boolean;
     isToolPanelSuppressGroups(): boolean;
     isToolPanelSuppressValues(): boolean;
-    isRowsAlreadyGrouped(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupHideGroupColumns(): boolean;
     isGroupIncludeFooter(): boolean;
@@ -33,6 +44,7 @@ export default class GridOptionsWrapper {
     isSuppressHorizontalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
+    isSuppressFieldDotNotation(): boolean;
     getFloatingTopRowData(): any[];
     getFloatingBottomRowData(): any[];
     isUnSortIcon(): boolean;
@@ -44,6 +56,7 @@ export default class GridOptionsWrapper {
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getHeaderCellRenderer(): any;
     getApi(): GridApi;
+    getColumnApi(): ColumnApi;
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     getGroupDefaultExpanded(): number;
@@ -52,6 +65,7 @@ export default class GridOptionsWrapper {
     isGroupUseEntireRow(): boolean;
     getGroupColumnDef(): ColDef;
     isGroupSuppressRow(): boolean;
+    getRowGroupPanelShow(): string;
     isAngularCompileRows(): boolean;
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;
@@ -61,11 +75,17 @@ export default class GridOptionsWrapper {
     isEnableSorting(): boolean;
     isEnableCellExpressions(): boolean;
     isEnableServerSideSorting(): boolean;
+    isSuppressContextMenu(): boolean;
     isEnableFilter(): boolean;
     isEnableServerSideFilter(): boolean;
     isSuppressScrollLag(): boolean;
     isSuppressMovableColumns(): boolean;
-    isSuppressMovingCss(): boolean;
+    isSuppressColumnMoveAnimation(): boolean;
+    isSuppressMenuColumnPanel(): boolean;
+    isSuppressMenuFilterPanel(): boolean;
+    isSuppressMenuMainPanel(): boolean;
+    isEnableRangeSelection(): boolean;
+    isRememberGroupStateWhenNewData(): boolean;
     getIcons(): any;
     getIsScrollLag(): () => boolean;
     getSortingOrder(): string[];
@@ -76,8 +96,14 @@ export default class GridOptionsWrapper {
     getCheckboxSelection(): Function;
     isSuppressAutoSize(): boolean;
     isSuppressParentsInRowNodes(): boolean;
+    isEnableStatusBar(): boolean;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
+    getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
+    getContextMenuItemsFunc(): GetContextMenuItems;
+    getMainMenuItemsFunc(): GetMainMenuItems;
+    getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;
+    executeProcessRowPostCreateFunc(params: ProcessRowParams): void;
     getHeaderHeight(): number;
     setHeaderHeight(headerHeight: number): void;
     isExternalFilterPresent(): boolean;
@@ -90,6 +116,6 @@ export default class GridOptionsWrapper {
     private checkForDeprecated();
     getLocaleTextFunc(): Function;
     globalEventHandler(eventName: string, event?: any): void;
-    getRowHeightForVirtualPagiation(): number;
+    getRowHeightForVirtualPagination(): number;
     getRowHeightForNode(rowNode: RowNode): number;
 }

@@ -1,11 +1,41 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var utils_1 = require('../utils');
+var masterSlaveService_1 = require("../masterSlaveService");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnController_1 = require("../columnController/columnController");
+var rowRenderer_1 = require("../rendering/rowRenderer");
+var floatingRowModel_1 = require("../rowControllers/floatingRowModel");
 var borderLayout_1 = require("../layout/borderLayout");
+var logger_1 = require("../logger");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
+var context_3 = require("../context/context");
+var eventService_1 = require("../eventService");
+var events_1 = require("../events");
+var context_4 = require("../context/context");
+var dragService_1 = require("../dragAndDrop/dragService");
+var constants_1 = require("../constants");
+var selectionController_1 = require("../selectionController");
+var csvCreator_1 = require("../csvCreator");
+var context_5 = require("../context/context");
+var mouseEventService_1 = require("./mouseEventService");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var gridHtml = '<div>' +
@@ -71,49 +101,173 @@ var GridPanel = (function () {
         this.scrollLagCounter = 0;
         this.lastLeftPosition = -1;
         this.lastTopPosition = -1;
+        this.animationThreadCount = 0;
     }
-    GridPanel.prototype.init = function (gridOptionsWrapper, columnController, rowRenderer, masterSlaveService, loggerFactory, floatingRowModel) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
+    GridPanel.prototype.agWire = function (loggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.setupComponents();
-        this.scrollWidth = utils_1.default.getScrollbarWidth();
-        this.columnController = columnController;
-        this.rowRenderer = rowRenderer;
-        this.masterSlaveService = masterSlaveService;
-        this.floatingRowModel = floatingRowModel;
+        this.scrollWidth = utils_1.Utils.getScrollbarWidth();
         this.logger = loggerFactory.create('GridPanel');
+        this.findElements();
+    };
+    GridPanel.prototype.onRowDataChanged = function () {
+        if (this.rowModel.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+            this.showNoRowsOverlay();
+        }
+        else {
+            this.hideOverlay();
+        }
     };
     GridPanel.prototype.getLayout = function () {
         return this.layout;
     };
-    GridPanel.prototype.setupComponents = function () {
-        if (this.forPrint) {
-            this.eRoot = utils_1.default.loadTemplate(gridForPrintHtml);
-            utils_1.default.addCssClass(this.eRoot, 'ag-root ag-no-scrolls');
-        }
-        else {
-            this.eRoot = utils_1.default.loadTemplate(gridHtml);
-            utils_1.default.addCssClass(this.eRoot, 'ag-root ag-scrolls');
-        }
-        this.findElements();
-        this.layout = new borderLayout_1.default({
+    GridPanel.prototype.init = function () {
+        this.addEventListeners();
+        this.addDragListeners();
+        this.layout = new borderLayout_1.BorderLayout({
             overlays: {
-                loading: utils_1.default.loadTemplate(this.createLoadingOverlayTemplate()),
-                noRows: utils_1.default.loadTemplate(this.createNoRowsOverlayTemplate())
+                loading: utils_1.Utils.loadTemplate(this.createLoadingOverlayTemplate()),
+                noRows: utils_1.Utils.loadTemplate(this.createNoRowsOverlayTemplate())
             },
             center: this.eRoot,
             dontFill: this.forPrint,
             name: 'eGridPanel'
         });
-        this.layout.addSizeChangeListener(this.onBodyHeightChange.bind(this));
+        this.layout.addSizeChangeListener(this.sizeHeaderAndBody.bind(this));
         this.addScrollListener();
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
         }
+        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
+            this.showLoadingOverlay();
+        }
+        this.setWidthsOfContainers();
+        this.showPinnedColContainersIfNeeded();
+        this.sizeHeaderAndBody();
+        this.disableBrowserDragging();
+        this.addShortcutKeyListeners();
+        this.addCellListeners();
     };
-    GridPanel.prototype.setMovingCss = function (moving) {
-        utils_1.default.addOrRemoveCssClass(this.eRoot, 'ag-column-moving', moving);
+    // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
+    // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
+    GridPanel.prototype.disableBrowserDragging = function () {
+        this.eRoot.addEventListener('dragstart', function (event) {
+            event.preventDefault();
+            return false;
+        });
+    };
+    GridPanel.prototype.addEventListeners = function () {
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
+        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+    };
+    GridPanel.prototype.addDragListeners = function () {
+        var _this = this;
+        if (this.forPrint // no range select when doing 'for print'
+            || !this.gridOptionsWrapper.isEnableRangeSelection() // no range selection if no property
+            || utils_1.Utils.missing(this.rangeController)) {
+            return;
+        }
+        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+            this.eFloatingTop, this.eFloatingBottom];
+        containers.forEach(function (container) {
+            _this.dragService.addDragSource({
+                dragStartPixels: 0,
+                eElement: container,
+                onDragStart: _this.rangeController.onDragStart.bind(_this.rangeController),
+                onDragStop: _this.rangeController.onDragStop.bind(_this.rangeController),
+                onDragging: _this.rangeController.onDragging.bind(_this.rangeController)
+            });
+        });
+    };
+    GridPanel.prototype.addCellListeners = function () {
+        var _this = this;
+        var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu'];
+        eventNames.forEach(function (eventName) {
+            _this.eAllCellContainers.forEach(function (container) {
+                return container.addEventListener(eventName, _this.processMouseEvent.bind(_this, eventName));
+            });
+        });
+    };
+    GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
+        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        if (utils_1.Utils.exists(cell)) {
+            //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+        }
+    };
+    GridPanel.prototype.addShortcutKeyListeners = function () {
+        var _this = this;
+        this.eAllCellContainers.forEach(function (container) {
+            container.addEventListener('keydown', function (event) {
+                if (event.ctrlKey || event.metaKey) {
+                    switch (event.which) {
+                        case constants_1.Constants.KEY_A: return _this.onCtrlAndA(event);
+                        case constants_1.Constants.KEY_C: return _this.onCtrlAndC(event);
+                        case constants_1.Constants.KEY_V: return _this.onCtrlAndV(event);
+                    }
+                }
+            });
+        });
+    };
+    GridPanel.prototype.onCtrlAndA = function (event) {
+        if (this.rangeController && this.rowModel.isRowsToRender()) {
+            var rowEnd;
+            var floatingStart;
+            var floatingEnd;
+            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_TOP)) {
+                floatingStart = null;
+            }
+            else {
+                floatingStart = constants_1.Constants.FLOATING_TOP;
+            }
+            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_BOTTOM)) {
+                floatingEnd = null;
+                rowEnd = this.rowModel.getRowCount() - 1;
+            }
+            else {
+                floatingEnd = constants_1.Constants.FLOATING_BOTTOM;
+                rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
+            }
+            var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+            if (utils_1.Utils.missingOrEmpty(allDisplayedColumns)) {
+                return;
+            }
+            this.rangeController.setRange({
+                rowStart: 0,
+                floatingStart: floatingStart,
+                rowEnd: rowEnd,
+                floatingEnd: floatingEnd,
+                columnStart: allDisplayedColumns[0],
+                columnEnd: allDisplayedColumns[allDisplayedColumns.length - 1]
+            });
+        }
+        event.preventDefault();
+        return false;
+    };
+    GridPanel.prototype.onCtrlAndC = function (event) {
+        if (!this.clipboardService) {
+            return;
+        }
+        this.clipboardService.copyToClipboard();
+        event.preventDefault();
+        return false;
+    };
+    GridPanel.prototype.onCtrlAndV = function (event) {
+        if (!this.clipboardService) {
+            return;
+        }
+        this.clipboardService.pasteFromClipboard();
+        //event.preventDefault();
+        return false;
     };
     GridPanel.prototype.getPinnedLeftFloatingTop = function () {
         return this.ePinnedLeftFloatingTop;
@@ -160,12 +314,12 @@ var GridPanel = (function () {
     };
     GridPanel.prototype.ensureIndexVisible = function (index) {
         this.logger.log('ensureIndexVisible: ' + index);
-        var lastRow = this.rowModel.getVirtualRowCount();
+        var lastRow = this.rowModel.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
-        var nodeAtIndex = this.rowModel.getVirtualRow(index);
+        var nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = nodeAtIndex.rowTop;
         var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
         var viewportTopPixel = this.eBodyViewport.scrollTop;
@@ -297,11 +451,16 @@ var GridPanel = (function () {
             }
         }
     };
-    GridPanel.prototype.setRowModel = function (rowModel) {
-        this.rowModel = rowModel;
-    };
     GridPanel.prototype.getBodyContainer = function () {
         return this.eBodyContainer;
+    };
+    GridPanel.prototype.getDropTargetBodyContainers = function () {
+        if (this.forPrint) {
+            return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
+        }
+        else {
+            return [this.eBodyViewport, this.eFloatingTopViewport, this.eFloatingBottomViewport];
+        }
     };
     GridPanel.prototype.getBodyViewport = function () {
         return this.eBodyViewport;
@@ -309,8 +468,24 @@ var GridPanel = (function () {
     GridPanel.prototype.getPinnedLeftColsContainer = function () {
         return this.ePinnedLeftColsContainer;
     };
+    GridPanel.prototype.getDropTargetLeftContainers = function () {
+        if (this.forPrint) {
+            return [];
+        }
+        else {
+            return [this.ePinnedLeftColsViewport, this.ePinnedLeftFloatingBottom, this.ePinnedLeftFloatingTop];
+        }
+    };
     GridPanel.prototype.getPinnedRightColsContainer = function () {
         return this.ePinnedRightColsContainer;
+    };
+    GridPanel.prototype.getDropTargetPinnedRightContainers = function () {
+        if (this.forPrint) {
+            return [];
+        }
+        else {
+            return [this.ePinnedRightColsViewport, this.ePinnedRightFloatingBottom, this.ePinnedRightFloatingTop];
+        }
     };
     GridPanel.prototype.getHeaderContainer = function () {
         return this.eHeaderContainer;
@@ -327,19 +502,28 @@ var GridPanel = (function () {
     GridPanel.prototype.getPinnedRightHeader = function () {
         return this.ePinnedRightHeader;
     };
-    GridPanel.prototype.getRowsParent = function () {
-        return this.eParentsOfRows;
-    };
     GridPanel.prototype.queryHtmlElement = function (selector) {
         return this.eRoot.querySelector(selector);
     };
     GridPanel.prototype.findElements = function () {
         if (this.forPrint) {
+            this.eRoot = utils_1.Utils.loadTemplate(gridForPrintHtml);
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-root');
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-font-style');
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-no-scrolls');
+        }
+        else {
+            this.eRoot = utils_1.Utils.loadTemplate(gridHtml);
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-root');
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-font-style');
+            utils_1.Utils.addCssClass(this.eRoot, 'ag-scrolls');
+        }
+        if (this.forPrint) {
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
-            this.eParentsOfRows = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
+            this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
         }
         else {
             this.eBody = this.queryHtmlElement('.ag-body');
@@ -360,12 +544,14 @@ var GridPanel = (function () {
             this.ePinnedLeftFloatingTop = this.queryHtmlElement('.ag-pinned-left-floating-top');
             this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
+            this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
             this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
             this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
             this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
-            // for scrolls, all rows live in eBody (containing pinned and normal body)
-            this.eParentsOfRows = [this.eBody, this.eFloatingTop, this.eFloatingBottom];
+            this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
+            this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+                this.eFloatingTop, this.eFloatingBottom];
             // IE9, Chrome, Safari, Opera
             this.ePinnedLeftColsViewport.addEventListener('mousewheel', this.pinnedLeftMouseWheelListener.bind(this));
             this.eBodyViewport.addEventListener('mousewheel', this.centerMouseWheelListener.bind(this));
@@ -419,19 +605,28 @@ var GridPanel = (function () {
         event.preventDefault();
         return false;
     };
-    GridPanel.prototype.setBodyContainerWidth = function () {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
-        this.eBodyContainer.style.width = mainRowWidth;
-        if (!this.forPrint) {
-            this.eFloatingBottomContainer.style.width = mainRowWidth;
-            this.eFloatingTopContainer.style.width = mainRowWidth;
+    GridPanel.prototype.onColumnsChanged = function (event) {
+        if (event.isContainerWidthImpacted()) {
+            this.setWidthsOfContainers();
+        }
+        if (event.isPinnedPanelVisibilityImpacted()) {
+            this.showPinnedColContainersIfNeeded();
+        }
+        if (event.getType() === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED) {
+            this.sizeHeaderAndBody();
         }
     };
-    GridPanel.prototype.setPinnedColContainerWidth = function () {
+    GridPanel.prototype.setWidthsOfContainers = function () {
+        this.logger.log('setWidthsOfContainers()');
+        this.showPinnedColContainersIfNeeded();
+        var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
+        this.eBodyContainer.style.width = mainRowWidth;
         if (this.forPrint) {
             // pinned col doesn't exist when doing forPrint
             return;
         }
+        this.eFloatingBottomContainer.style.width = mainRowWidth;
+        this.eFloatingTopContainer.style.width = mainRowWidth;
         var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth() + 'px';
         this.ePinnedLeftColsContainer.style.width = pinnedLeftWidth;
         this.ePinnedLeftFloatingBottom.style.width = pinnedLeftWidth;
@@ -468,9 +663,6 @@ var GridPanel = (function () {
             this.ePinnedRightColsViewport.style.display = 'none';
             this.eBodyViewport.style.overflowY = 'auto';
         }
-    };
-    GridPanel.prototype.onBodyHeightChange = function () {
-        this.sizeHeaderAndBody();
     };
     GridPanel.prototype.sizeHeaderAndBody = function () {
         if (this.forPrint) {
@@ -513,7 +705,26 @@ var GridPanel = (function () {
         return newScrollPosition - oldScrollPosition;
     };
     GridPanel.prototype.getHorizontalScrollPosition = function () {
-        return this.eBodyViewport.scrollLeft;
+        if (this.forPrint) {
+            return 0;
+        }
+        else {
+            return this.eBodyViewport.scrollLeft;
+        }
+    };
+    GridPanel.prototype.turnOnAnimationForABit = function () {
+        var _this = this;
+        if (this.gridOptionsWrapper.isSuppressColumnMoveAnimation()) {
+            return;
+        }
+        this.animationThreadCount++;
+        var animationThreadCountCopy = this.animationThreadCount;
+        utils_1.Utils.addCssClass(this.eRoot, 'ag-column-moving');
+        setTimeout(function () {
+            if (_this.animationThreadCount === animationThreadCountCopy) {
+                utils_1.Utils.removeCssClass(_this.eRoot, 'ag-column-moving');
+            }
+        }, 300);
     };
     GridPanel.prototype.addScrollListener = function () {
         var _this = this;
@@ -526,7 +737,7 @@ var GridPanel = (function () {
             var newLeftPosition = _this.eBodyViewport.scrollLeft;
             if (newLeftPosition !== _this.lastLeftPosition) {
                 _this.lastLeftPosition = newLeftPosition;
-                _this.horizontallyScrollHeaderCenterAndFloatingCenter(newLeftPosition);
+                _this.horizontallyScrollHeaderCenterAndFloatingCenter();
                 _this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             }
             // if we are pinning to the right, then it's the right pinned container
@@ -573,7 +784,7 @@ var GridPanel = (function () {
             useScrollLag = this.gridOptionsWrapper.getIsScrollLag()();
         }
         else {
-            useScrollLag = utils_1.default.isBrowserIE() || utils_1.default.isBrowserSafari();
+            useScrollLag = utils_1.Utils.isBrowserIE() || utils_1.Utils.isBrowserSafari();
         }
         if (useScrollLag) {
             this.scrollLagCounter++;
@@ -588,20 +799,130 @@ var GridPanel = (function () {
             this.rowRenderer.drawVirtualRows();
         }
     };
-    GridPanel.prototype.horizontallyScrollHeaderCenterAndFloatingCenter = function (bodyLeftPosition) {
-        // this.eHeaderContainer.style.transform = 'translate3d(' + -bodyLeftPosition + 'px,0,0)';
+    GridPanel.prototype.horizontallyScrollHeaderCenterAndFloatingCenter = function () {
+        var bodyLeftPosition = this.eBodyViewport.scrollLeft;
         this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
         this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
     };
     GridPanel.prototype.verticallyScrollLeftPinned = function (bodyTopPosition) {
-        // this.ePinnedColsContainer.style.transform = 'translate3d(0,' + -bodyTopPosition + 'px,0)';
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
     };
     GridPanel.prototype.verticallyScrollBody = function (position) {
         this.eBodyViewport.scrollTop = position;
     };
+    GridPanel.prototype.getVerticalScrollPosition = function () {
+        if (this.forPrint) {
+            return 0;
+        }
+        else {
+            return this.eBodyViewport.scrollTop;
+        }
+    };
+    GridPanel.prototype.getBodyViewportClientRect = function () {
+        if (this.forPrint) {
+            return this.eBodyContainer.getBoundingClientRect();
+        }
+        else {
+            return this.eBodyViewport.getBoundingClientRect();
+        }
+    };
+    GridPanel.prototype.getFloatingTopClientRect = function () {
+        if (this.forPrint) {
+            return this.eFloatingTopContainer.getBoundingClientRect();
+        }
+        else {
+            return this.eFloatingTop.getBoundingClientRect();
+        }
+    };
+    GridPanel.prototype.getFloatingBottomClientRect = function () {
+        if (this.forPrint) {
+            return this.eFloatingBottomContainer.getBoundingClientRect();
+        }
+        else {
+            return this.eFloatingBottom.getBoundingClientRect();
+        }
+    };
+    GridPanel.prototype.getPinnedLeftColsViewportClientRect = function () {
+        return this.ePinnedLeftColsViewport.getBoundingClientRect();
+    };
+    GridPanel.prototype.getPinnedRightColsViewportClientRect = function () {
+        return this.ePinnedRightColsViewport.getBoundingClientRect();
+    };
+    GridPanel.prototype.addScrollEventListener = function (listener) {
+        this.eBodyViewport.addEventListener('scroll', listener);
+    };
+    GridPanel.prototype.removeScrollEventListener = function (listener) {
+        this.eBodyViewport.removeEventListener('scroll', listener);
+    };
+    __decorate([
+        context_3.Autowired('masterSlaveService'), 
+        __metadata('design:type', masterSlaveService_1.MasterSlaveService)
+    ], GridPanel.prototype, "masterSlaveService", void 0);
+    __decorate([
+        context_3.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], GridPanel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_3.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], GridPanel.prototype, "columnController", void 0);
+    __decorate([
+        context_3.Autowired('rowRenderer'), 
+        __metadata('design:type', rowRenderer_1.RowRenderer)
+    ], GridPanel.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_3.Autowired('floatingRowModel'), 
+        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
+    ], GridPanel.prototype, "floatingRowModel", void 0);
+    __decorate([
+        context_3.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], GridPanel.prototype, "eventService", void 0);
+    __decorate([
+        context_3.Autowired('rowModel'), 
+        __metadata('design:type', Object)
+    ], GridPanel.prototype, "rowModel", void 0);
+    __decorate([
+        context_5.Optional('rangeController'), 
+        __metadata('design:type', Object)
+    ], GridPanel.prototype, "rangeController", void 0);
+    __decorate([
+        context_3.Autowired('dragService'), 
+        __metadata('design:type', dragService_1.DragService)
+    ], GridPanel.prototype, "dragService", void 0);
+    __decorate([
+        context_3.Autowired('selectionController'), 
+        __metadata('design:type', selectionController_1.SelectionController)
+    ], GridPanel.prototype, "selectionController", void 0);
+    __decorate([
+        context_5.Optional('clipboardService'), 
+        __metadata('design:type', Object)
+    ], GridPanel.prototype, "clipboardService", void 0);
+    __decorate([
+        context_3.Autowired('csvCreator'), 
+        __metadata('design:type', csvCreator_1.CsvCreator)
+    ], GridPanel.prototype, "csvCreator", void 0);
+    __decorate([
+        context_3.Autowired('mouseEventService'), 
+        __metadata('design:type', mouseEventService_1.MouseEventService)
+    ], GridPanel.prototype, "mouseEventService", void 0);
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
+        __metadata('design:returntype', void 0)
+    ], GridPanel.prototype, "agWire", null);
+    __decorate([
+        context_4.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], GridPanel.prototype, "init", null);
+    GridPanel = __decorate([
+        context_1.Bean('gridPanel'), 
+        __metadata('design:paramtypes', [])
+    ], GridPanel);
     return GridPanel;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = GridPanel;
+exports.GridPanel = GridPanel;

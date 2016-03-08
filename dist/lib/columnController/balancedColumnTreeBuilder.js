@@ -1,26 +1,43 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var gridOptionsWrapper_1 = require('../gridOptionsWrapper');
+var logger_1 = require('../logger');
+var columnUtils_1 = require('../columnController/columnUtils');
 var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
+var context_3 = require("../context/context");
+var context_4 = require("../context/context");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var BalancedColumnTreeBuilder = (function () {
     function BalancedColumnTreeBuilder() {
     }
-    BalancedColumnTreeBuilder.prototype.init = function (gridOptionsWrapper, loggerFactory, columnUtils) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnUtils = columnUtils;
+    BalancedColumnTreeBuilder.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
     BalancedColumnTreeBuilder.prototype.createBalancedColumnGroups = function (abstractColDefs) {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
-        var columnKeyCreator = new columnKeyCreator_1.default();
+        var columnKeyCreator = new columnKeyCreator_1.ColumnKeyCreator();
         // create am unbalanced tree that maps the provided definitions
         var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
@@ -81,8 +98,6 @@ var BalancedColumnTreeBuilder = (function () {
         if (!abstractColDefs) {
             return result;
         }
-        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
         abstractColDefs.forEach(function (abstractColDef) {
             _this.checkForDeprecatedItems(abstractColDef);
             if (_this.isColumnGroup(abstractColDef)) {
@@ -95,9 +110,9 @@ var BalancedColumnTreeBuilder = (function () {
             }
             else {
                 var colDef = abstractColDef;
-                var width = _this.columnUtils.calculateColInitialWidth(colDef);
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new column_1.default(colDef, width, colId, minColWidth, maxColWidth);
+                var column = new column_1.Column(colDef, colId);
+                _this.context.wireBean(column);
                 result.push(column);
             }
         });
@@ -121,7 +136,28 @@ var BalancedColumnTreeBuilder = (function () {
     BalancedColumnTreeBuilder.prototype.isColumnGroup = function (abstractColDef) {
         return abstractColDef.children !== undefined;
     };
+    __decorate([
+        context_3.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BalancedColumnTreeBuilder.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_3.Autowired('columnUtils'), 
+        __metadata('design:type', columnUtils_1.ColumnUtils)
+    ], BalancedColumnTreeBuilder.prototype, "columnUtils", void 0);
+    __decorate([
+        context_3.Autowired('context'), 
+        __metadata('design:type', context_4.Context)
+    ], BalancedColumnTreeBuilder.prototype, "context", void 0);
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
+        __metadata('design:returntype', void 0)
+    ], BalancedColumnTreeBuilder.prototype, "agWire", null);
+    BalancedColumnTreeBuilder = __decorate([
+        context_1.Bean('balancedColumnTreeBuilder'), 
+        __metadata('design:paramtypes', [])
+    ], BalancedColumnTreeBuilder);
     return BalancedColumnTreeBuilder;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BalancedColumnTreeBuilder;
+exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;

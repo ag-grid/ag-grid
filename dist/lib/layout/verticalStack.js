@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,5 +35,4 @@ var VerticalStack = (function () {
     };
     return VerticalStack;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = VerticalStack;
+exports.VerticalStack = VerticalStack;

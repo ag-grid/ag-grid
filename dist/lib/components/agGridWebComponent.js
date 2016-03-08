@@ -1,12 +1,18 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var componentUtil_1 = require("./componentUtil");
 var grid_1 = require("../grid");
+var registered = false;
 function initialiseAgGridWithWebComponents() {
+    // only register to WebComponents once
+    if (registered) {
+        return;
+    }
+    registered = true;
     if (typeof document === 'undefined' || !document.registerElement) {
         console.error('ag-Grid: unable to find document.registerElement() function, unable to initialise ag-Grid as a Web Component');
     }

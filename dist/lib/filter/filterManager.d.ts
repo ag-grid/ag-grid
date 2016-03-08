@@ -1,34 +1,31 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import PopupService from "../widgets/agPopupService";
-import ValueService from "../valueService";
-import { ColumnController } from "../columnController/columnController";
-import { Grid } from "../grid";
-import Column from "../entities/column";
-export default class FilterManager {
+import { Column } from "../entities/column";
+export declare class FilterManager {
     private $compile;
     private $scope;
     private gridOptionsWrapper;
-    private grid;
-    private allFilters;
-    private rowModel;
+    private gridCore;
     private popupService;
     private valueService;
     private columnController;
+    private rowModel;
+    private eventService;
+    private enterprise;
+    private allFilters;
     private quickFilter;
     private advancedFilterPresent;
     private externalFilterPresent;
-    init(grid: Grid, gridOptionsWrapper: GridOptionsWrapper, $compile: any, $scope: any, columnController: ColumnController, popupService: PopupService, valueService: ValueService): void;
+    private availableFilters;
+    init(): void;
+    registerFilter(key: string, Filter: any): void;
     setFilterModel(model: any): void;
     private setModelOnFilterWrapper(filter, newModel);
     getFilterModel(): any;
-    setRowModel(rowModel: any): void;
     isAdvancedFilterPresent(): boolean;
     isAnyFilterPresent(): boolean;
-    isFilterPresentForCol(colId: any): any;
     private doesFilterPass(node, filterToSkip?);
     setQuickFilter(newFilter: any): boolean;
     onFilterChanged(): void;
@@ -36,12 +33,19 @@ export default class FilterManager {
     doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
     doesRowPassFilter(node: any, filterToSkip?: any): boolean;
     private aggregateRowForQuickFilter(node);
-    onNewRowsLoaded(): void;
+    private onNewRowsLoaded();
     private createValueGetter(column);
     getFilterApi(column: Column): any;
-    private getOrCreateFilterWrapper(column);
+    getOrCreateFilterWrapper(column: Column): FilterWrapper;
     private createFilterWrapper(column);
-    destroy(): void;
+    private getFilterFromCache(filterType);
+    private onNewColumnsLoaded();
+    agDestroy(): void;
     private assertMethodHasNoParameters(theMethod);
-    showFilter(column: Column, eventSource: any): void;
+}
+export interface FilterWrapper {
+    column: Column;
+    filter: any;
+    scope: any;
+    gui: HTMLElement;
 }

@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-export default class AgList {
+import { OldToolPanelDragAndDropService } from "../dragAndDrop/oldToolPanelDragAndDropService";
+export declare class AgList {
     private eGui;
     private uniqueId;
     private modelChangedListeners;
@@ -18,7 +18,7 @@ export default class AgList {
     private cellRenderer;
     private readOnly;
     private dragAndDropService;
-    constructor(dragAndDropService: DragAndDropService);
+    constructor(dragAndDropService: OldToolPanelDragAndDropService);
     setReadOnly(readOnly: boolean): void;
     setEmptyMessage(emptyMessage: any): void;
     getUniqueId(): any;

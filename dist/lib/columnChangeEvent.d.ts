@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import Column from "./entities/column";
-import ColumnGroup from "./entities/columnGroup";
-export default class ColumnChangeEvent {
+import { Column } from "./entities/column";
+import { ColumnGroup } from "./entities/columnGroup";
+export declare class ColumnChangeEvent {
     private type;
     private column;
     private columns;
@@ -29,8 +29,8 @@ export default class ColumnChangeEvent {
     getColumn(): Column;
     getColumns(): Column[];
     getColumnGroup(): ColumnGroup;
-    isRowGroupChanged(): boolean;
-    isValueChanged(): boolean;
+    isPinnedPanelVisibilityImpacted(): boolean;
+    isContainerWidthImpacted(): boolean;
     isIndividualColumnResized(): boolean;
     isFinished(): boolean;
 }

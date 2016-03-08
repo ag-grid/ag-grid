@@ -1,14 +1,29 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var logger_1 = require("./logger");
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
 var ExpressionService = (function () {
     function ExpressionService() {
         this.expressionToFunctionCache = {};
     }
-    ExpressionService.prototype.init = function (loggerFactory) {
+    ExpressionService.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     };
     ExpressionService.prototype.evaluate = function (expression, params) {
@@ -48,7 +63,16 @@ var ExpressionService = (function () {
             return 'return ' + expression + ';';
         }
     };
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
+        __metadata('design:returntype', void 0)
+    ], ExpressionService.prototype, "agWire", null);
+    ExpressionService = __decorate([
+        context_1.Bean('expressionService'), 
+        __metadata('design:paramtypes', [])
+    ], ExpressionService);
     return ExpressionService;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ExpressionService;
+exports.ExpressionService = ExpressionService;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,13 @@ var Utils = (function () {
             var mappedItem = callback(item);
             result.push(mappedItem);
         }
+        return result;
+    };
+    Utils.mapObject = function (object, callback) {
+        var result = [];
+        Utils.iterateObject(object, function (key, value) {
+            result.push(callback(value));
+        });
         return result;
     };
     Utils.forEach = function (array, callback) {
@@ -73,12 +80,24 @@ var Utils = (function () {
         if (collection === null || collection === undefined) {
             return null;
         }
+        var firstMatchingItem;
         for (var i = 0; i < collection.length; i++) {
-            if (collection[i][predicate] === value) {
-                return collection[i];
+            var item = collection[i];
+            if (typeof predicate === 'string') {
+                if (item[predicate] === value) {
+                    firstMatchingItem = item;
+                    break;
+                }
+            }
+            else {
+                var callback = predicate;
+                if (callback(item)) {
+                    firstMatchingItem = item;
+                    break;
+                }
             }
         }
-        return null;
+        return firstMatchingItem;
     };
     Utils.toStrings = function (array) {
         return this.map(array, function (item) {
@@ -99,13 +118,13 @@ var Utils = (function () {
     //Returns true if it is a DOM node
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     Utils.isNode = function (o) {
-        return (typeof Node === "object" ? o instanceof Node :
+        return (typeof Node === "function" ? o instanceof Node :
             o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
     };
     //Returns true if it is a DOM element
     //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
     Utils.isElement = function (o) {
-        return (typeof HTMLElement === "object" ? o instanceof HTMLElement :
+        return (typeof HTMLElement === "function" ? o instanceof HTMLElement :
             o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
     };
     Utils.isNodeOrElement = function (o) {
@@ -129,6 +148,23 @@ var Utils = (function () {
         else {
             return value;
         }
+    };
+    Utils.missing = function (value) {
+        return !this.exists(value);
+    };
+    Utils.missingOrEmpty = function (value) {
+        return this.missing(value) || value.length === 0;
+    };
+    Utils.exists = function (value) {
+        if (value === null || value === undefined || value === '') {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    Utils.existsAndNotEmpty = function (value) {
+        return this.exists(value) && value.length > 0;
     };
     Utils.removeAllChildren = function (node) {
         if (node) {
@@ -157,25 +193,6 @@ var Utils = (function () {
         tempDiv.innerHTML = template;
         return tempDiv.firstChild;
     };
-    Utils.querySelectorAll_addCssClass = function (eParent, selector, cssClass) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.addCssClass(eRows[k], cssClass);
-        }
-    };
-    Utils.querySelectorAll_removeCssClass = function (eParent, selector, cssClass) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClass);
-        }
-    };
-    Utils.querySelectorAll_replaceCssClass = function (eParent, selector, cssClassToRemove, cssClassToAdd) {
-        var eRows = eParent.querySelectorAll(selector);
-        for (var k = 0; k < eRows.length; k++) {
-            this.removeCssClass(eRows[k], cssClassToRemove);
-            this.addCssClass(eRows[k], cssClassToAdd);
-        }
-    };
     Utils.addOrRemoveCssClass = function (element, className, addOrRemove) {
         if (addOrRemove) {
             this.addCssClass(element, className);
@@ -184,16 +201,34 @@ var Utils = (function () {
             this.removeCssClass(element, className);
         }
     };
+    Utils.callIfPresent = function (func) {
+        if (func) {
+            func();
+        }
+    };
     Utils.addCssClass = function (element, className) {
-        if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            if (cssClasses.indexOf(className) < 0) {
-                cssClasses.push(className);
-                element.className = cssClasses.join(' ');
-            }
+        var _this = this;
+        if (!className || className.length === 0) {
+            return;
+        }
+        if (className.indexOf(' ') >= 0) {
+            className.split(' ').forEach(function (value) { return _this.addCssClass(element, value); });
+            return;
+        }
+        if (element.classList) {
+            element.classList.add(className);
         }
         else {
-            element.className = className;
+            if (element.className && element.className.length > 0) {
+                var cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) < 0) {
+                    cssClasses.push(className);
+                    element.className = cssClasses.join(' ');
+                }
+            }
+            else {
+                element.className = className;
+            }
         }
     };
     Utils.offsetHeight = function (element) {
@@ -247,6 +282,15 @@ var Utils = (function () {
             return width;
         }
     };
+    Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        if (typeof value === 'number') {
+            return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        }
+        else {
+            return '';
+        }
+    };
     /**
      * Tries to use the provided renderer.
      */
@@ -261,6 +305,11 @@ var Utils = (function () {
         else if (this.isNodeOrElement(resultFromRenderer)) {
             //a dom node or element was returned, so add child
             eParent.appendChild(resultFromRenderer);
+        }
+        else {
+            if (this.exists(resultFromRenderer)) {
+                console.warn('ag-Grid: result from render should be either a string or a DOM object, got ' + typeof resultFromRenderer);
+            }
         }
     };
     /**
@@ -310,6 +359,9 @@ var Utils = (function () {
         }
     };
     Utils.addStylesToElement = function (eElement, styles) {
+        if (!styles) {
+            return;
+        }
         Object.keys(styles).forEach(function (key) {
             eElement.style[key] = styles[key];
         });
@@ -336,9 +388,14 @@ var Utils = (function () {
         var pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
     };
-    Utils.setVisible = function (element, visible) {
+    Utils.setVisible = function (element, visible, visibleStyle) {
         if (visible) {
-            element.style.display = 'inline';
+            if (this.exists(visibleStyle)) {
+                element.style.display = visibleStyle;
+            }
+            else {
+                element.style.display = 'inline';
+            }
         }
         else {
             element.style.display = 'none';
@@ -356,7 +413,58 @@ var Utils = (function () {
         }
         return this.isSafari;
     };
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    Utils.getBodyWidth = function () {
+        if (document.body) {
+            return document.body.clientWidth;
+        }
+        if (window.innerHeight) {
+            return window.innerWidth;
+        }
+        if (document.documentElement && document.documentElement.clientWidth) {
+            return document.documentElement.clientWidth;
+        }
+        return -1;
+    };
+    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    Utils.getBodyHeight = function () {
+        if (document.body) {
+            return document.body.clientHeight;
+        }
+        if (window.innerHeight) {
+            return window.innerHeight;
+        }
+        if (document.documentElement && document.documentElement.clientHeight) {
+            return document.documentElement.clientHeight;
+        }
+        return -1;
+    };
+    Utils.setCheckboxState = function (eCheckbox, state) {
+        if (typeof state === 'boolean') {
+            eCheckbox.checked = state;
+            eCheckbox.indeterminate = false;
+        }
+        else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            eCheckbox.indeterminate = true;
+        }
+    };
+    Utils.traverseNodesWithKey = function (nodes, callback) {
+        var keyParts = [];
+        recursiveSearchNodes(nodes);
+        function recursiveSearchNodes(nodes) {
+            nodes.forEach(function (node) {
+                if (node.group) {
+                    keyParts.push(node.key);
+                    var key = keyParts.join('|');
+                    callback(node, key);
+                    recursiveSearchNodes(node.children);
+                    keyParts.pop();
+                }
+            });
+        }
+    };
     return Utils;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Utils;
+exports.Utils = Utils;

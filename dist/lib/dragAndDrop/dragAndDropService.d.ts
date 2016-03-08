@@ -1,20 +1,70 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { LoggerFactory } from "../logger";
-/** Functionality for internal DnD functionality between GUI widgets. Eg this service is used to drag columns
- * from the 'available columns' list and putting them into the 'grouped columns' in the tool panel.
- * This service is NOT used by the column headers for resizing and moving, that is a different use case. */
-export default class DragAndDropService {
-    private dragItem;
-    private mouseUpEventListener;
+import { Column } from "../entities/column";
+export interface DragSource {
+    eElement: HTMLElement;
+    dragItem: Column;
+    dragSourceDropTarget?: DropTarget;
+}
+export interface DropTarget {
+    eContainer: HTMLElement;
+    iconName?: string;
+    eSecondaryContainers?: HTMLElement[];
+    onDragEnter?: (params: DraggingEvent) => void;
+    onDragLeave?: (params: DraggingEvent) => void;
+    onDragging?: (params: DraggingEvent) => void;
+    onDragStop?: (params: DraggingEvent) => void;
+}
+export interface DraggingEvent {
+    event: MouseEvent;
+    x: number;
+    y: number;
+    direction: string;
+    dragItem: Column;
+    dragSource: DragSource;
+}
+export declare class DragAndDropService {
+    private gridOptionsWrapper;
+    private dragService;
+    static DIRECTION_LEFT: string;
+    static DIRECTION_RIGHT: string;
+    static ICON_PINNED: string;
+    static ICON_ADD: string;
+    static ICON_MOVE: string;
+    static ICON_LEFT: string;
+    static ICON_RIGHT: string;
+    static ICON_GROUP: string;
     private logger;
-    init(loggerFactory: LoggerFactory): void;
-    destroy(): void;
-    private stopDragging();
-    private setDragCssClasses(eListItem, dragging);
-    addDragSource(eDragSource: any, dragSourceCallback: any): void;
-    private onMouseDownDragSource(eDragSource, dragSourceCallback);
-    addDropTarget(eDropTarget: any, dropTargetCallback: any): void;
+    private dragItem;
+    private eventLastTime;
+    private dragSource;
+    private dragging;
+    private eGhost;
+    private eGhostIcon;
+    private eBody;
+    private dropTargets;
+    private lastDropTarget;
+    private ePinnedIcon;
+    private ePlusIcon;
+    private eHiddenIcon;
+    private eMoveIcon;
+    private eLeftIcon;
+    private eRightIcon;
+    private eGroupIcon;
+    agWire(loggerFactory: LoggerFactory): void;
+    addDragSource(params: DragSource): void;
+    nudge(): void;
+    private onDragStart(dragSource, mouseEvent);
+    private onDragStop(mouseEvent);
+    private onDragging(mouseEvent);
+    addDropTarget(dropTarget: DropTarget): void;
+    workOutDirection(event: MouseEvent): string;
+    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string): DraggingEvent;
+    private positionGhost(event);
+    private removeGhost();
+    private createGhost();
+    setGhostIcon(iconName: string, shake?: boolean): void;
 }

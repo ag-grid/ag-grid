@@ -1,13 +1,13 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var utils_1 = require('../utils');
 var svgFactory_1 = require("../svgFactory");
 var agList_1 = require("./agList");
-var svgFactory = svgFactory_1.default.getInstance();
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var AgDropdownList = (function () {
     function AgDropdownList(popupService, dragAndDropService) {
         this.popupService = popupService;
@@ -30,16 +30,16 @@ var AgDropdownList = (function () {
         this.eGui = document.createElement('span');
         this.eValue = document.createElement('span');
         this.eGui.appendChild(this.eValue);
-        this.agList = new agList_1.default(dragAndDropService);
+        this.agList = new agList_1.AgList(dragAndDropService);
         this.eValue.addEventListener('click', this.onClick.bind(this));
         this.agList.addItemSelectedListener(this.itemSelected.bind(this));
         this.agList.addCssClass('ag-popup-list');
-        utils_1.default.addStylesToElement(this.eValue, {
+        utils_1.Utils.addStylesToElement(this.eValue, {
             border: '1px solid darkgrey',
             display: 'inline-block',
             paddingLeft: 2
         });
-        utils_1.default.addStylesToElement(this.eGui, { position: 'relative' });
+        utils_1.Utils.addStylesToElement(this.eGui, { position: 'relative' });
         this.agList.addStyles({
             display: 'inline-block',
             position: 'absolute',
@@ -57,7 +57,7 @@ var AgDropdownList = (function () {
     };
     AgDropdownList.prototype.onClick = function () {
         var agListGui = this.agList.getGui();
-        this.popupService.positionPopup(this.eGui, agListGui, false);
+        this.popupService.positionPopupUnderComponent({ eventSource: this.eGui, ePopup: agListGui });
         this.hidePopupCallback = this.popupService.addAsModalPopup(agListGui, true);
     };
     AgDropdownList.prototype.getGui = function () {
@@ -72,11 +72,11 @@ var AgDropdownList = (function () {
         this.cellRenderer = cellRenderer;
     };
     AgDropdownList.prototype.refreshView = function () {
-        utils_1.default.removeAllChildren(this.eValue);
+        utils_1.Utils.removeAllChildren(this.eValue);
         if (this.selectedItem) {
             if (this.cellRenderer) {
                 var params = { value: this.selectedItem };
-                utils_1.default.useRenderer(this.eValue, this.cellRenderer, params);
+                utils_1.Utils.useRenderer(this.eValue, this.cellRenderer, params);
             }
             else {
                 this.eValue.appendChild(document.createTextNode(this.selectedItem));
@@ -93,5 +93,4 @@ var AgDropdownList = (function () {
     };
     return AgDropdownList;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AgDropdownList;
+exports.AgDropdownList = AgDropdownList;

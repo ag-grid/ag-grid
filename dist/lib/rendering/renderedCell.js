@@ -1,40 +1,83 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var utils_1 = require('../utils');
-var vHtmlElement_1 = require("../virtualDom/vHtmlElement");
 var column_1 = require("../entities/column");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var expressionService_1 = require("../expressionService");
+var selectionRendererFactory_1 = require("../selectionRendererFactory");
+var rowRenderer_1 = require("./rowRenderer");
+var templateService_1 = require("../templateService");
+var columnController_1 = require("../columnController/columnController");
+var valueService_1 = require("../valueService");
+var eventService_1 = require("../eventService");
 var constants_1 = require("../constants");
 var events_1 = require("../events");
-var vWrapperElement_1 = require("../virtualDom/vWrapperElement");
+var context_1 = require("../context/context");
+var columnController_2 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
+var context_2 = require("../context/context");
+var focusedCellController_1 = require("../focusedCellController");
+var context_3 = require("../context/context");
+var gridCell_1 = require("../entities/gridCell");
 var RenderedCell = (function () {
-    function RenderedCell(firstRightPinnedCol, column, $compile, rowRenderer, gridOptionsWrapper, expressionService, selectionRendererFactory, selectionController, templateService, cellRendererMap, node, rowIndex, colIndex, scope, columnController, valueService, eventService) {
+    function RenderedCell(column, cellRendererMap, node, rowIndex, scope, renderedRow) {
         this.destroyMethods = [];
-        this.firstRightPinnedColumn = firstRightPinnedCol;
+        this.firstRightPinned = false;
+        this.lastLeftPinned = false;
         this.column = column;
-        this.rowRenderer = rowRenderer;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.expressionService = expressionService;
-        this.selectionRendererFactory = selectionRendererFactory;
-        this.selectionController = selectionController;
         this.cellRendererMap = cellRendererMap;
-        this.$compile = $compile;
-        this.templateService = templateService;
-        this.columnController = columnController;
-        this.valueService = valueService;
-        this.eventService = eventService;
         this.node = node;
         this.rowIndex = rowIndex;
-        this.colIndex = colIndex;
         this.scope = scope;
+        this.renderedRow = renderedRow;
+    }
+    RenderedCell.prototype.checkPinnedClasses = function () {
+    };
+    RenderedCell.prototype.setPinnedClasses = function () {
+        var _this = this;
+        var firstPinnedChangedListener = function () {
+            if (_this.firstRightPinned !== _this.column.isFirstRightPinned()) {
+                _this.firstRightPinned = _this.column.isFirstRightPinned();
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-first-right-pinned', _this.firstRightPinned);
+            }
+            if (_this.lastLeftPinned !== _this.column.isLastLeftPinned()) {
+                _this.lastLeftPinned = _this.column.isLastLeftPinned();
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-last-left-pinned', _this.lastLeftPinned);
+            }
+        };
+        this.column.addEventListener(column_1.Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.column.addEventListener(column_1.Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.destroyMethods.push(function () {
+            _this.column.removeEventListener(column_1.Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+            _this.column.removeEventListener(column_1.Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
+        });
+        firstPinnedChangedListener();
+    };
+    RenderedCell.prototype.getParentRow = function () {
+        return this.eParentRow;
+    };
+    RenderedCell.prototype.setParentRow = function (eParentRow) {
+        this.eParentRow = eParentRow;
+    };
+    RenderedCell.prototype.init = function () {
         this.data = this.getDataForRow();
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();
         this.setupComponents();
-    }
+    };
     RenderedCell.prototype.destroy = function () {
         this.destroyMethods.forEach(function (theFunction) {
             theFunction();
@@ -69,10 +112,10 @@ var RenderedCell = (function () {
         return this.column;
     };
     RenderedCell.prototype.getValue = function () {
-        return this.valueService.getValue(this.column.getColDef(), this.data, this.node);
+        return this.valueService.getValueUsingSpecificData(this.column, this.data, this.node);
     };
-    RenderedCell.prototype.getVGridCell = function () {
-        return this.vGridCell;
+    RenderedCell.prototype.getGui = function () {
+        return this.eGridCell;
     };
     RenderedCell.prototype.getDataForRow = function () {
         if (this.node.footer) {
@@ -98,66 +141,147 @@ var RenderedCell = (function () {
     RenderedCell.prototype.setLeftOnCell = function () {
         var _this = this;
         var leftChangedListener = function () {
-            //if (this.column.getColId()==='age') {
-            //    console.log('left changed: ' + this.column.getColId() + ' ' + this.column.getLeft());
-            //}
-            _this.vGridCell.addStyles({ left: _this.column.getLeft() + 'px' });
+            var newLeft = _this.column.getLeft();
+            if (utils_1.Utils.exists(newLeft)) {
+                _this.eGridCell.style.left = _this.column.getLeft() + 'px';
+            }
+            else {
+                _this.eGridCell.style.left = '';
+            }
         };
-        this.column.addEventListener(column_1.default.EVENT_LEFT_CHANGED, leftChangedListener);
+        this.column.addEventListener(column_1.Column.EVENT_LEFT_CHANGED, leftChangedListener);
         this.destroyMethods.push(function () {
-            _this.column.removeEventListener(column_1.default.EVENT_LEFT_CHANGED, leftChangedListener);
+            _this.column.removeEventListener(column_1.Column.EVENT_LEFT_CHANGED, leftChangedListener);
         });
         leftChangedListener();
+    };
+    RenderedCell.prototype.addRangeSelectedListener = function () {
+        var _this = this;
+        if (!this.rangeController) {
+            return;
+        }
+        var rangeCountLastTime = 0;
+        var rangeSelectedListener = function () {
+            var rangeCount = _this.rangeController.getCellRangeCount(new gridCell_1.GridCell(_this.rowIndex, _this.node.floating, _this.column));
+            if (rangeCountLastTime !== rangeCount) {
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-range-selected', rangeCount !== 0);
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-range-selected-1', rangeCount === 1);
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-range-selected-2', rangeCount === 2);
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-range-selected-3', rangeCount === 3);
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-range-selected-4', rangeCount >= 4);
+                rangeCountLastTime = rangeCount;
+            }
+        };
+        this.eventService.addEventListener(events_1.Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        this.destroyMethods.push(function () {
+            _this.eventService.removeEventListener(events_1.Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
+        });
+        rangeSelectedListener();
+    };
+    RenderedCell.prototype.addHighlightListener = function () {
+        var _this = this;
+        if (!this.rangeController) {
+            return;
+        }
+        var clipboardListener = function (event) {
+            utils_1.Utils.removeCssClass(_this.eGridCell, 'ag-cell-highlight');
+            utils_1.Utils.removeCssClass(_this.eGridCell, 'ag-cell-highlight-animation');
+            var cellId = new gridCell_1.GridCell(_this.rowIndex, _this.node.floating, _this.column).createId();
+            var shouldFlash = event.cells[cellId];
+            if (shouldFlash) {
+                _this.flashCellForClipboardInteraction();
+            }
+        };
+        this.eventService.addEventListener(events_1.Events.EVENT_FLASH_CELLS, clipboardListener);
+        this.destroyMethods.push(function () {
+            _this.eventService.removeEventListener(events_1.Events.EVENT_FLASH_CELLS, clipboardListener);
+        });
+    };
+    RenderedCell.prototype.flashCellForClipboardInteraction = function () {
+        var _this = this;
+        // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
+        // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
+        // CSS is cleared, that's the css removal in addClipboardListener() method
+        setTimeout(function () {
+            // once css is cleared, we want to highlight the cells, without any animation
+            utils_1.Utils.addCssClass(_this.eGridCell, 'ag-cell-highlight');
+            setTimeout(function () {
+                // then once that is applied, we remove the highlight with animation
+                utils_1.Utils.removeCssClass(_this.eGridCell, 'ag-cell-highlight');
+                utils_1.Utils.addCssClass(_this.eGridCell, 'ag-cell-highlight-animation');
+                setTimeout(function () {
+                    // and then to leave things as we got them, we remove the animation
+                    utils_1.Utils.removeCssClass(_this.eGridCell, 'ag-cell-highlight-animation');
+                }, 1000);
+            }, 500);
+        }, 0);
+    };
+    RenderedCell.prototype.addCellFocusedListener = function () {
+        var _this = this;
+        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+        var cellFocusedLastTime = null;
+        var cellFocusedListener = function (event) {
+            var cellFocused = _this.focusedCellController.isCellFocused(_this.rowIndex, _this.column, _this.node.floating);
+            if (cellFocused !== cellFocusedLastTime) {
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-focus', cellFocused);
+                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+                cellFocusedLastTime = cellFocused;
+            }
+            if (cellFocused && event && event.forceBrowserFocus) {
+                _this.eGridCell.focus();
+            }
+        };
+        this.eventService.addEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        this.destroyMethods.push(function () {
+            _this.eventService.removeEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        });
+        cellFocusedListener();
     };
     RenderedCell.prototype.setWidthOnCell = function () {
         var _this = this;
         var widthChangedListener = function () {
-            _this.vGridCell.addStyles({ width: _this.column.getActualWidth() + "px" });
+            _this.eGridCell.style.width = _this.column.getActualWidth() + "px";
         };
-        this.column.addEventListener(column_1.default.EVENT_WIDTH_CHANGED, widthChangedListener);
+        this.column.addEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
         this.destroyMethods.push(function () {
-            _this.column.removeEventListener(column_1.default.EVENT_WIDTH_CHANGED, widthChangedListener);
+            _this.column.removeEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
         });
         widthChangedListener();
     };
     RenderedCell.prototype.setupComponents = function () {
-        this.vGridCell = new vHtmlElement_1.default("div");
+        this.eGridCell = document.createElement('div');
         this.setLeftOnCell();
         this.setWidthOnCell();
+        this.setPinnedClasses();
+        this.addRangeSelectedListener();
+        this.addHighlightListener();
+        this.addCellFocusedListener();
         // only set tab index if cell selection is enabled
-        if (!this.gridOptionsWrapper.isSuppressCellSelection() && !this.node.floating) {
-            this.vGridCell.setAttribute("tabindex", "-1");
+        if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
+            this.eGridCell.setAttribute("tabindex", "-1");
         }
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
-        this.addCellClickedHandler();
-        this.addCellDoubleClickedHandler();
-        this.addCellContextMenuHandler();
-        if (!this.node.floating) {
-            this.addCellNavigationHandler();
-        }
+        this.addCellNavigationHandler();
         this.createParentOfValue();
         this.populateCell();
-        if (this.eCheckbox) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
     };
     // called by rowRenderer when user navigates via tab key
     RenderedCell.prototype.startEditing = function (key) {
         var _this = this;
         var that = this;
         this.editingCell = true;
-        utils_1.default.removeAllChildren(this.vGridCell.getElement());
+        utils_1.Utils.removeAllChildren(this.eGridCell);
         var eInput = document.createElement('input');
         eInput.type = 'text';
-        utils_1.default.addCssClass(eInput, 'ag-cell-edit-input');
-        var startWithOldValue = key !== constants_1.default.KEY_BACKSPACE && key !== constants_1.default.KEY_DELETE;
+        utils_1.Utils.addCssClass(eInput, 'ag-cell-edit-input');
+        var startWithOldValue = key !== constants_1.Constants.KEY_BACKSPACE && key !== constants_1.Constants.KEY_DELETE;
         var value = this.getValue();
         if (startWithOldValue && value !== null && value !== undefined) {
             eInput.value = value;
         }
         eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-        this.vGridCell.appendChild(eInput);
+        this.eGridCell.appendChild(eInput);
         eInput.focus();
         eInput.select();
         var blurListener = function () {
@@ -168,7 +292,7 @@ var RenderedCell = (function () {
         //stop editing if enter pressed
         eInput.addEventListener('keypress', function (event) {
             var key = event.which || event.keyCode;
-            if (key === constants_1.default.KEY_ENTER) {
+            if (key === constants_1.Constants.KEY_ENTER) {
                 _this.stopEditing(eInput, blurListener);
                 _this.focusCell(true);
             }
@@ -176,7 +300,7 @@ var RenderedCell = (function () {
         //stop editing if enter pressed
         eInput.addEventListener('keydown', function (event) {
             var key = event.which || event.keyCode;
-            if (key === constants_1.default.KEY_ESCAPE) {
+            if (key === constants_1.Constants.KEY_ESCAPE) {
                 _this.stopEditing(eInput, blurListener, true);
                 _this.focusCell(true);
             }
@@ -184,9 +308,9 @@ var RenderedCell = (function () {
         // tab key doesn't generate keypress, so need keydown to listen for that
         eInput.addEventListener('keydown', function (event) {
             var key = event.which || event.keyCode;
-            if (key == constants_1.default.KEY_TAB) {
+            if (key == constants_1.Constants.KEY_TAB) {
                 that.stopEditing(eInput, blurListener);
-                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, event.shiftKey);
+                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, that.node.floating, event.shiftKey);
                 // we don't want the default tab action, so return false, this stops the event from bubbling
                 event.preventDefault();
                 return false;
@@ -194,44 +318,22 @@ var RenderedCell = (function () {
         });
     };
     RenderedCell.prototype.focusCell = function (forceBrowserFocus) {
-        this.rowRenderer.focusCell(this.vGridCell.getElement(), this.rowIndex, this.column.getColId(), this.column.getColDef(), forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     };
     RenderedCell.prototype.stopEditing = function (eInput, blurListener, reset) {
         if (reset === void 0) { reset = false; }
         this.editingCell = false;
         var newValue = eInput.value;
-        var colDef = this.column.getColDef();
         //If we don't remove the blur listener first, we get:
         //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
         eInput.removeEventListener('blur', blurListener);
         if (!reset) {
-            var paramsForCallbacks = {
-                node: this.node,
-                data: this.node.data,
-                oldValue: this.node.data[colDef.field],
-                newValue: newValue,
-                rowIndex: this.rowIndex,
-                colDef: colDef,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-            if (colDef.newValueHandler) {
-                colDef.newValueHandler(paramsForCallbacks);
-            }
-            else {
-                this.valueService.setValueUsingField(this.node.data, colDef.field, newValue);
-            }
-            // at this point, the value has been updated
+            this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
-            paramsForCallbacks.newValue = this.value;
-            if (typeof colDef.onCellValueChanged === 'function') {
-                colDef.onCellValueChanged(paramsForCallbacks);
-            }
-            this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
         }
-        utils_1.default.removeAllChildren(this.vGridCell.getElement());
+        utils_1.Utils.removeAllChildren(this.eGridCell);
         if (this.checkboxSelection) {
-            this.vGridCell.appendChild(this.vCellWrapper.getElement());
+            this.eGridCell.appendChild(this.eCellWrapper);
         }
         this.refreshCell();
     };
@@ -241,46 +343,19 @@ var RenderedCell = (function () {
             data: this.node.data,
             value: this.value,
             rowIndex: this.rowIndex,
-            colIndex: this.colIndex,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         return params;
     };
     RenderedCell.prototype.createEvent = function (event, eventSource) {
         var agEvent = this.createParams();
         agEvent.event = event;
-        agEvent.eventSource = eventSource;
+        //agEvent.eventSource = eventSource;
         return agEvent;
-    };
-    RenderedCell.prototype.addCellDoubleClickedHandler = function () {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('dblclick', function (event) {
-            // always dispatch event to eventService
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(events_1.Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
-            // check if colDef also wants to handle event
-            if (typeof colDef.onCellDoubleClicked === 'function') {
-                colDef.onCellDoubleClicked(agEvent);
-            }
-            if (!that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
-            }
-        });
-    };
-    RenderedCell.prototype.addCellContextMenuHandler = function () {
-        var that = this;
-        var colDef = this.column.getColDef();
-        this.vGridCell.addEventListener('contextmenu', function (event) {
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(events_1.Events.EVENT_CELL_CONTEXT_MENU, agEvent);
-            if (colDef.onCellContextMenu) {
-                colDef.onCellContextMenu(agEvent);
-            }
-        });
     };
     RenderedCell.prototype.isCellEditable = function () {
         if (this.editingCell) {
@@ -290,41 +365,87 @@ var RenderedCell = (function () {
         if (this.node.group) {
             return false;
         }
-        // if boolean set, then just use it
-        var colDef = this.column.getColDef();
-        if (typeof colDef.editable === 'boolean') {
-            return colDef.editable;
-        }
-        // if function, then call the function to find out
-        if (typeof colDef.editable === 'function') {
-            var params = this.createParams();
-            var editableFunc = colDef.editable;
-            return editableFunc(params);
-        }
-        return false;
+        return this.column.isCellEditable(this.node);
     };
-    RenderedCell.prototype.addCellClickedHandler = function () {
+    RenderedCell.prototype.onMouseEvent = function (eventName, mouseEvent) {
+        switch (eventName) {
+            case 'click':
+                this.onCellClicked(mouseEvent);
+                break;
+            case 'mousedown':
+                this.onMouseDown();
+                break;
+            case 'dblclick':
+                this.onCellDoubleClicked();
+                break;
+            case 'contextmenu':
+                this.onContextMenu(mouseEvent);
+                break;
+        }
+    };
+    RenderedCell.prototype.onContextMenu = function (mouseEvent) {
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
+        // thus the normal menu is displayed
+        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            return;
+        }
         var colDef = this.column.getColDef();
-        var that = this;
-        this.vGridCell.addEventListener("click", function (event) {
-            // we pass false to focusCell, as we don't want the cell to focus
-            // also get the browser focus. if we did, then the cellRenderer could
-            // have a text field in it, for example, and as the user clicks on the
-            // text field, the text field, the focus doesn't get to the text
-            // field, instead to goes to the div behind, making it impossible to
-            // select the text field.
-            if (!that.node.floating) {
-                that.focusCell(false);
+        var agEvent = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_CONTEXT_MENU, agEvent);
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(agEvent);
+        }
+        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
+            event.preventDefault();
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+    RenderedCell.prototype.onCellDoubleClicked = function () {
+        var colDef = this.column.getColDef();
+        // always dispatch event to eventService
+        var agEvent = this.createEvent(event, this);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+        // check if colDef also wants to handle event
+        if (typeof colDef.onCellDoubleClicked === 'function') {
+            colDef.onCellDoubleClicked(agEvent);
+        }
+        if (!this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
+    };
+    RenderedCell.prototype.onMouseDown = function () {
+        // we pass false to focusCell, as we don't want the cell to focus
+        // also get the browser focus. if we did, then the cellRenderer could
+        // have a text field in it, for example, and as the user clicks on the
+        // text field, the text field, the focus doesn't get to the text
+        // field, instead to goes to the div behind, making it impossible to
+        // select the text field.
+        this.focusCell(false);
+        // if it's a right click, then if the cell is already in range,
+        // don't change the range, however if the cell is not in a range,
+        // we set a new range
+        if (this.rangeController) {
+            var thisCell = new gridCell_1.GridCell(this.rowIndex, this.node.floating, this.column);
+            var cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
+            if (!cellAlreadyInRange) {
+                this.rangeController.setRangeToCell(thisCell);
             }
-            var agEvent = that.createEvent(event, this);
-            that.eventService.dispatchEvent(events_1.Events.EVENT_CELL_CLICKED, agEvent);
-            if (colDef.onCellClicked) {
-                colDef.onCellClicked(agEvent);
-            }
-            if (that.gridOptionsWrapper.isSingleClickEdit() && that.isCellEditable()) {
-                that.startEditing();
-            }
-        });
+        }
+    };
+    RenderedCell.prototype.onCellClicked = function (mouseEvent) {
+        var agEvent = this.createEvent(mouseEvent, this);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_CLICKED, agEvent);
+        var colDef = this.column.getColDef();
+        if (colDef.onCellClicked) {
+            colDef.onCellClicked(agEvent);
+        }
+        if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
+            this.startEditing();
+        }
     };
     RenderedCell.prototype.populateCell = function () {
         // populate
@@ -356,7 +477,7 @@ var RenderedCell = (function () {
                 cssToUse = colDef.cellStyle;
             }
             if (cssToUse) {
-                this.vGridCell.addStyles(cssToUse);
+                utils_1.Utils.addStylesToElement(this.eGridCell, cssToUse);
             }
         }
     };
@@ -382,11 +503,11 @@ var RenderedCell = (function () {
                 classToUse = colDef.cellClass;
             }
             if (typeof classToUse === 'string') {
-                this.vGridCell.addClass(classToUse);
+                utils_1.Utils.addCssClass(this.eGridCell, classToUse);
             }
             else if (Array.isArray(classToUse)) {
                 classToUse.forEach(function (cssClassItem) {
-                    _this.vGridCell.addClass(cssClassItem);
+                    utils_1.Utils.addCssClass(_this.eGridCell, cssClassItem);
                 });
             }
         }
@@ -416,51 +537,51 @@ var RenderedCell = (function () {
                     resultOfRule = rule(params);
                 }
                 if (resultOfRule) {
-                    this.vGridCell.addClass(className);
+                    utils_1.Utils.addCssClass(this.eGridCell, className);
                 }
                 else {
-                    this.vGridCell.removeClass(className);
+                    utils_1.Utils.removeCssClass(this.eGridCell, className);
                 }
             }
         }
     };
     // rename this to 'add key event listener
     RenderedCell.prototype.addCellNavigationHandler = function () {
-        var that = this;
-        this.vGridCell.addEventListener('keydown', function (event) {
-            if (that.editingCell) {
+        var _this = this;
+        this.eGridCell.addEventListener('keydown', function (event) {
+            if (_this.editingCell) {
                 return;
             }
             // only interested on key presses that are directly on this element, not any children elements. this
             // stops navigation if the user is in, for example, a text field inside the cell, and user hits
             // on of the keys we are looking for.
-            if (event.target !== that.vGridCell.getElement()) {
+            if (event.target !== _this.eGridCell) {
                 return;
             }
             var key = event.which || event.keyCode;
-            var startNavigation = key === constants_1.default.KEY_DOWN || key === constants_1.default.KEY_UP
-                || key === constants_1.default.KEY_LEFT || key === constants_1.default.KEY_RIGHT;
+            var startNavigation = key === constants_1.Constants.KEY_DOWN || key === constants_1.Constants.KEY_UP
+                || key === constants_1.Constants.KEY_LEFT || key === constants_1.Constants.KEY_RIGHT;
             if (startNavigation) {
                 event.preventDefault();
-                that.rowRenderer.navigateToNextCell(key, that.rowIndex, that.column);
+                _this.rowRenderer.navigateToNextCell(key, _this.rowIndex, _this.column, _this.node.floating);
                 return;
             }
-            var startEdit = that.isKeycodeForStartEditing(key);
-            if (startEdit && that.isCellEditable()) {
-                that.startEditing(key);
+            var startEdit = _this.isKeycodeForStartEditing(key);
+            if (startEdit && _this.isCellEditable()) {
+                _this.startEditing(key);
                 // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
                 // press, and stops editing immediately, hence giving he user experience that nothing happened
                 event.preventDefault();
                 return;
             }
-            var selectRow = key === constants_1.default.KEY_SPACE;
-            if (selectRow && that.gridOptionsWrapper.isRowSelection()) {
-                var selected = that.selectionController.isNodeSelected(that.node);
+            var selectRow = key === constants_1.Constants.KEY_SPACE;
+            if (selectRow && _this.gridOptionsWrapper.isRowSelection()) {
+                var selected = _this.node.isSelected();
                 if (selected) {
-                    that.selectionController.deselectNode(that.node);
+                    _this.node.setSelected(false);
                 }
                 else {
-                    that.selectionController.selectNode(that.node, true);
+                    _this.node.setSelected(true);
                 }
                 event.preventDefault();
                 return;
@@ -468,87 +589,49 @@ var RenderedCell = (function () {
         });
     };
     RenderedCell.prototype.isKeycodeForStartEditing = function (key) {
-        return key === constants_1.default.KEY_ENTER || key === constants_1.default.KEY_BACKSPACE || key === constants_1.default.KEY_DELETE;
-    };
-    RenderedCell.prototype.createSelectionCheckbox = function () {
-        this.eCheckbox = document.createElement('input');
-        this.eCheckbox.type = "checkbox";
-        this.eCheckbox.name = "name";
-        this.eCheckbox.className = 'ag-selection-checkbox';
-        this.eCheckbox.addEventListener('click', function (event) {
-            event.stopPropagation();
-        });
-        var that = this;
-        this.checkboxOnChangeListener = function () {
-            var newValue = that.eCheckbox.checked;
-            if (newValue) {
-                that.selectionController.selectIndex(that.rowIndex, true);
-            }
-            else {
-                that.selectionController.deselectIndex(that.rowIndex);
-            }
-        };
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
-    };
-    RenderedCell.prototype.setSelected = function (state) {
-        if (!this.eCheckbox) {
-            return;
-        }
-        this.eCheckbox.onchange = null;
-        if (typeof state === 'boolean') {
-            this.eCheckbox.checked = state;
-            this.eCheckbox.indeterminate = false;
-        }
-        else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            this.eCheckbox.indeterminate = true;
-        }
-        this.eCheckbox.onchange = this.checkboxOnChangeListener;
+        return key === constants_1.Constants.KEY_ENTER || key === constants_1.Constants.KEY_BACKSPACE || key === constants_1.Constants.KEY_DELETE;
     };
     RenderedCell.prototype.createParentOfValue = function () {
         if (this.checkboxSelection) {
-            this.vCellWrapper = new vHtmlElement_1.default('span');
-            this.vCellWrapper.addClass('ag-cell-wrapper');
-            this.vGridCell.appendChild(this.vCellWrapper);
-            this.createSelectionCheckbox();
-            this.vCellWrapper.appendChild(new vWrapperElement_1.default(this.eCheckbox));
+            this.eCellWrapper = document.createElement('span');
+            utils_1.Utils.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
+            this.eGridCell.appendChild(this.eCellWrapper);
+            //this.createSelectionCheckbox();
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
+            this.eCellWrapper.appendChild(this.eCheckbox);
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
-            this.vSpanWithValue = new vHtmlElement_1.default('span');
-            this.vSpanWithValue.addClass('ag-cell-value');
-            this.vCellWrapper.appendChild(this.vSpanWithValue);
-            this.vParentOfValue = this.vSpanWithValue;
+            this.eSpanWithValue = document.createElement('span');
+            utils_1.Utils.addCssClass(this.eSpanWithValue, 'ag-cell-value');
+            this.eCellWrapper.appendChild(this.eSpanWithValue);
+            this.eParentOfValue = this.eSpanWithValue;
         }
         else {
-            this.vGridCell.addClass('ag-cell-value');
-            this.vParentOfValue = this.vGridCell;
+            utils_1.Utils.addCssClass(this.eGridCell, 'ag-cell-value');
+            this.eParentOfValue = this.eGridCell;
         }
     };
     RenderedCell.prototype.isVolatile = function () {
         return this.column.getColDef().volatile;
     };
     RenderedCell.prototype.refreshCell = function () {
-        utils_1.default.removeAllChildren(this.vParentOfValue.getElement());
+        utils_1.Utils.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
         this.populateCell();
-        if (this.checkboxSelection) {
-            this.setSelected(this.selectionController.isNodeSelected(this.node));
-        }
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.vGridCell.getElement())(this.scope);
+            this.$compile(this.eGridCell)(this.scope);
         }
     };
     RenderedCell.prototype.putDataIntoCell = function () {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
         if (colDef.template) {
-            this.vParentOfValue.setInnerHtml(colDef.template);
+            this.eParentOfValue.innerHTML = colDef.template;
         }
         else if (colDef.templateUrl) {
             var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
-                this.vParentOfValue.setInnerHtml(template);
+                this.eParentOfValue.innerHTML = template;
             }
         }
         else if (colDef.floatingCellRenderer && this.node.floating) {
@@ -560,7 +643,7 @@ var RenderedCell = (function () {
         else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (this.value !== undefined && this.value !== null && this.value !== '') {
-                this.vParentOfValue.setInnerHtml(this.value.toString());
+                this.eParentOfValue.innerHTML = this.value.toString();
             }
         }
     };
@@ -578,8 +661,9 @@ var RenderedCell = (function () {
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
-            eGridCell: this.vGridCell,
-            eParentOfValue: this.vParentOfValue
+            eGridCell: this.eGridCell,
+            eParentOfValue: this.eParentOfValue,
+            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
         // start duplicated code
         var actualCellRenderer;
@@ -598,30 +682,90 @@ var RenderedCell = (function () {
         }
         var resultFromRenderer = actualCellRenderer(rendererParams);
         // end duplicated code
-        if (utils_1.default.isNodeOrElement(resultFromRenderer)) {
+        if (resultFromRenderer === null || resultFromRenderer === '') {
+            return;
+        }
+        if (utils_1.Utils.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
-            this.vParentOfValue.appendChild(resultFromRenderer);
+            this.eParentOfValue.appendChild(resultFromRenderer);
         }
         else {
             // otherwise assume it was html, so just insert
-            this.vParentOfValue.setInnerHtml(resultFromRenderer);
+            this.eParentOfValue.innerHTML = resultFromRenderer;
         }
     };
     RenderedCell.prototype.addClasses = function () {
-        this.vGridCell.addClass('ag-cell');
-        this.vGridCell.addClass('ag-cell-no-focus');
-        this.vGridCell.setAttribute("colId", this.column.getColId());
+        utils_1.Utils.addCssClass(this.eGridCell, 'ag-cell');
+        this.eGridCell.setAttribute("colId", this.column.getColId());
         if (this.node.group && this.node.footer) {
-            this.vGridCell.addClass('ag-footer-cell');
+            utils_1.Utils.addCssClass(this.eGridCell, 'ag-footer-cell');
         }
         if (this.node.group && !this.node.footer) {
-            this.vGridCell.addClass('ag-group-cell');
-        }
-        if (this.firstRightPinnedColumn) {
-            this.vGridCell.addClass('ag-cell-first-right-pinned');
+            utils_1.Utils.addCssClass(this.eGridCell, 'ag-group-cell');
         }
     };
+    __decorate([
+        context_1.Autowired('columnApi'), 
+        __metadata('design:type', columnController_2.ColumnApi)
+    ], RenderedCell.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'), 
+        __metadata('design:type', gridApi_1.GridApi)
+    ], RenderedCell.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], RenderedCell.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('expressionService'), 
+        __metadata('design:type', expressionService_1.ExpressionService)
+    ], RenderedCell.prototype, "expressionService", void 0);
+    __decorate([
+        context_1.Autowired('selectionRendererFactory'), 
+        __metadata('design:type', selectionRendererFactory_1.SelectionRendererFactory)
+    ], RenderedCell.prototype, "selectionRendererFactory", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'), 
+        __metadata('design:type', rowRenderer_1.RowRenderer)
+    ], RenderedCell.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_1.Autowired('$compile'), 
+        __metadata('design:type', Object)
+    ], RenderedCell.prototype, "$compile", void 0);
+    __decorate([
+        context_1.Autowired('templateService'), 
+        __metadata('design:type', templateService_1.TemplateService)
+    ], RenderedCell.prototype, "templateService", void 0);
+    __decorate([
+        context_1.Autowired('valueService'), 
+        __metadata('design:type', valueService_1.ValueService)
+    ], RenderedCell.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], RenderedCell.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], RenderedCell.prototype, "columnController", void 0);
+    __decorate([
+        context_3.Optional('rangeController'), 
+        __metadata('design:type', Object)
+    ], RenderedCell.prototype, "rangeController", void 0);
+    __decorate([
+        context_1.Autowired('focusedCellController'), 
+        __metadata('design:type', focusedCellController_1.FocusedCellController)
+    ], RenderedCell.prototype, "focusedCellController", void 0);
+    __decorate([
+        context_3.Optional('contextMenuFactory'), 
+        __metadata('design:type', Object)
+    ], RenderedCell.prototype, "contextMenuFactory", void 0);
+    __decorate([
+        context_2.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], RenderedCell.prototype, "init", null);
     return RenderedCell;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = RenderedCell;
+exports.RenderedCell = RenderedCell;

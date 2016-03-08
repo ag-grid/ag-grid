@@ -1,10 +1,31 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var columnController_1 = require("./columnController/columnController");
+var gridPanel_1 = require("./gridPanel/gridPanel");
+var eventService_1 = require("./eventService");
+var logger_1 = require("./logger");
 var events_1 = require("./events");
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
+var context_3 = require("./context/context");
+var context_4 = require("./context/context");
 var MasterSlaveService = (function () {
     function MasterSlaveService() {
         // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
@@ -12,17 +33,15 @@ var MasterSlaveService = (function () {
         // we don't fire back any events.
         this.consuming = false;
     }
-    MasterSlaveService.prototype.init = function (gridOptionsWrapper, columnController, gridPanel, loggerFactory, eventService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.gridPanel = gridPanel;
-        this.eventService = eventService;
+    MasterSlaveService.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
-        eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+    };
+    MasterSlaveService.prototype.init = function () {
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
     };
     // common logic across all the fire methods
     MasterSlaveService.prototype.fireEvent = function (callback) {
@@ -145,7 +164,38 @@ var MasterSlaveService = (function () {
             }
         });
     };
+    __decorate([
+        context_3.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], MasterSlaveService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_3.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], MasterSlaveService.prototype, "columnController", void 0);
+    __decorate([
+        context_3.Autowired('gridPanel'), 
+        __metadata('design:type', gridPanel_1.GridPanel)
+    ], MasterSlaveService.prototype, "gridPanel", void 0);
+    __decorate([
+        context_3.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], MasterSlaveService.prototype, "eventService", void 0);
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
+        __metadata('design:returntype', void 0)
+    ], MasterSlaveService.prototype, "agWire", null);
+    __decorate([
+        context_4.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], MasterSlaveService.prototype, "init", null);
+    MasterSlaveService = __decorate([
+        context_1.Bean('masterSlaveService'), 
+        __metadata('design:paramtypes', [])
+    ], MasterSlaveService);
     return MasterSlaveService;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = MasterSlaveService;
+exports.MasterSlaveService = MasterSlaveService;

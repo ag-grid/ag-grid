@@ -1,11 +1,71 @@
+.ag-dark {
+  line-height: 1.4;
+}
+.ag-dark img {
+  vertical-align: middle;
+  border: 0px;
+}
 .ag-dark .ag-root {
   border: 1px solid #808080;
   color: #e0e0e0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-.ag-dark .ag-cell {
+.ag-dark .ag-row-group-cell {
+  background: #430000;
+  border: 1px solid #808080;
+  padding: 2px;
+}
+.ag-dark .ag-row-group-cell-ghost {
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+}
+.ag-dark .ag-row-group-cell-text {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.ag-dark .ag-row-group-cell-button {
+  border: 1px solid transparent;
+  padding-left: 2px;
+  padding-right: 2px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.ag-dark .ag-row-group-cell-button:hover {
+  border: 1px solid #808080;
+}
+.ag-dark .ag-row-group-empty-message {
+  padding-left: 2px;
+  padding-right: 2px;
+  border: 1px solid transparent;
+  color: #909090;
+}
+.ag-dark .ag-row-group-icon {
+  padding-right: 4px;
+}
+.ag-dark .ag-row-group-panel {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
   border-right: 1px solid #808080;
   padding: 4px;
+  background-color: #403e3e;
+  color: #e0e0e0;
+}
+.ag-dark .ag-cell {
+  border-right: 1px solid #808080;
+  padding: 2px;
+}
+.ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {
+  background-color: rgba(100,160,160,0.4);
+}
+.ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {
+  background-color: rgba(100,190,190,0.4);
+}
+.ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {
+  background-color: rgba(100,220,220,0.4);
+}
+.ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {
+  background-color: rgba(100,250,250,0.4);
 }
 .ag-dark .ag-column-moving .ag-cell {
   -webkit-transition: left 0.2s;
@@ -13,6 +73,31 @@
   -o-transition: left 0.2s;
   -ms-transition: left 0.2s;
   transition: left 0.2s;
+}
+.ag-dark .ag-cell-focus {
+  border: 1px solid #a9a9a9;
+}
+.ag-dark .ag-cell-no-focus {
+  border-right: 1px dotted #808080;
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+.ag-dark .ag-cell-first-right-pinned {
+  border-left: 1px solid #808080;
+}
+.ag-dark .ag-cell-last-left-pinned {
+  border-right: 1px solid #808080;
+}
+.ag-dark .ag-cell-highlight {
+  border: 1px solid #90ee90;
+}
+.ag-dark .ag-cell-highlight-animation {
+  -webkit-transition: border 1s;
+  -moz-transition: border 1s;
+  -o-transition: border 1s;
+  -ms-transition: border 1s;
+  transition: border 1s;
 }
 .ag-dark .ag-header {
   background-color: #430000;
@@ -39,9 +124,6 @@
   background-color: #808080;
 }
 .ag-dark .ag-pinned-right-header {
-  border-left: 1px solid #808080;
-}
-.ag-dark .ag-cell-first-right-pinned {
   border-left: 1px solid #808080;
 }
 .ag-dark .ag-header-cell-label {
@@ -79,8 +161,8 @@
   border: 1px solid #e0e0e0;
 }
 .ag-dark .ag-header-icon {
-  stroke: #fff;
-  fill: #fff;
+  stroke: #e0e0e0;
+  fill: #e0e0e0;
 }
 .ag-dark .ag-header-expand-icon:hover {
   cursor: pointer;
@@ -127,8 +209,61 @@
 .ag-dark .ag-footer-cell {
   font-style: italic;
 }
-.ag-dark .ag-filter {
-  color: #000;
+.ag-dark .ag-menu {
+  border: 1px solid #555;
+  background-color: #f0f0f0;
+  cursor: default;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+.ag-dark .ag-menu .ag-tab-header {
+  background-color: #430000;
+}
+.ag-dark .ag-menu .ag-tab {
+  padding: 6px 8px 6px 8px;
+  margin: 2px 2px 0px 2px;
+  display: inline-block;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-top: 1px solid transparent;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.ag-dark .ag-menu .ag-tab-selected {
+  background-color: #403e3e;
+  border-right: 1px solid #555;
+  border-left: 1px solid #555;
+  border-top: 1px solid #555;
+}
+.ag-dark .ag-menu-separator {
+  border-top: 1px solid #d3d3d3;
+}
+.ag-dark .ag-menu-option-active {
+  background-color: #bde2e5;
+}
+.ag-dark .ag-menu-option-icon {
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+}
+.ag-dark .ag-menu-option-text {
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+}
+.ag-dark .ag-menu-option-shortcut {
+  padding: 2px 2px 2px 20px;
+  vertical-align: middle;
+}
+.ag-dark .ag-menu-option-popup-pointer {
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+}
+.ag-dark .ag-menu-option-disabled {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
+.ag-dark .ag-menu-column-select-wrapper {
+  margin: 2px;
 }
 .ag-dark .ag-filter-checkbox {
   position: relative;
@@ -145,10 +280,6 @@
   border-top: 1px solid #d3d3d3;
   padding: 2px;
 }
-.ag-dark .ag-filter {
-  border: 1px solid #000;
-  background-color: #f0f0f0;
-}
 .ag-dark .ag-selection-checkbox {
   margin-left: 4px;
 }
@@ -164,47 +295,22 @@
   display: inline-block;
   width: 300px;
 }
-.ag-dark .ag-column-not-visible {
-  opacity: 0.75;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
-  filter: alpha(opacity=75);
-  font-style: italic;
-}
-.ag-dark .ag-not-dragging {
-  border: 1px solid transparent;
-}
-.ag-dark .ag-drop-target-above {
-  border-top: 5px solid #a9a9a9;
-}
-.ag-dark .ag-drop-target-below {
-  border-bottom: 5px solid #a9a9a9;
-}
-.ag-dark .ag-dragging {
-  border: 1px dotted #a9a9a9;
-}
-.ag-dark .ag-list-item-selected {
-  color: #f0f0f0;
-}
-.ag-dark .ag-list-item-not-selected {
-  font-style: italic;
-  color: #a0a0a0;
-}
-.ag-dark .ag-tool-panel-container {
+.ag-dark .ag-tool-panel {
   background-color: #eee;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  border: 1px solid #a9a9a9;
-  padding: 4px;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  border-top: 1px solid #808080;
 }
-.ag-dark .ag-list-selection {
-  background-color: #fff;
-  border: 1px solid #a9a9a9;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+.ag-dark .ag-status-bar {
+  font-size: 12px;
+  height: 20px;
+  border-bottom: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #808080;
+  padding: 2px;
+  background-color: #403e3e;
+  color: #e0e0e0;
 }
-.ag-dark .ag-visible-icons {
-  padding-left: 2px;
-  padding-right: 2px;
+.ag-dark .ag-status-bar-aggregations {
+  float: right;
 }

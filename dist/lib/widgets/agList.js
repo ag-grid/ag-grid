@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,10 +42,10 @@ var AgList = (function () {
         return this.uniqueId;
     };
     AgList.prototype.addStyles = function (styles) {
-        utils_1.default.addStylesToElement(this.eGui, styles);
+        utils_1.Utils.addStylesToElement(this.eGui, styles);
     };
     AgList.prototype.addCssClass = function (cssClass) {
-        utils_1.default.addCssClass(this.eGui, cssClass);
+        utils_1.Utils.addCssClass(this.eGui, cssClass);
     };
     AgList.prototype.addDragSource = function (dragSource) {
         this.dragSources.push(dragSource);
@@ -83,10 +83,10 @@ var AgList = (function () {
         }
     };
     AgList.prototype.setupComponents = function () {
-        this.eGui = utils_1.default.loadTemplate(template);
+        this.eGui = utils_1.Utils.loadTemplate(template);
         this.eFilterValueTemplate = this.eGui.querySelector("[ag-repeat]");
         this.eListParent = this.eFilterValueTemplate.parentNode;
-        utils_1.default.removeAllChildren(this.eListParent);
+        utils_1.Utils.removeAllChildren(this.eListParent);
     };
     AgList.prototype.setModel = function (model) {
         this.model = model;
@@ -99,7 +99,7 @@ var AgList = (function () {
         this.cellRenderer = cellRenderer;
     };
     AgList.prototype.refreshView = function () {
-        utils_1.default.removeAllChildren(this.eListParent);
+        utils_1.Utils.removeAllChildren(this.eListParent);
         if (this.model && this.model.length > 0) {
             this.insertRows();
         }
@@ -115,7 +115,7 @@ var AgList = (function () {
             var eListItem = this.eFilterValueTemplate.cloneNode(true);
             if (this.cellRenderer) {
                 var params = { value: item };
-                utils_1.default.useRenderer(eListItem, this.cellRenderer, params);
+                utils_1.Utils.useRenderer(eListItem, this.cellRenderer, params);
             }
             else {
                 eListItem.innerHTML = item;
@@ -224,14 +224,13 @@ var AgList = (function () {
         return this.model.indexOf(targetColumn) < this.model.indexOf(draggedColumn);
     };
     AgList.prototype.setDropCssClasses = function (eListItem, state) {
-        utils_1.default.addOrRemoveCssClass(eListItem, 'ag-not-drop-target', state === DropTargetLocation.NOT_DROP_TARGET);
-        utils_1.default.addOrRemoveCssClass(eListItem, 'ag-drop-target-above', state === DropTargetLocation.DROP_TARGET_ABOVE);
-        utils_1.default.addOrRemoveCssClass(eListItem, 'ag-drop-target-below', state === DropTargetLocation.DROP_TARGET_BELOW);
+        utils_1.Utils.addOrRemoveCssClass(eListItem, 'ag-not-drop-target', state === DropTargetLocation.NOT_DROP_TARGET);
+        utils_1.Utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-above', state === DropTargetLocation.DROP_TARGET_ABOVE);
+        utils_1.Utils.addOrRemoveCssClass(eListItem, 'ag-drop-target-below', state === DropTargetLocation.DROP_TARGET_BELOW);
     };
     AgList.prototype.getGui = function () {
         return this.eGui;
     };
     return AgList;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AgList;
+exports.AgList = AgList;

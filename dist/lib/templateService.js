@@ -1,17 +1,25 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
 var TemplateService = (function () {
     function TemplateService() {
         this.templateCache = {};
         this.waitingCallbacks = {};
     }
-    TemplateService.prototype.init = function ($scope) {
-        this.$scope = $scope;
-    };
     // returns the template if it is loaded, or null if it is not loaded
     // but will call the callback when it is loaded
     TemplateService.prototype.getTemplate = function (url, callback) {
@@ -64,7 +72,14 @@ var TemplateService = (function () {
             }, 0);
         }
     };
+    __decorate([
+        context_2.Autowired('$scope'), 
+        __metadata('design:type', Object)
+    ], TemplateService.prototype, "$scope", void 0);
+    TemplateService = __decorate([
+        context_1.Bean('templateService'), 
+        __metadata('design:paramtypes', [])
+    ], TemplateService);
     return TemplateService;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = TemplateService;
+exports.TemplateService = TemplateService;

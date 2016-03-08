@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,7 +67,7 @@ var TextFilter = (function () {
             case STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
             case ENDS_WITH:
-                var index = valueLowerCase.indexOf(this.filterText);
+                var index = valueLowerCase.lastIndexOf(this.filterText);
                 return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
             default:
                 // should never happen
@@ -91,10 +91,10 @@ var TextFilter = (function () {
             .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
     };
     TextFilter.prototype.createGui = function () {
-        this.eGui = utils_1.default.loadTemplate(this.createTemplate());
+        this.eGui = utils_1.Utils.loadTemplate(this.createTemplate());
         this.eFilterTextField = this.eGui.querySelector("#filterText");
         this.eTypeSelect = this.eGui.querySelector("#filterType");
-        utils_1.default.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
+        utils_1.Utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
         this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
         this.setupApply();
     };
@@ -107,7 +107,7 @@ var TextFilter = (function () {
             });
         }
         else {
-            utils_1.default.removeElement(this.eGui, '#applyPanel');
+            utils_1.Utils.removeElement(this.eGui, '#applyPanel');
         }
     };
     TextFilter.prototype.onTypeChanged = function () {
@@ -115,7 +115,7 @@ var TextFilter = (function () {
         this.filterChanged();
     };
     TextFilter.prototype.onFilterChanged = function () {
-        var filterText = utils_1.default.makeNull(this.eFilterTextField.value);
+        var filterText = utils_1.Utils.makeNull(this.eFilterTextField.value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
@@ -149,7 +149,7 @@ var TextFilter = (function () {
                 that.eTypeSelect.value = type;
             },
             setFilter: function (filter) {
-                filter = utils_1.default.makeNull(filter);
+                filter = utils_1.Utils.makeNull(filter);
                 if (filter) {
                     that.filterText = filter.toLowerCase();
                     that.eFilterTextField.value = filter;
@@ -192,5 +192,4 @@ var TextFilter = (function () {
     };
     return TextFilter;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = TextFilter;
+exports.TextFilter = TextFilter;

@@ -1,18 +1,27 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var columnUtils_1 = require("./columnUtils");
 var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var DisplayedGroupCreator = (function () {
     function DisplayedGroupCreator() {
     }
-    DisplayedGroupCreator.prototype.init = function (columnUtils) {
-        this.columnUtils = columnUtils;
-    };
     DisplayedGroupCreator.prototype.createDisplayedGroups = function (sortedVisibleColumns, balancedColumnTree, groupInstanceIdCreator) {
         var _this = this;
         var result = [];
@@ -30,7 +39,7 @@ var DisplayedGroupCreator = (function () {
                     var originalGroup = currentOriginalPath[i];
                     var groupId = originalGroup.getGroupId();
                     var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-                    var newGroup = new columnGroup_1.default(originalGroup, groupId, instanceId);
+                    var newGroup = new columnGroup_1.ColumnGroup(originalGroup, groupId, instanceId);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i == 0) {
@@ -106,7 +115,14 @@ var DisplayedGroupCreator = (function () {
             }
         }
     };
+    __decorate([
+        context_2.Autowired('columnUtils'), 
+        __metadata('design:type', columnUtils_1.ColumnUtils)
+    ], DisplayedGroupCreator.prototype, "columnUtils", void 0);
+    DisplayedGroupCreator = __decorate([
+        context_1.Bean('displayedGroupCreator'), 
+        __metadata('design:paramtypes', [])
+    ], DisplayedGroupCreator);
     return DisplayedGroupCreator;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = DisplayedGroupCreator;
+exports.DisplayedGroupCreator = DisplayedGroupCreator;

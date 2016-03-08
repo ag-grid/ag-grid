@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,7 +8,7 @@ var svgFactory_1 = require('../svgFactory');
 var utils_1 = require('../utils');
 var constants_1 = require('../constants');
 var events_1 = require('../events');
-var svgFactory = svgFactory_1.default.getInstance();
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
 function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, expressionService, eventService) {
     return function groupCellRenderer(params) {
         var eGroupCell = document.createElement('span');
@@ -19,7 +19,7 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
         }
         var checkboxNeeded = params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.checkbox && !node.footer;
         if (checkboxNeeded) {
-            var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex);
+            var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex, params.addRenderedRowListener);
             eGroupCell.appendChild(eCheckbox);
         }
         if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.innerRenderer) {
@@ -71,7 +71,7 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
         // and then expand / contract as the user hits enter or space-bar
         if (params.eGridCell) {
             params.eGridCell.addEventListener('keydown', function (event) {
-                if (utils_1.default.isKeyPressed(event, constants_1.default.KEY_ENTER)) {
+                if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
                     expandOrContract();
                     event.preventDefault();
                 }
@@ -82,11 +82,11 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
         }
     }
     function showAndHideExpandAndContract(eExpandIcon, eContractIcon, expanded) {
-        utils_1.default.setVisible(eExpandIcon, !expanded);
-        utils_1.default.setVisible(eContractIcon, expanded);
+        utils_1.Utils.setVisible(eExpandIcon, !expanded);
+        utils_1.Utils.setVisible(eContractIcon, expanded);
     }
     function createFromInnerRenderer(eGroupCell, params, renderer) {
-        utils_1.default.useRenderer(eGroupCell, renderer, params);
+        utils_1.Utils.useRenderer(eGroupCell, renderer, params);
     }
     function getRefreshFromIndex(params) {
         if (gridOptionsWrapper.isGroupIncludeFooter()) {
@@ -107,12 +107,12 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
     function createGroupExpandIcon(expanded) {
         var eIcon;
         if (expanded) {
-            eIcon = utils_1.default.createIcon('groupContracted', gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+            eIcon = utils_1.Utils.createIcon('groupContracted', gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
         else {
-            eIcon = utils_1.default.createIcon('groupExpanded', gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
+            eIcon = utils_1.Utils.createIcon('groupExpanded', gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
         }
-        utils_1.default.addCssClass(eIcon, 'ag-group-expand');
+        utils_1.Utils.addCssClass(eIcon, 'ag-group-expand');
         return eIcon;
     }
     // creates cell with 'Total {{key}}' for a group
@@ -122,7 +122,7 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
         if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.footerValueGetter) {
             var footerValueGetter = params.colDef.cellRenderer.footerValueGetter;
             // params is same as we were given, except we set the value as the item to display
-            var paramsClone = utils_1.default.cloneObject(params);
+            var paramsClone = utils_1.Utils.cloneObject(params);
             paramsClone.value = groupName;
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
@@ -162,7 +162,7 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
         var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
         if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
             params.value = groupName;
-            utils_1.default.useRenderer(eGroupCell, colDefOfGroupedCol.cellRenderer, params);
+            utils_1.Utils.useRenderer(eGroupCell, colDefOfGroupedCol.cellRenderer, params);
         }
         else {
             eGroupCell.appendChild(document.createTextNode(groupName));
@@ -176,11 +176,10 @@ function groupCellRendererFactory(gridOptionsWrapper, selectionRendererFactory, 
     }
     // creates cell with '{{key}} ({{childCount}})' for a group
     function createLeafCell(eParent, params) {
-        if (params.value) {
+        if (utils_1.Utils.exists(params.value)) {
             var eText = document.createTextNode(' ' + params.value);
             eParent.appendChild(eText);
         }
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = groupCellRendererFactory;
+exports.groupCellRendererFactory = groupCellRendererFactory;

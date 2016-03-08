@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Filter } from "./filter";
-export default class NumberFilter implements Filter {
+export declare class NumberFilter implements Filter {
     private filterParams;
     private filterChangedCallback;
     private filterModifiedCallback;

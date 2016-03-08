@@ -104,6 +104,19 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         }
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+
+        this.validate();
+    }
+
+    private validate(): void {
+        if (!this.gridOptionsWrapper.isEnterprise()) {
+            if (_.exists(this.colDef.aggFunc)) {
+                console.warn('ag-Grid: aggFunc is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.rowGroupIndex)) {
+                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
+            }
+        }
     }
 
     public addEventListener(eventType: string, listener: Function): void {

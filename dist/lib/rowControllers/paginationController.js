@@ -1,11 +1,30 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var utils_1 = require('../utils');
-var template = '<div class="ag-paging-panel">' +
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var context_1 = require("../context/context");
+var gridPanel_1 = require("../gridPanel/gridPanel");
+var selectionController_1 = require("../selectionController");
+var context_2 = require("../context/context");
+var sortController_1 = require("../sortController");
+var context_3 = require("../context/context");
+var eventService_1 = require("../eventService");
+var events_1 = require("../events");
+var filterManager_1 = require("../filter/filterManager");
+var template = '<div class="ag-paging-panel ag-font-style">' +
     '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
     '<span id="firstRowOnPage"></span>' +
     ' [TO] ' +
@@ -27,11 +46,24 @@ var template = '<div class="ag-paging-panel">' +
 var PaginationController = (function () {
     function PaginationController() {
     }
-    PaginationController.prototype.init = function (angularGrid, gridOptionsWrapper) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+    PaginationController.prototype.init = function () {
+        var _this = this;
         this.setupComponents();
         this.callVersion = 0;
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
+        this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, function () {
+            if (paginationEnabled && _this.gridOptionsWrapper.isEnableServerSideFilter()) {
+                _this.reset();
+            }
+        });
+        this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, function () {
+            if (paginationEnabled && _this.gridOptionsWrapper.isEnableServerSideSorting()) {
+                _this.reset();
+            }
+        });
+        if (paginationEnabled && this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        }
     };
     PaginationController.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
@@ -42,6 +74,7 @@ var PaginationController = (function () {
         this.reset();
     };
     PaginationController.prototype.reset = function () {
+        this.selectionController.reset();
         // copy pageSize, to guard against it changing the the datasource between calls
         if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
             console.warn('datasource.pageSize should be a number');
@@ -90,7 +123,7 @@ var PaginationController = (function () {
     };
     PaginationController.prototype.pageLoaded = function (rows, lastRowIndex) {
         var firstId = this.currentPage * this.pageSize;
-        this.angularGrid.setRowData(rows, firstId);
+        this.rowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
         if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
             this.foundMaxRow = true;
@@ -133,14 +166,14 @@ var PaginationController = (function () {
         this.callVersion++;
         var callVersionCopy = this.callVersion;
         var that = this;
-        this.angularGrid.showLoadingOverlay();
+        this.gridPanel.showLoadingOverlay();
         var sortModel;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.sortController.getSortModel();
         }
         var filterModel;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.filterManager.getFilterModel();
         }
         var params = {
             startRow: startRow,
@@ -151,7 +184,7 @@ var PaginationController = (function () {
             filterModel: filterModel
         };
         // check if old version of datasource used
-        var getRowsParams = utils_1.default.getFunctionParameters(this.datasource.getRows);
+        var getRowsParams = utils_1.Utils.getFunctionParameters(this.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
@@ -170,7 +203,7 @@ var PaginationController = (function () {
             // set in an empty set of rows, this will at
             // least get rid of the loading panel, and
             // stop blocking things
-            that.angularGrid.setRowData([]);
+            that.rowModel.setRowData([], true);
         }
     };
     PaginationController.prototype.isCallDaemon = function (versionCopy) {
@@ -222,7 +255,7 @@ var PaginationController = (function () {
         return this.eGui;
     };
     PaginationController.prototype.setupComponents = function () {
-        this.eGui = utils_1.default.loadTemplate(this.createTemplate());
+        this.eGui = utils_1.Utils.loadTemplate(this.createTemplate());
         this.btNext = this.eGui.querySelector('#btNext');
         this.btPrevious = this.eGui.querySelector('#btPrevious');
         this.btFirst = this.eGui.querySelector('#btFirst');
@@ -247,7 +280,44 @@ var PaginationController = (function () {
             that.onBtLast();
         });
     };
+    __decorate([
+        context_2.Autowired('filterManager'), 
+        __metadata('design:type', filterManager_1.FilterManager)
+    ], PaginationController.prototype, "filterManager", void 0);
+    __decorate([
+        context_2.Autowired('gridPanel'), 
+        __metadata('design:type', gridPanel_1.GridPanel)
+    ], PaginationController.prototype, "gridPanel", void 0);
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], PaginationController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_2.Autowired('selectionController'), 
+        __metadata('design:type', selectionController_1.SelectionController)
+    ], PaginationController.prototype, "selectionController", void 0);
+    __decorate([
+        context_2.Autowired('rowModel'), 
+        __metadata('design:type', Object)
+    ], PaginationController.prototype, "rowModel", void 0);
+    __decorate([
+        context_2.Autowired('sortController'), 
+        __metadata('design:type', sortController_1.SortController)
+    ], PaginationController.prototype, "sortController", void 0);
+    __decorate([
+        context_2.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], PaginationController.prototype, "eventService", void 0);
+    __decorate([
+        context_3.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], PaginationController.prototype, "init", null);
+    PaginationController = __decorate([
+        context_1.Bean('paginationController'), 
+        __metadata('design:paramtypes', [])
+    ], PaginationController);
     return PaginationController;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = PaginationController;
+exports.PaginationController = PaginationController;

@@ -1,72 +1,79 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var utils_1 = require('../utils');
-var columnGroup_1 = require("../entities/columnGroup");
-var renderedHeaderGroupCell_1 = require("./renderedHeaderGroupCell");
-var renderedHeaderCell_1 = require("./renderedHeaderCell");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnController_1 = require("../columnController/columnController");
+var gridPanel_1 = require("../gridPanel/gridPanel");
+var column_1 = require("../entities/column");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
+var context_3 = require("../context/context");
+var headerContainer_1 = require("./headerContainer");
+var eventService_1 = require("../eventService");
+var events_1 = require("../events");
+var context_4 = require("../context/context");
 var HeaderRenderer = (function () {
     function HeaderRenderer() {
-        this.headerElements = [];
     }
-    HeaderRenderer.prototype.init = function (gridOptionsWrapper, columnController, gridPanel, grid, filterManager, $scope, $compile, headerTemplateLoader, dragService) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.columnController = columnController;
-        this.grid = grid;
-        this.filterManager = filterManager;
-        this.$scope = $scope;
-        this.$compile = $compile;
-        this.headerTemplateLoader = headerTemplateLoader;
-        this.dragService = dragService;
-        this.gridPanel = gridPanel;
-        this.findAllElements();
-    };
-    HeaderRenderer.prototype.findAllElements = function () {
-        this.ePinnedLeftHeader = this.gridPanel.getPinnedLeftHeader();
-        this.ePinnedRightHeader = this.gridPanel.getPinnedRightHeader();
-        this.eHeaderContainer = this.gridPanel.getHeaderContainer();
+    HeaderRenderer.prototype.init = function () {
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
         this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
+        this.pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, column_1.Column.PINNED_LEFT);
+        this.pinnedRightContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, column_1.Column.PINNED_RIGHT);
+        this.centerContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), this.eRoot, null);
+        this.context.wireBean(this.pinnedLeftContainer);
+        this.context.wireBean(this.pinnedRightContainer);
+        this.context.wireBean(this.centerContainer);
+        // unlike the table data, the header more often 'refreshes everything' as a way to redraw, rather than
+        // do delta changes based on the event. this is because groups have bigger impacts, eg a column move
+        // can end up in a group splitting into two, or joining into one. this complexity makes the job much
+        // harder to do delta updates. instead we just shotgun - which is fine, as the header is relatively
+        // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
+        // animations.
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
+        // for resized, the individual cells take care of this, so don't need to refresh everything
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
+        if (this.columnController.isReady()) {
+            this.refreshHeader();
+        }
     };
+    // this is called from the API and refreshes everything, should be broken out
+    // into refresh everything vs just something changed
     HeaderRenderer.prototype.refreshHeader = function () {
-        utils_1.default.removeAllChildren(this.ePinnedLeftHeader);
-        utils_1.default.removeAllChildren(this.ePinnedRightHeader);
-        utils_1.default.removeAllChildren(this.eHeaderContainer);
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.destroy();
-        });
-        this.headerElements = [];
-        this.insertHeaderRowsIntoContainer(this.columnController.getLeftDisplayedColumnGroups(), this.ePinnedLeftHeader);
-        this.insertHeaderRowsIntoContainer(this.columnController.getRightDisplayedColumnGroups(), this.ePinnedRightHeader);
-        this.insertHeaderRowsIntoContainer(this.columnController.getCenterDisplayedColumnGroups(), this.eHeaderContainer);
-    };
-    HeaderRenderer.prototype.addChildToOverlay = function (child) {
+        this.pinnedLeftContainer.removeAllChildren();
+        this.pinnedRightContainer.removeAllChildren();
+        this.centerContainer.removeAllChildren();
+        this.pinnedLeftContainer.insertHeaderRowsIntoContainer();
+        this.pinnedRightContainer.insertHeaderRowsIntoContainer();
+        this.centerContainer.insertHeaderRowsIntoContainer();
+        // if forPrint, overlay is missing
+        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
+        // we can probably get rid of this when we no longer need the overlay
+        var dept = this.columnController.getColumnDept();
         if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.appendChild(child);
+            this.eHeaderOverlay.style.height = rowHeight + 'px';
+            this.eHeaderOverlay.style.top = ((dept - 1) * rowHeight) + 'px';
         }
-    };
-    HeaderRenderer.prototype.removeChildFromOverlay = function (child) {
-        if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.removeChild(child);
-        }
-    };
-    HeaderRenderer.prototype.addTreeNodesAtDept = function (cellTree, dept, result) {
-        var _this = this;
-        cellTree.forEach(function (abstractColumn) {
-            if (dept === 0) {
-                result.push(abstractColumn);
-            }
-            else if (abstractColumn instanceof columnGroup_1.default) {
-                var columnGroup = abstractColumn;
-                _this.addTreeNodesAtDept(columnGroup.getDisplayedChildren(), dept - 1, result);
-            }
-            else {
-            }
-        });
+        this.setPinnedColContainerWidth();
     };
     HeaderRenderer.prototype.setPinnedColContainerWidth = function () {
         if (this.gridOptionsWrapper.isForPrint()) {
@@ -78,70 +85,41 @@ var HeaderRenderer = (function () {
         var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
         this.eHeaderViewport.style.marginRight = pinnedRightWidth;
     };
-    HeaderRenderer.prototype.getRightPinnedStartPixel = function () {
-        var rightStart = this.ePinnedRightHeader.getBoundingClientRect().left;
-        var parentStart = this.eHeaderOverlay.getBoundingClientRect().left;
-        return rightStart - parentStart;
-    };
-    HeaderRenderer.prototype.insertHeaderRowsIntoContainer = function (cellTree, eContainerToAddTo) {
-        var _this = this;
-        // if we are displaying header groups, then we have many rows here.
-        // go through each row of the header, one by one.
-        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-        for (var dept = 0;; dept++) {
-            var nodesAtDept = [];
-            this.addTreeNodesAtDept(cellTree, dept, nodesAtDept);
-            // we want to break the for loop when we get to an empty set of cells,
-            // that's how we know we have finished rendering the last row.
-            if (nodesAtDept.length === 0) {
-                break;
-            }
-            var eRow = document.createElement('div');
-            eRow.className = 'ag-header-row';
-            eRow.style.top = (dept * rowHeight) + 'px';
-            eRow.style.height = rowHeight + 'px';
-            nodesAtDept.forEach(function (child) {
-                // skip groups that have no displayed children. this can happen when the group is broken,
-                // and this section happens to have nothing to display for the open / closed state
-                if (child instanceof columnGroup_1.default && child.getDisplayedChildren().length == 0) {
-                    return;
-                }
-                var renderedHeaderElement = _this.createHeaderElement(child);
-                _this.headerElements.push(renderedHeaderElement);
-                eRow.appendChild(renderedHeaderElement.getGui());
-            });
-            eContainerToAddTo.appendChild(eRow);
-        }
-        // if forPrint, overlay is missing
-        if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.style.height = rowHeight + 'px';
-            this.eHeaderOverlay.style.top = ((dept - 1) * rowHeight) + 'px';
-        }
-    };
-    HeaderRenderer.prototype.createHeaderElement = function (columnGroupChild) {
-        if (columnGroupChild instanceof columnGroup_1.default) {
-            return new renderedHeaderGroupCell_1.default(columnGroupChild, this.gridOptionsWrapper, this.columnController, this.eRoot, this.$scope, this.filterManager, this.$compile, this.dragService);
-        }
-        else {
-            return new renderedHeaderCell_1.default(columnGroupChild, null, this.gridOptionsWrapper, this.$scope, this.filterManager, this.columnController, this.$compile, this.grid, this.eRoot, this.headerTemplateLoader, this, this.dragService, this.gridPanel);
-        }
-    };
-    HeaderRenderer.prototype.updateSortIcons = function () {
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.refreshSortIcon();
-        });
-    };
-    HeaderRenderer.prototype.updateFilterIcons = function () {
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.refreshFilterIcon();
-        });
-    };
     HeaderRenderer.prototype.onIndividualColumnResized = function (column) {
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.onIndividualColumnResized(column);
-        });
+        this.pinnedLeftContainer.onIndividualColumnResized(column);
+        this.pinnedRightContainer.onIndividualColumnResized(column);
+        this.centerContainer.onIndividualColumnResized(column);
     };
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderRenderer.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_2.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], HeaderRenderer.prototype, "columnController", void 0);
+    __decorate([
+        context_2.Autowired('gridPanel'), 
+        __metadata('design:type', gridPanel_1.GridPanel)
+    ], HeaderRenderer.prototype, "gridPanel", void 0);
+    __decorate([
+        context_2.Autowired('context'), 
+        __metadata('design:type', context_3.Context)
+    ], HeaderRenderer.prototype, "context", void 0);
+    __decorate([
+        context_2.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], HeaderRenderer.prototype, "eventService", void 0);
+    __decorate([
+        context_4.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], HeaderRenderer.prototype, "init", null);
+    HeaderRenderer = __decorate([
+        context_1.Bean('headerRenderer'), 
+        __metadata('design:paramtypes', [])
+    ], HeaderRenderer);
     return HeaderRenderer;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = HeaderRenderer;
+exports.HeaderRenderer = HeaderRenderer;

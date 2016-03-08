@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,7 +96,7 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.addDisplayedLeafColumns = function (leafColumns) {
         this.displayedChildren.forEach(function (child) {
-            if (child instanceof column_1.default) {
+            if (child instanceof column_1.Column) {
                 leafColumns.push(child);
             }
             else if (child instanceof ColumnGroup) {
@@ -106,7 +106,7 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.addLeafColumns = function (leafColumns) {
         this.children.forEach(function (child) {
-            if (child instanceof column_1.default) {
+            if (child instanceof column_1.Column) {
                 leafColumns.push(child);
             }
             else if (child instanceof ColumnGroup) {
@@ -156,5 +156,4 @@ var ColumnGroup = (function () {
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
     return ColumnGroup;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ColumnGroup;
+exports.ColumnGroup = ColumnGroup;

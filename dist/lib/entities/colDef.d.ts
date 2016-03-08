@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -84,6 +84,10 @@ export interface ColDef extends AbstractColDef {
     suppressResize?: boolean;
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
+    /** Set to true if you don't want to be able to group by this column */
+    suppressRowGroup?: boolean;
+    /** Set to true if you don't want to be able to aggregate by this column */
+    suppressAggregation?: boolean;
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);
     /** Callbacks for editing.See editing section for further details. */

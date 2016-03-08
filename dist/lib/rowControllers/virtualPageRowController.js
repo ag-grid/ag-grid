@@ -1,10 +1,29 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var utils_1 = require('../utils');
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var rowNode_1 = require("../entities/rowNode");
+var context_1 = require("../context/context");
+var eventService_1 = require("../eventService");
+var selectionController_1 = require("../selectionController");
+var context_2 = require("../context/context");
+var context_3 = require("../context/context");
+var events_1 = require("../events");
+var sortController_1 = require("../sortController");
+var filterManager_1 = require("../filter/filterManager");
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
 * or standard pagination, the inMemoryRowController is used.
@@ -12,12 +31,27 @@ var utils_1 = require('../utils');
 var logging = false;
 var VirtualPageRowController = (function () {
     function VirtualPageRowController() {
-    }
-    VirtualPageRowController.prototype.init = function (rowRenderer, gridOptionsWrapper, angularGrid) {
-        this.rowRenderer = rowRenderer;
         this.datasourceVersion = 0;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.angularGrid = angularGrid;
+    }
+    VirtualPageRowController.prototype.init = function () {
+        var _this = this;
+        var virtualEnabled = this.gridOptionsWrapper.isRowModelVirtual();
+        this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, function () {
+            if (virtualEnabled && _this.gridOptionsWrapper.isEnableServerSideFilter()) {
+                _this.reset();
+            }
+        });
+        this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, function () {
+            if (virtualEnabled && _this.gridOptionsWrapper.isEnableServerSideSorting()) {
+                _this.reset();
+            }
+        });
+        if (virtualEnabled && this.gridOptionsWrapper.getDatasource()) {
+            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        }
+    };
+    VirtualPageRowController.prototype.getTopLevelNodes = function () {
+        return null;
     };
     VirtualPageRowController.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
@@ -27,7 +61,14 @@ var VirtualPageRowController = (function () {
         }
         this.reset();
     };
+    VirtualPageRowController.prototype.isEmpty = function () {
+        return !this.datasource;
+    };
+    VirtualPageRowController.prototype.isRowsToRender = function () {
+        return utils_1.Utils.exists(this.datasource);
+    };
     VirtualPageRowController.prototype.reset = function () {
+        this.selectionController.reset();
         // see if datasource knows how many rows there are
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.virtualRowCount = this.datasource.rowCount;
@@ -65,27 +106,42 @@ var VirtualPageRowController = (function () {
         this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
         this.doLoadOrQueue(0);
+        this.rowRenderer.refreshView();
     };
     VirtualPageRowController.prototype.createNodesFromRows = function (pageNumber, rows) {
         var nodes = [];
         if (rows) {
             for (var i = 0, j = rows.length; i < j; i++) {
                 var virtualRowIndex = (pageNumber * this.pageSize) + i;
-                var node = this.createNode(rows[i], virtualRowIndex);
+                var node = this.createNode(rows[i], virtualRowIndex, true);
                 nodes.push(node);
             }
         }
         return nodes;
     };
-    VirtualPageRowController.prototype.createNode = function (data, virtualRowIndex) {
+    VirtualPageRowController.prototype.createNode = function (data, virtualRowIndex, realNode) {
         var rowHeight = this.getRowHeightAsNumber();
         var top = rowHeight * virtualRowIndex;
-        var rowNode = {
-            data: data,
-            id: virtualRowIndex,
-            rowTop: top,
-            rowHeight: rowHeight
-        };
+        var rowNode;
+        if (realNode) {
+            // if a real node, then always create a new one
+            rowNode = new rowNode_1.RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+            rowNode.id = virtualRowIndex;
+            rowNode.data = data;
+            // and see if the previous one was selected, and if yes, swap it out
+            this.selectionController.syncInRowNode(rowNode);
+        }
+        else {
+            // if creating a proxy node, see if there is a copy in selected memory that we can use
+            var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
+            if (!rowNode) {
+                rowNode = new rowNode_1.RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+                rowNode.id = virtualRowIndex;
+                rowNode.data = data;
+            }
+        }
+        rowNode.rowTop = top;
+        rowNode.rowHeight = rowHeight;
         return rowNode;
     };
     VirtualPageRowController.prototype.removeFromLoading = function (pageNumber) {
@@ -211,11 +267,11 @@ var VirtualPageRowController = (function () {
         var datasourceVersionCopy = this.datasourceVersion;
         var sortModel;
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.angularGrid.getSortModel();
+            sortModel = this.sortController.getSortModel();
         }
         var filterModel;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.angularGrid.getFilterModel();
+            filterModel = this.filterManager.getFilterModel();
         }
         var params = {
             startRow: startRow,
@@ -226,7 +282,7 @@ var VirtualPageRowController = (function () {
             filterModel: filterModel
         };
         // check if old version of datasource used
-        var getRowsParams = utils_1.default.getFunctionParameters(this.datasource.getRows);
+        var getRowsParams = utils_1.Utils.getFunctionParameters(this.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
@@ -245,11 +301,14 @@ var VirtualPageRowController = (function () {
             that.pageLoadFailed(pageNumber);
         }
     };
+    VirtualPageRowController.prototype.expandOrCollapseAll = function (expand) {
+        console.warn('ag-Grid: can not expand or collapse all when doing virtual pagination');
+    };
     // check that the datasource has not changed since the lats time we did a request
     VirtualPageRowController.prototype.requestIsDaemon = function (datasourceVersionCopy) {
         return this.datasourceVersion !== datasourceVersionCopy;
     };
-    VirtualPageRowController.prototype.getVirtualRow = function (rowIndex) {
+    VirtualPageRowController.prototype.getRow = function (rowIndex) {
         if (rowIndex > this.virtualRowCount) {
             return null;
         }
@@ -260,7 +319,7 @@ var VirtualPageRowController = (function () {
         if (!page) {
             this.doLoadOrQueue(pageNumber);
             // return back an empty row, so table can at least render empty cells
-            var dummyNode = this.createNode({}, rowIndex);
+            var dummyNode = this.createNode(null, rowIndex, false);
             return dummyNode;
         }
         else {
@@ -280,7 +339,7 @@ var VirtualPageRowController = (function () {
         }
     };
     VirtualPageRowController.prototype.getRowHeightAsNumber = function () {
-        var rowHeight = this.gridOptionsWrapper.getRowHeightForVirtualPagiation();
+        var rowHeight = this.gridOptionsWrapper.getRowHeightForVirtualPagination();
         if (typeof rowHeight === 'number') {
             return rowHeight;
         }
@@ -289,7 +348,7 @@ var VirtualPageRowController = (function () {
             return 25;
         }
     };
-    VirtualPageRowController.prototype.getVirtualRowCombinedHeight = function () {
+    VirtualPageRowController.prototype.getRowCombinedHeight = function () {
         return this.virtualRowCount * this.getRowHeightAsNumber();
     };
     VirtualPageRowController.prototype.getRowAtPixel = function (pixel) {
@@ -301,36 +360,55 @@ var VirtualPageRowController = (function () {
             return 0;
         }
     };
-    VirtualPageRowController.prototype.getModel = function () {
-        var that = this;
-        return {
-            getRowAtPixel: function (pixel) {
-                return that.getRowAtPixel(pixel);
-            },
-            getVirtualRowCombinedHeight: function () {
-                return that.getVirtualRowCombinedHeight();
-            },
-            getVirtualRow: function (index) {
-                return that.getVirtualRow(index);
-            },
-            getVirtualRowCount: function () {
-                return that.virtualRowCount;
-            },
-            forEachInMemory: function (callback) {
-                that.forEachNode(callback);
-            },
-            forEachNode: function (callback) {
-                that.forEachNode(callback);
-            },
-            forEachNodeAfterFilter: function (callback) {
-                console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
-            },
-            forEachNodeAfterFilterAndSort: function (callback) {
-                console.warn('forEachNodeAfterFilterAndSort - does not work with virtual pagination');
-            }
-        };
+    VirtualPageRowController.prototype.getRowCount = function () {
+        return this.virtualRowCount;
     };
+    VirtualPageRowController.prototype.setRowData = function (rows, refresh, firstId) {
+        console.warn('setRowData - does not work with virtual pagination');
+    };
+    VirtualPageRowController.prototype.forEachNodeAfterFilter = function (callback) {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    };
+    VirtualPageRowController.prototype.forEachNodeAfterFilterAndSort = function (callback) {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    };
+    VirtualPageRowController.prototype.refreshModel = function () {
+        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    };
+    __decorate([
+        context_2.Autowired('rowRenderer'), 
+        __metadata('design:type', Object)
+    ], VirtualPageRowController.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], VirtualPageRowController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_2.Autowired('filterManager'), 
+        __metadata('design:type', filterManager_1.FilterManager)
+    ], VirtualPageRowController.prototype, "filterManager", void 0);
+    __decorate([
+        context_2.Autowired('sortController'), 
+        __metadata('design:type', sortController_1.SortController)
+    ], VirtualPageRowController.prototype, "sortController", void 0);
+    __decorate([
+        context_2.Autowired('selectionController'), 
+        __metadata('design:type', selectionController_1.SelectionController)
+    ], VirtualPageRowController.prototype, "selectionController", void 0);
+    __decorate([
+        context_2.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], VirtualPageRowController.prototype, "eventService", void 0);
+    __decorate([
+        context_3.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], VirtualPageRowController.prototype, "init", null);
+    VirtualPageRowController = __decorate([
+        context_1.Bean('rowModel'), 
+        __metadata('design:paramtypes', [])
+    ], VirtualPageRowController);
     return VirtualPageRowController;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = VirtualPageRowController;
+exports.VirtualPageRowController = VirtualPageRowController;

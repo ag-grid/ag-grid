@@ -1,16 +1,25 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var rowRenderer_1 = require("./rowRenderer");
+var gridPanel_1 = require("../gridPanel/gridPanel");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
 var AutoWidthCalculator = (function () {
     function AutoWidthCalculator() {
     }
-    AutoWidthCalculator.prototype.init = function (rowRenderer, gridPanel) {
-        this.gridPanel = gridPanel;
-        this.rowRenderer = rowRenderer;
-    };
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
@@ -19,7 +28,6 @@ var AutoWidthCalculator = (function () {
         var eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
-        eDummyContainer.style.backgroundColor = 'red';
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
         var eBodyContainer = this.gridPanel.getBodyContainer();
@@ -56,7 +64,18 @@ var AutoWidthCalculator = (function () {
         // we add 4 as I found without it, the gui still put '...' after some of the texts
         return dummyContainerWidth + 4;
     };
+    __decorate([
+        context_2.Autowired('rowRenderer'), 
+        __metadata('design:type', rowRenderer_1.RowRenderer)
+    ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_2.Autowired('gridPanel'), 
+        __metadata('design:type', gridPanel_1.GridPanel)
+    ], AutoWidthCalculator.prototype, "gridPanel", void 0);
+    AutoWidthCalculator = __decorate([
+        context_1.Bean('autoWidthCalculator'), 
+        __metadata('design:paramtypes', [])
+    ], AutoWidthCalculator);
     return AutoWidthCalculator;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AutoWidthCalculator;
+exports.AutoWidthCalculator = AutoWidthCalculator;

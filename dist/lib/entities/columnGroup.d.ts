@@ -1,13 +1,13 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColumnGroupChild } from "./columnGroupChild";
 import { ColGroupDef } from "./colDef";
-import Column from "./column";
+import { Column } from "./column";
 import { AbstractColDef } from "./colDef";
 import { OriginalColumnGroup } from "./originalColumnGroup";
-export default class ColumnGroup implements ColumnGroupChild {
+export declare class ColumnGroup implements ColumnGroupChild {
     static HEADER_GROUP_SHOW_OPEN: string;
     static HEADER_GROUP_SHOW_CLOSED: string;
     private children;

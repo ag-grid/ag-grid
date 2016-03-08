@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -91,10 +91,10 @@ var NumberFilter = (function () {
             .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
     };
     NumberFilter.prototype.createGui = function () {
-        this.eGui = utils_1.default.loadTemplate(this.createTemplate());
+        this.eGui = utils_1.Utils.loadTemplate(this.createTemplate());
         this.eFilterTextField = this.eGui.querySelector("#filterText");
         this.eTypeSelect = this.eGui.querySelector("#filterType");
-        utils_1.default.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
+        utils_1.Utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
         this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
         this.setupApply();
     };
@@ -107,7 +107,7 @@ var NumberFilter = (function () {
             });
         }
         else {
-            utils_1.default.removeElement(this.eGui, '#applyPanel');
+            utils_1.Utils.removeElement(this.eGui, '#applyPanel');
         }
     };
     NumberFilter.prototype.onTypeChanged = function () {
@@ -121,7 +121,7 @@ var NumberFilter = (function () {
         }
     };
     NumberFilter.prototype.onFilterChanged = function () {
-        var filterText = utils_1.default.makeNull(this.eFilterTextField.value);
+        var filterText = utils_1.Utils.makeNull(this.eFilterTextField.value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
@@ -148,7 +148,7 @@ var NumberFilter = (function () {
                 that.eTypeSelect.value = type;
             },
             setFilter: function (filter) {
-                filter = utils_1.default.makeNull(filter);
+                filter = utils_1.Utils.makeNull(filter);
                 if (filter !== null && !(typeof filter === 'number')) {
                     filter = parseFloat(filter);
                 }
@@ -188,5 +188,4 @@ var NumberFilter = (function () {
     };
     return NumberFilter;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = NumberFilter;
+exports.NumberFilter = NumberFilter;

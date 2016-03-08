@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,11 +81,19 @@ var ColumnChangeEvent = (function () {
     ColumnChangeEvent.prototype.getColumnGroup = function () {
         return this.columnGroup;
     };
-    ColumnChangeEvent.prototype.isRowGroupChanged = function () {
-        return this.type === events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE || this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED;
+    ColumnChangeEvent.prototype.isPinnedPanelVisibilityImpacted = function () {
+        return this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
+            this.type === events_1.Events.EVENT_COLUMN_GROUP_OPENED ||
+            this.type === events_1.Events.EVENT_COLUMN_VISIBLE ||
+            this.type === events_1.Events.EVENT_COLUMN_PINNED;
     };
-    ColumnChangeEvent.prototype.isValueChanged = function () {
-        return this.type === events_1.Events.EVENT_COLUMN_VALUE_CHANGE || this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED;
+    ColumnChangeEvent.prototype.isContainerWidthImpacted = function () {
+        return this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
+            this.type === events_1.Events.EVENT_COLUMN_GROUP_OPENED ||
+            this.type === events_1.Events.EVENT_COLUMN_VISIBLE ||
+            this.type === events_1.Events.EVENT_COLUMN_RESIZED ||
+            this.type === events_1.Events.EVENT_COLUMN_PINNED ||
+            this.type === events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE;
     };
     ColumnChangeEvent.prototype.isIndividualColumnResized = function () {
         return this.type === events_1.Events.EVENT_COLUMN_RESIZED && this.column !== undefined && this.column !== null;
@@ -95,5 +103,4 @@ var ColumnChangeEvent = (function () {
     };
     return ColumnChangeEvent;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ColumnChangeEvent;
+exports.ColumnChangeEvent = ColumnChangeEvent;

@@ -1,8 +1,15 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-export default class PaginationController {
+export declare class PaginationController {
+    private filterManager;
+    private gridPanel;
+    private gridOptionsWrapper;
+    private selectionController;
+    private rowModel;
+    private sortController;
+    private eventService;
     private eGui;
     private btNext;
     private btPrevious;
@@ -14,18 +21,16 @@ export default class PaginationController {
     private lbFirstRowOnPage;
     private lbLastRowOnPage;
     private ePageRowSummaryPanel;
-    private angularGrid;
     private callVersion;
-    private gridOptionsWrapper;
     private datasource;
     private pageSize;
     private rowCount;
     private foundMaxRow;
     private totalPages;
     private currentPage;
-    init(angularGrid: any, gridOptionsWrapper: any): void;
+    init(): void;
     setDatasource(datasource: any): void;
-    reset(): void;
+    private reset();
     private myToLocaleString(input);
     private setTotalLabels();
     private calculateTotalPages();

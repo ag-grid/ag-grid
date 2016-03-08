@@ -75,7 +75,11 @@ export class CellNavigationService {
 
     private getCellBelow(lastCell: GridCell): GridCell {
         var rowBelow = this.getRowBelow(lastCell.getGridRow());
-        return new GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
+        if (rowBelow) {
+            return new GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
+        } else {
+            return null;
+        }
     }
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
@@ -121,7 +125,11 @@ export class CellNavigationService {
 
     private getCellAbove(lastCell: GridCell): GridCell {
         var rowAbove = this.getRowAbove(lastCell.getGridRow());
-        return new GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
+        if (rowAbove) {
+            return new GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
+        } else {
+            return null;
+        }
     }
 
     private getLastBodyCell(): GridRow {

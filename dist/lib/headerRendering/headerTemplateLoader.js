@@ -1,18 +1,27 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var utils_1 = require('../utils');
 var svgFactory_1 = require("../svgFactory");
-var svgFactory = svgFactory_1.default.getInstance();
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var context_1 = require("../context/context");
+var context_2 = require("../context/context");
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderTemplateLoader = (function () {
     function HeaderTemplateLoader() {
     }
-    HeaderTemplateLoader.prototype.init = function (gridOptionsWrapper) {
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    };
     HeaderTemplateLoader.prototype.createHeaderElement = function (column) {
         var params = {
             column: column,
@@ -42,9 +51,9 @@ var HeaderTemplateLoader = (function () {
         // template can be a string or a dom element, if string we need to convert to a dom element
         var result;
         if (typeof userProvidedTemplate === 'string') {
-            result = utils_1.default.loadTemplate(userProvidedTemplate);
+            result = utils_1.Utils.loadTemplate(userProvidedTemplate);
         }
-        else if (utils_1.default.isNodeOrElement(userProvidedTemplate)) {
+        else if (utils_1.Utils.isNodeOrElement(userProvidedTemplate)) {
             result = userProvidedTemplate;
         }
         else {
@@ -53,7 +62,7 @@ var HeaderTemplateLoader = (function () {
         return result;
     };
     HeaderTemplateLoader.prototype.createDefaultHeaderElement = function (column) {
-        var eTemplate = utils_1.default.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
+        var eTemplate = utils_1.Utils.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
         this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
         this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
         this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column, svgFactory.createArrowUpDownSvg);
@@ -62,9 +71,16 @@ var HeaderTemplateLoader = (function () {
         return eTemplate;
     };
     HeaderTemplateLoader.prototype.addInIcon = function (eTemplate, iconName, cssSelector, column, defaultIconFactory) {
-        var eIcon = utils_1.default.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     };
+    // used when cell is dragged
+    HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE = '<div class="ag-header-cell ag-header-cell-ghost">' +
+        '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
+        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
+        '    <span id="agText" class="ag-header-cell-text"></span>' +
+        '  </div>' +
+        '</div>';
     HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
         '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
         '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
@@ -76,7 +92,14 @@ var HeaderTemplateLoader = (function () {
         '    <span id="agText" class="ag-header-cell-text"></span>' +
         '  </div>' +
         '</div>';
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
+    HeaderTemplateLoader = __decorate([
+        context_1.Bean('headerTemplateLoader'), 
+        __metadata('design:paramtypes', [])
+    ], HeaderTemplateLoader);
     return HeaderTemplateLoader;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = HeaderTemplateLoader;
+exports.HeaderTemplateLoader = HeaderTemplateLoader;

@@ -1,19 +1,21 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import ExpressionService from "./expressionService";
-import { ColumnController } from "./columnController/columnController";
-import { ColDef } from "./entities/colDef";
-export default class ValueService {
+import { RowNode } from "./entities/rowNode";
+import { Column } from "./entities/column";
+export declare class ValueService {
     private gridOptionsWrapper;
     private expressionService;
     private columnController;
-    init(gridOptionsWrapper: GridOptionsWrapper, expressionService: ExpressionService, columnController: ColumnController): void;
-    getValue(colDef: ColDef, data: any, node: any): any;
+    private eventService;
+    private suppressDotNotation;
+    init(): void;
+    getValue(column: Column, node: RowNode): any;
+    getValueUsingSpecificData(column: Column, data: any, node: any): any;
     private getValueUsingField(data, field);
-    setValueUsingField(data: any, field: string, newValue: any): void;
-    private executeValueGetter(valueGetter, data, colDef, node);
+    setValue(rowNode: RowNode, column: Column, newValue: any): void;
+    private setValueUsingField(data, field, newValue);
+    private executeValueGetter(valueGetter, data, column, node);
     private getValueCallback(data, node, field);
 }

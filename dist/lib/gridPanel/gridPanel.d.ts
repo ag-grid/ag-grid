@@ -1,21 +1,24 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import MasterSlaveService from "../masterSlaveService";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import { ColumnController } from "../columnController/columnController";
-import RowRenderer from "../rendering/rowRenderer";
-import FloatingRowModel from "../rowControllers/floatingRowModel";
-import BorderLayout from "../layout/borderLayout";
+import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
-export default class GridPanel {
+import { ColumnChangeEvent } from "../columnChangeEvent";
+export declare class GridPanel {
     private masterSlaveService;
     private gridOptionsWrapper;
     private columnController;
     private rowRenderer;
-    private rowModel;
     private floatingRowModel;
+    private eventService;
+    private rowModel;
+    private rangeController;
+    private dragService;
+    private selectionController;
+    private clipboardService;
+    private csvCreator;
+    private mouseEventService;
     private layout;
     private logger;
     private forPrint;
@@ -32,7 +35,6 @@ export default class GridPanel {
     private ePinnedLeftHeader;
     private ePinnedRightHeader;
     private eHeader;
-    private eParentsOfRows;
     private eBodyViewportWrapper;
     private ePinnedLeftColsViewport;
     private ePinnedRightColsViewport;
@@ -41,16 +43,29 @@ export default class GridPanel {
     private ePinnedLeftFloatingTop;
     private ePinnedRightFloatingTop;
     private eFloatingTopContainer;
+    private eFloatingTopViewport;
     private eFloatingBottom;
     private ePinnedLeftFloatingBottom;
     private ePinnedRightFloatingBottom;
     private eFloatingBottomContainer;
+    private eFloatingBottomViewport;
+    private eAllCellContainers;
     private lastLeftPosition;
     private lastTopPosition;
-    init(gridOptionsWrapper: GridOptionsWrapper, columnController: ColumnController, rowRenderer: RowRenderer, masterSlaveService: MasterSlaveService, loggerFactory: LoggerFactory, floatingRowModel: FloatingRowModel): void;
+    private animationThreadCount;
+    agWire(loggerFactory: LoggerFactory): void;
+    private onRowDataChanged();
     getLayout(): BorderLayout;
-    private setupComponents();
-    setMovingCss(moving: boolean): void;
+    private init();
+    private disableBrowserDragging();
+    private addEventListeners();
+    private addDragListeners();
+    private addCellListeners();
+    private processMouseEvent(eventName, mouseEvent);
+    private addShortcutKeyListeners();
+    private onCtrlAndA(event);
+    private onCtrlAndC(event);
+    private onCtrlAndV(event);
     getPinnedLeftFloatingTop(): HTMLElement;
     getPinnedRightFloatingTop(): HTMLElement;
     getFloatingTopContainer(): HTMLElement;
@@ -71,34 +86,43 @@ export default class GridPanel {
     hideOverlay(): void;
     private getWidthForSizeColsToFit();
     sizeColumnsToFit(nextTimeout?: number): void;
-    setRowModel(rowModel: any): void;
     getBodyContainer(): HTMLElement;
+    getDropTargetBodyContainers(): HTMLElement[];
     getBodyViewport(): HTMLElement;
     getPinnedLeftColsContainer(): HTMLElement;
+    getDropTargetLeftContainers(): HTMLElement[];
     getPinnedRightColsContainer(): HTMLElement;
+    getDropTargetPinnedRightContainers(): HTMLElement[];
     getHeaderContainer(): HTMLElement;
     getHeaderOverlay(): HTMLElement;
     getRoot(): HTMLElement;
     getPinnedLeftHeader(): HTMLElement;
     getPinnedRightHeader(): HTMLElement;
-    getRowsParent(): HTMLElement[];
     private queryHtmlElement(selector);
     private findElements();
     getHeaderViewport(): HTMLElement;
     private centerMouseWheelListener(event);
     private pinnedLeftMouseWheelListener(event);
     private generalMouseWheelListener(event, targetPanel);
-    setBodyContainerWidth(): void;
-    setPinnedColContainerWidth(): void;
-    showPinnedColContainersIfNeeded(): void;
-    onBodyHeightChange(): void;
+    onColumnsChanged(event: ColumnChangeEvent): void;
+    private setWidthsOfContainers();
+    private showPinnedColContainersIfNeeded();
     private sizeHeaderAndBody();
     setHorizontalScrollPosition(hScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
     getHorizontalScrollPosition(): number;
+    turnOnAnimationForABit(): void;
     private addScrollListener();
     private requestDrawVirtualRows();
-    private horizontallyScrollHeaderCenterAndFloatingCenter(bodyLeftPosition);
+    horizontallyScrollHeaderCenterAndFloatingCenter(): void;
     private verticallyScrollLeftPinned(bodyTopPosition);
     private verticallyScrollBody(position);
+    getVerticalScrollPosition(): number;
+    getBodyViewportClientRect(): ClientRect;
+    getFloatingTopClientRect(): ClientRect;
+    getFloatingBottomClientRect(): ClientRect;
+    getPinnedLeftColsViewportClientRect(): ClientRect;
+    getPinnedRightColsViewportClientRect(): ClientRect;
+    addScrollEventListener(listener: () => void): void;
+    removeScrollEventListener(listener: () => void): void;
 }

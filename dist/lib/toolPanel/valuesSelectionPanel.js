@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,10 +11,10 @@ var agDropdownList_1 = require("../widgets/agDropdownList");
 var column_1 = require("../entities/column");
 var agList_1 = require("../widgets/agList");
 var borderLayout_1 = require("../layout/borderLayout");
-var svgFactory = svgFactory_1.default.getInstance();
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var ValuesSelectionPanel = (function () {
-    function ValuesSelectionPanel(columnController, gridOptionsWrapper, popupService, eventService, dragAndDropService) {
-        this.dragAndDropService = dragAndDropService;
+    function ValuesSelectionPanel(columnController, gridOptionsWrapper, popupService, eventService, oldToolPanelDragAndDropService) {
+        this.oldToolPanelDragAndDropService = oldToolPanelDragAndDropService;
         this.popupService = popupService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.setupComponents();
@@ -35,15 +35,15 @@ var ValuesSelectionPanel = (function () {
         var column = params.value;
         var colDisplayName = this.columnController.getDisplayNameForCol(column);
         var eResult = document.createElement('span');
-        var eRemove = utils_1.default.createIcon('columnRemoveFromGroup', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
-        utils_1.default.addCssClass(eRemove, 'ag-visible-icons');
+        var eRemove = utils_1.Utils.createIcon('columnRemoveFromGroup', this.gridOptionsWrapper, column, svgFactory.createArrowUpSvg);
+        utils_1.Utils.addCssClass(eRemove, 'ag-visible-icons');
         eResult.appendChild(eRemove);
         var that = this;
         eRemove.addEventListener('click', function () {
             that.columnController.removeValueColumn(column);
         });
-        var agValueType = new agDropdownList_1.default(this.popupService, this.dragAndDropService);
-        agValueType.setModel([column_1.default.AGG_SUM, column_1.default.AGG_MIN, column_1.default.AGG_MAX]);
+        var agValueType = new agDropdownList_1.AgDropdownList(this.popupService, this.oldToolPanelDragAndDropService);
+        agValueType.setModel([column_1.Column.AGG_SUM, column_1.Column.AGG_MIN, column_1.Column.AGG_MAX]);
         agValueType.setSelected(column.aggFunc);
         agValueType.setWidth(45);
         agValueType.addItemSelectedListener(function (item) {
@@ -60,7 +60,7 @@ var ValuesSelectionPanel = (function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var columnsLocalText = localeTextFunc('valueColumns', 'Aggregations');
         var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag columns from above to aggregate values');
-        this.cColumnList = new agList_1.default(this.dragAndDropService);
+        this.cColumnList = new agList_1.AgList(this.oldToolPanelDragAndDropService);
         this.cColumnList.setCellRenderer(this.cellRenderer.bind(this));
         this.cColumnList.setEmptyMessage(emptyMessage);
         this.cColumnList.addStyles({ height: '100%', overflow: 'auto' });
@@ -69,7 +69,7 @@ var ValuesSelectionPanel = (function () {
         var eNorthPanel = document.createElement('div');
         eNorthPanel.style.paddingTop = '10px';
         eNorthPanel.innerHTML = '<div style="text-align: center;">' + columnsLocalText + '</div>';
-        this.layout = new borderLayout_1.default({
+        this.layout = new borderLayout_1.BorderLayout({
             center: this.cColumnList.getGui(),
             north: eNorthPanel
         });

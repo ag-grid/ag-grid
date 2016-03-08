@@ -1,39 +1,33 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import { Grid } from "../grid";
-import SelectionRendererFactory from "../selectionRendererFactory";
-import GridPanel from "../gridPanel/gridPanel";
-import SelectionController from "../selectionController";
-import ExpressionService from "../expressionService";
-import TemplateService from "../templateService";
-import ValueService from "../valueService";
-import EventService from "../eventService";
-import FloatingRowModel from "../rowControllers/floatingRowModel";
-import Column from "../entities/column";
+import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { ColDef } from "../entities/colDef";
-export default class RowRenderer {
-    private columnModel;
+import { ColumnChangeEvent } from "../columnChangeEvent";
+import { GridCell } from "../entities/gridCell";
+export declare class RowRenderer {
+    private columnController;
     private gridOptionsWrapper;
-    private angularGrid;
+    private gridCore;
     private selectionRendererFactory;
     private gridPanel;
     private $compile;
     private $scope;
-    private selectionController;
     private expressionService;
     private templateService;
-    private cellRendererMap;
-    private rowModel;
-    private firstVirtualRenderedRow;
-    private lastVirtualRenderedRow;
-    private focusedCell;
     private valueService;
     private eventService;
     private floatingRowModel;
+    private context;
+    private loggerFactory;
+    private rowModel;
+    private focusedCellController;
+    private rangeController;
+    private cellNavigationService;
+    private cellRendererMap;
+    private firstVirtualRenderedRow;
+    private lastVirtualRenderedRow;
     private renderedRows;
     private renderedTopFloatingRows;
     private renderedBottomFloatingRows;
@@ -50,20 +44,22 @@ export default class RowRenderer {
     private eFloatingBottomContainer;
     private eFloatingBottomPinnedLeftContainer;
     private eFloatingBottomPinnedRightContainer;
-    private eParentsOfRows;
-    init(columnModel: any, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, angularGrid: Grid, selectionRendererFactory: SelectionRendererFactory, $compile: any, $scope: any, selectionController: SelectionController, expressionService: ExpressionService, templateService: TemplateService, valueService: ValueService, eventService: EventService, floatingRowModel: FloatingRowModel): void;
+    private logger;
+    init(): void;
+    onColumnEvent(event: ColumnChangeEvent): void;
+    getContainersFromGridPanel(): void;
     setRowModel(rowModel: any): void;
     getAllCellsForColumn(column: Column): HTMLElement[];
     setMainRowWidths(): void;
-    private findAllElements(gridPanel);
     refreshAllFloatingRows(): void;
     private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainer, pinnedRightContainer, bodyContainer);
-    refreshView(refreshFromIndex?: any): void;
+    refreshView(refreshEvent?: any): void;
     softRefreshView(): void;
+    addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], colIds: string[]): void;
     rowDataChanged(rows: any): void;
-    destroy(): void;
+    agDestroy(): void;
     private refreshAllVirtualRows(fromIndex?);
     refreshGroupRows(): void;
     private removeVirtualRow(rowsToRemove, fromIndex?);
@@ -73,19 +69,9 @@ export default class RowRenderer {
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
     private ensureRowsRendered();
-    private insertRow(node, rowIndex, mainRowWidth);
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
+    private insertRow(node, rowIndex);
     getRenderedNodes(): any[];
-    getIndexOfRenderedNode(node: any): number;
-    navigateToNextCell(key: any, rowIndex: number, column: Column): void;
-    private getNextCellToFocus(key, lastCellToFocus);
-    onRowSelected(rowIndex: number, selected: boolean): void;
-    focusCell(eCell: any, rowIndex: number, colId: string, colDef: ColDef, forceBrowserFocus: any): void;
-    getFocusedCell(): {
-        rowIndex: number;
-        colId: string;
-        node: RowNode;
-        colDef: ColDef;
-    };
-    setFocusedCell(rowIndex: any, colIndex: any): void;
-    startEditingNextCell(rowIndex: any, column: any, shiftKey: any): void;
+    navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
+    startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any): void;
 }

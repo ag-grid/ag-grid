@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { ColGroupDef } from "./colDef";
+import { Column } from "./column";
 export declare class OriginalColumnGroup implements OriginalColumnGroupChild {
     private colGroupDef;
     private children;
@@ -15,9 +16,12 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild {
     isExpandable(): boolean;
     isExpanded(): boolean;
     getGroupId(): string;
+    getId(): string;
     setChildren(children: OriginalColumnGroupChild[]): void;
     getChildren(): OriginalColumnGroupChild[];
     getColGroupDef(): ColGroupDef;
+    getLeafColumns(): Column[];
+    private addLeafColumns(leafColumns);
     getColumnGroupShow(): string;
     calculateExpandable(): void;
 }

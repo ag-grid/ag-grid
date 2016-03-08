@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import PopupService from "./agPopupService";
-import DragAndDropService from "../dragAndDrop/dragAndDropService";
-export default class AgDropdownList {
+import { PopupService } from "./popupService";
+import { OldToolPanelDragAndDropService } from "../dragAndDrop/oldToolPanelDragAndDropService";
+export declare class AgDropdownList {
     private itemSelectedListeners;
     private eValue;
     private agList;
@@ -13,11 +13,11 @@ export default class AgDropdownList {
     private selectedItem;
     private cellRenderer;
     private popupService;
-    constructor(popupService: PopupService, dragAndDropService: DragAndDropService);
+    constructor(popupService: PopupService, dragAndDropService: OldToolPanelDragAndDropService);
     setWidth(width: any): void;
     addItemSelectedListener(listener: any): void;
     fireItemSelected(item: any): void;
-    setupComponents(dragAndDropService: DragAndDropService): void;
+    setupComponents(dragAndDropService: OldToolPanelDragAndDropService): void;
     itemSelected(item: any): void;
     onClick(): void;
     getGui(): any;

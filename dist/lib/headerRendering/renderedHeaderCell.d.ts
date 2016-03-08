@@ -1,56 +1,47 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import RenderedHeaderElement from "./renderedHeaderElement";
-import Column from "../entities/column";
-import RenderedHeaderGroupCell from "./renderedHeaderGroupCell";
-import FilterManager from "../filter/filterManager";
-import { ColumnController } from "../columnController/columnController";
-import { Grid } from "../grid";
-import HeaderTemplateLoader from "./headerTemplateLoader";
-import GridOptionsWrapper from "../gridOptionsWrapper";
-import { DragService } from "./dragService";
-import HeaderRenderer from "./headerRenderer";
-import GridPanel from "../gridPanel/gridPanel";
-export default class RenderedHeaderCell extends RenderedHeaderElement {
-    private static DEFAULT_SORTING_ORDER;
-    private parentGroup;
-    private eHeaderCell;
-    private eSortAsc;
-    private eSortDesc;
-    private eSortNone;
-    private eFilterIcon;
-    private eText;
-    private eHeaderCellLabel;
-    private column;
-    private childScope;
+import { Column } from "../entities/column";
+import { IRenderedHeaderElement } from "./iRenderedHeaderElement";
+import { DropTarget } from "../dragAndDrop/dragAndDropService";
+export declare class RenderedHeaderCell implements IRenderedHeaderElement {
+    private context;
     private filterManager;
     private columnController;
     private $compile;
-    private grid;
+    private gridCore;
     private headerTemplateLoader;
-    private headerRenderer;
+    private dragService;
+    private menuFactory;
+    private gridOptionsWrapper;
+    private dragAndDropService;
+    private sortController;
+    private eHeaderCell;
+    private eRoot;
+    private column;
+    private childScope;
     private startWidth;
+    private parentScope;
+    private dragSourceDropTarget;
     private destroyFunctions;
-    constructor(column: Column, parentGroup: RenderedHeaderGroupCell, gridOptionsWrapper: GridOptionsWrapper, parentScope: any, filterManager: FilterManager, columnController: ColumnController, $compile: any, grid: Grid, eRoot: HTMLElement, headerTemplateLoader: HeaderTemplateLoader, headerRenderer: HeaderRenderer, dragService: DragService, gridPanel: GridPanel);
+    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
+    init(): void;
+    private setupTooltip();
+    private setupText();
+    private setupFilterIcon();
+    private setupWidth();
     getGui(): HTMLElement;
     destroy(): void;
     private createScope(parentScope);
     private addAttributes();
-    private addMenu();
-    private removeSortIcons();
-    private addSortIcons();
-    private addMovingCss();
-    private setupComponents(eRoot, parentScope, dragService, gridPanel);
-    private addSort();
-    private addMove(eRoot, dragService, gridPanel);
-    private addResize(eRoot, dragService);
-    private useRenderer(headerNameValue, headerCellRenderer);
-    refreshFilterIcon(): void;
-    refreshSortIcon(): void;
-    private getNextSortDirection();
-    private addSortHandling();
+    private setupMenu();
+    showMenu(eventSource: HTMLElement): void;
+    private setupMovingCss();
+    private setupMove(eHeaderCellLabel);
+    private setupResize();
+    private useRenderer(headerNameValue, headerCellRenderer, eText);
+    setupSort(eHeaderCellLabel: HTMLElement): void;
     onDragStart(): void;
     onDragging(dragChange: number, finished: boolean): void;
     onIndividualColumnResized(column: Column): void;

@@ -1,11 +1,8 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
-import { ColumnController } from "./columnController/columnController";
-import { Grid } from "./grid";
-import ValueService from "./valueService";
+import { ProcessCellForExportParams } from "./entities/gridOptions";
 export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
@@ -15,15 +12,17 @@ export interface CsvExportParams {
     customFooter?: string;
     allColumns?: boolean;
     columnSeparator?: string;
+    onlySelected?: boolean;
+    processCellCallback?(params: ProcessCellForExportParams): void;
 }
-export default class CsvCreator {
-    private rowController;
+export declare class CsvCreator {
+    private rowModel;
     private columnController;
-    private grid;
     private valueService;
-    constructor(rowController: InMemoryRowController, columnController: ColumnController, grid: Grid, valueService: ValueService);
+    private gridOptionsWrapper;
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsCsv(params?: CsvExportParams): string;
+    private processCell(rowNode, column, value, processCellCallback);
     private createValueForGroupNode(node);
     private escape(value);
 }

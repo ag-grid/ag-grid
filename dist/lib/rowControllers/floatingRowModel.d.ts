@@ -1,14 +1,17 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import GridOptionsWrapper from "../gridOptionsWrapper";
 import { RowNode } from "../entities/rowNode";
-export default class FloatingRowModel {
+export declare class FloatingRowModel {
     private gridOptionsWrapper;
+    private eventService;
     private floatingTopRows;
     private floatingBottomRows;
-    init(gridOptionsWrapper: GridOptionsWrapper): void;
+    init(): void;
+    isEmpty(floating: string): boolean;
+    isRowsToRender(floating: string): boolean;
+    getRowAtPixel(pixel: number, floating: string): number;
     setFloatingTopRowData(rowData: any[]): void;
     setFloatingBottomRowData(rowData: any[]): void;
     private createNodesFromData(allData, isTop);

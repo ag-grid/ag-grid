@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,7 @@ var BorderLayout = (function () {
                     '</div>';
             this.layoutActive = false;
         }
-        this.eGui = utils_1.default.loadTemplate(template);
+        this.eGui = utils_1.Utils.loadTemplate(template);
         this.id = 'borderLayout';
         if (params.name) {
             this.id += '_' + params.name;
@@ -110,13 +110,13 @@ var BorderLayout = (function () {
     };
     // returns true if any item changed size, otherwise returns false
     BorderLayout.prototype.doLayout = function () {
-        if (!utils_1.default.isVisible(this.eGui)) {
+        if (!utils_1.Utils.isVisible(this.eGui)) {
             return false;
         }
         var atLeastOneChanged = false;
         var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
         var that = this;
-        utils_1.default.forEach(childLayouts, function (childLayout) {
+        utils_1.Utils.forEach(childLayouts, function (childLayout) {
             var childChangedSize = that.layoutChild(childLayout);
             if (childChangedSize) {
                 atLeastOneChanged = true;
@@ -157,7 +157,7 @@ var BorderLayout = (function () {
     // full height never changes the height, because the center is always 100%,
     // however we do check for change, to inform the listeners
     BorderLayout.prototype.layoutHeightFullHeight = function () {
-        var centerHeight = utils_1.default.offsetHeight(this.eGui);
+        var centerHeight = utils_1.Utils.offsetHeight(this.eGui);
         if (centerHeight < 0) {
             centerHeight = 0;
         }
@@ -170,9 +170,9 @@ var BorderLayout = (function () {
         }
     };
     BorderLayout.prototype.layoutHeightNormal = function () {
-        var totalHeight = utils_1.default.offsetHeight(this.eGui);
-        var northHeight = utils_1.default.offsetHeight(this.eNorthWrapper);
-        var southHeight = utils_1.default.offsetHeight(this.eSouthWrapper);
+        var totalHeight = utils_1.Utils.offsetHeight(this.eGui);
+        var northHeight = utils_1.Utils.offsetHeight(this.eNorthWrapper);
+        var southHeight = utils_1.Utils.offsetHeight(this.eSouthWrapper);
         var centerHeight = totalHeight - northHeight - southHeight;
         if (centerHeight < 0) {
             centerHeight = 0;
@@ -190,9 +190,9 @@ var BorderLayout = (function () {
         return this.centerHeightLastTime;
     };
     BorderLayout.prototype.layoutWidth = function () {
-        var totalWidth = utils_1.default.offsetWidth(this.eGui);
-        var eastWidth = utils_1.default.offsetWidth(this.eEastWrapper);
-        var westWidth = utils_1.default.offsetWidth(this.eWestWrapper);
+        var totalWidth = utils_1.Utils.offsetWidth(this.eGui);
+        var eastWidth = utils_1.Utils.offsetWidth(this.eEastWrapper);
+        var westWidth = utils_1.Utils.offsetWidth(this.eWestWrapper);
         var centerWidth = totalWidth - eastWidth - westWidth;
         if (centerWidth < 0) {
             centerWidth = 0;
@@ -202,6 +202,12 @@ var BorderLayout = (function () {
     BorderLayout.prototype.setEastVisible = function (visible) {
         if (this.eEastWrapper) {
             this.eEastWrapper.style.display = visible ? '' : 'none';
+        }
+        this.doLayout();
+    };
+    BorderLayout.prototype.setNorthVisible = function (visible) {
+        if (this.eNorthWrapper) {
+            this.eNorthWrapper.style.display = visible ? '' : 'none';
         }
         this.doLayout();
     };
@@ -216,13 +222,13 @@ var BorderLayout = (function () {
         //this.setOverlayVisible(false);
     };
     BorderLayout.prototype.hideOverlay = function () {
-        utils_1.default.removeAllChildren(this.eOverlayWrapper);
+        utils_1.Utils.removeAllChildren(this.eOverlayWrapper);
         this.eOverlayWrapper.style.display = 'none';
     };
     BorderLayout.prototype.showOverlay = function (key) {
         var overlay = this.overlays ? this.overlays[key] : null;
         if (overlay) {
-            utils_1.default.removeAllChildren(this.eOverlayWrapper);
+            utils_1.Utils.removeAllChildren(this.eOverlayWrapper);
             this.eOverlayWrapper.style.display = '';
             this.eOverlayWrapper.appendChild(overlay);
         }
@@ -239,5 +245,4 @@ var BorderLayout = (function () {
     };
     return BorderLayout;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BorderLayout;
+exports.BorderLayout = BorderLayout;

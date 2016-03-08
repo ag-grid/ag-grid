@@ -1,31 +1,23 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { Grid } from "./grid";
-import RowRenderer from "./rendering/rowRenderer";
-import HeaderRenderer from "./headerRendering/headerRenderer";
-import FilterManager from "./filter/filterManager";
-import { ColumnController } from "./columnController/columnController";
-import InMemoryRowController from "./rowControllers/inMemoryRowController";
-import SelectionController from "./selectionController";
-import GridOptionsWrapper from "./gridOptionsWrapper";
-import GridPanel from "./gridPanel/gridPanel";
-import ValueService from "./valueService";
-import MasterSlaveService from "./masterSlaveService";
-import EventService from "./eventService";
-import FloatingRowModel from "./rowControllers/floatingRowModel";
-import CsvExportParams from "./csvCreator";
+import { MasterSlaveService } from "./masterSlaveService";
+import { CsvExportParams } from "./csvCreator";
 import { ColDef } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
-import Column from "./entities/column";
+import { Column } from "./entities/column";
+import { IRowModel } from "./interfaces/iRowModel";
+import { RangeSelection } from "./interfaces/iRangeController";
+import { GridCell } from "./entities/gridCell";
+import { AddRangeSelectionParams } from "./interfaces/iRangeController";
 export declare class GridApi {
-    private grid;
+    private csvCreator;
+    private gridCore;
     private rowRenderer;
     private headerRenderer;
     private filterManager;
     private columnController;
-    private inMemoryRowController;
     private selectionController;
     private gridOptionsWrapper;
     private gridPanel;
@@ -33,22 +25,23 @@ export declare class GridApi {
     private masterSlaveService;
     private eventService;
     private floatingRowModel;
-    private csvCreator;
-    constructor(grid: Grid, rowRenderer: RowRenderer, headerRenderer: HeaderRenderer, filterManager: FilterManager, columnController: ColumnController, inMemoryRowController: InMemoryRowController, selectionController: SelectionController, gridOptionsWrapper: GridOptionsWrapper, gridPanel: GridPanel, valueService: ValueService, masterSlaveService: MasterSlaveService, eventService: EventService, floatingRowModel: FloatingRowModel);
+    private context;
+    private rowModel;
+    private sortController;
+    private paginationController;
+    private focusedCellController;
+    private rangeController;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
+    getFirstRenderedRow(): number;
+    getLastRenderedRow(): number;
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
     setDatasource(datasource: any): void;
-    onNewDatasource(): void;
-    setRowData(rowData: any): void;
-    setRows(rows: any): void;
-    onNewRows(): void;
+    setRowData(rowData: any[]): void;
     setFloatingTopRowData(rows: any[]): void;
     setFloatingBottomRowData(rows: any[]): void;
-    onNewCols(): void;
     setColumnDefs(colDefs: ColDef[]): void;
-    unselectAll(): void;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], colIds: string[]): void;
     rowDataChanged(rows: any): void;
@@ -59,15 +52,16 @@ export declare class GridApi {
     isAnyFilterPresent(): boolean;
     isAdvancedFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
-    getModel(): any;
+    getModel(): IRowModel;
     onGroupExpandedOrCollapsed(refreshFromIndex: any): void;
     expandAll(): void;
     collapseAll(): void;
     addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
+    addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     setQuickFilter(newFilter: any): void;
     selectIndex(index: any, tryMulti: any, suppressEvents: any): void;
     deselectIndex(index: number, suppressEvents?: boolean): void;
-    selectNode(node: any, tryMulti?: boolean, suppressEvents?: boolean): void;
+    selectNode(node: RowNode, tryMulti?: boolean, suppressEvents?: boolean): void;
     deselectNode(node: any, suppressEvents?: boolean): void;
     selectAll(): void;
     deselectAll(): void;
@@ -76,8 +70,7 @@ export declare class GridApi {
     showLoadingOverlay(): void;
     showNoRowsOverlay(): void;
     hideOverlay(): void;
-    showLoading(show: any): void;
-    isNodeSelected(node: any): boolean;
+    isNodeSelected(node: any): any;
     getSelectedNodesById(): {
         [nodeId: number]: RowNode;
     };
@@ -89,10 +82,9 @@ export declare class GridApi {
     ensureColumnVisible(key: string | Column | ColDef): void;
     ensureIndexVisible(index: any): void;
     ensureNodeVisible(comparator: any): void;
-    forEachInMemory(callback: Function): void;
-    forEachNode(callback: Function): void;
-    forEachNodeAfterFilter(callback: Function): void;
-    forEachNodeAfterFilterAndSort(callback: Function): void;
+    forEachNode(callback: (rowNode: RowNode) => void): void;
+    forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
+    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
     getFilterApiForColDef(colDef: any): any;
     getFilterApi(key: string | Column | ColDef): any;
     getColumnDef(key: string | Column | ColDef): ColDef;
@@ -104,23 +96,21 @@ export declare class GridApi {
     }[];
     setFilterModel(model: any): void;
     getFilterModel(): any;
-    getFocusedCell(): {
-        rowIndex: number;
-        colId: string;
-        node: RowNode;
-        colDef: ColDef;
-    };
-    setFocusedCell(rowIndex: any, colId: any): void;
+    getFocusedCell(): GridCell;
+    setFocusedCell(rowIndex: number, colKey: Column | ColDef | string, floating?: string): void;
     setHeaderHeight(headerHeight: number): void;
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
     doLayout(): void;
-    getValue(colDef: ColDef, data: any, node: any): any;
+    getValue(colKey: string | ColDef | Column, rowNode: RowNode): any;
     addEventListener(eventType: string, listener: Function): void;
     addGlobalListener(listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     removeGlobalListener(listener: Function): void;
     dispatchEvent(eventType: string, event?: any): void;
-    refreshRowGroup(): void;
     destroy(): void;
+    resetQuickFilter(): void;
+    getRangeSelections(): RangeSelection[];
+    addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
+    clearRangeSelection(): void;
 }

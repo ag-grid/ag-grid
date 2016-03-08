@@ -515,7 +515,10 @@ export class RowRenderer {
             this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
         }
 
-        this.gridPanel.ensureColumnVisible(nextCell.column);
+        if (!nextCell.column.isPinned()) {
+            this.gridPanel.ensureColumnVisible(nextCell.column);
+        }
+
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();

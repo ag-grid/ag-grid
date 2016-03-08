@@ -1,29 +1,41 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var utils_1 = require('../utils');
 var svgFactory_1 = require("../svgFactory");
-var renderedHeaderElement_1 = require("./renderedHeaderElement");
-var svgFactory = svgFactory_1.default.getInstance();
-var RenderedHeaderGroupCell = (function (_super) {
-    __extends(RenderedHeaderGroupCell, _super);
-    function RenderedHeaderGroupCell(columnGroup, gridOptionsWrapper, columnController, eRoot, parentScope, filterManager, $compile, dragService) {
-        _super.call(this, gridOptionsWrapper);
-        this.columnController = columnController;
+var columnController_1 = require("../columnController/columnController");
+var filterManager_1 = require("../filter/filterManager");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var column_1 = require("../entities/column");
+var horizontalDragService_1 = require("./horizontalDragService");
+var context_1 = require("../context/context");
+var cssClassApplier_1 = require("./cssClassApplier");
+var context_2 = require("../context/context");
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
+var RenderedHeaderGroupCell = (function () {
+    function RenderedHeaderGroupCell(columnGroup, eRoot, parentScope) {
+        this.destroyFunctions = [];
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
-        this.filterManager = filterManager;
-        this.$compile = $compile;
-        this.setupComponents(eRoot, dragService);
+        this.eRoot = eRoot;
+        this.parentScope = parentScope;
     }
+    // required by interface, but we don't use
+    RenderedHeaderGroupCell.prototype.refreshFilterIcon = function () { };
+    // required by interface, but we don't use
+    RenderedHeaderGroupCell.prototype.refreshSortIcon = function () { };
     RenderedHeaderGroupCell.prototype.getGui = function () {
         return this.eHeaderGroupCell;
     };
@@ -32,7 +44,7 @@ var RenderedHeaderGroupCell = (function (_super) {
             this.setWidthOfGroupHeaderCell();
         }
     };
-    RenderedHeaderGroupCell.prototype.setupComponents = function (eRoot, dragService) {
+    RenderedHeaderGroupCell.prototype.init = function () {
         var _this = this;
         this.eHeaderGroupCell = document.createElement('div');
         var classNames = ['ag-header-group-cell'];
@@ -46,20 +58,20 @@ var RenderedHeaderGroupCell = (function (_super) {
         }
         this.eHeaderGroupCell.className = classNames.join(' ');
         //this.eHeaderGroupCell.style.height = this.getGridOptionsWrapper().getHeaderHeight() + 'px';
-        this.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell);
-        if (this.getGridOptionsWrapper().isEnableColResize()) {
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
+        if (this.gridOptionsWrapper.isEnableColResize()) {
             this.eHeaderCellResize = document.createElement("div");
             this.eHeaderCellResize.className = "ag-header-cell-resize";
             this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
-            dragService.addDragHandling({
+            this.dragService.addDragHandling({
                 eDraggableElement: this.eHeaderCellResize,
-                eBody: eRoot,
+                eBody: this.eRoot,
                 cursor: 'col-resize',
                 startAfterPixels: 0,
                 onDragStart: this.onDragStart.bind(this),
                 onDragging: this.onDragging.bind(this)
             });
-            if (!this.getGridOptionsWrapper().isSuppressAutoSize()) {
+            if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
                 this.eHeaderCellResize.addEventListener('dblclick', function (event) {
                     // get list of all the column keys we are responsible for
                     var keys = [];
@@ -81,7 +93,7 @@ var RenderedHeaderGroupCell = (function (_super) {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
             this.eHeaderGroupCell.appendChild(eGroupCellLabel);
-            if (utils_1.default.isBrowserSafari()) {
+            if (utils_1.Utils.isBrowserSafari()) {
                 eGroupCellLabel.style.display = 'table-cell';
             }
             var eInnerText = document.createElement("span");
@@ -95,15 +107,30 @@ var RenderedHeaderGroupCell = (function (_super) {
         this.setWidthOfGroupHeaderCell();
     };
     RenderedHeaderGroupCell.prototype.setWidthOfGroupHeaderCell = function () {
-        this.eHeaderGroupCell.style.width = utils_1.default.formatWidth(this.columnGroup.getActualWidth());
+        var _this = this;
+        var widthChangedListener = function () {
+            _this.eHeaderGroupCell.style.width = _this.columnGroup.getActualWidth() + 'px';
+        };
+        this.columnGroup.getLeafColumns().forEach(function (column) {
+            column.addEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            _this.destroyFunctions.push(function () {
+                column.removeEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            });
+        });
+        widthChangedListener();
+    };
+    RenderedHeaderGroupCell.prototype.destroy = function () {
+        this.destroyFunctions.forEach(function (func) {
+            func();
+        });
     };
     RenderedHeaderGroupCell.prototype.addGroupExpandIcon = function (eGroupCellLabel) {
         var eGroupIcon;
         if (this.columnGroup.isExpanded()) {
-            eGroupIcon = utils_1.default.createIcon('columnGroupOpened', this.getGridOptionsWrapper(), null, svgFactory.createArrowLeftSvg);
+            eGroupIcon = utils_1.Utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
         }
         else {
-            eGroupIcon = utils_1.default.createIcon('columnGroupClosed', this.getGridOptionsWrapper(), null, svgFactory.createArrowRightSvg);
+            eGroupIcon = utils_1.Utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);
@@ -128,10 +155,6 @@ var RenderedHeaderGroupCell = (function (_super) {
         if (newWidth < minWidth) {
             newWidth = minWidth;
         }
-        // set the new width to the group header
-        //var newWidthPx = newWidth + "px";
-        //this.eHeaderGroupCell.style.width = newWidthPx;
-        //this.columnGroup.actualWidth = newWidth;
         // distribute the new width to the child headers
         var changeRatio = newWidth / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
@@ -157,7 +180,32 @@ var RenderedHeaderGroupCell = (function (_super) {
             _this.columnController.setColumnWidth(column, newChildSize, finished);
         });
     };
+    __decorate([
+        context_1.Autowired('filterManager'), 
+        __metadata('design:type', filterManager_1.FilterManager)
+    ], RenderedHeaderGroupCell.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], RenderedHeaderGroupCell.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('$compile'), 
+        __metadata('design:type', Object)
+    ], RenderedHeaderGroupCell.prototype, "$compile", void 0);
+    __decorate([
+        context_1.Autowired('horizontalDragService'), 
+        __metadata('design:type', horizontalDragService_1.HorizontalDragService)
+    ], RenderedHeaderGroupCell.prototype, "dragService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], RenderedHeaderGroupCell.prototype, "columnController", void 0);
+    __decorate([
+        context_2.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], RenderedHeaderGroupCell.prototype, "init", null);
     return RenderedHeaderGroupCell;
-})(renderedHeaderElement_1.default);
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = RenderedHeaderGroupCell;
+})();
+exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;

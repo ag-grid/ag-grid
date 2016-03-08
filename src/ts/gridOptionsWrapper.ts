@@ -33,6 +33,7 @@ export class GridOptionsWrapper {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('enterprise') private enterprise: boolean;
 
     private headerHeight: number;
 
@@ -56,6 +57,7 @@ export class GridOptionsWrapper {
         }
     }
 
+    public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }

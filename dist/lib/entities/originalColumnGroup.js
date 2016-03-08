@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var columnGroup_1 = require("./columnGroup");
+var column_1 = require("./column");
 var OriginalColumnGroup = (function () {
     function OriginalColumnGroup(colGroupDef, groupId) {
         this.expandable = false;
@@ -24,6 +25,9 @@ var OriginalColumnGroup = (function () {
     OriginalColumnGroup.prototype.getGroupId = function () {
         return this.groupId;
     };
+    OriginalColumnGroup.prototype.getId = function () {
+        return this.getGroupId();
+    };
     OriginalColumnGroup.prototype.setChildren = function (children) {
         this.children = children;
     };
@@ -32,6 +36,21 @@ var OriginalColumnGroup = (function () {
     };
     OriginalColumnGroup.prototype.getColGroupDef = function () {
         return this.colGroupDef;
+    };
+    OriginalColumnGroup.prototype.getLeafColumns = function () {
+        var result = [];
+        this.addLeafColumns(result);
+        return result;
+    };
+    OriginalColumnGroup.prototype.addLeafColumns = function (leafColumns) {
+        this.children.forEach(function (child) {
+            if (child instanceof column_1.Column) {
+                leafColumns.push(child);
+            }
+            else if (child instanceof OriginalColumnGroup) {
+                child.addLeafColumns(leafColumns);
+            }
+        });
     };
     OriginalColumnGroup.prototype.getColumnGroupShow = function () {
         if (this.colGroupDef) {
@@ -58,11 +77,11 @@ var OriginalColumnGroup = (function () {
             var abstractColumn = this.children[i];
             // if the abstractColumn is a grid generated group, there will be no colDef
             var headerGroupShow = abstractColumn.getColumnGroupShow();
-            if (headerGroupShow === columnGroup_1.default.HEADER_GROUP_SHOW_OPEN) {
+            if (headerGroupShow === columnGroup_1.ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;
             }
-            else if (headerGroupShow === columnGroup_1.default.HEADER_GROUP_SHOW_CLOSED) {
+            else if (headerGroupShow === columnGroup_1.ColumnGroup.HEADER_GROUP_SHOW_CLOSED) {
                 atLeastOneShowingWhenClosed = true;
                 atLeastOneChangeable = true;
             }

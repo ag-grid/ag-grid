@@ -1,16 +1,26 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v3.3.3
+ * @version v4.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var columnController_1 = require("./columnController/columnController");
+var valueService_1 = require("./valueService");
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
+var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var LINE_SEPARATOR = '\r\n';
 var CsvCreator = (function () {
-    function CsvCreator(rowController, columnController, grid, valueService) {
-        this.rowController = rowController;
-        this.columnController = columnController;
-        this.grid = grid;
-        this.valueService = valueService;
+    function CsvCreator() {
     }
     CsvCreator.prototype.exportDataAsCsv = function (params) {
         var csvString = this.getDataAsCsv(params);
@@ -37,7 +47,7 @@ var CsvCreator = (function () {
     };
     CsvCreator.prototype.getDataAsCsv = function (params) {
         var _this = this;
-        if (!this.grid.isUsingInMemoryModel()) {
+        if (this.gridOptionsWrapper.isRowModelVirtual()) {
             console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
             return '';
         }
@@ -48,7 +58,9 @@ var CsvCreator = (function () {
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
+        var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
+        var processCellCallback = params.processCellCallback;
         var columnsToExport;
         if (allColumns) {
             columnsToExport = this.columnController.getAllColumns();
@@ -76,11 +88,14 @@ var CsvCreator = (function () {
             });
             result += LINE_SEPARATOR;
         }
-        this.rowController.forEachNodeAfterFilterAndSort(function (node) {
+        this.rowModel.forEachNodeAfterFilterAndSort(function (node) {
             if (skipGroups && node.group) {
                 return;
             }
             if (skipFooters && node.footer) {
+                return;
+            }
+            if (onlySelected && !node.isSelected()) {
                 return;
             }
             columnsToExport.forEach(function (column, index) {
@@ -89,8 +104,9 @@ var CsvCreator = (function () {
                     valueForCell = _this.createValueForGroupNode(node);
                 }
                 else {
-                    valueForCell = _this.valueService.getValue(column.getColDef(), node.data, node);
+                    valueForCell = _this.valueService.getValue(column, node);
                 }
+                valueForCell = _this.processCell(node, column, valueForCell, processCellCallback);
                 if (valueForCell === null || valueForCell === undefined) {
                     valueForCell = '';
                 }
@@ -105,6 +121,21 @@ var CsvCreator = (function () {
             result += params.customFooter;
         }
         return result;
+    };
+    CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {
+        if (processCellCallback) {
+            return processCellCallback({
+                column: column,
+                node: rowNode,
+                value: value,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        }
+        else {
+            return value;
+        }
     };
     CsvCreator.prototype.createValueForGroupNode = function (node) {
         var keys = [node.key];
@@ -127,12 +158,31 @@ var CsvCreator = (function () {
             stringValue = value.toString();
         }
         else {
-            console.warn('known value type during csv conversio');
+            console.warn('known value type during csv conversion');
             stringValue = '';
         }
         return stringValue.replace(/"/g, "\"\"");
     };
+    __decorate([
+        context_2.Autowired('rowModel'), 
+        __metadata('design:type', Object)
+    ], CsvCreator.prototype, "rowModel", void 0);
+    __decorate([
+        context_2.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], CsvCreator.prototype, "columnController", void 0);
+    __decorate([
+        context_2.Autowired('valueService'), 
+        __metadata('design:type', valueService_1.ValueService)
+    ], CsvCreator.prototype, "valueService", void 0);
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CsvCreator.prototype, "gridOptionsWrapper", void 0);
+    CsvCreator = __decorate([
+        context_1.Bean('csvCreator'), 
+        __metadata('design:paramtypes', [])
+    ], CsvCreator);
     return CsvCreator;
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CsvCreator;
+exports.CsvCreator = CsvCreator;
