@@ -20,7 +20,7 @@
         <style>
             label { font-weight: normal !important; }
             .blue { background-color: darkblue; color: lightblue; }
-            .good-score { background-color: lightgreen; }
+            .good-score { background-color: #0a0; }
             .bad-score { background-color: lightcoral; }
         </style>
 

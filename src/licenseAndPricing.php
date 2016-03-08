@@ -127,6 +127,16 @@
         .gridFeature {
             padding: 4px;
         }
+        .gridFeaturesTitle {
+            /*background-color: #eee;*/
+            font-weight: bold;
+        }
+        .gridFeaturePlus {
+            font-weight: bold;
+        }
+        .gridFeaturesList {
+            /*background-color: #eee;*/
+        }
         .benefitsCell {
             border-bottom: 1px solid #888;
         }
@@ -198,39 +208,90 @@
                 <tr>
                     <td class="benefitsCell tableCell">
 
-                        <div class="gridFeature">Standard ag-Grid Features</div>
+                        <div class="gridFeaturesTitle">
+                            Standard ag-Grid Features:
+                        </div>
+                        <div class="gridFeaturesList">
 
-                        &diams;
+                            <ul class="diamond-separated-list">
+                                <li>Column Pinning Left & Right</li>
+                                <li>Column Resizing</li>
+                                <li>Column Auto-Size to Fit Contents</li>
+                                <li>Variable Row Height</li>
+                                <li>Tree Data</li>
+                                <li>Data CSV Export</li>
+                                <li>In Grid Sorting</li>
+                                <li>Server Side Sorting</li>
+                                <li>In Grid Filtering</li>
+                                <li>Server Side Filtering</li>
+                                <li>Data Editing</li>
+                                <li>Keyboard Navigation</li>
+                                <li>Quick Search</li>
+                                <li>Column Grouping</li>
+                                <li>Row Selection</li>
+                                <li>Checkbox Selection</li>
+                                <li>Grid Data Context</li>
+                                <li>Value Getters</li>
+                                <li>Expressions</li>
+                                <li>Cell Styling</li>
+                                <li>CSS Themes</li>
+                                <li>Custom Rendering</li>
+                                <li>Frozen / Floating Rows</li>
+                                <li>Multi Level Header Grouping</li>
+                                <li>Header Templates</li>
+                                <li>Events</li>
+                                <li>Internationalisation</li>
+                                <li>Cross Browser</li>
+                                <li>Printable</li>
+                                <li>Grid API</li>
+                                <li>Sorting API</li>
+                                <li>Filtering API</li>
+                                <li>Column API</li>
+                                <li>Pagination</li>
+                                <li>Infinite Scrolling</li>
+                                <li>Floating Footers</li>
+                                <li>Master / Slave</li>
+                            </ul>
+
+                        </div>
+
+                        <div class="gridFeaturePlus">Plus</div>
 
                         <div class="gridFeature">Get help via Stack Overflow</div>
 
                     </td>
                     <td class="gapCol"/>
                     <td class="benefitsCell tableCell">
-                        <div class="gridFeature">
-                            All standard features plus the following enterprise features:<br/>
-                            &bull; Grouping and Aggregation of Data<br/>
-                            &bull; Excel-like Filtering<br/>
-                            &bull; Context Menu<br/>
-                            &bull; Advanced Column Menu<br/>
-                            &bull; Tool Panel for Column Management<br/>
-                            &bull; Cell Range Selection<br/>
-                            &bull; Clipboard Interaction<br/>
+
+                        <div class="gridFeaturesTitle">
+                            All Standard Features Plus:
+                        </div>
+                        <div class="gridFeaturesList">
+                            <ul class="diamond-separated-list">
+                                <li>Grouping and Aggregation of Data</li>
+                                <li>Excel-like Filtering</li>
+                                <li>Advanced Column Menu</li>
+                                <li>Context Menu</li>
+                                <li>Cell Range Selection</li>
+                                <li>Status Panel with Aggregation</li>
+                                <li>Clipboard Copy & Paste</li>
+                                <li>Tool Panel for Column Management</li>
+                            </ul>
                         </div>
 
-                        &diams;
+                        <div class="gridFeaturePlus">Plus</div>
 
                         <div class="gridFeature">
                             Access to Support via Members Forum
                         </div>
 
-                        &diams;
+                        <div class="gridFeaturePlus">Plus</div>
 
                         <div class="gridFeature">
                             Raise Bugs and Feature Requests
                         </div>
 
-                        &diams;
+                        <div class="gridFeaturePlus">Plus</div>
 
                         <div class="gridFeature">
                             Influence the Future Direction of ag-Grid

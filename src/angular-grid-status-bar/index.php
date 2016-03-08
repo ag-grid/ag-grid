@@ -10,6 +10,12 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Status Bar</h2>
 
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        Status bar is available in ag-Grid Enterprise.
+    </p>
+
     <p>The status bar appears below the grid. When used in combination with the range selection it displays
     aggregation data about the selected range giving the following: average, count, min, max, sum.</p>
 

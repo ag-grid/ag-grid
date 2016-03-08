@@ -6,378 +6,78 @@ $pageKeyboards = "ag-Grid AngularJS Angular Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<h2>
+    Introduction
+</h2>
 
+<p>
+    ag-Grid is an Enterprise Grade Javascript Data Grid.
+    The purpose of ag-Grid is to provide a data grid that enterprise
+    software can use for building applications such as
+    reporting and data analytics, business workflow and data entry.
+    The author, having spent years building applications in C++, Java and Javascript,
+    found the choice of grids in JavaScript lacking, especially in
+    comparison to what was in other languages frameworks. ag-Grid is
+    the result of turning frustration into answers,
+    providing a grid worthy of enterprise development.
+</p>
 
-    <!--
-                        <div>
-                            "ag-Grid is an Enterprise Grade Javascript Data Grid.
-                            The purpose of ag-Grid is to provide a data grid that enterprise
-                            software can use for building applications such as
-                            reporting and data analytics, business workflow and data entry.
-                            Having spent years building applications in C++, Java and Javascript
-                            I found the choice of grids in JavaScript lacking, especially in
-                            comparison to what I was used to in other languages. ag-Grid is
-                            the result of turning my frustration into answers,
-                            providing a grid worthy of enterprise development."
-                        </div>
-                        <div style="margin-top: 10px;">
-                            Niall Crosby, ag-Grid Creator
-                        </div>
-    -->
+<p>
+    Here you will find documentation of every feature with at least
+    one example demonstrating that feature. The ag-Grid project doesn't consider a feature complete unless it is
+    documented and demonstrated.
+</p>
 
+<h2>
+    Where to start
+</h2>
 
-    <div style="float: left; width: 40px;">
-        <img src="../images/npm.png" style="width: 30px;"/>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            NPM Downloads Last Month (source www.npmjs.com)
-        </div>
-    </div>
+<p>
+    If you are introducing yourself to ag-Grid, then you should read <a href="angular-grid-getting-started">Getting Started</a>.
+    Then follow on to the section on the framework that interests you (one of
+    <a href="../best-javascript-data-grid/index.php">Javascript</a>,
+    <a href="../best-react-data-grid/index.php">React</a>,
+    <a href="../best-angularjs-data-grid/index.php">Angular JS</a>,
+    <a href="../best-angular-2-data-grid/index.php">Angular 2</a> or
+    <a href="../best-web-component-data-grid/index.php">Web Components</a>) and try and get a simple example working
+    yourself (you don't need to understand the grid, just how it install it into your application).
+    Then cover the <a href="../javascript-grid-interfacing-overview/index.php">Interfacing Overview</a>.
+    After that, you then have the foundations of ag-Grid and can jump to whatever section of the documentation
+    you need to the feature you are trying to implement.
+</p>
 
-    <style>
-        .chart-bar {
-            width: 100px;
-            margin-left: 30px;
-            margin-right: 30px;
-        }
-    </style>
-    <div>
-        <table style="margin-top: 40px;">
-            <tr>
-                <td colspan="3" align="center">
-                    <b></b>
-                </td>
-            </tr>
-            <tr style="border-bottom: 1px solid black; border-left: 1px solid black;">
-                <td valign="bottom" align="center">
-                    9,977<br/>
-                    <div class="chart-bar" style="height: 99px; background-color: darkgreen;"/>
-                </td>
-                <td valign="bottom" align="center">
-                    5,556<br/>
-                    <div class="chart-bar" style="height: 55px; background-color: brown;"/>
-                </td>
-                <td valign="bottom" align="center">
-                    1,274<br/>
-                    <div class="chart-bar" style="height: 12px; background-color: #3c3c3c;"/>
-                </td>
-            </tr>
-            <tr>
-                <td align="center">
-                    ag-Grid
-                </td>
-                <td align="center">
-                    ui-grid
-                </td>
-                <td align="center">
-                    Slickgrid
-                </td>
-            </tr>
-        </table>
-        <div style=""></div>
-    </div>
+<h2>
+    Sections
+</h2>
 
-    <div style="color: #767676; padding-top: 20px; padding-bottom: 20px;">
-        And the good news is, ag-Grid is growing. We are just getting started people :) ..... last
-        week I've been working hard on cell selection and clipboard copy/paste interaction.
-    </div>
+<p>
+    The documentation is broken in the following sections:
+    <ul>
+    <li><b>The Basics: </b> Learn how to set up ag-Grid with the framework that you have chosen.</li>
+    <li><b>Interfacing: </b> A quick reference guide detailing all the configuration options for ag-Grid.</li>
+    <li><b>Core Features: </b> A detailed look at all the core features.</li>
+    <li><b>Enterprise Features: </b> A detailed look at all the enterprise features.</li>
+    <li><b>Examples: </b> Some examples combining different features.</li>
+    <li><b>Tutorials: </b> Some video tutorials for the younger generation who prefer YouTube videos over reading.</li>
+</ul>
+</p>
 
+<h2>
+    Keeping up to date
+</h2>
+
+<p>
+    ag-Grid is a fast moving project. It has gone from zero to huge in a very short space of time. To keep
+    up to date, check back regularly to the website, follow Ceolter (core author) on twitter and join the ag-Grid mailing
+    list.
+</p>
+
+<div style="float: left; margin-top: 20px;">
+    <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 40px;">
-        <img src="../images/lab.png"/>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            What's cooking in the next version....
-        </div>
-    </div>
-
-    <div style="color: #767676; padding-top: 20px; padding-bottom: 20px;">
-        It's going to be a week or two before the next version is ready as I am making some large
-        changes. I've reworked all the column management to include proper drag and drop of columns
-        (so you can drag columns from the sidebar into the grid, drag columns into the 'group' bar
-        at the top, drag columns to the edge to make them pinned etc). It's working very well, but
-        not ready for general consumption yet! Oh, and also a cool menu.
-    </div>
-
-    <div>
-        <img src="../images/nextVersion.png"/>
-    </div>
-
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 240px;">
-        <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
-            <img src="../images/agGridDaily.png"/>
-        </a>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
-                Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
-            </a>
-        </div>
-    </div>
-    <div style="color: #767676; padding-top: 20px;">
-        Supporting all the frameworks and build systems took days of research and practicing.
-        This article goes through lessons learnt and how to structure a project while supporting
-        all the frameworks and build systems around today.
-    </div>
-
-</div>
-
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            <img src="../images/panda.png"/>
-        </div>
-        <div style="font-size: 25px; float: left; padding-left: 10px">
-            ag-Grid v3.3 Released
-        </div>
-        <div style="float: right;  color: #767676;">
-            08th February 2016
-        </div>
-    </div>
-
-    <div style="padding-top: 20px;">
-        <p>
-            The <a href="../changeLog.php">change log</a> has a full set of changes. The
-            highlights are as follows:
-        </p>
-        <p>
-        <ul>
-            <li>
-                <b>Column Drag Reordering</b> to reorder your columns by dragging the headers.
-            </li>
-            <li>
-                <b>'ready' event now 'gridReady'</b> (because it was clashing with another ready event in Angular 2)
-            </li>
-            <li>
-                <b>Moved to proper CommonJS</b> so now everything bundles nicely, including accessing ag-Grid
-                via ECMA 6 modules (great for Angular 2, no more global scope).
-            </li>
-            <li>
-                <b>Row Group Sorting</b> so now you can sort your groups.
-            </li>
-        </ul>
-        </p>
-        <h3>Examples on Github:</h3>
-        <p>
-
-        <ul>
-            <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
-            <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
-            <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a> - Project on Github</li>
-        </ul>
-        </p>
-        <h3>New ag-Grid Directory Structure (only for those interested)</h3>
-        <p>
-            The new build has the following structure:<br/>
-            <b>\src</b> -> contains source files (TypeScript and CSS), don't touch these!<br/>
-            <b>\dist</b> -> contains distribution files<br/>
-            <b>\dist\ag-grid.js and \dist\ag-grid.min.js</b> -> use these if not using a package manager and put ag-Grid on
-            the global scope. The new JavaScript distribution files contain the CSS for the grid, no need to reference
-            separately.<br/>
-            <b>\dist\styles</b> -> contains CSS files, used if doing your own bundling.<br/>
-            <b>\dist\lib</b> -> contains compiles JavaScript files in CommonJS format.<br/>
-            <b>\main.js</b> -> CommonJS root file, reference this file if importing project via CommonJS.<br/>
-            <b>\main.d.ts</b> -> CommonJS root definition file.<br/>
-        </p>
-    </div>
-
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 240px;">
-        <a href="../react-and-ag-grid">
-            <img src="../images/agGridDaily.png"/>
-        </a>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../react-and-ag-grid">
-                React and ag-Grid - the Perfect Match
-            </a>
-        </div>
-        <div style="float: right;  color: #767676;">
-            28th January 2016
-        </div>
-    </div>
-    <div style="color: #767676">
-        Self Published
-    </div>
-    <div style="color: #767676; padding-top: 20px;">
-        Article announcing ag-Grids support for React. Not only do they work together,
-        they play together very well indeed!
-    </div>
-
-</div>
-
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-    <b>Version 3.2.0 released</b>. Minor changes, see the <a href="../changeLog.php">change log</a>. This release
-    was mostly to support the 'React Component' which I'm going to release as soon as I get the
-    documentation updated.
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            <img src="../images/superDev.jpg"/>
-        </div>
-        <div style="font-size: 25px; float: left; padding: 20px;">
-            ag-Grid v3.1.0 Released
-        </div>
-        <div style="float: right;  color: #767676;">
-            20th January 2016
-        </div>
-    </div>
-
-    <div style="padding-top: 20px;">
-        <p>
-            ag-Grid 3.1.0 is now released. The <a href="../changeLog.php">change log</a> has a full set of changes. This
-            is a minor release and is fully compatible with the previous. Highlights of this release are:
-        </p>
-        <p>
-        <ul>
-            <li><b>Column Auto-width</b> to fit cell contents.
-                Documented <a href="../angular-grid-resizing/index.php">here</a>.
-            </li>
-            <li><b>Header Templates</b> to allow full customisation of headers.
-                Documented <a href="../angular-grid-header-rendering/index.php">here</a>. </li>
-            <li><b>Variable Row Height</b> so now your rows can have different heights.
-                Documented <a href="../angular-grid-row-height/index.php">here</a>. </li>
-        </ul>
-        </p>
-    </div>
-
-
-</div>
-
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            <img src="../images/newAndImproved.jpg"/>
-        </div>
-        <div style="font-size: 25px; float: left; padding: 20px;">
-            ag-Grid v3.0.0 Released
-        </div>
-        <div style="float: right;  color: #767676;">
-            18th January 2016
-        </div>
-    </div>
-
-    <div style="padding-top: 20px;">
-        <p>
-            ag-Grid 3.0.0 is now released. The <a href="../changeLog.php">change log</a> has a full set of changes and what
-            you need to do to upgrade. The new big changes are as follows:
-        </p>
-        <p>
-        <ul>
-            <li>Left and right column pinning with <a href="../angular-grid-pinning/index.php">updated documentation</a>. </li>
-            <li>Multiple levels of column grouping with <a href="../angular-grid-grouping-headers/index.php">updated documentation</a>. </li>
-            <li>Pivoting is now called 'row grouping' (it wasn't really pivoting, I will be implementing proper pivoting in the future and needed to remove the confusion!!).</li>
-        </ul>
-        </p>
-        <p>
-            The above three things are small in a list, however they had massive implications and required a very large coding effort.
-            I've spent the last few days
-            fully testing everything, making sure all the above work in all the scenarios. If you are looking at the source
-            code, the biggest difference you will see is around the ColumnController which is almost completely rewritten.
-            Now the columns are stored in tree structures instead of lists (to support multi levels of grouping).
-        </p>
-        <p>
-            This release has some minor breaking changes, especially if you are currently grouping headers or pivoting
-            (now called grouping rows). I tried to program the grid so if you are using old properties, it will hint
-            to the console what you need to change.
-        </p>
-        <p>
-            I have done massive amounts of regression testing and reviewing of the documentation.
-            If I missed anything, please let me know.
-        </p>
-    </div>
-
-
-</div>
-
-<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 250px;">
-        <img style="width: 240px;" src="https://images.rapgenius.com/f0ee868d0cca75ec68f62d2b9bf57b16.748x431x1.png"/>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; float: left;">
-            2016 will be the year ag-Grid takes over
-        </div>
-        <div style="float: right;  color: #767676;">
-            4th January 2016
-        </div>
-    </div>
-
-    <div style="color: #767676; padding-top: 20px;">
-        My 9 week holiday was great. I spent the last two months travelling India, Myanmar and Ireland (where I am from!).
-        I am now back in London and am unemployed. Finally I can get some decent 'grid time'.
-        So in the coming weeks you can expect weekly release with lots of new features
-        morphing ag-Grid into the best Javascript grid in the world.
-    </div>
-
-
-</div>-->
-
-<!--<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-    <div style="float: left; width: 240px;">
-        <div style="border: 1px solid grey; text-align: center; margin-right: 10px; padding: 10px;">
-            Sponsor
-        </div>
-    </div>
-    <div style="color: #767676;">
-        This website is receiving multiple thousands of visits per day and growing.
-        Would you like to sponsor and / or advertise here?
-    </div>
-</div>-->
-
-<!--
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
-
-    <div style="float: left; width: 240px;">
-        <a href="ag-grid-in-2016/">
-            <img src="images/agGridDaily.png"/>
-        </a>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="ag-grid-in-2016/">
-                Stepping it Up, ag-Grid Focuses on Agnostic in 2016
-            </a>
-        </div>
-        <div style="float: right;  color: #767676;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-    </div>
-    <div style="color: #767676">
-        Self Published
-    </div>
-    <div style="color: #767676; padding-top: 20px;">
-        Article taking a step back from ag-Grid and sharing the plans for ag-Grid and 2016.
-    </div>
-
-</div>
--->
-
-<div style="text-align: center; margin-top: 50px;">
+<div style="text-align: center; float: right; margin-top: 20px;">
     <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
 
         <!-- Begin MailChimp Signup Form -->
@@ -438,14 +138,29 @@ include 'documentation_header.php';
     </div>
 </div>
 
+<!--
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
-<!--<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
--->
+    <div style="float: left; width: 240px;">
+        <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
+            <img src="../images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
+                Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
+            </a>
+        </div>
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Supporting all the frameworks and build systems took days of research and practicing.
+        This article goes through lessons learnt and how to structure a project while supporting
+        all the frameworks and build systems around today.
+    </div>
+
+</div>-->
+
 
 
 <?php include 'documentation_footer.php';?>

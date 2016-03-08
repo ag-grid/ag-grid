@@ -49,18 +49,18 @@
 }
 
 .sidebarLink {
-    font-weight: bold;
-    padding: 4px;
-    border-bottom: 1px solid lightgrey;
+    padding: 2px 4px 2px 4px;
+    /*border-bottom: 1px solid #e8e8e8;*/
     display: block;
+    color: #888;
 }
 
 .sidebarLinkSelected {
-    font-weight: bold;
-    padding: 4px;
-    border-bottom: 1px solid lightgrey;
+    padding: 2px 4px 2px 4px;
+    /*border-bottom: 1px solid #e8e8e8;*/
     display: block;
-    background-color: aliceblue;
+    background-color: #eee;
+    color: #333;
 }
 
 h4 {

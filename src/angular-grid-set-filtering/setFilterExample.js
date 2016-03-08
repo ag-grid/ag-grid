@@ -1,5 +1,8 @@
+var irishAthletes = ['John Joe Nevin','Katie Taylor','Paddy Barnes','Kenny Egan','Darren Sutherland', 'Margaret Thatcher', 'Tony Blair', 'Ronald Regan', 'Barack Obama'];
+
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'set',
+        filterParams: { cellHeight: 20, values: irishAthletes} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
