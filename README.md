@@ -1,8 +1,14 @@
 
-ag-Grid Angular 2 Component
+ag-Grid-Enterprise
 ==============
 
-This project contains the Angular 2 Component for use with ag-Grid.
+This project contains ag-Grid-Enterprise features
+
+This is not free software, this software is covered by copyright and to use you need a commercial license.
+
+Please see files:
+LICENSE.md
+SUPPOR_AND_MAINTENANCE.md
 
 Building
 ==============
@@ -10,4 +16,4 @@ Building
 To build:
 - `npm install`
 - `npm install gulp -g`
-- `gulp`
+- `gulp` or `gulp release`
