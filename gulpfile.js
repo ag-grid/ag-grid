@@ -11,7 +11,13 @@ gulp.task('default', tscTask);
 
 function tscTask() {
     var tsResult = gulp
-        .src('src/**/*.ts')
+        .src([
+            // this first file should not be needed, it's a hack while Angular2 fixes itself.
+            // if not included, then we get error "Cannot find name 'Promise'."
+            //
+            'node_modules/angular2/typings/browser.d.ts',
+            'src/**/*.ts'
+        ])
         .pipe(gulpTypescript({
             typescript: typescript,
             module: 'commonjs',

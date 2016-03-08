@@ -1,5 +1,4 @@
-// ag-grid-ng2 v4.0.0
-/// <reference path="../node_modules/angular2/typings/browser.d.ts" />
+// ag-grid-ng2 v4.0.1
 import { ElementRef } from 'angular2/core';
 export declare class AgGridNg2 {
     private elementDef;

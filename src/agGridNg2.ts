@@ -1,4 +1,3 @@
-/// <reference path="../node_modules/angular2/typings/browser.d.ts" />
 
 import {Grid, GridOptions, GridApi, ColumnController, ColumnApi, ComponentUtil, Events} from 'ag-grid/main';
 import {Component, View, EventEmitter, ViewEncapsulation, ElementRef} from 'angular2/core';
