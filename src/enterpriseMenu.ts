@@ -167,8 +167,12 @@ export class EnterpriseMenu {
     }
 
     public destroy(): void {
-        this.columnSelectPanel.destroy();
-        this.mainMenuList.destroy();
+        if (this.columnSelectPanel) {
+            this.columnSelectPanel.destroy();
+        }
+        if (this.mainMenuList) {
+            this.mainMenuList.destroy();
+        }
     }
 
     private createPinnedSubMenu(): MenuList {
