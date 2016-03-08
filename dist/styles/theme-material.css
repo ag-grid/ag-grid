@@ -88,20 +88,20 @@
 .ag-material .ag-root .ag-body .ag-cell {
   outline: none;
   padding: 16px 24px;
+  font-weight: 500;
 }
-.ag-material .ag-root .ag-body .ag-selection-checkbox,
-.ag-material .ag-root .ag-header .ag-selection-checkbox {
-  margin: -2px -6px;
+.ag-material .ag-root .ag-selection-checkbox {
+  margin: -1px 0px;
   cursor: pointer;
+  height: 18px;
+  width: 18px;
 }
-.ag-material .ag-root .ag-body .ag-selection-checkbox:focus,
-.ag-material .ag-root .ag-header .ag-selection-checkbox:focus {
+.ag-material .ag-root .ag-selection-checkbox:focus {
   outline: none;
 }
-.ag-material .ag-root .ag-body .ag-selection-checkbox:before,
-.ag-material .ag-root .ag-header .ag-selection-checkbox:before {
-  width: 20px;
-  height: 20px;
+.ag-material .ag-root .ag-selection-checkbox:before {
+  width: 18px;
+  height: 18px;
   border: 2px solid #757575;
   -webkit-border-radius: 2px;
   border-radius: 2px;
@@ -117,13 +117,11 @@
   -ms-transition: 0.2s all ease-in;
   transition: 0.2s all ease-in;
 }
-.ag-material .ag-root .ag-body .ag-selection-checkbox:checked:before,
-.ag-material .ag-root .ag-header .ag-selection-checkbox:checked:before {
+.ag-material .ag-root .ag-selection-checkbox:checked:before {
   background: #ff4081;
   border-color: #ff4081;
 }
-.ag-material .ag-root .ag-body .ag-selection-checkbox:checked:after,
-.ag-material .ag-root .ag-header .ag-selection-checkbox:checked:after {
+.ag-material .ag-root .ag-selection-checkbox:checked:after {
   border-bottom: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom-left-radius: 1px;
@@ -132,9 +130,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  width: 13px;
+  width: 12px;
   height: 6px;
-  margin: 5px 4px;
+  margin: 5px 3px;
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   -o-transform: rotate(-45deg);
