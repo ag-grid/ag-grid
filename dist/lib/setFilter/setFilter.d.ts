@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.0
+// ag-grid-enterprise v4.0.1
 import { Filter } from "ag-grid/main";
 export declare class SetFilter implements Filter {
     private eGui;

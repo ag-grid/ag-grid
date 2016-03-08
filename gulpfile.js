@@ -69,7 +69,7 @@ function webpackTask(minify, styles) {
     if (minify) {
         plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
     }
-    var mainFile = styles ? './main-with-styles.js' : './main.js';
+    var mainFile = styles ? './webpack-with-styles.js' : './webpack.js';
 
     var fileName = 'ag-grid-enterprise';
     fileName += minify ? '.min' : '';

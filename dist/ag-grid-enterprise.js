@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.0
+// ag-grid-enterprise v4.0.1
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -55,23 +55,27 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
 	__webpack_require__(1);
 
-	var populateClientExports = __webpack_require__(3).populateClientExports;
+	// add in exports for ag-Grid-Enterprise
+	var populateClientExports = __webpack_require__(95).populateClientExports;
 	populateClientExports(exports);
 
-	__webpack_require__(95);
-	__webpack_require__(99);
-	__webpack_require__(101);
-	__webpack_require__(103);
+	// also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
+	var populateStandardExports = __webpack_require__(3).populateClientExports;
+	populateStandardExports(exports);
+
+	__webpack_require__(96);
+	__webpack_require__(100);
+	__webpack_require__(102);
+	__webpack_require__(104);
 
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var main_1 = __webpack_require__(2);
 	var toolPanel_1 = __webpack_require__(78);
 	var enterpriseMenu_1 = __webpack_require__(83);
@@ -95,8 +99,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	////////// MAKE SURE YOU EDIT main-webpack.js IF EDITING THIS FILE!!!
-
 	var populateClientExports = __webpack_require__(3).populateClientExports;
 	populateClientExports(exports);
 
@@ -15847,7 +15849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15904,7 +15906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16045,7 +16047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16159,7 +16161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16180,7 +16182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16291,7 +16293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16705,7 +16707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16972,7 +16974,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17261,7 +17263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17602,7 +17604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -17769,7 +17771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17923,7 +17925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18092,7 +18094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18136,7 +18138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var main_1 = __webpack_require__(2);
 	var setFilterModel_1 = __webpack_require__(92);
 	var template = '<div>' +
@@ -18491,7 +18493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var main_1 = __webpack_require__(2);
 	var SetFilterModel = (function () {
 	    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters) {
@@ -18711,7 +18713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -18877,7 +18879,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v4.0.0
+	// ag-grid-enterprise v4.0.1
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -18924,13 +18926,55 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// ag-grid-enterprise v4.0.1
+	var columnSelectPanel_1 = __webpack_require__(79);
+	var renderedColumn_1 = __webpack_require__(82);
+	var renderedGroup_1 = __webpack_require__(80);
+	var aggregationStage_1 = __webpack_require__(89);
+	var groupStage_1 = __webpack_require__(88);
+	var setFilter_1 = __webpack_require__(91);
+	var setFilterModel_1 = __webpack_require__(92);
+	var statusBar_1 = __webpack_require__(93);
+	var statusItem_1 = __webpack_require__(94);
+	var cContextMenu_1 = __webpack_require__(87);
+	var clipboardService_1 = __webpack_require__(86);
+	var enterpriseBoot_1 = __webpack_require__(90);
+	var enterpriseMenu_1 = __webpack_require__(83);
+	var rangeController_1 = __webpack_require__(85);
+	var rowGroupPanel_1 = __webpack_require__(84);
+	var toolPanel_1 = __webpack_require__(78);
+	function populateClientExports(exports) {
+	    exports.ColumnSelectPanel = columnSelectPanel_1.ColumnSelectPanel;
+	    exports.RenderedColumn = renderedColumn_1.RenderedColumn;
+	    exports.RenderedGroup = renderedGroup_1.RenderedGroup;
+	    exports.AggregationStage = aggregationStage_1.AggregationStage;
+	    exports.GroupStage = groupStage_1.GroupStage;
+	    exports.SetFilter = setFilter_1.SetFilter;
+	    exports.SetFilterModel = setFilterModel_1.SetFilterModel;
+	    exports.StatusBar = statusBar_1.StatusBar;
+	    exports.StatusItem = statusItem_1.StatusItem;
+	    exports.ContextMenuFactory = cContextMenu_1.ContextMenuFactory;
+	    exports.ClipboardService = clipboardService_1.ClipboardService;
+	    exports.EnterpriseBoot = enterpriseBoot_1.EnterpriseBoot;
+	    exports.EnterpriseMenu = enterpriseMenu_1.EnterpriseMenu;
+	    exports.RangeController = rangeController_1.RangeController;
+	    exports.RowGroupPanel = rowGroupPanel_1.RowGroupPanel;
+	    exports.ToolPanel = toolPanel_1.ToolPanel;
+	}
+	exports.populateClientExports = populateClientExports;
+
+
+/***/ },
+/* 96 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(96);
+	var content = __webpack_require__(97);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(98)(content, {});
+	var update = __webpack_require__(99)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -18947,10 +18991,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(97)();
+	exports = module.exports = __webpack_require__(98)();
 	// imports
 
 
@@ -18961,7 +19005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
+/* 98 */
 /***/ function(module, exports) {
 
 	/*
@@ -19017,7 +19061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 98 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -19271,16 +19315,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(100);
+	var content = __webpack_require__(101);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(98)(content, {});
+	var update = __webpack_require__(99)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -19297,10 +19341,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(97)();
+	exports = module.exports = __webpack_require__(98)();
 	// imports
 
 
@@ -19311,16 +19355,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(102);
+	var content = __webpack_require__(103);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(98)(content, {});
+	var update = __webpack_require__(99)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -19337,10 +19381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(97)();
+	exports = module.exports = __webpack_require__(98)();
 	// imports
 
 
@@ -19351,16 +19395,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(104);
+	var content = __webpack_require__(105);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(98)(content, {});
+	var update = __webpack_require__(99)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -19377,10 +19421,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(97)();
+	exports = module.exports = __webpack_require__(98)();
 	// imports
 
 
