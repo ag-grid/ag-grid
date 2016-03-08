@@ -135,6 +135,10 @@ export class GridCore {
 
     private createSouthPanel(): HTMLElement {
 
+        if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {
+            console.warn('ag-Grid: status bar is only available in ag-Grid-Enterprise');
+        }
+
         var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
         var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination() && !this.gridOptionsWrapper.isForPrint();
 
@@ -201,7 +205,7 @@ export class GridCore {
     }
 
     public showToolPanel(show: any) {
-        if (!this.toolPanel) {
+        if (show && !this.toolPanel) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             this.toolPanelShowing = false;
             return;

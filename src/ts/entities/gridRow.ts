@@ -30,6 +30,10 @@ export class GridRow {
             && this.floating === otherSelection.floating;
     }
 
+    public toString(): string {
+        return `rowIndex = ${this.rowIndex}, floating = ${this.floating}`;
+    }
+
     public getGridCell(column: Column): GridCell {
         return new GridCell(this.rowIndex, this.floating, column);
     }

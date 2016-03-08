@@ -37,9 +37,12 @@ export class MouseEventService {
         var floatingTopRect = this.gridPanel.getFloatingTopClientRect();
         var floatingBottomRect = this.gridPanel.getFloatingBottomClientRect();
 
-        if (floatingTopRect.bottom >= mouseEvent.clientY) {
+        var floatingTopRowsExist = !this.floatingRowModel.isEmpty(Constants.FLOATING_TOP);
+        var floatingBottomRowsExist = !this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM);
+
+        if (floatingTopRowsExist && floatingTopRect.bottom >= mouseEvent.clientY) {
             return Constants.FLOATING_TOP;
-        } else if (floatingBottomRect.top <= mouseEvent.clientY) {
+        } else if (floatingBottomRowsExist && floatingBottomRect.top <= mouseEvent.clientY) {
             return Constants.FLOATING_BOTTOM;
         } else {
             return null;
