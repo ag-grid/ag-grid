@@ -180,7 +180,7 @@
                             £250
                         </div>
                         <div>
-                            / developer
+                            / developer per year
                         </div>
                     </td>
                 </tr>
