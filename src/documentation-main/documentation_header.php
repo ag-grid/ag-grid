@@ -190,13 +190,7 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping-headers/index.php">Grouping Columns</a>
                 <?php } ?>
 
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
-                <?php } ?>
-
-                <?php if ($key == "TreeTree Data") { ?>
+                <?php if ($key == "Tree Data") { ?>
                     <span class="sidebarLinkSelected">Tree Data</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-tree/index.php">Tree Data</a>
@@ -346,18 +340,15 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-for-print/index.php">For Print</a>
                 <?php } ?>
 
-                <?php if ($version=='latest') { ?>
-                    <?php if ($key == "Change Log") { ?>
-                        <span class="sidebarLinkSelected">Change Log</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>changeLog.php">Change Log</a>
-                    <?php } ?>
-                    <a class="sidebarLink" href="/archive/">Archive Docs</a>
-                <?php } ?>
-
                 <h4>
                     Enterprise Features
                 </h4>
+
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
+                <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>
                     <span class="sidebarLinkSelected">Tool Panel</span>
@@ -431,6 +422,19 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Intermediate</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-tutorials/index.php">Intermediate</a>
+                <?php } ?>
+
+                <?php if ($version=='latest') { ?>
+                    <h4>
+                        Misc
+                    </h4>
+
+                    <?php if ($key == "Change Log") { ?>
+                        <span class="sidebarLinkSelected">Change Log</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>change-log/index.php">Change Log</a>
+                    <?php } ?>
+                    <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 <?php } ?>
 
             </div>

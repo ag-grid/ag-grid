@@ -55,6 +55,11 @@
     color: #888;
 }
 
+.sidebarLink:hover {
+    text-decoration: none;
+    color: #333;
+}
+
 .sidebarLinkSelected {
     padding: 2px 4px 2px 4px;
     /*border-bottom: 1px solid #e8e8e8;*/

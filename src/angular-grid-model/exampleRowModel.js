@@ -15,8 +15,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enableFilter: true,
-    enableSorting: true,
-    showToolPanel: true
+    enableSorting: true
 };
 
 function onBtForEachNode() {

@@ -1,14 +1,27 @@
 <?php
 $key = "index";
-$pageTitle = "ag-Grid Angular Grid Documentation";
-$pageDescription = "Introduction page of documentation for ag-Grid Angular Grid";
-$pageKeyboards = "ag-Grid AngularJS Angular Grid Documentation";
+$pageTitle = "ag-Grid JavaScript Grid Documentation";
+$pageDescription = "Introduction page of documentation for ag-Grid JavaScript Grid";
+$pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 include 'documentation_header.php';
 ?>
 
 <h2>
     Introduction
 </h2>
+
+<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin-left: 10px; width: 260px; float: right;">
+<!--    <img src="../images/agGridDaily.png"/> -->
+    <div style="font-weight: bold; text-align: center;">News 9th March 2016</div>
+
+    <div style="margin-top: 10px">Version 4.0.x released</div>
+    <p>
+        Check <a href="../change-log/index.php">change log</a> for what's in this release.
+    </p>
+    <p>
+        Check <a href="../ag-grid-goes-commercial/">ag-Grid Goes Commercial</a> media release.
+    </p>
+</div>
 
 <p>
     ag-Grid is an Enterprise Grade Javascript Data Grid.

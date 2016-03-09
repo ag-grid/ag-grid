@@ -80,12 +80,59 @@ import {Grid} from 'ag-grid/main';
 
     <p>Most single page web-apps use CommonJS and Bundling, so will use the CommonJS version of ag-Grid.</p>
 
-    <h3>Additional Projects</h3>
+    <h3>Referencing ag-Grid-Enterprise Files</h3>
+
+    <p>
+        ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
+    </p>
+
+    <h4>Self Contained Bundle</h4>
+
+    <p>Do <b>not</b> include both ag-Grid and ag-Grid-Enterprise self contained bundles. The ag-Grid-Enterprise
+    contains ag-Grid (that's the nature of Webpack bundles, they have no external dependencies).</p>
+
+    <p>
+        Reference the ag-Grid-Enterprise bundle as follows:
+    </p>
+
+    <pre>&lt;script src="pathToGrid/ag-grid-enterprise.js">&lt;/script></pre>
+
+    <p>
+        Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
+    <ul>
+        <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
+        <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
+        <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
+        <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
+    </ul>
+    </p>
+
+    <p>Even if you are using React, Angular 1 or 2 or Web Components, the above is all you need to do.
+    Any grid you create will be an enterprise grid once you load the library.</p>
+
+    <h4>CommonJS</h4>
+
+    <p>
+        If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need to
+        execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such that the
+        enterprise features are available when you use ag-Grid.
+    </p>
+
+    <pre>// ECMA 5 - using nodes require() method
+var AgGrid = require('ag-grid');
+require('ag-grid-enterprise');
+
+// ECMA 6 - using the system import method
+import {Grid} from 'ag-grid/main';
+import 'ag-grid-enterprise/main';
+</pre>
+
+    <h2>Additional Framework Projects</h2>
 
     <p>If using React or Angular 2, you will also need to reference the additional ag-Grid project for that
     framework. Details are provided the documentation for those frameworks.</p>
 
-    <h3>Bundled vs CommonJS & Frameworks Summary</h3>
+    <h4>Bundled vs CommonJS & Frameworks Summary</h4>
 
     <p>
         If you want to use the Angular 2 or React component of ag-Grid, then you have to
@@ -182,7 +229,7 @@ import {Grid} from 'ag-grid/main';
     </p>
     <p>
         So eg, the example has this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js?ignore=notused18"><br/></pre>
+    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js?ignore=notused19"><br/></pre>
     But all you need is this:<br/>
     <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
     </p>

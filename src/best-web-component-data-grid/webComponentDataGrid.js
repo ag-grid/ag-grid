@@ -210,7 +210,7 @@
     function modelUpdated() {
         var model = gridOptions.api.getModel();
         var totalRows = gridOptions.rowData.length;
-        var processedRows = model.getVirtualRowCount();
+        var processedRows = model.getRowCount();
         var eSpan = document.querySelector('#rowCount');
         eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }
@@ -313,8 +313,7 @@
         '<b>TITLE_NAME</b>' +
         '</div>';
 
-    function SkillFilter(params) {
-    }
+    function SkillFilter() {}
 
     SkillFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;

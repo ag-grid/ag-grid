@@ -1,12 +1,9 @@
 
         </div>
 
-        <hr/>
-
-        <footer style="float: right; margin-top: 20px;" class="license">
-            © ag-Grid Ltd 2015-2016
-        </footer>
     </div>
+
+    <?php include_once("../footer.php"); ?>
 
 </body>
 

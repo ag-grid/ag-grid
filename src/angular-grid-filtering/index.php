@@ -374,7 +374,7 @@ columnDefinition = {
     </p>
 
     <p>
-        Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>.
+        (Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
     <show-example example="exampleFilterApi"></show-example>
@@ -401,7 +401,7 @@ columnDefinition = {
     </p>
 
     <p>
-        Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>.
+        (Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
     <show-example example="exampleFilterModel"></show-example>

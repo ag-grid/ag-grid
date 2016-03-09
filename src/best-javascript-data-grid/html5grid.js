@@ -170,8 +170,6 @@
 
         addQuickFilterListener();
         onBtBringGridBack();
-
-        gridOptions.api.setRowData(createRowData());
     });
 
     function onBtBringGridBack() {
@@ -181,6 +179,7 @@
             btBringGridBack.disabled = true;
             btDestroyGrid.disabled = false;
         }
+        gridOptions.api.setRowData(createRowData());
     }
 
     function onBtDestroyGrid() {

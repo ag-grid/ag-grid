@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -63,6 +61,9 @@
                 consideration. Discussions had with enterprise users will also help dictate the ag-Grid
                 road-map.
             </p>
+
+            <div style="margin: 30px; padding: 10px; border: 1px solid grey">Currently the members forum is open to everyone. In the coming days this will be restricted
+                to members only. To become a member, your company must be paying for an enterprise license.</div>
 
             <h2>Support Channels</h2>
 

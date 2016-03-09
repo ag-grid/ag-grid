@@ -72,7 +72,7 @@
                         ag-Grid is a JavaScript data grid for building professional web
                         applications.
                         Your user's experience depends on your choice of data grid.
-                        Allow your users an enterprise experience, give them ag-Grid.
+                        Give your users an enterprise experience, give them ag-Grid.
                     </div>
                 </div>
                 <div class="col-md-2"></div>
@@ -84,8 +84,8 @@
 
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-3" style="text-align: center;">
-                    Choosing a JavaScript data grid component and choosing a JavaScript framework should be separate choices.
-                    'ag' stands for <b>Ag</b>nostic - ag-Grid is not bound to any framework
+                    'ag' stands for <b>Ag</b>nostic - not bound to any framework
+                    but integrates with many
                 </div>
 
                 <div class="col-md-9">

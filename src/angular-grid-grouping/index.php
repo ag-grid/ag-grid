@@ -11,13 +11,19 @@ include '../documentation-main/documentation_header.php';
     <h2>Grouping Rows and Aggregation</h2>
 
     <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        Grouping rows and aggregation is available in ag-Grid Enterprise.
+    </p>
+
+    <p>
         To group, mark the column definitions you want to group by with a rowGroupIndex.
         There is no limit on the number of columns that can be used.
         For example, the following groups by country column, then language column:
-        <code><pre>gridOptions.columnDefs = [
+        <pre>gridOptions.columnDefs = [
     {field: 'country', rowGroupIndex: 0},
     {field: 'language', rowGroupIndex: 1}
-];</pre></code>
+];</pre>
     </p>
 
     <h3>Grouping Auto Column</h3>

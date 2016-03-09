@@ -86,6 +86,11 @@ include '../documentation-main/documentation_header.php';
         possible for the grid to know the entire set of values as they reside on the server.
     </p>
 
+    <p>
+        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
+        ag-Grid-Enterprise is not required for pagination)
+    </p>
+
     <show-example example="pagingServerSide"></show-example>
 
 </div>

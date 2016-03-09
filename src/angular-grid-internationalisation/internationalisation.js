@@ -24,6 +24,8 @@ var gridOptions = {
     showToolPanel: true,
     rowModelType: 'pagination',
     rowGroupPanelShow: 'always',
+    enableStatusBar: true,
+    enableRangeSelection: true,
     localeText: {
         // for filter panel
         page: 'daPage',

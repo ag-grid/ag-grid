@@ -22,6 +22,33 @@ include('mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
+        <a href="ag-grid-goes-commercial/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="ag-grid-goes-commercial/">
+                ag-Grid Goes Commercial
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            9th March 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Press release announcing version 4 of ag-Grid, the first version of ag-Grid to have both free
+        (ag-Grid) and commercial (ag-Grid-Enterprise) version of the grid.
+    </div>
+
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+
+    <div style="float: left; width: 240px;">
         <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
             <img src="images/agGridDaily.png"/>
         </a>

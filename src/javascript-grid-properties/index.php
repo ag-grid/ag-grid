@@ -322,6 +322,11 @@ include '../documentation-main/documentation_header.php';
             <td>When true, if you set new data into the grid and have groups open, the grid will keep
                 groups open if they exist in the new dataset.</td>
         </tr>
+        <tr>
+            <th>enableStatusBar</th>
+            <td>When true, the status bar will be displayed at the bottom of the grid.</td>
+        </tr>
+
     </table>
 </div>
 

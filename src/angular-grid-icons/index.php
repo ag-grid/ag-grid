@@ -75,6 +75,10 @@ gridOptions.icons = {
         and the header icons use a mix of Font Awesome and strings.
     </p>
 
+    <p>
+        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
+    </p>
+
     <show-example example="icons"></show-example>
 </div>
 

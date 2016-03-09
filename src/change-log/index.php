@@ -3,60 +3,92 @@ $key = "Change Log";
 $pageTitle = "ag-Grid Angular Grid Change Log";
 $pageDescription = "ag-Grid change log. Details the items that have change between each release.";
 $pageKeyboards = "ag-Grid Angular Grid Change Log";
-include 'documentation_header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div style="padding: 20px;">
 
-    <h3>Version 3.4.0</h3>
+    <h3>Version 4.0.0</h3>
+
+    <!-- NEW FEATURES -->
+    <h4>New Features</h4>
+
+    <li>The grid has moved to Enterprise vs Free.</li>
+
+    <li>Enterprise Feature: Enhanced enterprise column menu, in addition to filtering there is now a menu and also column management.</li>
+
+    <li>Enterprise Feature: Row group panel on top of grid, so you can drag columns to here to group.</li>
+
+    <li>Enterprise Feature: You can now drag columns from the tool panel into the grid to make them visible.</li>
+
+    <li>Enterprise Feature: Row grouping and aggregation are no longer in the tool panel as they can be done
+    bia column menu (grouping and aggregation) or dragging to the row group panel (grouping).</li>
+
+    <li>Enterprise Feature: Context Menu</li>
+
+    <li>Enterprise Feature: Range Selection</li>
+    <li>Enterprise Feature: Enterprise column menu</li>
+    <li>Enterprise Feature: Clipboard interaction</li>
+    <li>Enterprise Feature: Status bar</li>
+
+    <li>Tool panel, set filter, row grouping and aggregation are now only available in Enterprise version
+    of ag-Grid.</li>
+
+    <!-- ENHANCEMENTS -->
+    <h4>Enhancements & Changes</h4>
+
+    <li>Performance improvements - no longer attaching listeners to each cell, so when scrolling, the dom is not
+    been ripped up with adding and removing listeners. Instead the grid has one listener (eg for mouse click),
+    and when the click happens, the grid then works out which cell it was for.</li>
 
     <li>rowNode is now a class object with methods (previously it only have properties, a simple data object).
         Methods now include: setSelected(), isSelected(), addEventListener(), removeEventListener(),
         resetQuickFilterAggregateText(), deptFirstSearch(callback).
-<!--        See <a href="./angular-grid-model/index.php">Row
-            Model</a> page for details.
--->    </li>
-
-    <li>Event rowDeselected gone, now event rowSelected gets fired for both selected and deselected. Check node state
-        to see if row is selected or not.</li>
-
-    <li>Event selectionChanged no longer contains the selected rows or nodes. Use the API to look these up if needed.
-    Preparing these lists took CPU time, so it's best they are only prepared if needed.</li>
-
-    <li>Concept of 'suppressEvents' was dumped for row selection. No other event event typ had this feature, and it
-    was out of sync with out web components work in general. If you don't want to be notified of an event, then remove
-    your event listener.</li>
+    </li>
 
     <li>RowNode now has method 'setSelected'. This should now be used for row selection over the gridApi.selectXXXX() methods.</li>
 
     <li>api.getSelectedNodesById gone, use api.getSelectedNodes instead</li>
 
+    <li>Event rowDeselected gone, now event rowSelected gets fired for both selected and deselected. Check node state
+        to see if row is selected or not.</li>
+
+    <li>Event selectionChanged no longer contains the selected rows or nodes. Use the API to look these up if needed.
+        Preparing these lists took CPU time, so it's best they are only prepared if needed.</li>
+
+    <li>Concept of 'suppressEvents' was dumped for row selection. No other event event type had this feature, and it
+        was out of sync with how web components work in general. If you don't want to be notified of an event, then remove
+        your event listener.</li>
+
     <li>api.addVirtualRowListener is gone. Instead for row selection/deselection listening, use node.addEventListener(),
         and for virtual row removed, use api.addRenderedRowListener()</li>
 
-    <li>New API methods: getFirstRenderedRow() getFirstVirtualRenderedRow()</li>
+    <li>New API methods: getFirstRenderedRow() and getLastRenderedRow(), to know the first and last rows in the DOM
+        (the grid only renders enough rows (plus a buffer) to show what's visible for performance reasons).</li>
 
-    <li>Took out virtual dom. It only made an improvement on IE, and now that we are using delayed scrolling, IE is working fast enough now.</li>
+    <li>Introduced property modelType, set to 'pagination' or 'virtual' for pagination and virtual pagination.
+        This replaces virtualPaging, as virtual was a boolean when in fact we need to distinctly model three modes
+        of operation: Normal, Pagination and Virtual Pagination.</li>
+
+    <li>rowsAlreadyGrouped replaced with getNodeChildDetails. If you are providing already grouped data to the grid,
+    see the new section 'Tree Data' on how this is now done. It had to change because Node is now an object with
+    functinality, so you can't just pass in JSON an expect them to be treated like nodes.</li>
+
+    <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
+
+    <li>Floating rows can now be selected and navigated.</li>
+
+    <li>processRowPostCreate callback, so you can process the grid row after it is created. Handy for adding attributes or other stuff to the row after create.</li>
+
+    <li>Now CSV export allows you to format cells on their way out. Handy if you want to import into Excel and need to make dates, for example, into Excel formatted dates.</li>
+
+    <li>New colDef properties suppressAggregation and suppressRowGroup for suppressing aggregation and row group for particular columns</li>
 
     <li>Added new property: suppressFieldDotNotation</li>
 
     <li>Took out property groupHideGroupColumns, if you don't want a column to be shown, just hide it. This feature was not necessary and caused complexity in the design.</li>
 
     <li>Removed api.refreshRowGroup() -> it wasn't documented, and I can't remember why I put it in, refreshing the grid has the same effect.</li>
-
-    <li>Introduced property modelType, set to 'pagination' or 'virtual' for pagination and virtual pagination. This replaces virtualPaging, as virtual was a boolean when in fact we need to distinctly model three modes of operation: Normal, Pagination and Virtual Pagination.</li>
-
-    <li>rowsAlreadyGrouped replaced with getNodeChildDetails</li>
-
-    <li>New features: Enterprise menu, new column management via menu and sidebar.</li>
-
-    <li>Toolpanel gone. Replaced with enterprise features.</li>
-
-    <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
-
-    <li>Bug fix: Text filter 'ends with' was not working correctly if search string appeared twice in the text.</li>
-
-    <li>Buf fix: forPrint was occasionally given 'Uncaught TypeError: Cannot read property 'appendChild' of undefined'. now fixed. </li>
 
     <li>api.getValue(colKey, node) replaces api.getValue(colDef, node, data), the colDef and data were 'old design', newer method works much better.</li>
 
@@ -66,21 +98,25 @@ include 'documentation_header.php';
 
     <li>setFocusedCell(rowIndex, colId) is now setFocusedCell(rowIndex, colKey, floating).</li>
 
-    <li>Floating rows can now be selected and navigated.</li>
+    <!-- BUG FIXES -->
+    <h4>Bug Fixes</h4>
 
-    <li>Next feature: Context Menu</li>
+    <li>Text filter 'ends with' was not working correctly if search string appeared twice in the text.</li>
 
-    <li>New feature: Range Selection</li>
-    <li>New feature: Enterprise column menu</li>
-    <li>New feature: Clipboard interaction</li>
+    <li>forPrint was occasionally given 'Uncaught TypeError: Cannot read property 'appendChild' of undefined'. now fixed. </li>
 
-    <li>New feature: processRowPostCreate callback, so you can process the grid row after it is created. Handy for adding attributes or other stuff to the row after create.</li>
+    <!-- NO VIRTUAL DOM -->
+    <h4>RIP Virtual DOM</h4>
 
-    <li>New feature: Now CSV export allows you to format cells on their way out. Handy if you want to import into Excel and need to make dates, for example, into Excel formatted dates.</li>
+    Took out virtual dom. This was an implementation detail, no change in how you interface with the grid.
+    It only made an improvement on IE, and now that we are using delayed scrolling, IE is
+        working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
+        it's work very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
+        design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
+        you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
 
-    <li>New colDef properties suppressAggregation and suppressRowGroup for suppressing aggregation and row group for particular columns</li>
 
-    <li>New feature: Status Bar</li>
+
 
     <h3>Version 3.3.3</h3>
     <li>Bug fix: Pinned rows were not colored correctly</li>
@@ -399,4 +435,4 @@ include 'documentation_header.php';
 
 </div>
 
-<?php include 'documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php';?>

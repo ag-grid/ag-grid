@@ -99,6 +99,11 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         When this happens, the datasource is called again with the new filtering options.
     </p>
 
+    <p>
+        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
+        ag-Grid-Enterprise is not required for virtual paging)
+    </p>
+
     <show-example example="virtualPagingServerSide"></show-example>
 
 </div>

@@ -76,8 +76,8 @@
             </h2>
 
             <p>
-                If you wish to use ag-Grid-Enterprise for a non-profit project, then you can use ag-Grid-Enterprise
-                for free. All we ask in return is the following:
+                If you wish to use ag-Grid-Enterprise for a non-profit project or for educational purposes,
+                then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
                 <ul>
                     <li>
                         If you are hosting ag-Grid-Enterprise on a website, you provide a link back to the ag-Grid website.
