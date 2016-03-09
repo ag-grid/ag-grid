@@ -35,7 +35,7 @@ It is the customers responsibility that raised support tickets regarding ag-Grid
 to receive help on related matters. In other words, ag-Grid support should not be used for general
 Javascript help or help using other frameworks.
 
-It is teh customers responsibility that the support tickets are raised by aptly trained individuals, such that the cause of the
+It is the customers responsibility that the support tickets are raised by aptly trained individuals, such that the cause of the
 issue is not due to inexperience of the raiser. In other words, the ticket should not be due to the 
 the raiser is not proficient enough in Javascript or other related technologies.
 
