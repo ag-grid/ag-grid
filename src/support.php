@@ -33,6 +33,25 @@
         <div class="col-md-12">
 
 
+            <style>
+                .membersForum {
+                    background-color: #090;
+                    padding: 8px;
+                    margin: 10px;
+                    display: inline-block;
+                    font-weight: bold;
+                    border-radius: 10px;
+                    color: #444;
+                    text-decoration: none;
+                }
+            </style>
+
+            <div style="float: right;">
+                <a href="https://www.ag-grid.com/forum/" class="membersForum">
+                    Go to Old Forum
+                </a>
+            </div>
+
             <h2>Free Support</h2>
 
             <p>

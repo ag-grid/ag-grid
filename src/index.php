@@ -12,7 +12,7 @@
 
         <link inline rel="stylesheet" href="dist/bootstrap.css">
         <link inline rel="stylesheet" href="dist/bootstrap-theme.css">
-        <link inline rel="stylesheet" href="dist/font-awesome/css/font-awesome.css">
+<!--        <link inline rel="stylesheet" href="dist/font-awesome/css/font-awesome.css">-->
 <!--        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">-->
         <link inline rel="stylesheet" type="text/css" href="style.css">
 
