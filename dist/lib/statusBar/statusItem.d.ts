@@ -1,5 +1,5 @@
-// ag-grid-enterprise v4.0.1
-import { Component } from 'ag-grid';
+// ag-grid-enterprise v4.0.2
+import { Component } from 'ag-grid/main';
 export declare class StatusItem extends Component {
     private static TEMPLATE;
     private lbValue;

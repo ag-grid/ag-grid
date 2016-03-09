@@ -1,6 +1,6 @@
 import {EventService, Component, Autowired, PostConstruct, Events, Utils as _, Column,
     GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService,
-    CellNavigationService, Bean, Context, GridOptionsWrapper, GridCell} from 'ag-grid';
+    CellNavigationService, Bean, Context, GridOptionsWrapper, GridCell} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 

@@ -1,4 +1,4 @@
-import {PostConstruct, Component, Utils as _} from 'ag-grid';
+import {PostConstruct, Component, Utils as _} from 'ag-grid/main';
 import {RangeController} from "../rangeController";
 
 export class StatusItem extends Component {

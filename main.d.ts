@@ -17,8 +17,6 @@ export * from './dist/lib/cContextMenu';
 export * from './dist/lib/clipboardService';
 export * from './dist/lib/enterpriseBoot';
 export * from './dist/lib/enterpriseMenu';
-export * from './dist/lib/main';
 export * from './dist/lib/rangeController';
 export * from './dist/lib/rowGroupPanel';
 export * from './dist/lib/toolPanel';
-
