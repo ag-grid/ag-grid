@@ -76,7 +76,7 @@
             </h2>
 
             <p>
-                If you wish to use ag-Grid-Enterprise for a non-profit project or for educational purposes,
+                If you wish to use ag-Grid-Enterprise within a non-profit organisation or for educational purposes,
                 then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
                 <ul>
                     <li>
@@ -180,7 +180,7 @@
                             £250
                         </div>
                         <div>
-                            / developer per year
+                            / developer per year*
                         </div>
                     </td>
                 </tr>
@@ -315,6 +315,26 @@
                 </tr>
             </table>
 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                * Developer per Year
+            </h2>
+
+            <p>
+                The commercial license is modelled for enterprise building applications where developers
+                roll from one project to another. The projects change but the technology stack and developer count
+                generally stay the same. If the pricing model does not suit, then get in touch. A tailored
+                license can be provided if your needs do no fit this model.
+            </p>
+            <p>
+                Site wide license and other bulk discounts can be provided. A common pricing model does not exist
+                for this so please get in touch with your requirement to get a quote.
+            </p>
         </div>
     </div>
 
