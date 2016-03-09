@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.2
+// ag-grid-enterprise v4.0.3
 var main_1 = require("ag-grid/main");
 var setFilterModel_1 = require("./setFilterModel");
 var template = '<div>' +

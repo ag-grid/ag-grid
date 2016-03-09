@@ -91,9 +91,9 @@ or a portion thereof within Your Application. You may not redistribute the ag-Gr
 as part of any Application that can be described as a development toolkit or library, an application builder, a 
 website builder a user interface designer, or any application that is intended for use by software, application, 
 or website developers or designers. You may not redistribute any part of the ag-Grid-Enterprise documentation. 
-You may not change or remove the copyright notice from any of the files included in the Sencha SDKs or Modifications.
+You may not change or remove the copyright notice from any of the files included in ag-Grid or Modifications.
 
-UNDER NO CIRCUMSTANCES MAY YOU USE THE SENCHA SDKS FOR AN APPLICATION THAT IS INTENDED FOR SOFTWARE 
+UNDER NO CIRCUMSTANCES MAY YOU USE THE AG-GRID FOR AN APPLICATION THAT IS INTENDED FOR SOFTWARE 
 OR APPLICATION DEVELOPMENT PURPOSES.
 
 You are required to ensure that the ag-Grid-Enterprise is not reused by or with any applications other than those 
@@ -103,7 +103,7 @@ be informed as such.
 
 Alternate versions of the ag-Grid-Enterprise (“GPL Version”) may be licensed under the terms of the GNU General 
 Public License versions 3.0 (“GPL”). If You, or another third party, has, at any time, developed all or any portion 
-of the Application(s) using a GPL Version, You may not combine such work with the Sencha SDKs licensed hereunder, 
+of the Application(s) using a GPL Version, You may not combine such work with the Grid SDKs licensed hereunder, 
 and You must license such application(s) under the terms of the GNU General Public License version 3.
 
 5.TERMINATION

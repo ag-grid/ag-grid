@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.2
+// ag-grid-enterprise v4.0.3
 import { IContextMenuFactory } from "ag-grid/main";
 import { RowNode } from "ag-grid/main";
 import { Column } from "ag-grid/main";
