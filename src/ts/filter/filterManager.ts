@@ -107,7 +107,7 @@ export class FilterManager {
                 return;
             }
             var model = filterApi.getModel();
-            if (model) {
+            if (_.exists(model)) {
                 result[key] = model;
             }
         });
