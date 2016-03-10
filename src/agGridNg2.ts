@@ -17,6 +17,7 @@ export class AgGridNg2 {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _initialised = false;
+    private _destroyed = false;
 
     private gridOptions: GridOptions;
 
@@ -51,11 +52,17 @@ export class AgGridNg2 {
 
     public ngOnDestroy(): void {
         if (this._initialised) {
+            // need to do this before the destroy, so we know not to emit any events
+            // while tearing down the grid.
+            this._destroyed = true;
             this.api.destroy();
         }
     }
 
     private globalEventListener(eventType: string, event: any): void {
+        // if we are tearing down, don't emit angular 2 events, as this causes
+        // problems with the angular 2 router
+        if (this._destroyed) { return; }
         // generically look up the eventType
         var emitter = <EventEmitter<any>> (<any>this)[eventType];
         if (emitter) {
