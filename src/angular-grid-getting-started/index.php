@@ -12,7 +12,9 @@ include '../documentation-main/documentation_header.php';
 
     <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
 
-    <h2>Download & Install</h2>
+    <h2>Getting ag-Grid</h2>
+
+    <h3>Download ag-Grid Project</h3>
 
     <table>
         <tr>
@@ -80,6 +82,36 @@ import {Grid} from 'ag-grid/main';
 
     <p>Most single page web-apps use CommonJS and Bundling, so will use the CommonJS version of ag-Grid.</p>
 
+    <h2>Getting ag-Grid-Enterprise</h2>
+
+    <h3>Download ag-Grid-Enterprise Project</h3>
+
+    <table>
+        <tr>
+            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td>
+                <b>Bower</b><br/>
+                bower install ag-grid-enterprise
+            </td>
+
+            <td style="width: 20px;"/>
+
+            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td>
+                <b>NPM</b><br/>
+                npm install ag-grid-enterprise
+            </td>
+
+            <td style="width: 20px;"/>
+
+            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td>
+                <b>Github</b><br/>
+                Download from <a href="https://github.com/ceolter/ag-grid-enterprise">Github</a>
+            </td>
+        </tr>
+    </table>
+
     <h3>Referencing ag-Grid-Enterprise Files</h3>
 
     <p>
@@ -120,10 +152,12 @@ import {Grid} from 'ag-grid/main';
 
     <pre>// ECMA 5 - using nodes require() method
 var AgGrid = require('ag-grid');
+// only include this line if you want to use ag-grid-enterprise
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
 import {Grid} from 'ag-grid/main';
+// only include this line if you want to use ag-grid-enterprise
 import 'ag-grid-enterprise/main';
 </pre>
 

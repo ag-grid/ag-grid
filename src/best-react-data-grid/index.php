@@ -225,6 +225,14 @@ somePointLater() {
     <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
     ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
     custom filter should appear on your components backing object. The example shows all of this in action.</p>
+
+
+    <h2>Notes on React Routing</h2>
+    <p>
+        If using the React Router, and want to have a link inside a cell, then you get (at time of writing)
+        <i>"this.context.router is undefined in link"</i>. This is because the cells React Context in ag-Grid
+        are not connect to the main React Context. The router uses the context, thus it doesn't work.
+    </p>
 </div>
 
 <script type="text/javascript" src="bundle.js" charset="utf-8"></script>

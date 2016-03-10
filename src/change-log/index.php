@@ -8,7 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 4.0.0</h3>
+    <h3>Version 4.0.x</h3>
+
+    <li>Bugfix: When filter was 'zero' (for number filer) is was not saving correctly when using 'getFilterModel()'.</li>
+    <li>Bugfix: Event 'gridSizeChanged' was not getting called when width of grid changed, only height.</li>
+
+    <h3>Version 4.0.x</h3>
 
     <!-- NEW FEATURES -->
     <h4>New Features</h4>

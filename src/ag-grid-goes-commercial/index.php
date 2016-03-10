@@ -25,7 +25,7 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            Doing this change was done with large consideration. I understand that this will upset some people
+            I made this change after much consideration. I understand that this will upset some people
             in the community. However I believe this change was needed for a project like ag-Grid to exist. Let me
             share some light on what is actually happening:
         </p>
@@ -37,7 +37,8 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            For 2016, I have given up my job to focus on ag-Grid full time. So far during this time I have taken
+            In 2016 I had to choose between my personal life, my job and ag-Grid, so I quite my job to focus on ag-Grid
+            full time and get back my life. So far during this time I have taken
             a step back from the code and implemented large changes to keep the codebase healthy. For example one
             of the major things I have done is created ag-Grid's
             own IoC container and Component library - the frameworks out there in my opinion are not suitable for
@@ -80,8 +81,9 @@ include('../mediaHeader.php');
             selection, status panel (to auto aggregation of selected ranges), the documentation has a new section
             for ag-Grid-Enterprise where you can see all the features included. From the previous version,
             I moved row grouping, aggregation, setFilter and toolPanel into the ag-Grid-Enterprise (I do not intend to
-            move anything else). If you are using these features currently, the you have the choice of a) do not
-            upgrade to the latest version b) stop using them or c) get a licence for and start using ag-Grid-Enterprise.
+            move anything else). If you are using these features currently, the you have the choice of a) do no upgrade
+            and continue to use your old version b) upgrade and stop using these features or c) get a license for and
+            start using ag-Grid-Enterprise.
         </p>
 
         <p>
@@ -104,7 +106,7 @@ include('../mediaHeader.php');
         <p>
             <b>But I gave you a sizable donation through PayPal, and I now have to pay?</b><br/>
             I am very grateful to anyone who has donated over the past year. If / when you enquire about an enterprise
-            license, please note to me who you are so I can match you kindness with discount (not one for one, I'll be nicer!!).
+            license, please note to me who you are so I can match your kindness with discount (not one for one, I'll be nicer!!).
         </p>
 
         <p>

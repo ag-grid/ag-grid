@@ -200,6 +200,17 @@ include '../documentation-main/documentation_header.php';
         by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
     </p>
 
+    <h2>Known Issues</h2>
+
+    <p>
+        <b>"Attempt to use a dehydrated detector"</b>
+    </p>
+
+    <p>
+        If you are getting the above error, then check out <a href="https://www.ag-grid.com/forum/showthread.php?tid=3537">this post</a>
+        where jose_DS shines some light on the issue.
+    </p>
+
     <h2>Next Steps...</h2>
 
     <p>
