@@ -15,9 +15,11 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: Renamed 'PopupService.js' to 'popupService.js -> caused issued for some import styles.</li>
     <li>Bugfix: Bug in virtual pagination, grid was not initialising when datasource set in gridOptions.</li>
     <li>Bugfix: Mouse double click was not working correctly in firefox.</li>
+    <li>Bugfix: Enterprise filters were not getting params in the 'afterGuiAttached' method.</li>
 
     <li>Enhancement: setColumnState() now returns a boolean, false if one or more columns could not be found.</li>
     <li>Enhancement: added API methods copySelectedRowsToClipboard() and copySelectedRangeToClipboard().</li>
+    <li>Enhancement: changed how auto-range aggregations work - blank cells not counted in count, and non-number cells not used for avg</li>
 
     <h3>Version 4.0.x</h3>
 
