@@ -41,7 +41,7 @@ export class ColumnApi {
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
     public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
     public getColumn(key: any): Column { return this._columnController.getColumn(key); }
-    public setColumnState(columnState: any): void { return this._columnController.setColumnState(columnState); }
+    public setColumnState(columnState: any): boolean { return this._columnController.setColumnState(columnState); }
     public getColumnState(): [any] { return this._columnController.getColumnState(); }
     public resetColumnState(): void { this._columnController.resetColumnState(); }
     public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
@@ -89,7 +89,7 @@ export class ColumnApi {
         this._columnController.setColumnVisible(colId, !hide);
     }
 
-    public setState(columnState: any): void {
+    public setState(columnState: any): boolean {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
@@ -610,18 +610,20 @@ export class ColumnController {
         this.setColumnState(state);
     }
 
-    public setColumnState(columnState: any[]): void {
+    public setColumnState(columnState: any[]): boolean {
         var oldColumnList = this.allColumns;
         this.allColumns = [];
         this.rowGroupColumns = [];
         this.valueColumns = [];
+
+        var success = true;
 
         if (columnState) {
             columnState.forEach( (stateItem: any)=> {
                 var oldColumn: Column = _.find(oldColumnList, 'colId', stateItem.colId);
                 if (!oldColumn) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
-                    return;
+                    success = false;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                 oldColumn.setVisible(!stateItem.hide);
@@ -676,6 +678,8 @@ export class ColumnController {
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+
+        return success;
     }
 
     public getColumns(keys: any[]): Column[] {

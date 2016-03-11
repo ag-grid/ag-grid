@@ -82,10 +82,13 @@ export class RowRenderer {
 
     private logger: Logger;
 
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = this.loggerFactory.create('RowRenderer');
+        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+    }
+
     @PostConstruct
     public init(): void {
-        this.logger = this.loggerFactory.create('RowRenderer');
-
         this.cellRendererMap = {
             'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
             'default': function(params: any) {
