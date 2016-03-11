@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: Mouse double click was not working correctly in firefox.</li>
 
     <li>Enhancement: setColumnState() now returns a boolean, false if one or more columns could not be found.</li>
+    <li>Enhancement: added API methods copySelectedRowsToClipboard() and copySelectedRangeToClipboard().</li>
 
     <h3>Version 4.0.x</h3>
 
