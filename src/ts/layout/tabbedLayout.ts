@@ -7,6 +7,8 @@ export class TabbedLayout {
     private eBody: HTMLElement;
     private params: TabbedLayoutParams;
 
+    private afterAttachedParams: any;
+
     private static TEMPLATE =
         '<div>'+
             '<div id="tabHeader" class="ag-tab-header"></div>'+
@@ -29,6 +31,10 @@ export class TabbedLayout {
         if (params.items) {
             params.items.forEach( item => this.addItem(item) );
         }
+    }
+
+    public setAfterAttachedParams(params: any): void {
+        this.afterAttachedParams = params;
     }
 
     public getMinWidth(): number {
@@ -108,7 +114,7 @@ export class TabbedLayout {
         this.activeItem = wrapper;
 
         if (wrapper.tabbedItem.afterAttachedCallback) {
-            wrapper.tabbedItem.afterAttachedCallback();
+            wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
         }
     }
 
