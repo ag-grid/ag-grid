@@ -31,27 +31,35 @@
         <div class="col-md-12">
 
             <h2>
-                Please Be Patient
+                How to Order
             </h2>
-
-            <p>
-                The online ordering system for ag-Grid is currently been developed. So we are going to
-                have to do things manually.
-            </p>
 
             <p>
                 To order ag-Grid-Enterprise, please email <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
                 with the following information:
                 <ul>
                     <li>Company name</li>
-                    <li>Country your company is registered</li>
-                    <li>Company VAT number</li>
+                    <li>Company address</li>
+                    <li>Company VAT number (EU only)</li>
                     <li>Number of licenses required (ie number of developers)</li>
-                    <li>Your email address (this will be used for all ag-Grid going forward)</li>
-                    <li>ag-Grid forum username (we will then grant your forum user access to the members only forum)</li>
+                    <li>Email address to associate with your ag-Grid account</li>
                 </ul>
-                We will then get back to you with an invoice. You will have the choice to settle the invoice via
-                bank transfer or use our online payments system when it is ready.
+                We will then get back to you with an invoice.
+            </p>
+
+            <h2>
+                How to Pay
+            </h2>
+
+            <p>
+                Once you receive an invoice, you will be registered with us and have a customer number to allow you to
+                make payments. Payments can be done via our online payments system or via direct debit.
+            </p>
+
+            <p>
+                <a href="payments.php" class="bigLink">
+                    Go to Online Payments
+                </a>
             </p>
 
         </div>

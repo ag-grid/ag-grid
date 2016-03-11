@@ -29,6 +29,7 @@ include '../documentation-main/documentation_header.php';
         <ul>
             <li>Select 'Copy' from the context menu that appears when you right click over a cell.</li>
             <li>Press keys Ctrl+C while focus is on the grid.</li>
+            <li>Use the API methods: copySelectedRowsToClipboard() and copySelectedRangeToClipboard()</li>
         </ul>
     </p>
 
@@ -51,7 +52,7 @@ include '../documentation-main/documentation_header.php';
         (eg Ctrl+V or from the browser menu). If Javascript could do this, then websites could steal
         data from the client via grabbing from the clipboard maliciously. The reason why ag-Grid keeps
         the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
-        the shortcut as a hint to the user.
+        the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
     </note>
 
     <p>
@@ -75,6 +76,20 @@ include '../documentation-main/documentation_header.php';
         selection will be copied into the clipboard. This was influenced by Excel, where if you try
         to copy multiple ranges, it gives an error message saying multiple ranges cannot be copied.
     </note>
+
+    <h3>Clipboard Example</h3>
+
+    <p>
+        Below you can:
+        <ul>
+        <li>Copy and Paste with the Context Menu.</li>
+        <li>Copy with the provided buttons.</li>
+    </ul>
+        The example has both row click selection and range selection enabled. You probably won't do
+    this in your application as it's confusing, it's done below just to demonstrate them side by side.
+    </p>
+
+    <show-example example="exampleClipboard" example-height="450px"></show-example>
 
 </div>
 

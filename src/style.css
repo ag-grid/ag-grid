@@ -1,6 +1,22 @@
 .highlight {
     font-weight: bold;
 }
+
+.bigLink {
+    background-color: #090;
+    padding: 8px;
+    margin: 10px;
+    display: inline-block;
+    font-weight: bold;
+    border-radius: 10px;
+    color: #111;
+    text-decoration: none;
+}
+
+.bigLink:hover {
+    text-decoration: none;
+}
+
 .paragraph {
     width: 800px;
     padding-top: 20px;

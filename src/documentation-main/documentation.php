@@ -16,7 +16,7 @@ include 'documentation_header.php';
 
     <div style="margin-top: 10px">Version 4.0.x released</div>
     <p>
-        Check <a href="../change-log/index.php">change log</a> for what's in this release.
+        Check <a href="../change-log/changeLogIndex.php">change log</a> for what's in this release.
     </p>
     <p>
         Check <a href="../ag-grid-goes-commercial/">ag-Grid Goes Commercial</a> media release.

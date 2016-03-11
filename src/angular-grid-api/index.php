@@ -388,6 +388,14 @@ include '../documentation-main/documentation_header.php';
             <th>clearRangeSelection()</th>
             <td>Clears the selected range.</td>
         </tr>
+        <tr>
+            <th>copySelectedRowsToClipboard()</th>
+            <td>Copies the selected rows to the clipboard.</td>
+        </tr>
+        <tr>
+            <th>copySelectedRangeToClipboard()</th>
+            <td>Copies the selected ranges to the clipboard.</td>
+        </tr>
     </table>
 </div>
 

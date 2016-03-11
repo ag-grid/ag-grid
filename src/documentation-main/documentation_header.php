@@ -432,7 +432,7 @@ if (strcmp($version , 'latest') == 0) {
                     <?php if ($key == "Change Log") { ?>
                         <span class="sidebarLinkSelected">Change Log</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>change-log/index.php">Change Log</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>change-log/changeLogIndex.php">Change Log</a>
                     <?php } ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 <?php } ?>

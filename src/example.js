@@ -228,10 +228,7 @@ var gridOptions = {
     onRangeSelectionChanged: function(event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    getContextMenuItems: getContextMenuItems,
-    processRowPostCreate: function(params) {
-        params.eRow.setAttribute('bonkers', 'saussage');
-    },
+    getContextMenuItems: getContextMenuItems
 };
 
 function getContextMenuItems(params) {
@@ -312,7 +309,7 @@ var defaultCols = [
         // column group 'Game of Choice'
         headerName: 'Game of Choice',
         children: [
-            {headerName: "Game of Choice", field: "game", width: 180, editable: true, filter: 'set',
+            {headerName: "Game of Choice", field: "game.name", width: 180, editable: true, filter: 'set',
                 cellClass: function() { return 'alphabet'; },
                 //pinned: 'right',
                 icons: {
@@ -320,7 +317,7 @@ var defaultCols = [
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
-            {headerName: "Bought", field: "bought", filter: 'set', editable: true, width: 100,
+            {headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
                 //pinned: 'right',
                 cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
@@ -494,10 +491,13 @@ function createRowItem(row, colCount) {
     var lastName = lastNames[row % lastNames.length];
     rowItem.name = firstName + " " + lastName;
 
-    rowItem.game = games[row % games.length];
+    rowItem.game = {
+        name: games[row % games.length],
+        bought: booleanValues[row % booleanValues.length]
+    };
+
     rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
     rowItem.rating = (Math.round(Math.random()*5));
-    rowItem.bought = booleanValues[row % booleanValues.length];
 
     var totalWinnings = 0;
     months.forEach(function(month) {

@@ -3,9 +3,9 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid Support</title>
-    <meta name="description" content="ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.">
-    <meta name="keywords" content="ag-Grid Javascript Grid Support"/>
+    <title>ag-Grid License and Pricing</title>
+    <meta name="description" content="License and Pricing details for ag-Grid">
+    <meta name="keywords" content="ag-Grid Javascript Grid License and Pricing"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -46,15 +46,15 @@
         <div class="col-md-12">
 
             <h2>
-                Enterprise Trial License
+                Enterprise Evaluation License
             </h2>
 
             <p>
-                A trial license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
+                An evaluation license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
                 All we ask in return is the following:
             <ul>
                 <li>
-                    You agree to use the Trial License only for evaluation of ag-Grid-Enterprise.
+                    You agree to use the Evaluation License only for evaluation of ag-Grid-Enterprise. You do not enter production with ag-Grid-Enterprise.
                 </li>
                 <li>
                     You limit your trial to two months (after that, either uninstall or purchase).
@@ -139,14 +139,6 @@
         }
         .benefitsCell {
             border-bottom: 1px solid #888;
-        }
-        .buyLink {
-            background-color: #0b0;
-            padding: 8px;
-            margin: 10px;
-            display: inline-block;
-            font-weight: bold;
-            border-radius: 10px;
         }
     </style>
 
@@ -307,7 +299,7 @@
                     <td class="gapCol"/>
                     <td class="tableHighlightCell tableCell">
 
-                        <a href="./order.php" class="buyLink">
+                        <a href="order.php" class="bigLink">
                             Continue to Ordering
                         </a>
 
@@ -332,8 +324,8 @@
                 license can be provided if your needs do no fit this model.
             </p>
             <p>
-                Site wide license and other bulk discounts can be provided. A common pricing model does not exist
-                for this so please get in touch with your requirement to get a quote.
+                Site wide license and other bulk discounts can be provided. Once you give details a quote
+                can be provided.
             </p>
         </div>
     </div>

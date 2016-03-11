@@ -25,6 +25,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
+    "stripe-php": "3.9.2"
   },
   "devDependencies": {
     "font-awesome": "4.5.0",
