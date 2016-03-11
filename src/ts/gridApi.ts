@@ -31,6 +31,7 @@ import {RangeSelection} from "./interfaces/iRangeController";
 import {Optional} from "./context/context";
 import {GridCell} from "./entities/gridCell";
 import {AddRangeSelectionParams} from "./interfaces/iRangeController";
+import {IClipboardService} from "./interfaces/iClipboardService";
 
 @Bean('gridApi')
 export class GridApi {
@@ -54,6 +55,7 @@ export class GridApi {
     @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -402,6 +404,14 @@ export class GridApi {
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.clearSelection();
+    }
+
+    public copySelectedRowsToClipboard(): void {
+        this.clipboardService.copySelectedRowsToClipboard();
+    }
+
+    public copySelectedRangeToClipboard(): void {
+        this.clipboardService.copySelectedRangeToClipboard();
     }
 
 }
