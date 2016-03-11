@@ -118,7 +118,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>setColumnState(columnState)</th>
-            <td>Sets the state of the columns. See example below.</td>
+            <td>Sets the state of the columns. See example below. Returns false if one or more columns
+            could not be found.</td>
         </tr>
         <tr>
             <th>resetColumnState()</th>

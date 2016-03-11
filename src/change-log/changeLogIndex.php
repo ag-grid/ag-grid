@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix: When filter was 'zero' (for number filer) is was not saving correctly when using 'getFilterModel()'.</li>
     <li>Bugfix: Event 'gridSizeChanged' was not getting called when width of grid changed, only height.</li>
+    <li>Bugfix: Renamed 'PopupService.js' to 'popupService.js -> caused issued for some import styles. </li>
+    <li>Bugfix: Bug in virtual pagination, grid was not initialising when datasource set in gridOptions. </li>
+
+    <li>Enhancement: setColumnState() now returns a boolean, false if one or more columns could not be found.</li>
 
     <h3>Version 4.0.x</h3>
 
