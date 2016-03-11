@@ -65,6 +65,7 @@ export class StatusBar extends Component {
 
         var sum = 0;
         var count = 0;
+        var numberCount = 0;
         var min = 0;
         var max = 0;
 
@@ -96,6 +97,11 @@ export class StatusBar extends Component {
                         var rowNode = this.getRowNode(currentRow);
                         var value = this.valueService.getValue(column, rowNode);
 
+                        // if empty cell, skip it, doesn't impact count or anything
+                        if (_.missing(value) || value === '') {
+                            return;
+                        }
+
                         if (typeof value === 'string') {
                             value = Number(value);
                         }
@@ -111,6 +117,8 @@ export class StatusBar extends Component {
                             if (value < min) {
                                 min = value;
                             }
+
+                            numberCount++;
                         }
                         count++;
                     });
@@ -128,16 +136,25 @@ export class StatusBar extends Component {
         }
 
         var gotResult = count > 1;
+        var gotNumberResult = numberCount>0;
 
+        // we should count even if no numbers
         if (gotResult) {
-            this.statusItemSum.setValue(sum);
             this.statusItemCount.setValue(count);
+        }
+        this.statusItemCount.setVisible(gotResult);
+
+        // if numbers, then show the number items
+        if (gotNumberResult) {
+            this.statusItemSum.setValue(sum);
             this.statusItemMin.setValue(min);
             this.statusItemMax.setValue(max);
-            this.statusItemAvg.setValue(sum / count);
+            this.statusItemAvg.setValue(sum / numberCount);
         }
-
-        this.forEachStatusItem( (statusItem)=> statusItem.setVisible(gotResult));
+        this.statusItemSum.setVisible(gotNumberResult);
+        this.statusItemMin.setVisible(gotNumberResult);
+        this.statusItemMax.setVisible(gotNumberResult);
+        this.statusItemAvg.setVisible(gotNumberResult);
     }
 
     private getRowNode(gridRow: GridRow): RowNode {
