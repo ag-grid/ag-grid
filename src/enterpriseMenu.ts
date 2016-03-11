@@ -421,6 +421,7 @@ export class EnterpriseMenu {
     }
 
     public afterGuiAttached(params: any): void {
+        this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
         this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
     }

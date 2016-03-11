@@ -74,7 +74,7 @@ export class SetFilter implements Filter {
 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
-    public afterGuiAttached(): void  {
+    public afterGuiAttached(params: any): void  {
         this.drawVirtualRows();
     }
 
