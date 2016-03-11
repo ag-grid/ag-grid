@@ -110,15 +110,15 @@ export class ClipboardService implements IClipboardService {
 
         // default is copy range if exists, otherwise rows
         if (this.rangeController.isMoreThanOneCell()) {
-            this.copySelectedRangesToClipboard();
+            this.copySelectedRangeToClipboard();
         } else if (!this.selectionController.isEmpty()) {
             this.copySelectedRowsToClipboard();
         } else if (!this.rangeController.isEmpty()) {
-            this.copySelectedRangesToClipboard();
+            this.copySelectedRangeToClipboard();
         }
     }
 
-    public copySelectedRangesToClipboard(): void {
+    public copySelectedRangeToClipboard(): void {
         if (this.rangeController.isEmpty()) { return; }
 
         var rangeSelections = this.rangeController.getCellRanges();
