@@ -21,8 +21,9 @@ export class AgGridNg2 {
 
     private gridOptions: GridOptions;
 
-    private api: GridApi;
-    private columnApi: ColumnApi;
+    // making these public, so they are accessible to people using the ng2 component references
+    public api: GridApi;
+    public columnApi: ColumnApi;
 
     constructor(private elementDef: ElementRef) {
         // create all the events generically. this is done generically so that
