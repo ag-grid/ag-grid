@@ -256,18 +256,22 @@ export class GridPanel {
 
     private addCellListeners(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
+        var that = this;
         eventNames.forEach( eventName => {
             this.eAllCellContainers.forEach( container =>
-                container.addEventListener(eventName, this.processMouseEvent.bind(this, eventName))
+                container.addEventListener(eventName, function(mouseEvent: MouseEvent) {
+                    var eventSource: HTMLElement = this;
+                    that.processMouseEvent(eventName, mouseEvent, eventSource);
+                })
             )
         });
     }
 
-    private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    private processMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
     }
 

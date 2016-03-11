@@ -447,11 +447,11 @@ export class RenderedCell {
         return this.column.isCellEditable(this.node);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         switch (eventName) {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
-            case 'dblclick': this.onCellDoubleClicked(); break;
+            case 'dblclick': this.onCellDoubleClicked(mouseEvent, eventSource); break;
             case 'contextmenu': this.onContextMenu(mouseEvent); break;
         }
     }
@@ -481,10 +481,10 @@ export class RenderedCell {
         }
     }
 
-    private onCellDoubleClicked() {
+    private onCellDoubleClicked(mouseEvent: MouseEvent, eventSource: HTMLElement) {
         var colDef = this.column.getColDef();
         // always dispatch event to eventService
-        var agEvent: any = this.createEvent(event, this);
+        var agEvent: any = this.createEvent(mouseEvent, eventSource);
         this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
 
         // check if colDef also wants to handle event
