@@ -53,7 +53,7 @@ include 'documentation_header.php';
     <a href="../best-angularjs-data-grid/index.php">Angular JS</a>,
     <a href="../best-angular-2-data-grid/index.php">Angular 2</a> or
     <a href="../best-web-component-data-grid/index.php">Web Components</a>) and try and get a simple example working
-    yourself (you don't need to understand the grid, just how it install it into your application).
+    yourself (you don't need to understand the grid, just how to install it into your application).
     Then cover the <a href="../javascript-grid-interfacing-overview/index.php">Interfacing Overview</a>.
     After that, you then have the foundations of ag-Grid and can jump to whatever section of the documentation
     you need to the feature you are trying to implement.
@@ -71,7 +71,7 @@ include 'documentation_header.php';
     <li><b>Core Features: </b> A detailed look at all the core features.</li>
     <li><b>Enterprise Features: </b> A detailed look at all the enterprise features.</li>
     <li><b>Examples: </b> Some examples combining different features.</li>
-    <li><b>Tutorials: </b> Some video tutorials for the younger generation who prefer YouTube videos over reading.</li>
+    <li><b>Tutorials: </b> Some video tutorials for those who prefer YouTube videos over reading.</li>
 </ul>
 </p>
 
@@ -81,7 +81,7 @@ include 'documentation_header.php';
 
 <p>
     ag-Grid is a fast moving project. It has gone from zero to huge in a very short space of time. To keep
-    up to date, check back regularly to the website, follow Ceolter (core author) on twitter and join the ag-Grid mailing
+    up to date, check back regularly to the website, follow Ceolter (core author) on Twitter and join the ag-Grid mailing
     list.
 </p>
 

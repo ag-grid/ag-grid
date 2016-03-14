@@ -1,0 +1,110 @@
+<style>
+    .form-label {
+        padding: 4px;
+    }
+    .form-value {
+        padding: 4px;
+        font-weight: bold;
+    }
+    .section {
+        padding: 10px;
+    }
+    .bottom-section {
+        padding: 10px;
+        padding-top: 30px;
+    }
+    .error {
+        padding-top: 10px;
+        color: darkred;
+    }
+    .header {
+        font-weight: bold;
+        font-size: 20px;
+        padding: 4px;
+        padding-bottom: 30px;
+    }
+</style>
+
+<div style="border: 1px solid grey; padding: 20px; border-style: dotted;">
+
+    <div ng-show="showCustomerLookup">
+
+        <div class="header">
+            Step 1: Identify Customer
+        </div>
+
+        <div>
+            <span class="form-label">
+                Customer Number: C-<input ng-model="id" type="text" placeholder="eg 902" style="width: 80px"/>
+            </span>
+            <span class="form-label">
+                Email: <input ng-model="email" type="text" placeholder="eg yourname@email.com" style="width: 300px"/>
+            </span>
+        </div>
+
+        <div class="bottom-section">
+            <button class="btn-primary" ng-click="lookupAccount()" ng-show="!showCustomerLoading">Continue</button>
+            <div ng-show="showCustomerLoading">Please wait....</div>
+            <div class="error">{{lookupAccountResult}}</div>
+        </div>
+    </div>
+
+    <div ng-show="showTakePayment">
+
+        <div class="header">
+            Step 2: Make Payment
+        </div>
+
+        <div class="section">
+            Customer Account Found:
+            <span class="form-value">
+                {{account.name}}
+            </span>
+        </div>
+
+        <div class="section">
+            Please enter the amount you want to pay. For example to pay £250.00, enter 250:
+        </div>
+
+        <div class="section">
+            Amount: GPB £<input ng-model="account.amount" style="width: 100px;"/>
+        </div>
+
+        <div class="bottom-section">
+            <button class="btn-primary" ng-click="makePayment()" ng-show="!showPaymentLoading">Make Payment</button>
+            <div ng-show="showPaymentLoading">Storing payment, please wait...</div>
+            <div class="error">{{paymentError}}</div>
+        </div>
+
+    </div>
+
+    <div ng-show="showFinished">
+
+        <div class="section">
+            Customer Account Found:
+            <span class="form-value">
+                {{account.name}}
+            </span>
+        </div>
+
+        <div class="section">
+            Amount:
+            <span class="form-value">
+                GPB £{{account.amount}}
+            </span>
+        </div>
+
+        <div class="section">
+            <div style="padding: 4px;">
+                <span>
+                    &#10004;
+                </span>
+                <span>
+                    Payment Received. Thank you for choosing ag-Grid.
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+</div>

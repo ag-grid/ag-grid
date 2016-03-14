@@ -57,7 +57,7 @@
             </p>
 
             <p>
-                <a href="payments.php" class="bigLink">
+                <a href="payments/payments.php" class="bigLink">
                     Go to Online Payments
                 </a>
             </p>
