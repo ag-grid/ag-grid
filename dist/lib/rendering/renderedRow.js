@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.2
+ * @version v4.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57,9 +57,6 @@ var RenderedRow = (function () {
         this.addDynamicClasses();
         this.addRowIds();
         this.setTopAndHeightCss();
-        if (this.scope) {
-            this.eLeftCenterAndRightRows.forEach(function (row) { return _this.$compile(row)(_this.scope); });
-        }
         this.addRowSelectedListener();
         this.addCellFocusedListener();
         this.addColumnListener();
@@ -75,6 +72,9 @@ var RenderedRow = (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
+        if (this.scope) {
+            this.eLeftCenterAndRightRows.forEach(function (row) { return _this.$compile(row)(_this.scope); });
+        }
     };
     RenderedRow.prototype.addColumnListener = function () {
         var _this = this;

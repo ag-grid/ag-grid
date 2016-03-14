@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.2
+ * @version v4.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -397,11 +397,8 @@ var RenderedCell = (function () {
         }
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
-            event.preventDefault();
-            return false;
-        }
-        else {
-            return true;
+            console.log('preventing default');
+            mouseEvent.preventDefault();
         }
     };
     RenderedCell.prototype.onCellDoubleClicked = function (mouseEvent, eventSource) {

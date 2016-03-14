@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.2
+ * @version v4.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -152,8 +152,10 @@ var GridPanel = (function () {
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     GridPanel.prototype.disableBrowserDragging = function () {
         this.eRoot.addEventListener('dragstart', function (event) {
-            event.preventDefault();
-            return false;
+            if (event.target instanceof HTMLImageElement) {
+                event.preventDefault();
+                return false;
+            }
         });
     };
     GridPanel.prototype.addEventListeners = function () {
@@ -585,26 +587,41 @@ var GridPanel = (function () {
         }
         return this.generalMouseWheelListener(event, targetPanel);
     };
+    /*    private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
+            var delta: number;
+            if (event.deltaY && event.deltaX != 0) {
+                // tested on chrome
+                delta = event.deltaY;
+            } else if (event.wheelDelta && event.wheelDelta != 0) {
+                // tested on IE
+                delta = -event.wheelDelta;
+            } else if (event.detail && event.detail != 0) {
+                // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
+                delta = event.detail * 20;
+            } else {
+                // couldn't find delta
+                return;
+            }
+    
+            var newTopPosition = this.eBodyViewport.scrollTop + delta;
+            targetPanel.scrollTop = newTopPosition;
+    
+            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+            event.preventDefault();
+            return false;
+        }*/
     GridPanel.prototype.generalMouseWheelListener = function (event, targetPanel) {
-        var delta;
-        if (event.deltaY && event.deltaX != 0) {
-            // tested on chrome
-            delta = event.deltaY;
-        }
-        else if (event.wheelDelta && event.wheelDelta != 0) {
-            // tested on IE
-            delta = -event.wheelDelta;
-        }
-        else if (event.detail && event.detail != 0) {
-            // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
-            delta = event.detail * 20;
+        var wheelEvent = utils_1.Utils.normalizeWheel(event);
+        // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
+        // horizontal scroll
+        if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
+            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            this.eBodyViewport.scrollLeft = newLeftPosition;
         }
         else {
-            // couldn't find delta
-            return;
+            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
+            targetPanel.scrollTop = newTopPosition;
         }
-        var newTopPosition = this.eBodyViewport.scrollTop + delta;
-        targetPanel.scrollTop = newTopPosition;
         // if we don't prevent default, then the whole browser will scroll also as well as the grid
         event.preventDefault();
         return false;
