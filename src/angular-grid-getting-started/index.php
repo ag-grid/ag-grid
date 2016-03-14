@@ -234,6 +234,10 @@ import 'ag-grid-enterprise/main';
         </tr>
     </table>
 
+    <p>
+        <b>Warning:</b> if you are using the bundled version of the grid (/dist/ag-grid-js) then you must specify this directly,
+        the main files specified in package.json and bower.json point to the commonjs versions of ag-Grid.
+    </p>
 
     <h3>List of Loading / Building Examples</h3>
 
