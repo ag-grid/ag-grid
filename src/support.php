@@ -67,9 +67,6 @@
                 road-map.
             </p>
 
-            <div style="margin: 30px; padding: 10px; border: 1px solid grey">Currently the members forum is open to everyone. In the coming days this will be restricted
-                to members only. To become a member, your company must be paying for an enterprise license.</div>
-
             <h2>Support Channels</h2>
 
             <table class="table">
@@ -89,10 +86,10 @@
                         I got this error, why?
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Free Forum</a>
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
+                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -100,10 +97,10 @@
                         Please look at my code?
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Free Forum</a>
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
+                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -114,7 +111,7 @@
                         Github issue
                     </td>
                     <td>
-                        Github issue or Members Forum
+                        Github issue or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -125,7 +122,7 @@
                         Github issue
                     </td>
                     <td>
-                        Github issue or Members Forum
+                        Github issue or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -136,7 +133,7 @@
                         Not covered
                     </td>
                     <td>
-                        Members Forum
+                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -147,7 +144,7 @@
                         Not covered
                     </td>
                     <td>
-                        Members Forum
+                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
                     </td>
                 </tr>
                 <tr>
@@ -174,9 +171,16 @@
             <h2>Stack Overflow</h2>
 
             <p>
-                Stack Overflow is the chosen platform for unofficial 'free' ag-Grid support. All ag-Grid related
+                Stack Overflow should be used for unofficial 'free' ag-Grid support. All ag-Grid related
                 queries should be tagged with
                 <a href="http://stackoverflow.com/questions/tagged/ag-grid">ag-Grid</a>
+            </p>
+
+            <h2>Free vs Members Forum</h2>
+
+            <p>
+                The free forum can be posted into by anyone and is not monitored by ag-Grid team. It is left
+                open to support the free community of users who help themselves.
             </p>
 
             <h2>Raising Bugs</h2>

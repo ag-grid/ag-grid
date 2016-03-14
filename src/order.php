@@ -52,7 +52,7 @@
             </h2>
 
             <p>
-                Once you receive an invoice, you will be registered with us and have a customer number to allow you to
+                Once you receive an invoice, you will be registered with us to allow you to
                 make payments. Payments can be done via our online payments system or via direct debit.
             </p>
 

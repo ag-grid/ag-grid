@@ -25,14 +25,14 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            I made this change after much consideration. I understand that this will upset some people
+            A lot of thought has gone into this change. I understand that this will upset some people
             in the community. However I believe this change was needed for a project like ag-Grid to exist. Let me
             share some light on what is actually happening:
         </p>
 
         <p>
             During 2015, ag-Grid was a pet project, it was what I spent most hours doing outside of my
-            day job. I estimate I put in 20 hours per week on average into ag-Grid. This meant my personal life
+            day job. I estimate 20 hours per week on average was put into ag-Grid. This meant my personal life
             took a back seat.
         </p>
 
@@ -40,7 +40,7 @@ include('../mediaHeader.php');
             In 2016 I had to choose between my personal life, my job and ag-Grid, so I quite my job to focus on ag-Grid
             full time and get back my life. So far during this time I have taken
             a step back from the code and implemented large changes to keep the codebase healthy. For example one
-            of the major things I have done is created ag-Grid's
+            of the major changes is ag-Grid now has it's
             own IoC container and Component library - the frameworks out there in my opinion are not suitable for
             a complex widget like ag-Grid. My full time commitment allows this technical ownership and what is
             allowing ag-Grid excel over other grids. Grids are complex systems,
@@ -69,20 +69,21 @@ include('../mediaHeader.php');
 
         <p>
             <b>How do you decide what features go into ag-Grid-Enterprise?</b><br/>
-            In my head I asked "what feature are above and beyond what the other grids are offering"
+            In my head I asked "what features are above and beyond what the other grids are offering"
             and decided to have that as a reference point on what should be provided for free vs paid. So if you are
-            looking for a grid that pretty much matches the other free ones for features (but kills them on everything else!)
-            then you can use ag-Grid free version if you are on a budget.
+            looking for a grid that pretty much matches the other free ones for features (but kills them on peformance
+            and quality!) then you can use ag-Grid free version if you are on a budget.
         </p>
 
         <p>
             <b>Are there new enterpsie features, or did you just move items around?</b><br/>
             There are plenty of new enterprise features in version 4 for example clipboard interaction, range cell
             selection, status panel (to auto aggregation of selected ranges), the documentation has a new section
-            for ag-Grid-Enterprise where you can see all the features included. From the previous version,
+            for ag-Grid-Enterprise where you can see all the features included. Future releases will contain
+            more enterprise features as this area is explored. From the previous version,
             I moved row grouping, aggregation, setFilter and toolPanel into the ag-Grid-Enterprise (I do not intend to
-            move anything else). If you are using these features currently, the you have the choice of a) do no upgrade
-            and continue to use your old version b) upgrade and stop using these features or c) get a license for and
+            move anything else). If you are using these features currently, then you have the choice of a) do not upgrade
+            and continue to use the version you are on b) upgrade and stop using these features or c) get a license for and
             start using ag-Grid-Enterprise.
         </p>
 
@@ -91,6 +92,13 @@ include('../mediaHeader.php');
             Yes. ag-Grid-Enterprise is open source and still commercial. Anyone can view the code, but you are not allowed
             to copy it as it is copyright. If you pay a licene then you are free to fork the code and make changes for
             your own personal use.
+        </p>
+
+        <p>
+            <b>What is the future of the free version?</b><br/>
+            The enterprise version depends on the free version, there is no duplication of logic. So going forward the
+            free version will continue to receive new features to the core grid along with normal maintenance and
+            bug fixes.
         </p>
 
         <p>
@@ -111,12 +119,15 @@ include('../mediaHeader.php');
 
         <p>
             <b>What about support?</b><br/>
-            I am going to change the forum to members
-            only so that I can give dedicated support to those who become ag-Grid-Enterprise users.
+            Support for the free version will stay the same, you are free to raise issues in the ag-Grid forum, and
+            someone from ag-Grid may help with no guarantee. For the enterprise version, an new members forum now
+            exists where members can post and get guaranteed support.
         </p>
 
         <p>
-            And that's it. My apologies to those who find the new commercial model a shock.
+            I hope this will be the first step in getting ag-Grid onto a whole new level. I plan in one year from now
+            to have ag-Grid explode with regards features capabailities. If we can get funding via sales, well the
+            sky is the limit.
         </p>
 
         <p>

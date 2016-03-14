@@ -172,7 +172,10 @@
                             £250
                         </div>
                         <div>
-                            / developer per year*
+                            / developer
+                        </div>
+                        <div style="padding-top: 10px;">
+                            Perpetual & OEM
                         </div>
                     </td>
                 </tr>
@@ -274,7 +277,13 @@
                         <div class="gridFeaturePlus">Plus</div>
 
                         <div class="gridFeature">
-                            Access to Support via Members Forum
+                            Upgrades for 1 Year
+                        </div>
+
+                        <div class="gridFeaturePlus">Plus</div>
+
+                        <div class="gridFeature">
+                            Online Support for 1 Year
                         </div>
 
                         <div class="gridFeaturePlus">Plus</div>
@@ -311,26 +320,6 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                * Developer per Year
-            </h2>
-
-            <p>
-                The commercial license is modelled for enterprise building applications where developers
-                roll from one project to another. The projects change but the technology stack and developer count
-                generally stay the same. If the pricing model does not suit, then get in touch. A tailored
-                license can be provided if your needs do no fit this model.
-            </p>
-            <p>
-                Site wide license and other bulk discounts can be provided. Once you give details a quote
-                can be provided.
-            </p>
-        </div>
-    </div>
-
-    <div class="row">
         <div class="col-md-12" style="text-align: center; padding: 40px;">
             Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
             back will help ag-Grid grow into the future.
@@ -340,6 +329,51 @@
     <div class="row">
         <div class="col-md-12" style="text-align: center;">
             Any questions on licensing or ordering? Email <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Perpetual, Support and Upgrades
+            </h2>
+
+            <p>
+                The perpetual nature of the enterprise license means you can continue to use the version of
+                ag-Grid Enterprise, plus any release for one year, indefinitely. There is no requirement to
+                pay again to continue using the software.
+            </p>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Bulk Licenses
+            </h2>
+
+            <p>
+                A price plan does exist for bulk purchases. Get in touch to receive a quote for the number
+                of developers you have in mind.
+            </p>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise OEM and Redistribution
+            </h2>
+
+            <p>
+                License includes permission to OEM for internal and external applications.
+            </p>
+
         </div>
     </div>
 

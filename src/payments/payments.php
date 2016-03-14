@@ -52,6 +52,10 @@
                 Payments via Stripe.com
             </h2>
 
+            <div style="float: right;">
+                <img src="../images/poweredByStripe.png"/>
+            </div>
+
             <p>
                 ag-Grid uses Stripe.com for online payments. Your transaction is safe.
             </p>
@@ -65,6 +69,7 @@
     <make-payment></make-payment>
 
 </div>
+
 
 <?php include("../footer.php"); ?>
 

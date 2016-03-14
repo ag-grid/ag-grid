@@ -10,17 +10,32 @@ include 'documentation_header.php';
     Introduction
 </h2>
 
-<div style="border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin-left: 10px; width: 260px; float: right;">
-<!--    <img src="../images/agGridDaily.png"/> -->
-    <div style="font-weight: bold; text-align: center;">News 9th March 2016</div>
+<div style="margin-left: 10px; width: 260px; float: right;">
 
-    <div style="margin-top: 10px">Version 4.0.x released</div>
-    <p>
-        Check <a href="../change-log/changeLogIndex.php">change log</a> for what's in this release.
-    </p>
-    <p>
-        Check <a href="../ag-grid-goes-commercial/">ag-Grid Goes Commercial</a> media release.
-    </p>
+    <style>
+        .news-box { border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin-bottom: 10px;}
+        .news-header { font-weight: bold; text-align: center; margin-bottom: 10px; }
+        .separator { text-align: center; }
+    </style>
+
+    <div class="news-box">
+        <div class="news-header">14th March 2016</div>
+        <div>Following feedback on license, Enterprise has changed to perpetual.
+            Check <a href="../licenseAndPricing.php">license & pricing</a> for details.</div>
+        <div class="separator">---</div>
+        <div>Following feedback the free forum will remain open and coexist with the members forum.</div>
+        <div class="separator">---</div>
+        <div>Patch for 4.0.x released with bug fixes and minor changes.
+            Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
+    </div>
+
+    <div class="news-box">
+        <div class="news-header">9th March 2016</div>
+        <div>Version 4.0.x released</div>
+        <div>Check <a href="../change-log/changeLogIndex.php">change log</a> for what's in this release.</div>
+        <div>Check <a href="../ag-grid-goes-commercial/">ag-Grid Goes Commercial</a> media release.</div>
+    </div>
+
 </div>
 
 <p>
