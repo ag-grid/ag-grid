@@ -102,10 +102,6 @@ export class RenderedRow {
         this.addRowIds();
         this.setTopAndHeightCss();
 
-        if (this.scope) {
-            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
-        }
-
         this.addRowSelectedListener();
         this.addCellFocusedListener();
         this.addColumnListener();
@@ -123,6 +119,10 @@ export class RenderedRow {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
+
+        if (this.scope) {
+            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
+        }
     }
 
     private addColumnListener(): void {
