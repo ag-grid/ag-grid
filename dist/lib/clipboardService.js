@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -94,16 +94,16 @@ var ClipboardService = (function () {
         this.logger.log('copyToClipboard');
         // default is copy range if exists, otherwise rows
         if (this.rangeController.isMoreThanOneCell()) {
-            this.copySelectedRangesToClipboard();
+            this.copySelectedRangeToClipboard();
         }
         else if (!this.selectionController.isEmpty()) {
             this.copySelectedRowsToClipboard();
         }
         else if (!this.rangeController.isEmpty()) {
-            this.copySelectedRangesToClipboard();
+            this.copySelectedRangeToClipboard();
         }
     };
-    ClipboardService.prototype.copySelectedRangesToClipboard = function () {
+    ClipboardService.prototype.copySelectedRangeToClipboard = function () {
         var _this = this;
         if (this.rangeController.isEmpty()) {
             return;

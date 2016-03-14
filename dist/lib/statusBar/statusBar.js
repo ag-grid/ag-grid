@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -49,6 +49,7 @@ var StatusBar = (function (_super) {
         var cellRanges = this.rangeController.getCellRanges();
         var sum = 0;
         var count = 0;
+        var numberCount = 0;
         var min = 0;
         var max = 0;
         var cellsSoFar = {};
@@ -70,6 +71,10 @@ var StatusBar = (function (_super) {
                         cellsSoFar[cellId] = true;
                         var rowNode = _this.getRowNode(currentRow);
                         var value = _this.valueService.getValue(column, rowNode);
+                        // if empty cell, skip it, doesn't impact count or anything
+                        if (main_1.Utils.missing(value) || value === '') {
+                            return;
+                        }
                         if (typeof value === 'string') {
                             value = Number(value);
                         }
@@ -81,6 +86,7 @@ var StatusBar = (function (_super) {
                             if (value < min) {
                                 min = value;
                             }
+                            numberCount++;
                         }
                         count++;
                     });
@@ -92,14 +98,23 @@ var StatusBar = (function (_super) {
             });
         }
         var gotResult = count > 1;
+        var gotNumberResult = numberCount > 0;
+        // we should count even if no numbers
         if (gotResult) {
-            this.statusItemSum.setValue(sum);
             this.statusItemCount.setValue(count);
+        }
+        this.statusItemCount.setVisible(gotResult);
+        // if numbers, then show the number items
+        if (gotNumberResult) {
+            this.statusItemSum.setValue(sum);
             this.statusItemMin.setValue(min);
             this.statusItemMax.setValue(max);
-            this.statusItemAvg.setValue(sum / count);
+            this.statusItemAvg.setValue(sum / numberCount);
         }
-        this.forEachStatusItem(function (statusItem) { return statusItem.setVisible(gotResult); });
+        this.statusItemSum.setVisible(gotNumberResult);
+        this.statusItemMin.setVisible(gotNumberResult);
+        this.statusItemMax.setVisible(gotNumberResult);
+        this.statusItemAvg.setVisible(gotNumberResult);
     };
     StatusBar.prototype.getRowNode = function (gridRow) {
         switch (gridRow.floating) {

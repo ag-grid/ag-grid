@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 var main_1 = require("ag-grid/main");
 var setFilterModel_1 = require("./setFilterModel");
 var template = '<div>' +
@@ -49,7 +49,7 @@ var SetFilter = (function () {
     };
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
-    SetFilter.prototype.afterGuiAttached = function () {
+    SetFilter.prototype.afterGuiAttached = function (params) {
         this.drawVirtualRows();
     };
     SetFilter.prototype.isFilterActive = function () {

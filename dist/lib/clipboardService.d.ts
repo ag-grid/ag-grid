@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 import { IClipboardService } from "ag-grid/main";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
@@ -19,7 +19,7 @@ export declare class ClipboardService implements IClipboardService {
     pasteFromClipboard(): void;
     private finishPasteFromClipboard(data);
     copyToClipboard(): void;
-    copySelectedRangesToClipboard(): void;
+    copySelectedRangeToClipboard(): void;
     private processRangeCell(rowNode, column, value);
     private getRowNode(gridRow);
     copySelectedRowsToClipboard(): void;

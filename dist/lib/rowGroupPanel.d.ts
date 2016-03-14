@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 import { Component } from "ag-grid/main";
 import { ColumnController } from "ag-grid/main";
 import { EventService } from "ag-grid/main";

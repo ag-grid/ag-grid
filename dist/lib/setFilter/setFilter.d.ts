@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 import { Filter } from "ag-grid/main";
 export declare class SetFilter implements Filter {
     private eGui;
@@ -21,7 +21,7 @@ export declare class SetFilter implements Filter {
     private applyActive;
     private eApplyButton;
     init(params: any): void;
-    afterGuiAttached(): void;
+    afterGuiAttached(params: any): void;
     isFilterActive(): boolean;
     doesFilterPass(node: any): boolean;
     getGui(): any;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.3
+// ag-grid-enterprise v4.0.4
 var main_1 = require('ag-grid/main');
 var toolPanel_1 = require("./toolPanel");
 var enterpriseMenu_1 = require("./enterpriseMenu");
