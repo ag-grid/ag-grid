@@ -39,8 +39,8 @@ ag-Grid-Enterprise or previous Modifications.
 2.LICENSE GRANT
 
 Subject to the payment of the fee required, and subject to Your compliance with all of the terms and conditions of 
-this Agreement, We grant to You a revocable, non-exclusive, non-transferable and non-sublicensable license (i) for 
-Designated User(s) to use the Software to create Modifications and Applications; (ii) for You to distribute the 
+this Agreement, We grant to You a revocable, non-exclusive, perpetual, non-transferable and non-sublicensable license 
+(i) for Designated User(s) to use the Software to create Modifications and Applications; (ii) for You to distribute the 
 ag-Grid-Enterprise and/or Modifications to End Users solely as integrated into the Applications; and (iii) for End 
 Users to use ag-Grid-Enterprise as integrated into Your Applications in accordance with the terms of this Agreement.
 
