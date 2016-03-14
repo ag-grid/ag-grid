@@ -456,7 +456,7 @@ export class RenderedCell {
         }
     }
 
-    private onContextMenu(mouseEvent: MouseEvent): any {
+    private onContextMenu(mouseEvent: MouseEvent): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
         // thus the normal menu is displayed
@@ -474,10 +474,8 @@ export class RenderedCell {
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
-            event.preventDefault();
-            return false;
-        } else {
-            return true;
+            console.log('preventing default');
+            mouseEvent.preventDefault();
         }
     }
 
