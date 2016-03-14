@@ -69,33 +69,33 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Javascript") { ?>
-                    <span class="sidebarLinkSelected childItem"><img src="/images/javascript_small.png" width="20px"> Javascript</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" width="20px"> Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php"><img src="/images/javascript.png" width="20px"> Javascript</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php"><img inline src="/images/javascript_small.png" width="20px"> Javascript</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started React") { ?>
-                    <span class="sidebarLinkSelected childItem"><img src="/images/react.png_small" width="20px"> React</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" width="20px"> React</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php"><img src="/images/react.png" width="20px"> React</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php"><img inline src="/images/react_small.png" width="20px"> React</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img src="/images/angularjs.png_small" width="20px"> AngularJS 1.x</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img src="/images/angularjs.png" width="20px"> AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img src="/images/angular2.png_small" width="20px"> AngularJS 2.0</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img src="/images/angular2.png" width="20px"> AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
-                    <span class="sidebarLinkSelected childItem"><img src="/images/webComponents.png_small" width="20px"> Web Components</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php"><img src="/images/webComponents.png" width="20px"> Web Components</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>
