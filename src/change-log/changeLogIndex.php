@@ -13,6 +13,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: Firefox was showing native context menu on top of grids context menu.</li>
     <li>Bugfix: Drag event is only cancelled if source is image, allows user to implement custom drag event.</li>
     <li>Bugfix: Angular compiling is now done after row is inserted into the DOM.</li>
+    <li>Bugfix: Fixed horizontal scroll on trackpads when mouse over pinned column.</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.2, ag-Grid-Enterprise 4.0.4)</h3>
 
