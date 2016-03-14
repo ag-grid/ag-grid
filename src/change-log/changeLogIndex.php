@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 4.0.x</h3>
+    <h3>Version 4.0.x (ag-Grid 4.0.2, ag-Grid-Enterprise 4.0.4)</h3>
 
     <li>Bugfix: When filter was 'zero' (for number filer) is was not saving correctly when using 'getFilterModel()'.</li>
     <li>Bugfix: Event 'gridSizeChanged' was not getting called when width of grid changed, only height.</li>
