@@ -708,7 +708,7 @@ export class GridPanel {
         return this.generalMouseWheelListener(event, targetPanel);
     }
 
-    private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
+/*    private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
         var delta: number;
         if (event.deltaY && event.deltaX != 0) {
             // tested on chrome
@@ -726,6 +726,26 @@ export class GridPanel {
 
         var newTopPosition = this.eBodyViewport.scrollTop + delta;
         targetPanel.scrollTop = newTopPosition;
+
+        // if we don't prevent default, then the whole browser will scroll also as well as the grid
+        event.preventDefault();
+        return false;
+    }*/
+
+    private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
+        var wheelEvent = _.normalizeWheel(event);
+
+        // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
+        // horizontal scroll
+        if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
+            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            this.eBodyViewport.scrollLeft = newLeftPosition;
+        }
+        // vertical scroll
+        else {
+            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
+            targetPanel.scrollTop = newTopPosition;
+        }
 
         // if we don't prevent default, then the whole browser will scroll also as well as the grid
         event.preventDefault();
