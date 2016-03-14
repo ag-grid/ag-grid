@@ -12,19 +12,8 @@
 
         <link inline rel="stylesheet" href="dist/bootstrap.css">
         <link inline rel="stylesheet" href="dist/bootstrap-theme.css">
-<!--        <link inline rel="stylesheet" href="dist/font-awesome/css/font-awesome.css">-->
-<!--        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">-->
+
         <link inline rel="stylesheet" type="text/css" href="style.css">
-
-        <script inline src="dist/ag-grid-enterprise.js"></script>
-
-        <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
-        <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">
-        <link inline href="example-account-report/account.css" rel="stylesheet">
-
-        <script inline src="best-javascript-data-grid/html5grid.js"></script>
-        <script inline src="example-account-report/account.js"></script>
-        <script inline src="example-file-browser/fileBrowser.js"></script>
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
@@ -328,4 +317,15 @@
     </body>
 </html>
 
+<script inline src="dist/ag-grid-enterprise.js"></script>
+
+<link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
+<link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">
+<link inline href="example-account-report/account.css" rel="stylesheet">
+
+<script inline src="best-javascript-data-grid/html5grid.js"></script>
+<script inline src="example-account-report/account.js"></script>
+<script inline src="example-file-browser/fileBrowser.js"></script>
+
 <?php include_once("analytics.php"); ?>
+

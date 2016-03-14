@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var liveReload = require('gulp-livereload');
 var inlinesource = require('gulp-inline-source');
+var htmlmin = require('gulp-htmlmin');
 
 gulp.task('default', ['watch']);
 gulp.task('release', ['inline-into-php']);
@@ -55,6 +56,9 @@ function copyFromDocs() {
 function inlineIntoPhp() {
     return gulp.src(['./dist/**/*.php'])
         .pipe(inlinesource())
+        // this plugin couldn't handle javascript examples in the documentation, and also messed up the
+        // layout of the index.html features list (the diamond separated list)
+        //.pipe(htmlmin({collapseWhitespace: true}))
         .pipe(gulp.dest('./dist'));
 }
 
