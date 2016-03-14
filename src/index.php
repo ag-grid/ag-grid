@@ -95,35 +95,35 @@
                         <div class="col-md-2" style="text-align: center;">
                             <a href="/best-javascript-data-grid/index.php">
                                 <div>
-                                    <img style="height: 100px;" src="images/javascript_large.png" alt="Best Javascript Data Grid" title="Best Javascript Data Grid"/>
+                                    <img inline style="height: 100px;" src="images/javascript_large.png" alt="Best Javascript Data Grid" title="Best Javascript Data Grid"/>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-2" style="text-align: center;">
                             <a href="/best-react-data-grid/index.php">
                                 <div>
-                                    <img style="height: 100px;" src="images/react_large.png" alt="Best React Data Grid" title="Best React Data Grid"/>
+                                    <img inline style="height: 100px;" src="images/react_large.png" alt="Best React Data Grid" title="Best React Data Grid"/>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-2" style="text-align: center;">
                             <a href="/best-angularjs-data-grid/index.php">
                                 <div>
-                                    <img style="height: 100px;" src="images/angularjs_large.png" alt="Best AngularJS Data Grid" title="Best AngularJS Data Grid"/>
+                                    <img inline style="height: 100px;" src="images/angularjs_large.png" alt="Best AngularJS Data Grid" title="Best AngularJS Data Grid"/>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-2" style="text-align: center;">
                             <a href="/best-angular-2-data-grid/index.php">
                                 <div>
-                                    <img style="height: 100px;" src="images/angular2_large.png" alt="Best Angular 2 Data Grid" title="Best Angular 2 Data Grid"/>
+                                    <img inline style="height: 100px;" src="images/angular2_large.png" alt="Best Angular 2 Data Grid" title="Best Angular 2 Data Grid"/>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-2" style="text-align: center;">
                             <a href="/best-web-component-data-grid/index.php" alt="Best Web Component Data Grid" title="Best Web Component Data Grid">
                                 <div>
-                                    <img style="height: 100px;" src="images/webComponents_large.png"/>
+                                    <img inline style="height: 100px;" src="images/webComponents_large.png"/>
                                 </div>
                             </a>
                         </div>

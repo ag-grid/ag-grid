@@ -96,19 +96,19 @@
                     </iframe>
 
                     <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com">
-                        <img src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
+                        <img inline src="/images/facebook_32.png" alt="Share on Facebook" title="Share on Facebook"/>
                     </a>
 
                     <a class='share-link' href="https://twitter.com/home?status=http://www.ag-Grid.com,%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers%20%23aggrid%20">
-                        <img src="/images/twitter_32.png" alt="Share on Twitter" title="Share on Twitter"/>
+                        <img inline src="/images/twitter_32.png" alt="Share on Twitter" title="Share on Twitter"/>
                     </a>
 
                     <a class='share-link' href="https://plus.google.com/share?url=www.ag-grid.com">
-                        <img src="/images/googleplus_32.png" alt="Share on Google Plus" title="Share on Google Plus"/>
+                        <img inline src="/images/googleplus_32.png" alt="Share on Google Plus" title="Share on Google Plus"/>
                     </a>
 
                     <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.ag-grid.com&title=Angular%20Grid&summary=%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers&source=">
-                        <img src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
+                        <img inline src="/images/linkedin_32.png" alt="Share on LinkedIn" title="Share on LinkedIn"/>
                     </a>
 
                 </div>
