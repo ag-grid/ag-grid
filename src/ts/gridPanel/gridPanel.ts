@@ -212,8 +212,10 @@ export class GridPanel {
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
         this.eRoot.addEventListener('dragstart', (event: MouseEvent)=> {
-            event.preventDefault();
-            return false;
+            if (event.target instanceof HTMLImageElement) {
+                event.preventDefault();
+                return false;
+            }
         });
     }
 
