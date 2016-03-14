@@ -26,7 +26,8 @@ or any portion thereof, for software development or application development purp
 “Designated User” shall mean a single distinct person for whom You have purchased a license to use the Software, 
 whether such person is an employee acting within the scope of their employment with You or Your consultant or 
 contractor acting within the scope of the services they provide for You. A Designated User can be replaced with a 
-new Designated User only after being a Designated User for a minimum of six (6) months.
+new Designated User as long as the number of concurrent Designated Users does not exceed that which the license
+was purchased for.
 
 “End User” means an end user of Your Application who acquires a license to such solely for their own internal use and 
 not for distribution, resale, user interface design, or software development purposes.
@@ -47,7 +48,7 @@ In addition to the other terms contained herein, and subject to Your compliance 
 of this Agreement, We grant to You a revocable, non-exclusive, non-transferable and non-sublicensable license to 
 install and use the Software (the “Trial License”) strictly for Your internal evaluation and review purposes and not 
 for production purposes. This Trial License applies only if You have registered with Us for a Trial License of the 
-Software and shall be effective for thirty (60) consecutive days following the date of registration (“the Trial Period”). 
+Software and shall be effective for sixty (60) consecutive days following the date of registration (“the Trial Period”). 
 You may only register for a Trial License once in any six month period. You agree not to use a Trial License 
 for any purpose other than determining whether to purchase a license to the Software. You are explicitly not permitted 
 to distribute the Software to any user outside the Organization on whose behalf You have undertaken this license. 
@@ -89,22 +90,16 @@ disclaimer statement affixed to, incorporated in or otherwise applied in connect
 You may not redistribute the ag-Grid-Enterprise code or Modifications other than by including the ag-Grid-Enterprise 
 or a portion thereof within Your Application. You may not redistribute the ag-Grid-Enterprise code or Modifications 
 as part of any Application that can be described as a development toolkit or library, an application builder, a 
-website builder a user interface designer, or any application that is intended for use by software, application, 
-or website developers or designers. You may not redistribute any part of the ag-Grid-Enterprise documentation. 
-You may not change or remove the copyright notice from any of the files included in ag-Grid or Modifications.
+website builder, a user interface designer, or any application that is intended for use by software, application, 
+or website developers or designers. You may not change or remove the copyright notice from any of the files included
+in ag-Grid or Modifications.
 
 UNDER NO CIRCUMSTANCES MAY YOU USE THE AG-GRID FOR AN APPLICATION THAT IS INTENDED FOR SOFTWARE 
 OR APPLICATION DEVELOPMENT PURPOSES.
 
 You are required to ensure that the ag-Grid-Enterprise is not reused by or with any applications other than those 
 with which You distribute it as permitted herein. For example, if You install the ag-Grid-Enterprise on a customer’s 
-server, that customer is not permitted to use the ag-Grid-Enterprise independently of Your Application, and must 
-be informed as such.
-
-Alternate versions of the ag-Grid-Enterprise (“GPL Version”) may be licensed under the terms of the GNU General 
-Public License versions 3.0 (“GPL”). If You, or another third party, has, at any time, developed all or any portion 
-of the Application(s) using a GPL Version, You may not combine such work with the Grid SDKs licensed hereunder, 
-and You must license such application(s) under the terms of the GNU General Public License version 3.
+server, that customer is not permitted to use the ag-Grid-Enterprise independently of Your Application.
 
 5.TERMINATION
 
@@ -131,20 +126,7 @@ MATTER RELATING TO THIS AGREEMENT, EVEN IF WE OR OUR RESELLERS HAVE BEEN ADVISED
 IN ANY CASE, OUR ENTIRE LIABILITY WITH RESPECT TO ANY SUBJECT MATER RELATING TO THIS AGREEMENT SHALL BE LIMITED TO 
 THE GREATER OF (I) THE AMOUNT ACTUALLY PAID BY YOU FOR THE SOFTWARE OR (II) FIVE HUNDRED BRITISH POUNDS (£500).
 
-8.VERIFICATION
-
-We or a certified auditor acting on Our behalf, may, upon Our reasonable request and at Our expense, audit You with 
-respect to the use of the Software. Such audit may be conducted by mail, electronic means or through an in-person 
-visit to Your place of business. Any such in-person audit shall be conducted during regular business hours at Your 
-facilities and shall not unreasonably interfere with Your business activities. We shall not remove, copy, or 
-redistribute any electronic material during the course of an audit. If an audit reveals that You are using the 
-Software in a way that is in material violation of the terms of this Agreement, then You shall pay Our reasonable 
-costs of conducting the audit. In the case of a material violation, You agree to pay Us any amounts owing that are 
-attributable to the unauthorized use. In the alternative, We reserve the right, at Our discretion, to terminate the 
-licenses for the Software, in addition to any other remedies available under law. This Section shall survive expiration 
-or termination of this Agreement for a period of two (2) years.
-
-9.PAYMENT AND TAXES
+8.PAYMENT AND TAXES
 
 If credit has been extended to You by Us, all payments under this Agreement are due within thirty (30) days of the date 
 We mail an invoice to You. If We have not extended credit to You, You shall be required to make payment concurrent with 
@@ -157,7 +139,7 @@ furnish evidence of such paid taxes as is sufficient to enable the other party t
 including original withholding tax certificates. Notwithstanding the foregoing, Software ordered through Our resellers 
 is subject to the fees and payment terms set forth on the applicable reseller invoice.
 
-10.MISCELLANEOUS
+9.MISCELLANEOUS
 
 The license granted herein applies only to the version of the Software available when purchased in connection with 
 the terms of this Agreement, and to any updates and/or upgrades to which You may be entitled. Any previous or subsequent 
