@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,7 +96,7 @@ var FilterManager = (function () {
                 return;
             }
             var model = filterApi.getModel();
-            if (model) {
+            if (utils_1.Utils.exists(model)) {
                 result[key] = model;
             }
         });

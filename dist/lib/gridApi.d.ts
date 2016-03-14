@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -31,6 +31,7 @@ export declare class GridApi {
     private paginationController;
     private focusedCellController;
     private rangeController;
+    private clipboardService;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
     getFirstRenderedRow(): number;
@@ -113,4 +114,6 @@ export declare class GridApi {
     getRangeSelections(): RangeSelection[];
     addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
     clearRangeSelection(): void;
+    copySelectedRowsToClipboard(): void;
+    copySelectedRangeToClipboard(): void;
 }

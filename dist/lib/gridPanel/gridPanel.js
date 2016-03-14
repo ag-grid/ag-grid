@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -191,17 +191,21 @@ var GridPanel = (function () {
     GridPanel.prototype.addCellListeners = function () {
         var _this = this;
         var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu'];
+        var that = this;
         eventNames.forEach(function (eventName) {
             _this.eAllCellContainers.forEach(function (container) {
-                return container.addEventListener(eventName, _this.processMouseEvent.bind(_this, eventName));
+                return container.addEventListener(eventName, function (mouseEvent) {
+                    var eventSource = this;
+                    that.processMouseEvent(eventName, mouseEvent, eventSource);
+                });
             });
         });
     };
-    GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
+    GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent, eventSource) {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
         if (utils_1.Utils.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
     };
     GridPanel.prototype.addShortcutKeyListeners = function () {

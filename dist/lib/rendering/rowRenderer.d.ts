@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { LoggerFactory } from "../logger";
 import { ColumnChangeEvent } from "../columnChangeEvent";
 import { GridCell } from "../entities/gridCell";
 export declare class RowRenderer {
@@ -45,6 +46,7 @@ export declare class RowRenderer {
     private eFloatingBottomPinnedLeftContainer;
     private eFloatingBottomPinnedRightContainer;
     private logger;
+    agWire(loggerFactory: LoggerFactory): void;
     init(): void;
     onColumnEvent(event: ColumnChangeEvent): void;
     getContainersFromGridPanel(): void;
@@ -69,7 +71,7 @@ export declare class RowRenderer {
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
     private ensureRowsRendered();
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void;
     private insertRow(node, rowIndex);
     getRenderedNodes(): any[];
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;

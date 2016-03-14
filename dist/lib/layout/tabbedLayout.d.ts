@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -7,10 +7,12 @@ export declare class TabbedLayout {
     private eHeader;
     private eBody;
     private params;
+    private afterAttachedParams;
     private static TEMPLATE;
     private items;
     private activeItem;
     constructor(params: TabbedLayoutParams);
+    setAfterAttachedParams(params: any): void;
     getMinWidth(): number;
     showFirstItem(): void;
     private addItem(item);

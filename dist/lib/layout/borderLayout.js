@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -197,7 +197,14 @@ var BorderLayout = (function () {
         if (centerWidth < 0) {
             centerWidth = 0;
         }
-        this.eCenterWrapper.style.width = centerWidth + 'px';
+        if (this.centerWidthLastTime !== centerWidth) {
+            this.centerWidthLastTime = centerWidth;
+            this.eCenterWrapper.style.width = centerWidth + 'px';
+            return true; // return true because there was a change
+        }
+        else {
+            return false;
+        }
     };
     BorderLayout.prototype.setEastVisible = function (visible) {
         if (this.eEastWrapper) {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -47,7 +47,7 @@ export declare class RenderedRow {
     private addCellFocusedListener();
     private createContainers();
     private attachContainers();
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void;
     private setTopAndHeightCss();
     private addRowIds();
     addEventListener(eventType: string, listener: Function): void;

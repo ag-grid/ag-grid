@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -541,12 +541,13 @@ var ColumnController = (function () {
         this.allColumns = [];
         this.rowGroupColumns = [];
         this.valueColumns = [];
+        var success = true;
         if (columnState) {
             columnState.forEach(function (stateItem) {
                 var oldColumn = utils_1.Utils.find(oldColumnList, 'colId', stateItem.colId);
                 if (!oldColumn) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
-                    return;
+                    success = false;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                 oldColumn.setVisible(!stateItem.hide);
@@ -598,6 +599,7 @@ var ColumnController = (function () {
         this.updateModel();
         var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        return success;
     };
     ColumnController.prototype.getColumns = function (keys) {
         var _this = this;

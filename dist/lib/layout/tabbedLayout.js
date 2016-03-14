@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,9 @@ var TabbedLayout = (function () {
             params.items.forEach(function (item) { return _this.addItem(item); });
         }
     }
+    TabbedLayout.prototype.setAfterAttachedParams = function (params) {
+        this.afterAttachedParams = params;
+    };
     TabbedLayout.prototype.getMinWidth = function () {
         var eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
@@ -79,7 +82,7 @@ var TabbedLayout = (function () {
         utils_1.Utils.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
         this.activeItem = wrapper;
         if (wrapper.tabbedItem.afterAttachedCallback) {
-            wrapper.tabbedItem.afterAttachedCallback();
+            wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
         }
     };
     TabbedLayout.prototype.getGui = function () {

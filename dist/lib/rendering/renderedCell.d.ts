@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -65,9 +65,9 @@ export declare class RenderedCell {
     private createParams();
     private createEvent(event, eventSource?);
     isCellEditable(): boolean;
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void;
     private onContextMenu(mouseEvent);
-    private onCellDoubleClicked();
+    private onCellDoubleClicked(mouseEvent, eventSource);
     private onMouseDown();
     private onCellClicked(mouseEvent);
     private populateCell();

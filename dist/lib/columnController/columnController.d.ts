@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,7 +16,7 @@ export declare class ColumnApi {
     getColumnGroup(name: string, instanceId?: number): ColumnGroup;
     getDisplayNameForCol(column: any): string;
     getColumn(key: any): Column;
-    setColumnState(columnState: any): void;
+    setColumnState(columnState: any): boolean;
     getColumnState(): [any];
     resetColumnState(): void;
     isPinning(): boolean;
@@ -52,7 +52,7 @@ export declare class ColumnApi {
     columnGroupOpened(group: ColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;
-    setState(columnState: any): void;
+    setState(columnState: any): boolean;
     getState(): [any];
     resetState(): void;
 }
@@ -136,7 +136,7 @@ export declare class ColumnController {
     getAllColumnsIncludingAuto(): Column[];
     getColumnState(): [any];
     resetColumnState(): void;
-    setColumnState(columnState: any[]): void;
+    setColumnState(columnState: any[]): boolean;
     getColumns(keys: any[]): Column[];
     getColumnWithValidation(key: string | ColDef | Column): Column;
     getColumn(key: string | ColDef | Column): Column;

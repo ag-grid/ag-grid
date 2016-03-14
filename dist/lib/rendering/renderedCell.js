@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -367,7 +367,7 @@ var RenderedCell = (function () {
         }
         return this.column.isCellEditable(this.node);
     };
-    RenderedCell.prototype.onMouseEvent = function (eventName, mouseEvent) {
+    RenderedCell.prototype.onMouseEvent = function (eventName, mouseEvent, eventSource) {
         switch (eventName) {
             case 'click':
                 this.onCellClicked(mouseEvent);
@@ -376,7 +376,7 @@ var RenderedCell = (function () {
                 this.onMouseDown();
                 break;
             case 'dblclick':
-                this.onCellDoubleClicked();
+                this.onCellDoubleClicked(mouseEvent, eventSource);
                 break;
             case 'contextmenu':
                 this.onContextMenu(mouseEvent);
@@ -404,10 +404,10 @@ var RenderedCell = (function () {
             return true;
         }
     };
-    RenderedCell.prototype.onCellDoubleClicked = function () {
+    RenderedCell.prototype.onCellDoubleClicked = function (mouseEvent, eventSource) {
         var colDef = this.column.getColDef();
         // always dispatch event to eventService
-        var agEvent = this.createEvent(event, this);
+        var agEvent = this.createEvent(mouseEvent, eventSource);
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {

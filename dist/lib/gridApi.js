@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.0
+ * @version v4.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -322,6 +322,12 @@ var GridApi = (function () {
         }
         this.rangeController.clearSelection();
     };
+    GridApi.prototype.copySelectedRowsToClipboard = function () {
+        this.clipboardService.copySelectedRowsToClipboard();
+    };
+    GridApi.prototype.copySelectedRangeToClipboard = function () {
+        this.clipboardService.copySelectedRangeToClipboard();
+    };
     __decorate([
         context_3.Autowired('csvCreator'), 
         __metadata('design:type', csvCreator_1.CsvCreator)
@@ -398,6 +404,10 @@ var GridApi = (function () {
         context_4.Optional('rangeController'), 
         __metadata('design:type', Object)
     ], GridApi.prototype, "rangeController", void 0);
+    __decorate([
+        context_4.Optional('clipboardService'), 
+        __metadata('design:type', Object)
+    ], GridApi.prototype, "clipboardService", void 0);
     GridApi = __decorate([
         context_1.Bean('gridApi'), 
         __metadata('design:paramtypes', [])

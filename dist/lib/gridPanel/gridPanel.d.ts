@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.0
+// Type definitions for ag-grid v4.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -61,7 +61,7 @@ export declare class GridPanel {
     private addEventListeners();
     private addDragListeners();
     private addCellListeners();
-    private processMouseEvent(eventName, mouseEvent);
+    private processMouseEvent(eventName, mouseEvent, eventSource);
     private addShortcutKeyListeners();
     private onCtrlAndA(event);
     private onCtrlAndC(event);
