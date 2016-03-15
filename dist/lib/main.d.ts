@@ -1,1 +1,1 @@
-// ag-grid-enterprise v4.0.5
+// ag-grid-enterprise v4.0.6

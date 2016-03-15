@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.5
+// ag-grid-enterprise v4.0.6
 import { IRangeController } from "ag-grid/main";
 import { RangeSelection } from "ag-grid/main";
 import { GridCell } from "ag-grid/main";
