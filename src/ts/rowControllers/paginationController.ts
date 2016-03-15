@@ -102,6 +102,12 @@ export class PaginationController {
     }
 
     private reset() {
+        // important to return here, as the user could be setting filter or sort before
+        // data-source is set
+        if (_.missing(this.datasource)) {
+            return;
+        }
+
         this.selectionController.reset();
 
         // copy pageSize, to guard against it changing the the datasource between calls
