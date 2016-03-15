@@ -10,7 +10,7 @@ This is not free software, this software is covered by copyright and to use you 
 
 Please see files:
 LICENSE.md
-SUPPOR_AND_MAINTENANCE.md
+SUPPORT_AND_MAINTENANCE.md
 
 Building
 ==============
