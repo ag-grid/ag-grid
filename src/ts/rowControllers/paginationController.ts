@@ -15,25 +15,25 @@ import {Events} from "../events";
 import {FilterManager} from "../filter/filterManager";
 
 var template =
-        '<div class="ag-paging-panel ag-font-style">'+
-            '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">'+
-                '<span id="firstRowOnPage"></span>'+
-                ' [TO] '+
-                '<span id="lastRowOnPage"></span>'+
-                ' [OF] '+
-                '<span id="recordCount"></span>'+
-            '</span>'+
-            '<span class="ag-paging-page-summary-panel">'+
-                '<button type="button" class="ag-paging-button" id="btFirst">[FIRST]</button>'+
-                '<button type="button" class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>'+
-                '[PAGE] '+
-                '<span id="current"></span>'+
-                ' [OF] '+
-                '<span id="total"></span>'+
-                '<button type="button" class="ag-paging-button" id="btNext">[NEXT]</button>'+
-                '<button type="button" class="ag-paging-button" id="btLast">[LAST]</button>'+
-            '</span>'+
-        '</div>';
+    '<div class="ag-paging-panel ag-font-style">'+
+    '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">'+
+    '<span id="firstRowOnPage"></span>'+
+    ' [TO] '+
+    '<span id="lastRowOnPage"></span>'+
+    ' [OF] '+
+    '<span id="recordCount"></span>'+
+    '</span>'+
+    '<span class="ag-paging-page-summary-panel">'+
+    '<button type="button" class="ag-paging-button" id="btFirst">[FIRST]</button>'+
+    '<button type="button" class="ag-paging-button" id="btPrevious">[PREVIOUS]</button>'+
+    '[PAGE] '+
+    '<span id="current"></span>'+
+    ' [OF] '+
+    '<span id="total"></span>'+
+    '<button type="button" class="ag-paging-button" id="btNext">[NEXT]</button>'+
+    '<button type="button" class="ag-paging-button" id="btLast">[LAST]</button>'+
+    '</span>'+
+    '</div>';
 
 @Bean('paginationController')
 export class PaginationController {
@@ -75,13 +75,13 @@ export class PaginationController {
 
         this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
             if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideFilter()) {
-                this.reset();
+                this.reset(null);
             }
         });
 
         this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, ()=> {
             if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideSorting()) {
-                this.reset();
+                this.reset(null);
             }
         });
 
@@ -98,10 +98,10 @@ export class PaginationController {
             return;
         }
 
-        this.reset();
+        this.reset(datasource);
     }
 
-    private reset() {
+    private reset(datasource: any ) {
         this.selectionController.reset();
 
         // copy pageSize, to guard against it changing the the datasource between calls
@@ -120,7 +120,14 @@ export class PaginationController {
             this.totalPages = null;
         }
 
-        this.currentPage = 0;
+        // if there is a startPage defined in the datasource set it to the currentPage.
+        if (datasource && datasource.startPage) {
+            this.currentPage = datasource.startPage;
+            // after setting clear it to avoid conflict at sorting.
+            this.currentPage = undefined;
+        } else {
+            this.currentPage = 0;
+        }
 
         // hide the summary panel until something is loaded
         this.ePageRowSummaryPanel.style.visibility = 'hidden';
