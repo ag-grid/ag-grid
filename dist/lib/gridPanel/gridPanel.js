@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.3
+ * @version v4.0.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -587,29 +587,6 @@ var GridPanel = (function () {
         }
         return this.generalMouseWheelListener(event, targetPanel);
     };
-    /*    private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
-            var delta: number;
-            if (event.deltaY && event.deltaX != 0) {
-                // tested on chrome
-                delta = event.deltaY;
-            } else if (event.wheelDelta && event.wheelDelta != 0) {
-                // tested on IE
-                delta = -event.wheelDelta;
-            } else if (event.detail && event.detail != 0) {
-                // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
-                delta = event.detail * 20;
-            } else {
-                // couldn't find delta
-                return;
-            }
-    
-            var newTopPosition = this.eBodyViewport.scrollTop + delta;
-            targetPanel.scrollTop = newTopPosition;
-    
-            // if we don't prevent default, then the whole browser will scroll also as well as the grid
-            event.preventDefault();
-            return false;
-        }*/
     GridPanel.prototype.generalMouseWheelListener = function (event, targetPanel) {
         var wheelEvent = utils_1.Utils.normalizeWheel(event);
         // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally

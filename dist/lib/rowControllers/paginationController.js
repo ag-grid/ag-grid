@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.3
+ * @version v4.0.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,11 @@ var PaginationController = (function () {
         this.reset();
     };
     PaginationController.prototype.reset = function () {
+        // important to return here, as the user could be setting filter or sort before
+        // data-source is set
+        if (utils_1.Utils.missing(this.datasource)) {
+            return;
+        }
         this.selectionController.reset();
         // copy pageSize, to guard against it changing the the datasource between calls
         if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
