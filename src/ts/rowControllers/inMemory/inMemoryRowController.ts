@@ -113,6 +113,10 @@ export class InMemoryRowController implements IRowModel {
         console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
     }
 
+    public reloadPage(): void {
+        console.error('ag-Grid: should never call resetData on inMemoryRowController');
+    }
+
     public getTopLevelNodes() {
         return this.rowsAfterGroup;
     }

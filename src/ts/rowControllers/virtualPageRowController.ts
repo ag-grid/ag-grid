@@ -84,12 +84,41 @@ export class VirtualPageRowController implements IRowModel {
         this.reset();
     }
 
+    public reloadPage(): void {
+        var startPage = Math.floor(this.rowRenderer.getFirstVirtualRenderedRow() / this.pageSize) || 0;
+        var endPage = Math.floor(this.rowRenderer.getLastVirtualRenderedRow() / this.pageSize) || 0;
+
+        this.virtualRowCount = 0;
+        this.foundMaxRow = false;
+
+        this.resetCache();
+
+        for (let page = startPage; page <= endPage; page++) {
+            this.loadPage(page);
+        }
+    }
+
     public isEmpty(): boolean {
         return !this.datasource;
     }
 
     public isRowsToRender(): boolean {
         return _.exists(this.datasource);
+    }
+
+    private resetCache(): void {
+        // in case any daemon requests coming from datasource, we know it ignore them
+        this.datasourceVersion++;
+
+        // map of page numbers to rows in that page
+        this.pageCache = {};
+        this.pageCacheSize = 0;
+
+        // if a number is in this array, it means we are pending a load from it
+        this.pageLoadsInProgress = [];
+        this.pageLoadsQueued = [];
+        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
+        this.accessTime = 0; // rather than using the clock, we use this counter
     }
 
     private reset() {
@@ -104,18 +133,7 @@ export class VirtualPageRowController implements IRowModel {
             this.foundMaxRow = false;
         }
 
-        // in case any daemon requests coming from datasource, we know it ignore them
-        this.datasourceVersion++;
-
-        // map of page numbers to rows in that page
-        this.pageCache = {};
-        this.pageCacheSize = 0;
-
-        // if a number is in this array, it means we are pending a load from it
-        this.pageLoadsInProgress = [];
-        this.pageLoadsQueued = [];
-        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
-        this.accessTime = 0; // rather than using the clock, we use this counter
+        this.resetCache();
 
         // the number of concurrent loads we are allowed to the server
         if (typeof this.datasource.maxConcurrentRequests === 'number' && this.datasource.maxConcurrentRequests > 0) {

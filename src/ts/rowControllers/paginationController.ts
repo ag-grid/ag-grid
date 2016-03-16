@@ -101,6 +101,10 @@ export class PaginationController {
         this.reset();
     }
 
+    public reloadPage(): void {
+        this.loadPage();
+    }
+
     private reset() {
         this.selectionController.reset();
 

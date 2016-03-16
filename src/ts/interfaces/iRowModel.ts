@@ -23,4 +23,5 @@ export interface IRowModel {
 
     // virtual row model only
     setDatasource(datasource:any): void;
+    reloadPage(): void;
 }
