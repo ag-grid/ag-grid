@@ -474,7 +474,6 @@ export class RenderedCell {
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
-            console.log('preventing default');
             mouseEvent.preventDefault();
         }
     }
