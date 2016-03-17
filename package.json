@@ -18,7 +18,7 @@
     "angularjs",
     "reactjs"
   ],
-  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ceolter/ag-grid-docs/issues"
