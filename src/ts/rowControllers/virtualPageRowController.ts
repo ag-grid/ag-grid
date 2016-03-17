@@ -93,6 +93,12 @@ export class VirtualPageRowController implements IRowModel {
     }
 
     private reset() {
+        // important to return here, as the user could be setting filter or sort before
+        // data-source is set
+        if (_.missing(this.datasource)) {
+            return;
+        }
+
         this.selectionController.reset();
 
         // see if datasource knows how many rows there are
