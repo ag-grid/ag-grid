@@ -77,6 +77,16 @@ include '../documentation-main/documentation_header.php';
         to copy multiple ranges, it gives an error message saying multiple ranges cannot be copied.
     </note>
 
+    <h3>Safari Support</h3>
+
+    <p>
+        Copy to clipboard is not supported in Safari. This is because the Safari browser does not implement the
+        required API that ag-Grid uses, further details are described
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand">here</a>. ag-Grid does
+        not plan to support Safari clipboard as Safari is not generally used in corporate environments where
+        the target audience for this feature resides.
+    </p>
+
     <h3>Clipboard Example</h3>
 
     <p>

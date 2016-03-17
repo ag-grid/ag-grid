@@ -100,95 +100,92 @@ include 'documentation_header.php';
     list.
 </p>
 
-<div style="float: left; margin-top: 20px;">
+<h4>Twitter</h4>
+
+<div>
     <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="text-align: center; float: right; margin-top: 20px;">
-    <div style="border: 1px solid lightgrey; display: inline-block; padding-right: 10px;">
+<h4>ag-Grid Mailing List</h4>
 
-        <!-- Begin MailChimp Signup Form -->
-        <link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
-        <style type="text/css">
-            #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
-            /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
-               We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-        </style>
+<!-- Begin MailChimp Signup Form -->
+<link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+    #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+       We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+</style>
 
-        <div id="mc_embed_signup">
-            <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
-                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-                <div id="mc_embed_signup_scroll">
-                    <div style="text-align: center; padding-bottom: 5px;">
-                        Join the mailing list to get updates of new features and releases
-                    </div>
-                    <table>
-                        <tr>
-                            <td style="padding: 4px;">
-                                <i class="fa fa-envelope"></i>
-                            </td>
-                            <td style="padding: 4px;">
-                                <input style="width: 200px" placeholder="Email Address..." type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
-                            </td>
-                            <td style="padding: 4px;">
-                                <i class="fa fa-user" style="padding-left: 4px;"></i>
-                            </td>
-                            <td style="padding: 4px;">
-                                <input style="width: 200px" placeholder="First Name" type="text" value="" name="FNAME" class="" id="mce-FNAME">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                            </td>
-                            <td>
-                            </td>
-                            <td>
-                            </td>
-                            <td style="padding: 4px;">
-                                <input style="width: 200px" placeholder="Last Name" type="text" value="" name="LNAME" class="" id="mce-LNAME">
-                            </td>
-                        </tr>
-                    </table>
-                    <div id="mce-responses" class="clear">
-                        <div class="response" id="mce-error-response" style="display:none"></div>
-                        <div class="response" id="mce-success-response" style="display:none"></div>
-                    </div>
-                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                    <div style="position: absolute; left: -5000px;"><input type="text" name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988" tabindex="-1" value=""></div>
-                    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-                </div>
-            </form>
+<div id="mc_embed_signup">
+    <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
+          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate
+          style="padding: 0px">
+        <div id="mc_embed_signup_scroll">
+            <input style="width: 200px" placeholder="Email Address..." type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+            <input style="width: 200px" placeholder="First Name" type="text" value="" name="FNAME" class="" id="mce-FNAME">
+            <input style="width: 200px" placeholder="Last Name" type="text" value="" name="LNAME" class="" id="mce-LNAME">
+            <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
+                        style="position: relative; top: -4px;">
+            <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+            </div>
+            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+            <div style="position: absolute; left: -5000px;"><input type="text" name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988" tabindex="-1" value=""></div>
         </div>
-        <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
-        <!--End mc_embed_signup-->
-
-    </div>
+    </form>
 </div>
+<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+<!--End mc_embed_signup-->
 
-<!--
-<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+<h2>
+    ag-Grid Roadmap
+</h2>
 
-    <div style="float: left; width: 240px;">
-        <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
-            <img src="../images/agGridDaily.png"/>
-        </a>
-    </div>
-    <div style="overflow: hidden;">
-        <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else">
-                Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
-            </a>
-        </div>
-    </div>
-    <div style="color: #767676; padding-top: 20px;">
-        Supporting all the frameworks and build systems took days of research and practicing.
-        This article goes through lessons learnt and how to structure a project while supporting
-        all the frameworks and build systems around today.
-    </div>
+<p>
+    Below are listed the 'next big things' on the roadmap for ag-Grid. During the development,
+    other smaller items will be included. The next major release of ag-Grid will be released once
+    one or more of the below are complete. All of these are being developed out in coordination with
+    large ag-Grid clients including one leading investment bank in London and one leading fund
+    management company in Canada.
+</p>
 
-</div>-->
+<h4>Enhanced Editing (ag-Grid free)</h4>
 
+<p>
+    The core editing and navigation will be revamped, to allow users to work with editing the data as easy as
+    working in Excel. Expect a new type 'cellEditor' to be added, allowing your editors to integrate with the
+    built in navigation and editing of the grid.
+</p>
 
+<h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
+
+<p>
+    Modern reporting tools show filters in a panel, so you can interact with a set of filters
+    concurrently. ag-Grid will allow this option by having a 'pinnable' option on the filters, which
+    when clicked, will move the filter to the tool panel (the right hand panel that currently has
+    column management). This will allow the tool panel to host and display multiple filters concurrently.
+</p>
+
+<h4>Big Data View (ag-Grid-Enterprise)</h4>
+
+<p>
+    A new data model type (in addition to the existing three that are 1 - plain, 2 - pagination and 3 - virtual pagination)
+    that will allow viewing
+    infinite amounts of data (as far as the grid is concerned) through a virtual web view. The concept
+    will be similar to the current virtual pagination but far more advanced. The view will support
+    aggregations, parent / child and drill-down. The target for this is to sit on top of the new
+    generation of 'big data' stores, allowing an easy navigation experience on top of very large data.
+    This feature will be of particular interest to corporations with large stores of risk, trade and market data.
+</p>
+
+<h4>Smaller Items (all for ag-Grid free)</h4>
+
+<p>Plus the following smaller items:</p>
+<ul>
+    <li>Adding / removing rows without required to call setRowData()</li>
+    <li>Components inside the grid with full control of the row (ie will support grids inside grids)</li>
+</ul>
 
 <?php include 'documentation_footer.php';?>
