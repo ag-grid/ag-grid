@@ -7,8 +7,9 @@ var template =
                 '<select class="ag-filter-select" id="filterType">'+
                     '<option value="1">[CONTAINS]</option>'+
                     '<option value="2">[EQUALS]</option>'+
-                    '<option value="3">[STARTS WITH]</option>'+
-                    '<option value="4">[ENDS WITH]</option>'+
+                    '<option value="3">[NOT EQUALS]</option>'+
+                    '<option value="4">[STARTS WITH]</option>'+
+                    '<option value="5">[ENDS WITH]</option>'+
                 '</select>'+
             '</div>'+
             '<div>'+
@@ -21,8 +22,9 @@ var template =
 
 var CONTAINS = 1;
 var EQUALS = 2;
-var STARTS_WITH = 3;
-var ENDS_WITH = 4;
+var NOT_EQUALS = 3;
+var STARTS_WITH = 4;
+var ENDS_WITH = 5;
 
 export class TextFilter implements Filter {
 
@@ -80,6 +82,8 @@ export class TextFilter implements Filter {
                 return valueLowerCase.indexOf(this.filterText) >= 0;
             case EQUALS:
                 return valueLowerCase === this.filterText;
+            case NOT_EQUAL:
+                return valueLowerCase != this.filterText;
             case STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
             case ENDS_WITH:
@@ -104,6 +108,7 @@ export class TextFilter implements Filter {
         return template
             .replace('[FILTER...]', this.localeTextFunc('filterOoo', 'Filter...'))
             .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
+            .replace('[NOT EQUALS]', this.localeTextFunc('notEquals', 'Not equals'))
             .replace('[CONTAINS]', this.localeTextFunc('contains', 'Contains'))
             .replace('[STARTS WITH]', this.localeTextFunc('startsWith', 'Starts with'))
             .replace('[ENDS WITH]', this.localeTextFunc('endsWith', 'Ends with'))
@@ -164,6 +169,7 @@ export class TextFilter implements Filter {
         var that = this;
         this.api = {
             EQUALS: EQUALS,
+            NOT_EQUALS: NOT_EQUALS,
             CONTAINS: CONTAINS,
             STARTS_WITH: STARTS_WITH,
             ENDS_WITH: ENDS_WITH,
