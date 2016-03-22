@@ -13,6 +13,8 @@ import {PostConstruct} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {FilterManager} from "../filter/filterManager";
+import {IInMemoryRowModel} from "../interfaces/iInMemoryRowModel";
+import {Constants} from "../constants";
 
 var template =
         '<div class="ag-paging-panel ag-font-style">'+
@@ -42,9 +44,12 @@ export class PaginationController {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
+
+    // we wire up rowModel, but cast to inMemoryRowModel before using it
+    @Autowired('rowModel') private rowModel: IRowModel;
+    private inMemoryRowModel: IInMemoryRowModel;
 
     private eGui: any;
     private btNext: any;
@@ -69,6 +74,14 @@ export class PaginationController {
 
     @PostConstruct
     public init() {
+
+        // if we are doing pagination, we are guaranteed that the model type
+        // is normal. if it is not, then this paginationController service
+        // will never be called.
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
+            this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        }
+
         this.setupComponents();
         this.callVersion = 0;
         var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
@@ -162,7 +175,7 @@ export class PaginationController {
 
     private pageLoaded(rows: any, lastRowIndex: any) {
         var firstId = this.currentPage * this.pageSize;
-        this.rowModel.setRowData(rows, true, firstId);
+        this.inMemoryRowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
         if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
             this.foundMaxRow = true;
@@ -254,7 +267,7 @@ export class PaginationController {
             // set in an empty set of rows, this will at
             // least get rid of the loading panel, and
             // stop blocking things
-            that.rowModel.setRowData([], true);
+            that.inMemoryRowModel.setRowData([], true);
         }
     }
 

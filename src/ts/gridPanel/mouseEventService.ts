@@ -82,7 +82,7 @@ export class MouseEventService {
 
         var bodyY = mouseEvent.clientY - clientRect.top + scrollY;
 
-        var rowIndex = this.rowModel.getRowAtPixel(bodyY);
+        var rowIndex = this.rowModel.getRowIndexAtPixel(bodyY);
 
         return rowIndex;
     }

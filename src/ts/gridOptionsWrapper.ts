@@ -17,7 +17,7 @@ import {GetContextMenuItems} from "./entities/gridOptions";
 import {GetMainMenuItems} from "./entities/gridOptions";
 import {ProcessRowParams} from "./entities/gridOptions";
 import {ProcessCellForExportParams} from "./entities/gridOptions";
-import {Column} from "./entities/column";
+import {Utils as _} from "./utils";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -274,10 +274,14 @@ export class GridOptionsWrapper {
     }
 
     // we don't allow dynamic row height for virtual paging
-    public getRowHeightForVirtualPagination(): number {
-        if (typeof this.gridOptions.rowHeight === 'number') {
+    public getRowHeightAsNumber(): number {
+        var rowHeight = this.gridOptions.rowHeight;
+        if (_.missing(rowHeight)) {
+            return DEFAULT_ROW_HEIGHT;
+        } else if (typeof this.gridOptions.rowHeight === 'number') {
             return this.gridOptions.rowHeight;
         } else {
+            console.warn('ag-Grid row height must be a number if not using standard row model');
             return DEFAULT_ROW_HEIGHT;
         }
     }

@@ -378,8 +378,8 @@ export class RowRenderer {
             var topPixel = this.eBodyViewport.scrollTop;
             var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-            var first = this.rowModel.getRowAtPixel(topPixel);
-            var last = this.rowModel.getRowAtPixel(bottomPixel);
+            var first = this.rowModel.getRowIndexAtPixel(topPixel);
+            var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
 
             //add in buffer
             var buffer = this.gridOptionsWrapper.getRowBuffer();

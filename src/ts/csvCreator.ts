@@ -10,6 +10,8 @@ import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ProcessCellForExportParams} from "./entities/gridOptions";
+import {Constants} from "./constants";
+import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -59,10 +61,11 @@ export class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
             return '';
         }
+        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
 
         var result = '';
 
@@ -106,7 +109,7 @@ export class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
-        this.rowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        inMemoryRowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }

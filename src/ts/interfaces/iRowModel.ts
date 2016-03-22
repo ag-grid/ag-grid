@@ -2,25 +2,28 @@ import {RowNode} from "../entities/rowNode";
 
 export interface IRowModel {
 
+    /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
+    /** Returns the total row count. */
     getRowCount(): number;
-    getRowAtPixel(pixel: number): number;
+    /** Returns the row index at the given pixel */
+    getRowIndexAtPixel(pixel: number): number;
+    /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
     getRowCombinedHeight(): number;
-    // does this model have any rows, will be true if rows present, but rows removed by filter
+
+    /** Returns true if this model has any rows, regardless of model filter. EG if rows present, but filtered
+     * out, this still returns false. If it returns true, then the grid shows the 'not rows' overlay - but we
+     * don't show that overlay if the rows are just filtered out. */
     isEmpty(): boolean;
-    // does this model have rows to render, so if filtering removed all rows, returns false
+    /** Returns true if not rows (either not rows at all, or the rows are filtered out). This is what the grid
+     * uses to know if there are rows to render or now. */
     isRowsToRender(): boolean;
 
+    /** Iterate through each node. What this does depends on the model type. For inMemory, goes through
+     * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode)=>void): void;
 
-    // in memory model only
-    refreshModel(step: number, fromIndex?: number): void;
-    getTopLevelNodes(): RowNode[];
-    forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void): void;
-    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void): void;
-    expandOrCollapseAll(expand: boolean): void;
-    setRowData(rows: any[], refresh: boolean, firstId?: number): void;
-
-    // virtual row model only
-    setDatasource(datasource:any): void;
+    /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
+     * their own implementation of the models in the future. */
+    getType(): string;
 }
