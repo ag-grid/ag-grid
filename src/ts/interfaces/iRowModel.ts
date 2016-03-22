@@ -2,7 +2,9 @@ import {RowNode} from "../entities/rowNode";
 
 export interface IRowModel {
 
+    // inMemory Only
     getTopLevelNodes(): RowNode[];
+
     getRow(index: number): RowNode;
     getRowCount(): number;
     getRowAtPixel(pixel: number): number;
