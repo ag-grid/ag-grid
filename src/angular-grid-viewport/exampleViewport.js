@@ -18,39 +18,22 @@ var columnDefs = [
 var gridOptions = {
     enableColResize: true,
     debug: true,
-    rowSelection: 'multiple',
-    rowDeselection: true,
     columnDefs: columnDefs,
-    rowModelType: 'virtual'
+    rowModelType: 'viewport'
 };
 
-function setRowData(allOfTheData) {
-    var dataSource = {
-        rowCount: null, // behave as infinite scroll
-        pageSize: 100,
-        overflowSize: 100,
-        maxConcurrentRequests: 2,
-        maxPagesInCache: 2,
-        getRows: function (params) {
-            console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            // At this point in your code, you would call the server, using $http if in AngularJS.
-            // To make the demo look real, wait for 500ms before returning
-            setTimeout( function() {
-                // take a slice of the total rows
-                var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
-                // if on or after the last page, work out the last row.
-                var lastRow = -1;
-                if (allOfTheData.length <= params.endRow) {
-                    lastRow = allOfTheData.length;
-                }
-                // call the success callback
-                params.successCallback(rowsThisPage, lastRow);
-            }, 500);
-        }
-    };
+var viewport = {
+    setViewport: function(index, length) {
+    }
+};
 
-    gridOptions.api.setDatasource(dataSource);
+function setRowData(rowData) {
+    // set up a mock server - real code will not do this, it will contact your
+    // real server to get what it needs
+    var mockServer = new MockServer();
+    mockServer.init(rowData);
 }
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
