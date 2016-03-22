@@ -66,8 +66,8 @@ export class StatusBar extends Component {
         var sum = 0;
         var count = 0;
         var numberCount = 0;
-        var min = 0;
-        var max = 0;
+        var min: number = null;
+        var max: number = null;
 
         var cellsSoFar: any = {};
 
@@ -110,11 +110,11 @@ export class StatusBar extends Component {
 
                             sum += value;
 
-                            if (value > max) {
+                            if (max === null || value > max) {
                                 max = value;
                             }
 
-                            if (value < min) {
+                            if (min === null || value < min) {
                                 min = value;
                             }
 
