@@ -88,6 +88,16 @@ export class GridApi {
         }
     }
 
+    public reloadPage() {
+        if (this.gridOptionsWrapper.isRowModelPagination()) {
+            this.paginationController.reloadPage();
+        } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
+            this.rowModel.reloadPage();
+        } else {
+            console.warn(`ag-Grid: you can only use reloadPage() when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
+        }
+    }
+
     public setRowData(rowData: any[]) {
         this.rowModel.setRowData(rowData, true);
     }

@@ -101,6 +101,10 @@ export class PaginationController {
         this.reset();
     }
 
+    public reloadPage(): void {
+        this.loadPage();
+    }
+
     private reset() {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
