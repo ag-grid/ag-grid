@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If you want to turn off the context menu completely, set the grid property <i>suppressContextMenu=false</i>.
+        If you want to turn off the context menu completely, set the grid property <i>suppressContextMenu=true</i>.
     </p>
 
     <h3>Context Menu Example</h3>

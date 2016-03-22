@@ -396,6 +396,10 @@ include '../documentation-main/documentation_header.php';
             <th>copySelectedRangeToClipboard()</th>
             <td>Copies the selected ranges to the clipboard.</td>
         </tr>
+        <tr>
+            <th>copySelectedRangeDown()</th>
+            <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
+        </tr>
     </table>
 </div>
 
