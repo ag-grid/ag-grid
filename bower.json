@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
-    "Niall Crosby <niall.crosby@gmail.com>"
+    "Niall Crosby <niall.crosby@ag-grid.com>"
   ],
   "description": "React Component for ag-Grid Data Grid",
   "main": [
