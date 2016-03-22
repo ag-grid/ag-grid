@@ -19,21 +19,9 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">14th March 2016</div>
-        <div>Following feedback on license, Enterprise has changed to perpetual.
-            Check <a href="../licenseAndPricing.php">license & pricing</a> for details.</div>
-        <div class="separator">---</div>
-        <div>Following feedback the free forum will remain open and coexist with the members forum.</div>
-        <div class="separator">---</div>
+        <div class="news-header">22th March 2016</div>
         <div>Patch for 4.0.x released with bug fixes and minor changes.
             Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">9th March 2016</div>
-        <div>Version 4.0.x released</div>
-        <div>Check <a href="../change-log/changeLogIndex.php">change log</a> for what's in this release.</div>
-        <div>Check <a href="../ag-grid-goes-commercial/">ag-Grid Goes Commercial</a> media release.</div>
     </div>
 
 </div>
