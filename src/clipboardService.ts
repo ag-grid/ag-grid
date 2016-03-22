@@ -62,6 +62,39 @@ export class ClipboardService implements IClipboardService {
         );
     }
 
+    public copyRangeDown(): void {
+        if (this.rangeController.isEmpty()) { return; }
+
+        var cellsToFlash = <any>{};
+        var firstRowValues: any[] = null;
+
+        this.forEachRangeRow( (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+            // take reference of first row, this is the one we will be using to copy from
+            if (!firstRowValues) {
+                firstRowValues = [];
+                columns.forEach( column => {
+                    var value = this.valueService.getValue(column, rowNode);
+                    firstRowValues.push(value);
+                });
+            } else {
+                // otherwise we are not the first row, so copy
+                columns.forEach( (column: Column, index: number) => {
+                    if (!column.isCellEditable(rowNode)) { return; }
+
+                    var firstRowValue = firstRowValues[index];
+                    this.valueService.setValue(rowNode, column, firstRowValue);
+
+                    var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                    cellsToFlash[cellId] = true;
+                });
+            }
+        });
+
+        // this is very heavy, should possibly just refresh the specific cells?
+        this.rowRenderer.refreshView();
+        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+    }
+
     private finishPasteFromClipboard(data: string) {
         if (_.missingOrEmpty(data)) { return; }
 
@@ -100,7 +133,7 @@ export class ClipboardService implements IClipboardService {
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
         });
 
-        // this is very heavy!!
+        // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshView();
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
@@ -118,7 +151,7 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    public copySelectedRangeToClipboard(): void {
+    private forEachRangeRow(callback: Function): void {
         if (this.rangeController.isEmpty()) { return; }
 
         var rangeSelections = this.rangeController.getCellRanges();
@@ -135,12 +168,27 @@ export class ClipboardService implements IClipboardService {
         var currentRow = startRowIsFirst ? startRow : endRow;
         var lastRow = startRowIsFirst ? endRow : startRow;
 
-        var cellsToFlash = <any>{};
+        while (true) {
+
+            var rowNode = this.getRowNode(currentRow);
+            callback(currentRow, rowNode, range.columns);
+
+            if (currentRow.equals(lastRow)) {
+                break;
+            }
+
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        }
+    }
+
+    public copySelectedRangeToClipboard(): void {
+        if (this.rangeController.isEmpty()) { return; }
 
         var data = '';
-        while (true) {
-            range.columns.forEach( (column, index) => {
-                var rowNode = this.getRowNode(currentRow);
+        var cellsToFlash = <any>{};
+
+        this.forEachRangeRow( (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+            columns.forEach( (column, index) => {
                 var value = this.valueService.getValue(column, rowNode);
 
                 value = this.processRangeCell(rowNode, column, value);
@@ -155,13 +203,7 @@ export class ClipboardService implements IClipboardService {
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
-
-            if (currentRow.equals(lastRow)) {
-                break;
-            }
-
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
-        }
+        });
 
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
