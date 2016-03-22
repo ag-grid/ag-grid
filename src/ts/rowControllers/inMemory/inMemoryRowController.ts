@@ -22,11 +22,12 @@ import {PostConstruct} from "../../context/context";
 import {NodeChildDetails} from "../../entities/gridOptions";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {Optional} from "../../context/context";
+import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
 @Bean('rowModel')
-export class InMemoryRowController implements IRowModel {
+export class InMemoryRowController implements IInMemoryRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -68,6 +69,10 @@ export class InMemoryRowController implements IRowModel {
 
     }
 
+    public getType(): string {
+        return Constants.ROW_MODEL_TYPE_NORMAL;
+    }
+    
     public refreshModel(step: number, fromIndex?: any, groupState?: any): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -134,7 +139,7 @@ export class InMemoryRowController implements IRowModel {
         }
     }
 
-    public getRowAtPixel(pixelToMatch: number): number {
+    public getRowIndexAtPixel(pixelToMatch: number): number {
         if (this.isEmpty()) {
             return -1;
         }
