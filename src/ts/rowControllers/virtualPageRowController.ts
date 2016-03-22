@@ -69,10 +69,6 @@ export class VirtualPageRowController implements IRowModel {
         }
     }
 
-    public getTopLevelNodes(): RowNode[] {
-        return null;
-    }
-
     public setDatasource(datasource: any): void {
         this.datasource = datasource;
 
@@ -448,6 +444,11 @@ export class VirtualPageRowController implements IRowModel {
 
     public refreshModel(): void {
         console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public getTopLevelNodes(): RowNode[] {
+        console.warn('getTopLevelNodes - does not work with virtual pagination');
+        return null;
     }
 
 }

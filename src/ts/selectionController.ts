@@ -180,8 +180,6 @@ export class SelectionController {
         this.rowModel.forEachNode( (rowNode: RowNode) => {
             rowNode.setSelected(true, false, true);
         });
-        // because we passed in 'false' as third parameter above, the
-        // eventSelectionChanged event was not fired.
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
     }
 
