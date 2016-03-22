@@ -169,7 +169,7 @@
                     <td class="gapCol"/>
                     <td class="titlePrice tableCell">
                         <div style="font-size: 20px; font-weight: bold;">
-                            £250
+                            £350
                         </div>
                         <div>
                             / developer
