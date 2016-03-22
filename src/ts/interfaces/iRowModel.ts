@@ -2,9 +2,6 @@ import {RowNode} from "../entities/rowNode";
 
 export interface IRowModel {
 
-    // inMemory Only
-    getTopLevelNodes(): RowNode[];
-
     getRow(index: number): RowNode;
     getRowCount(): number;
     getRowAtPixel(pixel: number): number;
@@ -13,13 +10,14 @@ export interface IRowModel {
     isEmpty(): boolean;
     // does this model have rows to render, so if filtering removed all rows, returns false
     isRowsToRender(): boolean;
-    refreshModel(step: number, fromIndex?: number): void;
 
     forEachNode(callback: (rowNode: RowNode)=>void): void;
-    forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void): void;
-    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void): void;
 
     // in memory model only
+    refreshModel(step: number, fromIndex?: number): void;
+    getTopLevelNodes(): RowNode[];
+    forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void): void;
+    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void): void;
     expandOrCollapseAll(expand: boolean): void;
     setRowData(rows: any[], refresh: boolean, firstId?: number): void;
 
