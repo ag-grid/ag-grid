@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.6
+// ag-grid-enterprise v4.0.7
 import { RenderedItem } from "./renderedItem";
 import { OriginalColumnGroup } from "ag-grid/main";
 export declare class RenderedGroup extends RenderedItem {

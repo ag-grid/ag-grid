@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.6
+// ag-grid-enterprise v4.0.7
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -50,8 +50,8 @@ var StatusBar = (function (_super) {
         var sum = 0;
         var count = 0;
         var numberCount = 0;
-        var min = 0;
-        var max = 0;
+        var min = null;
+        var max = null;
         var cellsSoFar = {};
         if (!main_1.Utils.missingOrEmpty(cellRanges)) {
             cellRanges.forEach(function (cellRange) {
@@ -80,10 +80,10 @@ var StatusBar = (function (_super) {
                         }
                         if (typeof value === 'number' && !isNaN(value)) {
                             sum += value;
-                            if (value > max) {
+                            if (max === null || value > max) {
                                 max = value;
                             }
-                            if (value < min) {
+                            if (min === null || value < min) {
                                 min = value;
                             }
                             numberCount++;

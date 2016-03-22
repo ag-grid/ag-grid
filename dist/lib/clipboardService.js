@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.6
+// ag-grid-enterprise v4.0.7
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -44,6 +44,39 @@ var ClipboardService = (function () {
             _this.finishPasteFromClipboard(text);
         });
     };
+    ClipboardService.prototype.copyRangeDown = function () {
+        var _this = this;
+        if (this.rangeController.isEmpty()) {
+            return;
+        }
+        var cellsToFlash = {};
+        var firstRowValues = null;
+        this.forEachRangeRow(function (currentRow, rowNode, columns) {
+            // take reference of first row, this is the one we will be using to copy from
+            if (!firstRowValues) {
+                firstRowValues = [];
+                columns.forEach(function (column) {
+                    var value = _this.valueService.getValue(column, rowNode);
+                    firstRowValues.push(value);
+                });
+            }
+            else {
+                // otherwise we are not the first row, so copy
+                columns.forEach(function (column, index) {
+                    if (!column.isCellEditable(rowNode)) {
+                        return;
+                    }
+                    var firstRowValue = firstRowValues[index];
+                    _this.valueService.setValue(rowNode, column, firstRowValue);
+                    var cellId = new main_17.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                    cellsToFlash[cellId] = true;
+                });
+            }
+        });
+        // this is very heavy, should possibly just refresh the specific cells?
+        this.rowRenderer.refreshView();
+        this.eventService.dispatchEvent(main_18.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+    };
     ClipboardService.prototype.finishPasteFromClipboard = function (data) {
         var _this = this;
         if (main_16.Utils.missingOrEmpty(data)) {
@@ -86,7 +119,7 @@ var ClipboardService = (function () {
             // move to next row down for next set of values
             currentRow = _this.cellNavigationService.getRowBelow(currentRow);
         });
-        // this is very heavy!!
+        // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshView();
         this.eventService.dispatchEvent(main_18.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
@@ -103,8 +136,7 @@ var ClipboardService = (function () {
             this.copySelectedRangeToClipboard();
         }
     };
-    ClipboardService.prototype.copySelectedRangeToClipboard = function () {
-        var _this = this;
+    ClipboardService.prototype.forEachRangeRow = function (callback) {
         if (this.rangeController.isEmpty()) {
             return;
         }
@@ -118,11 +150,24 @@ var ClipboardService = (function () {
         var startRowIsFirst = startRow.before(endRow);
         var currentRow = startRowIsFirst ? startRow : endRow;
         var lastRow = startRowIsFirst ? endRow : startRow;
-        var cellsToFlash = {};
-        var data = '';
         while (true) {
-            range.columns.forEach(function (column, index) {
-                var rowNode = _this.getRowNode(currentRow);
+            var rowNode = this.getRowNode(currentRow);
+            callback(currentRow, rowNode, range.columns);
+            if (currentRow.equals(lastRow)) {
+                break;
+            }
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        }
+    };
+    ClipboardService.prototype.copySelectedRangeToClipboard = function () {
+        var _this = this;
+        if (this.rangeController.isEmpty()) {
+            return;
+        }
+        var data = '';
+        var cellsToFlash = {};
+        this.forEachRangeRow(function (currentRow, rowNode, columns) {
+            columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
                 value = _this.processRangeCell(rowNode, column, value);
                 if (index != 0) {
@@ -135,11 +180,7 @@ var ClipboardService = (function () {
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
-            if (currentRow.equals(lastRow)) {
-                break;
-            }
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
-        }
+        });
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(main_18.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
