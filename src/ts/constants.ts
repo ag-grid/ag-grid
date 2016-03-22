@@ -21,6 +21,7 @@ export class Constants {
     static KEY_A = 65;
     static KEY_C = 67;
     static KEY_V = 86;
+    static KEY_D = 68;
 
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';

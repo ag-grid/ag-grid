@@ -407,11 +407,17 @@ export class GridApi {
     }
 
     public copySelectedRowsToClipboard(): void {
+        if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copySelectedRowsToClipboard();
     }
 
     public copySelectedRangeToClipboard(): void {
+        if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copySelectedRangeToClipboard();
     }
 
+    public copySelectedRangeDown(): void {
+        if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
+        this.clipboardService.copyRangeDown();
+    }
 }

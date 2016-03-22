@@ -4,4 +4,5 @@ export interface IClipboardService {
     copyToClipboard(): void;
     copySelectedRowsToClipboard(): void;
     copySelectedRangeToClipboard(): void;
+    copyRangeDown(): void;
 }

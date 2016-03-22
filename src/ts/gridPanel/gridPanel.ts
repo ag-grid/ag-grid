@@ -281,10 +281,12 @@ export class GridPanel {
         this.eAllCellContainers.forEach( (container)=> {
             container.addEventListener('keydown', (event: any)=> {
                 if (event.ctrlKey || event.metaKey) {
+                    console.log('key = ' + event.which);
                     switch (event.which) {
                         case Constants.KEY_A: return this.onCtrlAndA(event);
                         case Constants.KEY_C: return this.onCtrlAndC(event);
                         case Constants.KEY_V: return this.onCtrlAndV(event);
+                        case Constants.KEY_D: return this.onCtrlAndD(event);
                     }
                 }
             });
@@ -334,12 +336,19 @@ export class GridPanel {
     }
 
     private onCtrlAndV(event: KeyboardEvent): boolean {
-        if (!this.clipboardService) { return; }
+        if (!this.rangeController) { return; }
         this.clipboardService.pasteFromClipboard();
         //event.preventDefault();
         return false;
     }
 
+    private onCtrlAndD(event: KeyboardEvent): boolean {
+        if (!this.clipboardService) { return; }
+        this.clipboardService.copyRangeDown();
+        event.preventDefault();
+        return false;
+    }
+    
     public getPinnedLeftFloatingTop(): HTMLElement {
         return this.ePinnedLeftFloatingTop;
     }
