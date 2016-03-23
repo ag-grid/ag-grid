@@ -1,4 +1,4 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -6,23 +6,19 @@ import {ExpressionService} from "../expressionService";
 import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnController, ColumnApi} from "../columnController/columnController";
 import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {Events} from "../events";
 import {RenderedRow} from "./renderedRow";
-import {Qualifier} from "../context/context";
-import {Autowired} from "../context/context";
-import {ColumnApi} from "../columnController/columnController";
+import {Autowired, PostConstruct, Optional} from "../context/context";
 import {GridApi} from "../gridApi";
-import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
-import {Optional} from "../context/context";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RangeSelection} from "../interfaces/iRangeController";
-import {GridCell} from "../entities/gridCell";
 import {IRangeController} from "../interfaces/iRangeController";
+import {GridCell} from "../entities/gridCell";
+import {DefaultEditor} from "./defaultEditor";
 
 export class RenderedCell {
 
@@ -329,75 +325,43 @@ export class RenderedCell {
         this.populateCell();
     }
 
+    private cellEditor: DefaultEditor;
+
     // called by rowRenderer when user navigates via tab key
-    public startEditing(key?: number) {
-        var that = this;
+    public startEditing(keyPress?: number) {
+
+        this.cellEditor = new DefaultEditor();
+
         this.editingCell = true;
         _.removeAllChildren(this.eGridCell);
-        var eInput = document.createElement('input');
-        eInput.type = 'text';
-        _.addCssClass(eInput, 'ag-cell-edit-input');
 
-        var startWithOldValue = key !== Constants.KEY_BACKSPACE && key !== Constants.KEY_DELETE;
-        var value = this.getValue();
-        if (startWithOldValue && value !== null && value !== undefined) {
-            eInput.value = value;
-        }
-
-        eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-        this.eGridCell.appendChild(eInput);
-        eInput.focus();
-        eInput.select();
-
-        var blurListener = function () {
-            that.stopEditing(eInput, blurListener);
+        var params = {
+            value: this.getValue(),
+            keyPress: keyPress,
+            column: this.column,
+            stopEditing: this.stopEditing.bind(this),
+            focusCell: this.focusCell.bind(this),
+            startEditingNextCell: this.startEditingNextCell.bind(this)
         };
-
-        //stop entering if we loose focus
-        eInput.addEventListener("blur", blurListener);
-
-        //stop editing if enter pressed
-        eInput.addEventListener('keypress', (event: any) => {
-            var key = event.which || event.keyCode;
-            if (key === Constants.KEY_ENTER) {
-                this.stopEditing(eInput, blurListener);
-                this.focusCell(true);
-            }
-        });
-
-        //stop editing if enter pressed
-        eInput.addEventListener('keydown', (event: any) => {
-            var key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
-                this.stopEditing(eInput, blurListener, true);
-                this.focusCell(true);
-            }
-        });
-
-        // tab key doesn't generate keypress, so need keydown to listen for that
-        eInput.addEventListener('keydown', function (event:any) {
-            var key = event.which || event.keyCode;
-            if (key == Constants.KEY_TAB) {
-                that.stopEditing(eInput, blurListener);
-                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, that.node.floating, event.shiftKey);
-                // we don't want the default tab action, so return false, this stops the event from bubbling
-                event.preventDefault();
-                return false;
-            }
-        });
+        
+        this.cellEditor.startEditing(params);
+        this.eGridCell.appendChild(this.cellEditor.getGui());
+        this.cellEditor.afterGuiAttached();
     }
 
+    private startEditingNextCell(backwards: boolean): void {
+        this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
+    }
+    
     public focusCell(forceBrowserFocus: boolean): void {
+        console.log('focusCell: ' + forceBrowserFocus);
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
+    private stopEditing(reset: boolean = false) {
         this.editingCell = false;
-        var newValue = eInput.value;
 
-        //If we don't remove the blur listener first, we get:
-        //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
-        eInput.removeEventListener('blur', blurListener);
+        var newValue = this.cellEditor.getValue();
 
         if (!reset) {
             this.valueService.setValue(this.node, this.column, newValue);
