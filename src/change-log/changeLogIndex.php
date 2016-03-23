@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
     due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
 
+    <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
+    <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
+    <li>Enhancement: Now ctrl+d will copy down the selected range, similar to Excel</li>
+
     <h3>Version 4.0.x (ag-Grid 4.0.4)</h3>
 
     <li>Bugfix: Firefox was showing native context menu on top of grids context menu.</li>
