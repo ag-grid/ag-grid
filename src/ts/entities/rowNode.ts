@@ -6,6 +6,7 @@ import {SelectionController} from "../selectionController";
 export class RowNode {
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
+    public static EVENT_DATA_CHANGED = 'dataChanged';
 
     /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
     public id: number;
@@ -66,6 +67,14 @@ export class RowNode {
         this.selectionController = selectionController ;
     }
 
+    public setData(data: any): void {
+        if (this.data === data) { return; }
+        var oldData = this.data;
+        this.data = data;
+        var event = {oldData: oldData, newData: data};
+        this.eventService.dispatchEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+    
     public resetQuickFilterAggregateText(): void {
         this.quickFilterAggregateText = null;
     }

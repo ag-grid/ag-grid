@@ -104,6 +104,7 @@ export class RenderedRow {
 
         this.addRowSelectedListener();
         this.addCellFocusedListener();
+        this.addNodeDataChangedListener();
         this.addColumnListener();
 
         this.attachContainers();
@@ -155,6 +156,9 @@ export class RenderedRow {
         this.refreshCellsIntoRow();
     }
 
+    // method makes sure the right cells are present, and are in the right container. so when this gets called for
+    // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
+    // container (ie into pinned)
     private refreshCellsIntoRow() {
 
         var columns = this.columnController.getAllDisplayedColumns();
@@ -252,6 +256,24 @@ export class RenderedRow {
         rowFocusedListener();
     }
 
+    private forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
+        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+            if (renderedCell) {
+                callback(renderedCell);
+            }
+        });
+    }
+
+    private addNodeDataChangedListener(): void {
+        var nodeDataChangedListener = () => {
+            this.forEachRenderedCell( renderedCell => renderedCell.refreshCell() );
+        };
+        this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        this.destroyFunctions.push(()=> {
+            this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        });
+    }
+
     private createContainers(): void {
         this.eBodyRow = this.createRowContainer();
         this.eLeftCenterAndRightRows = [this.eBodyRow];
@@ -319,8 +341,8 @@ export class RenderedRow {
     }
 
     public softRefresh(): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (renderedCell && renderedCell.isVolatile()) {
+        this.forEachRenderedCell( renderedCell => {
+            if (renderedCell.isVolatile()) {
                 renderedCell.refreshCell();
             }
         });
@@ -351,11 +373,7 @@ export class RenderedRow {
             this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
         }
 
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (renderedCell) {
-                renderedCell.destroy();
-            }
-        });
+        this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
@@ -574,10 +592,7 @@ export class RenderedRow {
         }
         var columnsToRefresh = this.columnController.getColumns(colIds);
 
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (!renderedCell) {
-                return;
-            }
+        this.forEachRenderedCell( renderedCell => {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
                 renderedCell.refreshCell();

@@ -65,7 +65,8 @@ export class GridOptionsWrapper {
 
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
-    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual()); }
+    public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
+    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()); }
 
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }

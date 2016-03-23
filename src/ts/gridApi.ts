@@ -35,6 +35,8 @@ import {IClipboardService} from "./interfaces/iClipboardService";
 import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
+import {ViewportRowController} from "./rowControllers/viewportRowController";
+import {ViewportDatasource} from "./interfaces/iViewportDatasourcet";
 
 @Bean('gridApi')
 export class GridApi {
@@ -100,6 +102,14 @@ export class GridApi {
         }
     }
 
+    public setViewportDatasource(viewportDatasource: ViewportDatasource) {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setViewportDatasource(viewportDatasource);
+        } else {
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+    
     public setRowData(rowData: any[]) {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call setRowData unless using normal row model') }
         this.inMemoryRowModel.setRowData(rowData, true);
@@ -439,4 +449,22 @@ export class GridApi {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copyRangeDown();
     }
+
+/*
+    public setViewportRowData(rowData: {[key: number]: RowNode}): void {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
+        } else {
+            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+
+    public setViewportTotalRowCount(rowCount: number): void {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setRowCount(rowCount);
+        } else {
+            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+*/
 }
