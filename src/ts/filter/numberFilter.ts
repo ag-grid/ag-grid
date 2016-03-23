@@ -6,8 +6,11 @@ var template =
             '<div>'+
                 '<select class="ag-filter-select" id="filterType">'+
                     '<option value="1">[EQUALS]</option>'+
-                    '<option value="2">[LESS THAN]</option>'+
-                    '<option value="3">[GREATER THAN]</option>'+
+                    '<option value="2">[NOT EQUAL]</option>'+
+                    '<option value="3">[LESS THAN]</option>'+
+                    '<option value="4">[LESS THAN OR EQUAL]</option>'+
+                    '<option value="5">[GREATER THAN]</option>'+
+                    '<option value="6">[GREATER THAN OR EQUAL]</option>'+
                 '</select>'+
             '</div>'+
             '<div>'+
@@ -19,8 +22,11 @@ var template =
         '</div>';
 
 var EQUALS = 1;
-var LESS_THAN = 2;
-var GREATER_THAN = 3;
+var NOT_EQUAL = 2;
+var LESS_THAN = 3;
+var LESS_THAN_OR_EQUAL = 4;
+var GREATER_THAN = 5;
+var GREATER_THAN_OR_EQUAL = 6;
 
 export class NumberFilter implements Filter {
 
@@ -88,6 +94,12 @@ export class NumberFilter implements Filter {
                 return valueAsNumber < this.filterNumber;
             case GREATER_THAN:
                 return valueAsNumber > this.filterNumber;
+            case LESS_THAN_OR_EQUAL:
+                return valueAsNumber <= this.filterNumber;
+            case GREATER_THAN_OR_EQUAL:
+                return valueAsNumber >= this.filterNumber;
+            case NOT_EQUAL:
+                return valueAsNumber != this.filterNumber;  
             default:
                 // should never happen
                 console.warn('invalid filter type ' + this.filterType);
@@ -109,6 +121,9 @@ export class NumberFilter implements Filter {
             .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
             .replace('[LESS THAN]', this.localeTextFunc('lessThan', 'Less than'))
             .replace('[GREATER THAN]', this.localeTextFunc('greaterThan', 'Greater than'))
+            .replace('[LESS THAN OR EQUAL]', this.localeTextFunc('lessThanOrEqual', 'Less than or equal'))
+            .replace('[GREATER THAN OR EQUAL]', this.localeTextFunc('greaterThanOrEqual', 'Greater than or equal'))
+            .replace('[NOT EQUAL]', this.localeTextFunc('notEqual', 'Not equal'))
             .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
     }
 
@@ -167,8 +182,11 @@ export class NumberFilter implements Filter {
         var that = this;
         this.api = {
             EQUALS: EQUALS,
+            NOT_EQUAL: NOT_EQUAL,            
             LESS_THAN: LESS_THAN,
             GREATER_THAN: GREATER_THAN,
+            LESS_THAN_OR_EQUAL: LESS_THAN_OR_EQUAL,
+            GREATER_THAN_OR_EQUAL: GREATER_THAN_OR_EQUAL,
             setType: function (type: any) {
                 that.filterType = type;
                 that.eTypeSelect.value = type;
