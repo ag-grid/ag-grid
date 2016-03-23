@@ -56,4 +56,5 @@ export class Events {
     public static EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
     public static EVENT_GRID_READY = 'gridReady';
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+    public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
 }

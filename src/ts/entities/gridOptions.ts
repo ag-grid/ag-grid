@@ -3,6 +3,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {MenuItem} from "../widgets/cMenuItem";
+import {ViewportDatasource} from "../interfaces/iViewportDatasourcet";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -110,6 +111,7 @@ export interface GridOptions {
     showToolPanel?: boolean;
     columnDefs?: any[]; // change to typed
     datasource?: any; // should be typed
+    viewportDatasource: ViewportDatasource;
     // in properties
     headerHeight?: number;
 

@@ -50,6 +50,7 @@ import {Utils as _} from './utils';
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
+import {ViewportRowController} from "./rowControllers/viewportRowController";
 
 export class Grid {
 
@@ -69,9 +70,8 @@ export class Grid {
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
-
-        var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
-        var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
+        
+        var rowModelClass = this.getRowModelClass(gridOptions);
 
         var enterprise = _.exists(Grid.enterpriseBeans);
 
@@ -98,6 +98,16 @@ export class Grid {
             debug: !!gridOptions.debug
         });
     }
+
+    private getRowModelClass(gridOptions:GridOptions): any {
+        if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
+            return ViewportRowController;
+        } else if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL) {
+            return VirtualPageRowController;
+        } else {
+            return InMemoryRowController;
+        }
+    };
 
     public destroy(): void {
         this.context.destroy();

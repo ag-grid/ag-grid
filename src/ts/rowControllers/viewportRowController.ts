@@ -7,7 +7,7 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {SelectionController} from "../selectionController";
-import {ViewportSource} from "../interfaces/iViewportSourcet";
+import {ViewportDatasource} from "../interfaces/iViewportDatasourcet";
 
 @Bean('rowModel')
 export class ViewportRowController implements IRowModel {
@@ -15,35 +15,70 @@ export class ViewportRowController implements IRowModel {
     /** Have rowNode emit an event when the data changes. Then the cell should look at the data, and if it's
      * different, do a flash */
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
 
-    private rowCount = -1;
-    private viewportIndex = -1;
-    private viewportHeight = -1;
+    // rowRenderer tells us these
+    private firstRow = -1;
+    private lastRow = -1;
 
-    private rows: any = <any>{};
+    // datasource tells us this
+    private rowCount = -1;
+
+    private rowNodesByIndex: {[key: number]: RowNode} = {};
 
     private rowHeight: number;
 
-    private viewportSource: ViewportSource;
+    private viewportDatasource: ViewportDatasource;
 
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     }
 
-    public setViewportSource(viewportSource: ViewportSource): void {
-        this.viewportSource = viewportSource;
+    private onViewportChanged(event: any): void {
+        this.firstRow = event.firstRow;
+        this.lastRow = event.lastRow;
+        this.purgeRowsNotInViewport();
+        if (this.viewportDatasource) {
+            this.viewportDatasource.setViewportRange(this.firstRow, this.lastRow);
+        }
+    }
+
+    public purgeRowsNotInViewport(): void {
+        Object.keys(this.rowNodesByIndex).forEach( indexStr => {
+            var index = parseInt(indexStr);
+            if (index < this.firstRow || index > this.lastRow) {
+                delete this.rowNodesByIndex[index];
+            }
+        });
+    }
+
+    public setViewportDatasource(viewportDatasource: ViewportDatasource): void {
+        this.viewportDatasource = viewportDatasource;
+        this.rowCount = 0;
+        if (!viewportDatasource.init) {
+            console.warn('ag-Grid: viewport is missing init method.');
+        } else {
+            viewportDatasource.init({
+                setRowCount: this.setRowCount.bind(this),
+                setRowData: this.setRowData.bind(this)
+            });
+        }
     }
 
     public getType(): string {
         return Constants.ROW_MODEL_TYPE_VIEWPORT;
     }
 
-    public getRow(index: number): RowNode {
-        return this.rows[index];
+    public getRow(rowIndex: number): RowNode {
+        if (!this.rowNodesByIndex[rowIndex]) {
+            this.rowNodesByIndex[rowIndex] = this.createNode(null, rowIndex);
+        }
+
+        return this.rowNodesByIndex[rowIndex];
     }
 
     public getRowCount(): number {
@@ -73,59 +108,37 @@ export class ViewportRowController implements IRowModel {
     public forEachNode(callback:(rowNode: RowNode)=>void): void {
     }
 
-    public setViewportIndex(index: number): void {
-        if (this.viewportIndex !== index) {
-            this.viewportIndex = index;
-            this.viewportSource.onIndexChanged(index);
-        }
-    }
-
-    public setViewportHeight(height: number): void {
-        if (this.viewportHeight!==height) {
-            this.viewportHeight = height;
-            this.viewportSource.onHeightChanged(height);
-        }
-    }
-
-    private setRowData(rowData: any): void {
-        var viewportEnd = this.viewportIndex + this.viewportHeight;
+    private setRowData(rowData: {[key: number]: RowNode}): void {
         _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
             var index = parseInt(indexStr);
-            if (index >= this.viewportIndex && index <= this.viewportHeight) {
-                this.rows[index] = this.createNode(dataItem, index, true);
+            if (index >= this.firstRow && index <= this.lastRow) {
+                var nodeAlreadyExists = !!this.rowNodesByIndex[index];
+                if (nodeAlreadyExists) {
+                    this.rowNodesByIndex[index].setData(dataItem);
+                } else {
+                    this.rowNodesByIndex[index] = this.createNode(dataItem, index);
+                }
             }
         });
     }
 
     // this is duplicated in virtualPageRowController, need to refactor
-    private createNode(data: any, rowIndex: number, realNode: boolean): RowNode {
+    private createNode(data: any, rowIndex: number): RowNode {
         var rowHeight = this.rowHeight;
         var top = rowHeight * rowIndex;
 
-        var rowNode: RowNode;
-        if (realNode) {
-            // if a real node, then always create a new one
-            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
-            rowNode.id = rowIndex;
-            rowNode.data = data;
-            // and see if the previous one was selected, and if yes, swap it out
-            this.selectionController.syncInRowNode(rowNode);
-        } else {
-            // if creating a proxy node, see if there is a copy in selected memory that we can use
-            var rowNode = this.selectionController.getNodeForIdIfSelected(rowIndex);
-            if (!rowNode) {
-                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
-                rowNode.id = rowIndex;
-                rowNode.data = data;
-            }
-        }
+        // need to refactor this, get it in sync with VirtualPageRowController, which was not
+        // written with the rowNode.rowUpdated in mind
+        var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        rowNode.id = rowIndex;
+        rowNode.data = data;
         rowNode.rowTop = top;
         rowNode.rowHeight = rowHeight;
 
         return rowNode;
     }
 
-    private setRowCount(rowCount: number): void {
+    public setRowCount(rowCount: number): void {
         if (rowCount!==this.rowCount) {
             this.rowCount = rowCount;
             this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);

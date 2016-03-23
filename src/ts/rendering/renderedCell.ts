@@ -50,7 +50,6 @@ export class RenderedCell {
     private eParentRow: HTMLElement;
 
     private column: Column;
-    private data: any;
     private node: RowNode;
     private rowIndex: number;
     private editingCell: boolean;
@@ -119,7 +118,6 @@ export class RenderedCell {
 
     @PostConstruct
     public init(): void {
-        this.data = this.getDataForRow();
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();
 
@@ -166,7 +164,8 @@ export class RenderedCell {
     }
 
     private getValue(): any {
-        return this.valueService.getValueUsingSpecificData(this.column, this.data, this.node);
+        var data = this.getDataForRow();
+        return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
     }
 
     public getGui(): HTMLElement {
