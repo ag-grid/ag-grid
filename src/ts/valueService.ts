@@ -70,7 +70,7 @@ export class ValueService {
             var currentObject = data;
             for (var i = 0; i<fields.length; i++) {
                 currentObject = currentObject[fields[i]];
-                if (!currentObject) {
+                if (_.missing(currentObject)) {
                     return null;
                 }
             }
