@@ -9,7 +9,7 @@ import {GridCore} from "./gridCore";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ProcessCellForExportParams} from "./entities/gridOptions";
+import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entities/gridOptions";
 import {Constants} from "./constants";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 
@@ -26,6 +26,7 @@ export interface CsvExportParams {
     columnSeparator?: string;
     onlySelected?: boolean;
     processCellCallback?(params: ProcessCellForExportParams): void;
+    processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
 
 @Bean('csvCreator')
@@ -97,7 +98,8 @@ export class CsvCreator {
         // first pass, put in the header names of the cols
         if (!skipHeader) {
             columnsToExport.forEach( (column: Column, index: number)=> {
-                var nameForCol = this.columnController.getDisplayNameForCol(column);
+
+                var nameForCol = this.getHeaderName(params.processHeaderCallback, column);
                 if (nameForCol === null || nameForCol === undefined) {
                     nameForCol = '';
                 }
@@ -141,6 +143,19 @@ export class CsvCreator {
         }
 
         return result;
+    }
+
+    private getHeaderName(callback: (params: ProcessHeaderForExportParams)=>string, column: Column): string {
+        if (callback) {
+            return callback({
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        } else {
+            return this.columnController.getDisplayNameForCol(column);
+        }
     }
 
     private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>void): any {

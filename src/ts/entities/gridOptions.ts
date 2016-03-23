@@ -225,3 +225,10 @@ export interface ProcessCellForExportParams {
     columnApi: ColumnApi,
     context: any
 }
+
+export interface ProcessHeaderForExportParams {
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
+}
