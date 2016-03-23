@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 4.1.x</h3>
+    <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
+    due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
+
     <h3>Version 4.0.x (ag-Grid 4.0.4)</h3>
 
     <li>Bugfix: Firefox was showing native context menu on top of grids context menu.</li>

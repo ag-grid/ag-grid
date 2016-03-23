@@ -174,6 +174,11 @@ include '../documentation-main/documentation_header.php';
             <th>columnGroupOpened</th>
             <td>A column group was opened / closed.</td>
         </tr>
+        <tr>
+            <th>viewportChanged</th>
+            <td>Informs when rows rendered into the DOM changes.</td>
+        </tr>
+
     </table>
 
     <p>

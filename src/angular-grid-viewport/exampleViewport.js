@@ -22,9 +22,16 @@ var gridOptions = {
     rowModelType: 'viewport'
 };
 
-var viewport = {
-    setViewport: function(index, length) {
-    }
+function ViewportDatasource(mockServer) {
+    this.mockServer = mockServer;
+}
+ViewportDatasource.prototype.setViewportRange = function(start, finish) {
+    console.log('ViewportDatasource.prototype.setViewportRange');
+    this.mockServer.setViewportRange(start, finish);
+};
+ViewportDatasource.prototype.init = function(params) {
+    this.mockServer.setCallback(params.setRowData);
+    params.setRowCount(this.mockServer.getRowCount());
 };
 
 function setRowData(rowData) {
@@ -32,6 +39,9 @@ function setRowData(rowData) {
     // real server to get what it needs
     var mockServer = new MockServer();
     mockServer.init(rowData);
+    
+    var viewportDatasource = new ViewportDatasource(mockServer);
+    gridOptions.api.setViewportDatasource(viewportDatasource);
 }
 
 
