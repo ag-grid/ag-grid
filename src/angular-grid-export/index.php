@@ -41,6 +41,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>onlySelected</b>: Only export selected rows.</li>
         <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
         <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
+        <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
 
     <h3>processCellCallback()</h3>
@@ -51,6 +52,15 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The callback params has the following attributes: value, node, column, api, columnApi, context.
+    </p>
+
+    <h3>processHeaderCallback()</h3>
+
+    <p>If you don't like the header names the grid provides, then you can provide your own header names. Maybe you
+        have grouped columns and you want to include the columns parent groups.</p>
+
+    <p>
+        The callback params has the following attributes: column, api, columnApi, context.
     </p>
 
     <h3>

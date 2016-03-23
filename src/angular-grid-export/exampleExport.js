@@ -45,6 +45,12 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#processHeaders')) {
+        params.processHeaderCallback  = function(params) {
+            return params.column.getColDef().headerName.toUpperCase();
+        };
+    }
+
     if (getBooleanValue('#customHeader')) {
         params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
     }
