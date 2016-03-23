@@ -624,6 +624,7 @@ export class ColumnController {
                 if (!oldColumn) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
                     success = false;
+                    return;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
                 oldColumn.setVisible(!stateItem.hide);
