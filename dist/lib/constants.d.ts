@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.4
+// Type definitions for ag-grid v4.0.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -22,6 +22,7 @@ export declare class Constants {
     static KEY_A: number;
     static KEY_C: number;
     static KEY_V: number;
+    static KEY_D: number;
     static ROW_MODEL_TYPE_PAGINATION: string;
     static ROW_MODEL_TYPE_VIRTUAL: string;
     static ALWAYS: string;

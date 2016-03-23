@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.4
+ * @version v4.0.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -215,10 +215,12 @@ var GridPanel = (function () {
         this.eAllCellContainers.forEach(function (container) {
             container.addEventListener('keydown', function (event) {
                 if (event.ctrlKey || event.metaKey) {
+                    console.log('key = ' + event.which);
                     switch (event.which) {
                         case constants_1.Constants.KEY_A: return _this.onCtrlAndA(event);
                         case constants_1.Constants.KEY_C: return _this.onCtrlAndC(event);
                         case constants_1.Constants.KEY_V: return _this.onCtrlAndV(event);
+                        case constants_1.Constants.KEY_D: return _this.onCtrlAndD(event);
                     }
                 }
             });
@@ -268,11 +270,19 @@ var GridPanel = (function () {
         return false;
     };
     GridPanel.prototype.onCtrlAndV = function (event) {
-        if (!this.clipboardService) {
+        if (!this.rangeController) {
             return;
         }
         this.clipboardService.pasteFromClipboard();
         //event.preventDefault();
+        return false;
+    };
+    GridPanel.prototype.onCtrlAndD = function (event) {
+        if (!this.clipboardService) {
+            return;
+        }
+        this.clipboardService.copyRangeDown();
+        event.preventDefault();
         return false;
     };
     GridPanel.prototype.getPinnedLeftFloatingTop = function () {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.4
+// Type definitions for ag-grid v4.0.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -66,6 +66,7 @@ export declare class GridPanel {
     private onCtrlAndA(event);
     private onCtrlAndC(event);
     private onCtrlAndV(event);
+    private onCtrlAndD(event);
     getPinnedLeftFloatingTop(): HTMLElement;
     getPinnedRightFloatingTop(): HTMLElement;
     getFloatingTopContainer(): HTMLElement;
