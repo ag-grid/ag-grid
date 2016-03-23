@@ -12,6 +12,7 @@ import {PostConstruct} from "../context/context";
 import {Events} from "../events";
 import {SortController} from "../sortController";
 import {FilterManager} from "../filter/filterManager";
+import {Constants} from "../constants";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
@@ -48,8 +49,12 @@ export class VirtualPageRowController implements IRowModel {
     private pageSize: number;
     private overflowSize: number;
 
+    private rowHeight: number;
+
     @PostConstruct
     public init(): void {
+        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+
         var virtualEnabled = this.gridOptionsWrapper.isRowModelVirtual();
 
         this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
@@ -69,8 +74,8 @@ export class VirtualPageRowController implements IRowModel {
         }
     }
 
-    public getTopLevelNodes(): RowNode[] {
-        return null;
+    public getType(): string {
+        return Constants.ROW_MODEL_TYPE_VIRTUAL;
     }
 
     public setDatasource(datasource: any): void {
@@ -152,7 +157,7 @@ export class VirtualPageRowController implements IRowModel {
     }
 
     private createNode(data: any, virtualRowIndex: number, realNode: boolean): RowNode {
-        var rowHeight = this.getRowHeightAsNumber();
+        var rowHeight = this.rowHeight;
         var top = rowHeight * virtualRowIndex;
 
         var rowNode: RowNode;
@@ -407,24 +412,13 @@ export class VirtualPageRowController implements IRowModel {
         }
     }
 
-    public getRowHeightAsNumber(): number {
-        var rowHeight: number|Function = this.gridOptionsWrapper.getRowHeightForVirtualPagination();
-        if (typeof rowHeight === 'number') {
-            return <number>rowHeight;
-        } else {
-            console.warn('ag-Grid row height must be a number when doing virtual paging');
-            return 25;
-        }
-    }
-
     public getRowCombinedHeight(): number {
-        return this.virtualRowCount * this.getRowHeightAsNumber();
+        return this.virtualRowCount * this.rowHeight;
     }
 
-    public getRowAtPixel(pixel: number): number {
-        var rowHeight = this.getRowHeightAsNumber();
-        if (rowHeight!==0) { // avoid divide by zero error
-            return Math.floor(pixel / rowHeight);
+    public getRowIndexAtPixel(pixel: number): number {
+        if (this.rowHeight!==0) { // avoid divide by zero error
+            return Math.floor(pixel / this.rowHeight);
         } else {
             return 0;
         }
@@ -448,6 +442,11 @@ export class VirtualPageRowController implements IRowModel {
 
     public refreshModel(): void {
         console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+    }
+
+    public getTopLevelNodes(): RowNode[] {
+        console.warn('getTopLevelNodes - does not work with virtual pagination');
+        return null;
     }
 
 }

@@ -17,7 +17,7 @@ import {ColDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
-import {Bean} from "./context/context";
+import {Bean, PostConstruct} from "./context/context";
 import {Qualifier} from "./context/context";
 import {GridCore} from "./gridCore";
 import {Context} from "./context/context";
@@ -32,6 +32,11 @@ import {Optional} from "./context/context";
 import {GridCell} from "./entities/gridCell";
 import {AddRangeSelectionParams} from "./interfaces/iRangeController";
 import {IClipboardService} from "./interfaces/iClipboardService";
+import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
+import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
+import {Utils as _} from "./utils";
+import {ViewportRowController} from "./rowControllers/viewportRowController";
+import {ViewportDatasource} from "./interfaces/iViewportDatasourcet";
 
 @Bean('gridApi')
 export class GridApi {
@@ -56,6 +61,15 @@ export class GridApi {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
+
+    private inMemoryRowModel: IInMemoryRowModel;
+
+    @PostConstruct
+    private init(): void {
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
+            this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        }
+    }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
@@ -82,14 +96,23 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
             this.paginationController.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            this.rowModel.setDatasource(datasource);
+            (<VirtualPageRowController>this.rowModel).setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
         }
     }
 
+    public setViewportDatasource(viewportDatasource: ViewportDatasource) {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setViewportDatasource(viewportDatasource);
+        } else {
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+    
     public setRowData(rowData: any[]) {
-        this.rowModel.setRowData(rowData, true);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call setRowData unless using normal row model') }
+        this.inMemoryRowModel.setRowData(rowData, true);
     }
 
     public setFloatingTopRowData(rows: any[]): void {
@@ -150,15 +173,18 @@ export class GridApi {
     }
 
     public onGroupExpandedOrCollapsed(refreshFromIndex: any) {
-        this.rowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model') }
+        this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
     }
 
     public expandAll() {
-        this.rowModel.expandOrCollapseAll(true);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call expandAll unless using normal row model') }
+        this.inMemoryRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        this.rowModel.expandOrCollapseAll(false);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call collapseAll unless using normal row model') }
+        this.inMemoryRowModel.expandOrCollapseAll(false);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -214,7 +240,8 @@ export class GridApi {
     }
 
     public recomputeAggregates(): void {
-        this.rowModel.refreshModel(Constants.STEP_AGGREGATE);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call recomputeAggregates unless using normal row model') }
+        this.inMemoryRowModel.refreshModel(Constants.STEP_AGGREGATE);
     }
 
     public sizeColumnsToFit() {
@@ -284,11 +311,13 @@ export class GridApi {
     }
 
     public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
-        this.rowModel.forEachNodeAfterFilter(callback);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        this.inMemoryRowModel.forEachNodeAfterFilter(callback);
     }
 
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
-        this.rowModel.forEachNodeAfterFilterAndSort(callback);
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilterAndSort unless using normal row model') }
+        this.inMemoryRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
     public getFilterApiForColDef(colDef:any) {
@@ -420,4 +449,22 @@ export class GridApi {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copyRangeDown();
     }
+
+/*
+    public setViewportRowData(rowData: {[key: number]: RowNode}): void {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
+        } else {
+            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+
+    public setViewportTotalRowCount(rowCount: number): void {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            (<ViewportRowController>this.rowModel).setRowCount(rowCount);
+        } else {
+            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+        }
+    }
+*/
 }

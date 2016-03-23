@@ -56,8 +56,8 @@ export class RowRenderer {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
     private cellRendererMap: {[key: string]: any};
-    private firstVirtualRenderedRow: number;
-    private lastVirtualRenderedRow: number;
+    private firstRenderedRow: number;
+    private lastRenderedRow: number;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
@@ -362,50 +362,61 @@ export class RowRenderer {
 
     public workOutFirstAndLastRowsToRender(): void {
 
+        var newFirst: number;
+        var newLast: number;
+
         if (!this.rowModel.isRowsToRender()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
-            return;
-        }
-
-        var rowCount = this.rowModel.getRowCount();
-
-        if (this.gridOptionsWrapper.isForPrint()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = rowCount;
+            newFirst = 0;
+            newLast = -1; // setting to -1 means nothing in range
         } else {
+            var rowCount = this.rowModel.getRowCount();
 
-            var topPixel = this.eBodyViewport.scrollTop;
-            var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+            if (this.gridOptionsWrapper.isForPrint()) {
+                newFirst = 0;
+                newLast = rowCount;
+            } else {
 
-            var first = this.rowModel.getRowAtPixel(topPixel);
-            var last = this.rowModel.getRowAtPixel(bottomPixel);
+                var topPixel = this.eBodyViewport.scrollTop;
+                var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-            //add in buffer
-            var buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
+                var first = this.rowModel.getRowIndexAtPixel(topPixel);
+                var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
 
-            // adjust, in case buffer extended actual size
-            if (first < 0) {
-                first = 0;
+                //add in buffer
+                var buffer = this.gridOptionsWrapper.getRowBuffer();
+                first = first - buffer;
+                last = last + buffer;
+
+                // adjust, in case buffer extended actual size
+                if (first < 0) {
+                    first = 0;
+                }
+                if (last > rowCount - 1) {
+                    last = rowCount - 1;
+                }
+
+                newFirst = first;
+                newLast = last;
             }
-            if (last > rowCount - 1) {
-                last = rowCount - 1;
-            }
-
-            this.firstVirtualRenderedRow = first;
-            this.lastVirtualRenderedRow = last;
         }
 
+        var firstDiffers = newFirst !== this.firstRenderedRow;
+        var lastDiffers = newLast !== this.lastRenderedRow;
+        if (firstDiffers || lastDiffers) {
+            this.firstRenderedRow = newFirst;
+            this.lastRenderedRow = newLast;
+
+            var event = {firstRow: newFirst, lastRow: newLast};
+            this.eventService.dispatchEvent(Events.EVENT_VIEWPORT_CHANGED, event);
+        }
     }
 
     public getFirstVirtualRenderedRow() {
-        return this.firstVirtualRenderedRow;
+        return this.firstRenderedRow;
     }
 
     public getLastVirtualRenderedRow() {
-        return this.lastVirtualRenderedRow;
+        return this.lastRenderedRow;
     }
 
     private ensureRowsRendered() {
@@ -416,7 +427,7 @@ export class RowRenderer {
         var rowsToRemove = Object.keys(this.renderedRows);
 
         // add in new rows
-        for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
+        for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
