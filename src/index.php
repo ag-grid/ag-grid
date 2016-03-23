@@ -148,6 +148,25 @@
             </div>
 
             <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <div class="testimonial-quote">
+                        "Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market."
+                    </div>
+                    <div class="testimonial-reference">
+                        Robin Cote - Senior Systems Developer, Investment Solutions Group, Healthcare of Ontario Pension Plan
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+
+            <div class="horizontal-rule">
+                <hr/>
+            </div>
+
+            <div class="row">
                 <div class="col-md-12">
 
                     <h4 style="padding-bottom: 30px; text-align: center;">
