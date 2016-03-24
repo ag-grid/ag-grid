@@ -7,7 +7,7 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {SelectionController} from "../selectionController";
-import {ViewportDatasource} from "../interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "../interfaces/iViewportDatasourcet";
 
 @Bean('rowModel')
 export class ViewportRowController implements IRowModel {
@@ -30,12 +30,19 @@ export class ViewportRowController implements IRowModel {
 
     private rowHeight: number;
 
-    private viewportDatasource: ViewportDatasource;
+    private viewportDatasource: IViewportDatasource;
 
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+
+        var viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
+
+        if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
+            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
+        }
+
     }
 
     private onViewportChanged(event: any): void {
@@ -56,7 +63,7 @@ export class ViewportRowController implements IRowModel {
         });
     }
 
-    public setViewportDatasource(viewportDatasource: ViewportDatasource): void {
+    public setViewportDatasource(viewportDatasource: IViewportDatasource): void {
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
         if (!viewportDatasource.init) {

@@ -36,7 +36,7 @@ import {VirtualPageRowController} from "./rowControllers/virtualPageRowControlle
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
-import {ViewportDatasource} from "./interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "./interfaces/iViewportDatasourcet";
 
 @Bean('gridApi')
 export class GridApi {
@@ -102,7 +102,7 @@ export class GridApi {
         }
     }
 
-    public setViewportDatasource(viewportDatasource: ViewportDatasource) {
+    public setViewportDatasource(viewportDatasource: IViewportDatasource) {
         if (this.gridOptionsWrapper.isRowModelViewport()) {
             (<ViewportRowController>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {

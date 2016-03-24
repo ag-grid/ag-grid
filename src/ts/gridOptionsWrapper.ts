@@ -1,23 +1,21 @@
-import {RowNode} from './entities/rowNode';
-import {GridOptions} from './entities/gridOptions';
+import {RowNode} from "./entities/rowNode";
+import {
+    GridOptions,
+    NodeChildDetails,
+    GetContextMenuItems,
+    GetMainMenuItems,
+    ProcessRowParams, ProcessCellForExportParams
+} from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef} from "./entities/colDef";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {ColumnController} from "./columnController/columnController";
-import {Autowired} from "./context/context";
+import {Bean, Qualifier, Autowired, PostConstruct} from "./context/context";
+import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
-import {NodeChildDetails} from "./entities/gridOptions";
-import {ColumnApi} from "./columnController/columnController";
-import {PostConstruct} from "./context/context";
-import {GetContextMenuItems} from "./entities/gridOptions";
-import {GetMainMenuItems} from "./entities/gridOptions";
-import {ProcessRowParams} from "./entities/gridOptions";
-import {ProcessCellForExportParams} from "./entities/gridOptions";
 import {Utils as _} from "./utils";
+import {IViewportDatasource} from "./interfaces/iViewportDatasourcet";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
@@ -112,6 +110,7 @@ export class GridOptionsWrapper {
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
     public getDatasource() { return this.gridOptions.datasource; }
+    public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
@@ -142,7 +141,7 @@ export class GridOptionsWrapper {
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
-    public getProcessCellForClipboardFunc() { return this.gridOptions.processCellForClipboard; }
+    public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
 
     public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
         if (this.gridOptions.processRowPostCreate) {

@@ -82,7 +82,7 @@ export class TextFilter implements Filter {
                 return valueLowerCase.indexOf(this.filterText) >= 0;
             case EQUALS:
                 return valueLowerCase === this.filterText;
-            case NOT_EQUAL:
+            case NOT_EQUALS:
                 return valueLowerCase != this.filterText;
             case STARTS_WITH:
                 return valueLowerCase.indexOf(this.filterText) === 0;
