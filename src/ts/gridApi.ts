@@ -1,10 +1,8 @@
-import {CsvCreator} from "./csvCreator";
-import {Grid} from "./grid";
+import {CsvCreator, CsvExportParams} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
@@ -12,31 +10,24 @@ import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
-import {CsvExportParams} from "./csvCreator";
 import {ColDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
-import {Bean, PostConstruct} from "./context/context";
-import {Qualifier} from "./context/context";
+import {Bean, PostConstruct, Context, Autowired, Optional} from "./context/context";
 import {GridCore} from "./gridCore";
-import {Context} from "./context/context";
-import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {SortController} from "./sortController";
 import {PaginationController} from "./rowControllers/paginationController";
 import {FocusedCellController} from "./focusedCellController";
-import {IRangeController} from "./interfaces/iRangeController";
-import {RangeSelection} from "./interfaces/iRangeController";
-import {Optional} from "./context/context";
+import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
 import {GridCell} from "./entities/gridCell";
-import {AddRangeSelectionParams} from "./interfaces/iRangeController";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
-import {IViewportDatasource} from "./interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 
 @Bean('gridApi')
 export class GridApi {

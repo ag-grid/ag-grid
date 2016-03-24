@@ -78,9 +78,6 @@ export class RenderedCell {
         this.renderedRow = renderedRow;
     }
 
-    public checkPinnedClasses(): void {
-    }
-
     private setPinnedClasses(): void {
         var firstPinnedChangedListener = () => {
             if (this.firstRightPinned !== this.column.isFirstRightPinned()) {
@@ -249,6 +246,19 @@ export class RenderedCell {
         });
     }
 
+    private addChangeListener(): void {
+        var cellChangeListener = (event: any) => {
+            if (event.column === this.column) {
+                this.refreshCell();
+                this.flashCellForClipboardInteraction();
+            }
+        };
+        this.node.addEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
+        this.destroyMethods.push(()=> {
+            this.node.removeEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
+        });
+    }
+
     private flashCellForClipboardInteraction(): void {
         // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
         // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
@@ -310,6 +320,7 @@ export class RenderedCell {
         this.setPinnedClasses();
         this.addRangeSelectedListener();
         this.addHighlightListener();
+        this.addChangeListener();
         this.addCellFocusedListener();
 
         // only set tab index if cell selection is enabled

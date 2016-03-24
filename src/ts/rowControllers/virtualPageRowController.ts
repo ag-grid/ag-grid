@@ -1,14 +1,10 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
+import {Bean, Context, Autowired, PostConstruct} from "../context/context";
 import {EventService} from "../eventService";
 import {SelectionController} from "../selectionController";
-import {Autowired} from "../context/context";
 import {IRowModel} from "./../interfaces/iRowModel";
-import {PostConstruct} from "../context/context";
 import {Events} from "../events";
 import {SortController} from "../sortController";
 import {FilterManager} from "../filter/filterManager";
@@ -30,6 +26,7 @@ export class VirtualPageRowController implements IRowModel {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     private datasourceVersion = 0;
     private datasource: any;
@@ -169,7 +166,8 @@ export class VirtualPageRowController implements IRowModel {
         var rowNode: RowNode;
         if (realNode) {
             // if a real node, then always create a new one
-            rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+            rowNode = new RowNode();
+            this.context.wireBean(rowNode);
             rowNode.id = virtualRowIndex;
             rowNode.data = data;
             // and see if the previous one was selected, and if yes, swap it out
@@ -178,7 +176,8 @@ export class VirtualPageRowController implements IRowModel {
             // if creating a proxy node, see if there is a copy in selected memory that we can use
             var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
             if (!rowNode) {
-                rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+                rowNode = new RowNode();
+                this.context.wireBean(rowNode);
                 rowNode.id = virtualRowIndex;
                 rowNode.data = data;
             }

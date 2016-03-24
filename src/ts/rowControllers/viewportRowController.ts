@@ -1,4 +1,4 @@
-import {Bean, PostConstruct, Autowired} from "../context/context";
+import {Bean, PostConstruct, Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
@@ -7,7 +7,7 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {SelectionController} from "../selectionController";
-import {IViewportDatasource} from "../interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 
 @Bean('rowModel')
 export class ViewportRowController implements IRowModel {
@@ -18,6 +18,7 @@ export class ViewportRowController implements IRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('context') private context: Context;
 
     // rowRenderer tells us these
     private firstRow = -1;
@@ -45,6 +46,16 @@ export class ViewportRowController implements IRowModel {
 
     }
 
+    private agDestroy(): void {
+        this.destroyCurrentDatasource();
+    }
+
+    private destroyCurrentDatasource(): void {
+        if (this.viewportDatasource && this.viewportDatasource.destroy) {
+            this.viewportDatasource.destroy();
+        }
+    }
+    
     private onViewportChanged(event: any): void {
         this.firstRow = event.firstRow;
         this.lastRow = event.lastRow;
@@ -64,14 +75,18 @@ export class ViewportRowController implements IRowModel {
     }
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource): void {
+        this.destroyCurrentDatasource();
+        
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
+
         if (!viewportDatasource.init) {
             console.warn('ag-Grid: viewport is missing init method.');
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),
-                setRowData: this.setRowData.bind(this)
+                setRowData: this.setRowData.bind(this),
+                getRow: this.getRow.bind(this)
             });
         }
     }
@@ -136,7 +151,8 @@ export class ViewportRowController implements IRowModel {
 
         // need to refactor this, get it in sync with VirtualPageRowController, which was not
         // written with the rowNode.rowUpdated in mind
-        var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        var rowNode = new RowNode();
+        this.context.wireBean(rowNode);
         rowNode.id = rowIndex;
         rowNode.data = data;
         rowNode.rowTop = top;

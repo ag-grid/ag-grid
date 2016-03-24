@@ -1,8 +1,7 @@
-import {Bean} from "../../context/context";
+import {Bean, Context, Autowired} from "../../context/context";
 import {RowNode} from "../../entities/rowNode";
-import {Utils as _} from '../../utils';
+import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {EventService} from "../../eventService";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -13,6 +12,7 @@ export class FlattenStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     public execute(rowsToFlatten: RowNode[]): RowNode[] {
         // even if not doing grouping, we do the mapping, as the client might
@@ -57,7 +57,8 @@ export class FlattenStage implements IRowNodeStage {
     }
 
     private createFooterNode(groupNode: RowNode): RowNode {
-        var footerNode = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        var footerNode = new RowNode();
+        this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             (<any>footerNode)[key] = (<any>groupNode)[key];
         });

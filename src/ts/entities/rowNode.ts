@@ -2,11 +2,23 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SelectionController} from "../selectionController";
+import {ColDef} from "./colDef";
+import {Column} from "./column";
+import {ValueService} from "../valueService";
+import {ColumnController} from "../columnController/columnController";
+import {Autowired} from "../context/context";
 
 export class RowNode {
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
+    public static EVENT_CELL_CHANGED = 'cellChanged';
+
+    @Autowired('eventService') private mainEventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('valueService') private valueService: ValueService;
 
     /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
     public id: number;
@@ -54,25 +66,21 @@ export class RowNode {
     public rowTop: number;
 
     private selected = false;
-
     private eventService: EventService;
-    private mainEventService: EventService;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private selectionController: SelectionController;
-
-    constructor(mainEventService: EventService, gridOptionsWrapper: GridOptionsWrapper,
-                selectionController: SelectionController) {
-        this.mainEventService = mainEventService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.selectionController = selectionController ;
-    }
 
     public setData(data: any): void {
-        if (this.data === data) { return; }
         var oldData = this.data;
         this.data = data;
         var event = {oldData: oldData, newData: data};
         this.eventService.dispatchEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    // redundency here, how does this work with cell editing???
+    public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
+        var column = this.columnController.getColumn(colKey);
+        this.valueService.setValue(this, column, newValue);
+        var event = {column: column, newValue: newValue};
+        this.eventService.dispatchEvent(RowNode.EVENT_CELL_CHANGED, event);
     }
     
     public resetQuickFilterAggregateText(): void {

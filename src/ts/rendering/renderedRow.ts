@@ -168,7 +168,6 @@ export class RenderedRow {
         columns.forEach( (column: Column) => {
             var renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
-            renderedCell.checkPinnedClasses();
             _.removeFromArray(renderedCellKeys, column.getColId());
         });
 

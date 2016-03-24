@@ -78,7 +78,9 @@ export class ValueService {
         }
     }
 
-    public setValue(rowNode: RowNode, column: Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
+        var column = this.columnController.getColumn(colKey);
+        
         if (!rowNode || !column) {
             return;
         }

@@ -10,7 +10,7 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {Column} from "../../entities/column";
 import {ColDef} from "../../entities/colDef";
-import {Bean} from "../../context/context";
+import {Bean, Context} from "../../context/context";
 import {Qualifier} from "../../context/context";
 import {GridCore} from "../../gridCore";
 import {SelectionController} from "../../selectionController";
@@ -35,6 +35,7 @@ export class InMemoryRowController implements IInMemoryRowModel {
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -334,9 +335,6 @@ export class InMemoryRowController implements IInMemoryRowModel {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         var nodeChildDetailsFunc = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         var suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        var eventService = this.eventService;
-        var gridOptionsWrapper = this.gridOptionsWrapper;
-        var selectionController = this.selectionController;
 
         // kick off recursion
         var result = recursiveFunction(rowData, null, 0);
@@ -345,7 +343,8 @@ export class InMemoryRowController implements IInMemoryRowModel {
         function recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
             var rowNodes: RowNode[] = [];
             rowData.forEach( (dataItem)=> {
-                var node = new RowNode(eventService, gridOptionsWrapper, selectionController);
+                var node = new RowNode();
+                this.context.wireBean(node);
                 var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
                 if (nodeChildDetails && nodeChildDetails.group) {
                     node.group = true;

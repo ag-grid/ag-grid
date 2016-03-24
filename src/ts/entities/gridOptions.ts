@@ -3,7 +3,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {MenuItem} from "../widgets/cMenuItem";
-import {IViewportDatasource} from "../interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *

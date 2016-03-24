@@ -15,7 +15,7 @@ import {Bean, Qualifier, Autowired, PostConstruct} from "./context/context";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
 import {Utils as _} from "./utils";
-import {IViewportDatasource} from "./interfaces/iViewportDatasourcet";
+import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 
 var DEFAULT_ROW_HEIGHT = 25;
 
