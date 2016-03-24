@@ -30,14 +30,14 @@
     "gulp-header": "1.7.0",
     "merge2": "0.3.6",
 
-    "es6-promise": "^3.0.2",
-    "es6-shim": "^0.33.3",
+    "systemjs": "0.19.24",
+    "es6-shim": "^0.35.0",
     "reflect-metadata": "0.1.2",
     "rxjs": "5.0.0-beta.2",
-    "zone.js": "0.5.15"
+    "zone.js": "0.6.6"
   },
   "peerDependencies": {
-    "angular2": "2.0.0-beta.8",
+    "angular2": "2.0.0-beta.12",
     "ag-grid": "4.0.x"
   },
   "dependencies": {
