@@ -1,14 +1,16 @@
-import {Utils as _} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {IRowNodeStage} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {SelectionController} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {ValueService} from "ag-grid/main";
-import {EventService} from "ag-grid/main";
-import {RowNode} from "ag-grid/main";
-import {Column} from "ag-grid/main";
+import {
+    Bean,
+    Context,
+    IRowNodeStage,
+    Autowired,
+    SelectionController,
+    GridOptionsWrapper,
+    ColumnController,
+    ValueService,
+    EventService,
+    RowNode,
+    Column
+} from "ag-grid/main";
 
 @Bean('groupStage')
 export class GroupStage implements IRowNodeStage {
@@ -18,6 +20,7 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     public execute(rowsToGroup: RowNode[]): RowNode[] {
         var result: RowNode[];
@@ -41,7 +44,9 @@ export class GroupStage implements IRowNodeStage {
 
     private group(rowNodes: RowNode[], groupedCols: Column[], expandByDefault: number) {
 
-        var topMostGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        var topMostGroup = new RowNode();
+        this.context.wireBean(topMostGroup);
+
         topMostGroup.level = -1;
         topMostGroup.children = [];
         topMostGroup._childrenMap = {};
@@ -79,7 +84,8 @@ export class GroupStage implements IRowNodeStage {
                 // if group doesn't exist yet, create it
                 nextGroup = currentGroup._childrenMap[groupKey];
                 if (!nextGroup) {
-                    nextGroup = new RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+                    nextGroup = new RowNode();
+                    this.context.wireBean(nextGroup);
                     nextGroup.group = true;
                     nextGroup.field = groupColumn.getColDef().field;
                     nextGroup.id = index--;
