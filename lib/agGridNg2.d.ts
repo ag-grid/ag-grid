@@ -1,4 +1,4 @@
-// ag-grid-ng2 v4.0.2
+// ag-grid-ng2 v4.0.3
 import { GridApi, ColumnApi } from 'ag-grid/main';
 import { ElementRef } from 'angular2/core';
 export declare class AgGridNg2 {
