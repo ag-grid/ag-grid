@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 4.1.x</h3>
     <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
     due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
+    <li>Navigation: When not editing, tab moves between cells. Shift+tab goes backwards.</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>

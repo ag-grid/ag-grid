@@ -11,7 +11,7 @@ MockServer.prototype.periodicallyUpdateData = function() {
     var changes = [];
 
     // randomly update data for some rows
-    for (var i = 0; i<1000; i++) {
+    for (var i = 0; i<100; i++) {
         var index = Math.floor(this.allData.length * Math.random());
         var columnId = columnIds[i%3];
         var dataItem = this.allData[index];
