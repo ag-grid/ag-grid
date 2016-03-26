@@ -326,6 +326,7 @@ export class InMemoryRowController implements IInMemoryRowModel {
     }
 
     private createRowNodesFromData(rowData: any[], firstId?: number): RowNode[] {
+        var that = this;
         if (!rowData) {
             return [];
         }
@@ -344,7 +345,7 @@ export class InMemoryRowController implements IInMemoryRowModel {
             var rowNodes: RowNode[] = [];
             rowData.forEach( (dataItem)=> {
                 var node = new RowNode();
-                this.context.wireBean(node);
+                that.context.wireBean(node);
                 var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
                 if (nodeChildDetails && nodeChildDetails.group) {
                     node.group = true;

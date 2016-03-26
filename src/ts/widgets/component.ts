@@ -10,7 +10,7 @@ export class Component {
     private localEventService: EventService;
 
     constructor(template: string) {
-        this.eGui = _.loadTemplate(template);
+        this.eGui = _.loadTemplate(<string>template);
     }
 
     public addEventListener(eventType: string, listener: Function): void {

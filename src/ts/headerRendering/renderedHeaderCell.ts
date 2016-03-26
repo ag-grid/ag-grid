@@ -1,27 +1,17 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
-import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
 import {FilterManager} from "../filter/filterManager";
 import {ColumnController} from "../columnController/columnController";
-import {Grid} from "../grid";
 import {HeaderTemplateLoader} from "./headerTemplateLoader";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {HorizontalDragService} from "./horizontalDragService";
-import {HeaderRenderer} from "./headerRenderer";
-import {GridPanel} from "../gridPanel/gridPanel";
 import {GridCore} from "../gridCore";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {PopupService} from "../widgets/popupService";
-import {Autowired} from "../context/context";
-import {Context} from "../context/context";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {DragSource} from "../dragAndDrop/dragAndDropService";
-import {EventService} from "../eventService";
+import {DragAndDropService, DropTarget, DragSource} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
-import {PostConstruct} from "../context/context";
 
 export class RenderedHeaderCell implements IRenderedHeaderElement {
 

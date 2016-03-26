@@ -54,6 +54,7 @@ export class RenderedCell {
 
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
+    private cellEditor: DefaultEditor;
 
     private value: any;
     private checkboxSelection: boolean;
@@ -107,14 +108,6 @@ export class RenderedCell {
 
     public setParentRow(eParentRow: HTMLElement): void {
         this.eParentRow = eParentRow;
-    }
-
-    @PostConstruct
-    public init(): void {
-        this.value = this.getValue();
-        this.checkboxSelection = this.calculateCheckboxSelection();
-
-        this.setupComponents();
     }
 
     public destroy(): void {
@@ -260,7 +253,7 @@ export class RenderedCell {
     }
 
     private flashCellForClipboardInteraction(): void {
-        // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
+        // so tempted to not put a comment here!!!! but because i'm going to release an enterprise version,
         // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
         // CSS is cleared, that's the css removal in addClipboardListener() method
         setTimeout( ()=> {
@@ -312,7 +305,10 @@ export class RenderedCell {
         widthChangedListener();
     }
 
-    private setupComponents() {
+    @PostConstruct
+    public init(): void {
+        this.value = this.getValue();
+        this.checkboxSelection = this.calculateCheckboxSelection();
         this.eGridCell = document.createElement('div');
 
         this.setLeftOnCell();
@@ -322,6 +318,7 @@ export class RenderedCell {
         this.addHighlightListener();
         this.addChangeListener();
         this.addCellFocusedListener();
+        this.addKeyDownListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -331,15 +328,100 @@ export class RenderedCell {
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
 
-        this.addCellNavigationHandler();
         this.createParentOfValue();
         this.populateCell();
     }
 
-    private cellEditor: DefaultEditor;
+    private onEnterKeyDown(): void {
+        if (this.editingCell) {
+            this.stopEditing();
+        } else {
+            this.startEditingIfEnabled(Constants.KEY_ENTER);
+        }
+    }
+
+    private onEscapeKeyDown(): void {
+        if (this.editingCell) {
+            this.stopEditing(true);
+        }
+    }
+
+    private onTabKeyDown(event: any): void {
+        if (this.editingCell) {
+            this.stopEditing(false, true, event.shiftKey);
+            // we don't want the default tab action, so return false, this stops the event from bubbling
+            event.preventDefault();
+            // return false;
+        }
+    }
+
+    private onBackspaceOrDeleteKeyPressed(key: number): void {
+        if (!this.editingCell) {
+            this.startEditingIfEnabled(key);
+        }
+    }
+
+    private onSpaceKeyPressed(): void {
+        if (!this.editingCell && this.gridOptionsWrapper.isRowSelection()) {
+            var selected = this.node.isSelected();
+            this.node.setSelected(!selected);
+        }
+        // prevent default as space key, by default, moves browser scroll down
+        event.preventDefault();
+    }
+
+    private onNavigationKeyPressed(event: any, key: number): void {
+        if (!this.editingCell) {
+            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        }
+        // if we don't prevent default, the grid will scroll with the navigation keys
+        event.preventDefault();
+    }
+
+    private addKeyDownListener(): void {
+        var that = this;
+        var editingKeyListener = function(event: any) {
+
+            var key = event.which || event.keyCode;
+
+            switch (key) {
+                case Constants.KEY_ENTER:
+                    that.onEnterKeyDown();
+                    break;
+                case Constants.KEY_ESCAPE:
+                    that.onEscapeKeyDown();
+                    break;
+                case Constants.KEY_TAB:
+                    that.onTabKeyDown(event);
+                    break;
+                case Constants.KEY_BACKSPACE:
+                case Constants.KEY_DELETE:
+                    that.onBackspaceOrDeleteKeyPressed(key);
+                    break;
+                case Constants.KEY_SPACE:
+                    that.onSpaceKeyPressed();
+                    break;
+                case Constants.KEY_DOWN:
+                case Constants.KEY_UP:
+                case Constants.KEY_RIGHT:
+                case Constants.KEY_LEFT:
+                    that.onNavigationKeyPressed(event, key);
+                    break;
+            }
+        };
+
+        this.eGridCell.addEventListener('keydown', editingKeyListener);
+        this.destroyMethods.push( () => {
+            this.eGridCell.removeEventListener('keydown', editingKeyListener);
+        });
+    }
 
     // called by rowRenderer when user navigates via tab key
-    public startEditing(keyPress?: number) {
+    public startEditingIfEnabled(keyPress?: number) {
+
+        if (!this.isCellEditable()) {
+            return;
+        }
 
         this.cellEditor = new DefaultEditor();
 
@@ -351,25 +433,18 @@ export class RenderedCell {
             keyPress: keyPress,
             column: this.column,
             stopEditing: this.stopEditing.bind(this),
-            focusCell: this.focusCell.bind(this),
-            startEditingNextCell: this.startEditingNextCell.bind(this)
         };
         
-        this.cellEditor.startEditing(params);
+        this.cellEditor.init(params);
         this.eGridCell.appendChild(this.cellEditor.getGui());
         this.cellEditor.afterGuiAttached();
     }
 
-    private startEditingNextCell(backwards: boolean): void {
-        this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
-    }
-    
     public focusCell(forceBrowserFocus: boolean): void {
-        console.log('focusCell: ' + forceBrowserFocus);
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(reset: boolean = false) {
+    private stopEditing(reset: boolean = false, startEditingNextCell = false, backwards = false) {
         this.editingCell = false;
 
         var newValue = this.cellEditor.getValue();
@@ -379,11 +454,19 @@ export class RenderedCell {
             this.value = this.getValue();
         }
 
+        this.cellEditor.destroy();
+
         _.removeAllChildren(this.eGridCell);
         if (this.checkboxSelection) {
             this.eGridCell.appendChild(this.eCellWrapper);
         }
         this.refreshCell();
+
+        if (startEditingNextCell) {
+            this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
+        } else {
+            this.focusCell(true);
+        }
     }
 
     private createParams(): any {
@@ -463,8 +546,8 @@ export class RenderedCell {
             colDef.onCellDoubleClicked(agEvent);
         }
 
-        if (!this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
-            this.startEditing();
+        if (!this.gridOptionsWrapper.isSingleClickEdit()) {
+            this.startEditingIfEnabled();
         }
     }
 
@@ -499,8 +582,8 @@ export class RenderedCell {
             colDef.onCellClicked(agEvent);
         }
 
-        if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
-            this.startEditing();
+        if (this.gridOptionsWrapper.isSingleClickEdit()) {
+            this.startEditingIfEnabled();
         }
     }
 
@@ -603,56 +686,6 @@ export class RenderedCell {
                 }
             }
         }
-    }
-
-    // rename this to 'add key event listener
-    private addCellNavigationHandler() {
-        this.eGridCell.addEventListener('keydown', (event: any) => {
-            if (this.editingCell) {
-                return;
-            }
-            // only interested on key presses that are directly on this element, not any children elements. this
-            // stops navigation if the user is in, for example, a text field inside the cell, and user hits
-            // on of the keys we are looking for.
-            if (event.target !== this.eGridCell) {
-                return;
-            }
-
-            var key = event.which || event.keyCode;
-
-            var startNavigation = key === Constants.KEY_DOWN || key === Constants.KEY_UP
-                || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
-            if (startNavigation) {
-                event.preventDefault();
-                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
-                return;
-            }
-
-            var startEdit = this.isKeycodeForStartEditing(key);
-            if (startEdit && this.isCellEditable()) {
-                this.startEditing(key);
-                // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
-                // press, and stops editing immediately, hence giving he user experience that nothing happened
-                event.preventDefault();
-                return;
-            }
-
-            var selectRow = key === Constants.KEY_SPACE;
-            if (selectRow && this.gridOptionsWrapper.isRowSelection()) {
-                var selected = this.node.isSelected();
-                if (selected) {
-                    this.node.setSelected(false);
-                } else {
-                    this.node.setSelected(true);
-                }
-                event.preventDefault();
-                return;
-            }
-        });
-    }
-
-    private isKeycodeForStartEditing(key: number): boolean {
-        return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
     }
 
     private createParentOfValue() {

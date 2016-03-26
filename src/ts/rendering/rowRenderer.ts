@@ -587,7 +587,7 @@ export class RowRenderer {
                 // floating cell, the scrolls get out of sync
                 this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
 
-                nextRenderedCell.startEditing();
+                nextRenderedCell.startEditingIfEnabled();
                 nextRenderedCell.focusCell(false);
                 if (this.rangeController) {
                     this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
