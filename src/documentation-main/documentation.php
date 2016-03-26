@@ -161,7 +161,7 @@ include 'documentation_header.php';
     column management). This will allow the tool panel to host and display multiple filters concurrently.
 </p>
 
-<h4>Big Data View (ag-Grid-Enterprise)</h4>
+<h4>Big Data View (ag-Grid enterprise)</h4>
 
 <p>
     A new data model type (in addition to the existing three that are 1 - plain, 2 - pagination and 3 - virtual pagination)
