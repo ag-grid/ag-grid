@@ -9,17 +9,12 @@ export class DefaultEditor extends Component {
         super(DefaultEditor.TEMPLATE);
     }
 
-    private getInput(): HTMLInputElement {
-        return <HTMLInputElement> this.getGui();
-    }
-
     public init(params: any): void {
 
         var keyPress = params.keyPress;
         var value = params.value;
-        var stopEditing = params.stopEditing;
 
-        var eInput = this.getInput();
+        var eInput = <HTMLInputElement> this.getGui();
 
         var startWithOldValue = keyPress !== Constants.KEY_BACKSPACE && keyPress !== Constants.KEY_DELETE;
         if (startWithOldValue && value !== null && value !== undefined) {
@@ -27,10 +22,6 @@ export class DefaultEditor extends Component {
         }
 
         eInput.style.width = (params.column.getActualWidth() - 14) + 'px';
-
-        //stop editing if we loose focus
-        eInput.addEventListener('blur', stopEditing);
-        this.addDestroyFunc( ()=> eInput.removeEventListener('blur', stopEditing));
     }
 
     public afterGuiAttached(): void {
@@ -40,6 +31,7 @@ export class DefaultEditor extends Component {
     }
 
     public getValue(): any {
-        return this.getInput().value;
+        var eInput = <HTMLInputElement> this.getGui();
+        return eInput.value;
     }
 }

@@ -319,6 +319,7 @@ export class RenderedCell {
         this.addChangeListener();
         this.addCellFocusedListener();
         this.addKeyDownListener();
+        this.addBlurListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -378,6 +379,37 @@ export class RenderedCell {
         event.preventDefault();
     }
 
+    private addBlurListener(): void {
+        var that = this;
+        var blurListener = function(event: FocusEvent) {
+            if (that.editingCell && that.hasFocusLeftCell(event)) {
+                that.stopEditing();
+            }
+        };
+        this.eGridCell.addEventListener('focusout', blurListener);
+        this.destroyMethods.push( () => {
+            this.eGridCell.removeEventListener('focusout', blurListener);
+        });
+    }
+
+    private hasFocusLeftCell(event: FocusEvent): boolean {
+        // if the user clicks outside this cell, then relatedTarget
+        // will be the new cell (or outside the grid completly).
+        // to check if inside this cell, we walk up the DOM tree
+        // looking for our eGridCell, and if we don't find it,
+        // we know focus was lost to outside the cell.
+        var eTarget = <Node> event.relatedTarget;
+        var found = false;
+        while (eTarget) {
+            if (eTarget === this.eGridCell) {
+                found = true;
+            }
+            eTarget = eTarget.parentNode;
+        }
+
+        return !found;
+    }
+
     private addKeyDownListener(): void {
         var that = this;
         var editingKeyListener = function(event: any) {
@@ -431,8 +463,7 @@ export class RenderedCell {
         var params = {
             value: this.getValue(),
             keyPress: keyPress,
-            column: this.column,
-            stopEditing: this.stopEditing.bind(this),
+            column: this.column
         };
         
         this.cellEditor.init(params);
@@ -465,7 +496,7 @@ export class RenderedCell {
         if (startEditingNextCell) {
             this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
         } else {
-            this.focusCell(true);
+            // this.focusCell(true);
         }
     }
 
