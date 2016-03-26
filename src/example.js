@@ -193,25 +193,25 @@ var gridOptions = {
     //floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
-        console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
+        // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
     onRowDoubleClicked: function(params) {
-        console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
+        // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
     // callback when cell clicked
     onCellClicked: function(params) {
-        console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     // callback when cell double clicked
     onCellDoubleClicked:  function(params) {
-        console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     // callback when cell right clicked
     onCellContextMenu:  function(params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onCellFocused: function(params) {
-        console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
+        // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
     onGridReady: function(event) {
         console.log('Callback onGridReady: api = ' + event.api);
