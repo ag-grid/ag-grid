@@ -148,15 +148,7 @@ export class GridCore {
             this.eRootPanel.setNorthVisible(false);
         }
     }
-
-    public agApplicationBoot(): void {
-        var readyEvent = {
-            api: this.gridOptions.api,
-            columnApi: this.gridOptions.columnApi
-        };
-        this.eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
-    }
-
+    
     private addWindowResizeListener(): void {
         var that = this;
         // putting this into a function, so when we remove the function,

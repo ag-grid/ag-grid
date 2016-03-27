@@ -45,6 +45,7 @@ import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
+import {Events} from "./events";
 
 export class Grid {
 
@@ -92,6 +93,13 @@ export class Grid {
                 CellEditorFactory],
             debug: !!gridOptions.debug
         });
+
+        var eventService = this.context.getBean('eventService');
+        var readyEvent = {
+            api: gridOptions.api,
+            columnApi: gridOptions.columnApi
+        };
+        eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
     }
 
     private getRowModelClass(gridOptions:GridOptions): any {

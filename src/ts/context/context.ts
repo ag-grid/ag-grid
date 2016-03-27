@@ -60,7 +60,6 @@ export class Context {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
         this.postConstruct(beans);
-        this.wireCompleteBeans(beans);
     }
 
     private createBeans(): void {
@@ -201,12 +200,8 @@ export class Context {
         } );
     }
 
-    private wireCompleteBeans(beans: any[]): void {
-        beans.forEach( (bean)=> {
-            if (bean.agApplicationBoot) {
-                bean.agApplicationBoot();
-            }
-        } );
+    public getBean(name: string): any {
+        return this.lookupBeanInstance('getBean', name, true);
     }
 
     public destroy(): void {
