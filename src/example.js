@@ -819,6 +819,10 @@ LanguageCellEditor.prototype.init = function(params) {
         eGui.appendChild(option);
     });
     this.eGui = eGui;
+
+    eGui.addEventListener('change', function() {
+        params.stopEditing();
+    });
 };
 
 LanguageCellEditor.prototype.afterGuiAttached = function() {
