@@ -73,9 +73,11 @@ export class Utils {
     }
 
     static assign(object: any, source: any): void {
-        Utils.iterateObject(source, function(key: string, value: any) {
-            object[key] = value;
-        });
+        if (this.exists(source)) {
+            this.iterateObject(source, function(key: string, value: any) {
+                object[key] = value;
+            });
+        }
     }
 
     static getFunctionParameters(func: any) {

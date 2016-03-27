@@ -19,6 +19,7 @@ import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 import {DefaultEditor} from "./defaultEditor";
+import {ICellEditor} from "./iCellEditor";
 
 export class RenderedCell {
 
@@ -54,7 +55,7 @@ export class RenderedCell {
 
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
-    private cellEditor: DefaultEditor;
+    private cellEditor: ICellEditor;
 
     private value: any;
     private checkboxSelection: boolean;
@@ -478,6 +479,37 @@ export class RenderedCell {
         });
     }
 
+    private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
+        var colDef = this.column.getColDef();
+        var cellEditor: ICellEditor;
+        if (colDef.cellEditor) {
+            cellEditor = new colDef.cellEditor();
+        } else {
+            cellEditor = new DefaultEditor();
+        }
+
+        if (cellEditor.init) {
+            var params = {
+                value: this.getValue(),
+                keyPress: keyPress,
+                charPress: charPress,
+                column: this.column,
+                node: this.node,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+
+            if (colDef.cellEditorParams) {
+                _.assign(params, colDef.cellEditorParams);
+            }
+
+            cellEditor.init(params);
+        }
+
+        return cellEditor;
+    }
+
     // called by rowRenderer when user navigates via tab key
     public startEditingIfEnabled(keyPress?: number, charPress?: string) {
 
@@ -485,25 +517,18 @@ export class RenderedCell {
             return;
         }
 
-        this.cellEditor = new DefaultEditor();
+        this.cellEditor = this.createCellEditor(keyPress, charPress);
 
         this.editingCell = true;
         _.removeAllChildren(this.eGridCell);
-
-        var params = {
-            value: this.getValue(),
-            keyPress: keyPress,
-            charPress: charPress,
-            column: this.column,
-            node: this.node,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext()
-        };
-        
-        this.cellEditor.init(params);
-        this.eGridCell.appendChild(this.cellEditor.getGui());
-        this.cellEditor.afterGuiAttached();
+        if (this.cellEditor.getGui) {
+            this.eGridCell.appendChild(this.cellEditor.getGui());
+        } else {
+            console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+        }
+        if (this.cellEditor.afterGuiAttached) {
+            this.cellEditor.afterGuiAttached();
+        }
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
@@ -520,7 +545,9 @@ export class RenderedCell {
             this.value = this.getValue();
         }
 
-        this.cellEditor.destroy();
+        if (this.cellEditor.destroy) {
+            this.cellEditor.destroy();
+        }
 
         _.removeAllChildren(this.eGridCell);
         if (this.checkboxSelection) {

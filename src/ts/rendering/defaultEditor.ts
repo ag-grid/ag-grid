@@ -1,7 +1,8 @@
 import {Constants} from "../constants";
 import {Component} from "../widgets/component";
+import {ICellEditor} from "./iCellEditor";
 
-export class DefaultEditor extends Component {
+export class DefaultEditor extends Component implements ICellEditor {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 
@@ -13,19 +14,19 @@ export class DefaultEditor extends Component {
 
     public init(params: any): void {
 
-        var keyPress = params.keyPress;
-        var charPress = params.charPress;
-        var value = params.value;
-
         var eInput = <HTMLInputElement> this.getGui();
-
         var startValue: string;
-        if (keyPress === Constants.KEY_BACKSPACE || keyPress === Constants.KEY_DELETE) {
+
+        var keyPressBackspaceOrDelete =
+            params.keyPress === Constants.KEY_BACKSPACE
+            || params.keyPress === Constants.KEY_DELETE;
+
+        if (keyPressBackspaceOrDelete) {
             startValue = '';
-        } else if (charPress) {
-            startValue = charPress;
+        } else if (params.charPress) {
+            startValue = params.charPress;
         } else {
-            startValue = value;
+            startValue = params.value;
             this.highlightAllOnFocus = true;
         }
 

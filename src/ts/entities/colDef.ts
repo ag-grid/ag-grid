@@ -77,8 +77,9 @@ export interface ColDef extends AbstractColDef {
     /** A function for rendering a cell. */
     cellRenderer?: Function | {};
 
-    /** A function for editing a cell */
-    cellEditor?: Function | {}
+    /** Cell editor */
+    cellEditor?: Function;
+    cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
     floatingCellRenderer?: Function | {};
