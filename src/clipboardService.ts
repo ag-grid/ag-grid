@@ -136,6 +136,8 @@ export class ClipboardService implements IClipboardService {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshView();
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     }
 
     public copyToClipboard(): void {
