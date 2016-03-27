@@ -1,5 +1,5 @@
 
-export * from './dist/lib/cellRenderers/groupCellRendererFactory';
+export * from './dist/lib/rendering/cellRenderers/groupCellRendererFactory';
 
 export * from './dist/lib/columnController/balancedColumnTreeBuilder';
 export * from './dist/lib/columnController/columnController';

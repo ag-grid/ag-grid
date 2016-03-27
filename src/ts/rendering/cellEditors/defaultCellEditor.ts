@@ -1,15 +1,15 @@
-import {Constants} from "../constants";
-import {Component} from "../widgets/component";
+import {Constants} from "../../constants";
+import {Component} from "../../widgets/component";
 import {ICellEditor} from "./iCellEditor";
 
-export class DefaultEditor extends Component implements ICellEditor {
+export class DefaultCellEditor extends Component implements ICellEditor {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 
     private highlightAllOnFocus: boolean;
 
     constructor() {
-        super(DefaultEditor.TEMPLATE);
+        super(DefaultCellEditor.TEMPLATE);
     }
 
     public init(params: any): void {

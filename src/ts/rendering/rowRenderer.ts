@@ -9,7 +9,6 @@ import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {RenderedRow} from "./renderedRow";
-import {groupCellRendererFactory} from "../cellRenderers/groupCellRendererFactory";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events} from "../events";
@@ -32,6 +31,7 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {Optional} from "../context/context";
 import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
+import {groupCellRendererFactory} from "./cellRenderers/groupCellRendererFactory";
 
 @Bean('rowRenderer')
 export class RowRenderer {

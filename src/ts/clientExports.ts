@@ -14,7 +14,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {defaultGroupComparator} from "./functions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {CMenuItem} from "./widgets/cMenuItem";
-import {groupCellRendererFactory} from "./cellRenderers/groupCellRendererFactory";
+import {groupCellRendererFactory} from "./rendering/cellRenderers/groupCellRendererFactory";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";

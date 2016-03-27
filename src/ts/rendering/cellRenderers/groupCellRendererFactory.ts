@@ -1,11 +1,12 @@
-import {SvgFactory} from '../svgFactory';
-import {Utils as _} from '../utils';
-import {Constants as constants} from '../constants';
-import {GridOptionsWrapper} from '../gridOptionsWrapper';
-import {SelectionRendererFactory} from '../selectionRendererFactory';
-import {ExpressionService} from '../expressionService';
-import {EventService} from '../eventService';
-import {Events} from '../events';
+
+import {SvgFactory} from "../../svgFactory";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {SelectionRendererFactory} from "../../selectionRendererFactory";
+import {ExpressionService} from "../../expressionService";
+import {EventService} from "../../eventService";
+import {Constants} from "../../constants";
+import {Utils as _} from '../../utils';
+import {Events} from "../../events";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -81,7 +82,7 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
         // and then expand / contract as the user hits enter or space-bar
         if (params.eGridCell) {
             params.eGridCell.addEventListener('keydown', function(event: any) {
-                if (_.isKeyPressed(event, constants.KEY_ENTER)) {
+                if (_.isKeyPressed(event, Constants.KEY_ENTER)) {
                     expandOrContract();
                     event.preventDefault();
                 }

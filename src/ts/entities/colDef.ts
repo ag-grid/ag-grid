@@ -1,7 +1,7 @@
 import {RowNode} from "./rowNode";
 import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
-import {ICellEditor} from "../rendering/iCellEditor";
+import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {

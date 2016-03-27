@@ -18,9 +18,10 @@ import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
-import {DefaultEditor} from "./defaultEditor";
-import {ICellEditor} from "./iCellEditor";
 import {FocusService} from "../misc/focusService";
+import {ICellEditor} from "./cellEditors/iCellEditor";
+import {DefaultCellEditor} from "./cellEditors/defaultCellEditor";
+import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
 
 export class RenderedCell {
 
@@ -39,6 +40,7 @@ export class RenderedCell {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -484,12 +486,8 @@ export class RenderedCell {
 
     private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
         var colDef = this.column.getColDef();
-        var cellEditor: ICellEditor;
-        if (colDef.cellEditor) {
-            cellEditor = new colDef.cellEditor();
-        } else {
-            cellEditor = new DefaultEditor();
-        }
+
+        var cellEditor = this.cellEditorFactory.createCellEditor(colDef.cellEditor);
 
         if (cellEditor.init) {
             var params = {

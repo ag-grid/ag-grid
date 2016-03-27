@@ -44,6 +44,7 @@ import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
 import {FocusService} from "./misc/focusService";
+import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
 
 export class Grid {
 
@@ -87,7 +88,8 @@ export class Grid {
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService],
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
+                CellEditorFactory],
             debug: !!gridOptions.debug
         });
     }
