@@ -295,7 +295,10 @@ var defaultCols = [
             },
             {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
-                cellEditor: LanguageCellEditor,
+                cellEditor: 'select',
+                cellEditorParams: {
+                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+                },
                 //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
@@ -804,38 +807,6 @@ function languageCellRenderer(params) {
         return null;
     }
 }
-
-function LanguageCellEditor() {}
-
-LanguageCellEditor.prototype.init = function(params) {
-    var eGui = document.createElement('select');
-    ['English','Spanish','French','Portuguese','(other)'].forEach( function(language) {
-        var option = document.createElement('option');
-        option.value = language;
-        option.text = language;
-        if (params.value === language) {
-            option.selected = true;
-        }
-        eGui.appendChild(option);
-    });
-    this.eGui = eGui;
-
-    eGui.addEventListener('change', function() {
-        params.stopEditing();
-    });
-};
-
-LanguageCellEditor.prototype.afterGuiAttached = function() {
-    this.eGui.focus();
-};
-
-LanguageCellEditor.prototype.getValue = function() {
-    return this.eGui.value;
-};
-
-LanguageCellEditor.prototype.getGui = function() {
-    return this.eGui;
-};
 
 function countryCellRenderer(params) {
     //get flags from here: http://www.freeflagicons.com/
