@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
 import {Logger, LoggerFactory} from "../logger";
-import {Bean} from "../context/context";
+import {Bean, PreDestroy} from "../context/context";
 import {Qualifier} from "../context/context";
 
 /** Functionality for internal DnD functionality between GUI widgets. Eg this service is used to drag columns
@@ -23,7 +23,8 @@ export class OldToolPanelDragAndDropService {
         this.destroyFunctions.push( () => { document.removeEventListener('mouseup', mouseUpListener); } );
     }
 
-    public agDestroy(): void {
+    @PreDestroy
+    private destroy(): void {
         this.destroyFunctions.forEach( func => func() );
         document.removeEventListener('mouseup', this.mouseUpEventListener);
     }

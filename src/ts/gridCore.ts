@@ -1,44 +1,20 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
-import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ValueService} from "./valueService";
-import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger} from "./logger";
-import {GridApi} from "./gridApi";
+import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
-import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
-import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
-import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {SelectionRendererFactory} from "./selectionRendererFactory";
-import {ExpressionService} from "./expressionService";
-import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
-import {LoggerFactory} from "./logger";
-import {ColumnUtils} from "./columnController/columnUtils";
-import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {Events} from "./events";
 import {BorderLayout} from "./layout/borderLayout";
-import {ColumnChangeEvent} from "./columnChangeEvent";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {ColDef} from "./entities/colDef";
-import {Context} from './context/context';
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {Autowired} from "./context/context";
+import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
-import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
-import {Optional} from "./context/context";
 import {Component} from "./widgets/component";
 
 @Bean('gridCore')
@@ -219,7 +195,8 @@ export class GridCore {
         return this.toolPanelShowing;
     }
 
-    public agDestroy() {
+    @PreDestroy
+    private destroy() {
         if (this.windowResizeListener) {
             window.removeEventListener('resize', this.windowResizeListener);
             this.logger.log('Removing windowResizeListener');

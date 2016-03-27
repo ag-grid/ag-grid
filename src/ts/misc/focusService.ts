@@ -1,4 +1,4 @@
-import {Bean, PostConstruct, Autowired} from "../context/context";
+import {Bean, PostConstruct, Autowired, PreDestroy} from "../context/context";
 import {Utils as _} from '../utils';
 
 // because FireFox doesn't implement focusout event, we have to hack
@@ -34,8 +34,9 @@ export class FocusService {
     private informListeners(focusEvent: FocusEvent): void {
         this.listeners.forEach( listener => listener(focusEvent) );
     }
-    
-    private agDestroy(): void {
+
+    @PreDestroy
+    private destroy(): void {
         this.destroyMethods.forEach( destroyMethod => destroyMethod() );
     }
 

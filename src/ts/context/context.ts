@@ -59,7 +59,7 @@ export class Context {
     private wireBeans(beans: any[]): void {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
-        this.postWire(beans);
+        this.postConstruct(beans);
         this.wireCompleteBeans(beans);
     }
 
@@ -191,7 +191,7 @@ export class Context {
         }
     }
 
-    private postWire(beans: any): void {
+    private postConstruct(beans: any): void {
         beans.forEach( (bean: any) => {
             // try calling init methods
             if (bean.__agBeanMetaData && bean.__agBeanMetaData.postConstructMethods) {
@@ -215,15 +215,15 @@ export class Context {
             return;
         }
         this.logger.log('>> Shutting down ag-Application Context');
+        
+        // try calling destroy methods
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agDestroy) {
-                if (this.contextParams.debug) {
-                    console.log('ag-Grid: destroying ' + beanEntry.beanName);
-                }
-                beanEntry.beanInstance.agDestroy();
+            var bean = beanEntry.beanInstance;
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preDestroyMethods) {
+                bean.__agBeanMetaData.preDestroyMethods.forEach( (methodName: string) => bean[methodName]() );
             }
-            this.logger.log('bean ' + this.getBeanName(beanEntry.beanInstance) + ' destroyed');
         });
+
         this.destroyed = true;
         this.logger.log('>> ag-Application Context shut down - component is dead');
     }
@@ -238,12 +238,19 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
 }
 
 export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    // it's an attribute on the class
     var props = getOrCreateProps(target);
     if (!props.postConstructMethods) {
         props.postConstructMethods = [];
     }
     props.postConstructMethods.push(methodName);
+}
+
+export function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
+    var props = getOrCreateProps(target);
+    if (!props.preDestroyMethods) {
+        props.preDestroyMethods = [];
+    }
+    props.preDestroyMethods.push(methodName);
 }
 
 export function Bean(beanName: string): Function {

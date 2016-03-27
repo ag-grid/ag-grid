@@ -1,6 +1,5 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Grid} from "../grid";
 import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
@@ -13,22 +12,15 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events} from "../events";
 import {Constants} from "../constants";
-import {ColDef} from "../entities/colDef";
 import {RenderedCell} from "./renderedCell";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
+import {Bean, PreDestroy, Qualifier, Context, Autowired, PostConstruct, Optional} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
-import {Context} from "../context/context";
-import {Autowired} from "../context/context";
-import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
+import {Logger, LoggerFactory} from "../logger";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
-import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
-import {Optional} from "../context/context";
 import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
 import {groupCellRendererFactory} from "./cellRenderers/groupCellRendererFactory";
@@ -302,7 +294,8 @@ export class RowRenderer {
         this.drawVirtualRows();
     }
 
-    public agDestroy() {
+    @PreDestroy
+    private destroy() {
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove);
     }

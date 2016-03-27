@@ -1,4 +1,4 @@
-import {Bean, PostConstruct, Autowired, Context} from "../context/context";
+import {Bean, PostConstruct, Autowired, Context, PreDestroy} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
@@ -46,7 +46,8 @@ export class ViewportRowController implements IRowModel {
 
     }
 
-    private agDestroy(): void {
+    @PreDestroy
+    private destroy(): void {
         this.destroyCurrentDatasource();
     }
 

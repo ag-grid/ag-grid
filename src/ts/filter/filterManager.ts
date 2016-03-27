@@ -1,21 +1,16 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService";
 import {ColumnController} from "../columnController/columnController";
-import {Grid} from "../grid";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {TextFilter} from "./textFilter";
 import {NumberFilter} from "./numberFilter";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {Autowired} from "../context/context";
+import {Bean, PreDestroy, Autowired, PostConstruct} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {PostConstruct} from "../context/context";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -398,10 +393,11 @@ export class FilterManager {
     }
 
     private onNewColumnsLoaded(): void {
-        this.agDestroy();
+        this.destroy();
     }
 
-    public agDestroy() {
+    @PreDestroy
+    public destroy() {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
             if (filterWrapper.filter.destroy) {
                 filterWrapper.filter.destroy();
