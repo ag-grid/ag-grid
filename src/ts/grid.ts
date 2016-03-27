@@ -6,7 +6,7 @@ import {PaginationController} from "./rowControllers/paginationController";
 import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {SelectionController} from "./selectionController";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -15,7 +15,6 @@ import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {OldToolPanelDragAndDropService} from "./dragAndDrop/oldToolPanelDragAndDropService";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
 import {Constants} from "./constants";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
@@ -28,29 +27,23 @@ import {PopupService} from "./widgets/popupService";
 import {LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
-import {Events} from "./events";
-import {BorderLayout} from "./layout/borderLayout";
-import {ColumnChangeEvent} from "./columnChangeEvent";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {ColDef} from "./entities/colDef";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
-import {Context} from './context/context';
+import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {SortController} from "./sortController";
-import {ColumnApi} from "./columnController/columnController";
 import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {Utils as _} from './utils';
+import {Utils as _} from "./utils";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
+import {FocusService} from "./misc/focusService";
 
 export class Grid {
 
@@ -94,7 +87,7 @@ export class Grid {
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage],
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService],
             debug: !!gridOptions.debug
         });
     }

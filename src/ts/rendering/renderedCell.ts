@@ -20,6 +20,7 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 import {DefaultEditor} from "./defaultEditor";
 import {ICellEditor} from "./iCellEditor";
+import {FocusService} from "../misc/focusService";
 
 export class RenderedCell {
 
@@ -37,6 +38,9 @@ export class RenderedCell {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('focusService') private focusService: FocusService;
+
+    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -321,7 +325,7 @@ export class RenderedCell {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
-        this.addBlurListener();
+        this.addFocusListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -388,26 +392,26 @@ export class RenderedCell {
         event.preventDefault();
     }
 
-    private addBlurListener(): void {
+    private addFocusListener(): void {
         var that = this;
-        var blurListener = function(event: FocusEvent) {
+        var focusListener = function(event: FocusEvent) {
             if (that.editingCell && that.hasFocusLeftCell(event)) {
                 that.stopEditing();
             }
         };
-        this.eGridCell.addEventListener('focusout', blurListener);
+        this.focusService.addListener(focusListener);
         this.destroyMethods.push( () => {
-            this.eGridCell.removeEventListener('focusout', blurListener);
+            this.focusService.removeListener(focusListener);
         });
     }
 
     private hasFocusLeftCell(event: FocusEvent): boolean {
         // if the user clicks outside this cell, then relatedTarget
-        // will be the new cell (or outside the grid completly).
+        // will be the new cell (or outside the grid completely).
         // to check if inside this cell, we walk up the DOM tree
         // looking for our eGridCell, and if we don't find it,
         // we know focus was lost to outside the cell.
-        var eTarget = <Node> event.relatedTarget;
+        var eTarget = <Node> event.target;
         var found = false;
         while (eTarget) {
             if (eTarget === this.eGridCell) {
@@ -424,11 +428,10 @@ export class RenderedCell {
         var keyPressListener = function(event: any) {
             if (!that.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
-                console.log('event.charCode = ' + event.charCode + ', string = ' + pressedChar);
                 if (pressedChar === ' ') {
                     that.onSpaceKeyPressed();
                 } else {
-                    if ('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}'.indexOf(pressedChar)>=0) {
+                    if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
                         that.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
@@ -497,7 +500,8 @@ export class RenderedCell {
                 node: this.node,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
+                context: this.gridOptionsWrapper.getContext(),
+                stopEditing: this.stopEditingAndFocus.bind(this)
             };
 
             if (colDef.cellEditorParams) {
@@ -508,6 +512,13 @@ export class RenderedCell {
         }
 
         return cellEditor;
+    }
+
+    // cell editors call this, when they want to stop for reasons other
+    // than what we pick up on. eg selecting from a dropdown ends editing.
+    private stopEditingAndFocus(): void {
+        this.stopEditing();
+        this.focusCell(true);
     }
 
     // called by rowRenderer when user navigates via tab key
@@ -554,12 +565,6 @@ export class RenderedCell {
             this.eGridCell.appendChild(this.eCellWrapper);
         }
         this.refreshCell();
-
-        // if (startEditingNextCell) {
-        //     this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
-        // } else {
-        //     // this.focusCell(true);
-        // }
     }
 
     private createParams(): any {

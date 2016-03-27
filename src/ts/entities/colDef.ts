@@ -1,6 +1,7 @@
 import {RowNode} from "./rowNode";
 import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
+import {ICellEditor} from "../rendering/iCellEditor";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -78,7 +79,7 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: Function | {};
 
     /** Cell editor */
-    cellEditor?: Function;
+    cellEditor?: {new(): ICellEditor};
     cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
