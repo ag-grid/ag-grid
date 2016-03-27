@@ -40,6 +40,11 @@ export class DefaultEditor extends Component implements ICellEditor {
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
+        } else {
+            // this puts the carot at the end of the first character, which
+            // is needed if the user started typing, otherwise in IE, if user
+            // typed 'apply', what would end up in the cell would be 'pplea'
+            eInput.setSelectionRange(1,1);
         }
     }
 

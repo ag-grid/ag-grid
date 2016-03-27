@@ -25,6 +25,7 @@ import {CsvCreator} from "../csvCreator";
 import {Optional} from "../context/context";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
+import {FocusedCellController} from "../focusedCellController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -109,6 +110,7 @@ export class GridPanel {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -281,7 +283,6 @@ export class GridPanel {
         this.eAllCellContainers.forEach( (container)=> {
             container.addEventListener('keydown', (event: any)=> {
                 if (event.ctrlKey || event.metaKey) {
-                    console.log('key = ' + event.which);
                     switch (event.which) {
                         case Constants.KEY_A: return this.onCtrlAndA(event);
                         case Constants.KEY_C: return this.onCtrlAndC(event);
@@ -330,15 +331,26 @@ export class GridPanel {
 
     private onCtrlAndC(event: KeyboardEvent): boolean {
         if (!this.clipboardService) { return; }
+
+        var focusedCell = this.focusedCellController.getFocusedCell();
+
         this.clipboardService.copyToClipboard();
         event.preventDefault();
+
+        // the copy operation results in loosing focus on the cell,
+        // because of the trickery the copy logic uses with a temporary
+        // widget. so we set it back again.
+        if (focusedCell) {
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        }
+
         return false;
     }
 
     private onCtrlAndV(event: KeyboardEvent): boolean {
         if (!this.rangeController) { return; }
+
         this.clipboardService.pasteFromClipboard();
-        //event.preventDefault();
         return false;
     }
 
