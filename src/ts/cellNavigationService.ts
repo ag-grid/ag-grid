@@ -142,6 +142,14 @@ export class CellNavigationService {
         return new GridRow(lastFloatingRow, Constants.FLOATING_TOP);
     }
 
+    public getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell {
+        if (backwards) {
+            return this.getNextTabbedCellBackwards(gridCell);
+        } else {
+            return this.getNextTabbedCellForwards(gridCell);
+        }
+    }
+    
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
 
         var displayedColumns = this.columnController.getAllDisplayedColumns();

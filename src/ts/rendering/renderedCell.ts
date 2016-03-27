@@ -319,6 +319,7 @@ export class RenderedCell {
         this.addChangeListener();
         this.addCellFocusedListener();
         this.addKeyDownListener();
+        this.addKeyPressListener();
         this.addBlurListener();
 
         // only set tab index if cell selection is enabled
@@ -336,6 +337,7 @@ export class RenderedCell {
     private onEnterKeyDown(): void {
         if (this.editingCell) {
             this.stopEditing();
+            this.focusCell(true);
         } else {
             this.startEditingIfEnabled(Constants.KEY_ENTER);
         }
@@ -344,16 +346,22 @@ export class RenderedCell {
     private onEscapeKeyDown(): void {
         if (this.editingCell) {
             this.stopEditing(true);
+            this.focusCell(true);
         }
     }
 
     private onTabKeyDown(event: any): void {
+        var editNextCell: boolean;
         if (this.editingCell) {
-            this.stopEditing(false, true, event.shiftKey);
-            // we don't want the default tab action, so return false, this stops the event from bubbling
-            event.preventDefault();
-            // return false;
+            // if editing, we stop editing, then start editing next cell
+            this.stopEditing();
+            editNextCell = true;
+        } else {
+            // otherwise we just move to the next cell
+            editNextCell = false;
         }
+        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        event.preventDefault();
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -410,6 +418,31 @@ export class RenderedCell {
         return !found;
     }
 
+    private addKeyPressListener(): void {
+        var that = this;
+        var keyPressListener = function(event: any) {
+            if (!that.editingCell) {
+                var pressedChar = String.fromCharCode(event.charCode);
+                console.log('event.charCode = ' + event.charCode + ', string = ' + pressedChar);
+                if (pressedChar === ' ') {
+                    that.onSpaceKeyPressed();
+                } else {
+                    if ('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}'.indexOf(pressedChar)>=0) {
+                        that.startEditingIfEnabled(null, pressedChar);
+                        // if we don't prevent default, then the keypress also gets applied to the text field
+                        // (at least when doing the default editor), but we need to allow the editor to decide
+                        // what it wants to do.
+                        event.preventDefault();
+                    }
+                }
+            }
+        };
+        this.eGridCell.addEventListener('keypress', keyPressListener);
+        this.destroyMethods.push( () => {
+            this.eGridCell.removeEventListener('keypress', keyPressListener);
+        });
+    }
+
     private addKeyDownListener(): void {
         var that = this;
         var editingKeyListener = function(event: any) {
@@ -430,9 +463,6 @@ export class RenderedCell {
                 case Constants.KEY_DELETE:
                     that.onBackspaceOrDeleteKeyPressed(key);
                     break;
-                case Constants.KEY_SPACE:
-                    that.onSpaceKeyPressed();
-                    break;
                 case Constants.KEY_DOWN:
                 case Constants.KEY_UP:
                 case Constants.KEY_RIGHT:
@@ -449,7 +479,7 @@ export class RenderedCell {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startEditingIfEnabled(keyPress?: number) {
+    public startEditingIfEnabled(keyPress?: number, charPress?: string) {
 
         if (!this.isCellEditable()) {
             return;
@@ -463,7 +493,12 @@ export class RenderedCell {
         var params = {
             value: this.getValue(),
             keyPress: keyPress,
-            column: this.column
+            charPress: charPress,
+            column: this.column,
+            node: this.node,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
         };
         
         this.cellEditor.init(params);
@@ -475,7 +510,7 @@ export class RenderedCell {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(reset: boolean = false, startEditingNextCell = false, backwards = false) {
+    private stopEditing(reset: boolean = false) {
         this.editingCell = false;
 
         var newValue = this.cellEditor.getValue();
@@ -493,11 +528,11 @@ export class RenderedCell {
         }
         this.refreshCell();
 
-        if (startEditingNextCell) {
-            this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
-        } else {
-            // this.focusCell(true);
-        }
+        // if (startEditingNextCell) {
+        //     this.rowRenderer.startEditingNextCell(this.rowIndex, this.column, this.node.floating, backwards);
+        // } else {
+        //     // this.focusCell(true);
+        // }
     }
 
     private createParams(): any {

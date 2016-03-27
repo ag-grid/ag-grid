@@ -543,57 +543,74 @@ export class RowRenderer {
         }
     }
 
+    private getComponentForCell(gridCell: GridCell): RenderedCell {
+        var rowComponent: RenderedRow;
+        switch (gridCell.floating) {
+            case Constants.FLOATING_TOP:
+                rowComponent = this.renderedTopFloatingRows[gridCell.rowIndex];
+                break;
+            case Constants.FLOATING_BOTTOM:
+                rowComponent = this.renderedBottomFloatingRows[gridCell.rowIndex];
+                break;
+            default:
+                rowComponent = this.renderedRows[gridCell.rowIndex];
+                break;
+        }
+
+        if (!rowComponent) {
+            return null;
+        }
+
+        var cellComponent: RenderedCell = rowComponent.getRenderedCellForColumn(gridCell.column);
+        return cellComponent;
+    }
+
     // called by the cell, when tab is pressed while editing
-    public startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any) {
+    public moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean) {
 
         var nextCell = new GridCell(rowIndex, floating, column);
 
         while (true) {
 
-            if (shiftKey) {
-                nextCell = this.cellNavigationService.getNextTabbedCellBackwards(nextCell);
-            } else {
-                nextCell = this.cellNavigationService.getNextTabbedCellForwards(nextCell);
-            }
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            var nextRenderedCell = this.getComponentForCell(nextCell);
 
-            var nextRenderedRow: RenderedRow;
-            switch (nextCell.floating) {
-                case Constants.FLOATING_TOP:
-                    nextRenderedRow = this.renderedTopFloatingRows[nextCell.rowIndex];
-                    break;
-                case Constants.FLOATING_BOTTOM:
-                    nextRenderedRow = this.renderedBottomFloatingRows[nextCell.rowIndex];
-                    break;
-                default:
-                    nextRenderedRow = this.renderedRows[nextCell.rowIndex];
-                    break;
-            }
-            if (!nextRenderedRow) {
-                // this happens if we are on floating row and try to jump to body
+            // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
+            // so bottom right cell going forwards, or top left going backwards
+            if (!nextRenderedCell) {
                 return;
             }
 
-            var nextRenderedCell: RenderedCell = nextRenderedRow.getRenderedCellForColumn(nextCell.column);
+            // if editing, but cell not editable, skip cell
+            if (startEditing && !nextRenderedCell.isCellEditable()) {
+                continue;
+            }
 
-            if (nextRenderedCell.isCellEditable()) {
+            // this scrolls the row into view
+            var cellIsNotFloating = _.missing(nextCell.floating);
+            if (cellIsNotFloating) {
+                this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+            }
 
-                // this scrolls the row into view
-                if (_.missing(nextCell.floating)) {
-                    this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
-                }
+            this.gridPanel.ensureColumnVisible(nextCell.column);
+            // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+            // floating cell, the scrolls get out of sync
+            this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
 
-                this.gridPanel.ensureColumnVisible(nextCell.column);
-                // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
-                // floating cell, the scrolls get out of sync
-                this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
-
+            if (startEditing) {
                 nextRenderedCell.startEditingIfEnabled();
                 nextRenderedCell.focusCell(false);
-                if (this.rangeController) {
-                    this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
-                }
-                return;
+            } else {
+                nextRenderedCell.focusCell(true);
             }
+
+            // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
+            // consistent, we set into range here also.
+            if (this.rangeController) {
+                this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+            }
+
+            return;
         }
     }
 }
