@@ -18,12 +18,9 @@ export class ToolPanel extends Component {
         super(ToolPanel.TEMPLATE);
     }
 
-    public agWire(): void {
-        this.columnSelectPanel = new ColumnSelectPanel(true);
-    }
-
     @PostConstruct
     public init(): void {
+        this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
         this.getGui().appendChild(this.columnSelectPanel.getGui());
     }

@@ -39,12 +39,9 @@ export class RowGroupPanel extends Component {
         super('<div class="ag-row-group-panel ag-font-style"></div>');
     }
 
-    public agWire(): void {
-        this.addEmptyMessageToGui();
-    }
-
     @PostConstruct
     public init(): void {
+        this.addEmptyMessageToGui();
         this.logger = this.loggerFactory.create('RowGroupPanel');
         this.globalEventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
         this.globalEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
