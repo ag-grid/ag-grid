@@ -281,6 +281,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: countryCellRenderer,
+                cellEditor: 'popupText',
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {
