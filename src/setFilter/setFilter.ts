@@ -32,7 +32,7 @@ var DEFAULT_ROW_HEIGHT = 20;
 
 export class SetFilter implements Filter {
 
-    private eGui: any;
+    private eGui: HTMLElement;
     private filterParams: any;
     private rowHeight: any;
     private model: any;
