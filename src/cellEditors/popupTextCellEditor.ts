@@ -6,7 +6,7 @@ export class PopupTextCellEditor extends Component implements ICellEditor {
     private highlightAllOnFocus: boolean;
 
     constructor() {
-        super('<input/>');
+        super('<input class="ag-cell-edit-input" type="text"/>');
     }
 
     public init(params: any): void {

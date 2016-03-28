@@ -68,16 +68,24 @@ export class ClipboardService implements IClipboardService {
         var cellsToFlash = <any>{};
         var firstRowValues: any[] = null;
 
+        var updatedRowNodes: RowNode[] = [];
+        var updatedColumnIds: string[] = [];
+
         this.forEachRangeRow( (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
+                // two reasons for looping through columns
                 columns.forEach( column => {
+                    // reason 1 - to get the initial values to copy down
                     var value = this.valueService.getValue(column, rowNode);
                     firstRowValues.push(value);
+                    // reason 2 - to record the columnId for refreshing
+                    updatedColumnIds.push(column.getId());
                 });
             } else {
                 // otherwise we are not the first row, so copy
+                updatedRowNodes.push(rowNode);
                 columns.forEach( (column: Column, index: number) => {
                     if (!column.isCellEditable(rowNode)) { return; }
 
@@ -92,6 +100,8 @@ export class ClipboardService implements IClipboardService {
 
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshView();
+        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
+
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
@@ -115,11 +125,15 @@ export class ClipboardService implements IClipboardService {
         var currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
         var cellsToFlash = <any>{};
 
-        parsedData.forEach( (values: string[]) => {
+        var updatedRowNodes: RowNode[] = [];
+        var updatedColumnIds: string[] = [];
+
+        parsedData.forEach( (values: string[], index: number) => {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) { return; }
 
             var rowNode = this.getRowNode(currentRow);
+            updatedRowNodes.push(rowNode);
             var column = focusedCell.column;
             values.forEach( (value: any)=> {
                 if (_.missing(column)) { return; }
@@ -127,6 +141,11 @@ export class ClipboardService implements IClipboardService {
                 this.valueService.setValue(rowNode, column, value);
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
+
+                if (index === 0) {
+                    updatedColumnIds.push(column.getId());
+                }
+
                 column = this.columnController.getDisplayedColAfter(column);
             });
             // move to next row down for next set of values
@@ -134,7 +153,8 @@ export class ClipboardService implements IClipboardService {
         });
 
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshView();
+        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
+
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
 
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
