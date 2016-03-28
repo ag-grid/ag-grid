@@ -5,7 +5,7 @@ import {Utils as _} from '../../utils';
 export class SelectCellEditor extends Component implements ICellEditor {
 
     constructor() {
-        super('<select/>');
+        super('<select class="ag-cell-edit-input"/>');
     }
 
     public init(params: any) {
