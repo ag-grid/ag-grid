@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         This is an intermediate tutorial on how to use the grid. If you are just starting, you might
-        find this a bit to difficult to follow. This tutorial introduces expressions, value getters,
+        find this a bit too difficult to follow. This tutorial introduces expressions, value getters,
         context and cell class rules.
     </p>
 
