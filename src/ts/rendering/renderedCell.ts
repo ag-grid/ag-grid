@@ -22,6 +22,8 @@ import {FocusService} from "../misc/focusService";
 import {ICellEditor} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
 import {Component} from "../widgets/component";
+import {PopupService} from "../widgets/popupService";
+import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 
 export class RenderedCell extends Component {
 
@@ -41,6 +43,7 @@ export class RenderedCell extends Component {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('popupService') private popupService: PopupService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -49,6 +52,8 @@ export class RenderedCell extends Component {
     private eCellWrapper: HTMLElement;
     private eParentOfValue: HTMLElement;
 
+    private gridCell: GridCell; // this is a pojo, not a gui element
+
     // we do not use this in this class, however the renderedRow wants to konw this
     private eParentRow: HTMLElement;
 
@@ -56,6 +61,8 @@ export class RenderedCell extends Component {
     private node: RowNode;
     private rowIndex: number;
     private editingCell: boolean;
+    private cellEditorInPopup: boolean;
+    private hideEditorPopup: Function;
 
     private scope: any;
 
@@ -87,6 +94,8 @@ export class RenderedCell extends Component {
         this.rowIndex = rowIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
+
+        this.gridCell = new GridCell(rowIndex, node.floating, column)
     }
 
     private setPinnedClasses(): void {
@@ -202,7 +211,7 @@ export class RenderedCell extends Component {
         var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
 
-            var rangeCount = this.rangeController.getCellRangeCount(new GridCell(this.rowIndex, this.node.floating, this.column));
+            var rangeCount = this.rangeController.getCellRangeCount(this.gridCell);
             if (rangeCountLastTime !== rangeCount) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
@@ -227,7 +236,7 @@ export class RenderedCell extends Component {
         var clipboardListener = (event: any) => {
             _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
             _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-            var cellId = new GridCell(this.rowIndex, this.node.floating, this.column).createId();
+            var cellId = this.gridCell.createId();
             var shouldFlash = event.cells[cellId];
             if (shouldFlash) {
                 this.flashCellForClipboardInteraction();
@@ -275,7 +284,7 @@ export class RenderedCell extends Component {
         // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
         var cellFocusedLastTime: boolean = null;
         var cellFocusedListener = (event?: any) => {
-            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column, this.node.floating);
+            var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
             if (cellFocused !== cellFocusedLastTime) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
@@ -349,6 +358,19 @@ export class RenderedCell extends Component {
         }
     }
 
+    private onPopupEditorClosed(): void {
+        if (this.editingCell) {
+            this.stopEditing(true);
+
+            // we only focus cell again if this cell is still focused. it is possible
+            // it is not focused if the user cancelled the edit by clicking on another
+            // cell outside of this one
+            if (this.focusedCellController.isCellFocused(this.gridCell)) {
+                this.focusCell(true);
+            }
+        }
+    }
+
     private onTabKeyDown(event: any): void {
         var editNextCell: boolean;
         if (this.editingCell) {
@@ -379,9 +401,12 @@ export class RenderedCell extends Component {
     }
 
     private onNavigationKeyPressed(event: any, key: number): void {
-        if (!this.editingCell) {
-            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        if (this.editingCell) {
+            this.stopEditing();
         }
+        // if (!this.editingCell) {
+            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        // }
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -389,7 +414,7 @@ export class RenderedCell extends Component {
     private addFocusListener(): void {
         var that = this;
         var focusListener = function(event: FocusEvent) {
-            if (that.editingCell && that.hasFocusLeftCell(event)) {
+            if (that.editingCell &&!that.cellEditorInPopup && that.hasFocusLeftCell(event)) {
                 that.stopEditing();
             }
         };
@@ -441,35 +466,34 @@ export class RenderedCell extends Component {
         });
     }
 
+    private onKeyDown(event: KeyboardEvent): void {
+        var key = event.which || event.keyCode;
+
+        switch (key) {
+            case Constants.KEY_ENTER:
+                this.onEnterKeyDown();
+                break;
+            case Constants.KEY_ESCAPE:
+                this.onEscapeKeyDown();
+                break;
+            case Constants.KEY_TAB:
+                this.onTabKeyDown(event);
+                break;
+            case Constants.KEY_BACKSPACE:
+            case Constants.KEY_DELETE:
+                this.onBackspaceOrDeleteKeyPressed(key);
+                break;
+            case Constants.KEY_DOWN:
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_LEFT:
+                this.onNavigationKeyPressed(event, key);
+                break;
+        }
+    }
+
     private addKeyDownListener(): void {
-        var that = this;
-        var editingKeyListener = function(event: any) {
-
-            var key = event.which || event.keyCode;
-
-            switch (key) {
-                case Constants.KEY_ENTER:
-                    that.onEnterKeyDown();
-                    break;
-                case Constants.KEY_ESCAPE:
-                    that.onEscapeKeyDown();
-                    break;
-                case Constants.KEY_TAB:
-                    that.onTabKeyDown(event);
-                    break;
-                case Constants.KEY_BACKSPACE:
-                case Constants.KEY_DELETE:
-                    that.onBackspaceOrDeleteKeyPressed(key);
-                    break;
-                case Constants.KEY_DOWN:
-                case Constants.KEY_UP:
-                case Constants.KEY_RIGHT:
-                case Constants.KEY_LEFT:
-                    that.onNavigationKeyPressed(event, key);
-                    break;
-            }
-        };
-
+        var editingKeyListener = this.onKeyDown.bind(this);
         this.eGridCell.addEventListener('keydown', editingKeyListener);
         this.addDestroyFunc( () => {
             this.eGridCell.removeEventListener('keydown', editingKeyListener);
@@ -491,6 +515,7 @@ export class RenderedCell extends Component {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
+                onKeyDown: this.onKeyDown.bind(this),
                 stopEditing: this.stopEditingAndFocus.bind(this)
             };
 
@@ -519,17 +544,56 @@ export class RenderedCell extends Component {
         }
 
         this.cellEditor = this.createCellEditor(keyPress, charPress);
+        // this.cellEditor = this.createCellEditor(keyPress, charPress);
+
+        if (!this.cellEditor.getGui) {
+            console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            return;
+        }
 
         this.editingCell = true;
-        _.removeAllChildren(this.eGridCell);
-        if (this.cellEditor.getGui) {
-            this.eGridCell.appendChild(this.cellEditor.getGui());
+
+        this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
+
+        if (this.cellEditorInPopup) {
+            this.addPopupCellEditor();
         } else {
-            console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            this.addInCellEditor();
         }
+
         if (this.cellEditor.afterGuiAttached) {
             this.cellEditor.afterGuiAttached();
         }
+    }
+
+    private addInCellEditor(): void {
+        _.removeAllChildren(this.eGridCell);
+        this.eGridCell.appendChild(this.cellEditor.getGui());
+    }
+
+    private addPopupCellEditor(): void {
+        var ePopupGui = this.cellEditor.getGui();
+
+        this.hideEditorPopup = this.popupService.addAsModalPopup(
+            ePopupGui,
+            true,
+            // callback for when popup disappears
+            ()=> {
+                // we only call stopEditing if we are editing, as
+                // it's possible the popup called 'stop editing'
+                // before this, eg if 'enter key' was pressed on
+                // the editor
+                if (this.editingCell) {
+                    this.onPopupEditorClosed();
+                }
+            }
+        );
+
+        this.popupService.positionPopupUnderComponent({
+            eventSource: this.eGridCell,
+            ePopup: ePopupGui,
+            keepWithinBounds: true
+        });
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
@@ -550,10 +614,16 @@ export class RenderedCell extends Component {
             this.cellEditor.destroy();
         }
 
-        _.removeAllChildren(this.eGridCell);
-        if (this.checkboxSelection) {
-            this.eGridCell.appendChild(this.eCellWrapper);
+        if (this.cellEditorInPopup) {
+            this.hideEditorPopup();
+            this.hideEditorPopup = null;
+        } else {
+            _.removeAllChildren(this.eGridCell);
+            if (this.checkboxSelection) {
+                this.eGridCell.appendChild(this.eCellWrapper);
+            }
         }
+
         this.refreshCell();
     }
 
@@ -652,7 +722,7 @@ export class RenderedCell extends Component {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         if (this.rangeController) {
-            var thisCell = new GridCell(this.rowIndex, this.node.floating, this.column);
+            var thisCell = this.gridCell;
             var cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
             if (!cellAlreadyInRange) {
                 this.rangeController.setRangeToCell(thisCell);

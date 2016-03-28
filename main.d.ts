@@ -1,6 +1,9 @@
 
 export * from './dist/lib/rendering/cellRenderers/groupCellRendererFactory';
 
+export * from './dist/lib/rendering/cellEditors/iCellEditor';
+export * from './dist/lib/rendering/cellEditors/cellEditorFactory';
+
 export * from './dist/lib/columnController/balancedColumnTreeBuilder';
 export * from './dist/lib/columnController/columnController';
 export * from './dist/lib/columnController/columnKeyCreator';

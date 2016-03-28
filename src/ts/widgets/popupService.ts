@@ -145,6 +145,8 @@ export class PopupService {
 
         var that = this;
 
+        var popupHidden = false;
+
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         setTimeout(function() {
@@ -171,6 +173,14 @@ export class PopupService {
             if (event && event === eventFromChild) {
                 return;
             }
+            // this method should only be called once. the client can have different
+            // paths, each one wanting to close, so this method may be called multiple
+            // times.
+            if (popupHidden) {
+                return;
+            }
+            popupHidden = true;
+
             that.ePopupParent.removeChild(eChild);
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             //eBody.removeEventListener('mousedown', hidePopupOnEsc);

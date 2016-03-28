@@ -3,6 +3,7 @@ import {Utils as _} from '../../utils';
 import {ICellEditor} from "./iCellEditor";
 import {DefaultCellEditor} from "./defaultCellEditor";
 import {SelectCellEditor} from "./selectCellEditor";
+import {PopupEditorWrapper} from "./popupEditorWrapper";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -39,6 +40,11 @@ export class CellEditorFactory {
         }
 
         var cellEditor = new CellEditorClass();
+        
+        if (cellEditor.isPopup && cellEditor.isPopup()) {
+            cellEditor = new PopupEditorWrapper(cellEditor);
+        }
+        
         return cellEditor;
     }
 }

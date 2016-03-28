@@ -4,4 +4,5 @@ export interface ICellEditor {
     getGui(): HTMLElement;
     getValue(): any;
     destroy?(): void;
+    isPopup?(): boolean;
 }

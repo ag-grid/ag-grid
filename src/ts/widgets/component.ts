@@ -9,6 +9,8 @@ export class Component {
 
     private localEventService: EventService;
 
+    private childComponents: Component[] = [];
+
     constructor(template: string) {
         this.eGui = _.loadTemplate(<string>template);
     }
@@ -42,7 +44,9 @@ export class Component {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
-            this.eGui.appendChild((<Component>newChild).getGui());
+            var childComponent = <Component>newChild;
+            this.eGui.appendChild(childComponent.getGui());
+            this.childComponents.push(childComponent);
         }
     }
 
@@ -51,6 +55,7 @@ export class Component {
     }
 
     public destroy(): void {
+        this.childComponents.forEach( childComponent => childComponent.destroy() );
         this.destroyFunctions.forEach( func => func() );
     }
 
