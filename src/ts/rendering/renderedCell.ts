@@ -544,7 +544,6 @@ export class RenderedCell extends Component {
         }
 
         this.cellEditor = this.createCellEditor(keyPress, charPress);
-        // this.cellEditor = this.createCellEditor(keyPress, charPress);
 
         if (!this.cellEditor.getGui) {
             console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
@@ -589,7 +588,7 @@ export class RenderedCell extends Component {
             }
         );
 
-        this.popupService.positionPopupUnderComponent({
+        this.popupService.positionPopupOverComponent({
             eventSource: this.eGridCell,
             ePopup: ePopupGui,
             keepWithinBounds: true

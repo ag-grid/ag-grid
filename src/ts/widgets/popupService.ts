@@ -80,6 +80,28 @@ export class PopupService {
         });
     }
 
+    public positionPopupOverComponent(params: {
+        eventSource: HTMLElement,
+        ePopup: HTMLElement,
+        minWidth?: number,
+        nudgeX?: number,
+        nudgeY?: number,
+        keepWithinBounds?: boolean}) {
+
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var parentRect = this.ePopupParent.getBoundingClientRect();
+
+        this.positionPopup({
+            ePopup: params.ePopup,
+            minWidth: params.minWidth,
+            nudgeX: params.nudgeX,
+            nudgeY: params.nudgeY,
+            x: sourceRect.left - parentRect.left,
+            y: sourceRect.top - parentRect.top,
+            keepWithinBounds: params.keepWithinBounds
+        });
+    }
+    
     private positionPopup(params: {
                         ePopup: HTMLElement,
                         minWidth?: number,
