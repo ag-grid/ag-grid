@@ -32,7 +32,7 @@ export class DefaultCellEditor extends Component implements ICellEditor {
 
         eInput.value = startValue;
 
-        eInput.style.width = (params.column.getActualWidth() - 14) + 'px';
+        eInput.style.width = (params.column.getActualWidth() - 0) + 'px';
     }
 
     public afterGuiAttached(): void {

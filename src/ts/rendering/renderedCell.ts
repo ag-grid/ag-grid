@@ -337,7 +337,7 @@ export class RenderedCell extends Component {
 
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
-
+        this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
     }
@@ -551,8 +551,8 @@ export class RenderedCell extends Component {
         }
 
         this.editingCell = true;
-
         this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
+        this.setInlineEditingClass();
 
         if (this.cellEditorInPopup) {
             this.addPopupCellEditor();
@@ -622,6 +622,8 @@ export class RenderedCell extends Component {
                 this.eGridCell.appendChild(this.eCellWrapper);
             }
         }
+
+        this.setInlineEditingClass();
 
         this.refreshCell();
     }
@@ -744,6 +746,14 @@ export class RenderedCell extends Component {
         }
     }
 
+    // if we are editing inline, then we don't have the padding in the cell (set in the themes)
+    // to allow the text editor full access to the entire cell
+    private setInlineEditingClass(): void {
+        var editingInline = this.editingCell && !this.cellEditorInPopup;
+        _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-inline-editing', editingInline);
+        _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-not-inline-editing', !editingInline);
+    }
+    
     private populateCell() {
         // populate
         this.putDataIntoCell();
