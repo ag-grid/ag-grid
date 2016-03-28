@@ -20,10 +20,10 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 import {FocusService} from "../misc/focusService";
 import {ICellEditor} from "./cellEditors/iCellEditor";
-import {DefaultCellEditor} from "./cellEditors/defaultCellEditor";
 import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
+import {Component} from "../widgets/component";
 
-export class RenderedCell {
+export class RenderedCell extends Component {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -67,8 +67,6 @@ export class RenderedCell {
     private checkboxSelection: boolean;
     private renderedRow: RenderedRow;
 
-    private destroyMethods: Function[] = [];
-
     private firstRightPinned = false;
     private lastLeftPinned = false;
 
@@ -76,6 +74,11 @@ export class RenderedCell {
                 cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, scope: any,
                 renderedRow: RenderedRow) {
+        super('<div/>');
+
+        // because we reference eGridCell everywhere in this class,
+        // we keep a local reference
+        this.eGridCell = this.getGui();
 
         this.column = column;
         this.cellRendererMap = cellRendererMap;
@@ -101,7 +104,7 @@ export class RenderedCell {
 
         this.column.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
         this.column.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
             this.column.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
         });
@@ -115,12 +118,6 @@ export class RenderedCell {
 
     public setParentRow(eParentRow: HTMLElement): void {
         this.eParentRow = eParentRow;
-    }
-
-    public destroy(): void {
-        this.destroyMethods.forEach( theFunction => {
-            theFunction();
-        });
     }
 
     public calculateCheckboxSelection() {
@@ -161,10 +158,6 @@ export class RenderedCell {
         return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
     }
 
-    public getGui(): HTMLElement {
-        return this.eGridCell;
-    }
-
     private getDataForRow() {
         if (this.node.footer) {
             // if footer, we always show the data
@@ -195,7 +188,7 @@ export class RenderedCell {
         };
 
         this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
         });
 
@@ -220,7 +213,7 @@ export class RenderedCell {
             }
         };
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
         });
         rangeSelectedListener();
@@ -241,7 +234,7 @@ export class RenderedCell {
             }
         };
         this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
         });
     }
@@ -254,7 +247,7 @@ export class RenderedCell {
             }
         };
         this.node.addEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.node.removeEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
         });
     }
@@ -293,7 +286,7 @@ export class RenderedCell {
             }
         };
         this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         });
         cellFocusedListener();
@@ -305,7 +298,7 @@ export class RenderedCell {
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
         });
 
@@ -316,7 +309,6 @@ export class RenderedCell {
     public init(): void {
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();
-        this.eGridCell = document.createElement('div');
 
         this.setLeftOnCell();
         this.setWidthOnCell();
@@ -402,7 +394,7 @@ export class RenderedCell {
             }
         };
         this.focusService.addListener(focusListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.focusService.removeListener(focusListener);
         });
     }
@@ -444,7 +436,7 @@ export class RenderedCell {
             }
         };
         this.eGridCell.addEventListener('keypress', keyPressListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.eGridCell.removeEventListener('keypress', keyPressListener);
         });
     }
@@ -479,7 +471,7 @@ export class RenderedCell {
         };
 
         this.eGridCell.addEventListener('keydown', editingKeyListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.eGridCell.removeEventListener('keydown', editingKeyListener);
         });
     }

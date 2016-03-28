@@ -75,7 +75,7 @@ export class DragAndDropService {
     private eRightIcon = svgFactory.createRightIcon();
     private eGroupIcon = svgFactory.createGroupIcon();
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
         this.eBody = <HTMLElement> document.querySelector('body');
         if (!this.eBody) {

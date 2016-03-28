@@ -14,6 +14,7 @@ export class Utils {
     private static isIE: boolean;
 
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
+        if (this.missing(object)) { return; }
         var keys = Object.keys(object);
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];

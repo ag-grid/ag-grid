@@ -157,7 +157,7 @@ export class ColumnController {
         }
     }
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
 

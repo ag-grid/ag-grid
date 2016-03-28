@@ -1,6 +1,5 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
 
 // steps in booting up:
 // 1. create all beans
@@ -75,8 +74,9 @@ export class Context {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             var constructorParamsMeta: any;
             if (beanEntry.bean.prototype.__agBeanMetaData
-                && beanEntry.bean.prototype.__agBeanMetaData.agConstructor) {
-                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.agConstructor;
+                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods
+                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor) {
+                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.beanName);
             var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
@@ -144,22 +144,19 @@ export class Context {
     }
 
     private methodWireBean(bean: any): void {
-        var beanName = this.getBeanName(bean);
 
-        // if no init method, skip he bean
-        if (!bean.agWire) {
-            return;
+        var autowiredMethods: any;
+        if (bean.__agBeanMetaData) {
+            autowiredMethods = bean.__agBeanMetaData.autowireMethods;
         }
 
-        var wireParams: any;
-        if (bean.__agBeanMetaData
-            && bean.__agBeanMetaData.agWire) {
-            wireParams = bean.__agBeanMetaData.agWire;
-        }
-
-        var initParams = this.getBeansForParameters(wireParams, beanName);
-
-        bean.agWire.apply(bean, initParams);
+        _.iterateObject(autowiredMethods, (methodName: string, wireParams: any[]) => {
+            // skip constructor, as this is dealt with elsewhere
+            if (methodName === 'agConstructor') { return; }
+            var beanName = this.getBeanName(bean);
+            var initParams = this.getBeansForParameters(wireParams, beanName);
+            bean[methodName].apply(bean, initParams);
+        });
     }
 
     private getBeansForParameters(parameters: any, beanName: string): any[] {
@@ -301,10 +298,13 @@ export function Qualifier(name: string): Function {
                 props = getOrCreateProps(classPrototype.prototype);
                 methodName = 'agConstructor';
             }
-            if (!props[methodName]) {
-                props[methodName] = {};
+            if (!props.autowireMethods) {
+                props.autowireMethods = {};
             }
-            props[methodName][index] = name;
+            if (!props.autowireMethods[methodName]) {
+                props.autowireMethods[methodName] = {};
+            }
+            props.autowireMethods[methodName][index] = name;
         }
 
     };

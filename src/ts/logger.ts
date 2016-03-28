@@ -7,7 +7,7 @@ export class LoggerFactory {
 
     private logging: boolean;
 
-    public agWire(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
+    private setBeans(@Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper): void {
         this.logging = gridOptionsWrapper.isDebug();
     }
 
