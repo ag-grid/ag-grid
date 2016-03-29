@@ -4,9 +4,10 @@ import {LoggerFactory} from "./logger";
 import {Utils as _} from './utils';
 import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
+import {IEventEmitter} from "./interfaces/iEventEmitter";
 
 @Bean('eventService')
-export class EventService {
+export class EventService implements IEventEmitter {
 
     private allListeners: {[key: string]: Function[]} = {};
 

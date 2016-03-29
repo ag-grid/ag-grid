@@ -1,5 +1,6 @@
 import {Utils as _} from '../utils';
 import {EventService} from "../eventService";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
 
 export class Component {
 
@@ -64,18 +65,18 @@ export class Component {
         this.destroyFunctions.push( ()=> this.getGui().removeEventListener(event, listener));
     }
 
-    public addDestroyableEventListener(eElement: HTMLElement|EventService, event: string, listener: (event?: any)=>void): void {
-        if (eElement instanceof EventService) {
-            (<EventService>eElement).addEventListener(event, listener);
-        } else {
+    public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter, event: string, listener: (event?: any)=>void): void {
+        if (eElement instanceof HTMLElement) {
             (<HTMLElement>eElement).addEventListener(event, listener);
+        } else {
+            (<IEventEmitter>eElement).addEventListener(event, listener);
         }
 
         this.destroyFunctions.push( ()=> {
-            if (eElement instanceof EventService) {
-                (<EventService>eElement).removeEventListener(event, listener);
-            } else {
+            if (eElement instanceof HTMLElement) {
                 (<HTMLElement>eElement).removeEventListener(event, listener);
+            } else {
+                (<IEventEmitter>eElement).removeEventListener(event, listener);
             }
         });
     }

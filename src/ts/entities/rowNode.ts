@@ -75,7 +75,11 @@ export class RowNode {
         this.eventService.dispatchEvent(RowNode.EVENT_DATA_CHANGED, event);
     }
 
-    // redundency here, how does this work with cell editing???
+    // we also allow editing the value via the editors. when it is done via
+    // the editors, no 'cell changed' event gets fired, as it's assumed that
+    // the cell knows about the change given it's in charge of the editing.
+    // this method is for the client to call, so the cell listens for the change
+    // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
         var column = this.columnController.getColumn(colKey);
         this.valueService.setValue(this, column, newValue);

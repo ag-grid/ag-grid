@@ -234,12 +234,10 @@ export class RenderedCell extends Component {
         }
 
         var clipboardListener = (event: any) => {
-            _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
-            _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
             var cellId = this.gridCell.createId();
             var shouldFlash = event.cells[cellId];
             if (shouldFlash) {
-                this.flashCellForClipboardInteraction();
+                this.animateCellWithHighlight();
             }
         };
         this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
@@ -252,32 +250,35 @@ export class RenderedCell extends Component {
         var cellChangeListener = (event: any) => {
             if (event.column === this.column) {
                 this.refreshCell();
-                this.flashCellForClipboardInteraction();
+                this.animateCellWithDataChanged();
             }
         };
-        this.node.addEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-        this.addDestroyFunc( ()=> {
-            this.node.removeEventListener(RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-        });
+        this.addDestroyableEventListener(this.node, RowNode.EVENT_CELL_CHANGED, cellChangeListener);
     }
 
-    private flashCellForClipboardInteraction(): void {
-        // so tempted to not put a comment here!!!! but because i'm going to release an enterprise version,
-        // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
-        // CSS is cleared, that's the css removal in addClipboardListener() method
+    private animateCellWithDataChanged(): void {
+        this.animateCell('data-changed');
+    }
+
+    private animateCellWithHighlight(): void {
+        this.animateCell('highlight');
+    }
+
+    private animateCell(cssName: string): void {
+        var fullName = 'ag-cell-' + cssName;
+        var animationFullName = 'ag-cell-' + cssName + '-animation';
+        // we want to highlight the cells, without any animation
+        _.addCssClass(this.eGridCell, fullName);
+        _.removeCssClass(this.eGridCell, animationFullName);
+        // then once that is applied, we remove the highlight with animation
         setTimeout( ()=> {
-            // once css is cleared, we want to highlight the cells, without any animation
-            _.addCssClass(this.eGridCell, 'ag-cell-highlight');
+            _.removeCssClass(this.eGridCell, fullName);
+            _.addCssClass(this.eGridCell, animationFullName);
             setTimeout( ()=> {
-                // then once that is applied, we remove the highlight with animation
-                _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
-                _.addCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-                setTimeout( ()=> {
-                    // and then to leave things as we got them, we remove the animation
-                    _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-                }, 1000);
-            }, 500);
-        }, 0);
+                // and then to leave things as we got them, we remove the animation
+                _.removeCssClass(this.eGridCell, animationFullName);
+            }, 1000);
+        }, 500);
     }
 
     private addCellFocusedListener(): void {
