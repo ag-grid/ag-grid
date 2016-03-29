@@ -208,6 +208,7 @@ columnDefinition = {
             <td>Init method called on the filter once after 'new' is called on the function. Takes one parameter
                 with the following attributes:
                 <ul>
+                    <li>column: The column this filter is for.</li>
                     <li>colDef: The col def this filter is for.</li>
                     <li>rowModel: The internal row model inside ag-Grid. This should be treated as
                         read only. If the filter needs to know which rows are a) in the table b) currently
