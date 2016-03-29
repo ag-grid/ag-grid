@@ -12,10 +12,16 @@ export class Component {
 
     private childComponents: Component[] = [];
 
-    constructor(template: string) {
-        this.eGui = _.loadTemplate(<string>template);
+    constructor(template?: string) {
+        if (template) {
+            this.eGui = _.loadTemplate(<string>template);
+        }
     }
 
+    public setTemplate(template: string): void {
+        this.eGui = _.loadTemplate(<string>template);
+    }
+    
     public addEventListener(eventType: string, listener: Function): void {
         if (!this.localEventService) {
             this.localEventService = new EventService();

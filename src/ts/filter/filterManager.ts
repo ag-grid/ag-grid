@@ -7,7 +7,7 @@ import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {TextFilter} from "./textFilter";
 import {NumberFilter} from "./numberFilter";
-import {Bean, PreDestroy, Autowired, PostConstruct} from "../context/context";
+import {Bean, PreDestroy, Autowired, PostConstruct, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
 import {Events} from "../events";
@@ -25,6 +25,7 @@ export class FilterManager {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
+    @Autowired('context') private context: Context;
 
     private allFilters: any = {};
     private quickFilter: string = null;
@@ -323,12 +324,15 @@ export class FilterManager {
             console.error('ag-Grid: colDef.filter should be function or a string');
         }
 
+        this.context.wireBean(filterWrapper.filter);
+
         var filterChangedCallback = this.onFilterChanged.bind(this);
         var filterModifiedCallback = () => this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var filterParams = colDef.filterParams;
 
         var params = {
+            column: column,
             colDef: colDef,
             rowModel: this.rowModel,
             filterChangedCallback: filterChangedCallback,
