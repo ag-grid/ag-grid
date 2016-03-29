@@ -1,6 +1,7 @@
-import {Utils as _} from "ag-grid/main";
+import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
+import {RichList} from "../richList";
 
 var template =
     '<div>'+
@@ -30,18 +31,19 @@ var template =
 
 var DEFAULT_ROW_HEIGHT = 20;
 
-export class SetFilter implements Filter {
+export class SetFilter extends Component implements Filter {
 
-    private eGui: HTMLElement;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('context') private context: Context;
+
     private filterParams: any;
-    private rowHeight: any;
+    private rowHeight: number;
     private model: any;
     private filterChangedCallback: any;
     private filterModifiedCallback: any;
     private valueGetter: any;
     private rowsInBodyContainer: any;
     private colDef: any;
-    private localeTextFunc: any;
     private cellRenderer: any;
 
     private eListContainer: any;
@@ -53,6 +55,16 @@ export class SetFilter implements Filter {
     private applyActive: any;
     private eApplyButton: any;
 
+    constructor() {
+        super(null);
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        // var richList = new RichList();
+        // this.context.wireBean(richList);
+    }
+
     public init(params: any): void {
         this.filterParams = params.filterParams;
         this.rowHeight = (this.filterParams && this.filterParams.cellHeight) ? this.filterParams.cellHeight : DEFAULT_ROW_HEIGHT;
@@ -63,7 +75,7 @@ export class SetFilter implements Filter {
         this.valueGetter = params.valueGetter;
         this.rowsInBodyContainer = {};
         this.colDef = params.colDef;
-        this.localeTextFunc = params.localeTextFunc;
+
         if (this.filterParams) {
             this.cellRenderer = this.filterParams.cellRenderer;
         }
@@ -108,10 +120,6 @@ export class SetFilter implements Filter {
         }
     }
 
-    public getGui(): any {
-        return this.eGui;
-    }
-
     public onNewRowsLoaded(): void {
         var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
@@ -128,22 +136,23 @@ export class SetFilter implements Filter {
     }
 
     private createTemplate() {
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         return template
-            .replace('[SELECT ALL]', this.localeTextFunc('selectAll', 'Select All'))
-            .replace('[SEARCH...]', this.localeTextFunc('searchOoo', 'Search...'))
-            .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
+            .replace('[SELECT ALL]', localeTextFunc('selectAll', 'Select All'))
+            .replace('[SEARCH...]', localeTextFunc('searchOoo', 'Search...'))
+            .replace('[APPLY FILTER]', localeTextFunc('applyFilter', 'Apply Filter'));
     }
 
     private createGui() {
         var _this = this;
 
-        this.eGui = _.loadTemplate(this.createTemplate());
+        this.setTemplate(this.createTemplate());
 
-        this.eListContainer = this.eGui.querySelector(".ag-filter-list-container");
-        this.eFilterValueTemplate = this.eGui.querySelector("#itemForRepeat");
-        this.eSelectAll = this.eGui.querySelector("#selectAll");
-        this.eListViewport = this.eGui.querySelector(".ag-filter-list-viewport");
-        this.eMiniFilter = this.eGui.querySelector(".ag-filter-filter");
+        this.eListContainer = this.queryForHtmlElement(".ag-filter-list-container");
+        this.eFilterValueTemplate = this.queryForHtmlElement("#itemForRepeat");
+        this.eSelectAll = this.queryForHtmlElement("#selectAll");
+        this.eListViewport = this.queryForHtmlElement(".ag-filter-list-viewport");
+        this.eMiniFilter = this.queryForHtmlElement(".ag-filter-filter");
         this.eListContainer.style.height = (this.model.getUniqueValueCount() * this.rowHeight) + "px";
 
         this.setContainerHeight();
@@ -170,12 +179,12 @@ export class SetFilter implements Filter {
 
     private setupApply() {
         if (this.applyActive) {
-            this.eApplyButton = this.eGui.querySelector('#applyButton');
+            this.eApplyButton = this.queryForHtmlElement('#applyButton');
             this.eApplyButton.addEventListener('click', () => {
                 this.filterChangedCallback();
             });
         } else {
-            _.removeElement(this.eGui, '#applyPanel');
+            _.removeElement(this.getGui(), '#applyPanel');
         }
     }
 
@@ -249,7 +258,8 @@ export class SetFilter implements Filter {
 
         } else {
             //otherwise display as a string
-            var blanksText = '(' + this.localeTextFunc('blanks', 'Blanks') + ')';
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            var blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
             var displayNameOfValue = value === null ? blanksText : value;
             valueElement.innerHTML = displayNameOfValue;
         }
@@ -339,10 +349,6 @@ export class SetFilter implements Filter {
         this.eListViewport.addEventListener("scroll", function () {
             _this.drawVirtualRows();
         });
-    }
-
-    public getApi() {
-        return this.api;
     }
 
     private createApi() {
