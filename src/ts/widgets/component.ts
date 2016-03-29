@@ -2,7 +2,7 @@ import {Utils as _} from '../utils';
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 
-export class Component {
+export class Component implements IEventEmitter {
 
     private eGui: HTMLElement;
 
@@ -27,6 +27,12 @@ export class Component {
             this.localEventService = new EventService();
         }
         this.localEventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        if (this.localEventService) {
+            this.localEventService.removeEventListener(eventType, listener);
+        }
     }
 
     public dispatchEvent(eventType: string, event?: any): void {

@@ -12,9 +12,6 @@ import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 @Bean('rowModel')
 export class ViewportRowController implements IRowModel {
 
-    /** Have rowNode emit an event when the data changes. Then the cell should look at the data, and if it's
-     * different, do a flash */
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
