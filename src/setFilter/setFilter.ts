@@ -5,6 +5,7 @@ import {RichList} from "../richList";
 
 var template =
     '<div>'+
+        // '<div id="richList"></div>'+
         '<div class="ag-filter-header-container">'+
             '<input class="ag-filter-filter" type="text" placeholder="[SEARCH...]"/>'+
         '</div>'+

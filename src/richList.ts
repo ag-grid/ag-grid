@@ -33,5 +33,6 @@ export class RichList extends Component {
 
     @PostConstruct
     private init(): void {
+        this.setTemplate('<div>inside the rich list</div>');
     }
 }
