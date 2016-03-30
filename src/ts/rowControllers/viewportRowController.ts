@@ -128,7 +128,7 @@ export class ViewportRowController implements IRowModel {
     public forEachNode(callback:(rowNode: RowNode)=>void): void {
     }
 
-    private setRowData(rowData: {[key: number]: RowNode}): void {
+    private setRowData(rowData: {[key: number]: any}): void {
         _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
             var index = parseInt(indexStr);
             if (index >= this.firstRow && index <= this.lastRow) {

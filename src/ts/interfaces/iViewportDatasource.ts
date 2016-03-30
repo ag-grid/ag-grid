@@ -9,7 +9,7 @@ export interface IViewportDatasource {
             /** datasource calls this method when the total row count changes */
             setRowCount: (count:number) => void,
             /** datasource calls this when new data arrives */
-            setRowData: (rowData:{[key:number]:RowNode}) => void,
+            setRowData: (rowData:{[key:number]:any}) => void,
             /** datasource calls this when it wants a row node - typically used when it wants to update the row node */
             getRow: (rowIndex: number) => RowNode
         }
