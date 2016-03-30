@@ -197,7 +197,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     }
 
     public showMenu(eventSource: HTMLElement) {
-        this.menuFactory.showMenu(this.column, eventSource);
+        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource);
     }
 
     private setupMovingCss(): void {

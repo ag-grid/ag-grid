@@ -4,7 +4,9 @@ import {ColumnController} from "../columnController/columnController";
 
 export interface IMenuFactory {
 
-    showMenu(column: Column, eventSource: HTMLElement): void;
+    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
+
+    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent): void;
 
     isMenuEnabled(column: Column): boolean;
 }

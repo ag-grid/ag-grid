@@ -28,6 +28,7 @@ import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {ViewportRowController} from "./rowControllers/viewportRowController";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
+import {IMenuFactory} from "./interfaces/iMenuFactory";
 
 @Bean('gridApi')
 export class GridApi {
@@ -52,6 +53,7 @@ export class GridApi {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
 
@@ -441,21 +443,31 @@ export class GridApi {
         this.clipboardService.copyRangeDown();
     }
 
-/*
-    public setViewportRowData(rowData: {[key: number]: RowNode}): void {
-        if (this.gridOptionsWrapper.isRowModelViewport()) {
-            (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
-        } else {
-            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-        }
+    public showColumnMenuAfterButtonClick(colKey: string|Column|ColDef, buttonElement: HTMLElement): void {
+        var column = this.columnController.getColumn(colKey);
+        this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
-    public setViewportTotalRowCount(rowCount: number): void {
-        if (this.gridOptionsWrapper.isRowModelViewport()) {
-            (<ViewportRowController>this.rowModel).setRowCount(rowCount);
-        } else {
-            console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-        }
+    public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent): void {
+        var column = this.columnController.getColumn(colKey);
+        this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
-*/
+
+    /*
+        public setViewportRowData(rowData: {[key: number]: RowNode}): void {
+            if (this.gridOptionsWrapper.isRowModelViewport()) {
+                (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
+            } else {
+                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+            }
+        }
+
+        public setViewportTotalRowCount(rowCount: number): void {
+            if (this.gridOptionsWrapper.isRowModelViewport()) {
+                (<ViewportRowController>this.rowModel).setRowCount(rowCount);
+            } else {
+                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+            }
+        }
+    */
 }
