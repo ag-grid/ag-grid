@@ -1,0 +1,41 @@
+{
+  "name": "ag-grid-dev",
+  "version": "0.0.1",
+  "description": "Development project for all the other projects, contains a master gulp build file for dev purposes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceolter/ag-grid-parent.git"
+  },
+  "keywords": [
+  ],
+  "author": "Niall Crosby <niall.crosby@ag-grid.com>",
+  "homepage": "http://www.ag-grid.com/",
+  "devDependencies": {
+    "gulp": "3.9.0",
+    "gulp-foreach": "0.1.0",
+    "gulp-rename": "1.2.2",
+    "gulp-stylus": "2.2.0",
+    "gulp-uglify": "1.5.1",
+    "gulp-typescript": "2.10.0",
+    "gulp-sourcemaps": "1.5.2",
+    "gulp-clean": "0.3.1",
+    "gulp-header": "1.7.0",
+    "gulp-tsd": "0.0.4",
+    "style-loader": "0.13.0",
+    "gulp-livereload": "3.8.1",
+    "css-loader": "0.23.1",
+    "json-stable-stringify": "1.0.0",
+    "jasmine-core": "2.4.1",
+    "gulp-jasmine": "2.2.1",
+    "nib": "^1.1.0",
+    "stylus": "0.53.0",
+    "vinyl-buffer": "1.0.0",
+    "typescript": "1.7.5",
+    "merge2": "0.3.6",
+    "font-awesome": "4.5.0",
+    "bootstrap": "3.3.6",
+    "webpack-stream": "3.1.0",
+    "webpack": "1.12.12",
+    "gulp-task-listing": "latest"
+  }
+}
