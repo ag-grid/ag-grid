@@ -30,7 +30,32 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     private lastSelectedTab: string;
 
-    public showMenu(column: Column, eventSource: HTMLElement): void {
+    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent): void {
+
+        this.showMenu(column, (menu: EnterpriseMenu)=> {
+            this.popupService.positionPopupUnderMouseEvent({
+                mouseEvent: mouseEvent,
+                ePopup: menu.getGui()
+            });
+        });
+
+    }
+
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
+
+        this.showMenu(column, (menu: EnterpriseMenu)=> {
+            this.popupService.positionPopupUnderComponent({eventSource: eventSource,
+                ePopup: menu.getGui(),
+                nudgeX: -9,
+                nudgeY: -26,
+                minWidth: menu.getMinWidth(),
+                keepWithinBounds: true
+            });
+        });
+
+    }
+
+    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void): void {
 
         var menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
@@ -44,13 +69,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             true,
             ()=> menu.destroy()
         );
-        this.popupService.positionPopupUnderComponent({eventSource: eventSource,
-            ePopup: eMenuGui,
-            nudgeX: -9,
-            nudgeY: -26,
-            minWidth: menu.getMinWidth(),
-            keepWithinBounds: true
-        });
+
+        positionCallback(menu);
 
         menu.afterGuiAttached({
             hidePopup: hidePopup
