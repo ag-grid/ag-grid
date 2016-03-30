@@ -360,6 +360,11 @@ include '../documentation-main/documentation_header.php';
             <th>getFirstRenderedRow() getFirstVirtualRenderedRow()</th>
             <td>Gets the index of the first and last rendered rows.</td>
         </tr>
+        <tr>
+            <th>showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterButtonClick(colKey, buttonElement)</th>
+            <td>Shows the column menu after and positions it relative to the provided element (button click) or mouse
+                event. Use in conjunction with your own header template.</td>
+        </tr>
     </table>
 
     <h2>

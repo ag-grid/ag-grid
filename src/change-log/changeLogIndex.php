@@ -14,7 +14,8 @@ include '../documentation-main/documentation_header.php';
     <li>Navigation: When not editing, tab moves between cells. Shift+tab goes backwards.</li>
     <li>Editing: Hitting any key started editing.</li>
     <li>Enhancement: api.refreshCell() now takes 'animate' parameter, so cell will flash when changed.</li>
-k
+    <li>Enhancement: New api methods: showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterButtonClick(colKey, buttonElement)</li>
+
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
     <li>Enhancement: Now ctrl+d will copy down the selected range, similar to Excel</li>

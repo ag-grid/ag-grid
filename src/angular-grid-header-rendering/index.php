@@ -85,12 +85,27 @@ include '../documentation-main/documentation_header.php';
     then when filtering, the grid will not try and show the filter icon.
     </p>
 
+    <h4>Grid API</h4>
 
+    <p>There are two methods useful in the API for showing the column menu if you don't like the provided logic:</p>
+    <ul>
+        <li><b>showColumnMenuAfterButtonClick(colKey, buttonElement)</b>: Shows a menu and positions relative
+        to the provided button element - so it appears over the element giving the impression of the dropdown menu.</li>
+        <li><b>showColumnMenuAfterMouseClick(colKey, mouseEvent)</b>: Shows a menu and positions relative
+        to the provided mouse event - use this for context menu, so the menu appears where you click the mouse.</li>
+    </ul>
+    <p>It is unusual to use these methods, only use them if you can't get what you want from the normal behaviour.</p>
+
+    <h4>Example Header Template</h4>
     <p>
         The example below shows defining header templates in different ways. The <i>gridOptions.headerCellTemplate</i>
-        is provided with a string of HTML that is used for all the columns bar 'Country'. The 'Country' column
+        is provided with a string of HTML that is used for all the columns bar 'Athlete' and 'Country'.
+        The 'Country' column
         definition is provided with a function that returns a DOM element (not a string) with some functionality
         attached to it. The functionality shows a message when you click on the additional 'Calendar' icon.
+
+        The 'Athlete' column uses the two api methods above, one api method to show menu when you mouse click on the button,
+        and the other api method to show menu when you right click on the athlete header.
     </p>
     <show-example example="exampleHeaderTemplate"></show-example>
 
