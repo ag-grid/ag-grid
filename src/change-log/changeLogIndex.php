@@ -13,7 +13,8 @@ include '../documentation-main/documentation_header.php';
     due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
     <li>Navigation: When not editing, tab moves between cells. Shift+tab goes backwards.</li>
     <li>Editing: Hitting any key started editing.</li>
-
+    <li>Enhancement: api.refreshCell() now takes 'animate' parameter, so cell will flash when changed.</li>
+k
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
     <li>Enhancement: Now ctrl+d will copy down the selected range, similar to Excel</li>
