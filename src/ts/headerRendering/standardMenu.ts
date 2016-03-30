@@ -31,8 +31,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {
-                hidePopup: hidePopup,
-                eventSource: eventSource
+                hidePopup: hidePopup
             };
             filterWrapper.filter.afterGuiAttached(params);
         }

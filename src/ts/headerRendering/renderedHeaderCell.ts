@@ -180,10 +180,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
-        var that = this;
-        eMenu.addEventListener('click', function () {
-            that.showMenu(this);
-        });
+        eMenu.addEventListener('click', ()=> this.showMenu(eMenu));
 
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
             eMenu.style.opacity = '0';

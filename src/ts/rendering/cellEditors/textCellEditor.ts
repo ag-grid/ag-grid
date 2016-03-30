@@ -2,11 +2,17 @@ import {Constants} from "../../constants";
 import {Component} from "../../widgets/component";
 import {ICellEditor} from "./iCellEditor";
 
+enum StartState {
+    HighlightAll,
+    CursorAtEnd
+}
+
 export class TextCellEditor extends Component implements ICellEditor {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 
     private highlightAllOnFocus: boolean;
+    private putCursorAtEndOnFocus: boolean;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);
@@ -27,16 +33,14 @@ export class TextCellEditor extends Component implements ICellEditor {
             startValue = params.charPress;
         } else {
             startValue = params.value;
-            this.highlightAllOnFocus = true;
+            if (params.keyPress === Constants.KEY_F2) {
+                this.putCursorAtEndOnFocus = true;
+            } else {
+                this.highlightAllOnFocus = true;
+            }
         }
 
         eInput.value = startValue;
-
-        // if (!params.popup) {
-        //
-        // }
-
-        // eInput.style.width = (params.column.getActualWidth() - 0) + 'px';
     }
 
     public afterGuiAttached(): void {
@@ -45,10 +49,14 @@ export class TextCellEditor extends Component implements ICellEditor {
         if (this.highlightAllOnFocus) {
             eInput.select();
         } else {
-            // this puts the carot at the end of the first character, which
-            // is needed if the user started typing, otherwise in IE, if user
-            // typed 'apply', what would end up in the cell would be 'pplea'
-            eInput.setSelectionRange(1,1);
+            // when we started editing, we want the carot at the end, not the start.
+            // this comes into play in two scenarios: a) when user hits F2 and b)
+            // when user hits a printable character, then on IE (and only IE) the carot
+            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            var length = eInput.value ? eInput.value.length : 0;
+            if (length > 0) {
+                eInput.setSelectionRange(length,length);
+            }
         }
     }
 

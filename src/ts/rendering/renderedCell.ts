@@ -352,6 +352,12 @@ export class RenderedCell extends Component {
         }
     }
 
+    private onF2KeyDown(): void {
+        if (!this.editingCell) {
+            this.startEditingIfEnabled(Constants.KEY_F2);
+        }
+    }
+
     private onEscapeKeyDown(): void {
         if (this.editingCell) {
             this.stopEditing(true);
@@ -473,6 +479,9 @@ export class RenderedCell extends Component {
         switch (key) {
             case Constants.KEY_ENTER:
                 this.onEnterKeyDown();
+                break;
+            case Constants.KEY_F2:
+                this.onF2KeyDown();
                 break;
             case Constants.KEY_ESCAPE:
                 this.onEscapeKeyDown();
