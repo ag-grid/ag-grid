@@ -585,7 +585,7 @@ export class RenderedRow {
         return this.rowIndex;
     }
 
-    public refreshCells(colIds: string[]): void {
+    public refreshCells(colIds: string[], animate: boolean): void {
         if (!colIds) {
             return;
         }
@@ -594,7 +594,7 @@ export class RenderedRow {
         this.forEachRenderedCell( renderedCell => {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell();
+                renderedCell.refreshCell(animate);
             }
         });
     }

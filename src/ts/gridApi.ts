@@ -122,8 +122,8 @@ export class GridApi {
         this.rowRenderer.refreshRows(rowNodes);
     }
 
-    public refreshCells(rowNodes: RowNode[], colIds: string[]): void {
-        this.rowRenderer.refreshCells(rowNodes, colIds);
+    public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
+        this.rowRenderer.refreshCells(rowNodes, colIds, animate);
     }
 
     public rowDataChanged(rows:any) {

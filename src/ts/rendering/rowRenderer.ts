@@ -262,7 +262,7 @@ export class RowRenderer {
         this.drawVirtualRows();
     }
 
-    public refreshCells(rowNodes: RowNode[], colIds: string[]): void {
+    public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
@@ -271,7 +271,7 @@ export class RowRenderer {
         _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
             var rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode)>=0) {
-                renderedRow.refreshCells(colIds);
+                renderedRow.refreshCells(colIds, animate);
             }
         });
     }

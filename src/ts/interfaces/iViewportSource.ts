@@ -1,3 +1,4 @@
+/*
 export interface ViewportSource {
 
     init(): void;
@@ -5,4 +6,4 @@ export interface ViewportSource {
     onHeightChanged(height: number): void;
     onIndexChanged(index: number): void;
 
-}
+}*/

@@ -892,7 +892,7 @@ export class RenderedCell extends Component {
         return this.column.getColDef().volatile;
     }
 
-    public refreshCell() {
+    public refreshCell(animate = false) {
 
         _.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
@@ -902,6 +902,10 @@ export class RenderedCell extends Component {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             this.$compile(this.eGridCell)(this.scope);
+        }
+        
+        if (animate) {
+            this.animateCellWithDataChanged();
         }
     }
 
