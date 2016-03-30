@@ -53,8 +53,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         });
 
         menu.afterGuiAttached({
-            hidePopup: hidePopup,
-            eventSource: eventSource
+            hidePopup: hidePopup
         });
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
