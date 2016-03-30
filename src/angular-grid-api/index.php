@@ -361,7 +361,7 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the index of the first and last rendered rows.</td>
         </tr>
         <tr>
-            <th>showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterButtonClick(colKey, buttonElement)</th>
+            <th>showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)</th>
             <td>Shows the column menu after and positions it relative to the provided element (button click) or mouse
                 event. Use in conjunction with your own header template.</td>
         </tr>
