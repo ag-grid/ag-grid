@@ -97,10 +97,16 @@
         transition: border 1s;
 
     .ag-cell-data-changed
-        background: lightgreen;
+        background-color: cadetblue;
 
     .ag-cell-data-changed-animation
-        transition: lightgreen 1s;
+        transition: background-color 1s;
+
+    .ag-cell-data-changed:not(.ag-cell-focus)
+        background-color: cadetblue;
+
+    .ag-cell-data-changed-animation:not(.ag-cell-focus)
+        transition: background-color 1s;
 
     .ag-header
         background-color: #430000;

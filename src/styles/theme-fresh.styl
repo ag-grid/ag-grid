@@ -94,10 +94,21 @@
         transition: border 1s;
 
     .ag-cell-data-changed
-        background: lightblue;
+        background-color: lightblue;
 
     .ag-cell-data-changed-animation
-        transition: background  1s;
+        transition: background-color 1s;
+
+    // because the .ag-cell-range-selected classes use 'not' operator, they get precedence
+    // over the background-color defined here. to get around this, we also use the 'not'
+    // operator here which is redundency as far as this class is concerned, however it means
+    // when the cell doe not have ag-cell-focus, this background color gets used and not
+    // the range selection - as this is listed after the range selection in the css file.
+    .ag-cell-data-changed:not(.ag-cell-focus)
+        background-color: lightblue;
+    // likewise for animation, see previous comment
+    .ag-cell-data-changed-animation:not(.ag-cell-focus)
+        transition: background-color 1s;
 
     .ag-header
         background: linear-gradient(white, lightgrey);
