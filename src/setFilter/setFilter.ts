@@ -3,36 +3,17 @@ import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
 import {RichList} from "../richList";
 
-var template =
-    '<div>'+
-        // '<div id="richList"></div>'+
-        '<div class="ag-filter-header-container">'+
-            '<input class="ag-filter-filter" type="text" placeholder="[SEARCH...]"/>'+
-        '</div>'+
-        '<div class="ag-filter-header-container">'+
-            '<label>'+
-                '<input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>'+
-                '([SELECT ALL])'+
-            '</label>'+
-        '</div>'+
-        '<div class="ag-filter-list-viewport">'+
-            '<div class="ag-filter-list-container">'+
-                '<div id="itemForRepeat" class="ag-filter-item">'+
-                    '<label>'+
-                        '<input type="checkbox" class="ag-filter-checkbox" filter-checkbox="true"/>'+
-                        '<span class="ag-filter-value"></span>'+
-                    '</label>'+
-                '</div>'+
-            '</div>'+
-        '</div>'+
-        '<div class="ag-filter-apply-panel" id="applyPanel">'+
-            '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
-        '</div>'+
-    '</div>';
-
 var DEFAULT_ROW_HEIGHT = 20;
 
 export class SetFilter extends Component implements Filter {
+
+    private static TEMPLATE =
+            '<div>'+
+                '<div id="richList"></div>'+
+                '<div class="ag-filter-apply-panel" id="applyPanel">'+
+                    '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
+                '</div>'+
+            '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
@@ -56,14 +37,21 @@ export class SetFilter extends Component implements Filter {
     private applyActive: any;
     private eApplyButton: any;
 
+    private cRichList: RichList;
+    
     constructor() {
-        super(null);
+        super();
     }
 
     @PostConstruct
     private postConstruct(): void {
-        // var richList = new RichList();
-        // this.context.wireBean(richList);
+
+        this.setTemplate(this.createTemplate());
+
+        this.cRichList = new RichList();
+        this.context.wireBean(this.cRichList);
+
+        this.getGui().querySelector('#richList').appendChild(this.cRichList.getGui());
     }
 
     public init(params: any): void {
@@ -138,16 +126,12 @@ export class SetFilter extends Component implements Filter {
 
     private createTemplate() {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        return template
-            .replace('[SELECT ALL]', localeTextFunc('selectAll', 'Select All'))
-            .replace('[SEARCH...]', localeTextFunc('searchOoo', 'Search...'))
+        return SetFilter.TEMPLATE
             .replace('[APPLY FILTER]', localeTextFunc('applyFilter', 'Apply Filter'));
     }
 
     private createGui() {
         var _this = this;
-
-        this.setTemplate(this.createTemplate());
 
         this.eListContainer = this.queryForHtmlElement(".ag-filter-list-container");
         this.eFilterValueTemplate = this.queryForHtmlElement("#itemForRepeat");
