@@ -357,7 +357,7 @@ export class GridApi {
     }
 
     public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating?: string) {
-        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating);
+        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
     public setHeaderHeight(headerHeight: number) {
