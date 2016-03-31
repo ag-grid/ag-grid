@@ -578,6 +578,10 @@ export class RenderedCell extends Component {
     private addInCellEditor(): void {
         _.removeAllChildren(this.eGridCell);
         this.eGridCell.appendChild(this.cellEditor.getGui());
+
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(this.eGridCell)(this.scope);
+        }
     }
 
     private addPopupCellEditor(): void {
@@ -603,6 +607,10 @@ export class RenderedCell extends Component {
             ePopup: ePopupGui,
             keepWithinBounds: true
         });
+
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(ePopupGui)(this.scope);
+        }
     }
 
     public focusCell(forceBrowserFocus: boolean): void {

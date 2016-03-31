@@ -165,7 +165,7 @@ export class GridApi {
         return this.rowModel;
     }
 
-    public onGroupExpandedOrCollapsed(refreshFromIndex: any) {
+    public onGroupExpandedOrCollapsed(refreshFromIndex?: any) {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model') }
         this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
     }
