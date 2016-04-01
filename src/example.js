@@ -73,8 +73,8 @@ var groupColumn = {
     comparator: agGrid.defaultGroupComparator,
     suppressAggregation: true,
     suppressRowGroup: true,
-    cellRenderer: {
-        renderer: "group",
+    cellRenderer: 'group',
+    cellRendererParams: {
         checkbox: true
     }
 };
