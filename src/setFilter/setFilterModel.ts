@@ -246,7 +246,7 @@ export class SetFilterModel {
         return selectedValues;
     }
 
-    public setModel(model: any, isSelectAll: boolean) {
+    public setModel(model: any, isSelectAll = false) {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (var i = 0; i < model.length; i++) {
